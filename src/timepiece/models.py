@@ -313,7 +313,7 @@ class Business(models.Model):
         # return return_users
 
     def get_colour_for_status(self, status_name):
-        possible_states = [x['status'] for x in Issue.objects.filter(project__business=self).values('status').order_by("status").distinct()]
+        possible_states = [x['status2__name'] for x in Issue.objects.filter(project__business=self).values('status2__name').order_by("status2__name").distinct()]
         index = possible_states.index(status_name)
         index = index % len(Business.DEFAULT_STATUS_COLOURS)
         return Business.DEFAULT_STATUS_COLOURS[index]
@@ -352,11 +352,6 @@ class Business(models.Model):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-
-    def autocreate_all_status_colours(self):
-        # incomplete
-        for status in Issue.objects.filter(project__business=self).values('status').distinct():
-            pass
 
     @classmethod
     def businesses_in_desc_order_of_use(self, user):
@@ -1512,9 +1507,12 @@ class Project(models.Model):
             stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
 
-            stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_closed'] = _get_total(issue_points.exclude(issue__status__in=open_status_options).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
+                                                                         .filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_closed'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
+                                                               .values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status2__name__in=open_status_options)\
+                                                                       .filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
             stats_per_user[user]['adjusted_points_non_adhoc_no_scope_creep'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
@@ -1533,9 +1531,16 @@ class Project(models.Model):
               float(stats_per_user[user]['rate'].billable_amount or 0)
 
 
-            stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative.filter(issue__status__in=open_status_options).filter(issue__adhoc=False).values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative\
+                                                                              .filter(issue__adhoc=False).values('user')\
+                                                                              .annotate(total=Sum('points')))
+            stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status2__name__in=open_status_options)\
+                                                                                     .filter(issue__adhoc=False)\
+                                                                                     .values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative\
+                                                                                   .filter(issue__status2__name__in=open_status_options)\
+                                                                                   .filter(issue__adhoc=False)\
+                                                                                   .values('user').annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_comparative_non_adhoc'] = (stats_per_user[user]['points_comparative_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
 
@@ -1547,8 +1552,8 @@ class Project(models.Model):
             stats_per_user[user]['hours_for_role'] = _get_total(entries.filter_on_role(stats_per_user[user]['rate'].time_tracking_mode).values('user').annotate(total=Sum('hours')))
 
             stats_per_user[user]['hours_real'] = _get_total(entries.filter(issue__adhoc=False).order_by('user').values('user').annotate(total=Sum('hours')))
-            stats_per_user[user]['hours_closed'] = _get_total(entries.exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
-            stats_per_user[user]['hours_closed_real'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_closed'] = _get_total(entries.exclude(issue__status2__name__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_closed_real'] = _get_total(entries.filter(issue__adhoc=False).exclude(issue__status2__name__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
             stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__adhoc=True).order_by('user').values('user').annotate(total=Sum('hours')))
 
             stats_per_user[user]['hours_ctc'] = stats_per_user[user]['rate'].amount * stats_per_user[user]['hours']
@@ -1749,8 +1754,8 @@ class Project(models.Model):
         billed_core_rate = 0
 
         # The 'or 1' clause is so that if the project has no estimates, the ratios still have some meaning.
-        number_dev_done = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(Q(status__icontains='dev done')|Q(status__icontains='devdone')|Q(status__icontains="cannot reproduce")).values_list('story_points')]])
-        number_tested = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(status__icontains='tested').values_list('story_points')]])
+        number_dev_done = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(Q(status2__name__icontains='dev done')|Q(status2__name__icontains='devdone')|Q(status2__name__icontains="cannot reproduce")).values_list('story_points')]])
+        number_tested = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.filter(status2__name__icontains='tested').values_list('story_points')]])
         number_total = lambda issues_qs : 1.0*sum([ (ii or 1) for ii in  [i[0] for i in issues_qs.values_list('story_points')]])
 
         def get_css_class_for_level(level, reverse_colours=False):
@@ -1932,7 +1937,7 @@ class Project(models.Model):
     def total_points_for_user(self, user, issue_status=None):
         entries_qs = IssuePoints.objects.filter(issue__project=self, user=user)
         if issue_status is not None:
-            entries_qs = entries_qs.filter(issue__status=issue_status)
+            entries_qs = entries_qs.filter(issue__status2__name=issue_status)
 
         total = entries_qs.aggregate(points=Sum('points'))['points']
         return total
@@ -3620,7 +3625,7 @@ class Issue(models.Model):
                                        'manager': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
 
-    status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
+    #status = models.CharField(max_length=255, choices = ISSUE_STATUS_CHOICES, blank=False)
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
@@ -3679,7 +3684,7 @@ class Issue(models.Model):
         self.representation.per_user = OrderedDict()
 
     def status_as_class(self):
-        return 'status_%s' % self.status.replace(" ","_").lower()
+        return 'status_%s' % self.status2.name.replace(" ","_").lower()
 
     def get_points(self):
         business_users = self.project.business.users
@@ -3693,7 +3698,7 @@ class Issue(models.Model):
 
     @property
     def status_name(self):
-        return dict(self.ISSUE_STATUS_CHOICES).get(self.status.lower(), "unknown")
+        return self.status2.name
 
     def move_after(self, other_issue):
         self.order = other_issue.order + 0.00001
@@ -3783,16 +3788,16 @@ class Issue(models.Model):
 
     @property
     def css_class(self):
-        status = self.status.replace(" ","").replace("_","").lower()
-        if status == 'devdone':
+        status_name = self.status2.name.replace(" ","").replace("_","").lower()
+        if status_name == 'devdone':
             return "devdone"
-        elif status == 'tested':
+        elif status_name == 'tested':
             return "tested"
         else:
             return "open"
 
     def is_closed(self):
-        return self.status.replace(" ","").lower() == 'tested'
+        return self.status2.name.replace(" ","").lower() == 'tested'
 
     def add_user_to_representation(self, user, per_user_issue_data):
         self.representation.per_user[user] = per_user_issue_data
@@ -3807,7 +3812,7 @@ class Issue(models.Model):
 
     @property
     def colour(self):
-        return self.project.business.get_colour_for_status(self.status)
+        return self.project.business.get_colour_for_status(self.status2.name)
 
     @property
     def hours(self):

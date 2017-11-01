@@ -9,8 +9,8 @@ Click a status to only show issues with that status
     </a>
 {% for status in stati %}
   <li>
-    <a href="" onclick="return imp.filter_on_status({{project_id}}, '{{status.status}}');">
-      {{status.status}}
+    <a href="" onclick="return imp.filter_on_status({{project_id}}, '{{status}}');">
+      {{status}}
     </a>
   </li>
 {% endfor %}

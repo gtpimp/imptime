@@ -869,7 +869,7 @@ class IssueStatusForm(forms.ModelForm):
     class Meta:
         model = timepiece.Issue
         fields = (
-            'status',
+            'status2',
         )
 
     def __init__(self, *args, **kwargs):
@@ -1253,7 +1253,7 @@ class SprintInvoiceReportSettingsForm(forms.Form):
             del self.fields['view_budget']
 
         if project:
-            self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
+            self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['id'],x['status2__name']) for x in project.issues.values('id', 'status2__name').distinct()] )
             self.fields['only_assigned_to'].choices = [('all', 'Any user'),] + list( [ (x['assigned_to__username'],x['assigned_to__username']) for x in project.issues.exclude(assigned_to__isnull=True).values('assigned_to__username').distinct()] )
 
         if only_these_issues is None:
@@ -1325,7 +1325,7 @@ class SprintQuoteReportSettingsForm(forms.Form):
         if not self.bp.has_view_ctc_billable_rates or not self.bp.has_view_ctc_rates:
             del self.fields['show_billable']
 
-        self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['status'],x['status']) for x in project.issues.values('status').distinct()] )
+        self.fields['only_these_statuses'].choices = [('all', 'Any status'),] + list( [ (x['id'],x['status2__name']) for x in project.issues.values('id', 'status2__name').distinct()] )
         self.fields['preferred_user_for_estimates'].choices = [ (x.user.id, x.user) for x in BusinessPermissions.by_user(project.business).values() if x.has_estimate_own_points ]
 
         if only_these_issues is None:
@@ -1362,7 +1362,7 @@ class IssueCheckboxContextMenuChangeStateForm(forms.Form):
 
     def __init__(self, project, *args, **kwargs):
         super(IssueCheckboxContextMenuChangeStateForm, self).__init__(*args, **kwargs)
-        self.fields['status'].choices = [('na', ''),] + list( [ (x['status'],x['status']) for x in Issue.objects.filter(project__business=project.business).values('status').distinct()] )
+        self.fields['status'].choices = [(None, ''),] + list( [ (x['id'],x['status2__name']) for x in Issue.objects.filter(project__business=project.business).values('id', 'status2__name').distinct()] )
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
@@ -1372,7 +1372,7 @@ class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
 
     def __init__(self, project, *args, **kwargs):
         super(IssueCheckboxContextMenuSelectByStateForm, self).__init__(*args, **kwargs)
-        self.fields['status'].choices = [('na', ''),] + list( [ (x['status'],x['status']) for x in Issue.objects.filter(project__business=project.business).values('status').distinct()] )
+        self.fields['status'].choices = [('na', ''),] + list( [ (x['id'],x['status2__name']) for x in Issue.objects.filter(project__business=project.business).values('id', 'status2__name').distinct()] )
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuChangeFeatureForm(forms.Form):

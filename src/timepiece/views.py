@@ -2095,7 +2095,7 @@ class ReportMixin(object):
                 query &= Q(project__in=project_form.cleaned_data['pj_select'])
 
         entries = timepiece.Entry.objects.filter_by_logged_in_user(user).date_trunc(trunc,
-            extra_values=('activity', 'issue__project__status')).filter(query)
+            extra_values=('activity', 'issue__project__status2__name')).filter(query)
         date_headers = utils.generate_dates(from_date, header_to, by=trunc)
 
         context.update({
@@ -3385,7 +3385,7 @@ def business_features(request, business_id):
 @login_required
 def status_filter(request, project_id, template="timepiece/project/status_filter_popup.html"):
     context = {}
-    stati = timepiece.Issue.objects.filter(project_id=project_id).order_by('status').values('status').distinct()
+    stati = timepiece.Issue.objects.filter(project_id=project_id).order_by('status2__name').values_list('status2__name', flat=True).distinct()
     context['stati'] = stati
     context['project_id'] = project_id
     return render(request, template, context)
@@ -4748,7 +4748,7 @@ def sprint_report(request, project_id, context=None):
             if 'only_these_statuses' in form.cleaned_data:
                 statuses = form.cleaned_data['only_these_statuses']
                 if 'all' not in statuses:
-                    issues = issues.filter(status__in=statuses)
+                    issues = issues.filter(status2__name__in=statuses)
 
             if 'only_assigned_to' in form.cleaned_data:
                 assigned_to = form.cleaned_data['only_assigned_to']
@@ -5294,7 +5294,7 @@ def bulk_select_by_issue_state(request, project_id, context=None):
 
     if form.is_valid():
         state = form.cleaned_data['status']
-        selected_issues = selected_project.issues.filter(status=state)
+        selected_issues = selected_project.issues.filter(status2__name=state)
         request.session['selected_issue_ids_for_context_menu'] = [x.id for x in selected_issues]
         messages.info(request, "%d issues selected for state %s" % (selected_issues.count(), state))
     else:
@@ -5342,7 +5342,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
             raise PermissionDenied
 
         for state in ordered_states:
-            issues_for_state = issues.filter(status=state)
+            issues_for_state = issues.filter(status2__name=state)
             for issue in issues_for_state:
                 if issue.order != count:
                     issue.order = count
@@ -5355,7 +5355,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 
         return HttpResponse(json.dumps({'redirect_url':reverse('project_list', args=[project.id])}))
     else:
-        context['states'] = [x['status'] for x in project.issues.order_by("status").values("status").distinct()]
+        context['states'] = [x['status2__name'] for x in project.issues.order_by("status2__name").values("status2__name").distinct()]
         context['project'] = project
         return render(request, template, context)
 
@@ -6094,7 +6094,7 @@ def _get_quick_clocker_issue(project, user):
                                                subject=issue_subject,
                                                auto_created_during_import=True,
                                                adhoc=False,
-                                               status='quick_clocker',
+                                               status2=IssueStatus.objects.get_or_create(name='quick_clocker', business=project.business)[0],
                                                assigned_to=user,
                                                number=timepiece.Issue.get_next_issue_number(project.business),
                                                description="General work",
