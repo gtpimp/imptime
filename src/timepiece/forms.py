@@ -1,5 +1,6 @@
 from decimal import Decimal
 import re
+from django.utils.functional import curry
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.contrib.auth.models import Group
 import time
@@ -872,8 +873,9 @@ class IssueStatusForm(forms.ModelForm):
             'status2',
         )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, business, *args, **kwargs):
         super(IssueStatusForm, self).__init__(*args, **kwargs)
+        self.fields['status2'].queryset = IssueStatus.objects.filter(business=business).order_by("name")
 
 class IssueNumberForm(forms.ModelForm):
     class Meta:
@@ -1194,7 +1196,11 @@ def lookup_project(name, projects):
             return project
     raise LookupError("Project %s does not exist" % name)
 
-issue_status_formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm,extra=0 ,can_delete=True, exclude=[])
+def createIssueStatusFormset(business):
+    formset = modelformset_factory(timepiece.Issue, form=IssueStatusForm, extra=0 ,can_delete=True, exclude=[])
+    formset.form = staticmethod(curry(IssueStatusForm, business=business))
+    return formset
+    
 expense_formset = modelformset_factory(timepiece.Expense, can_delete=True, extra=2, exclude=[])
 permissions_formset = modelformset_factory(timepiece.BusinessPermissions, form=EditPersonPermission,extra=0, exclude=['user', 'business'] )
 
@@ -1362,7 +1368,7 @@ class IssueCheckboxContextMenuChangeStateForm(forms.Form):
 
     def __init__(self, project, *args, **kwargs):
         super(IssueCheckboxContextMenuChangeStateForm, self).__init__(*args, **kwargs)
-        self.fields['status'].choices = [(None, ''),] + list( [ (x['id'],x['status2__name']) for x in Issue.objects.filter(project__business=project.business).values('id', 'status2__name').distinct()] )
+        self.fields['status'].choices = [(None, ''),] + list( [ (x.id,x.name) for x in IssueStatus.objects.filter(business=project.business).order_by("name")] )
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
@@ -1372,12 +1378,13 @@ class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
 
     def __init__(self, project, *args, **kwargs):
         super(IssueCheckboxContextMenuSelectByStateForm, self).__init__(*args, **kwargs)
-        self.fields['status'].choices = [('na', ''),] + list( [ (x['id'],x['status2__name']) for x in Issue.objects.filter(project__business=project.business).values('id', 'status2__name').distinct()] )
+        statuses_in_use = IssueStatus.objects.filter(business=project.business).order_by("name")
+        self.fields['status'].choices = [('na', ''),] + list([ (x.id, x.name) for x in statuses_in_use])
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuChangeFeatureForm(forms.Form):
 
-    feature = forms.ChoiceField( label="New feature",
+    feature = forms.ChoiceField(label="New feature",
                                 required=True, initial=('New',) )
 
     def __init__(self, project, *args, **kwargs):

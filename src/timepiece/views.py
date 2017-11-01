@@ -3399,14 +3399,11 @@ def feature_filter(request, project_id, template="timepiece/project/feature_filt
     return render(request, template, context)
 
 @login_required
-def allowed_issue_stati(request, issue_id=None):
-    if issue_id:
-        issue = timepiece.Issue.objects.get(pk=issue_id)
-        stati = get_interface_plugin(request, issue.project.business).get_allowed_stati(issue)
-    else:
-        stati = None
+def allowed_issue_stati(request, issue_id):
+    issue = timepiece.Issue.objects.get(pk=issue_id)
+    stati = get_interface_plugin(request, issue.project.business).get_allowed_stati(issue)
     if stati is None:
-        stati = sorted(timepiece.Issue.ISSUE_STATUS_CHOICES, key=lambda x: x[1])
+        stati = [(x.id, x.name) for x in timepiece.IssueStatus.objects.filter(business_id=issue.project.business_id).order_by("name")]
     return HttpResponse(json.dumps(stati), content_type='application/json')
 
 @login_required
@@ -3440,8 +3437,9 @@ def project_issues(request, pk, template="timepiece/project/issues.html", contex
     business = project.business
 
     queryset = project.get_ordered_issues()
-    issues_forms = timepiece_forms.issue_status_formset(request.POST or None,
-                                                        queryset=queryset)
+    issues_forms = timepiece_forms.createIssueStatusFormset(business)(
+        request.POST or None,
+        queryset=queryset)
     users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
     rates_by_user = project.get_rates_by_user()
     for form in issues_forms.forms:
@@ -3498,8 +3496,8 @@ def get_project_detail(request, project_id, context=None):
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
 
     if len(queryset) :
-        issues_forms = timepiece_forms.issue_status_formset(request.POST or None,
-                                                            queryset=queryset)
+        issues_forms = timepiece_forms.createIssueStatusFormset(business=business)(request.POST or None,
+                                                                                   queryset=queryset)
         users_allowed_to_estimate_on_business=business.get_users_allowed_to_estimate_on_business(request.user)
         rates_by_user = project.get_rates_by_user()
         for form in issues_forms.forms:
@@ -3748,17 +3746,19 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue)
 
     old_status = edited_issue.status2.name if edited_issue.status2 else ""
-    new_status_name = request.POST["selected_value"]
-    if len(new_status_name.strip())>0:
-        edited_issue.status2 = timepiece.IssueStatus.objects.get_or_create(business=project.business, name=new_status_name)[0]
-    else:
+    issue_status_id = request.POST["selected_value"].strip()
+    if not issue_status_id:
         edited_issue.status2 = None
+        new_status = None
+    else:
+        new_status = timepiece.IssueStatus.objects.get(business_id=project.business_id, pk=issue_status_id)
+    edited_issue.status2 = new_status
+    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, new_status)
     edited_issue.save()
 
-    timepiece.IssueHistory.add_history(request.user, edited_issue, "changed status", old_status, new_status_name)
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
-    return HttpResponse(json.dumps({ 'new_value': new_status_name }), content_type='application/json')
+    return HttpResponse(json.dumps({ 'new_value': str(new_status) }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -5115,7 +5115,7 @@ def bulk_change_issue_state(request, context=None):
     if not form.cleaned_data['status']:
         new_status = None
     else:
-        new_status = timepiece.IssueStatus.objects.get_or_create(name=form.cleaned_data['status'], business=selected_project.business)[0]
+        new_status = timepiece.IssueStatus.objects.get_or_create(pk=form.cleaned_data['status'], business=selected_project.business)[0]
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         if not issue.status2 or new_status != issue.status2.name:
