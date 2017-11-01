@@ -280,10 +280,11 @@ function updateSprint(sprint_ids, field_name, new_value, on_done) {
     }
 }
 
-export function announceCloneSprintFailed(sprint_id) {
+export function announceCloneSprintFailed(sprint_id, error) {
     return {
         type: ANNOUNCE_CLONE_SPRINT_FAILED,
-        sprint_id: sprint_id
+        sprint_id: sprint_id,
+        error: error
     }
 }
 
@@ -299,8 +300,6 @@ export function announceClonedSprint(sprint_id, payload) {
         type: ANNOUNCE_CLONED_SPRINT,
         sprint_id: sprint_id,
         new_sprint_id: payload.new_sprint_id
-    }
-}
 
 export function cloneTemplateSprint(sprint_id, onDone) {
 
@@ -319,7 +318,7 @@ export function cloneTemplateSprint(sprint_id, onDone) {
 	 .then(json => {
              if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
-		 dispatch(announceCloneSprintFailed(json.error))
+		 dispatch(announceCloneSprintFailed(sprint_id, json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
 		 dispatch(announceClonedSprint(sprint_id, json.payload))
@@ -330,7 +329,7 @@ export function cloneTemplateSprint(sprint_id, onDone) {
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceCloneSprintFailed(error))
+	     dispatch(announceCloneSprintFailed(sprint_id, error))
 	 })
     }
 }
