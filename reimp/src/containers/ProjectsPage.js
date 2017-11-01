@@ -15,6 +15,11 @@ import {
     select_projects,
     get_selected_project_ids,
 } from '../actions/Page'
+import {
+    selectItems,
+    update_list_filter,
+    invalidateList
+} from '../actions/ItemList'
 import {getCandidateProject} from '../actions/Projects'
 
 class ProjectsPage extends Component {
@@ -32,12 +37,12 @@ class ProjectsPage extends Component {
 
     onSelectProjects(project_ids) {
         const { dispatch } = this.props
-        // dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
-        if ( project_ids && project_ids.length === 1 ) {
-            browserHistory.push('/projects/' + project_ids[0] + '/sprints');
-        } else {
-            dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
-        }
+         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
+        /* if ( project_ids && project_ids.length === 1 ) {
+         *     browserHistory.push('/projects/' + project_ids[0] + '/sprints');
+         * } else {*/
+        dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
+        //}
     }
             
     render() {

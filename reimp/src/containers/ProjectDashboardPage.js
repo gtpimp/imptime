@@ -17,52 +17,32 @@ class ProjectDashboardPage extends Component {
 
     constructor(props) {
         super(props)
-        this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
-        this.navigateToSprintTemplatesPage = this.navigateToSprintTemplatesPage.bind(this)
-        this.navigateToProjectUsersPage = this.navigateToProjectUsersPage.bind(this)
-        this.navigateToProjectStatementPage = this.navigateToProjectStatementPage.bind(this)
     }
 
     componentDidMount() {
         const {dispatch, project_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECT_DASHBOARD_PAGE, ['project-dashboard']))
-        this.refresh(project_id)
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
         const { project_id } = this.props
-        if ( new_props.loaded !== this.props.loaded || new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ) {
-            this.refresh(new_props.project_id, new_props.project)
+        if ( new_props.loaded !== this.props.loaded ||
+             new_props.project_id !== project_id ||
+             new_props.project.id !== this.props.project.id ) {
+            this.refresh(new_props)
         }
     }
 
-    refresh(project_id, project) {
-        const { dispatch } = this.props
-        project = project || {}
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
-                                  {to: '/projects/'+project_id, label: project.name} ]))
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, project_id, project } = props
+        if ( project.id ) {
+            dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                                      {to: '/projects/'+project_id, label: project.name} ]))
+        }
         dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project_id]))
         dispatch(ensureProjectsLoaded([project_id]))
-    }
-
-    navigateToSprintsPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints');
-    }
-
-    navigateToSprintTemplatesPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprintTemplates');
-    }
-
-    navigateToProjectUsersPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/users');
-    }
-
-    navigateToProjectStatementPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/projectStatement');
     }
 
     render() {
@@ -71,11 +51,6 @@ class ProjectDashboardPage extends Component {
 
         return (
             <div>
-              <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
-              <button className="button button--large button--primary" onClick={this.navigateToSprintTemplatesPage}>Sprint templates</button>
-              <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
-              <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
-
               <ProjectDashboard project_id={project.id} />
               <br/>
             </div>

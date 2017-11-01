@@ -4,6 +4,7 @@ import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName.js'
 import PropertyStackComponent from '../components/PropertyStackComponent'
+import SprintTimeSummary from '../components/SprintTimeSummary'
 //import '../sass/sprint-dashboard.scss'
 import {
     PAGE_KEY__SPRINT_DASHBOARD_PAGE
@@ -16,7 +17,6 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded,
         getSprint
 } from '../actions/Sprints'
-import { has_permission } from '../actions/Users'
 
 class ProjectDashboardPage extends Component {
 
@@ -68,23 +68,14 @@ class ProjectDashboardPage extends Component {
 
     render() {
 
-        const { sprint, sprint_id, has_view_ctc_billable_rates_permission } = this.props
+        const { sprint, sprint_id, project_id } = this.props
 
         return (
             <div>
-              <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>
-                Issues
-              </button>
-              { has_view_ctc_billable_rates_permission &&
-                <div>
-                  <button className="button button--large button--primary" onClick={this.navigateToCostSummaryPage}>
-                    Cost Summary
-                  </button>
-                </div>
-              }
               <PropertyStackComponent className="property-stack-component__small">
               <EditableSprintName sprint_id={sprint_id}/>
               </PropertyStackComponent>
+              <SprintTimeSummary sprint_id={sprint.id} project_id={project_id} />
             </div>
         )
     }
@@ -95,14 +86,12 @@ function mapStateToProps(state, props) {
     const sprint_id = props.params.sprintId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
-    const has_view_ctc_billable_rates_permission = has_permission(state, project_id, 'has_view_ctc_billable_rates')
 
     return {
         project_id: project_id,
         project: project,
         sprint_id: sprint_id,
-        sprint: sprint,
-        has_view_ctc_billable_rates_permission: has_view_ctc_billable_rates_permission
+        sprint: sprint
     }
 }
 

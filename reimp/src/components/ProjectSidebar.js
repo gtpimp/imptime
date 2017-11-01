@@ -12,6 +12,7 @@ class ProjectSidebar extends Component {
     constructor(props) {
         super(props)
         this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
+        this.navigateToProjectDashboard = this.navigateToProjectDashboard.bind(this)
     }
 
     componentDidMount() {
@@ -33,6 +34,11 @@ class ProjectSidebar extends Component {
         browserHistory.push('/projects/' + project_id + '/sprints');
     }
 
+    navigateToProjectDashboard() {
+        const {project_id} = this.props
+        browserHistory.push('/projects/' + project_id);
+    }
+
     render() {
 
         const {project_id, project} = this.props
@@ -46,7 +52,12 @@ class ProjectSidebar extends Component {
                         </div>                        
                     </PropertyStackComponent>
                     <PropertyStackComponent>
-                        <button onClick={this.navigateToSprintsPage}>Take me to your sprints</button>
+                      <button className="button button--primary issue_sidebar--button"
+                              onClick={this.navigateToSprintsPage}>Sprints</button>
+                    </PropertyStackComponent>
+                    <PropertyStackComponent>
+                      <button className="button button--primary issue_sidebar--button"
+                              onClick={this.navigateToProjectDashboard}>Dashboard</button>
                     </PropertyStackComponent>
                 </PropertyStack>
             </Sidebar>

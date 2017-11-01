@@ -7,31 +7,45 @@ import ReactTooltip from 'react-tooltip'
 import {
     PAGE_KEY__SPRINT_DASHBOARD_PAGE
 } from '../../actions/ItemListKeyRegistry'
+import { has_permission } from '../../actions/Users'
 
 class SprintDashboardToolbarPanel extends Component {
 
     constructor(props) {
         super(props)
         this.onDeleteSprintClick = this.onDeleteSprintClick.bind(this)
-        this.onOpenSprintClick = this.onOpenSprintClick.bind(this)
+        this.navigateToIssuesPage = this.navigateToIssuesPage.bind(this)
+        this.navigateToCostSummaryPage = this.navigateToCostSummaryPage.bind(this)
     }
 
     onDeleteSprintClick() {
-        console.log('delete sprint clicked')
+        alert("Deleting of sprints not available yet")
     }
 
-    onOpenSprintClick() {
+    navigateToIssuesPage() {
         const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
+        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
+    }
+
+    navigateToCostSummaryPage() {
+        const { project_id, sprint_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/costSummary');
     }
 
     render() {
-        const { sprint_id } = this.props
+        const { sprint_id, has_view_ctc_billable_rates_permission } = this.props
         return (
             <div className="toolbar-panel">
-                { sprint_id &&
-                  <ToolbarButton tooltip="Back" icon="subdirectory_arrow_left" onClick={this.onOpenSprintClick}/>
-                }
+                  <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>
+                    Issues
+                  </button>
+                  { has_view_ctc_billable_rates_permission &&
+                    <div>
+                      <button className="button button--large button--primary" onClick={this.navigateToCostSummaryPage}>
+                        Cost Summary
+                      </button>
+                    </div>
+                  }
               <ToolbarButton tooltip="Delete" icon="delete" onClick={this.onDeleteSprintClick}/>
               <ReactTooltip place="bottom" type="info" />
             </div>
@@ -46,11 +60,13 @@ function mapStateToProps(state, props) {
     const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || {}
     const sprint_id = sprint.id || null
     const project_id = sprint.project_id || null
+    const has_view_ctc_billable_rates_permission = has_permission(state, project_id, 'has_view_ctc_billable_rates')
 
     return {
-        sprint: sprint,
-        sprint_id: sprint_id,
-        project_id: project_id
+        sprint,
+        sprint_id,
+        project_id,
+        has_view_ctc_billable_rates_permission
     }
 }
 
