@@ -14,7 +14,6 @@ class IssueDescriptionForm extends Component {
 
     onChangeAndSubmit(e, fieldOnChange) {
         fieldOnChange(e)
-        // setTimeout(() => handleSubmit(), 0)
     }
 
     keyDown(event) {

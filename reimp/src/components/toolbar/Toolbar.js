@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar.css'
 import Breadcrumbs from '../../components/Breadcrumbs'
+import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
@@ -46,6 +47,8 @@ class ToolBar extends Component {
                 return <UserTimesheetsToolbarPanel key="user-timesheet-panel" {...this.props}/>
             case 'visual-spec-document':
                 return <VisualSpecDocumentToolbarPanel key='visual-spec-document' {...this.props}/>
+            case 'bulk-issue-creator':
+                return <BulkCreateIssuesToolbarPanel key='bulk-issue-creator' {...this.props}/>
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

@@ -27,6 +27,7 @@ class SprintsToolbarPanel extends Component {
         this.onDashboardClick = this.onDashboardClick.bind(this)
         this.onIssuesClick = this.onIssuesClick.bind(this)
         this.onSprintShowClosedToggleButtonClick = this.onSprintShowClosedToggleButtonClick.bind(this)
+        this.onBulkCreateIssuesClick = this.onBulkCreateIssuesClick.bind(this)
     }
 
     componentDidMount() {
@@ -65,6 +66,11 @@ class SprintsToolbarPanel extends Component {
         dispatch(set_display_all(PAGE_KEY__SPRINTS_TOOLBAR, display_all))
     }
 
+    onBulkCreateIssuesClick() {
+        const { dispatch, project_id, sprint_id } = this.props
+        browserHistory.push("/projects/" + project_id + "/sprints/" + sprint_id + "/bulkCreate")
+    }
+
     render() {
 
         const { sprint, display_all } = this.props
@@ -86,6 +92,9 @@ class SprintsToolbarPanel extends Component {
                   </div>
                 </div>
               }
+              <div className="button toolbar-button--small button--large button--primary" onClick={this.onBulkCreateIssuesClick}>
+                + Bulk Issues
+              </div>
               { sprint &&
                 <div>
                   <div className="button button--large button--primary" onClick={this.onDashboardClick}>

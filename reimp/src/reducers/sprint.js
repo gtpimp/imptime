@@ -24,8 +24,10 @@ import {
     DISPLAY_ALL_MODE,
 
     ANNOUNCE_CLONING_SPRINT,
-    ANNOUNCE_CLONED_SPRINT
+    ANNOUNCE_CLONED_SPRINT,
 
+    ANNOUNCE_BULK_CREATING_ISSUES,
+    ANNOUNCE_BULK_CREATED_ISSUES,
     
 } from '../actions/Sprints.js'
 
@@ -138,6 +140,14 @@ export default function sprint(state = initialState, action) {
                                  {cloning_sprint: Object.assign({},
                                                                 state.cloning_sprint,
                                                                 {new_sprint_id: action.new_sprint_id})})
+
+        case ANNOUNCE_BULK_CREATING_ISSUES:
+            return Object.assign({}, state,
+                                 {bulk_creating_issues: { sprint_id: action.sprint_id }})
+                                 
+        case ANNOUNCE_BULK_CREATED_ISSUES:
+            return Object.assign({}, state,
+                                 {bulk_creating_issues: null})
             
         default:
             return state
