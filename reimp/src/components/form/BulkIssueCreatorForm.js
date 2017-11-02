@@ -30,7 +30,7 @@ class BulkIssueCreatorForm extends Component {
         return (
             <Textarea
                 className="textarea textarea--text-component bulk-issue-creator-form__textarea"
-                style={{height:200}}
+                style={{ minHeight:200 }}
                 placeholder="Bulk Text"
                 value={input.value}
                 onChange={(e) => this.onChange(e, input.onChange)}
@@ -47,7 +47,7 @@ class BulkIssueCreatorForm extends Component {
               <h2>Bulk Issue Creator</h2>
               <div>
                 Sample of a single issue section, include as many as you want:
-                <pre>
+                <pre>{`
 
                   *** my new issue1
                   This is some description
@@ -55,7 +55,7 @@ class BulkIssueCreatorForm extends Component {
                   *** my new issue2
                   This is another description
                   
-                </pre>
+                `}</pre>
               </div>
               <div>
                 <div className="issue_sidebar--textarea">
