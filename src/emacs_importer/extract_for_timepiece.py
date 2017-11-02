@@ -156,7 +156,6 @@ class Extractor(object):
                                                             subject=subject,
                                                             defaults={'auto_created_during_import':True,
                                                                       'adhoc':True,
-                                                                      'status': 'new', #obsolete
                                                                       'status2':IssueStatus.objects.get_or_create(name='new', business=business)[0],
                                                                       'feature':feature,
                                                                       'assigned_to':timesheet_user,
