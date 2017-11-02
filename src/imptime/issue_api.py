@@ -3,8 +3,9 @@ from issue_serializer import IssueSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from lib import hours_helper
+from imptime.bulk_text_parser import BulkTextParser
 from issue_serializer import IssueWithEstimatesSerializer
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import list_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -249,6 +250,27 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    @list_route(methods=['POST'])
+    def bulk_create_issues(self, request):
+        try:
+            params = request.data
+            sprint_id = params['sprint_id']
+            bulk_issue_text = params['bulk_issue_text']
+            sprint = self.allowed_sprint(sprint_id)
+            if not self.logged_in_permissions(sprint.business).has_add_issue:
+                raise Exception("Can't add issues")
+            new_issues = BulkTextParser(request.user).create_issues(raw_text=bulk_issue_text, sprint=sprint)
+            new_issue_ids = [ str(x.id) for x in new_issues ]
+            data = {'status': 'success', 'payload': {'new_issue_ids': new_issue_ids}}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+            
+    
     def delete(self, request):
         try:
             context = {}

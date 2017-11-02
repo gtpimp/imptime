@@ -26,10 +26,6 @@ export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
 export const ANNOUNCE_CLONE_SPRINT_FAILED = 'ANNOUNCE_CLONE_SPRINT_FAILED'
 
-export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'
-export const ANNOUNCE_BULK_CREATING_ISSUES_FAILED = 'ANNOUNCE_BULK_CREATING_ISSUES_FAILED'
-export const ANNOUNCE_BULK_CREATED_ISSUES = 'ANNOUNCE_BULK_CREATED_ISSUES'
-
 export function invalidateAllSprints() {
     return {
         type: INVALIDATE_ALL_SPRINTS
@@ -338,58 +334,4 @@ export function cloneTemplateSprint(sprint_id, onDone) {
 	     dispatch(announceCloneSprintFailed(sprint_id, error))
 	 })
     }
-}
-
-function announceBulkCreatingIssues(sprint_id) {
-    return {
-        type: ANNOUNCE_BULK_CREATING_ISSUES,
-        sprint_id: sprint_id
-    }
-}
-
-function announceBulkCreatedIssues(sprint_id) {
-    return {
-        type: ANNOUNCE_BULK_CREATED_ISSUES,
-        sprint_id: sprint_id
-    }
-}
-
-function announceBulkCreatingIssuesFailed(sprint_id, error) {
-    return {
-        type: ANNOUNCE_BULK_CREATING_ISSUES_FAILED,
-        sprint_id: sprint_id,
-        error: error
-    }
-}
-
-export function bulkCreateIssues(sprint_id, bulk_issue_text) {
-    return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceBulkCreatingIssues(sprint_id))
-	let data = { bulk_issue_text: bulk_issue_text }
-	return impfetch( state, "imp/sprint/" + sprint_id + "/bulkCreateIssues/", dispatch,
-			 {method: "POST",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-                 dispatch(announceBulkCreatingIssuesFailed(sprint_id, json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-                 dispatch(announceBulkCreatedIssues(sprint_id))
-             }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-             dispatch(announceBulkCreatingIssuesFailed(sprint_id, error))
-	 })
-    }
-}
-
-export function isBulkCreatingIssues(state, sprint_id) {
-    return (((state || {}).sprint || {}).bulk_creating_issues || {}).sprint_id === sprint_id
 }

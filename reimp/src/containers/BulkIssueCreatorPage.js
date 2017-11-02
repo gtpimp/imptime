@@ -5,12 +5,20 @@ import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import includes from 'lodash/includes'
-import { PAGE_KEY__BULK_CREATE_ISSUES_PAGE } from '../actions/ItemListKeyRegistry.js'
+import {
+    PAGE_KEY__BULK_CREATE_ISSUES_PAGE,
+    PAGE_KEY__ISSUES_PAGE,
+    LIST_KEY__ISSUE_LIST
+} from '../actions/ItemListKeyRegistry.js'
+import {
+    selectItems,
+} from '../actions/ItemList'
 import BulkIssueCreatorForm from '../components/form/BulkIssueCreatorForm.js'
-import { bulkCreateIssues, isBulkCreatingIssues } from '../actions/Sprints'
+import { bulkCreateIssues, isBulkCreatingIssues } from '../actions/Issues'
 import {
     set_toolbars,
     select_sprints,
+    select_issues
 } from '../actions/Page'
 
 class BulkIssueCreatorPage extends Component {
@@ -19,6 +27,7 @@ class BulkIssueCreatorPage extends Component {
         super(props)
         this.onSubmitBulkCreate = this.onSubmitBulkCreate.bind(this)
         this.onCancel = this.onCancel.bind(this)
+        this.onIssuesCreated = this.onIssuesCreated.bind(this)
     }
 
     componentDidMount() {
@@ -46,9 +55,16 @@ class BulkIssueCreatorPage extends Component {
         browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id)
     }
 
+    onIssuesCreated(new_issue_ids) {
+        const { dispatch, project_id, sprint_id } = this.props
+        dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, new_issue_ids))
+        dispatch(selectItems(LIST_KEY__ISSUE_LIST, new_issue_ids))
+        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + "/issues/")
+    }
+    
     onSubmitBulkCreate(new_values) {
         const { dispatch, sprint_id } = this.props
-        dispatch(bulkCreateIssues(sprint_id, new_values.bulk_issue_text))
+        dispatch(bulkCreateIssues(sprint_id, new_values.bulk_issue_text, this.onIssuesCreated))
     }
 
     refresh(sprint, project) {

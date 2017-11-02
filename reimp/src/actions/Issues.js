@@ -29,6 +29,9 @@ export const ANNOUNCE_ISSUE_DELETED = 'ANNOUNCE_ISSUE_DELETED'
 export const ANNOUNCE_DELETE_ISSUE_FAILED = 'ANNOUNCE_DELETE_ISSUE_FAILED'
 export const SET_ISSUE_STORE_VALUE = 'SET_ISSUE_STORE_VALUE'
 
+export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'
+export const ANNOUNCE_BULK_CREATING_ISSUES_FAILED = 'ANNOUNCE_BULK_CREATING_ISSUES_FAILED'
+export const ANNOUNCE_BULK_CREATED_ISSUES = 'ANNOUNCE_BULK_CREATED_ISSUES'
 
 export function invalidateAllIssues() {
     return {
@@ -807,4 +810,64 @@ export function getCandidateIssue(state) {
 
 export function is_issue_invalidated(state, issue_id) {
     return (((state.issue || {}).invalidated_item_ids) || []).indexOf(issue_id) !== -1
+}
+
+
+function announceBulkCreatingIssues(sprint_id) {
+    return {
+        type: ANNOUNCE_BULK_CREATING_ISSUES,
+        sprint_id: sprint_id
+    }
+}
+
+function announceBulkCreatedIssues(sprint_id, new_issue_ids) {
+    return {
+        type: ANNOUNCE_BULK_CREATED_ISSUES,
+        sprint_id: sprint_id,
+        new_issue_ids: new_issue_ids
+    }
+}
+
+function announceBulkCreatingIssuesFailed(sprint_id, error) {
+    return {
+        type: ANNOUNCE_BULK_CREATING_ISSUES_FAILED,
+        sprint_id: sprint_id,
+        error: error
+    }
+}
+
+export function bulkCreateIssues(sprint_id, bulk_issue_text, on_done) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceBulkCreatingIssues(sprint_id))
+	let data = { sprint_id: sprint_id,
+                     bulk_issue_text: bulk_issue_text }
+	return impfetch( state, "imp/issue/bulk_create_issues/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceBulkCreatingIssuesFailed(sprint_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceBulkCreatedIssues(sprint_id, json.payload.new_issues_ids))
+                 if ( on_done ) {
+                     on_done(json.payload.new_issue_ids)
+                 }
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceBulkCreatingIssuesFailed(sprint_id, error))
+	 })
+    }
+}
+
+export function isBulkCreatingIssues(state, sprint_id) {
+    return (((state || {}).sprint || {}).bulk_creating_issues || {}).sprint_id === sprint_id
 }
