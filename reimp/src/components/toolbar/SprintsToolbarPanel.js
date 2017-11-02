@@ -25,6 +25,7 @@ class SprintsToolbarPanel extends Component {
         super(props)
         this.onNewSprintClick = this.onNewSprintClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
+        this.onIssuesClick = this.onIssuesClick.bind(this)
         this.onSprintShowClosedToggleButtonClick = this.onSprintShowClosedToggleButtonClick.bind(this)
     }
 
@@ -54,6 +55,11 @@ class SprintsToolbarPanel extends Component {
         browserHistory.push('/projects/'+project_id);
     }
 
+    onIssuesClick() {
+        const { project_id, sprint } = this.props
+        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint.id+'/issues');
+    }
+
     onSprintShowClosedToggleButtonClick(display_all) {
         const { dispatch } = this.props
         dispatch(set_display_all(PAGE_KEY__SPRINTS_TOOLBAR, display_all))
@@ -73,6 +79,13 @@ class SprintsToolbarPanel extends Component {
               <div className="button button--large button--primary" onClick={this.onNewSprintClick}>
                 + New Sprint
               </div>
+              { sprint && sprint.id &&
+                <div>
+                  <div className="button button--large button--primary" onClick={this.onIssuesClick}>
+                    Issues
+                  </div>
+                </div>
+              }
               { sprint &&
                 <div>
                   <div className="button button--large button--primary" onClick={this.onDashboardClick}>

@@ -26,7 +26,6 @@ class IssuesToolbarPanel extends Component {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.onNewFeatureClick = this.onNewFeatureClick.bind(this)
-        this.onDashboardClick = this.onDashboardClick.bind(this)
         this.onIssueWideViewToggleButtonClick = this.onIssueWideViewToggleButtonClick.bind(this)
     }
 
@@ -54,11 +53,6 @@ class IssuesToolbarPanel extends Component {
         dispatch(startCandidateFeature(sprint_id, last_selected_issue_id))
     }
 
-    onDashboardClick() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
-    }
-
     onIssueWideViewToggleButtonClick(wide_view) {
         const { dispatch } = this.props
         dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, wide_view))
@@ -75,7 +69,6 @@ class IssuesToolbarPanel extends Component {
               />
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewFeatureClick}>+ New Feature</div>
-              <div className="button toolbar-button--large button--large button--primary" onClick={this.onDashboardClick}>+ Dashboard</div>
             </div>
         )
     }

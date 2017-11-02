@@ -13,12 +13,6 @@ import SprintName from './SprintName'
 
 class SprintSidebar extends Component {
 
-    constructor(props) {
-        super(props)
-        this.navigateToIssuesPage = this.navigateToIssuesPage.bind(this)
-        this.navigateToDashboardPage = this.navigateToDashboardPage.bind(this)
-    }
-
     componentDidMount() {
 	const { dispatch, project_id, sprint_id } = this.props
 	if ( project_id ) {
@@ -40,16 +34,6 @@ class SprintSidebar extends Component {
 	}
     }
 
-    navigateToIssuesPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
-    }
-
-    navigateToDashboardPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
-    }
-
     render() {
 
         const { sprint_id, sprint, project } = this.props
@@ -59,16 +43,6 @@ class SprintSidebar extends Component {
                 <PropertyStack>
 
                     <PropertyStackComponent>
-                        <div className="property-text">
-                            <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>
-                                Issues
-                            </button>
-                        </div>
-                        <div className="property-text">
-                            <button className="button button--large button--primary" onClick={this.navigateToDashboardPage}>
-                                Dashboard
-                            </button>
-                        </div>
                         { sprint.sprint_template_id &&
                           <div className="property-text">
                             Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
