@@ -3231,6 +3231,7 @@ def add_issue(request, project_id, template="timepiece/project/_add_issue_form.h
 
         if new_issue_form.is_valid() and (plugin_form is None or plugin_form.is_valid()):
             issue = new_issue_form.save(commit=False)
+            issue.created_by = request.user
             issue.number = next_issue_number
             issue.project = project
             issue.save()
@@ -6097,6 +6098,7 @@ def _get_quick_clocker_issue(project, user):
                                                adhoc=False,
                                                status2=IssueStatus.objects.get_or_create(name='quick_clocker', business=project.business)[0],
                                                assigned_to=user,
+                                               created_by=user,
                                                number=timepiece.Issue.get_next_issue_number(project.business),
                                                description="General work",
                                                story_points=0,

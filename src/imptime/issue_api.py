@@ -222,6 +222,7 @@ class IssueViewSet(BaseViewSet):
                         status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
                         number=Issue.get_next_issue_number(sprint.business),
                         subject=params['subject'],
+                        created_by=request.user,
                         can_group_issues=params.get('can_group_issues', False)) 
                 issue.renumber_issue_order()
                 IssueHistory.add_history(self.request.user, issue,

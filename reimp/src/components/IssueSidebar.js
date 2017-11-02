@@ -16,6 +16,7 @@ import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSp
 import EditableIssueEstimate from './EditableIssueEstimate'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
+import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -64,6 +65,12 @@ import {getProject} from '../actions/Projects'
                         <PropertyStackComponent>
                           <div className="text-component--readonly">
                             #{issue.number}
+                          </div>
+                          <div className="text-component--readonly">
+                            Created <Timestamp value={issue.created_at} format="from_now" />
+                            { issue.created_by_id &&
+                              <div>by <OtherUser user_id={issue.created_by_id} /></div>
+                            }
                           </div>
                         </PropertyStackComponent>
 
