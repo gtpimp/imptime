@@ -6,11 +6,12 @@ from django.db import migrations
 from django.db.models import F
 
 def forwards(apps, schema_editor):
-    Issue = apps.get_model('timepiece', 'Issue')
-    IssueStatus = apps.get_model('timepiece', 'IssueStatus')
-    for i in Issue.objects.exclude(status2__name=F('status')):
-        i.status2 = IssueStatus.objects.get_or_create(name=i.status, business=i.project.business)[0]
-        i.save()
+    pass
+    # Issue = apps.get_model('timepiece', 'Issue')
+    # IssueStatus = apps.get_model('timepiece', 'IssueStatus')
+    # for i in Issue.objects.exclude(status2__name=F('status')):
+    #     i.status2 = IssueStatus.objects.get_or_create(name=i.status, business=i.project.business)[0]
+    #     i.save()
         
 class Migration(migrations.Migration):
 
