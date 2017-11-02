@@ -13,6 +13,11 @@ import SprintName from './SprintName'
 
 class SprintSidebar extends Component {
 
+    constructor(props) {
+        super(props)
+        this.showEmacsSprint = this.showEmacsSprint.bind(this)
+    }
+    
     componentDidMount() {
 	const { dispatch, project_id, sprint_id } = this.props
 	if ( project_id ) {
@@ -34,6 +39,12 @@ class SprintSidebar extends Component {
 	}
     }
 
+    showEmacsSprint() {
+        const { issue, sprint } = this.props
+        const text = "** sprint#" + sprint.id + " " + sprint.name
+        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    }
+
     render() {
 
         const { sprint_id, sprint, project } = this.props
@@ -50,6 +61,7 @@ class SprintSidebar extends Component {
                         }
                         
                     </PropertyStackComponent>
+
                     <PropertyStackComponent>
                         <div className="property--title">
                             <EditableSprintName sprint_id={sprint_id} />
@@ -60,6 +72,13 @@ class SprintSidebar extends Component {
                         </div>
                     </PropertyStackComponent>
 
+                    <PropertyStackComponent>
+                      <div onClick={this.showEmacsSprint}>
+                        Sprint
+                        <div className="sprint_sidebar__emacs_copy_img" />
+                      </div>
+                    </PropertyStackComponent>
+                    
                     <PropertyStackComponent>
                         <div className="property-text">
                             <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
