@@ -71,7 +71,7 @@ class SelectSprintForm extends Component {
 
 function mapStateToProps(state, props) {
     const { item_list } = state
-    const { onChange } = props
+    const { onSubmitted, project_id } = props
     const l = (item_list && item_list[SELECTOR__SPRINTS]) || {}
     const sprint_ids = l.visible_item_ids || []
     const sprints = getSprints(state, sprint_ids)
@@ -83,10 +83,11 @@ function mapStateToProps(state, props) {
     return {
         initialValues: {sprint_id:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange,
+        onSubmit: onSubmitted,
         sprints: sprints,
         sprint_ids: sprint_ids,
-        sprint_options: sprint_options
+        sprint_options: sprint_options,
+        project_id
     }
 }
 
