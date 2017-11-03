@@ -79,7 +79,20 @@ class ReleaseNote(BaseModel):
     header = models.TextField(null=False)
     content = models.TextField(null=False)
     created_by = models.ForeignKey(User, related_name='release_notes_created_by', null=False, blank=False)
+    
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ReleaseNote, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
 
+    def delete(self):
+        super(ReleaseNote, self).delete()
+        RefreshNotifier().notify_model_delete(self)
+
+        
 class ReleaseNoteSeen(BaseModel):
     release_note = ProtectedForeignKey(ReleaseNote, related_name='seen_by', null=False)
     seen_by = models.ForeignKey(User, related_name='release_notes_seen_by', null=False, blank=False)

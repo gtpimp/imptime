@@ -43,12 +43,11 @@ class ReleaseNoteViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             release_notes = self.allowed_release_notes()
+            release_notes = release_notes.order_by("created")
             release_notes = self.apply_filter(qs=release_notes,
                                          raw_filter_args=filter_args)
             release_notes = self.apply_pagination(qs=release_notes,
                                              pagination=pagination)
-
-            release_notes = release_notes.order_by("created")
 
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in release_notes.values_list('id', flat=True)]
@@ -71,7 +70,7 @@ class ReleaseNoteViewSet(BaseViewSet):
     def apply_filter(self, qs, raw_filter_args):
         unseen = raw_filter_args.pop('unseen', None)
         if unseen == True:
-            qs = qs.exclude(release_notes_seen_by=self.request.user)
+            qs = qs.exclude(seen_by__seen_by=self.request.user)
         return super(ReleaseNoteViewSet, self).apply_filter(qs, raw_filter_args)
     
     def update(self, request, pk):
