@@ -44,7 +44,7 @@ class ReleaseNoteViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             release_notes = self.allowed_release_notes()
-            release_notes = release_notes.order_by("created")
+            release_notes = release_notes.order_by("-created")
             release_notes = self.apply_filter(qs=release_notes,
                                          raw_filter_args=filter_args)
             release_notes = self.apply_pagination(qs=release_notes,

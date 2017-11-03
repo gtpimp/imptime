@@ -15,6 +15,10 @@ class ReleaseNotesPopup extends Component {
     constructor(props) {
         super(props)
         this.closeModal = this.closeModal.bind(this)
+        this.state = {
+            userClosedModal: false
+        }
+        
     }
     
     componentDidMount() {
@@ -32,6 +36,7 @@ class ReleaseNotesPopup extends Component {
     closeModal() {
         const { dispatch, release_note_ids } = this.props
         dispatch(markReleaseNotesAsSeen(release_note_ids))
+        this.setState({userClosedModal: true})
     }
 
     render() {
@@ -43,10 +48,9 @@ class ReleaseNotesPopup extends Component {
         }
 
         return (
-            <Modal isOpen={true}
+            <Modal isOpen={!this.state.userClosedModal}
                    contentLabel="Release Notes"
                    onRequestClose={this.closeModal} >
-
               <h2>Release Notes</h2>
               <ReleaseNotes list_key={list_key} />
             </Modal>
