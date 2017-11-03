@@ -6095,7 +6095,7 @@ def _get_quick_clocker_issue(project, user):
                                                subject=issue_subject,
                                                auto_created_during_import=True,
                                                adhoc=False,
-                                               status2=IssueStatus.objects.get_or_create(name='quick_clocker', business=project.business)[0],
+                                               status2=timepiece.IssueStatus.objects.get_or_create(name='quick_clocker', business=project.business)[0],
                                                assigned_to=user,
                                                number=timepiece.Issue.get_next_issue_number(project.business),
                                                description="General work",
