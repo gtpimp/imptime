@@ -8,7 +8,6 @@ class ReleaseNoteSerializer(BaseSerializer):
     id = serializers.CharField()
     header = serializers.CharField()
     content = serializers.CharField()
-    created_by_id = serializers.CharField()
     created_at = serializers.DateTimeField(source='created')
 
     

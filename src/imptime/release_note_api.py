@@ -105,7 +105,6 @@ class ReleaseNoteViewSet(BaseViewSet):
                 raise Exception("Can't create release notes")
             
             release_note = ReleaseNote.objects.create(
-                created_by=request.user,
                 header=header,
                 content=content)
 

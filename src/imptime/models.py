@@ -78,7 +78,6 @@ class SprintTemplate(BaseModel):
 class ReleaseNote(BaseModel):
     header = models.TextField(null=False)
     content = models.TextField(null=False)
-    created_by = models.ForeignKey(User, related_name='release_notes_created_by', null=False, blank=False)
     
     def save(self, *args, **kwargs):
         was_created = not self.id
