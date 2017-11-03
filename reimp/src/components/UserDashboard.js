@@ -20,12 +20,17 @@ class UserDashboard extends Component {
         browserHistory.push('/password/change')
     }
 
+    onShowReleaseNotes() {
+        browserHistory.push('/release_notes')
+    }
+
     render() {
 
         return (
             <div className="user-dashboard button">
                 <button className="button--primary button--large" onClick={this.onLogout}>Logout</button>
                 <button className="button--primary button--large" onClick={this.onChangePassword}>Change password</button>
+                <button className="button--primary button--large" onClick={this.onShowReleaseNotes}>Release notes</button>
 
             </div>
         )

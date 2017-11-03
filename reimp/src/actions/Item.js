@@ -319,7 +319,9 @@ export function fetchItemsIfNeeded(entity_key, list_key) {
             return fetchItemsPromise(dispatch, state, entity_key, unmatching_item_ids)
         }
     const is_generic_item = true
-    return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func, is_generic_item)
+    return fetchListIfNeeded(list_key, matching_items_key,
+                             matching_items_promise_func,
+                             { is_generic_item: true })
 }
 
 export function ensureItemsLoaded(entity_key, item_ids) {

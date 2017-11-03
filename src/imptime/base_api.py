@@ -9,7 +9,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import Issue
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
-from imptime.models import VisualSpecDocument, VisualSpecIssue
+from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote
 
 class PermissionHelper():
     @classmethod
@@ -156,6 +156,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
 
+    def allowed_release_notes(self):
+        return ReleaseNote.objects.all()
+    
     def logged_in_permissions(self, project):
         if project.id in self._logged_in_permissions_by_project:
             return self._logged_in_permissions_by_project[project.id]

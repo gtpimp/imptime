@@ -6,6 +6,7 @@ import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
+import ReleaseNotesToolbarPanel from './ReleaseNotesToolbarPanel'
 import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import SprintTemplatesToolbarPanel from './SprintTemplatesToolbarPanel'
@@ -49,6 +50,8 @@ class ToolBar extends Component {
                 return <VisualSpecDocumentToolbarPanel key='visual-spec-document' {...this.props}/>
             case 'bulk-issue-creator':
                 return <BulkCreateIssuesToolbarPanel key='bulk-issue-creator' {...this.props}/>
+            case 'release-notes':
+                return <ReleaseNotesToolbarPanel key='release-notes' {...this.props}/>
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

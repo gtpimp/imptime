@@ -72,7 +72,8 @@ function fetchUserTimesheetsPromise(dispatch, state, user_ids) {
 export function fetchUserTimesheetsIfNeeded(list_key) {
     const matching_items_key = ENTITY_KEY__USER_TIMESHEET
     const matching_items_promise_func = fetchUserTimesheetsPromise
-    return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func, 'imp/time_chart/user_timesheet/')
+    return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func,
+                             { fetch_item_ids_url: 'imp/time_chart/user_timesheet/' })
 }
 
 export function ensureUserTimesheetsLoaded(user_ids) {

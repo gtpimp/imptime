@@ -1,6 +1,7 @@
 from lib.models import BaseModel
 from lib.fields import UploadTo, ProtectedForeignKey
 from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
+from django.contrib.auth.models import User
 from timepiece.models import Issue
 from timepiece.models import Project as Sprint
 from impasync.refresh_notifier import RefreshNotifier
@@ -73,3 +74,13 @@ class VisualSpecIssue(BaseModel):
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)
     clones = models.ManyToManyField(Sprint, related_name='parent_sprint_templates')
+
+class ReleaseNote(BaseModel):
+    header = models.TextField(null=False)
+    content = models.TextField(null=False)
+    created_by = models.ForeignKey(User, related_name='release_notes_created_by', null=False, blank=False)
+
+class ReleaseNoteSeen(BaseModel):
+    release_note = ProtectedForeignKey(ReleaseNote, related_name='seen_by', null=False)
+    seen_by = models.ForeignKey(User, related_name='release_notes_seen_by', null=False, blank=False)
+    seen_at = models.DateTimeField(null=False, auto_now=True)

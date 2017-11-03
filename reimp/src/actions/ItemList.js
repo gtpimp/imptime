@@ -265,12 +265,12 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
     return item_ids_to_load
 }
 
-function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func,
-                              fetch_item_ids_url, is_generic_item) {
+function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func, args) {
 
     // First tries to fetch the list of items, and then fetches all
     // missing matching items
 
+    let { fetch_item_ids_url, is_generic_item } = args
     fetch_item_ids_url = fetch_item_ids_url || 'imp/' + matching_items_key + '/'
     
     return (dispatch, getState) => {
@@ -339,13 +339,12 @@ function shouldFetchList(state, list_key) {
 export function fetchListIfNeeded(list_key,
 				  matching_items_key,
                                   matching_items_promise_func,
-                                  fetch_item_ids_url, is_generic_item ) {
+                                  args) {
     
     return tryFetchListAndItems(list_key,
 			        matching_items_key,
 			        matching_items_promise_func,
-                                fetch_item_ids_url,
-                                is_generic_item)
+                                args)
 }
 
 export function getVisibleItemIds(state, list_key) {

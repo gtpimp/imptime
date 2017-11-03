@@ -736,6 +736,7 @@ class BusinessPermissions(BaseModel):
     def has_be_scheduled(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and(self.can_be_scheduled or self.user.has_perm('timepiece.belongs_to_all_projects'))
 
+
 class ProjectStatus(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
     business = models.ForeignKey(Business, related_name='project_statuses')

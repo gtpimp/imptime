@@ -17,6 +17,7 @@ import ReactDOM from 'react-dom';
 import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
+import ReleaseNotesPage from './containers/ReleaseNotesPage'
 import SprintsPage from './containers/SprintsPage'
 import SprintTemplatesPage from './containers/SprintTemplatesPage'
 import VisualSpecDocumentPage from './components/visual_spec/VisualSpecDocumentPage'
@@ -51,6 +52,7 @@ ReactDOM.render(
                 <Route path="/password/forgot" component={ForgotPasswordPage}/>
                 <Route path="/password/reminded" component={PasswordReminderSentPage}/>
                 <Route path="dev" component={DevPage}/>
+                <Route path="release_notes" component={ReleaseNotesPage}/>
                 <Route path="projects" component={ProjectsPage}/>
                 <Route path="projects/:projectId" component={ProjectDashboardPage}/>
                 <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
