@@ -27,7 +27,7 @@ import {
     LIST_KEY__RELEASE_NOTES_LIST,
     LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
 } from '../actions/ItemListKeyRegistry'
-import each from 'lodash/each'
+import { each, keys } from 'lodash'
 
 function triggerInvalidateEntity(d, dispatch) {
     // used for updates of existing objects, invalidates or
@@ -68,34 +68,34 @@ function triggerInvalidateEntity(d, dispatch) {
     }
 }
 
-function triggerInvalidateItemLists(d, dispatch) {
+function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     // used for creation of new objects. invalidates the lists that point to
     // these objects.
     //
     // Components which show lists of objects should automatically
     // refresh their lists on demand using componentWillReceiveProps
     if ( d.entity_name === 'project' ) {
-        dispatch(invalidateList(LIST_KEY__PROJECT_LIST))
+        list_keys_to_invalidate[LIST_KEY__PROJECT_LIST] = true
 
     } else if ( d.entity_name === 'sprint' ) {
-        dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
-        dispatch(invalidateList(LIST_KEY__SPRINT_TEMPLATE_LIST))
+        list_keys_to_invalidate[LIST_KEY__SPRINT_LIST] = true
+        list_keys_to_invalidate[LIST_KEY__SPRINT_TEMPLATE_LIST] = true
 
     } else if ( d.entity_name === 'issue' ) {
-        dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
+        list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
     } else if ( d.entity_name === 'projectinvite' ) {
-        dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
+        list_keys_to_invalidate[LIST_KEY__PROJECT_USER_LIST] = true
 
     } else if ( d.entity_name === 'projectpermissions' ) {
-        dispatch(invalidateList(LIST_KEY__PROJECT_USER_LIST))
+        list_keys_to_invalidate[LIST_KEY__PROJECT_USER_LIST] = true
     } else if ( d.entity_name === 'visualspecissue' ) {
         if ( d.action_type === "create" ) {
             dispatch(invalidateAllVisualSpecDocuments())
-            dispatch(invalidateList(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST))
+            list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
         }
     } else if ( d.entity_name == 'releasenote' ) {
-        dispatch(invalidateList(LIST_KEY__RELEASE_NOTES_LIST))
-        dispatch(invalidateList(LIST_KEY__RELEASE_NOTES_EDITOR_LIST))
+        list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_LIST] = true
+        list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_EDITOR_LIST] = true
     } else {
         console.log("Ignoring: Unknown entity to refresh lists: " + d.entity_name)
     }
@@ -112,21 +112,26 @@ function refreshMiddleware(_ref) {
 
                 const payload = action.payload || [{}]
 
+                let list_keys_to_invalidate = {}
+                
                 each(payload, (d) => {
 
                     if ( d.action_type === "create" ) {
-                        triggerInvalidateItemLists(d, dispatch)
+                        triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate)
                     } else if ( d.action_type === "update" ) {
                         triggerInvalidateEntity(d, dispatch)
-                        triggerInvalidateItemLists(d, dispatch)
+                        triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate)
                     } else if ( d.action_type === "delete" ) {
                         triggerInvalidateEntity(d, dispatch)
-                        triggerInvalidateItemLists(d, dispatch)
+                        triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate)
                     } else {
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
                     dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
                 })
+
+                each(keys(list_keys_to_invalidate), (key) => dispatch(invalidateList(key)))
+                
                 return
             }
             return next(action)

@@ -241,7 +241,7 @@ class IssueViewSet(BaseViewSet):
             else:
                 data = {'status': 'failed', 'error_message': 'Failed creating issue'}
 
-            context['issue'] = { 'number': issue.number }
+            context['issue'] = { 'number': issue.number, 'id': issue.id }
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:

@@ -217,7 +217,7 @@ class Issue extends Component {
                   {includes(visible_header_keys, "name") &&
                    <td className="list-table__cell list-table__cell--issue-name">
                      {subject_prefix}{issue.subject}{subject_suffix}
-                     { issue.group_children.length > 0 &&
+                     { issue.group_children && issue.group_children.length > 0 &&
                        <span>
                          ({issue.group_children.length}
                          {issue.group_children.length === 1 && <span>child</span>}

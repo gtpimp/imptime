@@ -715,33 +715,36 @@ export function cancelCandidateIssue() {
     }
 }
 
-export function saveCandidateIssue() {
+export function saveCandidateIssue(on_done) {
 
     return (dispatch, getState) => {
-	      const state = getState()
-	      dispatch(announceCandidateIssueSaving())
-	      let data = {issue: state.issue.candidate_issue}
+	const state = getState()
+	dispatch(announceCandidateIssueSaving())
+	let data = {issue: state.issue.candidate_issue}
 
-	      return impfetch(state, "imp/issue/", dispatch,
-			                  {method: "POST",
-			                   credentials: 'same-origin',
-			                   data: data,
-			                   headers: {"Content-type": "application/json; charset=UTF-8"},
-			                   body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
+	return impfetch(state, "imp/issue/", dispatch,
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"},
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
              if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announceCandidateIssueSaveFailed(json.error))
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceCandidateIssueSaveFailed(json.error))
              } else {
-		             console.log('Request succeeded with JSON response', json);
-		             dispatch(announceCandidateIssueSaved(json.payload.issue))
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceCandidateIssueSaved(json.payload.issue))
+                 if ( on_done ) {
+                     on_done(json.payload.issue.id) 
+                 }
              }
-	       })
-	       .catch(function (error) {
+	 })
+	 .catch(function (error) {
              console.log('Request failed', error);
-	           dispatch(announceCandidateIssueSaveFailed(error))
-	       })
+	     dispatch(announceCandidateIssueSaveFailed(error))
+	 })
     }
 
 }

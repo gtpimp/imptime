@@ -177,9 +177,14 @@ class IssueList extends Component {
     }
 
     onSaveCandidateIssue(obj) {
-        const {dispatch} = this.props
+        const {onSelectIssues, dispatch} = this.props
         dispatch(updateCandidateSubject(obj.candidate_issue_subject))
-        dispatch(saveCandidateIssue())
+
+        const onDone = function(issue_id) {
+            onSelectIssues([issue_id])
+        }
+        
+        dispatch(saveCandidateIssue(onDone))
     }
 
     onCancelCandidateIssue() {
