@@ -58,7 +58,6 @@ class ReleaseNoteViewSet(BaseViewSet):
                 context['release_notes'] = release_notes_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-
             
         except Exception, ex:
             logger.exception(ex)
