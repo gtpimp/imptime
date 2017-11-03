@@ -83,17 +83,17 @@ class Issue extends Component {
 
     onChangeAssignedTo(issue_id, new_value) {
         const {dispatch} = this.props
-        dispatch(updateIssueAssignedTo(issue_id, new_value))
+        dispatch(updateIssueAssignedTo([issue_id], new_value))
     }
 
     onChangeStatus(issue_id, new_value) {
         const {dispatch} = this.props
-        dispatch(updateIssueStatus(issue_id, new_value))
+        dispatch(updateIssueStatus([issue_id], new_value))
     }
 
     onChangeFeature(issue_id, new_value) {
         const {dispatch} = this.props
-        dispatch(updateIssueFeature(issue_id, new_value))
+        dispatch(updateIssueFeature([issue_id], new_value))
     }
 
     onDeleteTag(tag) {

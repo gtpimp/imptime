@@ -265,7 +265,6 @@ class Command(BaseCommand):
                                                     subject=raw_issue['subject'],
                                                     defaults={'auto_created_during_import':True,
                                                               'adhoc':False,
-                                                              'status': 'new', #obsolete
                                                               'status2':IssueStatus.objects.get_or_create(name='new', business=project)[0],
                                                               'feature':raw_issue['feature'],
                                                               'assigned_to':user,

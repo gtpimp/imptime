@@ -24,7 +24,7 @@ import {
     DISPLAY_ALL_MODE,
 
     ANNOUNCE_CLONING_SPRINT,
-    ANNOUNCE_CLONED_SPRINT
+    ANNOUNCE_CLONED_SPRINT,
 
     
 } from '../actions/Sprints.js'
@@ -138,7 +138,7 @@ export default function sprint(state = initialState, action) {
                                  {cloning_sprint: Object.assign({},
                                                                 state.cloning_sprint,
                                                                 {new_sprint_id: action.new_sprint_id})})
-            
+
         default:
             return state
     }

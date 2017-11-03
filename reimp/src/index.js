@@ -1,4 +1,5 @@
 import './sass/imptime.css'
+import BulkIssueCreatorPage from './containers/BulkIssueCreatorPage'
 import ChangePasswordPage from './containers/ChangePasswordPage'
 import ClientsPage from './containers/ClientsPage'
 import DashboardPage from './containers/DashboardPage'
@@ -59,6 +60,7 @@ ReactDOM.render(
                 <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
+                <Route path="projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
                 <Route path="projects/:projectId/users" component={ProjectUserPage}/>
                 <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
                 <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>

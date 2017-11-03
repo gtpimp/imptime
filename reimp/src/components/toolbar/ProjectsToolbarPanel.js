@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory} from 'react-router'
 import '../../sass/toolbar-panel.css'
 import {
     PAGE_KEY__PROJECTS_PAGE
@@ -18,6 +19,8 @@ class ProjectsToolbarPanel extends Component {
     constructor(props) {
         super(props)
         this.onNewProjectClick = this.onNewProjectClick.bind(this)
+        this.onDashboardClick = this.onDashboardClick.bind(this)
+        this.onSprintsClick = this.onSprintsClick.bind(this)
     }
 
     componentDidMount() {
@@ -38,11 +41,29 @@ class ProjectsToolbarPanel extends Component {
         dispatch(startCandidateProject())
     }
 
+    onDashboardClick() {
+        const {project_id} = this.props
+        browserHistory.push('/projects/' + project_id);
+    }
+
+    onSprintsClick() {
+        const {project_id} = this.props
+        browserHistory.push('/projects/' + project_id + '/sprints');
+    }
+
     render() {
 
         return (
             <div className="toolbar-panel">
-                <div className="button button--large button--primary" onClick={this.onNewProjectClick}>+ New Project</div>
+              <div className="button button--large button--primary" onClick={this.onNewProjectClick}>
+                + New Project
+              </div>
+              <div className="button button--large button--primary" onClick={this.onSprintsClick}>
+                Sprints
+              </div>
+              <div className="button button--large button--primary" onClick={this.onDashboardClick}>
+                Dashboard
+              </div>
             </div>
         )
     }

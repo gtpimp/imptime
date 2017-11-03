@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
 import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
@@ -15,10 +14,9 @@ class SprintSidebar extends Component {
 
     constructor(props) {
         super(props)
-        this.navigateToIssuesPage = this.navigateToIssuesPage.bind(this)
-        this.navigateToDashboardPage = this.navigateToDashboardPage.bind(this)
+        this.showEmacsSprint = this.showEmacsSprint.bind(this)
     }
-
+    
     componentDidMount() {
 	const { dispatch, project_id, sprint_id } = this.props
 	if ( project_id ) {
@@ -40,14 +38,10 @@ class SprintSidebar extends Component {
 	}
     }
 
-    navigateToIssuesPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
-    }
-
-    navigateToDashboardPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
+    showEmacsSprint() {
+        const { issue, sprint } = this.props
+        const text = "** sprint#" + sprint.id + " " + sprint.name
+        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
     }
 
     render() {
@@ -59,16 +53,6 @@ class SprintSidebar extends Component {
                 <PropertyStack>
 
                     <PropertyStackComponent>
-                        <div className="property-text">
-                            <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>
-                                Issues
-                            </button>
-                        </div>
-                        <div className="property-text">
-                            <button className="button button--large button--primary" onClick={this.navigateToDashboardPage}>
-                                Dashboard
-                            </button>
-                        </div>
                         { sprint.sprint_template_id &&
                           <div className="property-text">
                             Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
@@ -76,6 +60,7 @@ class SprintSidebar extends Component {
                         }
                         
                     </PropertyStackComponent>
+
                     <PropertyStackComponent>
                         <div className="property--title">
                             <EditableSprintName sprint_id={sprint_id} />
@@ -86,6 +71,13 @@ class SprintSidebar extends Component {
                         </div>
                     </PropertyStackComponent>
 
+                    <PropertyStackComponent>
+                      <div onClick={this.showEmacsSprint}>
+                        Sprint
+                        <div className="sprint_sidebar__emacs_copy_img" />
+                      </div>
+                    </PropertyStackComponent>
+                    
                     <PropertyStackComponent>
                         <div className="property-text">
                             <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />

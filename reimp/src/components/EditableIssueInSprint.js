@@ -15,8 +15,8 @@ class EditableIssueInSprint extends Component {
     }
 
     onChange(new_value) {
-        const { dispatch, issue } = this.props
-        dispatch(moveIssuesToSprint(issue.id, new_value.sprint_id))
+        const { dispatch, issue_ids } = this.props
+        dispatch(moveIssuesToSprint(issue_ids, new_value.sprint_id))
     }
 
     render() {
@@ -43,13 +43,15 @@ class EditableIssueInSprint extends Component {
 function mapStateToProps(state, props) {
     const { issue_ids } = props
 
-    const issue = getIssues(state, issue_ids) || []
-    const project_id = issue && issue.length > 0 && issue[0].project_id
-    const sprint_id = issue && issue.length > 0 && issue[0].sprint_id
-    const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+    const issues = getIssues(state, issue_ids) || []
+    const issue = issues && issues.length > 0 && issues[0]
+    const project_id = issue.project_id
+    const sprint_id = issue.sprint_id
+    const can_edit = has_permission(state, issue.project_id, 'has_add_issue')
 
     return {
-        issues: issue,
+        issue_ids,
+        issues: issues,
         project_id: project_id,
         sprint_id: sprint_id,
         can_edit: can_edit

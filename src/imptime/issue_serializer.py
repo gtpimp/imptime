@@ -43,6 +43,7 @@ class IssueSerializer(BaseSerializer):
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
     created_at = serializers.DateTimeField(source='created')
+    created_by_id = serializers.CharField()
     modified_at = serializers.DateTimeField(source='modified')
 
     def __init__(self, *args, **kwargs):

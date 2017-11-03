@@ -22,7 +22,9 @@ import {
     ANNOUNCE_ISSUES_SAVED,
     ANNOUNCE_ISSUES_SAVING,
     ANNOUNCE_DELETE_ISSUE_FAILED,
-    SET_ISSUE_STORE_VALUE
+    SET_ISSUE_STORE_VALUE,
+    ANNOUNCE_BULK_CREATING_ISSUES,
+    ANNOUNCE_BULK_CREATED_ISSUES,
 } from '../actions/Issues.js'
 
 const initialState = {
@@ -169,6 +171,14 @@ export default function issue(state = initialState, action) {
             })
             return state_clone
 
+        case ANNOUNCE_BULK_CREATING_ISSUES:
+            return Object.assign({}, state,
+                                 {bulk_creating_issues: { sprint_id: action.sprint_id }})
+            
+        case ANNOUNCE_BULK_CREATED_ISSUES:
+            return Object.assign({}, state,
+                                 {bulk_creating_issues: null})
+            
         default:
             return state
     }

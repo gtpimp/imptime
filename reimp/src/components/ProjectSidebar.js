@@ -9,12 +9,6 @@ import EditableProjectName from '../components/EditableProjectName'
 
 class ProjectSidebar extends Component {
 
-    constructor(props) {
-        super(props)
-        this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
-        this.navigateToProjectDashboard = this.navigateToProjectDashboard.bind(this)
-    }
-
     componentDidMount() {
         const {dispatch, project_id} = this.props
         if (project_id) {
@@ -29,16 +23,6 @@ class ProjectSidebar extends Component {
         }
     }
 
-    navigateToSprintsPage() {
-        const {project_id} = this.props
-        browserHistory.push('/projects/' + project_id + '/sprints');
-    }
-
-    navigateToProjectDashboard() {
-        const {project_id} = this.props
-        browserHistory.push('/projects/' + project_id);
-    }
-
     render() {
 
         const {project_id, project} = this.props
@@ -50,14 +34,6 @@ class ProjectSidebar extends Component {
                         <div className="property--title">
                             <EditableProjectName project_id={project_id} />
                         </div>                        
-                    </PropertyStackComponent>
-                    <PropertyStackComponent>
-                      <button className="button button--primary issue_sidebar--button"
-                              onClick={this.navigateToSprintsPage}>Sprints</button>
-                    </PropertyStackComponent>
-                    <PropertyStackComponent>
-                      <button className="button button--primary issue_sidebar--button"
-                              onClick={this.navigateToProjectDashboard}>Dashboard</button>
                     </PropertyStackComponent>
                 </PropertyStack>
             </Sidebar>

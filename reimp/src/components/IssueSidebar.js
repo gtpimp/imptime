@@ -16,6 +16,7 @@ import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSp
 import EditableIssueEstimate from './EditableIssueEstimate'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
+import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -28,11 +29,14 @@ import {
 import { ensureUsersLoaded } from '../actions/Users'
 import {format_hours} from '../actions/lib'
 import {getProject} from '../actions/Projects'
+import {getSprint} from '../actions/Sprints'
 
-    class IssueSidebar extends Component {
+class IssueSidebar extends Component {
 
     constructor(props) {
         super(props)
+        this.showEmacsIssue = this.showEmacsIssue.bind(this)
+        this.showEmacsSprint = this.showEmacsSprint.bind(this)
     }
 
     componentDidMount() {
@@ -43,6 +47,18 @@ import {getProject} from '../actions/Projects'
         this.refresh(new_props)
     }
 
+    showEmacsIssue() {
+        const { issue } = this.props
+        const text = "*** issue" + issue.number + " " + issue.subject
+        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    }
+
+    showEmacsSprint() {
+        const { issue, sprint } = this.props
+        const text = "** sprint#" + sprint.id + " " + sprint.name
+        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    }
+    
     refresh(props) {
         const {dispatch, issue_id, assignable_user_ids} = props
         dispatch(ensureIssuesLoaded([issue_id]))
@@ -64,6 +80,23 @@ import {getProject} from '../actions/Projects'
                         <PropertyStackComponent>
                           <div className="text-component--readonly">
                             #{issue.number}
+                          </div>
+                          <div className="text-component--readonly">
+                            Created <Timestamp value={issue.created_at} format="from_now" />
+                            { issue.created_by_id &&
+                              <div>by <OtherUser user_id={issue.created_by_id} /></div>
+                            }
+                          </div>
+                        </PropertyStackComponent>
+
+                        <PropertyStackComponent>
+                          <div onClick={this.showEmacsIssue}>
+                            Issue
+                            <div className="issue_sidebar__emacs_copy_img" />
+                          </div>
+                          <div onClick={this.showEmacsSprint}>
+                            Sprint
+                            <div className="issue_sidebar__emacs_copy_img" />
                           </div>
                         </PropertyStackComponent>
 
@@ -139,6 +172,7 @@ import {getProject} from '../actions/Projects'
 function mapStateToProps(state, props) {
     const {issue_id, sprint_id, project_id} = props
     const issue = getIssue(state, issue_id) || {}
+    const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
     populateEstimates(state, issue)
@@ -152,6 +186,7 @@ function mapStateToProps(state, props) {
         visual_spec_documents: issue.visual_spec_documents,
         sprint_id: sprint_id,
         project_id: project_id,
+        sprint,
         assignable_user_ids: assignable_user_ids,
     }
 }

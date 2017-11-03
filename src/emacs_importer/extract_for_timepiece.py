@@ -111,14 +111,6 @@ class Extractor(object):
         except User.DoesNotExist:
             timesheet_user = User.objects.create(username=self.username, first_name=self.username)
         location = Location.objects.get_or_create(name='office')[0]
-        # try:
-        #     project_status = Attribute.objects.get(type='project-status', label='open')
-        # except: 
-        #     project_status = Attribute.objects.create(type='project-status', label='open', billable=True, enable_timetracking=True)
-        # try:
-        #     project_type = Attribute.objects.get(type='project-type', label='default')
-        # except:
-        #     project_type = Attribute.objects.create(type='project-type', label='default', billable=True, enable_timetracking=True)
 
         try:
             project = Project.get_project_from_name(name=sprint_name, business=business)

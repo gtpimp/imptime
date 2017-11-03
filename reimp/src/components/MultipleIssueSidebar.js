@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PropertyStack from './PropertyStack'
+import PropertyStackComponent from './PropertyStackComponent'
 import map from 'lodash/map'
 import {browserHistory} from 'react-router'
 // import PropertyStack from './PropertyStack'
@@ -33,24 +35,30 @@ class MultipleIssueSidebar extends Component {
 
             <Sidebar>
 
-                <div>
-                    { issues.length } issues selected
-                    
-                    <div>
-                        Status:
-                        <EditableIssueStatus issue_ids={issue_ids} project_id={project_id} />
-                    </div>
+              <div>
+                { issues.length } issues selected
 
-                    <div>
-                        Sprint:
-                        <EditableIssueInSprint issue_ids={issue_ids} />
-                    </div>
+                <PropertyStackComponent>
+                  <div>
+                    Status:
+                    <EditableIssueStatus issue_ids={issue_ids} project_id={project_id} />
+                  </div>
+                </PropertyStackComponent>
 
-                    <div>
-                        Change assigned user:
-                        <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id} />
-                    </div>
-                </div>
+                <PropertyStackComponent>
+                  <div>
+                    Sprint:
+                    <EditableIssueInSprint issue_ids={issue_ids} />
+                  </div>
+                </PropertyStackComponent>
+
+                <PropertyStackComponent>
+                  <div>
+                    Change assigned user:
+                    <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id} />
+                  </div>
+                </PropertyStackComponent>
+              </div>
 
             </Sidebar>
         )
