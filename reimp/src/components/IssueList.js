@@ -1,10 +1,5 @@
 import React, {Component} from 'react'
-import each from 'lodash/each'
-import map from 'lodash/map'
-import keys from 'lodash/keys'
-import union from 'lodash/union'
-import includes from 'lodash/includes'
-import difference from 'lodash/difference'
+import { each, indexOf, map, keys, union, difference, includes } from 'lodash'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -90,10 +85,42 @@ class IssueList extends Component {
             } else {
                 selected_issue_ids = union(selected_ids, [issue_id])
             }
+        } else if (event.shiftKey) {
+            selected_issue_ids = this.findIssuesFromHereToAlreadySelected(issue_id)
         } else {
             selected_issue_ids = [issue_id]
         }
         onSelectIssues(selected_issue_ids)
+    }
+
+    findIssuesFromHereToAlreadySelected(target_issue_id) {
+        const {selected_ids, visible_item_ids} = this.props
+
+        let issue_ids_to_select = []
+        let possible_issue_ids_to_select = []
+        let running_issue_index = indexOf(visible_item_ids, target_issue_id)
+        while(running_issue_index>0 && !includes(selected_ids, visible_item_ids[running_issue_index])) {
+            possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
+            running_issue_index -= 1
+            if ( includes(selected_ids, visible_item_ids[running_issue_index]) ) {
+                possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
+                issue_ids_to_select = possible_issue_ids_to_select
+            }
+        }
+
+        if ( issue_ids_to_select.length == 0 ) {
+            possible_issue_ids_to_select = []
+            running_issue_index = indexOf(visible_item_ids, target_issue_id)
+            while(running_issue_index<visible_item_ids.length && !includes(selected_ids, visible_item_ids[running_issue_index])) {
+                possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
+                running_issue_index += 1
+                if ( includes(selected_ids, visible_item_ids[running_issue_index]) ) {
+                    possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
+                    issue_ids_to_select = possible_issue_ids_to_select
+                }
+            }
+        }
+        return issue_ids_to_select
     }
 
     onChangePage() {
@@ -427,6 +454,7 @@ function mapStateToProps(state, props) {
 
     return {
         list_key: list_key,
+        visible_item_ids,
         sprint_id: sprint_id,
         issues: items,
         issue_ids: map(items, 'id'),
