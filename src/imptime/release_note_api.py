@@ -14,38 +14,12 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated,))
 class ReleaseNoteViewSet(BaseViewSet):
 
-    @list_route(methods=['GET'])
-    def unseen_list(self, request):
-        try:
-            context = {}
-            params = request.GET.get('params', '{}')
-            params = json.loads(params)
-            format_args = params.get('format', {})
-
-            release_notes = self.allowed_release_notes()\
-                                .order_by("created")\
-                                .exclude(release_notes_seen_by=request.user)
-            if format_args.get('ids_only'):
-                context['ids'] = [str(x) for x in release_notes.values_list(
-                    'id', flat=True)]
-            else:
-                s = ReleaseNoteSerializer(release_notes,
-                                      logged_in_user=self.request.user,
-                                      many=True)
-                release_notes_data = s.data
-                context['release_notes'] = release_notes_data
-            data = {'status': 'success', 'payload': context}
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
-        
-        return HttpResponse(JSONRenderer().render(data))
-
     @list_route(methods=['POST'])
-    def mark_seen(self, request):
+    def mark_seen(self, request, release_note_ids=None):
         try:
-            params = request.data
-            release_note_ids = params['release_note_ids']
+            if release_note_ids is None:
+                params = request.data
+                release_note_ids = params['release_note_ids']
 
             for release_note_id in release_note_ids:
                 release_note = self.allowed_release_notes().get(pk=release_note_id)
@@ -74,14 +48,20 @@ class ReleaseNoteViewSet(BaseViewSet):
             release_notes = self.apply_pagination(qs=release_notes,
                                              pagination=pagination)
 
+            release_notes = release_notes.order_by("created")
+
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in release_notes.values_list('id', flat=True)]
+                if 'unseen' in filter_args:
+                    self.mark_seen(request, context['ids'])
             else:
                 s = ReleaseNoteSerializer(release_notes, many=True)
                 release_notes_data = s.data
                 context['release_notes'] = release_notes_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
+
+            
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
@@ -140,3 +120,19 @@ class ReleaseNoteViewSet(BaseViewSet):
             logger.exception(ex)
             return self.error_response(ex)
         
+    def delete(self, request, pk):
+        try:
+            release_note_id = pk
+
+            if not request.user.is_superuser:
+                raise Exception("Can't delete release notes")
+            
+            release_note = self.allowed_release_notes().get(pk=release_note_id)
+            release_note.delete()
+            
+            data = {'status': 'success'}
+            return HttpResponse(JSONRenderer().render(data))
+        
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)

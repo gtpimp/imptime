@@ -261,7 +261,7 @@ export function deleteItem(entity_key, item_id) {
 	      const state = getState()
 	      dispatch(announceDeletingItem(entity_key, item_id))
 	      let data = { item_id: item_id }
-	      return impfetch( state, "imp/item/", dispatch,
+	      return impfetch( state, "imp/" + entity_key + "/" + item_id + "/", dispatch,
 			                   {method: "DELETE",
 			                    credentials: 'same-origin',
 			                    data: data,

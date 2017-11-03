@@ -28,6 +28,11 @@ import { can_delete_release_notes } from '../actions/Auth'
 
 class ReleaseNotes extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onDeleteReleaseNote = this.onDeleteReleaseNote.bind(this)
+    }
+    
     componentDidMount() {
 	const { dispatch, list_key } = this.props
 	dispatch(initList(list_key))
@@ -39,14 +44,16 @@ class ReleaseNotes extends Component {
         dispatch(fetchReleaseNotesIfNeeded(list_key))
     }
 
-    onDeleteReleaseNote(release_note_id) {
+    onDeleteReleaseNote(event, release_note_id) {
         const { dispatch } = this.props
+        event.stopPropagation()
         dispatch(deleteReleaseNote(release_note_id))
     }
     
     render() {
 
         const { release_notes, is_loading, has_delete_permission } = this.props
+        const that = this
 
         if ( is_loading ) {
             return (
@@ -73,7 +80,7 @@ class ReleaseNotes extends Component {
                           </div>
                           { has_delete_permission &&
                             <div className="issue__small-delete-image"
-                                 onClick={() => this.onDeleteReleaseNote(release_note.id)} />
+                                 onClick={(event) => that.onDeleteReleaseNote(event, release_note.id)} />
                           }
                         </div>
                     )
