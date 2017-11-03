@@ -16,7 +16,10 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
-    deleteItem
+    deleteItem,
+    announceItemSaveFailed,
+    announceItemsSaved,
+    announceItemsSaving
 } from '../actions/Item'
 
 export function invalidateAllReleaseNotes() {
@@ -66,5 +69,33 @@ export function createReleaseNote(header, content) {
 export function deleteReleaseNote(release_note_id) {
     return (dispatch, getState) => {
         dispatch(deleteItem(ENTITY_KEY__RELEASE_NOTE, release_note_id))
+    }
+}
+
+export function markReleaseNotesAsSeen(release_note_ids) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceItemsSaving(ENTITY_KEY__RELEASE_NOTE, release_note_ids[0]))
+	let data = { release_note_ids: release_note_ids }
+	return impfetch( state, "imp/" + ENTITY_KEY__RELEASE_NOTE + "/mark_seen/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceItemSaveFailed(ENTITY_KEY__RELEASE_NOTE, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceItemsSaved(ENTITY_KEY__RELEASE_NOTE, release_note_ids))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceItemSaveFailed(ENTITY_KEY__RELEASE_NOTE, error))
+	 })
     }
 }

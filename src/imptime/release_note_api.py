@@ -23,7 +23,8 @@ class ReleaseNoteViewSet(BaseViewSet):
 
             for release_note_id in release_note_ids:
                 release_note = self.allowed_release_notes().get(pk=release_note_id)
-                ReleaseNoteSeen.get_or_create(seen_by=request.user, release_note=release_note)
+                ReleaseNoteSeen.objects.get_or_create(seen_by=request.user, release_note=release_note)
+                release_note.save()
                 
             data = {'status': 'success'}
         except Exception, ex:
@@ -51,8 +52,6 @@ class ReleaseNoteViewSet(BaseViewSet):
 
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in release_notes.values_list('id', flat=True)]
-                if 'unseen' in filter_args:
-                    self.mark_seen(request, context['ids'])
             else:
                 s = ReleaseNoteSerializer(release_notes, many=True)
                 release_notes_data = s.data

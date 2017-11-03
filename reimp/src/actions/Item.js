@@ -100,7 +100,7 @@ function fetchItemsPromise(dispatch, state, entity_key, item_ids) {
     })
 }
 
-function announceItemSaveFailed(entity_key, error) {
+export function announceItemSaveFailed(entity_key, error) {
     return {
         type: ANNOUNCE_ITEM_SAVE_FAILED,
         entity_key: entity_key, 
@@ -109,7 +109,7 @@ function announceItemSaveFailed(entity_key, error) {
     }
 }
 
-function announceItemsSaved(entity_key, item_ids) {
+export function announceItemsSaved(entity_key, item_ids) {
     return {
         type: ANNOUNCE_ITEMS_SAVED,
         entity_key: entity_key, 
@@ -118,7 +118,7 @@ function announceItemsSaved(entity_key, item_ids) {
     }
 }
 
-function announceItemsSaving(entity_key, item_ids, field_name, new_value) {
+export function announceItemsSaving(entity_key, item_ids, field_name, new_value) {
     return {
         type: ANNOUNCE_ITEMS_SAVING,
         entity_key: entity_key, 

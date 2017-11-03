@@ -6,7 +6,7 @@ import {ensureReleaseNotesLoaded, getReleaseNote} from '../actions/ReleaseNotes'
 import includes from 'lodash/includes'
 import {
     PAGE_KEY__RELEASE_NOTES_PAGE,
-    LIST_KEY__RELEASE_NOTES_LIST,
+    LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
 } from '../actions/ItemListKeyRegistry.js'
 import {
     selectItems,
@@ -30,7 +30,7 @@ class ReleaseNotesPage extends Component {
     componentDidMount() {
         const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__RELEASE_NOTES_PAGE, ['release-notes']))
-        dispatch(update_list_filter(LIST_KEY__RELEASE_NOTES_LIST, {unseen:true}))
+        dispatch(update_list_filter(LIST_KEY__RELEASE_NOTES_EDITOR_LIST, {unseen:true}))
     }
 
     onCreateReleaseNote(values) {
@@ -47,7 +47,7 @@ class ReleaseNotesPage extends Component {
                     onSubmit={this.onCreateReleaseNote}
                 />
               }
-              <ReleaseNotes list_key={LIST_KEY__RELEASE_NOTES_LIST} />
+              <ReleaseNotes list_key={LIST_KEY__RELEASE_NOTES_EDITOR_LIST} />
             </div>
         )
     }

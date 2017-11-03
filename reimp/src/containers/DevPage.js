@@ -5,6 +5,7 @@ import SprintList from '../components/SprintList'
 import IssueList from '../components/IssueList'
 import IssueDetails from '../components/IssueDetails'
 import IssueDeveloperDetails from '../components/IssueDeveloperDetails'
+
 import {StickyContainer} from 'react-sticky';
 import {
     LIST_KEY__PROJECT_LIST,

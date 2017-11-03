@@ -24,7 +24,8 @@ import {
     LIST_KEY__ISSUE_LIST,
     LIST_KEY__PROJECT_USER_LIST,
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
-    LIST_KEY__RELEASE_NOTES_LIST
+    LIST_KEY__RELEASE_NOTES_LIST,
+    LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
 } from '../actions/ItemListKeyRegistry'
 import each from 'lodash/each'
 
@@ -94,6 +95,7 @@ function triggerInvalidateItemLists(d, dispatch) {
         }
     } else if ( d.entity_name == 'releasenote' ) {
         dispatch(invalidateList(LIST_KEY__RELEASE_NOTES_LIST))
+        dispatch(invalidateList(LIST_KEY__RELEASE_NOTES_EDITOR_LIST))
     } else {
         console.log("Ignoring: Unknown entity to refresh lists: " + d.entity_name)
     }

@@ -1,0 +1,71 @@
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { map } from 'lodash'
+import Modal from 'react-modal';
+import {
+    fetchReleaseNotesIfNeeded,
+    markReleaseNotesAsSeen
+} from '../actions/ReleaseNotes'
+import { update_list_filter, initList, getVisibleItemIds, shouldFetchList } from '../actions/ItemList'
+import { ENTITY_KEY__RELEASE_NOTE, LIST_KEY__RELEASE_NOTES_LIST, } from '../actions/ItemListKeyRegistry'
+import ReleaseNotes from './ReleaseNotes'
+
+class ReleaseNotesPopup extends Component {
+
+    constructor(props) {
+        super(props)
+        this.closeModal = this.closeModal.bind(this)
+    }
+    
+    componentDidMount() {
+	const { dispatch, list_key } = this.props
+	dispatch(initList(list_key))
+        dispatch(update_list_filter(list_key, { unseen: true }))
+	dispatch(fetchReleaseNotesIfNeeded(list_key))
+    }
+
+    componentWillReceiveProps() {
+        const { dispatch, list_key } = this.props
+        dispatch(fetchReleaseNotesIfNeeded(list_key))
+    }
+
+    closeModal() {
+        const { dispatch, release_note_ids } = this.props
+        dispatch(markReleaseNotesAsSeen(release_note_ids))
+    }
+
+    render() {
+
+        const { has_release_notes, list_key } = this.props
+
+        if ( ! has_release_notes ) {
+            return null
+        }
+
+        return (
+            <Modal isOpen={true}
+                   contentLabel="Release Notes"
+                   onRequestClose={this.closeModal} >
+
+              <h2>Release Notes</h2>
+              <ReleaseNotes list_key={list_key} />
+            </Modal>
+        )
+
+    }
+}
+
+function mapStateToProps(state, props) {
+    const list_key = LIST_KEY__RELEASE_NOTES_LIST
+    const visible_item_ids = getVisibleItemIds(state, list_key) || []
+    const should_fetch_list = shouldFetchList(state, list_key)
+
+    return {
+        has_release_notes: visible_item_ids.length > 0,
+        release_note_ids: visible_item_ids,
+        should_fetch_list,
+        list_key
+    }
+}
+
+export default connect(mapStateToProps)(ReleaseNotesPopup)

@@ -271,7 +271,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
     // First tries to fetch the list of items, and then fetches all
     // missing matching items
 
-    let { fetch_item_ids_url, is_generic_item } = args
+    let { fetch_item_ids_url, is_generic_item } = args || {}
     fetch_item_ids_url = fetch_item_ids_url || 'imp/' + matching_items_key + '/'
     
     return (dispatch, getState) => {
@@ -322,7 +322,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
     }
 }
 
-function shouldFetchList(state, list_key) {
+export function shouldFetchList(state, list_key) {
 
     const item_list = state.item_list || {}
     const l = item_list[list_key] || {}
@@ -335,6 +335,7 @@ function shouldFetchList(state, list_key) {
     if ( ! l.visible_item_ids ) {
 	      return true
     }
+    return false
 }
 
 export function fetchListIfNeeded(list_key,

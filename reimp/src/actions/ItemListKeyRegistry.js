@@ -10,6 +10,7 @@ export const LIST_KEY__PROJECT_DASHBOARD_LIST = 'project_dashboards'
 export const LIST_KEY__USER_TIMESHEET_LIST = 'user_timesheets'
 export const LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST = 'visual_spec_document_issue_list'
 export const LIST_KEY__RELEASE_NOTES_LIST = 'release_notes_list'
+export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
 
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
