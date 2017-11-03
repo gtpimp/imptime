@@ -57,7 +57,7 @@ upload_to_logos = UploadTo("logos")
 upload_to_attachments = UploadTo("issue_attachments")
 upload_to_project_documents = UploadTo("project_documents")
 
-class Client(models.Model):
+class Client(BaseModel):
     """ a client is a top-level customer of the system,
     which has their own users etc. """
     name = models.CharField(max_length=255, null=False, blank=True)
@@ -72,7 +72,7 @@ class Client(models.Model):
         return self.name
 
 
-class Attribute(models.Model):
+class Attribute(BaseModel):
     ATTRIBUTE_TYPES = (
         ('project-type', 'Project Type'),
         ('project-status', 'Project Status'),
@@ -140,7 +140,7 @@ class BusinessQuerySet(QuerySet):
     def budget(self):
         return self.aggregate(total=Sum('new_business_projects__budget'))['total']
 
-class Business(models.Model):
+class Business(BaseModel):
 
     DEFAULT_STATUS_COLOURS = COLOURS
 
@@ -379,7 +379,7 @@ class Business(models.Model):
         return cls.objects.all().filter_by_logged_in_user(user).distinct()
 
 
-class BusinessComment(models.Model):
+class BusinessComment(BaseModel):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
     comment = models.TextField(null=True, blank=True)
 
@@ -390,7 +390,7 @@ class BusinessComment(models.Model):
     def __unicode__(self):
         return self.comment
 
-class Feature(models.Model):
+class Feature(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
     business = models.ForeignKey(Business,related_name='features')
 
@@ -736,7 +736,7 @@ class BusinessPermissions(BaseModel):
     def has_be_scheduled(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and(self.can_be_scheduled or self.user.has_perm('timepiece.belongs_to_all_projects'))
 
-class ProjectStatus(models.Model):
+class ProjectStatus(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
     business = models.ForeignKey(Business, related_name='project_statuses')
 
@@ -800,7 +800,7 @@ class ProjectQuerySet(QuerySet):
     def filter_can_add_dev_time_states(self):
         return self.filter(status3__name__in=Project.can_add_dev_time_states())
 
-class Project(models.Model):
+class Project(BaseModel):
 
     PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
                          ('quote sent', 'quote sent'),
@@ -2088,7 +2088,7 @@ class BusinessInvite(BaseModel):
             RefreshNotifier().notify_model_update(self, params={'users': [self.user_id],
                                                                 'projects': [self.business_id]}) #sic
 
-class RelationshipType(models.Model):
+class RelationshipType(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True, editable=False)
 
@@ -2103,7 +2103,7 @@ class RelationshipType(models.Model):
         return self.name
 
 
-class ProjectRelationship(models.Model):
+class ProjectRelationship(BaseModel):
     types = models.ManyToManyField(
         RelationshipType,
         related_name='project_relationships',
@@ -2128,7 +2128,7 @@ class ProjectRelationship(models.Model):
         )
 
 
-class Activity(models.Model):
+class Activity(BaseModel):
     """
     Represents different types of activity: debugging, developing,
     brainstorming, QA, etc...
@@ -2196,7 +2196,7 @@ class HourGroupManager(models.Manager):
         return totals
 
 
-class HourGroup(models.Model):
+class HourGroup(BaseModel):
     """Activities that are bundled together for billing"""
 
     name = models.CharField(max_length=255, unique=True)
@@ -2212,7 +2212,7 @@ class HourGroup(models.Model):
         return self.name
 
 
-class ActivityGroup(models.Model):
+class ActivityGroup(BaseModel):
     """Activities that are allowed for a project"""
 
     name = models.CharField(max_length=255, unique=True)
@@ -2225,7 +2225,7 @@ class ActivityGroup(models.Model):
         return self.name
 
 
-class Location(models.Model):
+class Location(BaseModel):
     name = models.CharField(max_length=255, unique=True)
     slug = models.CharField(max_length=255, unique=True)
 
@@ -2449,7 +2449,7 @@ class EntryQuerySetForReporting(QuerySet):
         return self.aggregate(total_hours=Sum('hours'))['total_hours']
 
 
-class Entry(models.Model):
+class Entry(BaseModel):
     """
     This class is where all of the time logs are taken care of
     """
@@ -2921,7 +2921,7 @@ class Entry(models.Model):
         """ Make a best attempt to identify what the issue number. """
         return Issue.extract_issue_id(self.comments)
 
-class EntryGroup(models.Model):
+class EntryGroup(BaseModel):
     VALID_STATUS = ('invoiced', 'not-invoiced')
     STATUS_CHOICES = [status for status in ENTRY_STATUS \
                       if status[0] in VALID_STATUS]
@@ -2958,7 +2958,7 @@ User.clocked_in = property(lambda user: user.timepiece_entries.filter(
     end_time__isnull=True).count() > 0)
 
 
-class ProjectContract(models.Model):
+class ProjectContract(BaseModel):
     CONTRACT_STATUS = (
         ('upcoming', 'Upcoming'),
         ('current', 'Current'),
@@ -3009,7 +3009,7 @@ class ProjectContract(models.Model):
         return unicode(self.project)
 
 
-class ContractMilestone(models.Model):
+class ContractMilestone(BaseModel):
     contract = models.ForeignKey(ProjectContract, related_name='milestones')
     name = models.CharField(max_length=255)
     start_date = models.DateField()
@@ -3078,7 +3078,7 @@ class AssignmentManager(models.Manager):
 
 
 
-class ContractAssignment(models.Model):
+class ContractAssignment(BaseModel):
     contract = models.ForeignKey(ProjectContract, related_name='assignments')
     user = models.ForeignKey(
         User,
@@ -3240,7 +3240,7 @@ class AllocationManager(models.Manager):
             ).exclude(hours=0)
 
 
-class AssignmentAllocation(models.Model):
+class AssignmentAllocation(BaseModel):
     assignment = models.ForeignKey(ContractAssignment, related_name='blocks')
     date = models.DateField()
     hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -3261,7 +3261,7 @@ class AssignmentAllocation(models.Model):
 
     objects = AllocationManager()
 
-class PersonSchedule(models.Model):
+class PersonSchedule(BaseModel):
     user = models.OneToOneField(
         User,
         #unique=True,
@@ -3300,7 +3300,7 @@ class PersonSchedule(models.Model):
         return unicode(self.user)
 
 
-class UserProfile(models.Model):
+class UserProfile(BaseModel):
     user = models.OneToOneField(User, unique=True, related_name='profile')
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -3357,7 +3357,7 @@ class UserAutoLoginToken(BaseModel):
         return a.user
 
 
-class ProjectHours(models.Model):
+class ProjectHours(BaseModel):
     week_start = models.DateField(verbose_name='start of week')
     project = models.ForeignKey(Project)
     user = models.ForeignKey(User)
@@ -3382,7 +3382,7 @@ class SalaryQuerySet(QuerySet):
     def amount(self):
         return self.aggregate(Sum('amount'))['amount__sum']
 
-class Salary(models.Model):
+class Salary(BaseModel):
     user = models.ForeignKey(User)
     amount = models.DecimalField(max_digits=12,decimal_places=2,default=0)
     date = models.DateField(verbose_name='month')
@@ -3442,7 +3442,7 @@ class Salary(models.Model):
                  'leave_accured_this_month':self.leave_accrued,
                  'leave_taken_this_month':self.leave_taken }
 
-class Rate(models.Model):
+class Rate(BaseModel):
     TIME_TRACKING_MODES = [ ('developer', 'Developer'), ('manager', 'Manager'), ('tester', 'Tester') ]
     project = models.ForeignKey(Project, related_name="rate")
     user = models.ForeignKey(User, related_name="rates")
@@ -3485,7 +3485,7 @@ class Rate(models.Model):
         """ best guess """
         return Rate.objects.filter(user_id=user_id, project__business_id=business_id).order_by("project__order").first()
 
-class Expense(models.Model):
+class Expense(BaseModel):
     date = models.DateField()
     amount = models.DecimalField(max_digits=12,decimal_places=0,default=0)
     description = models.CharField(max_length=255, blank=True, null=True)
@@ -3496,11 +3496,11 @@ class Expense(models.Model):
             ('view_expense', 'Can view expenses.'),
         )
 
-class Income(models.Model):
+class Income(BaseModel):
     date = models.DateField()
     amount = models.DecimalField(max_digits=12,decimal_places=0,default=0)
 
-# class Invoice(models.Model):
+# class Invoice(BaseModel):
 #     description = models.CharField(max_length=255, blank=True, null=True)
 #     date_sent = models.DateField(blank=True,null=True)
 #     date_paid = models.DateField(blank=True,null=True)
@@ -3514,7 +3514,7 @@ class Income(models.Model):
 #             ('view_invoice', 'Can view invoices.'),
 #         )
 
-class TagCategory(models.Model):
+class TagCategory(BaseModel):
     class Meta:
         unique_together = ('business', 'name')
 
@@ -3535,7 +3535,7 @@ class TagCategory(models.Model):
                 self, params={'issues': affected_issue_ids})
 
 
-class Tag(models.Model):
+class Tag(BaseModel):
 
     class Meta:
         unique_together = ('name', 'category')
@@ -3556,7 +3556,7 @@ class Tag(models.Model):
             RefreshNotifier().notify_model_update(
                 self, params={'issues': affected_issues})
 
-class IssueStatus(models.Model):
+class IssueStatus(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
     business = models.ForeignKey(Business, related_name='issue_statuses')
     created = models.DateTimeField(auto_now_add=True)
@@ -3597,7 +3597,7 @@ class IssueQuerySet(QuerySet):
             return self
         return self.filter(project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
-class Issue(models.Model):
+class Issue(BaseModel):
 
     ISSUE_STATUS_CHOICES = (
            ('new', 'new'),
@@ -3903,7 +3903,7 @@ class Issue(models.Model):
     def is_fixed_ctc_cost(self):
         return self.fixed_ctc_amount is not None
 
-class IssueComment(models.Model):
+class IssueComment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')
     comment = models.TextField(blank=True)
     author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False)
@@ -3920,7 +3920,7 @@ class IssueAttachment(BaseModel):
     def download_url(self):
         return reverse('download_issue_attachment', kwargs={'issue_attachment_id':self.id})
 
-class RedmineToTimepieceBusinessMapping(models.Model):
+class RedmineToTimepieceBusinessMapping(BaseModel):
     redmine_business_name = models.CharField(max_length=255)
     timepiece_business_name = models.CharField(max_length=255)
 
@@ -3931,7 +3931,7 @@ class RedmineToTimepieceBusinessMapping(models.Model):
         except RedmineToTimepieceBusinessMapping.DoesNotExist:
             return redmine_business_name
 
-class RedmineToTimepieceProjectMapping(models.Model):
+class RedmineToTimepieceProjectMapping(BaseModel):
     timepiece_business_name = models.CharField(max_length=255)
     redmine_project_code = models.CharField(max_length=255)
     timepiece_project_code = models.CharField(max_length=255)
@@ -3944,7 +3944,7 @@ class RedmineToTimepieceProjectMapping(models.Model):
         except RedmineToTimepieceProjectMapping.DoesNotExist:
             return redmine_project_code
 
-class IssuePoints(models.Model):
+class IssuePoints(BaseModel):
 
     class Meta:
         unique_together = (('user','issue'),)
@@ -3956,7 +3956,7 @@ class IssuePoints(models.Model):
     def __unicode__(self):
         return u'%s:%s - %s hours' % (self.issue.subject, self.user.username, self.points)
 
-class IssueHistory(models.Model):
+class IssueHistory(BaseModel):
 
     issue_id = models.IntegerField(blank=False, null=False, db_index=True)
     created_by = models.ForeignKey(User, blank=False, null=False)
@@ -3974,7 +3974,7 @@ class IssueHistory(models.Model):
     def for_issue(self, issue):
         return IssueHistory.objects.filter(issue_id=issue.id).order_by("-created_at")
 
-class BusinessHistory(models.Model):
+class BusinessHistory(BaseModel):
 
     business_id = models.IntegerField(blank=False, null=False, db_index=True)
     created_by = models.ForeignKey(User, blank=False, null=False)
@@ -3993,7 +3993,7 @@ class BusinessHistory(models.Model):
         return BusinessHistory.objects.filter(business_id=business.id).order_by("-created_at")
 
 
-class BusinessDocument(models.Model):
+class BusinessDocument(BaseModel):
 
     DOC_TYPE_CHOICES = ( ('invoice', 'Invoice'), ('summary', 'Sprint summary'),
                          ('proposal', 'Sprint proposal'), ('contract', 'Contract'),
@@ -4025,7 +4025,7 @@ class BusinessDocument(models.Model):
         return self.filename
 
 
-class CalendarEvent(models.Model):
+class CalendarEvent(BaseModel):
 
     EVENT_TYPES = ( ('planned', 'Planned'), ('meeting', 'Meeting'), ('leave', 'Leave'), ('sickday', 'Sick day'),
                     ('office_closed', 'Office Closed'), ('personal', 'Personal'),
@@ -4104,7 +4104,7 @@ class CalendarEvent(models.Model):
     def __unicode__(self):
         return "Starts at %s, ends at %s \n%s " % (self.start.strftime('%d %B %Y %H:%M'), self.end.strftime('%d %B %Y %H:%M'), self.description)
 
-class BaseChecklist(models.Model):
+class BaseChecklist(BaseModel):
     class Meta:
         abstract=True
 
@@ -4135,7 +4135,7 @@ class BaseChecklist(models.Model):
     def is_ok(self):
         return self.passed
 
-class BaseChecklistItem(models.Model):
+class BaseChecklistItem(BaseModel):
     class Meta:
         abstract=True
 
@@ -4246,7 +4246,7 @@ class FinanceChecklist(BaseChecklist):
 class FinanceChecklistItem(BaseChecklistItem):
     finance_checklist = models.ForeignKey(FinanceChecklist, null=False, blank=True, db_index=True, related_name="items")
 
-class UserNotification(models.Model):
+class UserNotification(BaseModel):
 	user = models.ForeignKey(User, related_name='notifications')
 	notification_type = models.CharField(max_length=50, null=False, blank=False,
 										 choices=( ("daily_calendar", "Daily Calendar"), ("planned_for_today", "Planned for today") ))
@@ -4300,7 +4300,7 @@ class UserNotification(models.Model):
 		return CalendarEvent.objects.filter(user=self.user, start__gte=datetime.datetime.today().date(), start__lt=datetime.datetime.today().date()+relativedelta(days=1)).order_by("start")
 
 
-class Holiday(models.Model):
+class Holiday(BaseModel):
     applies_on = models.DateField(blank=True, null=True)
     name = models.CharField(max_length=100, default='public holiday', null=False, blank=True)
 
@@ -4356,7 +4356,7 @@ class ScheduleQuerySet(QuerySet):
         return total
 
 
-class Schedule(models.Model):
+class Schedule(BaseModel):
     business = models.ForeignKey('business', null=False, blank=False)
     scheduled_date = models.DateField(null=False, blank=False)
     num_hours = models.IntegerField(null=False, blank=False)
