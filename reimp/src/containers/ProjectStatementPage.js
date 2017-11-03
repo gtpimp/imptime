@@ -40,7 +40,7 @@ class ProjectStatementPage extends Component {
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
-            breadcrumbs.push({to: '/projects', label: 'All Projects'})
+            breadcrumbs.push({to: '/projects', label: 'Projects'})
             if ( project_id === project.id ) {
                 breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
             }

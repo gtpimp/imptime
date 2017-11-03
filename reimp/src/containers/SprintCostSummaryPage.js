@@ -65,9 +65,9 @@ class SprintCostSummaryPage extends Component {
         const { dispatch } = this.props
         dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, [sprint.id]))
         if ( sprint.id ) {
-            dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+            dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
                                       {to: '/projects/'+project.id, label: project.name},
-                                      {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
+                                      {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/costSummary', label: 'Cost Summary'}]))
             dispatch(update_project_statement_filter(null, null, [sprint.id]))

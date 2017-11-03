@@ -59,9 +59,9 @@ class SprintTemplatesPage extends Component {
                                                                  sprint_type:'template'})))
             dispatch(select_projects(page_key, [project.id]))
             dispatch(invalidateList(list_key))
-            dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
+            dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
                                      {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/' + project.id + '/sprintTemplates', label: 'All Templates'}]))
+                                     {to: '/projects/' + project.id + '/sprintTemplates', label: 'Templates'}]))
         }
     }
 

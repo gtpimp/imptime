@@ -59,9 +59,9 @@ class SprintsPage extends Component {
                                                                 {project_id: project.id})))
             dispatch(select_projects(page_key, [project.id]))
             dispatch(invalidateList(list_key))
-            dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
+            dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
                 {to: '/projects/' + project.id, label: project.name},
-                {to: '/projects/' + project.id + '/sprints', label: 'All Sprints'}]))
+                {to: '/projects/' + project.id + '/sprints', label: 'Sprints'}]))
         }
     }
 

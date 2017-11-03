@@ -50,13 +50,13 @@ class ProjectUserPage extends Component {
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
-            breadcrumbs.push({to: '/projects', label: 'All Projects'})
+            breadcrumbs.push({to: '/projects', label: 'Projects'})
             if ( project_id === project.id ) {
                 breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
             }
             if ( user_id ) {
                 dispatch(ensureUsersLoaded([user_id]))
-                breadcrumbs.push({to: '/projects/'+project_id+'/users', label: 'All Users'})
+                breadcrumbs.push({to: '/projects/'+project_id+'/users', label: 'Users'})
                 if ( user_id === user.id ) {
                     breadcrumbs.push({to: '/projects/'+project_id+'/users/'+user_id, label: user.username})
                 }

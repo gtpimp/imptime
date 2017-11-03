@@ -66,11 +66,11 @@ class VisualSpecDocumentPage extends Component {
         dispatch(ensureVisualSpecDocumentsLoaded([active_visual_spec_document_id]))
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
         if ( project && project.id && sprint && sprint.id && issue && issue.id ) {
-            dispatch(setBreadcrumbs([{to: '/projects', label: 'All Projects'},
+            dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
                                      {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
+                                     {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                     {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'All Issues'},
+                                     {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'Issues'},
                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues/'+issue.id, label: '#'+issue.number},
                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues'+issue.id+'/visualSpec/'+active_visual_spec_document_id,
                                       label: active_visual_spec_document.name}]))

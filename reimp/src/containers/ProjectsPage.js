@@ -32,7 +32,7 @@ class ProjectsPage extends Component {
     componentDidMount() {
         const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'} ]))
+        dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'} ]))
     }
 
     onSelectProjects(project_ids) {

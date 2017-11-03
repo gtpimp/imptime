@@ -73,15 +73,15 @@ class BulkIssueCreatorPage extends Component {
             dispatch(select_sprints(PAGE_KEY__BULK_CREATE_ISSUES_PAGE, [sprint.id]))
 
             if ( sprint.sprint_type == 'sprint' ) {
-                dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
                                           {to: '/projects/'+project.id, label: project.name},
-                                          {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
+                                          {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
                                           {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                           {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/bulkCreateIssues', label: 'Bulk Create'}]))
             } else if ( sprint.sprint_type == 'template' ) {
-                dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+                dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
                                           {to: '/projects/'+project.id, label: project.name},
-                                          {to: '/projects/'+project.id+'/sprintTemplates', label: 'All Templates'},
+                                          {to: '/projects/'+project.id+'/sprintTemplates', label: 'Templates'},
                                           {to: '/projects/'+project.id+'/sprintTemplates/'+sprint.id, label: sprint.name},
                                           {to: '/projects/'+project.id+'/sprintTemplates/'+sprint.id+'/issues', label: 'Bulk Create'}]))
             }

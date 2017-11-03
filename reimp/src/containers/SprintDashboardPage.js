@@ -49,9 +49,9 @@ class ProjectDashboardPage extends Component {
 
     refresh(sprint, project) {
         const { dispatch } = this.props
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'All Projects'},
+        dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
                                   {to: '/projects/'+project.id, label: project.name},
-                                  {to: '/projects/'+project.id+'/sprints', label: 'All Sprints'},
+                                  {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
                                   {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name} ]))
         dispatch(select_sprints(PAGE_KEY__SPRINT_DASHBOARD_PAGE, [sprint.id]))
     }
