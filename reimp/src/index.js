@@ -52,7 +52,7 @@ ReactDOM.render(
                 <Route path="/password/forgot" component={ForgotPasswordPage}/>
                 <Route path="/password/reminded" component={PasswordReminderSentPage}/>
                 <Route path="dev" component={DevPage}/>
-                <Route path="release_notes" component={ReleaseNotesPage}/>
+                <Route path="release_notes_editor" component={ReleaseNotesPage}/>
                 <Route path="projects" component={ProjectsPage}/>
                 <Route path="projects/:projectId" component={ProjectDashboardPage}/>
                 <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>

@@ -34,6 +34,7 @@ class LoginViewSet(rest_views.ObtainAuthToken):
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
                          'user_id': user.id,
+                         'is_superuser': user.is_superuser,
                          'has_usable_password': user.has_usable_password()})
 
 @permission_classes((IsAuthenticated,))
@@ -67,6 +68,7 @@ class AutoLoginViewSet(BaseViewSet):
         return Response({'username': user.username,
                          'token': token.key,
                          'user_id': user.id,
+                         'is_superuser': user.is_superuser,
                          'has_usable_password': user.has_usable_password()})
 
     @list_route(methods=['POST'])

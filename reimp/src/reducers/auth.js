@@ -16,6 +16,7 @@ export default function auth(state = initialState, action) {
             cookie.save('username', action.username, { path: '/' })
             cookie.save('user_id', action.user_id, { path: '/' })
             cookie.save('has_usable_password', action.has_usable_password, { path: '/' })
+            cookie.save('is_superuser', action.is_superuser, { path: '/' })
             return Object.assign({}, state,
                                  { username: action.username,
                                    token: action.token,
@@ -26,11 +27,13 @@ export default function auth(state = initialState, action) {
             cookie.save('username', "", { path: '/' })
             cookie.save('user_id', "", { path: '/' })
             cookie.save('has_usable_password', "", { path: '/' })
+            cookie.save('is_superuser', "", { path: '/' })
             return Object.assign({}, state,
                                  { username: null,
                                    token: null,
                                    user_id: null,
-                                   has_usable_password: null})
+                                   has_usable_password: null,
+                                   is_superuser: null})
         default:
             return state
     }

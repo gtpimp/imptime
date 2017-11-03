@@ -13,7 +13,10 @@ import {
     ensureItemsLoaded,
     getItem,
     getItems,
-    updateItem
+    updateItem,
+    startCandidateItem,
+    saveCandidateItem,
+    deleteItem
 } from '../actions/Item'
 
 export function invalidateAllReleaseNotes() {
@@ -52,3 +55,16 @@ export function getReleaseNotes(state, release_note_ids) {
     return getItems(state, ENTITY_KEY__RELEASE_NOTE, release_note_ids)
 }
 
+export function createReleaseNote(header, content) {
+    return (dispatch, getState) => {
+        dispatch(startCandidateItem(ENTITY_KEY__RELEASE_NOTE, { header: header,
+                                                                content: content }))
+        dispatch(saveCandidateItem(ENTITY_KEY__RELEASE_NOTE))
+    }
+}
+
+export function deleteReleaseNote(release_note_id) {
+    return (dispatch, getState) => {
+        dispatch(deleteItem(ENTITY_KEY__RELEASE_NOTE, release_note_id))
+    }
+}

@@ -1,0 +1,32 @@
+@import 'variables.scss';
+
+.release_note {
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+    text-align: center;
+    max-width: 50%;
+    margin: auto;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.release_note__header {
+    margin-bottom: 5px;
+}
+
+.release_note__header_title {
+    font: $bold-extra-large;
+}
+
+.release_note__header_created {
+    float: right;
+    font-size: $font-size-small;
+}
+
+.release_note__content {
+}
+
+.issue__small-delete-image {
+    float: right;
+}

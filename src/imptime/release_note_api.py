@@ -110,30 +110,33 @@ class ReleaseNoteViewSet(BaseViewSet):
             release_note.save()
             
             data = {'status': 'success'}
+            return HttpResponse(JSONRenderer().render(data))
+        
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
         
-        return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
         try:
             context = {}
-            params = request.data['release_note']
+            params = request.data['item']
+            header = params['header']
+            content = params['content']
 
             if not request.user.is_superuser:
                 raise Exception("Can't create release notes")
             
             release_note = ReleaseNote.objects.create(
                 created_by=request.user,
-                header=params['header'],
-                content=params['content'])
+                header=header,
+                content=content)
 
-            context['release_note'] = ReleaseNoteSerializer(release_note)
-            data = {'status': 'success', 'payload': context}
+            context['release_note'] = ReleaseNoteSerializer(release_note).data
+            data = {'status': 'success', 'payload': { 'item': context }}
+            return HttpResponse(JSONRenderer().render(data))
 
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
         
-        return HttpResponse(JSONRenderer().render(data))

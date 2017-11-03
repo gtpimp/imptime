@@ -31,7 +31,8 @@ class MainLayout extends Component {
     }
 
     refresh(props) {
-        const { dispatch, location, logged_in_user_id, settings, has_usable_password } = props
+        const { dispatch, location, logged_in_user_id, settings,
+                has_usable_password } = props
         dispatch(ensureUsersLoaded([logged_in_user_id]))
         
         if ( logged_in_user_id ) {

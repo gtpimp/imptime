@@ -1,7 +1,7 @@
 import { impfetch } from './lib.js'
 
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
-import { map, difference, keyBy, compact } from 'lodash'
+import { map, difference, keyBy, compact, find } from 'lodash'
 
 export const ANNOUNCE_ITEMS_SAVING = 'ANNOUNCE_ITEMS_SAVING'
 export const ANNOUNCE_ITEMS_SAVED = 'ANNOUNCE_ITEMS_SAVED'
@@ -209,14 +209,12 @@ export function updateItem(entity_key, item_ids, field_name, new_value, on_done)
     }
 }
 
-export function startCandidateItem(entity_key, sprint_id, item_id_before) {
+export function startCandidateItem(entity_key, candidate_item) {
     return (dispatch, getState) => {
-	const state = getState()
 	dispatch({
 	    type: ANNOUNCE_CAPTURING_NEW_ITEM,
             entity_key: entity_key,
-            candidate_item: { item_id_before: item_id_before,
-	                      sprint_id: sprint_id }
+            candidate_item: candidate_item
 	})
     }
 }
@@ -332,4 +330,15 @@ export function ensureItemsLoaded(entity_key, item_ids) {
             fetchItemsPromise(dispatch, state, entity_key, item_ids_to_load)
         }
     }
+}
+
+export function isLoadingItems(state, entity_key, item_ids) {
+    if ( ! item_ids ) {
+        return false
+    }
+    const items = getItems(state, entity_key, item_ids)
+    const all_loaded = find(items, function(x) {
+        return x.loaded == false
+    }) === undefined
+    return !all_loaded
 }

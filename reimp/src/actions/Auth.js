@@ -6,13 +6,14 @@ import {browserHistory} from 'react-router'
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
 
-function setAuthToken(username, token, user_id, has_usable_password) {
+function setAuthToken(username, token, user_id, has_usable_password, is_superuser) {
     return {
         type: SET_AUTH_TOKEN,
         username: username,
         token: token,
         user_id: user_id,
-        has_usable_password: has_usable_password
+        has_usable_password: has_usable_password,
+        is_superuser: is_superuser
     }
 }
 
@@ -41,7 +42,8 @@ export function auto_login(auto_login_token) {
             .then(response => response.json())
             .then(json => {
                 if ( json.token ) {
-                    dispatch(setAuthToken(json.username, json.token, json.user_id, json.has_usable_password))
+                    dispatch(setAuthToken(json.username, json.token, json.user_id,
+                                          json.has_usable_password, json.is_superuser))
                     if ( json.has_usable_password === "false" ) {
                         browserHistory.push('/password/change')
                     }
@@ -70,7 +72,9 @@ export function login(username, password) {
             .then(response => response.json())
             .then(json => {
                 if ( json.token ) {
-                    dispatch(setAuthToken(username, json.token, json.user_id, json.has_usable_password))
+                    dispatch(setAuthToken(username, json.token,
+                                          json.user_id, json.has_usable_password,
+                                          json.is_superuser))
                 } else {
                     throw new SubmissionError({ _error: 'Invalid credentials' })
                 }
@@ -114,7 +118,8 @@ export function logged_in_user() {
     return { username: cookie.load('username'),
              token: cookie.load('token'),
              user_id: cookie.load('user_id'),
-             has_usable_password: cookie.load('has_usable_password')
+             has_usable_password: cookie.load('has_usable_password'),
+             is_superuser: cookie.load('is_superuser')
     }
 }
 
@@ -122,4 +127,17 @@ export function is_authenticated() {
     const user = logged_in_user()
     return user.user_id !== undefined && user.user_id !== null && user.user_id.length > 0 &&
            user.token !== null && user.token != undefined && user.token.length > 0
+}
+
+function is_superuser() {
+    const user = logged_in_user()
+    return is_authenticated() && user.is_superuser == "true"
+}
+
+export function can_create_release_notes() {
+    return is_superuser()
+}
+
+export function can_delete_release_notes() {
+    return is_superuser()
 }

@@ -23,6 +23,10 @@ export const ENTITY_KEY__VISUAL_SPEC_DOCUMENT = 'visual_spec_document'
 export const ENTITY_KEY__VISUAL_SPEC_ISSUE = 'visual_spec_issue'
 export const ENTITY_KEY__RELEASE_NOTE = 'release_note'
 
+// Temporary list to keep track of which entities are using the new actions/Item.js
+// mechanism and therefore are in a different place in the state.
+export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE, ENTITY_KEY__VISUAL_SPEC_ISSUE ]
+
 export const PAGE_KEY__DASHBOARD_PATH = 'dashboard_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
 export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'
@@ -68,3 +72,4 @@ export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'estimates': "Estimates",
     'small_delete': ""
 }
+

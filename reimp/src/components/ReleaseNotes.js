@@ -16,12 +16,15 @@ import {
     getSelectedItems,
     getDisplayMode
 } from '../actions/ItemList'
+import { isLoadingItems } from '../actions/Item'
 import {
     invalidateAllReleaseNotes,
-    fetchReleaseNotesIfNeeded
+    fetchReleaseNotesIfNeeded,
+    deleteReleaseNote
 } from '../actions/ReleaseNotes'
 import { ENTITY_KEY__RELEASE_NOTE } from '../actions/ItemListKeyRegistry'
 import Timestamp from './Timestamp'
+import { can_delete_release_notes } from '../actions/Auth'
 
 class ReleaseNotes extends Component {
 
@@ -35,10 +38,15 @@ class ReleaseNotes extends Component {
         const { dispatch, list_key } = this.props
         dispatch(fetchReleaseNotesIfNeeded(list_key))
     }
+
+    onDeleteReleaseNote(release_note_id) {
+        const { dispatch } = this.props
+        dispatch(deleteReleaseNote(release_note_id))
+    }
     
     render() {
 
-        const { release_notes, is_loading } = this.props
+        const { release_notes, is_loading, has_delete_permission } = this.props
 
         if ( is_loading ) {
             return (
@@ -51,14 +59,22 @@ class ReleaseNotes extends Component {
 
               { map(release_notes, function(release_note) {
                     return (
-                        <div className="release_note">
+                        <div key={release_note.id} className="release_note">
                           <div className="release_note__header">
-                            <Timestamp value={release_note.created} />
-                            {release_note.header}
+                            <div className="release_note__header_created">
+                              <Timestamp value={release_note.created_at} />
+                            </div>
+                            <div className="release_note__header_title">
+                              {release_note.header}
+                            </div>
                           </div>
                           <div className="release_note__content">
                             {release_note.content}
                           </div>
+                          { has_delete_permission &&
+                            <div className="issue__small-delete-image"
+                                 onClick={() => this.onDeleteReleaseNote(release_note.id)} />
+                          }
                         </div>
                     )
                 }
@@ -73,15 +89,17 @@ function mapStateToProps(state, props) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__RELEASE_NOTE)
     const loading_item_ids = getLoadingItemIds(state, list_key)
-    const is_loading = isLoading(state, list_key)
+    const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__RELEASE_NOTE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
+    const has_delete_permission = can_delete_release_notes(state)
 
     return {
         release_notes: visible_items,
-        release_note_ids: visible_item_ids,
+        release_note_ids: map(visible_items, 'id'),
         loading_item_ids,
         is_loading,
-        last_updated
+        last_updated,
+        has_delete_permission
     }
 }
 

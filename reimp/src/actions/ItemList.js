@@ -17,6 +17,7 @@ export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
 export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
 export const HIGHLIGHT_LIST_SELECTION = 'HIGHLIGHT_LIST_SELECTION'
+import { GENERIC_ENTITIES } from './ItemListKeyRegistry'
 
 export function initList(list_key) {
     return {
@@ -353,9 +354,18 @@ export function getVisibleItemIds(state, list_key) {
     return visible_item_ids
 }
 
+function getItemsById(state, entity_key) {
+    const is_generic_item = includes(GENERIC_ENTITIES, entity_key)
+    if ( is_generic_item === true ) {
+        return (((state || {}).item || {})[entity_key] || {}).items_by_id || {}
+    } else {
+        return ((state || {})[entity_key] || {}).items_by_id || {}
+    }
+}
+
 export function getVisibleItems(state, list_key, entity_key) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
-    const items_by_id = ((state || {})[entity_key] || {}).items_by_id || {}
+    const items_by_id = getItemsById(state, entity_key)
     return (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
 	return items_by_id[visible_item_id] || { 'id': visible_item_id,
 						 'loaded': false }
@@ -370,7 +380,7 @@ export function getSelectedItemIds(state, list_key) {
 
 export function getSelectedItems(state, list_key, entity_key) {
     const selected_item_ids = getSelectedItemIds(state, list_key)
-    const items_by_id = ((state || {})[entity_key] || {}).items_by_id || {}
+    const items_by_id = getItemsById(state, entity_key)
     return (items_by_id && selected_item_ids.map( function(selected_item_id, index) {
 	return items_by_id[selected_item_id] || { 'id': selected_item_id,
 						  'loaded': false }
@@ -398,7 +408,7 @@ export function haveItemsBeenRetrieved(state, ids, entity_key) {
     if ( !ids || ids.length == 0 ) {
         return true
     }
-    const items = (state[entity_key] || {}).items_by_id || {}
+    const items = getItemsById(state, entity_key)
     const sample_item = items[ids[0]]
     return sample_item !== undefined
 }
