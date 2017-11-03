@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { each, indexOf, map, keys, union, difference, includes } from 'lodash'
+import { concat, each, indexOf, map, keys, union, difference, includes } from 'lodash'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -88,9 +88,35 @@ class IssueList extends Component {
         } else if (event.shiftKey) {
             selected_issue_ids = this.findIssuesFromHereToAlreadySelected(issue_id)
         } else {
-            selected_issue_ids = [issue_id]
+            selected_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(issue_id)
         }
         onSelectIssues(selected_issue_ids)
+    }
+
+    findHiddenIssuesRelatingToTargetIssueId(target_issue_id) {
+        const {visible_item_ids, issues, expanded_issues} = this.props
+        let issue_ids_to_select = [target_issue_id]
+        let running_issue_index = indexOf(visible_item_ids, target_issue_id)
+        let issue = issues[running_issue_index]
+        if (issue.can_group_issues !== true) {
+            return issue_ids_to_select
+        }
+        if ( includes(expanded_issues, issue.id) ) {
+            return issue_ids_to_select
+        }
+        
+        let parent_group_id = issue.id
+        running_issue_index += 1
+        while( running_issue_index < visible_item_ids.length ) {
+            issue = issues[running_issue_index]
+            if ( issue.parent_group_id == parent_group_id ) {
+                issue_ids_to_select.push(issue.id)
+            } else {
+                break
+            }
+            running_issue_index += 1
+        }
+        return issue_ids_to_select
     }
 
     findIssuesFromHereToAlreadySelected(target_issue_id) {
@@ -120,7 +146,11 @@ class IssueList extends Component {
                 }
             }
         }
-        return issue_ids_to_select
+
+        let issue_and_feature_ids_to_select = []
+        map(issue_ids_to_select, (issue_id) =>
+            issue_and_feature_ids_to_select = concat(issue_and_feature_ids_to_select, this.findHiddenIssuesRelatingToTargetIssueId(issue_id)))
+        return issue_and_feature_ids_to_select
     }
 
     onChangePage() {
