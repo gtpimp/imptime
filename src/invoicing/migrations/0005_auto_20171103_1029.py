@@ -29,6 +29,14 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # note to devs: this is a hack because I did some stuff
+        # manually on the prod machine and now I can't split this
+        # migration into two anymore.  The RunPython and the
+        # AlterField should have been in separate migrations. See
+        # https://stackoverflow.com/questions/28429933/django-migrations-using-runpython-to-commit-changes
+        # for why this hack is necessary.
+        migrations.RunSQL('SET CONSTRAINTS ALL IMMEDIATE', reverse_sql=migrations.RunSQL.noop),
+        
         migrations.RunPython(forwards, migrations.RunPython.noop),
         migrations.AlterField(
             model_name='invoice',
