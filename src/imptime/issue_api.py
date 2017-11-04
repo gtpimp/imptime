@@ -55,36 +55,7 @@ class IssueViewSet(BaseViewSet):
                 elif 'general' in detail_levels:
                     s = IssueGeneralDetailsSerializer(issues, many=True)
                 else:
-                    issues = issues.select_related('parent_group')\
-                                   .select_related('project__business')\
-                                   .select_related('assigned_to')\
-                                   .select_related('feature')\
-                                   .select_related('status2')\
-                                   .prefetch_related('comments')\
-                                   .prefetch_related('attachments')\
-                                   .prefetch_related('group_children')\
-                                   .prefetch_related('tags__category')\
-                                   .prefetch_related('issue_points__user')\
-                                   .prefetch_related('group_children')\
-                                   .prefetch_related(Prefetch('entries', to_attr='active_clocks',
-                                                              queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
-                                   .prefetch_related(Prefetch('entries', to_attr='my_entries',
-                                                              queryset=Entry.objects.filter(user=request.user).select_related('user')))\
-                                   .prefetch_related(Prefetch('issue_points', to_attr='all_estimates'))\
-                                   .prefetch_related(Prefetch('issue_points', to_attr='my_estimate',
-                                                              queryset=IssuePoints.objects.filter(user=request.user, issue__in=issues)))\
-                                   .prefetch_related(Prefetch('issue_points__user'))\
-                                   .prefetch_related(Prefetch('entries', to_attr='my_clocked_in_entries',
-                                                              queryset=Entry.objects.filter(user=request.user).select_related('user').filter(end_time__isnull=True)))
-
-
-                    issues = issues.annotate(actual_hours=Sum('entries__hours'))
-
-                    for issue in issues:
-                        for attachment in issue.attachments.all():
-                            attachment.react_download_url = IssueAttachmentSerializer.get_download_url(request, attachment)
-                            attachment.react_preview_url = IssueAttachmentSerializer.get_preview_url(request, attachment)
-
+                    issues = self._enrich_issues_qs(issues)
                     s = IssueSerializer(issues, logged_in_user=request.user, many=True)
 
                 issues_data = s.data
@@ -96,6 +67,36 @@ class IssueViewSet(BaseViewSet):
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
 
+    def _enrich_issues_qs(self, issues):
+        issues = issues.select_related('parent_group')\
+                       .select_related('project__business')\
+                       .select_related('assigned_to')\
+                       .select_related('feature')\
+                       .select_related('status2')\
+                       .prefetch_related('comments')\
+                       .prefetch_related('attachments')\
+                       .prefetch_related('group_children')\
+                       .prefetch_related('tags__category')\
+                       .prefetch_related('issue_points__user')\
+                       .prefetch_related('group_children')\
+                       .prefetch_related(Prefetch('entries', to_attr='active_clocks',
+                                                  queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
+                       .prefetch_related(Prefetch('entries', to_attr='my_entries',
+                                                  queryset=Entry.objects.filter(user=self.request.user).select_related('user')))\
+                       .prefetch_related(Prefetch('issue_points', to_attr='all_estimates'))\
+                       .prefetch_related(Prefetch('issue_points', to_attr='my_estimate',
+                                                  queryset=IssuePoints.objects.filter(user=self.request.user, issue__in=issues)))\
+                       .prefetch_related(Prefetch('issue_points__user'))\
+                       .prefetch_related(Prefetch('entries', to_attr='my_clocked_in_entries',
+                                                  queryset=Entry.objects.filter(user=self.request.user).select_related('user').filter(end_time__isnull=True)))
+        issues = issues.annotate(actual_hours=Sum('entries__hours'))
+        for issue in issues:
+            for attachment in issue.attachments.all():
+                attachment.react_download_url = IssueAttachmentSerializer.get_download_url(self.request, attachment)
+                attachment.react_preview_url = IssueAttachmentSerializer.get_preview_url(self.request, attachment)
+        return issues
+
+    
     def update(self, request, pk):
         try:
             params = request.data
@@ -215,7 +216,7 @@ class IssueViewSet(BaseViewSet):
 
             def create_issue():
                 issue = Issue.objects.create(
-                        project=sprint,   # sic
+                        project_id=sprint.id,   # sic
                         status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
                         number=Issue.get_next_issue_number(sprint.business),
                         subject=params['subject'],
@@ -235,15 +236,16 @@ class IssueViewSet(BaseViewSet):
             if issue_id_before:
                 issue = self.allowed_issue(issue_id_before)
                 if self.logged_in_permissions(issue.project.business).has_edit_issues:
-                    issue =  create_issue()
+                    issue = create_issue()
                 else:
                     data = {'status': 'failed', 'error_message': 'Permission denied to create issues'}
             elif not issue_id_before:
-                issue =  create_issue()
+                issue = create_issue()
             else:
                 data = {'status': 'failed', 'error_message': 'Failed creating issue'}
 
-            context['issue'] = { 'number': issue.number, 'id': issue.id }
+            issue = self._enrich_issues_qs(Issue.objects.filter(pk=issue.id)).first()
+            context['issue'] = IssueSerializer(issue, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
