@@ -1408,7 +1408,7 @@ class IssueCheckboxContextMenuActiveIssueForm(forms.Form):
 
     def __init__(self, project, label, *args, **kwargs):
         super(IssueCheckboxContextMenuActiveIssueForm, self).__init__(*args, **kwargs)
-        self.fields['focus_issue'].choices = [ ('', '') ] + [ (x.id, "%s %s" % (x.number, x.subject)) for x in project.issues.all().order_by("order") ]
+        self.fields['focus_issue'].choices = [ ('', '') ] + [ (x.id, "%s %s" % (x.number, x.subject)) for x in project.issues.all().order_by_project_id(project.id) ]
         self.fields['focus_issue'].label = label
         self.fields['focus_issue'].widget.attrs['onchange'] = "this.form.submit();"
 
@@ -1656,7 +1656,7 @@ class QuickClockerEditEntry(forms.ModelForm):
         self.fields['project'].choices=[ (x.id, x.long_name()) for x in projects ]
 
         if self.instance and self.instance.project:
-            issues = self.instance.project.issues.all().order_by("order")
+            issues = self.instance.project.issues.all().order_by_project_id(self.instance.project.id)
             self.fields['issue'].queryset = issues
             self.fields['issue'].choices=[(None,"default"),] + [ (x.id, "issue%d: %s" % (x.number, x.subject)) for x in issues ]
 

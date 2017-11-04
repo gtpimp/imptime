@@ -4576,32 +4576,13 @@ def sortable_issue_update(request, project_id, context=None):
 
     new_project_id = request.POST['project_id']
 
-    new_project = timepiece.Project.objects.get(pk=new_project_id)
-    for item_order_count, issue_id in enumerate(ordered_issue_ids):
-        issue = timepiece.Issue.objects.get(pk=issue_id)
-        old_project = issue.project
-        old_order = issue.order
-        if old_project != new_project:
-            issue.project = new_project
-            issue.save()
-            timepiece.IssueHistory.add_history(request.user, issue, "changed sprint", old_project, new_project)
-
-        if old_order != item_order_count:
-            issue.order = item_order_count
-            issue.save()
-            timepiece.IssueHistory.add_history(request.user, issue, "order", old_order, issue.order)
-
-        if old_project != new_project or old_order != item_order_count:
-            get_interface_plugin(request, new_project.business).move_issue(issue, old_project=old_project)
-
+    timepiece.Issue.objects.filter(pk__in=ordered_issue_ids).update(project_id=new_project_id)
+    timepiece.ProjectIssueOrder.order_like_this(project_id=new_project_id, ordered_issue_ids=ordered_issue_ids)
     return HttpResponse("")
-
 
 @csrf_exempt
 @login_required
 def sortable_project_update(request):
-    context = {}
-
     ordered_project_ids = []
     for index in request.POST['ordered_ids'].split(","):
         try:
@@ -4611,8 +4592,7 @@ def sortable_project_update(request):
             continue
 
     first_project = timepiece.Project.objects.get(id=ordered_project_ids[0])
-
-    ordered_projects = first_project.business.get_ordered_projects()
+    first_project.business.get_ordered_projects()
     for item_order_count, project_id in enumerate(ordered_project_ids):
         project= timepiece.Project.objects.get(pk=project_id)
         project.order = item_order_count
@@ -4721,7 +4701,7 @@ def sprint_report(request, project_id, context=None):
             return response
 
         business = project.business
-        issues = project.issues.order_by("order")
+        issues = project.issues.order_by_project_id(project.id)
 
         bp = timepiece.BusinessPermissions.for_user(user, business)
         quote_form = timepiece_forms.SprintQuoteReportSettingsForm(project, bp, issues, DATA)
@@ -5214,9 +5194,11 @@ def bulk_move_issue_above_issue(request, context=None):
     issues = selected_project.issues.all().filter(pk__in=selected_issue_ids)
     selected_issues = issues.order_by_project_id(selected_project.id)
     num_moved = 0
+    running_issue = focus_issue
     for index, issue in enumerate(selected_issues):
         num_moved += 1
-        timepiece.ProjectIssueOrder.insert_before(issue=issue, set_before_this_issue=focus_issue)
+        timepiece.ProjectIssueOrder.insert_before(issue=issue, set_before_this_issue=running_issue)
+        running_issue = issue
 
     messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -5239,9 +5221,11 @@ def bulk_move_issue_below_issue(request, context=None):
     issues = selected_project.issues.all().filter(pk__in=selected_issue_ids)
     selected_issues = issues.order_by_project_id(selected_project.id)
     num_moved = 0
+    running_issue = focus_issue
     for index, issue in enumerate(selected_issues):
         num_moved += 1
-        timepiece.ProjectIssueOrder.insert_after(issue=issue, set_after_this_issue=focus_issue)
+        timepiece.ProjectIssueOrder.insert_after(issue=issue, set_after_this_issue=running_issue)
+        running_issue = issue
 
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -5321,7 +5305,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
 
     if 'ordered_states' in request.POST:
         ordered_states = request.POST['ordered_states'].split(",")
-        issues = project.issues.order_by("order", "order2")
+        issues = project.issues.order_by_project_id(project.id)
 
         bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
         if not bp.has_edit_issues:

@@ -3941,7 +3941,18 @@ class ProjectIssueOrder(BaseModel):
         new_order = self.get_next_order(issue.project_id)
         self.objects.get_or_create(project_id=issue.project_id, issue_id=issue.id, defaults={'order':new_order})
         self.renumber(issue.project_id)
-            
+
+    @classmethod
+    def order_like_this(self, project_id, ordered_issue_ids):
+        order = 0
+        for issue_id in ordered_issue_ids:
+            pio = ProjectIssueOrder.objects.get_or_create(project_id=project_id, issue_id=issue_id,
+                                                          defaults={'order':order})[0]
+            if pio.order != order:
+                pio.order = order
+                pio.save()
+            order += self.INCREMENT
+        
     @classmethod
     def get_next_order(self, project_id, issue_qs=None):
         if issue_qs is None:
