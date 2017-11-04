@@ -113,7 +113,7 @@ function refreshMiddleware(_ref) {
                 const payload = action.payload || [{}]
 
                 let list_keys_to_invalidate = {}
-                
+
                 each(payload, (d) => {
 
                     if ( d.action_type === "create" ) {
@@ -127,7 +127,8 @@ function refreshMiddleware(_ref) {
                     } else {
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
-                    dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
+                    
+                    //dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
                 })
 
                 each(keys(list_keys_to_invalidate), (key) => dispatch(invalidateList(key)))

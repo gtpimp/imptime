@@ -252,7 +252,8 @@ class IssueViewSet(BaseViewSet):
             logger.exception(ex)
             return self.error_response(ex)
 
-        return HttpResponse(JSONRenderer().render(data))
+        res = HttpResponse(JSONRenderer().render(data))
+        return res
 
     @list_route(methods=['POST'])
     def bulk_create_issues(self, request):
