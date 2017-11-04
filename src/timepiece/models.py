@@ -1,5 +1,7 @@
 import datetime
 import timings
+from django.db.models import Case, When
+
 from django.core.urlresolvers import reverse
 import os
 from dateutil.relativedelta import relativedelta
@@ -1008,16 +1010,6 @@ class Project(BaseModel):
                     estimate = round(estimate, 2)
                 for user_id, bp, user in tester_users:
                     issue.set_points(user=user, points=estimate)
-
-    def refresh_issues_order(self):
-        """ Doesn''t re-sort, just makes the numbers sequential """
-        order = 1
-        for issue in self.issues.all().order_by("order", "order2"):
-            old_order = issue.order
-            if old_order != order:
-                issue.order = order
-                issue.save()
-            order += 1000 # sort with a number in between to make moving easier
 
     def min_estimate_hours(self):
         return self.estimate_stats()['total_estimate_hours_min']
@@ -2046,18 +2038,7 @@ class Project(BaseModel):
         return settings.TRAC_URL % self.tracker_url
 
     def get_ordered_issues(self):
-        all_project_issues = Issue.objects.filter(project=self)
-
-        orderless_issues = all_project_issues.filter(order__isnull=True).order_by('-id')
-        ordered_issues = all_project_issues.exclude(order__isnull=True).order_by('order', 'order2')
-
-        if len(orderless_issues) > 0:
-            all_issues = [ issue for issue in orderless_issues ] + [ issue for issue in ordered_issues ]
-            for index,issue in enumerate(all_issues):
-                if issue.order != index:
-                    issue.order = index
-                    issue.save()
-        return Issue.objects.filter(project=self).order_by("order", "order2")
+        return Issue.objects.filter(project=self).order_by_project_id(self.id)
 
     def get_ctc_and_billable_totals(self):
         totals = Issue.objects.filter(project_id=self.id).values('fixed_ctc_amount', 'fixed_amount').aggregate(
@@ -3598,6 +3579,14 @@ class IssueQuerySet(QuerySet):
             return self
         return self.filter(project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
+    def order_by_project_id(self, project_id):
+        issue_ids_in_order = ProjectIssueOrder.objects.filter(project_id=project_id)\
+                                                      .order_by("order")\
+                                                      .values_list("issue_id", flat=True)
+        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(issue_ids_in_order)])
+        return self.order_by(preserved)
+        
+    
 class Issue(BaseModel):
 
     ISSUE_STATUS_CHOICES = (
@@ -3632,8 +3621,7 @@ class Issue(BaseModel):
     subject = models.TextField(db_index=True)
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)
-    order = models.FloatField(null=True,blank=True)
-    order2 = models.CharField(max_length=50, default=None, null=True,blank=True) #alternative means of ordering by string (used by eg jira)
+    order_deprecated = models.FloatField(null=True,blank=True) #deprecated
     feature = models.ForeignKey("Feature", blank=True, null=True, related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
@@ -3702,43 +3690,22 @@ class Issue(BaseModel):
         return self.status2.name
 
     def move_after(self, other_issue):
-        self.order = other_issue.order + 0.00001
-        self.save()
-        self.renumber_issue_order()
+        ProjectIssueOrder.insert_after(issue=self, set_after_this_issue=other_issue)
 
     def renumber_issue_order(self):
-        """ Doesn''t re-sort, just makes the numbers sequential """
-        order = 1
-        for issue in self.project.issues\
-                                 .all().order_by("order"):
-            old_order = issue.order
-            if old_order != order:
-                issue.order = order
-                issue.save()
-            order += 1
+        ProjectIssueOrder.renumber(self.project_id)
 
     def set_order(self):
-        if self.order is not None:
-            return self
-        self.order = Issue.get_next_order(self.project)
-        self.save()
+        ProjectIssueOrder.insert_at_the_end(self)
         return self
 
     def get_next_child_order(self):
-        max_child_order = Issue.objects.filter(parent_group=self).aggregate(max_order=Max('order'))['max_order'] or 0
-        if max_child_order == 0:
-            max_child_order = self.order
-        return max_child_order+0.1
+        return ProjectIssueOrder.get_next_order(project_id=self.project_id,
+                                                issue_qs=Issue.objects.filter(parent_group=self))
     
     @classmethod
     def get_next_order(self, project):
-        project_issue_order = Issue.objects.filter(project = project).aggregate(max_order=Max('order'))
-        current_order = project_issue_order['max_order'] or 0
-        new_order = current_order + 1
-        num_issues = Issue.objects.filter(project = project).count()
-        if new_order > num_issues:
-            new_order = num_issues
-        return new_order
+        return ProjectIssueOrder.get_next_order(project_id=project.id)
 
     def get_issue_points_by_user(self):
         return dict( [ (x['user'], float(x['points'] or 0)) for x in IssuePoints.objects.filter(issue=self).values('user', 'points') ] )
@@ -3911,6 +3878,79 @@ class IssueComment(BaseModel):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+class ProjectIssueOrder(BaseModel):
+    order = models.FloatField()
+    issue = ProtectedForeignKey(Issue)
+    project = ProtectedForeignKey(Project)
+
+    INCREMENT=10
+    MAX_ORDER=999999
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ProjectIssueOrder, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+    
+    @classmethod
+    def renumber(self, project_id):
+        issue_ids = Issue.objects.filter(project_id=project_id).order_by_project_id(project_id).values_list('pk', flat=True)
+        order = 0
+        for issue_id in issue_ids:
+            pio = ProjectIssueOrder.objects.get_or_create(project_id=project_id, issue_id=issue_id,
+                                                          defaults={'order':order})[0]
+            if pio.order != order:
+                pio.order = order
+                pio.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def insert_before(self, issue, set_before_this_issue):
+        if issue.project_id != set_before_this_issue.project_id:
+            raise Exception("Cannot reorder, must be in the same project")
+        pio = self.objects.get_or_create(project_id=set_before_this_issue.project_id,
+                                         issue_id=set_before_this_issue.id,
+                                         defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio.order-1
+        pio, is_new = self.objects.get_or_create(project_id=issue.project_id, issue_id=issue.id)
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(issue.project_id)
+            
+    @classmethod
+    def insert_after(self, issue, set_after_this_issue):
+        if issue.project_id != set_after_this_issue.project_id:
+            raise Exception("Cannot reorder, must be in the same project")
+        pio = self.objects.get_or_create(project_id=set_after_this_issue.project_id,
+                                         issue_id=set_after_this_issue.id,
+                                         defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio.order+1
+        pio, is_new = self.objects.get_or_create(project_id=issue.project_id,
+                                                 issue_id=issue.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(issue.project_id)
+
+    @classmethod
+    def insert_at_the_end(self, issue):
+        new_order = self.get_next_order(issue.project_id)
+        self.objects.get_or_create(project_id=issue.project_id, issue_id=issue.id, defaults={'order':new_order})
+        self.renumber(issue.project_id)
+            
+    @classmethod
+    def get_next_order(self, project_id, issue_qs=None):
+        if issue_qs is None:
+            issue_qs = Issue.objects.filter(project_id=project_id)
+        max_order = self.objects.filter(project_id=project_id, issue__in=issue_qs)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+        
+    
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
     attachment = models.FileField(max_length=255, upload_to=upload_to_attachments, null=False, blank=False)

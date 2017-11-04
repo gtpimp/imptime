@@ -23,7 +23,6 @@ class IssueSerializer(BaseSerializer):
     assigned_to_id = serializers.CharField()
     feature_name = serializers.CharField()
     number = serializers.IntegerField()
-    position_if_creating_new_issue_after = serializers.IntegerField()
     sprint_id = serializers.CharField()
     project_id = serializers.CharField()
     tags = TagSerializer(many=True)
@@ -58,7 +57,6 @@ class IssueSerializer(BaseSerializer):
         
         issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.status2_name = issue.status2.name if issue.status2_id else None
-        issue.position_if_creating_new_issue_after = (issue.order or 0) + 0.5
         issue.sprint_id = str(issue.project_id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
         issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate

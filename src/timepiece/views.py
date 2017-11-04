@@ -5067,11 +5067,11 @@ def move_issue_to_project(request):
         return HttpResponse(json.dumps({ "status": "No permission" }))
 
     issue.project = dest_project
-    issue.order += 9999
     issue.save()
+    timepiece.ProjectIssueOrder.insert_at_the_end(issue)
+    
     timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
     get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
-    dest_project.refresh_issues_order()
     return HttpResponse(json.dumps({ "status" : "ok" }))
 
 @login_required
@@ -5088,12 +5088,11 @@ def bulk_move_issues_to_project(request, dest_project_id, context=None):
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
         old_project = issue.project
         issue.project = dest_project
-        issue.order += 99999999
         issue.save()
+        timepiece.ProjectIssueOrder.insert_at_the_end(issue)
         timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
         get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
 
-    dest_project.refresh_issues_order()
     messages.info(request, "%d issues moved to %s" % (len(selected_issue_ids), dest_project))
 
     return HttpResponseRedirect(reverse('project_list', args=[dest_project.id]))
@@ -5212,19 +5211,12 @@ def bulk_move_issue_above_issue(request, context=None):
         return HttpResponse("No issue chosen: %s" % form.errors)
     focus_issue = timepiece.Issue.objects.filter(project=selected_project).get(pk=form.cleaned_data['focus_issue'])
 
-    selected_project.refresh_issues_order()
-
-    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("-order", "-order2")
+    issues = selected_project.issues.all().filter(pk__in=selected_issue_ids)
+    selected_issues = issues.order_by_project_id(selected_project.id)
     num_moved = 0
     for index, issue in enumerate(selected_issues):
-        if issue.order >= focus_issue.order:
-            old_order = issue.order
-            issue.order = focus_issue.order-(index+1)
-            issue.save()
-            timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
-            num_moved += 1
-            get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
-    selected_project.refresh_issues_order()
+        num_moved += 1
+        timepiece.ProjectIssueOrder.insert_before(issue=issue, set_before_this_issue=focus_issue)
 
     messages.info(request, "%d issues moved above %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -5244,19 +5236,12 @@ def bulk_move_issue_below_issue(request, context=None):
         return HttpResponse("No issue chosen: %s" % form.errors)
     focus_issue = timepiece.Issue.objects.filter(project=selected_project).get(pk=form.cleaned_data['focus_issue'])
 
-    selected_project.refresh_issues_order()
-
-    selected_issues = selected_project.issues.all().filter(pk__in=selected_issue_ids).order_by("order", "order2")
+    issues = selected_project.issues.all().filter(pk__in=selected_issue_ids)
+    selected_issues = issues.order_by_project_id(selected_project.id)
     num_moved = 0
     for index, issue in enumerate(selected_issues):
-        if issue.order <= focus_issue.order:
-            old_order = issue.order
-            issue.order = focus_issue.order+(index+1)
-            issue.save()
-            timepiece.IssueHistory.add_history(request.user, issue, "order changed", old_order, issue.order)
-            num_moved += 1
-            get_interface_plugin(request, selected_project.business).move_issue(issue, old_project=selected_project)
-    selected_project.refresh_issues_order()
+        num_moved += 1
+        timepiece.ProjectIssueOrder.insert_after(issue=issue, set_after_this_issue=focus_issue)
 
     messages.info(request, "%d issues moved below %s %s" % (num_moved, focus_issue.number, focus_issue.subject))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
@@ -5337,23 +5322,19 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
     if 'ordered_states' in request.POST:
         ordered_states = request.POST['ordered_states'].split(",")
         issues = project.issues.order_by("order", "order2")
-        count = 1
 
         bp = timepiece.BusinessPermissions.for_user(request.user, project.business)
         if not bp.has_edit_issues:
             raise PermissionDenied
 
+        running_issue = issues[0]
         for state in ordered_states:
             issues_for_state = issues.filter(status2__name=state)
             for issue in issues_for_state:
-                if issue.order != count:
-                    issue.order = count
-                    count += 1
-                    issue.save()
-                    get_interface_plugin(request, project.business).move_issue(issue, old_project=project)
+                timepiece.ProjectIssueOrder.insert_after(issue=issue, issue_to_set_after=running_issue)
+                running_issue = issue
 
         messages.info(request, "Auto ordered issues in %s" % project)
-        project.refresh_issues_order()
 
         return HttpResponse(json.dumps({'redirect_url':reverse('project_list', args=[project.id])}))
     else:

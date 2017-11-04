@@ -51,7 +51,7 @@ class ReleaseNotesPopup extends Component {
             <Modal isOpen={!this.state.userClosedModal}
                    contentLabel="Release Notes"
                    onRequestClose={this.closeModal} >
-              <h2>Release Notes</h2>
+              <h2>Some things have changed</h2>
               <button className="release-notes__close button button--primary button--large" onClick={this.closeModal}>close</button>
               <ReleaseNotes list_key={list_key} />
             </Modal>

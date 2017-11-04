@@ -11,6 +11,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import Issue
 from imptime.models import SprintTemplate
 from rest_framework.decorators import detail_route
@@ -160,7 +161,7 @@ class SprintViewSet(BaseViewSet):
             sprint_template.save()
 
             mapped_issues = {}
-            for template_issue in template_sprint.issues.all().order_by("order"):
+            for template_issue in template_sprint.issues.all().order_by_project_id(template_sprint.id):
                 new_issue = Issue.objects.create(
                     status = template_issue.status,
                     status2 = template_issue.status2,
@@ -169,8 +170,6 @@ class SprintViewSet(BaseViewSet):
                     subject = template_issue.subject,
                     description = template_issue.description,
                     story_points = template_issue.story_points,
-                    order = template_issue.order,
-                    order2 = template_issue.order2,
                     feature = template_issue.feature,
                     assigned_to = template_issue.assigned_to,
                     created = timezone.now(),
@@ -180,6 +179,7 @@ class SprintViewSet(BaseViewSet):
                     fixed_amount = template_issue.fixed_amount,
                     fixed_ctc_amount = template_issue.fixed_ctc_amount,
                     can_group_issues = template_issue.can_group_issues)
+                SprintIssueOrder.insert_at_the_end(new_issue)
                 mapped_issues[template_issue] = new_issue
                 
                 for template_issue in mapped_issues.keys():

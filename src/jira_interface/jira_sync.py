@@ -232,8 +232,6 @@ class JiraSync(object):
                                                   subject=fixed_subject,
                                                   description=jira_issue.fields.description or "",
                                                   status=state,
-                                                  order=order,
-                                                  order2=order2,
                                                   number=jira_issue.id,
                                                   interface_plugin_number=jira_issue.key)
                 timepiece_issue.number = timepiece.Issue.get_last_issue_number(timepiece_project.business)+1
@@ -251,10 +249,10 @@ class JiraSync(object):
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "State change during jira import", timepiece_issue.status, state)
                 timepiece_issue.status = state
 
-            if (timepiece_issue.order != order or timepiece_issue.order2 != order2) and self.settings.sync_issue_ordering_from_jira:
-                timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
-                timepiece_issue.order = order
-                timepiece_issue.order2 = order2
+            # if (timepiece_issue.order != order or timepiece_issue.order2 != order2) and self.settings.sync_issue_ordering_from_jira:
+            #     timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Order change during jira import", timepiece_issue.order, order)
+            #     timepiece_issue.order = order
+            #     timepiece_issue.order2 = order2
 
             if timepiece_issue.interface_plugin_number != jira_issue.key:
                 timepiece.IssueHistory.add_history(self.active_user, timepiece_issue, "Key change during jira import", timepiece_issue.interface_plugin_number, jira_issue.key)

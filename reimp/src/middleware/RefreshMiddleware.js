@@ -63,8 +63,6 @@ function triggerInvalidateEntity(d, dispatch) {
 
     } else if ( d.entity_name === 'visualspecissue' ) {
         dispatch(invalidateVisualSpecIssues([d.entity_ref]))
-    } else {
-        console.log("Ignoring: Unknown entity to refresh: " + d.entity_name)
     }
 }
 
@@ -96,8 +94,10 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name == 'releasenote' ) {
         list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_LIST] = true
         list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_EDITOR_LIST] = true
-    } else {
-        console.log("Ignoring: Unknown entity to refresh lists: " + d.entity_name)
+        
+    } else if ( d.entity_name == 'projectissueorder' ) {
+        list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
+        
     }
 }
 

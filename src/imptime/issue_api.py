@@ -18,6 +18,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature
 from imptime.models import VisualSpecIssue
 from timepiece.models import TagCategory, Tag, Entry, IssueStatus, IssuePoints
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +34,12 @@ class IssueViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            issues = self.allowed_issues().order_by("order")
+            issues = self.allowed_issues()
             issues = self.apply_filter(qs=issues, raw_filter_args=filter_args)
+
+            if 'sprint_id' in filter_args:
+                issues = issues.order_by_project_id(project_id=filter_args['sprint_id']) #sic
+            
             issues = self.apply_pagination(qs=issues, pagination=pagination)
 
             if format_args.get('ids_only', None):
@@ -139,12 +144,8 @@ class IssueViewSet(BaseViewSet):
                             old_feature_name, issue.feature.name)
                 elif field_name == 'issue_id_after':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
-                        old_order = issue.order
                         after_issue = self.allowed_issue(new_value)
-                        issue.move_after(after_issue)
-                        IssueHistory.add_history(
-                            self.request.user, issue, "changed order",
-                            old_order, issue.order)
+                        SprintIssueOrder.insert_after(issue, set_after_this_issue=after_issue)
                 elif field_name == 'assigned_to_id':
                     if self.logged_in_permissions(issue.project.business).has_assign_user:
                         old_assigned_to = \
@@ -179,7 +180,8 @@ class IssueViewSet(BaseViewSet):
                         old_sprint = issue.project
                         new_sprint = self.allowed_sprint(new_value)
                         issue.project = new_sprint
-                        issue.order += 9999
+                        issue.save()
+                        SprintIssueOrder.insert_at_the_end(issue)
                         IssueHistory.add_history(request.user, issue, "moved to sprint", unicode(old_sprint), unicode(new_sprint))
                 elif field_name == "my_estimate":
                     if self.logged_in_permissions(issue.project.business).has_estimate_own_points:
@@ -209,23 +211,23 @@ class IssueViewSet(BaseViewSet):
             sprint_id = params['sprint_id']
             issue_id_before = params.get('issue_id_before', None)
 
-            if issue_id_before:
-                issue_before = self.allowed_issue(issue_id_before)
-                order = issue_before.order + 0.5
-            else:
-                order = 0
             sprint = self.allowed_sprint(sprint_id)
 
             def create_issue():
                 issue = Issue.objects.create(
                         project=sprint,   # sic
-                        order=order,
                         status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
                         number=Issue.get_next_issue_number(sprint.business),
                         subject=params['subject'],
                         created_by=request.user,
-                        can_group_issues=params.get('can_group_issues', False)) 
-                issue.renumber_issue_order()
+                        can_group_issues=params.get('can_group_issues', False))
+
+                if issue_id_before is None:
+                    SprintIssueOrder.insert_at_the_end(issue)
+                else:
+                    issue_before = self.allowed_issue(issue_id_before)
+                    SprintIssueOrder.insert_after(issue, set_after_this_issue=issue_before)
+                
                 IssueHistory.add_history(self.request.user, issue,
                                              "created", "", issue.number)
                 return issue
