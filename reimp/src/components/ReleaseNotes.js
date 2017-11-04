@@ -68,9 +68,11 @@ class ReleaseNotes extends Component {
                     return (
                         <div key={release_note.id} className="release_note">
                           <div className="release_note__header">
-                            <div className="release_note__header_created">
-                              <Timestamp value={release_note.created_at} />
-                            </div>
+                            { has_delete_permission &&
+                              <div className="release_note__header_created">
+                                <Timestamp value={release_note.created_at} />
+                              </div>
+                            }
                             <div className="release_note__header_title">
                               {release_note.header}
                             </div>
