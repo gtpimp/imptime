@@ -38,7 +38,6 @@ class IssueList extends Component {
         this.onClickedIssue = this.onClickedIssue.bind(this)
         this.reorderIssue = this.reorderIssue.bind(this)
         this.onStartCandidateIssue = this.onStartCandidateIssue.bind(this)
-        this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
         this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
         this.toggleAsFeature = this.toggleAsFeature.bind(this)
         this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
@@ -176,17 +175,6 @@ class IssueList extends Component {
         dispatch(startCandidateIssue(list_key))
     }
 
-    onSaveCandidateIssue(obj) {
-        const {onSelectIssues, dispatch} = this.props
-        dispatch(updateCandidateSubject(obj.candidate_issue_subject))
-
-        const onDone = function(issue_id) {
-            onSelectIssues([issue_id])
-        }
-        
-        dispatch(saveCandidateIssue(onDone))
-    }
-
     onCancelCandidateIssue() {
         const {dispatch} = this.props
         dispatch(cancelCandidateIssue())
@@ -295,17 +283,6 @@ class IssueList extends Component {
         return (
             <tr key={list_key + ".candidate_issue"} className="issue_list__candidate_issue">
               <td colSpan="20">Creating new issue here</td>
-              { false &&
-                <td>
-                  <RIEModeToggler initialValue=""
-                                  propName="candidate_issue_subject"
-                                  initialState="editing"
-                                  onChange={this.onSaveCandidateIssue}
-                                  onCancel={this.onCancelCandidateIssue}>
-                    <RIEInput/>
-                  </RIEModeToggler>
-                </td>
-              }
             </tr>
         )
     }

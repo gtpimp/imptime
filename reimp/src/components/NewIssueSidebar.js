@@ -17,9 +17,13 @@ class NewIssueSidebar extends Component {
     }
 
     onSaveCandidateIssue(new_value) {
-        const {dispatch} = this.props
+        const {onCreatedIssues, dispatch} = this.props
         dispatch(updateCandidateSubject(new_value.title))
-        dispatch(saveCandidateIssue())
+
+        const onDone = function(issue_id) {
+            onCreatedIssues([issue_id])
+        }
+        dispatch(saveCandidateIssue(onDone))
     }
 
     render() {
@@ -41,8 +45,10 @@ class NewIssueSidebar extends Component {
 function mapStateToProps(state, props) {
 
     const candidate_issue = getCandidateIssue(state) || null
+    const { onSelectIssues } = props
     return {
-        candidate_issue: candidate_issue
+        candidate_issue: candidate_issue,
+        onSelectIssues
     }
 }
 

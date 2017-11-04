@@ -116,7 +116,7 @@ class IssuesPage extends Component {
               </div>
               { is_creating_issue &&
                 <div className="list-layout__sidebar">
-                  <NewIssueSidebar />
+                  <NewIssueSidebar onCreatedIssues={this.onSelectIssues} />
                 </div>
               }
               { ! is_creating_issue && is_single_selection && sprint_id && selected_issue &&
