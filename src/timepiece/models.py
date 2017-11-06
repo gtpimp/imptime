@@ -1280,7 +1280,7 @@ class Project(BaseModel):
 
     @classmethod
     def active_states(self):
-        return ( 'in dev', 'waiting to invoice', 'invoiced', 'in client qa' )
+        return ( 'open', 'in dev', 'waiting to invoice', 'invoiced', 'in client qa' )
 
     @classmethod
     def pending_states(self):
