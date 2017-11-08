@@ -1272,7 +1272,7 @@ class Project(BaseModel):
 
     @classmethod
     def active_states(self):
-        return ( 'in dev', 'waiting to invoice', 'invoiced', 'in client qa' )
+        return ( 'open', 'in dev', 'waiting to invoice', 'invoiced', 'in client qa' )
 
     @classmethod
     def pending_states(self):
@@ -1288,7 +1288,7 @@ class Project(BaseModel):
 
     @classmethod
     def can_add_dev_time_states(self):
-        return ( 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent' )
+        return ( 'open', 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent' )
 
     def can_add_dev_time(self):
         return self.status3.name in self.can_add_dev_time_states() and self.is_open

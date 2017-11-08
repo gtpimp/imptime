@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
+import {browserHistory} from 'react-router'
 import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
 import Timestamp from '../components/Timestamp'
@@ -10,6 +11,16 @@ import '../sass/sprint.css'
 
 class Sprint extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onIssuesClick = this.onIssuesClick.bind(this)
+    }
+    
+    onIssuesClick() {
+        const { sprint } = this.props
+        browserHistory.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues');
+    }
+    
     render_collapsed() {
 	      const { sprint } = this.props
 	      return (
@@ -21,46 +32,47 @@ class Sprint extends Component {
 
     render_expanded() {
         const { sprint, is_loading, is_selected, isOver,
-		            onClickedSprint, connectDragSource, connectDropTarget } = this.props
+		onClickedSprint, connectDragSource, connectDropTarget } = this.props
 
-	      if ( ! sprint ) {
-	          return (<tr><td>Loading...</td></tr>)
-	      }
+	if ( ! sprint ) {
+	    return (<tr><td>Loading...</td></tr>)
+	}
 
-	      if ( ! is_loading === false ) {
-	          return (
-		            <tr key={this.key+"."+sprint.id}
-		                onClick={onClickedSprint}
-		                className={is_selected ? 'tr--selected' : ''}
-		            >
-		              <td>{sprint && sprint.id}</td>
-		              <td>Loading...</td>
-		            </tr>
-	          )
-	      } else {
+	if ( ! is_loading === false ) {
+	    return (
+		<tr key={this.key+"."+sprint.id}
+		onClick={onClickedSprint}
+		className={is_selected ? 'tr--selected' : ''}
+		>
+		<td>{sprint && sprint.id}</td>
+		<td>Loading...</td>
+		</tr>
+	    )
+	} else {
             return connectDragSource(connectDropTarget(
-		            <tr key={this.key+"."+sprint.id}
-		                onClick={onClickedSprint}
-		                className={classNames('sprint', 'sprint__type-'+sprint.sprint_type,
-                                                      {'tr--drop-target': isOver,
-                                                       'sprint__is_clone': sprint.sprint_template_id,
-                                                       'list-table__row--unselected': !is_selected,
-                                                       'list-table__row--selected': is_selected})}
-		            >
-		              <td className="list-table__cell">{sprint.number}</td>
-		              <td className="list-table__cell">{sprint.name}</td>
-		              <td className="list-table__cell">
-                    <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
-                  </td>
-		              <td className="list-table__cell">
-                    <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
-                  </td>
-		              <td className="list-table__cell">{sprint.num_issues || 0} Issues</td>
-		              { false && <td className="list-table__cell"><Progress issue={sprint} /></td> }
-		              <td className="list-table__cell">{sprint.status_name}</td>
-		            </tr>
+		<tr key={this.key+"."+sprint.id}
+		onClick={onClickedSprint}
+		className={classNames('sprint', 'sprint__type-'+sprint.sprint_type,
+                                      {'tr--drop-target': isOver,
+                                       'sprint__is_clone': sprint.sprint_template_id,
+                                       'list-table__row--unselected': !is_selected,
+                                       'list-table__row--selected': is_selected})}
+		>
+		<td className="list-table__cell">{sprint.number}</td>
+		<td className="list-table__cell">{sprint.name}</td>
+		<td className="list-table__cell">
+                <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
+                </td>
+		<td className="list-table__cell">
+                <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
+                </td>
+		<td className="list-table__cell" onClick={this.onIssuesClick}>{sprint.num_issues || 0} Issues
+                </td>
+		{ false && <td className="list-table__cell"><Progress issue={sprint} /></td> }
+		<td className="list-table__cell">{sprint.status_name}</td>
+		</tr>
             ))
-	      }
+	}
     }
 
     render() {

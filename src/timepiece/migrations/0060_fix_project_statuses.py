@@ -202,7 +202,12 @@ def forwards(apps, schema_editor):
               {'business_id': 99, 'pk': 1578, 'status2': u'waiting_to_invoice'}]
 
     for b in broken:
-        Project.objects.filter(pk=b['pk']).update(status3=ProjectStatus.objects.get_or_create(name=b['status2'], business_id=b['business_id'])[0])
+        try:
+            Project.objects.filter(pk=b['pk']).update(status3=ProjectStatus.objects.get_or_create(name=b['status2'], business_id=b['business_id'])[0])
+        except Exception:
+            # This has already been run in production, so this
+            # migration only has to not crash for developers.
+            pass
 
 class Migration(migrations.Migration):
 

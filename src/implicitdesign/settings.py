@@ -240,6 +240,12 @@ WSGI_APPLICATION = 'implicitdesign.wsgi.application'
 #     os.path.join(PROJECT_HOME, "templates"),
 # )
 
+PAGINATION_DEFAULT_PAGINATION=1000
+EL_PAGINATION_PER_PAGE=50
+EL_PAGINATION_ADD_NOFOLLOW=True
+
+
+
 REST_FRAMEWORK = {
    'DEFAULT_AUTHENTICATION_CLASSES': (
        'rest_framework.authentication.TokenAuthentication',
@@ -248,7 +254,7 @@ REST_FRAMEWORK = {
    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated'
    ),
-   'PAGINATE_BY': 20,
+   'PAGINATE_BY': PAGINATION_DEFAULT_PAGINATION,
 }
 
 INSTALLED_APPS = (
@@ -299,10 +305,6 @@ INSTALLED_APPS = (
 
     'devops'
 )
-
-PAGINATION_DEFAULT_PAGINATION=200
-EL_PAGINATION_PER_PAGE=50
-EL_PAGINATION_ADD_NOFOLLOW=True
 
 INVOICE_PAYMENT_DAYS=30
 
