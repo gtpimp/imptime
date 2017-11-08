@@ -24,3 +24,7 @@
 .sprint__is_clone {
     background-color: $color-34;
 }
+
+.sprint__num-issues-column:hover {
+    background: $button-active-background;
+}

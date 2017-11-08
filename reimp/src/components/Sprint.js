@@ -66,7 +66,7 @@ class Sprint extends Component {
 		<td className="list-table__cell">
                 <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
                 </td>
-		<td className="list-table__cell" onClick={this.onIssuesClick}>{sprint.num_issues || 0} Issues
+		<td className="list-table__cell sprint__num-issues-column" onClick={this.onIssuesClick}>{sprint.num_issues || 0} Issues
                 </td>
 		{ false && <td className="list-table__cell"><Progress issue={sprint} /></td> }
 		<td className="list-table__cell">{sprint.status_name}</td>
