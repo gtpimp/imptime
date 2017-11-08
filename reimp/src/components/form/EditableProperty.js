@@ -65,7 +65,7 @@ class EditableProperty extends Component {
 
     render() {
 
-        const {children, initial_value, is_readonly, is_editing, is_empty, edit_as_modal} = this.props
+        const {children, initial_value, is_readonly, is_editing, is_empty, edit_as_modal, class_name} = this.props
 
         const that = this
         let editing_child = null
@@ -97,7 +97,7 @@ class EditableProperty extends Component {
         }
 
         return (
-            <div onClick={this.startEditing}>
+            <div className={class_name} onClick={this.startEditing}>
               <div>
                 { is_editing && edit_as_modal &&
                   <Modal isOpen={true}
@@ -125,7 +125,7 @@ class EditableProperty extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {property_key, initial_value, edit_as_modal, can_edit} = props
+    const {property_key, initial_value, edit_as_modal, can_edit, class_name} = props
 
     return {
         property_key: property_key,
@@ -134,7 +134,8 @@ function mapStateToProps(state, props) {
         can_edit: can_edit,
         is_editing: can_edit && isEditing(state, property_key),
         is_readonly: isReadonly(state, property_key),
-        is_empty: !initial_value //isEmpty(state, property_key)
+        is_empty: !initial_value,
+        class_name: class_name || ""
     }
 }
 

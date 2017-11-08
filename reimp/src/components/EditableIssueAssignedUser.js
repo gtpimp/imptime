@@ -20,28 +20,27 @@ class EditableIssueAssignedUser extends Component {
     }
 
     render() {
-        const { project_id, issue, can_edit} = this.props
+        const { project_id, issue, can_edit, class_name} = this.props
 
         return (
-            <div>
-                <EditableProperty property_key='issue_assigned_to'
-                                  initial_value={issue && issue.assigned_to_id || null}
-                                  edit_as_modal={true}
-                                  onChange={this.onChange}
-                                  actionLabel="Assign to"
-                                  can_edit={can_edit}
-                >
-                    <IssueAssignedUserForm project_id={project_id}/>
-                    <OtherUser />
-                    <div className="text-component--empty">Unassigned</div>
-                </EditableProperty>
-            </div>
+            <EditableProperty property_key='issue_assigned_to'
+                              initial_value={issue && issue.assigned_to_id || null}
+                              edit_as_modal={true}
+                              onChange={this.onChange}
+                              class_name={class_name}
+                              actionLabel="Assign to"
+                              can_edit={can_edit}
+            >
+              <IssueAssignedUserForm project_id={project_id}/>
+              <OtherUser />
+              <div className="text-component--empty">Unassigned</div>
+            </EditableProperty>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { issue_ids } = props
+    const { issue_ids, class_name } = props
     const issues = getIssues(state, issue_ids) || []
     const issue = issues && issues.length > 0 && issues[0]
     const project_id = issue.project_id
@@ -51,7 +50,8 @@ function mapStateToProps(state, props) {
         issues: issues,
         issue: issue,
         project_id: project_id,
-        can_edit: can_edit
+        can_edit: can_edit,
+        class_name: class_name || ""
     }
 }
 

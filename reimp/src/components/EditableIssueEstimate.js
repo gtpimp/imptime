@@ -20,12 +20,13 @@ class EditableIssueEstimate extends Component {
     }
 
     render() {
-        const { issue, can_edit, estimate_hours } = this.props
+        const { issue, can_edit, estimate_hours, class_name } = this.props
 
         return (
             <EditableProperty property_key='issue_estimate'
                               initial_value={format_hours(estimate_hours)}
                               onChange={this.onChange}
+                              class_name={class_name}
                               can_edit={can_edit}
             >
               <IssueEstimateForm />
@@ -39,7 +40,7 @@ class EditableIssueEstimate extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { issue_id } = props
+    const { issue_id, class_name } = props
     const issue = getIssue(state, issue_id) || {}
     const can_edit = has_permission(state, issue.project_id, 'has_estimate_own_points')
     const estimate_hours = ((issue.my_estimate || [])[0] || {}).estimate_hours || null
@@ -47,7 +48,8 @@ function mapStateToProps(state, props) {
     return {
         issue,
         can_edit,
-        estimate_hours
+        estimate_hours,
+        class_name
     }
 }
 

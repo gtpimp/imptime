@@ -19,28 +19,27 @@ class EditableIssueStatus extends Component {
         dispatch(updateIssueStatus(issue_ids, new_value.issue_status_name))
     }
     render() {
-        const { issue, project_id, can_edit } = this.props
+        const { issue, project_id, can_edit, class_name } = this.props
 
         return (
-            <div>
-                <EditableProperty property_key='issue_status_name'
-                                  initial_value={issue && issue.status_name || null}
-                                  edit_as_modal={true}
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
-                                  actionLabel="Issue Status"
-                >
-                    <IssueStatusForm project_id={project_id}/>
-                    <IssueStatusLabel />
-                    <div className="text-component--empty">No status</div>
-                </EditableProperty>
-            </div>
+            <EditableProperty property_key='issue_status_name'
+                              initial_value={issue && issue.status_name || null}
+                              edit_as_modal={true}
+                              class_name={class_name}
+                              onChange={this.onChange}
+                              can_edit={can_edit}
+                              actionLabel="Issue Status"
+            >
+              <IssueStatusForm project_id={project_id}/>
+              <IssueStatusLabel />
+              <div className="text-component--empty">No status</div>
+            </EditableProperty>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { issue_ids } = props
+    const { issue_ids, class_name } = props
     const issues = getIssues(state, issue_ids) || []
     const issue = issues && issues.length > 0 && issues[0]
     const project_id = issue.project_id
@@ -50,7 +49,8 @@ function mapStateToProps(state, props) {
         issues: issues,
         issue: issue,
         project_id: project_id,
-        can_edit: can_edit
+        can_edit: can_edit,
+        class_name
     }
 }
 

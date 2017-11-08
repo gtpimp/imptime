@@ -21,9 +21,9 @@ import {
     getUser
 } from '../actions/Users'
 import OtherUser from '../components/OtherUser'
-import RIEDropDown from '../widgets/RIEDropDown'
-import RIEModeToggler from '../widgets/RIEModeToggler'
-import RIEUserDropDown from '../widgets/RIEUserDropDown'
+import EditableIssueAssignedUser from './EditableIssueAssignedUser'
+import EditableIssueStatus from './EditableIssueStatus'
+import EditableIssueEstimate from './EditableIssueEstimate'
 import Progress from '../components/Progress'
 import IssueEstimatesSummary from '../components/IssueEstimatesSummary'
 import TimerSwitch from '../components/TimerSwitch'
@@ -229,16 +229,7 @@ class Issue extends Component {
                   }
                   {includes(visible_header_keys, "assignee") &&
                    <td className="list-table__cell list-table__cell--issue-assignee">
-                     <OtherUser user_id={issue.assigned_to_id}/>
-                     { false &&
-                       <RIEModeToggler
-                           rie_key={"issue_assigned_to_" + issue.id}
-                           initialValue={issue.assigned_to_id || "..."}
-                           onChange={(new_value) =>
-                               this.onChangeAssignedTo(issue.id, new_value)}>
-                         <RIEUserDropDown user_ids={assignable_user_ids}/>
-                       </RIEModeToggler>
-                     }
+                     <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
                    </td>
                   }
                   {includes(visible_header_keys, "created_at") &&
@@ -248,22 +239,17 @@ class Issue extends Component {
                   }
                    {includes(visible_header_keys, "status") &&
                     <td className="list-table__cell list-table__cell--issue-status">
-                      <IssueStatusLabel value={issue.status_name}/>
+                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </td>
                    }
-                  { false &&
-                    <td className="list-table__cell list-table__cell--issue-sprint">
-                      1
-                    </td>
-                  }
                   {includes(visible_header_keys, "progress") &&
                    <td className="list-table__cell list-table__cell--issue-progress">
                      <Progress issue={issue}/>
                    </td>
                   }
-                  {includes(visible_header_keys, "estimates") &&
+                  {includes(visible_header_keys, "estimated") &&
                    <td className="list-table__cell list-table__cell--issue-estimates">
-                     <IssueEstimatesSummary issue_id={issue.id} />
+                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                    </td>
                   }
                   {includes(visible_header_keys, "tags") &&

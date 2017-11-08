@@ -85,3 +85,35 @@
     height:15px;
 }
 
+.issue-cell__assignee {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.issue-cell__assignee:hover {
+    background: $button-hover-background;
+}
+
+.issue-cell__status {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.issue-cell__status:hover {
+    background: $button-hover-background;
+}
+
+.issue-cell__my-estimate {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.list-table__cell--issue-name:hover {
+    background: $button-hover-background;
+}
