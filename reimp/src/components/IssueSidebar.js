@@ -37,6 +37,7 @@ class IssueSidebar extends Component {
         super(props)
         this.showEmacsIssue = this.showEmacsIssue.bind(this)
         this.showEmacsSprint = this.showEmacsSprint.bind(this)
+        this.showGitCommitMessage = this.showGitCommitMessage.bind(this)
     }
 
     componentDidMount() {
@@ -56,6 +57,12 @@ class IssueSidebar extends Component {
     showEmacsSprint() {
         const { issue, sprint } = this.props
         const text = "** sprint#" + sprint.id + " " + sprint.name
+        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    }
+
+    showGitCommitMessage() {
+        const { issue, sprint } = this.props
+        const text = "#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject
         window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
     }
     
@@ -81,15 +88,20 @@ class IssueSidebar extends Component {
                           <div className="text-component--readonly">
                             #{issue.number}
                           </div>
-                          <div className="text-component--readonly">
+                          <EditableIssueTitle issue_id={issue.id}/>
+                        </PropertyStackComponent>
+
+                        <PropertyStackComponent title="Description">
+                          <EditableIssueDescription issue_id={issue.id}/>
+                        </PropertyStackComponent>
+                        
+                        <PropertyStackComponent>
+                          <div>
                             Created <Timestamp value={issue.created_at} format="from_now" />
                             { issue.created_by_id &&
                               <div>by <OtherUser user_id={issue.created_by_id} /></div>
                             }
                           </div>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent>
                           <div onClick={this.showEmacsIssue}>
                             Issue
                             <div className="issue_sidebar__emacs_copy_img" />
@@ -98,14 +110,10 @@ class IssueSidebar extends Component {
                             Sprint
                             <div className="issue_sidebar__emacs_copy_img" />
                           </div>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent>
-                          <EditableIssueTitle issue_id={issue.id}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Description">
-                          <EditableIssueDescription issue_id={issue.id}/>
+                          <div onClick={this.showGitCommitMessage}>
+                            Git commit message
+                            <div className="issue_sidebar__git_img" />
+                          </div>
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Testables">
@@ -123,7 +131,7 @@ class IssueSidebar extends Component {
                           }
                           <EditableIssueComment issue_id={issue.id} comment_id={null}/>
                         </PropertyStackComponent>
-                        
+
                         <PropertyStackComponent title="Assigned User">
                           <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
                         </PropertyStackComponent>
@@ -132,23 +140,23 @@ class IssueSidebar extends Component {
                           <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
                         </PropertyStackComponent>
 
+                        <PropertyStackComponent title="Estimates">
+                          <IssueEstimatesSummary issue_id={issue.id} />
+                          <div>
+                            My estimate: <EditableIssueEstimate issue_id={issue.id} />
+                          </div>
+                        </PropertyStackComponent>
+
                         <PropertyStackComponent title="Sprint Name">
                           <EditableIssueInSprint issue_ids={[issue.id]}/>
                         </PropertyStackComponent>
-
+                        
                         <PropertyStackComponent title="Attachments">
                           { map(attachments, function (attachment, index) {
                                 return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
                             })
                           }
                           <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Estimates">
-                          <IssueEstimatesSummary issue_id={issue.id} />
-                          <div>
-                            My estimate: <EditableIssueEstimate issue_id={issue.id} />
-                          </div>
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Visual Spec Documents">
