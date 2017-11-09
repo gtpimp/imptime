@@ -3970,7 +3970,14 @@ class ProjectIssueOrder(BaseModel):
                 pio.order = order
                 pio.save()
             order += self.INCREMENT
-        
+
+    @classmethod
+    def sort_these_issue_ids(self, project_id, unordered_issue_ids):
+        return ProjectIssueOrder.objects.filter(project=project_id)\
+                                        .filter(issue_id__in=unordered_issue_ids)\
+                                        .order_by("order")\
+                                        .values_list("issue_id", flat=True)
+            
     @classmethod
     def get_next_order(self, project_id, issue_qs=None):
         if issue_qs is None:

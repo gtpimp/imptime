@@ -105,9 +105,15 @@ class IssueViewSet(BaseViewSet):
 
             if 'issue_ids' in params:
                 issue_pks = params['issue_ids']
+                project_id = Issue.objects.filter(pk=issue_pks[0]).values_list('project_id', flat=True)[0]
+                issue_pks = SprintIssueOrder.sort_these_issue_ids(project_id, set(issue_pks))
+
+                if field_name == 'issue_id_after':
+                    # need to reverse sort because of how the function works
+                    issue_pks = issue_pks.reverse()
             else:
                 issue_pks = [pk]
-
+                
             for issue_pk in issue_pks:
                 issue = self.allowed_issue(issue_pk)
 
