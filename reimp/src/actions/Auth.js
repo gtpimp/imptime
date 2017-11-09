@@ -141,3 +141,7 @@ export function can_create_release_notes() {
 export function can_delete_release_notes() {
     return is_superuser()
 }
+
+export function can_seen_by_release_notes() {
+    return is_superuser()
+}

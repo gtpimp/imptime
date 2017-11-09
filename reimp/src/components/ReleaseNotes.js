@@ -23,8 +23,9 @@ import {
     deleteReleaseNote
 } from '../actions/ReleaseNotes'
 import { ENTITY_KEY__RELEASE_NOTE } from '../actions/ItemListKeyRegistry'
+import OtherUser from './OtherUser'
 import Timestamp from './Timestamp'
-import { can_delete_release_notes } from '../actions/Auth'
+import { can_delete_release_notes, can_seen_by_release_notes } from '../actions/Auth'
 
 class ReleaseNotes extends Component {
 
@@ -52,7 +53,7 @@ class ReleaseNotes extends Component {
     
     render() {
 
-        const { release_notes, is_loading, has_delete_permission } = this.props
+        const { release_notes, is_loading, has_delete_permission, has_seen_by_permission } = this.props
         const that = this
 
         if ( is_loading ) {
@@ -73,6 +74,18 @@ class ReleaseNotes extends Component {
                                 <Timestamp value={release_note.created_at} />
                               </div>
                             }
+                            { has_seen_by_permission &&
+                              <div className="release_note__seen_by">
+                                { release_note.seen_by_user_ids.length == 0 && <div>Not seen by anyone yet</div> }
+                                { release_note.seen_by_user_ids.length > 0 &&
+                                  <div>
+                                    Seen by:
+                                    {map(release_note.seen_by_user_ids, (user_id) => <OtherUser user_id={user_id} />)}
+                                  </div>
+                                }
+                              </div>
+                            } 
+                            
                             <div className="release_note__header_title">
                               {release_note.header}
                             </div>
@@ -101,6 +114,7 @@ function mapStateToProps(state, props) {
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__RELEASE_NOTE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
     const has_delete_permission = can_delete_release_notes(state)
+    const has_seen_by_permission = can_seen_by_release_notes(state)
 
     return {
         release_notes: visible_items,
@@ -108,7 +122,8 @@ function mapStateToProps(state, props) {
         loading_item_ids,
         is_loading,
         last_updated,
-        has_delete_permission
+        has_delete_permission,
+        has_seen_by_permission
     }
 }
 

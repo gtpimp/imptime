@@ -8,6 +8,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.models import ReleaseNote, ReleaseNoteSeen
+from timepiece.models import GlobalPermissions
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class ReleaseNoteViewSet(BaseViewSet):
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in release_notes.values_list('id', flat=True)]
             else:
-                s = ReleaseNoteSerializer(release_notes, many=True)
+                s = ReleaseNoteSerializer(release_notes, many=True, logged_in_user=request.user)
                 release_notes_data = s.data
                 context['release_notes'] = release_notes_data
             context['pagination'] = pagination
@@ -78,7 +79,7 @@ class ReleaseNoteViewSet(BaseViewSet):
             header = params['header']
             content = params['content']
 
-            if not request.user.is_superuser:
+            if not GlobalPermissions().has_update_release_notes_permission(request.user):
                 raise Exception("Can't update release notes")
             
             release_note = self.allowed_release_notes().get(pk=release_note_id)
@@ -101,14 +102,14 @@ class ReleaseNoteViewSet(BaseViewSet):
             header = params['header']
             content = params['content']
 
-            if not request.user.is_superuser:
+            if not GlobalPermissions().has_update_release_notes_permission(request.user):
                 raise Exception("Can't create release notes")
             
             release_note = ReleaseNote.objects.create(
                 header=header,
                 content=content)
 
-            context['release_note'] = ReleaseNoteSerializer(release_note).data
+            context['release_note'] = ReleaseNoteSerializer(release_note, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': { 'item': context }}
             return HttpResponse(JSONRenderer().render(data))
 
@@ -120,7 +121,7 @@ class ReleaseNoteViewSet(BaseViewSet):
         try:
             release_note_id = pk
 
-            if not request.user.is_superuser:
+            if not GlobalPermissions().has_update_release_notes_permission(request.user):
                 raise Exception("Can't delete release notes")
             
             release_note = self.allowed_release_notes().get(pk=release_note_id)

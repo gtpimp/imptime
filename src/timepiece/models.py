@@ -402,6 +402,12 @@ class Feature(BaseModel):
     def __unicode__(self):
         return self.name
 
+class GlobalPermissions():
+    """ should be replaced by real django permissions probably, it's just such a mess right now """
+
+    def has_update_release_notes_permission(self, user):
+        return user and user.is_superuser
+    
 class BusinessPermissions(BaseModel):
 
     class Meta:
