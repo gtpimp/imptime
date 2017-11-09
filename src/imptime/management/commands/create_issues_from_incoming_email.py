@@ -3,6 +3,7 @@ from timepiece.models import Project as Sprint
 from django.core.mail import send_mail
 from timepiece.models import Business as Project
 from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import ProjectStatus as SprintStatus
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
 import html2text
@@ -271,9 +272,9 @@ class Command(BaseCommand):
                                                               'number':Issue.get_next_issue_number(project),
                                                               'description':raw_issue['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
                                                               'story_points':0,
-                                                              'order':Issue.get_next_order(sprint),
                                                               'created':message['time'],
                                                               'modified':message['time']})
+        SprintIssueOrder.insert_at_the_end(issue)
 
         if not is_new:
             IssueComment.objects.create(issue=issue,

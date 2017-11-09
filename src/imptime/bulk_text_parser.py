@@ -1,5 +1,6 @@
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
 from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from django.utils import timezone
 from django.conf import settings
 import logging
@@ -38,9 +39,9 @@ class BulkTextParser(object):
                                                               'number':Issue.get_next_issue_number(sprint.business), #sic
                                                               'description':description[0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
                                                               'story_points':0,
-                                                              'order':Issue.get_next_order(sprint),
                                                               'created':timezone.now(),
                                                               'modified':timezone.now()})
+        SprintIssueOrder.insert_at_the_end(issue)
 
         logger.debug("Created issue %s %s" % (issue.id, issue.subject))
         return issue

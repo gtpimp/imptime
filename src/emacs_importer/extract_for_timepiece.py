@@ -7,7 +7,8 @@ from timepiece.interface_plugin import get_interface_plugin
 from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from django.contrib.auth.models import User
-from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus
+from timepiece.models import Business, Project, Activity, Entry, Location, Attribute,
+from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder
 import logging
 logger = logging.getLogger(__name__)
 
@@ -153,8 +154,8 @@ class Extractor(object):
                                                                       'assigned_to':timesheet_user,
                                                                       'number':Issue.get_next_issue_number(project.business),
                                                                       'description':orgnode.CleanBody(),
-                                                                      'story_points':0,
-                                                                      'order':Issue.get_next_order(project)})
+                                                                      'story_points':0})
+                
                 if is_new:
                     self.status['num_issues_created'] += 1
             except Issue.MultipleObjectsReturned:
