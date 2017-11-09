@@ -2044,7 +2044,10 @@ class Project(BaseModel):
         return settings.TRAC_URL % self.tracker_url
 
     def get_ordered_issues(self):
-        return Issue.objects.filter(project=self).order_by_project_id(self.id)
+        qs = Issue.objects.filter(project=self)
+        if self.id:
+            qs = qs.order_by_project_id(self.id)
+        return qs
 
     def get_ctc_and_billable_totals(self):
         totals = Issue.objects.filter(project_id=self.id).values('fixed_ctc_amount', 'fixed_amount').aggregate(
@@ -3586,11 +3589,17 @@ class IssueQuerySet(QuerySet):
         return self.filter(project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def order_by_project_id(self, project_id):
-        issue_ids_in_order = ProjectIssueOrder.objects.filter(project_id=project_id)\
-                                                      .order_by("order")\
-                                                      .values_list("issue_id", flat=True)
-        preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(issue_ids_in_order)])
-        return self.order_by(preserved)
+        if project_id:
+            issue_ids_in_order = ProjectIssueOrder.objects.filter(project_id=project_id)\
+                                                          .order_by("order")\
+                                                          .values_list("issue_id", flat=True)
+            if issue_ids_in_order.count() == 0:
+                return self
+            preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(issue_ids_in_order)])
+            
+            return self.order_by(preserved)
+        else:
+            return self
         
     
 class Issue(BaseModel):
@@ -3889,6 +3898,9 @@ class ProjectIssueOrder(BaseModel):
     issue = ProtectedForeignKey(Issue)
     project = ProtectedForeignKey(Project)
 
+    class Meta:
+        unique_together = ('project', 'issue')
+    
     INCREMENT=10
     MAX_ORDER=999999
 

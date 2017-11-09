@@ -239,7 +239,8 @@ class IssueList extends Component {
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
         const {dispatch, list_key} = this.props
-        dispatch(reorderIssue(moving_issue_id, move_after_issue_id, list_key,
+        const selected_ids = concat(this.props.selected_ids || [], this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id))
+        dispatch(reorderIssue(selected_ids, move_after_issue_id, list_key,
                               function () {
                                   dispatch(invalidateList(list_key))
                                   dispatch(fetchIssuesIfNeeded(list_key))

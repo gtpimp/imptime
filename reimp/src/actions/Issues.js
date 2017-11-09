@@ -672,10 +672,10 @@ export function setIssueStoreValue(issue_ids, field_name, new_value) {
     }
 }
 
-export function reorderIssue(moving_issue_id, issue_id_after, list_key, on_done) {
+export function reorderIssue(moving_issue_ids, issue_id_after, list_key, on_done) {
     return (dispatch, getState) => {
-        dispatch(updateVisibleItemIdAbove(list_key, moving_issue_id, issue_id_after))
-        dispatch(updateIssue([moving_issue_id], "issue_id_after", issue_id_after, on_done))
+        dispatch(updateVisibleItemIdAbove(list_key, moving_issue_ids, issue_id_after))
+        dispatch(updateIssue(moving_issue_ids, "issue_id_after", issue_id_after, on_done))
     }
 }
 
