@@ -7,7 +7,7 @@ from timepiece.interface_plugin import get_interface_plugin
 from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from django.contrib.auth.models import User
-from timepiece.models import Business, Project, Activity, Entry, Location, Attribute,
+from timepiece.models import Business, Project, Activity, Entry, Location, Attribute
 from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder
 import logging
 logger = logging.getLogger(__name__)
