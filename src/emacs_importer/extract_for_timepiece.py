@@ -155,7 +155,7 @@ class Extractor(object):
                                                                       'number':Issue.get_next_issue_number(project.business),
                                                                       'description':orgnode.CleanBody(),
                                                                       'story_points':0})
-                
+                ProjectIssueOrder.insert_at_the_end(issue)
                 if is_new:
                     self.status['num_issues_created'] += 1
             except Issue.MultipleObjectsReturned:
