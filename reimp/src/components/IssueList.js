@@ -85,7 +85,7 @@ class IssueList extends Component {
                 selected_issue_ids = union(selected_ids, [issue_id])
             }
         } else if (event.shiftKey) {
-            selected_issue_ids = this.findIssuesFromHereToAlreadySelected(issue_id)
+            selected_issue_ids = concat(selected_ids, this.findIssuesFromHereToAlreadySelected(issue_id))
         } else {
             selected_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(issue_id)
         }
