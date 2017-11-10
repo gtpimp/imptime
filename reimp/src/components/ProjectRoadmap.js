@@ -23,6 +23,7 @@ import {
     fetchSprintsIfNeeded,
 } from '../actions/Sprints'
 import SprintName from './SprintName'
+import Timestamp from './Timestamp'
 
 class ProjectRoadmap extends Component {
 
@@ -77,14 +78,37 @@ class ProjectRoadmap extends Component {
         return dimensions
     }
 
-    renderSprint(sprint) {
+    renderSprintContent__ActualDuration(sprint, dimensions) {
+        return (
+            <div>
+              { sprint.first_entry &&
+                <div>
+                  First clock: <Timestamp value={sprint.first_entry.start_time} format="datetime" />
+                </div>
+              }
+              { sprint.last_entry &&
+                <div>
+                  Last clock: <Timestamp value={sprint.last_entry.end_time} format="datetime" />
+                </div>
+              }
+              { !sprint.last_entry &&
+                <div>
+                  No clocked time yet
+                </div>
+              }
+            </div>
+        )
+    }
 
+    renderSprint(sprint) {
+        const { sprint_width_mode } = this.props
         const dimensions = this.getSprintDimensions(sprint)
         
         return (
             <div key={sprint.id} className="project-roadmap__sprint">
               <div>
                 <SprintName sprint_id={sprint.id} />
+                { sprint_width_mode=='clock' && this.renderSprintContent__ActualDuration(sprint, dimensions) }
               </div>
               <div className="project-roadmap__duration" style={{width:dimensions.width_percentage}}>
                 {dimensions.width_days} days
