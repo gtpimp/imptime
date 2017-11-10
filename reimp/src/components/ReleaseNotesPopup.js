@@ -33,9 +33,14 @@ class ReleaseNotesPopup extends Component {
         dispatch(fetchReleaseNotesIfNeeded(list_key))
     }
 
-    closeModal() {
+    looksGood() {
         const { dispatch, release_note_ids } = this.props
         dispatch(markReleaseNotesAsSeen(release_note_ids))
+        this.setState({userClosedModal: true})
+    }
+
+    willReadLater() {
+        const { dispatch, release_note_ids } = this.props
         this.setState({userClosedModal: true})
     }
 
@@ -52,7 +57,8 @@ class ReleaseNotesPopup extends Component {
                    contentLabel="Release Notes"
                    onRequestClose={this.closeModal} >
               <h2>Some things have changed</h2>
-              <button className="release-notes__close button button--primary button--large" onClick={this.closeModal}>close</button>
+              <button className="release-notes__close button button--primary button--large" onClick={this.looksGood}>Yup, whatever</button>
+              <button className="release-notes__close button button--primary button--large" onClick={this.willReadLater}>Will read later</button>
               <ReleaseNotes list_key={list_key} />
             </Modal>
         )
