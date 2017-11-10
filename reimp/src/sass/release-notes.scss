@@ -27,6 +27,12 @@
 .release_note__content {
 }
 
+.release-notes__buttons {
+    float: right;
+    display:flex;
+    flex-direction: column;
+}
+
 .issue__small-delete-image {
     float: right;
 }
@@ -35,4 +41,8 @@
     float: right;
     font-size: $font-size-small;
     clear: right;
+}
+
+.release-notes__later {
+    margin-top: 10px;
 }
