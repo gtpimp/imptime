@@ -80,7 +80,7 @@ class SprintSidebar extends Component {
                     
                     <PropertyStackComponent>
                         <div className="property-text">
-                            <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                            Status: <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
                         </div>
                     </PropertyStackComponent>
                     

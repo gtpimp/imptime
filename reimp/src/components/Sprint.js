@@ -6,6 +6,7 @@ import {browserHistory} from 'react-router'
 import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
 import Timestamp from '../components/Timestamp'
+import EditableSprintStatus from '../components/EditableSprintStatus'
 import moment from 'moment'
 import '../sass/sprint.css'
 
@@ -69,7 +70,9 @@ class Sprint extends Component {
 		<td className="list-table__cell sprint__num-issues-column" onClick={this.onIssuesClick}>{sprint.num_issues || 0} Issues
                 </td>
 		{ false && <td className="list-table__cell"><Progress issue={sprint} /></td> }
-		<td className="list-table__cell">{sprint.status_name}</td>
+		<td className="list-table__cell">
+                  <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                </td>
 		</tr>
             ))
 	}

@@ -35,10 +35,10 @@ class SprintStatusForm extends Component {
         const {input, data, ...rest} = field
         return (
             <SingleValueSelector
-                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
-                value={input.value}
-                options={data}
-                {...rest}
+            onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+            value={input.value}
+            options={data}
+            {...rest}
             />
         )
     }
@@ -47,16 +47,16 @@ class SprintStatusForm extends Component {
         const { handleSubmit, status_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="status">Status</label>
-                    <Field name="sprint_status_name"
-                           component={this.renderSingleValueSelector}
-                           valueField="value"
-                           textField="label"
-                           data={status_options}
-                    />
-                </div>
-                <button type="submit">Submit</button>
+            <div>
+            <label htmlFor="status">Status</label>
+            <Field name="sprint_status_name"
+            component={this.renderSingleValueSelector}
+            valueField="value"
+            textField="label"
+            data={status_options}
+            />
+            </div>
+            <button type="submit">Submit</button>
             </form>
         )
     }
@@ -64,7 +64,7 @@ class SprintStatusForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project_id, onChange } = props
+    const { project_id, onSubmitted } = props
     const project = getProject(state, project_id) || {}
     const status_names = project.allowed_sprint_status_names || []
     const status_options = status_names.map(function(status_name) {
@@ -74,7 +74,7 @@ function mapStateToProps(state, props) {
     return {
         initialValues: {assigned_to: props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange,
+        onSubmit: onSubmitted,
         status_options: status_options,
         project_id: project_id,
         project: project

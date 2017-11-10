@@ -28,3 +28,14 @@
 .sprint__num-issues-column:hover {
     background: $button-active-background;
 }
+
+.sprint-cell__status {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.sprint-cell__status:hover {
+    background: $button-hover-background;
+}
