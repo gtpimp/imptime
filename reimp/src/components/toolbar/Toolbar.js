@@ -15,6 +15,7 @@ import IssuesToolbarPanel from './IssuesToolbarPanel'
 import ListToolbarPanel from './ListToolbarPanel'
 import CostSummaryToolbarPanel from './CostSummaryToolbarPanel'
 import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
+import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 
@@ -52,6 +53,8 @@ class ToolBar extends Component {
                 return <BulkCreateIssuesToolbarPanel key='bulk-issue-creator' {...this.props}/>
             case 'release-notes':
                 return <ReleaseNotesToolbarPanel key='release-notes' {...this.props}/>
+            case 'project-roadmap':
+                return <ProjectRoadmapToolbarPanel key='project-roadmap' {...this.props} />
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

@@ -17,6 +17,7 @@ import ReactDOM from 'react-dom';
 import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
+import ProjectRoadmapPage from './containers/ProjectRoadmapPage'
 import ReleaseNotesPage from './containers/ReleaseNotesPage'
 import SprintsPage from './containers/SprintsPage'
 import SprintTemplatesPage from './containers/SprintTemplatesPage'
@@ -29,10 +30,10 @@ import {syncHistoryWithStore} from 'react-router-redux'
 import Raven from 'raven-js'
 
 /* /projects
- /projects/{project-id}
- /projects/{project-id}/sprints
- /projects/{project-id}/sprints/{sprint-id}
- /projects/{project-id}/issues/{issue-id}*/
+   /projects/{project-id}
+   /projects/{project-id}/sprints
+   /projects/{project-id}/sprints/{sprint-id}
+   /projects/{project-id}/issues/{issue-id}*/
 
 const store = configureStore({})
 const history = syncHistoryWithStore(browserHistory, store)
@@ -44,35 +45,36 @@ if (RAVEN_DSN) {
 
 ReactDOM.render(
     <Provider store={store}>
-        <Router history={history}>
-            <Route component={MainLayout}>
-                <IndexRoute component={ProjectsPage}/>
-                <Route path="/" component={ProjectsPage}/>
-                <Route path="/password/change" component={ChangePasswordPage}/>
-                <Route path="/password/forgot" component={ForgotPasswordPage}/>
-                <Route path="/password/reminded" component={PasswordReminderSentPage}/>
-                <Route path="dev" component={DevPage}/>
-                <Route path="release_notes_editor" component={ReleaseNotesPage}/>
-                <Route path="projects" component={ProjectsPage}/>
-                <Route path="projects/:projectId" component={ProjectDashboardPage}/>
-                <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
-                <Route path="projects/:projectId/sprints" component={SprintsPage}/>
-                <Route path="projects/:projectId/sprintTemplates" component={SprintTemplatesPage}/>
-                <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
-                <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
-                <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
-                <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
-                <Route path="projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
-                <Route path="projects/:projectId/users" component={ProjectUserPage}/>
-                <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
-                <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+      <Router history={history}>
+        <Route component={MainLayout}>
+          <IndexRoute component={ProjectsPage}/>
+          <Route path="/" component={ProjectsPage}/>
+          <Route path="/password/change" component={ChangePasswordPage}/>
+          <Route path="/password/forgot" component={ForgotPasswordPage}/>
+          <Route path="/password/reminded" component={PasswordReminderSentPage}/>
+          <Route path="dev" component={DevPage}/>
+          <Route path="release_notes_editor" component={ReleaseNotesPage}/>
+          <Route path="projects" component={ProjectsPage}/>
+          <Route path="projects/:projectId" component={ProjectDashboardPage}/>
+          <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
+          <Route path="projects/:projectId/sprints" component={SprintsPage}/>
+          <Route path="projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
+          <Route path="projects/:projectId/sprintTemplates" component={SprintTemplatesPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
+          <Route path="projects/:projectId/users" component={ProjectUserPage}/>
+          <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
 
-                <Route path="dashboard" component={DashboardPage}/>
-                <Route path="usertimesheets" component={UserTimesheetPage}/>
-                <Route path="clients" component={ClientsPage}/>
-                <Route path="team" component={TeamPage}/>
-            </Route>
-        </Router>
+          <Route path="dashboard" component={DashboardPage}/>
+          <Route path="usertimesheets" component={UserTimesheetPage}/>
+          <Route path="clients" component={ClientsPage}/>
+          <Route path="team" component={TeamPage}/>
+        </Route>
+      </Router>
     </Provider>,
     document.getElementById('root')
 )

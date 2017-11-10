@@ -1,0 +1,21 @@
+@import 'variables.scss';
+
+.project-roadmap__sprint {
+    border: 1px solid $form-field-border;
+    padding: 5px;
+    display: block;
+    margin: 10px;
+    background-color: yellow;
+}
+
+.project-roadmap__sprint-content  {
+}
+
+.project-roadmap__duration {
+    background-color:  green;
+}
+
+.project-roadmap {
+    max-width:  50%;
+}
+

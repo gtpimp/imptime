@@ -51,18 +51,18 @@ export function update_list_format(list_key, format) {
 }
 
 export function collapse_list(list_key) {
-    return {
-	      type: UPDATE_LIST_DISPLAY_MODE,
-	      list_key: list_key,
-	      display_mode: 'collapsed'
-    }
+    return setDisplayMode(list_key, 'collapsed')
 }
 
 export function expand_list(list_key) {
+    return setDisplayMode(list_key, 'expanded')
+}
+
+export function setDisplayMode(list_key, display_mode) {
     return {
-	      type: UPDATE_LIST_DISPLAY_MODE,
-	      list_key: list_key,
-	      display_mode: 'expanded'
+	type: UPDATE_LIST_DISPLAY_MODE,
+	list_key: list_key,
+	display_mode: display_mode
     }
 }
 

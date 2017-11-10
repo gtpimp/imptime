@@ -18,6 +18,7 @@ class ProjectDashboardToolbarPanel extends Component {
         this.navigateToSprintTemplatesPage = this.navigateToSprintTemplatesPage.bind(this)
         this.navigateToProjectUsersPage = this.navigateToProjectUsersPage.bind(this)
         this.navigateToProjectStatementPage = this.navigateToProjectStatementPage.bind(this)
+        this.navigateToProjectRoadmapPage = this.navigateToProjectRoadmapPage.bind(this)
     }
 
     onDeleteProjectClick() {
@@ -50,16 +51,22 @@ class ProjectDashboardToolbarPanel extends Component {
         browserHistory.push('/projects/'+project_id+'/projectStatement');
     }
 
+    navigateToProjectRoadmapPage() {
+        const { project_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/roadmap');
+    }
+
     render() {
         return (
             <div className="toolbar-panel">
-                <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
-                <button className="button button--large button--primary" onClick={this.navigateToSprintTemplatesPage}>Sprint templates</button>
-                <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
-                <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
-                <ToolbarButton tooltip="Back" icon="subdirectory_arrow_left" onClick={this.onOpenProjectClick}/>
-                <ToolbarButton tooltip="Delete" icon="delete" onClick={this.onDeleteProjectClick}/>
-                <ReactTooltip place="bottom" type="info" />
+              
+              <button className="button button--large button--primary" onClick={this.navigateToSprintTemplatesPage}>Sprint templates</button>
+              <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
+              <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
+              <button className="button button--large button--primary" onClick={this.navigateToProjectRoadmapPage}>Roadmap</button>
+              <ToolbarButton tooltip="Back" icon="subdirectory_arrow_left" onClick={this.onOpenProjectClick}/>
+              <ToolbarButton tooltip="Delete" icon="delete" onClick={this.onDeleteProjectClick}/>
+              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

@@ -21,6 +21,7 @@ class ProjectsToolbarPanel extends Component {
         this.onNewProjectClick = this.onNewProjectClick.bind(this)
         this.onDashboardClick = this.onDashboardClick.bind(this)
         this.onSprintsClick = this.onSprintsClick.bind(this)
+        this.onRoadmapClick = this.onRoadmapClick.bind(this)
     }
 
     componentDidMount() {
@@ -46,24 +47,40 @@ class ProjectsToolbarPanel extends Component {
         browserHistory.push('/projects/' + project_id);
     }
 
+    onRoadmapClick() {
+        const {project_id} = this.props
+        browserHistory.push('/projects/' + project_id + '/roadmap/');
+    }
+
     onSprintsClick() {
         const {project_id} = this.props
         browserHistory.push('/projects/' + project_id + '/sprints');
     }
 
     render() {
-
+        const { project_id } = this.props
+        
         return (
             <div className="toolbar-panel">
               <div className="button button--large button--primary" onClick={this.onNewProjectClick}>
                 + New Project
               </div>
-              <div className="button button--large button--primary" onClick={this.onSprintsClick}>
-                Sprints
-              </div>
-              <div className="button button--large button--primary" onClick={this.onDashboardClick}>
-                Dashboard
-              </div>
+              { project_id && 
+                <div className="button button--large button--primary" onClick={this.onSprintsClick}>
+                  Sprints
+                </div>
+              }
+              { project_id && 
+                <div className="button button--large button--primary" onClick={this.onDashboardClick}>
+                  Dashboard
+                </div>
+              }
+              { project_id && 
+                <div className="button button--large button--primary" onClick={this.onRoadmapClick}>
+                  Roadmap
+                </div>
+              }
+              
             </div>
         )
     }
