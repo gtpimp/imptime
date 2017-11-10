@@ -253,6 +253,8 @@ class Business(BaseModel):
             IssueStatus.objects.get_or_create(name=name, business=self)
         for code, name in Project.PROJECT_STATUSES:
             ProjectStatus.objects.get_or_create(name=name, business=self)
+        for code, name in ProjectDeadlineType.DEFAULT_PROJECT_DEADLINE_TYPES:
+            ProjectDeadlineType.objects.get_or_create(name=name, business=self)
     
     def get_traffic_owners(self):
         return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_traffic_checklist=True)]
@@ -4465,3 +4467,26 @@ class Schedule(BaseModel):
         num_days -= leave_days
         return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
                  'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
+
+    
+class ProjectDeadlineType(BaseModel):
+    DEFAULT_PROJECT_DEADLINE_TYPES = ( ('start_dev', 'Start development'),
+                                       ('start_internal_qa', 'Start internal QA'),
+                                       ('end_external_qa', 'End external QA') )
+    
+    business = ProtectedForeignKey(Business, related_name='deadline_types')
+    name = models.CharField(max_length=100, null=False)
+
+
+    class Meta:
+        unique_together = ('name', 'business')
+
+
+class ProjectDeadline(BaseModel):
+    project = ProtectedForeignKey(Project, null=False)
+    deadline_type = ProtectedForeignKey(ProjectDeadlineType, null=False)
+    deadline = models.DateTimeField(null=True)
+    is_hard_deadline = models.BooleanField()
+    represents_project_start = models.BooleanField()
+    represents_project_end = models.BooleanField()
+
