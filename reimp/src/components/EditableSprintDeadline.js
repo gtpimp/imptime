@@ -55,38 +55,43 @@ class EditableSprintDeadline extends Component {
         if ( ! can_view ) {
             return (<div>No permission to view deadlines</div>)
         }
+
+        return null
         
         return (
 
             <div>
               { deadline.id &&
-                <EditableProperty property_key={'sprint_deadline_'+sprint_id+'_'+deadline.id}
-                                  initial_value={deadline.deadline}
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
-                    >
-                  <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
-                                    sprint_id={sprint_id} deadline={deadline}/>
-                  <div className="text-component--readonly text-component--deadline">
-                    <div className="sprint_sidebar--deadline_date" >
-                      {deadline.deadline_type_name}
+                <div>
+                  <EditableProperty property_key={'sprint_deadline_'+sprint_id+'_'+deadline.id}
+                                    initial_value={deadline.deadline}
+                                    onChange={this.onChange}
+                                    can_edit={can_edit}
+                  >
+                    <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
+                                        sprint_id={sprint_id} deadline={deadline}/>
+                    <div className="text-component--readonly text-component--deadline">
+                      <div className="sprint_sidebar--deadline_date" >
+                        {deadline.deadline_type_name}
+                      </div>
+                      <div className="sprint_sidebar--textarea--readonly" >
+                        <Timestamp value={deadline.deadline} />
+                      </div>
                     </div>
-                    <div className="sprint_sidebar--textarea--readonly" >
-                      <Timestamp value={deadline.deadline} />
+                    <div className="text-component">
+                      {deadline.description}
                     </div>
-                  </div>
-                  <div className="text-component">
-                    {deadline.description}
-                  </div>
-                  <div className="text-component">
-                    { deadline.is_hard_deadline && "Hard deadline" }
-                    { !deadline.is_hard_deadline && "Soft deadline" }
-                  </div>
-                  <div className="text-component">
-                    { deadline.represents_sprint_start && "Start of sprint" }
-                    { deadline.represents_sprint_end && "End of sprint" }
-                  </div>
-                </EditableProperty>
+                    <div className="text-component">
+                      { deadline.is_hard_deadline && "Hard deadline" }
+                      { !deadline.is_hard_deadline && "Soft deadline" }
+                    </div>
+                    <div className="text-component">
+                      { deadline.represents_sprint_start && "Start of sprint" }
+                      { deadline.represents_sprint_end && "End of sprint" }
+                    </div>
+                  </EditableProperty>
+                  <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
+                </div>
               }
 
               { ! deadline.id &&
@@ -105,7 +110,6 @@ class EditableSprintDeadline extends Component {
                 </div>
               }
 
-              { deadline.id && <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button> }
             </div>
         )
     }
