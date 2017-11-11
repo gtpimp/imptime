@@ -92,12 +92,12 @@ class SprintDeadlineViewSet(BaseViewSet):
     def get_deadline_from_params(self, sprint, params):
         deadline = params['deadline']
         deadline['project'] = sprint.id
-        deadline['represents_project_start'] = deadline.pop('represents_sprint_start', False)
-        deadline['represents_project_end'] = deadline.pop('represents_sprint_end', False)
-        deadline['is_hard_deadline'] = deadline.pop('is_hard_deadline', False)
+        deadline['represents_project_start'] = deadline.pop('represents_sprint_start', False) or False
+        deadline['represents_project_end'] = deadline.pop('represents_sprint_end', False) or False
+        deadline['is_hard_deadline'] = deadline.pop('is_hard_deadline', False) or False
 
         deadline['deadline_type'] = SprintDeadlineType.objects.get(business_id=sprint.business_id, #sic
-                                                                   pk=deadline.pop('deadline_type')).id
+                                                                   pk=deadline.pop('deadline_type_id')).id
 
         return deadline
     

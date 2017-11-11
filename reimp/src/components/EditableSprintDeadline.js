@@ -145,6 +145,7 @@ function mapStateToProps(state, props) {
         sprint_id: sprint_id,
         deadline_id: deadline_id,
         deadline: deadline,
+        deadline_modified: deadline.modified,
         can_edit: can_edit,
         can_view: can_view,
         is_invalidated: is_sprint_invalidated(state, sprint.id),

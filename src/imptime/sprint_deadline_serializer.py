@@ -12,12 +12,14 @@ class SprintDeadlineSerializer(BaseSerializer):
 
     id = serializers.CharField()
     project_id = serializers.CharField()
+    deadline_type_id = serializers.CharField(source="deadline_type.id")
     deadline_type_name = serializers.CharField(source="deadline_type.name")
     deadline = serializers.DateTimeField(input_formats=['iso-8601'])
     description = serializers.CharField()
     is_hard_deadline = serializers.BooleanField()
     represents_sprint_start = serializers.BooleanField(source="represents_project_start")
     represents_sprint_end = serializers.BooleanField(source="represents_project_end")
+    modified = serializers.DateTimeField(input_formats=['iso-8601'])
 
 class SprintDeadlineModelSerializer(BaseModelSerializer):
 

@@ -11,6 +11,7 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 
+const required = value => value ? undefined : 'Required'
 
 class SprintDeadlineForm extends Component {
 
@@ -74,7 +75,9 @@ class SprintDeadlineForm extends Component {
     renderCheckbox(field) {
         const { input } = field
         return (
-            <input type="checkbox" {...input} />
+            <input type="checkbox"
+                   checked={input.value}
+                   onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}/>
         )
     }
 
@@ -92,6 +95,7 @@ class SprintDeadlineForm extends Component {
                   </div>
                   <div className="sprint_sidebar--textarea">
                     <Field name="deadline_type"
+                           validate={[required]}
                            component={this.renderDeadlineTypeField} />
                   </div>
                   <div className="sprint_sidebar--textarea">
@@ -122,10 +126,18 @@ function mapStateToProps(state, props) {
     const project = (sprint.project_id && getProject(state, sprint.project_id)) || {}
     const allowed_deadline_types = project.allowed_deadline_types || []
 
+    const initial_values = deadline || {}
+    if ( deadline.deadline ) {
+        initial_values.deadline = moment(deadline.deadline)
+    }
+    if ( deadline.deadline_type_id ) {
+        initial_values.deadline_type = deadline.deadline_type_id
+    }
+    
     return {
         project_id: project.id,
         deadline: deadline,
-        initialValues: {deadline:props.initial_value},
+        initialValues: initial_values,
         enableReinitialize: true,
         onSubmit: onSubmitted,
         allowed_deadline_types
