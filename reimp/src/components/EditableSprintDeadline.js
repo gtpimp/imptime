@@ -4,18 +4,23 @@ import { map } from 'lodash'
 import EditableProperty from './form/EditableProperty'
 import Timestamp from '../components/Timestamp'
 import {
-    updateSprintDeadline,
-    createSprintDeadline,
-    deleteSprintDeadline,
     ensureSprintsLoaded,
     getSprint,
     is_sprint_invalidated
 } from '../actions/Sprints'
+import { updateSprintDeadline,
+         createSprintDeadline,
+         deleteSprintDeadline,
+         getSprintDeadline,
+         ensureSprintDeadlinesLoaded
+} from '../actions/SprintDeadlines'
+
 import SprintDeadlineForm from './form/SprintDeadlineForm'
 import Label from './form/Label'
 import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
 import TickCross from './TickCross'
+import moment from 'moment'
 
 class EditableSprintDeadline extends Component {
 
@@ -25,36 +30,39 @@ class EditableSprintDeadline extends Component {
         this.onDelete = this.onDelete.bind(this)
     }
 
-    componentWillMount() {
-        const { dispatch, sprint_id } = this.props
-        if ( sprint_id ) {
-            dispatch(ensureSprintsLoaded([sprint_id]))
+    componentDidMount() {
+        const { dispatch, deadline_id } = this.props
+        if ( deadline_id ) {
+            dispatch(ensureSprintDeadlinesLoaded([deadline_id]))
         }
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = this.props
-        const { sprint_id } = new_props
-        if ( sprint_id ) {
-            dispatch(ensureSprintsLoaded([sprint_id]))
+        const { deadline_id } = new_props
+        if ( deadline_id ) {
+            dispatch(ensureSprintDeadlinesLoaded([deadline_id]))
         }
     }
 
     onChange(new_values) {
-        const { dispatch, sprint_id, deadline_id } = this.props
+        const { dispatch, deadline_id, sprint_id } = this.props
 
         new_values['deadline_type'] = new_values['deadline_type'] && new_values['deadline_type']['id']
+        new_values['deadline'] = new_values['deadline'] || moment()
         
         if ( deadline_id ) {
-            dispatch(updateSprintDeadline(sprint_id, deadline_id, new_values))
+            dispatch(updateSprintDeadline([deadline_id], new_values))
         } else {
-            dispatch(createSprintDeadline(sprint_id, new_values))
+            new_values.sprint_id = sprint_id
+            dispatch(createSprintDeadline(new_values))
         }
     }
 
-    onDelete(new_value) {
-        const { dispatch, sprint_id, deadline_id } = this.props
-        dispatch(deleteSprintDeadline(sprint_id, deadline_id))
+    onDelete(event) {
+        const { dispatch, deadline_id } = this.props
+        event.stopPropagation()
+        dispatch(deleteSprintDeadline(deadline_id))
     }
 
     render() {
@@ -84,7 +92,7 @@ class EditableSprintDeadline extends Component {
                         {deadline.deadline_type_name}
                       </div>
                       <div className="sprint_sidebar--textarea--readonly" >
-                        <Timestamp value={deadline.deadline} />
+                        <Timestamp value={deadline.deadline} format="date" />
                       </div>
                       <div className="text-component">
                         {deadline.description}
@@ -133,22 +141,15 @@ function mapStateToProps(state, props) {
 
     const can_edit = has_permission(state, sprint.project_id, 'has_edit_deadlines')
     const can_view = has_permission(state, sprint.project_id, 'has_view_deadlines')
-
-    let deadline = { id: null}
-    map(sprint.deadlines || [], function(sprint_deadline, index) {
-        if ( sprint_deadline.id === deadline_id ) {
-            deadline = sprint_deadline
-        }
-    })
-
+    const deadline = getSprintDeadline(state, deadline_id) || {}
+    
     return {
         sprint_id: sprint_id,
         deadline_id: deadline_id,
         deadline: deadline,
         deadline_modified: deadline.modified,
         can_edit: can_edit,
-        can_view: can_view,
-        is_invalidated: is_sprint_invalidated(state, sprint.id),
+        can_view: can_view
     }
 }
 

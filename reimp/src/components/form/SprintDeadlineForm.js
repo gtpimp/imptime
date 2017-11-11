@@ -65,7 +65,7 @@ class SprintDeadlineForm extends Component {
     renderDeadlineDatePicker(field) {
         const { input } = field
         return (
-            <DatePicker selected={input.value}
+            <DatePicker selected={input.value || moment()}
                         dateFormat="DD MMM YYYY"
                         onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
             />

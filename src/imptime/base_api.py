@@ -9,6 +9,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import Issue
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
+from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote
 
 class PermissionHelper():
@@ -158,6 +159,9 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_release_notes(self):
         return ReleaseNote.objects.all()
+
+    def allowed_sprint_deadlines(self):
+        return SprintDeadline.objects.filter(project__in=self.allowed_sprints()) #sic
     
     def logged_in_permissions(self, project):
         if project.id in self._logged_in_permissions_by_project:

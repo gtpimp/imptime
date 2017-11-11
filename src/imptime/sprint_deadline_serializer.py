@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class SprintDeadlineSerializer(BaseSerializer):
 
     id = serializers.CharField()
-    project_id = serializers.CharField()
+    sprint_id = serializers.CharField(source="project_id")
     deadline_type_id = serializers.CharField(source="deadline_type.id")
     deadline_type_name = serializers.CharField(source="deadline_type.name")
     deadline = serializers.DateTimeField(input_formats=['iso-8601'])

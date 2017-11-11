@@ -11,6 +11,7 @@ import { invalidatePups } from '../actions/ProjectUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
 import { invalidateVisualSpecDocuments, invalidateAllVisualSpecDocuments } from '../actions/VisualSpecDocuments'
 import { invalidateVisualSpecIssues } from '../actions/VisualSpecIssues'
+import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { addAsyncMessage } from '../actions/Async'
 
 import {
@@ -63,6 +64,8 @@ function triggerInvalidateEntity(d, dispatch) {
 
     } else if ( d.entity_name === 'visualspecissue' ) {
         dispatch(invalidateVisualSpecIssues([d.entity_ref]))
+    } else if ( d.entity_name === 'projectdeadline' ) {
+        dispatch(invalidateSprintDeadlines([d.entity_ref]))
     }
 }
 
@@ -97,7 +100,6 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         
     } else if ( d.entity_name == 'projectissueorder' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
-        
     }
 }
 

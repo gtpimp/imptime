@@ -20,21 +20,53 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated,))
 class SprintDeadlineViewSet(BaseViewSet):
 
+    def list(self, request):
+        try:
+            context = {}
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
+
+            sprint_deadlines = self.allowed_sprint_deadlines()
+            sprint_deadlines = sprint_deadlines.order_by("deadline")
+            sprint_deadlines = self.apply_filter(qs=sprint_deadlines,
+                                                 raw_filter_args=filter_args)
+            sprint_deadlines = self.apply_pagination(qs=sprint_deadlines,
+                                                     pagination=pagination)
+
+            if format_args.get('ids_only'):
+                context['ids'] = [str(x) for x in sprint_deadlines.values_list('id', flat=True)]
+            else:
+                s = SprintDeadlineSerializer(sprint_deadlines, many=True)
+                sprint_deadlines_data = s.data
+                context['sprint_deadlines'] = sprint_deadlines_data
+                context['pagination'] = pagination
+                data = {'status': 'success', 'payload': context}
+                
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
+    
     def create(self, request):
         try:
             params = request.data
-            sprint_pk = params['sprint_id']
+            deadline_data = self.fix_deadline_data_from_params(params['item'])
+            sprint_pk = deadline_data['sprint_id']
             sprint = self.allowed_sprint(sprint_pk)
             if not self.logged_in_permissions(sprint.business).has_edit_deadlines:
                 raise Exception("Permission denied")
             
-            s = SprintDeadlineModelSerializer(data=self.get_deadline_from_params(sprint, params))
+            s = SprintDeadlineModelSerializer(data=deadline_data)
             s.is_valid(raise_exception=True)
             deadline = s.save()
             sprint.save()
             
             data = {'status': 'success',
-                    'payload': SprintDeadlineSerializer(deadline).data}
+                    'payload': { 'item': { 'deadline': SprintDeadlineSerializer(deadline).data}}}
 
         except Exception, ex:
             logger.exception(ex)
@@ -45,8 +77,9 @@ class SprintDeadlineViewSet(BaseViewSet):
     def update(self, request, pk):
         try:
             params = request.data
-            sprint_pk = params['sprint_id']
-            deadline_id = params['deadline_id']
+            deadline_data = self.fix_deadline_data_from_params(params['value'])
+            sprint_pk = deadline_data['sprint_id']
+            deadline_id = pk
 
             sprint = self.allowed_sprint(sprint_pk)
             deadline = SprintDeadline.objects.filter(project=sprint).get(pk=deadline_id)
@@ -54,7 +87,7 @@ class SprintDeadlineViewSet(BaseViewSet):
             if not self.logged_in_permissions(sprint.business).has_edit_deadlines:
                 raise Exception("Permission denied")
             
-            s = SprintDeadlineModelSerializer(data=self.get_deadline_from_params(sprint, params), instance=deadline)
+            s = SprintDeadlineModelSerializer(data=deadline_data, instance=deadline)
             s.is_valid(raise_exception=True)
             deadline = s.save()
             sprint.save()
@@ -70,15 +103,13 @@ class SprintDeadlineViewSet(BaseViewSet):
 
     def delete(self, request, pk):
         try:
-            params = request.data
-            sprint_pk = params['sprint_id']
-            deadline_id = params['deadline_id']
-            sprint = self.allowed_sprint(sprint_pk)
+            deadline_id = pk
+            deadline = self.allowed_sprint_deadlines().get(pk=deadline_id)
+            sprint = deadline.project #sic
 
             if not self.logged_in_permissions(sprint.business).has_edit_deadlines:
                 raise Exception("Permission denied")
             
-            deadline = SprintDeadline.objects.filter(project=sprint).get(pk=deadline_id) #sic
             deadline.delete()
             sprint.save()
             data = {'status': 'success'}
@@ -89,15 +120,16 @@ class SprintDeadlineViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    def get_deadline_from_params(self, sprint, params):
-        deadline = params['deadline']
-        deadline['project'] = sprint.id
-        deadline['represents_project_start'] = deadline.pop('represents_sprint_start', False) or False
-        deadline['represents_project_end'] = deadline.pop('represents_sprint_end', False) or False
-        deadline['is_hard_deadline'] = deadline.pop('is_hard_deadline', False) or False
+    def fix_deadline_data_from_params(self, deadline_data):
+        sprint_id = deadline_data['sprint_id']
+        business_id = Sprint.objects.filter(pk=sprint_id).values_list('business_id', flat=True)[0]
+        deadline_data['project'] = sprint_id
+        deadline_data['represents_project_start'] = deadline_data.pop('represents_sprint_start', False) or False
+        deadline_data['represents_project_end'] = deadline_data.pop('represents_sprint_end', False) or False
+        deadline_data['is_hard_deadline'] = deadline_data.pop('is_hard_deadline', False) or False
 
-        deadline['deadline_type'] = SprintDeadlineType.objects.get(business_id=sprint.business_id, #sic
-                                                                   pk=deadline.pop('deadline_type_id', deadline.pop('deadline_type', None))).id
+        deadline_data['deadline_type'] = SprintDeadlineType.objects.get(business_id=business_id, #sic
+                                                                        pk=deadline_data.pop('deadline_type_id', deadline_data.pop('deadline_type', None))).id
 
-        return deadline
+        return deadline_data
     

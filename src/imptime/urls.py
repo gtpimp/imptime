@@ -39,7 +39,7 @@ router.register(r'project', project_api.ProjectViewSet,
                 base_name='project')
 router.register(r'time_chart', time_chart_api.TimeChartViewSet,
                 base_name='time_chart')
-router.register(r'sprint/deadline', sprint_deadline_api.SprintDeadlineViewSet,
+router.register(r'sprint_deadline', sprint_deadline_api.SprintDeadlineViewSet,
                 base_name='sprint_deadline')
 router.register(r'sprint', sprint_api.SprintViewSet,
                 base_name='sprint')
