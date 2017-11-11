@@ -71,7 +71,7 @@ class SprintList extends Component {
         dispatch(expand_list(list_key))
     }
 
-    onClickedSprint(sprint_id) {
+    onClickedSprint(event, sprint_id) {
         const {onSelectSprints, selected_ids} = this.props
         event.stopPropagation()
 
@@ -196,7 +196,7 @@ class SprintList extends Component {
             <Sprint key={list_key + sprint.id + index}
                     is_collapsed={false}
                     reorderSprints={that.reorderSprints}
-                    onClickedSprint={() => that.onClickedSprint(sprint.id)}
+                    onClickedSprint={(event) => that.onClickedSprint(event, sprint.id)}
                     is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
                     is_selected={selected_ids.indexOf(sprint.id) !== -1}
                     sprint_id={sprint.id}
