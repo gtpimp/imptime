@@ -127,11 +127,11 @@ function mapStateToProps(state, props) {
     const allowed_deadline_types = project.allowed_deadline_types || []
 
     const initial_values = deadline || {}
-    if ( deadline.deadline ) {
-        initial_values.deadline = moment(deadline.deadline)
+    if ( initial_values.deadline ) {
+        initial_values.deadline = moment(initial_values.deadline)
     }
-    if ( deadline.deadline_type_id ) {
-        initial_values.deadline_type = deadline.deadline_type_id
+    if ( initial_values.deadline_type_id ) {
+        initial_values.deadline_type = initial_values.deadline_type_id
     }
     
     return {

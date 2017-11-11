@@ -97,7 +97,7 @@ class SprintDeadlineViewSet(BaseViewSet):
         deadline['is_hard_deadline'] = deadline.pop('is_hard_deadline', False) or False
 
         deadline['deadline_type'] = SprintDeadlineType.objects.get(business_id=sprint.business_id, #sic
-                                                                   pk=deadline.pop('deadline_type_id')).id
+                                                                   pk=deadline.pop('deadline_type_id', deadline.pop('deadline_type', None))).id
 
         return deadline
     
