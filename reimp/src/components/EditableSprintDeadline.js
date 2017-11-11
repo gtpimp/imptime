@@ -65,6 +65,8 @@ class EditableSprintDeadline extends Component {
                   <EditableProperty property_key={'sprint_deadline_'+sprint_id+'_'+deadline.id}
                                     initial_value={deadline.deadline}
                                     onChange={this.onChange}
+                                    actionLabel="Sprint deadline"
+                                    edit_as_modal={true}
                                     can_edit={can_edit}
                   >
                     <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
@@ -98,6 +100,8 @@ class EditableSprintDeadline extends Component {
                   <EditableProperty property_key={'sprint_deadline_'+sprint_id}
                                     initial_value=''
                                     onChange={this.onChange}
+                                    actionLabel="Sprint deadline"
+                                    edit_as_modal={true}
                                     can_edit={can_edit}
                     >
                     <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id} sprint_id={sprint_id} />

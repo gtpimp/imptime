@@ -1,13 +1,22 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseSerializer
+from base_serializer import BaseSerializer, BaseModelSerializer
 from timepiece.models import Feature, IssueStatus
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
 from timepiece.models import BusinessPermissions as ProjectPermissions
-from timepiece.models import BusinessInvite as ProjectInvite
 from project_user_permission_serializer import ProjectUserPermissionSerializer
 logger = logging.getLogger(__name__)
+
+class ProjectDeadlineTypeSerializer(BaseModelSerializer):
+
+    value = serializers.CharField(source="id")
+    label = serializers.CharField(source="name")
+    
+    class Meta:
+        model = SprintDeadlineType
+        fields = ( 'id', 'name', "value", "label" )
+    
 
 class ProjectSerializer(BaseSerializer):
 
@@ -17,7 +26,7 @@ class ProjectSerializer(BaseSerializer):
     invited_user_ids = serializers.ListField(child=serializers.CharField())
     allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
-    allowed_deadline_types = serializers.ListField(child=serializers.CharField())
+    allowed_deadline_types = serializers.ListField(child=ProjectDeadlineTypeSerializer())
     feature_names = serializers.ListField(child=serializers.CharField())
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
 
@@ -45,10 +54,9 @@ class ProjectSerializer(BaseSerializer):
                                                .order_by("name")\
                                                .values_list('name', flat=True)] #sic
 
-        project.allowed_deadline_types = [x for x in SprintDeadlineType.objects.all()\
-                                          .filter(business=project)\
-                                          .order_by("name")\
-                                          .values_list("name", flat=True)] #sic
+        project.allowed_deadline_types = SprintDeadlineType.objects.all()\
+                                                                   .filter(business=project)\
+                                                                   .order_by("name")
         
         project.user_permissions = ProjectPermissions.for_user(user=self.logged_in_user,
                                                                business=project) #sic
