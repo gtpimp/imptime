@@ -5,6 +5,7 @@ from timepiece.models import ProjectDeadline as SprintDeadline
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
 from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
+from lib import date_helper
 logger = logging.getLogger(__name__)
 
 class SprintDeadlineSerializer(BaseSerializer):
@@ -12,29 +13,22 @@ class SprintDeadlineSerializer(BaseSerializer):
     id = serializers.CharField()
     project_id = serializers.CharField()
     deadline_type_name = serializers.CharField(source="deadline_type.name")
-    deadline = serializers.DateTimeField()
+    deadline = serializers.DateTimeField(input_formats=['iso-8601'])
     description = serializers.CharField()
     is_hard_deadline = serializers.BooleanField()
     represents_sprint_start = serializers.BooleanField(source="represents_project_start")
     represents_sprint_end = serializers.BooleanField(source="represents_project_end")
 
 class SprintDeadlineModelSerializer(BaseModelSerializer):
+
+    deadline = serializers.DateTimeField(input_formats=['iso-8601'])
+    
     class Meta:
         model = SprintDeadline
-        fields = ('project_id', #sic
+        fields = ('project', #sic
                   'deadline_type',
                   'deadline',
                   'description',
                   'is_hard_deadline',
                   'represents_project_start',
                   'represents_project_end')
-
-    def validate(self, validated_data):
-        sprint_id = validated_data.pop('sprint')
-        validated_data['project_id'] = sprint_id
-        validated_data['represents_sprint_start'] = validated_data.pop('represents_project_start')
-        validated_data['represents_sprint_end'] = validated_data.pop('represents_project_end')
-        project = Sprint.objects.get(pk=sprint_id).business_id #sic
-        validated_data['deadline_type'] = SprintDeadlineType.objects.get(business_id=project.id, #sic
-                                                                         name=validated_data.pop('deadline_type_name'))
-        return validated_data

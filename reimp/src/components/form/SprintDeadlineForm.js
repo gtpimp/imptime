@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+const  { DOM: { input, select, textarea } } = React
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
@@ -19,6 +20,7 @@ class SprintDeadlineForm extends Component {
         this.renderDeadlineTypeField = this.renderDeadlineTypeField.bind(this)
         this.renderDeadlineDatePicker = this.renderDeadlineDatePicker.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        this.renderCheckbox = this.renderCheckbox.bind(this)
         this.keyDown = this.keyDown.bind(this)
     }
 
@@ -69,6 +71,13 @@ class SprintDeadlineForm extends Component {
         )
     }
 
+    renderCheckbox(field) {
+        const { input } = field
+        return (
+            <input type="checkbox" {...input} />
+        )
+    }
+
     render() {
 
         const { deadline, handleSubmit } = this.props
@@ -88,6 +97,15 @@ class SprintDeadlineForm extends Component {
                   <div className="sprint_sidebar--textarea">
                     <Field name="deadline"
                            component={this.renderDeadlineDatePicker} />
+                  </div>
+                  <div className="sprint_sidebar--textarea">
+                    Is a hard deadline: <Field name="is_hard_deadline" component={this.renderCheckbox} />
+                  </div>
+                  <div className="sprint_sidebar--textarea">
+                    Is the start of the sprint: <Field name="represents_sprint_start" component={this.renderCheckbox} />
+                  </div>
+                  <div className="sprint_sidebar--textarea">
+                    Is the end of the sprint: <Field name="represents_sprint_end" component={this.renderCheckbox} />
                   </div>
                 </div>
                 <button className="button sprint_sidebar--textarea" type="submit">Submit</button>

@@ -27,17 +27,24 @@ class EditableSprintDeadline extends Component {
 
     componentWillMount() {
         const { dispatch, sprint_id } = this.props
-        dispatch(ensureSprintsLoaded([sprint_id]))
+        if ( sprint_id ) {
+            dispatch(ensureSprintsLoaded([sprint_id]))
+        }
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = this.props
         const { sprint_id } = new_props
-        dispatch(ensureSprintsLoaded([sprint_id]))
+        if ( sprint_id ) {
+            dispatch(ensureSprintsLoaded([sprint_id]))
+        }
     }
 
     onChange(new_values) {
         const { dispatch, sprint_id, deadline_id } = this.props
+
+        new_values['deadline_type'] = new_values['deadline_type'] && new_values['deadline_type']['id']
+        
         if ( deadline_id ) {
             dispatch(updateSprintDeadline(sprint_id, deadline_id, new_values))
         } else {
@@ -65,33 +72,34 @@ class EditableSprintDeadline extends Component {
                   <EditableProperty property_key={'sprint_deadline_'+sprint_id+'_'+deadline.id}
                                     initial_value={deadline.deadline}
                                     onChange={this.onChange}
+                                    class_name="sprint-deadline__card"
                                     actionLabel="Sprint deadline"
                                     edit_as_modal={true}
                                     can_edit={can_edit}
                   >
                     <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
                                         sprint_id={sprint_id} deadline={deadline}/>
-                    <div className="text-component--readonly text-component--deadline">
+                    <div>
                       <div className="sprint_sidebar--deadline_date" >
                         {deadline.deadline_type_name}
                       </div>
                       <div className="sprint_sidebar--textarea--readonly" >
                         <Timestamp value={deadline.deadline} />
                       </div>
-                    </div>
-                    <div className="text-component">
-                      {deadline.description}
-                    </div>
-                    <div className="text-component">
-                      { deadline.is_hard_deadline && "Hard deadline" }
-                      { !deadline.is_hard_deadline && "Soft deadline" }
-                    </div>
-                    <div className="text-component">
-                      { deadline.represents_sprint_start && "Start of sprint" }
-                      { deadline.represents_sprint_end && "End of sprint" }
+                      <div className="text-component">
+                        {deadline.description}
+                      </div>
+                      <div className="text-component">
+                        { deadline.is_hard_deadline && "Hard deadline" }
+                        { !deadline.is_hard_deadline && "Soft deadline" }
+                      </div>
+                      <div className="text-component">
+                        { deadline.represents_sprint_start && "Start of sprint" }
+                        { deadline.represents_sprint_end && "End of sprint" }
+                      </div>
+                      <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
                     </div>
                   </EditableProperty>
-                  <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
                 </div>
               }
 

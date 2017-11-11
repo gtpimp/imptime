@@ -107,7 +107,7 @@ class SprintSidebar extends Component {
                 </PropertyStack>
 
                 <PropertyStackComponent title="Deadlines">
-                  { false && map(sprint.deadlines, function (deadline, index) {
+                  { map(sprint.deadlines, function (deadline, index) {
                         return <EditableSprintDeadline key={sprint.id, deadline.id} sprint_id={sprint.id} deadline_id={deadline.id}/>
                     })
                   }
