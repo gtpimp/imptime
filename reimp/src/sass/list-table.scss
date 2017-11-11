@@ -54,8 +54,23 @@
     padding-right: 16px;
     vertical-align: middle;
     cursor: pointer;
+    /*display: flex;*/
+    /*width: 100%;*/
+    /*align-items: center;*/
 
     &:first-child {
 	padding-left: 26px;
     }
+}
+
+.list-table__cell--default {
+    @extend .list-table__cell;
+    display: flex;
+    align-items: center;
+}
+
+.list-table__cell--hover {
+    -webkit-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+    -moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+    box-shadow:inset 0px 0px 0px 2px $button-hover-background;
 }

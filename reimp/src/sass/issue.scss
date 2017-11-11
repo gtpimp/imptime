@@ -1,4 +1,5 @@
 @import 'variables.scss';
+@import 'list-table.scss';
 
 .issue {
     color: $color-1;
@@ -86,34 +87,29 @@
 }
 
 .issue-cell__assignee {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    width: 100%;
+    @extend .list-table__cell--default;
 }
 
 .issue-cell__assignee:hover {
-    background: $button-hover-background;
+    @extend .list-table__cell--hover;
 }
 
 .issue-cell__status {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    width: 100%;
+    @extend .list-table__cell--default;
 }
 
 .issue-cell__status:hover {
-    background: $button-hover-background;
+    @extend .list-table__cell--hover;
 }
 
 .issue-cell__my-estimate {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    width: 100%;
+    @extend .list-table__cell--default;
+}
+
+.list-table__cell--issue-name {
+    @extend .list-table__cell--default;
 }
 
 .list-table__cell--issue-name:hover {
-    background: $button-hover-background;
+    @extend .list-table__cell--hover;
 }
