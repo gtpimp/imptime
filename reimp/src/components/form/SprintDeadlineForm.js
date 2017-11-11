@@ -29,14 +29,15 @@ class SprintDeadlineForm extends Component {
     }
 
     renderDescriptionField(field) {
+        const { input } = field
         return (
             <Textarea
                 rows="1"
                 maxLength="3000"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"
-                onChange={(e) => this.onChangeAndSubmit(e, field.onChange)}
-                value={field.value}
+                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                value={input.value}
                 onKeyDown={this.keyDown}
             />
         )
@@ -44,10 +45,11 @@ class SprintDeadlineForm extends Component {
 
     renderDeadlineTypeField(field) {
         const { allowed_deadline_types } = this.props
+        const { input } = field
         return (
-            <Select value={field.value}
+            <Select value={input.value}
                     options={allowed_deadline_types}
-                    onChange={(e) => this.onChangeAndSubmit(e, field.onChange)}
+                    onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
             />
         )
     }
