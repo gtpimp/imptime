@@ -36,12 +36,12 @@ class EditableSprintDeadline extends Component {
         dispatch(ensureSprintsLoaded([sprint_id]))
     }
 
-    onChange(new_value) {
+    onChange(new_values) {
         const { dispatch, sprint_id, deadline_id } = this.props
         if ( deadline_id ) {
-            dispatch(updateSprintDeadline(sprint_id, deadline_id, new_value.deadline))
+            dispatch(updateSprintDeadline(sprint_id, deadline_id, new_values))
         } else {
-            dispatch(createSprintDeadline(sprint_id, new_value.deadline))
+            dispatch(createSprintDeadline(sprint_id, new_values))
         }
     }
 
@@ -51,13 +51,12 @@ class EditableSprintDeadline extends Component {
     }
 
     render() {
+
         const {deadline, can_view, can_edit, sprint_id} = this.props
         if ( ! can_view ) {
             return (<div>No permission to view deadlines</div>)
         }
 
-        return null
-        
         return (
 
             <div>
@@ -119,8 +118,9 @@ function mapStateToProps(state, props) {
 
     const { sprint_id, deadline_id } = props
     const sprint = getSprint(state, sprint_id) || {}
-    const can_edit = has_permission(state, sprint.project_id, 'can_edit_deadlines')
-    const can_view = has_permission(state, sprint.project_id, 'can_view_deadlines')
+
+    const can_edit = has_permission(state, sprint.project_id, 'has_edit_deadlines')
+    const can_view = has_permission(state, sprint.project_id, 'has_view_deadlines')
 
     let deadline = { id: null}
     map(sprint.deadlines || [], function(sprint_deadline, index) {

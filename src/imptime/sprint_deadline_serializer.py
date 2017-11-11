@@ -21,17 +21,20 @@ class SprintDeadlineSerializer(BaseSerializer):
 class SprintDeadlineModelSerializer(BaseModelSerializer):
     class Meta:
         model = SprintDeadline
-        fields = ('business_id', #sic
+        fields = ('project_id', #sic
                   'deadline_type',
                   'deadline',
                   'description',
                   'is_hard_deadline',
-                  'represents_sprint_start',
-                  'represents_sprint_end')
+                  'represents_project_start',
+                  'represents_project_end')
 
     def validate(self, validated_data):
-        project_id = validated_data.pop('project_id')
-        validated_data['business_id'] = project_id
-        validated_data['deadline_type'] = SprintDeadlineType.objects.get(business_id=project_id, #sic
+        sprint_id = validated_data.pop('sprint')
+        validated_data['project_id'] = sprint_id
+        validated_data['represents_sprint_start'] = validated_data.pop('represents_project_start')
+        validated_data['represents_sprint_end'] = validated_data.pop('represents_project_end')
+        project = Sprint.objects.get(pk=sprint_id).business_id #sic
+        validated_data['deadline_type'] = SprintDeadlineType.objects.get(business_id=project.id, #sic
                                                                          name=validated_data.pop('deadline_type_name'))
         return validated_data

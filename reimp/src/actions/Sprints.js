@@ -425,3 +425,8 @@ export function deleteSprintDeadline(sprint_id, deadline_id) {
     }
 }
 
+export function is_sprint_invalidated(state, sprint_id) {
+    return (((state.sprint || {}).invalidated_item_ids) || []).indexOf(sprint_id) !== -1
+}
+
+

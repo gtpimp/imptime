@@ -39,6 +39,8 @@ router.register(r'project', project_api.ProjectViewSet,
                 base_name='project')
 router.register(r'time_chart', time_chart_api.TimeChartViewSet,
                 base_name='time_chart')
+router.register(r'sprint/deadline', sprint_deadline_api.SprintDeadlineViewSet,
+                base_name='sprint_deadline')
 router.register(r'sprint', sprint_api.SprintViewSet,
                 base_name='sprint')
 router.register(r'issue/tag', issue_tag_api.IssueTagViewSet,
@@ -73,8 +75,6 @@ router.register(r'project_dashboard', project_dashboard_api.ProjectDashboardView
                 base_name='project_dashboard')
 router.register(r'project_statement', project_statement_api.ProjectStatementViewSet,
                 base_name='project_statement')
-router.register(r'sprint/deadline', sprint_deadline_api.SprintDeadlineViewSet,
-                base_name='sprint_deadline')
 router.register(r'release_note', release_note_api.ReleaseNoteViewSet,
                 base_name='release_note')
 
