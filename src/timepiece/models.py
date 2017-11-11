@@ -4483,10 +4483,22 @@ class ProjectDeadlineType(BaseModel):
 
 
 class ProjectDeadline(BaseModel):
-    project = ProtectedForeignKey(Project, null=False)
+    project = ProtectedForeignKey(Project, null=False, related_name='deadlines')
     deadline_type = ProtectedForeignKey(ProjectDeadlineType, null=False)
     deadline = models.DateTimeField(null=True)
+    description = models.TextField(null=True)
     is_hard_deadline = models.BooleanField()
     represents_project_start = models.BooleanField()
     represents_project_end = models.BooleanField()
 
+    class Meta:
+        ordering = ('deadline',)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ProjectDeadline, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+        

@@ -335,3 +335,93 @@ export function cloneTemplateSprint(sprint_id, onDone) {
 	 })
     }
 }
+
+export function updateSprintDeadline(sprint_id, deadline_id, new_deadline) {
+
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceSprintsSaving([sprint_id], 'deadline', new_deadline))
+	let data = { sprint_id: sprint_id,
+                     deadline_id: deadline_id,
+                     deadline: new_deadline }
+	return impfetch( state, "imp/sprint/deadline/0/", dispatch,
+			 {method: "PUT",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceSprintSaveFailed(sprint_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceSprintsSaved([sprint_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceSprintSaveFailed(sprint_id, error))
+	 })
+    }
+}
+
+export function createSprintDeadline(sprint_id, new_deadline) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceSprintsSaving([sprint_id], 'deadline', new_deadline))
+	let data = { sprint_id: sprint_id,
+                     deadline: new_deadline }
+	return impfetch( state, "imp/sprint/deadline/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceSprintSaveFailed(sprint_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceSprintsSaved([sprint_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceSprintSaveFailed(sprint_id, error))
+	 })
+    }
+}
+
+export function deleteSprintDeadline(sprint_id, deadline_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+	dispatch(announceSprintsSaving([sprint_id], 'deadline', "deleting"))
+        let data = { sprint_id: sprint_id,
+                     deadline_id: deadline_id }
+	return impfetch( state, "imp/sprint/deadline/0/", dispatch,
+			 {method: "DELETE",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceSprintSaveFailed(sprint_id, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceSprintsSaved([sprint_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceSprintSaveFailed(sprint_id, error))
+	 })
+    }
+}
+

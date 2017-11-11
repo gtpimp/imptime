@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
@@ -8,6 +9,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
+import EditableSprintDeadline from '../components/EditableSprintDeadline'
 import SprintName from './SprintName'
 
 class SprintSidebar extends Component {
@@ -103,6 +105,15 @@ class SprintSidebar extends Component {
                         </div>
                     </PropertyStackComponent>
                 </PropertyStack>
+
+                <PropertyStackComponent title="Deadlines">
+                  { map(sprint.deadlines, function (deadline, index) {
+                        return <EditableSprintDeadline key={sprint.id, deadline.id} sprint_id={sprint.id} deadline_id={deadline.id}/>
+                    })
+                  }
+                  <EditableSprintDeadline deadline_id={sprint.id} deadline_id={null}/>
+                </PropertyStackComponent>
+
             </div>
         )
     }

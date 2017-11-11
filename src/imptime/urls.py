@@ -16,6 +16,7 @@ import project_statement_api
 import project_user_permission_api
 import release_note_api
 import sprint_api
+import sprint_deadline_api
 import time_chart_api
 import time_summary_api
 import user_api
@@ -72,6 +73,8 @@ router.register(r'project_dashboard', project_dashboard_api.ProjectDashboardView
                 base_name='project_dashboard')
 router.register(r'project_statement', project_statement_api.ProjectStatementViewSet,
                 base_name='project_statement')
+router.register(r'sprint/deadline', sprint_deadline_api.SprintDeadlineViewSet,
+                base_name='sprint_deadline')
 router.register(r'release_note', release_note_api.ReleaseNoteViewSet,
                 base_name='release_note')
 

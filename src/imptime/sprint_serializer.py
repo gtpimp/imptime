@@ -4,6 +4,7 @@ from base_serializer import BaseSerializer
 from clock_entry_serializer import ClockEntrySerializer
 from timepiece.models import Entry
 from imptime.models import SprintTemplate
+from sprint_deadline_serializer import SprintDeadlineSerializer
 logger = logging.getLogger(__name__)
 
 class SprintSerializer(BaseSerializer):
@@ -21,6 +22,7 @@ class SprintSerializer(BaseSerializer):
     sprint_type = serializers.CharField(source="project_type")
     sprint_template_id = serializers.CharField(source="cloned_from_sprint_id")
     sprint_clone_ids = serializers.ListField(child=serializers.CharField())
+    deadlines = serializers.ListField(child=SprintDeadlineSerializer(), source="ordered_deadlines")
 
     def to_representation(self, sprint, *args, **kwargs):
         sprint.status_name = sprint.status3 and sprint.status3.name
@@ -34,6 +36,7 @@ class SprintSerializer(BaseSerializer):
             sprint.cloned_from_sprint_id = None
 
         sprint.sprint_clone_ids = SprintTemplate.objects.filter(sprint=sprint).values_list('clones__id', flat=True)
+        sprint.ordered_deadlines = sprint.deadlines.order_by("deadline")
             
         return super(SprintSerializer, self).to_representation(
             sprint, *args, **kwargs)
