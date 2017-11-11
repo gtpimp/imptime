@@ -1,18 +1,18 @@
 @import 'variables.scss';
 
 .editable-property-modal {
-  background-color: $color-2;
-  border-radius: 2px;
-  box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
-  padding: 16px;
-  width: 288px;
-  height: 50vh;
-
-  position: absolute;
-  top: 25%;
-  left: 40%;
-  outline: none;
-  overflow: auto;
+    background-color: $color-2;
+    border-radius: 2px;
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    width: 288px;
+    // height: 50vh;
+    position: absolute;
+    top: 20%;
+    bottom: 25%;
+    left: 40%;
+    outline: none;
+    overflow: auto;
 }
 
 .editable-property-modal__overlay {

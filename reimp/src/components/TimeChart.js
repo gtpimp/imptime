@@ -25,9 +25,7 @@ import {
 } from '../actions/TimeChart'
 import { ensureUsersLoaded } from '../actions/Users'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
-import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import 'react-datepicker/dist/react-datepicker.css';
 
 class TimeChartTooltip extends Component {
 

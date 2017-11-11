@@ -6,6 +6,10 @@ import { getSprint } from '../../actions/Sprints'
 import { getProject } from '../../actions/Projects'
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 class SprintDeadlineForm extends Component {
 
@@ -13,6 +17,7 @@ class SprintDeadlineForm extends Component {
         super(props)
         this.renderDescriptionField = this.renderDescriptionField.bind(this)
         this.renderDeadlineTypeField = this.renderDeadlineTypeField.bind(this)
+        this.renderDeadlineDatePicker = this.renderDeadlineDatePicker.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
         this.keyDown = this.keyDown.bind(this)
     }
@@ -54,6 +59,16 @@ class SprintDeadlineForm extends Component {
         )
     }
 
+    renderDeadlineDatePicker(field) {
+        const { input } = field
+        return (
+            <DatePicker selected={input.value}
+                        dateFormat="DD MMM YYYY"
+                        onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+            />
+        )
+    }
+
     render() {
 
         const { deadline, handleSubmit } = this.props
@@ -69,6 +84,10 @@ class SprintDeadlineForm extends Component {
                   <div className="sprint_sidebar--textarea">
                     <Field name="deadline_type"
                            component={this.renderDeadlineTypeField} />
+                  </div>
+                  <div className="sprint_sidebar--textarea">
+                    <Field name="deadline"
+                           component={this.renderDeadlineDatePicker} />
                   </div>
                 </div>
                 <button className="button sprint_sidebar--textarea" type="submit">Submit</button>
