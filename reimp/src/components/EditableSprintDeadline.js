@@ -20,6 +20,7 @@ import Label from './form/Label'
 import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
 import TickCross from './TickCross'
+import SprintDeadline from './SprintDeadline'
 import moment from 'moment'
 
 class EditableSprintDeadline extends Component {
@@ -62,6 +63,9 @@ class EditableSprintDeadline extends Component {
     onDelete(event) {
         const { dispatch, deadline_id } = this.props
         event.stopPropagation()
+        if ( ! confirm("Delete this deadline?") ) {
+            return
+        }
         dispatch(deleteSprintDeadline(deadline_id))
     }
 
@@ -87,24 +91,8 @@ class EditableSprintDeadline extends Component {
                   >
                     <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
                                         sprint_id={sprint_id} deadline={deadline}/>
-                    <div>
-                      <div className="sprint_sidebar--deadline_date" >
-                        {deadline.deadline_type_name}
-                      </div>
-                      <div className="sprint_sidebar--textarea--readonly" >
-                        <Timestamp value={deadline.deadline} format="date" />
-                      </div>
-                      <div className="text-component">
-                        {deadline.description}
-                      </div>
-                      <div className="text-component">
-                        { deadline.is_hard_deadline && "Hard deadline" }
-                        { !deadline.is_hard_deadline && "Soft deadline" }
-                      </div>
-                      <div className="text-component">
-                        { deadline.represents_sprint_start && "Start of sprint" }
-                        { deadline.represents_sprint_end && "End of sprint" }
-                      </div>
+                    <div className="sprint-deadline__card">
+                      <SprintDeadline deadline_id={deadline.id} />
                       <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
                     </div>
                   </EditableProperty>

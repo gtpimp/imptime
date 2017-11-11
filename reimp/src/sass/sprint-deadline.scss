@@ -3,3 +3,29 @@
 .sprint-deadline__card {
     border-bottom: 1px solid $form-field-border;
 }
+
+.sprint-deadline--heading {
+    display: flex;
+    flex-direction: row;
+}
+
+.sprint-deadline--type {
+    font: $bold;
+}
+
+.sprint-deadline--deadline {
+    margin-left: 7px;
+}
+
+.sprint-deadline--description {
+    font-size: $font-size-small;
+    font-style: italic;
+}
+
+.sprint-deadline--hard {
+    font-size: $font-size-small;
+}
+
+.sprint-deadline--classification {
+    font-size: $font-size-small;
+}
