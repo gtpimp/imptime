@@ -60,7 +60,8 @@ class ProjectDashboardToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               
-              <button className="button button--large button--primary" onClick={this.navigateToSprintTemplatesPage}>Sprint templates</button>
+              <button className="button button--large button--primary" onClick={this.navigateToSprintsPage}>Sprints</button>
+              <button className="button button--large button--primary" onClick={this.navigateToSprintTemplatesPage}>Templates</button>
               <button className="button button--large button--primary" onClick={this.navigateToProjectUsersPage}>Users</button>
               <button className="button button--large button--primary" onClick={this.navigateToProjectStatementPage}>Project Statement</button>
               <button className="button button--large button--primary" onClick={this.navigateToProjectRoadmapPage}>Roadmap</button>
