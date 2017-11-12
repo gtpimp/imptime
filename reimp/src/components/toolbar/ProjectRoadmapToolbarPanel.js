@@ -14,6 +14,7 @@ class ProjectRoadmapToolbarPanel extends Component {
         super(props)
         this.setDisplayModeClockTime = this.setDisplayModeClockTime.bind(this)
         this.setDisplayModeDeadline = this.setDisplayModeDeadline.bind(this)
+        this.setDisplayModeEstimate = this.setDisplayModeEstimate.bind(this)
     }
 
     componentDidMount() {
@@ -34,6 +35,11 @@ class ProjectRoadmapToolbarPanel extends Component {
         dispatch(setSprintWidthMode(list_key, 'deadline'))
     }
 
+    setDisplayModeEstimate() {
+        const { dispatch, list_key } = this.props
+        dispatch(setSprintWidthMode(list_key, 'estimate'))
+    }
+
     refresh() {
     }
     
@@ -51,6 +57,11 @@ class ProjectRoadmapToolbarPanel extends Component {
                                             {"toolbar-button--enabled": sprint_width_mode=='deadline'})}
                       onClick={this.setDisplayModeDeadline}>
                 Deadline
+              </button>
+              <button className={classNames("button button--large button--primary",
+                                            {"toolbar-button--enabled": sprint_width_mode=='estimate'})}
+                      onClick={this.setDisplayModeEstimate}>
+                Estimate
               </button>
             </div>
         )

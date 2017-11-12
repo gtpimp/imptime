@@ -11,3 +11,7 @@ export function updateSettings(new_settings) {
 export function isConfigured(state) {
     return state.settings
 }
+
+export function getSetting(state, name) {
+    return (state.settings || {})[name]
+}

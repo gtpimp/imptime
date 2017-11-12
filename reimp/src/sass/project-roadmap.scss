@@ -1,11 +1,27 @@
 @import 'variables.scss';
 
+.project-roadmap {
+    max-width:  50%;
+}
+
 .project-roadmap__sprint {
     border: 1px solid $form-field-border;
     padding: 5px;
     display: block;
     margin: 10px;
     background-color: ghostwhite;
+}
+
+.project-roadmap__sprint-heading {
+    font: $bold-extra-large;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 3px;
+}
+
+.project-roadmap__sprint-heading-status {
+    font:  $plain;
+    font-style: italic;
 }
 
 .project-roadmap__sprint-content  {
@@ -15,7 +31,7 @@
     background-color:  cadetblue;
 }
 
-.project-roadmap {
-    max-width:  50%;
+.project-roadmap__sprint-time-entry  {
+    display: flex;
+    flex-direction: row;
 }
-

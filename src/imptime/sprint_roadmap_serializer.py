@@ -5,6 +5,7 @@ from clock_entry_serializer import ClockEntrySerializer
 from timepiece.models import Entry
 from imptime.models import SprintTemplate
 from timepiece.models import ProjectDeadline as SprintDeadline
+from imptime.helpers import estimate_helper
 logger = logging.getLogger(__name__)
 
 class SprintRoadmapSerializer(BaseSerializer):
@@ -19,7 +20,13 @@ class SprintRoadmapSerializer(BaseSerializer):
     deadline_ids = serializers.ListField(child=serializers.CharField(), source="ordered_deadline_ids")
     first_deadline_at = serializers.DateTimeField()
     last_deadline_at = serializers.DateTimeField()
+    fastest_estimated_hours = serializers.FloatField()
+    slowest_estimated_hours = serializers.FloatField()
 
+    def __init__(self, *args, **kwargs):
+        self.logged_in_user = kwargs.pop('logged_in_user')
+        super(SprintRoadmapSerializer, self).__init__(*args, **kwargs)
+    
     def to_representation(self, sprint_roadmap, *args, **kwargs):
         sprint_roadmap.first_entry = Entry.objects.filter(issue__project_id=sprint_roadmap.id).order_by('start_time').first()
         sprint_roadmap.last_entry = Entry.objects.filter(issue__project_id=sprint_roadmap.id).order_by('-end_time').first()
@@ -31,5 +38,14 @@ class SprintRoadmapSerializer(BaseSerializer):
 
         last_deadline = SprintDeadline.objects.filter(project_id=sprint_roadmap.id).order_by("deadline").last()
         sprint_roadmap.last_deadline_at = last_deadline.deadline if last_deadline else None
+
+        sprint = sprint_roadmap
+        comparative_estimates = estimate_helper.get_comparative_estimates(sprint, self.logged_in_user)
+        if len(comparative_estimates) > 0 and comparative_estimates['fastest_user_id'] is not None:
+            sprint_roadmap.fastest_estimated_hours = comparative_estimates[comparative_estimates['fastest_user_id']]['total_hours']
+            sprint_roadmap.slowest_estimated_hours = comparative_estimates[comparative_estimates['slowest_user_id']]['total_hours']
+        else:
+            sprint_roadmap.fastest_estimated_hours = 0
+            sprint_roadmap.slowest_estimated_hours = 0
         
         return super(SprintRoadmapSerializer, self).to_representation(sprint_roadmap, *args, **kwargs)

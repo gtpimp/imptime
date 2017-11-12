@@ -40,7 +40,7 @@ class SprintRoadmapViewSet(BaseViewSet):
             else:
                 sprints = sprints.select_related("status3")
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                s = SprintRoadmapSerializer(sprints, many=True)
+                s = SprintRoadmapSerializer(sprints, many=True, logged_in_user=request.user)
                 sprints_data = s.data
                 context['sprint_roadmaps'] = sprints_data
             context['pagination'] = pagination

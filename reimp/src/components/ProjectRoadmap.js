@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map } from 'lodash'
 import moment from 'moment'
+import { getSetting } from '../actions/Settings'
 import {
     initList,
     invalidateList,
@@ -72,7 +73,7 @@ class ProjectRoadmap extends Component {
     }
 
     getSprintDimensions(sprint) {
-        const { sprint_width_mode, sprint_roadmaps_by_id } = this.props
+        const { sprint_width_mode, sprint_roadmaps_by_id, num_business_hours_per_day } = this.props
         const sprint_roadmap = sprint_roadmaps_by_id[sprint.id] || {}
         
         const dimensions = {start: moment(),
@@ -83,13 +84,18 @@ class ProjectRoadmap extends Component {
             case 'clock':
                 dimensions.start = (sprint.first_entry && moment(sprint.first_entry.start_time)) || moment()
                 dimensions.end = (sprint.last_entry && moment(sprint.last_entry.end_time)) || moment()
+                dimensions.width_days = dimensions.end.diff(dimensions.start, 'days')
                 break
             case 'deadline':
                 dimensions.start = (sprint_roadmap.first_deadline_at && moment(sprint_roadmap.first_deadline_at)) || moment()
                 dimensions.end = (sprint_roadmap.last_deadline_at && moment(sprint_roadmap.last_deadline_at)) || moment()
+                dimensions.width_days = dimensions.end.diff(dimensions.start, 'days')
+                break
+            case 'estimate':
+                const average_estimate_hours = ((sprint_roadmap.slowest_estimated_hours || 0)*1.0 + (sprint_roadmap.fastest_estimated_hours|| 0))/2
+                dimensions.width_days = Math.round(average_estimate_hours / num_business_hours_per_day)
                 break
         }
-        dimensions.width_days = dimensions.end.diff(dimensions.start, 'days')
 
         if ( this.project_roadmap_el ) {
             const max_width = this.project_roadmap_el.clientWidth;
@@ -105,12 +111,12 @@ class ProjectRoadmap extends Component {
         return (
             <div>
               { sprint.first_entry &&
-                <div>
+                <div className="project-roadmap__sprint-time-entry">
                   First clock: <Timestamp value={sprint.first_entry.start_time} format="datetime" />
                 </div>
               }
               { sprint.last_entry &&
-                <div>
+                <div className="project-roadmap__sprint-time-entry">
                   Last clock: <Timestamp value={sprint.last_entry.end_time} format="datetime" />
                 </div>
               }
@@ -138,6 +144,19 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderSprintContent__Estimate(sprint, dimensions) {
+        return (
+            <div>
+              { dimensions.width_days &&
+                <div>Estimate {dimensions.width_days} days (dev+testing+management+velocity+scopecreep)</div>
+              }
+              { !dimensions.width_days &&
+                <div>No estimate</div>
+              }
+            </div>
+        )
+    }
+
     renderSprint(sprint) {
         const { sprint_width_mode } = this.props
         const dimensions = this.getSprintDimensions(sprint)
@@ -145,13 +164,21 @@ class ProjectRoadmap extends Component {
         return (
             <div key={sprint.id} className="project-roadmap__sprint">
               <div>
-                <SprintName sprint_id={sprint.id} />
+                <div className="project-roadmap__sprint-heading">
+                  <SprintName sprint_id={sprint.id} />
+                  <div className="project-roadmap__sprint-heading-status">
+                    - { sprint.status_name }
+                  </div>
+                </div>
                 { sprint_width_mode=='clock' && this.renderSprintContent__ActualDuration(sprint, dimensions) }
                 { sprint_width_mode=='deadline' && this.renderSprintContent__Deadline(sprint, dimensions) }
+                { sprint_width_mode=='estimate' && this.renderSprintContent__Estimate(sprint, dimensions) }
               </div>
-              <div className="project-roadmap__duration" style={{width:dimensions.width_percentage}}>
-                {dimensions.width_days} days
-              </div>
+              { dimensions.width_days>0 &&
+                <div className="project-roadmap__duration" style={{width:dimensions.width_percentage}}>
+                  {dimensions.width_days} days
+                </div>
+              }
             </div>
         )
     }
@@ -198,7 +225,8 @@ function mapStateToProps(state, props) {
         sprint_width_mode,
         list_key,
         deadline_list_key,
-        sprint_deadlines_by_id
+        sprint_deadlines_by_id,
+        num_business_hours_per_day: getSetting(state, 'NUM_BUSINESS_HOURS_PER_DAY') || 8
     }
 }
 

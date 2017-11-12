@@ -3,6 +3,7 @@ from sprint_serializer import SprintSerializer # change to new serializer once c
 from datetime import datetime
 import csv
 from rest_framework.decorators import detail_route
+from helpers import estimate_helper
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -35,7 +36,7 @@ class EstimateSummaryViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def _get_data(self, sprint, user):
-        comparative_estimates = self._get_comparative_estimates(sprint, user)
+        comparative_estimates = estimate_helper.get_comparative_estimates(sprint, user)
         user_infos = self._get_user_infos(sprint)
         context = { 'project_id':sprint.business_id, #sic
                     'sprint_id':sprint.id,
@@ -44,67 +45,6 @@ class EstimateSummaryViewSet(BaseViewSet):
                     'comparative_estimates': comparative_estimates }
         return context
     
-    def _get_comparative_estimates(self, sprint, user):
-        users = User.objects.filter(pk__in=[x.id for x in sprint.business.get_users_allowed_to_estimate_on_business(user)])
-        developers = users.filter(rates__project_id=sprint.id, rates__time_tracking_mode='developer')
-        developer_estimates = IssuePoints.objects.filter(issue__project=sprint,
-                                                    user_id__in=[x.pk for x in developers])
-        developer_estimate_hours = developer_estimates.order_by("user_id")\
-                                                      .values('user_id')\
-                                                      .annotate(total_hours=Sum('points'))
-        
-        estimates = {}
-        for user_estimate_info in developer_estimate_hours:
-            if not user_estimate_info['total_hours']:
-                continue
-
-            rate = Rate.objects.get(user=user_estimate_info['user_id'],
-                                              project=sprint)
-            developer_rate = rate.billable_amount
-            developer_rate_with_commission = float(developer_rate) * float((1+(sprint.commission_percentage/100)))
-            developer_velocity_adjusted_hours = float((user_estimate_info['total_hours'] or 0)) * float((rate.velocity or 1))
-            developer_cost = float(developer_velocity_adjusted_hours) * float(developer_rate)
-            
-            tester_adjusted_hours = float(developer_velocity_adjusted_hours) * float(sprint.ratio_testing)
-            tester_rate = Rate.objects.filter(project=sprint,
-                                              time_tracking_mode='tester')\
-                                      .aggregate(Avg('billable_amount'))['billable_amount__avg'] or 0
-            tester_rate_with_commission = float(tester_rate) * float((1+(sprint.commission_percentage/100)))
-            tester_cost = float(tester_adjusted_hours) * float(tester_rate_with_commission)
-            
-
-            manager_adjusted_hours = float(developer_velocity_adjusted_hours) * float(sprint.ratio_management)
-            manager_rate = Rate.objects.filter(project=sprint,
-                                               time_tracking_mode='manager')\
-                                       .aggregate(Avg('billable_amount'))['billable_amount__avg'] or 0
-            manager_rate_with_commission = float(manager_rate) * float((1+(sprint.commission_percentage/100)))
-            manager_cost = float(manager_adjusted_hours) * float(manager_rate_with_commission)
-
-            working_cost = developer_cost + tester_cost + manager_cost
-            total_cost = working_cost * (1+sprint.ratio_scope_creep)
-
-            estimates[user_estimate_info['user_id']] = { 'user_id': user_estimate_info['user_id'],
-                                                         'developer_original_hours': user_estimate_info['total_hours'],
-                                                         'developer_velocity': rate.velocity,
-                                                         'developer_adjusted_hours': developer_velocity_adjusted_hours,
-                                                         'developer_rate': developer_rate,
-                                                         'developer_rate_with_commission': developer_rate_with_commission,
-                                                         'developer_cost': developer_cost,
-                                                         'tester_ratio': sprint.ratio_testing,
-                                                         'tester_adjusted_hours': tester_adjusted_hours,
-                                                         'tester_rate': tester_rate,
-                                                         'tester_rate_with_commission': tester_rate_with_commission,
-                                                         'tester_cost': tester_cost,
-                                                         'manager_ratio': sprint.ratio_management,
-                                                         'manager_adjusted_hours': manager_adjusted_hours,
-                                                         'manager_rate': manager_rate,
-                                                         'manager_rate_with_commission': manager_rate_with_commission,
-                                                         'manager_cost': manager_cost,
-                                                         'working_cost': working_cost,
-                                                         'ratio_scope_creep': sprint.ratio_scope_creep,
-                                                         'total_cost': total_cost }
-        return estimates
-
     def _get_rate(self, user_id, sprint_id):
         return Rate.full_rate_for_project(user_id=user_id, project_id=sprint_id) #sic
 
