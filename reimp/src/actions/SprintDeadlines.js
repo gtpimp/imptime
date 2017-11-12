@@ -12,6 +12,7 @@ import {
     ensureItemsLoaded,
     getItem,
     getItems,
+    getItemsById,
     updateItem,
     startCandidateItem,
     saveCandidateItem,
@@ -55,6 +56,10 @@ export function getSprintDeadline(state, sprint_deadline_id) {
 
 export function getSprintDeadlines(state, sprint_deadline_ids) {
     return getItems(state, ENTITY_KEY__SPRINT_DEADLINE, sprint_deadline_ids)
+}
+
+export function getSprintDeadlinesById(state, sprint_deadline_ids) {
+    return getItemsById(state, ENTITY_KEY__SPRINT_DEADLINE, sprint_deadline_ids)
 }
 
 export function createSprintDeadline(deadline) {

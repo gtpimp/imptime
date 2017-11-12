@@ -13,8 +13,8 @@ import {
     update_list_filter,
     update_list_format
 } from '../actions/ItemList'
-import { getSprintWidthMode } from '../actions/ProjectRoadmap'
-import { setSprintWidthMode  } from '../actions/ProjectRoadmap'
+import { getSprintWidthMode, setSprintWidthMode } from '../actions/ProjectRoadmap'
+import { fetchSprintDeadlinesIfNeeded, getSprintDeadlinesById } from '../actions/SprintDeadlines'
 import {
     ENTITY_KEY__SPRINT
 } from '../actions/ItemListKeyRegistry'
@@ -24,6 +24,7 @@ import {
 } from '../actions/Sprints'
 import SprintName from './SprintName'
 import Timestamp from './Timestamp'
+import SprintDeadline from './SprintDeadline'
 
 class ProjectRoadmap extends Component {
 
@@ -32,12 +33,15 @@ class ProjectRoadmap extends Component {
     }
     
     componentDidMount() {
-	const { dispatch, list_key, project_id } = this.props
+	const { dispatch, list_key, deadline_list_key, project_id } = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(update_list_filter(list_key, {project_id: project_id}))
             dispatch(update_list_format(list_key, {roadmap: true}))
             dispatch(fetchSprintsIfNeeded(list_key))
+
+            dispatch(update_list_filter(deadline_list_key, {project_id: project_id}))
+            dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
         }
     }
 
@@ -64,7 +68,11 @@ class ProjectRoadmap extends Component {
             case 'clock':
                 dimensions.start = (sprint.first_entry && moment(sprint.first_entry.start_time)) || moment()
                 dimensions.end = (sprint.last_entry && moment(sprint.last_entry.end_time)) || moment()
-            
+                break
+            case 'deadline':
+                dimensions.start = (sprint.first_deadline_at && moment(sprint.first_deadline_at)) || moment()
+                dimensions.end = (sprint.last_deadline_at && moment(sprint.last_deadline_at)) || moment()
+                break
         }
         dimensions.width_days = dimensions.end.diff(dimensions.start, 'days')
 
@@ -100,6 +108,21 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderSprintContent__Deadline(sprint, dimensions) {
+        return (
+            <div>
+              { map(sprint.deadline_ids, function(deadline_id) {
+                    return (
+                        <div>
+                          <SprintDeadline deadline_id={deadline_id} />
+                        </div>
+                    )
+                })
+              }
+            </div>
+        )
+    }
+
     renderSprint(sprint) {
         const { sprint_width_mode } = this.props
         const dimensions = this.getSprintDimensions(sprint)
@@ -109,6 +132,7 @@ class ProjectRoadmap extends Component {
               <div>
                 <SprintName sprint_id={sprint.id} />
                 { sprint_width_mode=='clock' && this.renderSprintContent__ActualDuration(sprint, dimensions) }
+                { sprint_width_mode=='deadline' && this.renderSprintContent__Deadline(sprint, dimensions) }
               </div>
               <div className="project-roadmap__duration" style={{width:dimensions.width_percentage}}>
                 {dimensions.width_days} days
@@ -139,17 +163,23 @@ class ProjectRoadmap extends Component {
 
 function mapStateToProps(state, props) {
     const { list_key, project_id } = props
+    const deadline_list_key = list_key + "_DEADLINES"
     const sprint_ids = getVisibleItemIds(state, list_key)
     const sprints = getVisibleItems(state, list_key, ENTITY_KEY__SPRINT)
     const is_loading = isLoading(state, list_key) || getLoadingItemIds(state, list_key).length > 0 || !haveItemsBeenRetrieved(state, sprint_ids, ENTITY_KEY__SPRINT)
     const sprint_width_mode = getSprintWidthMode(state, list_key)
+    const sprint_deadline_ids = getVisibleItemIds(deadline_list_key)
+    const sprint_deadlines_by_id = getSprintDeadlinesById(state, sprint_deadline_ids)
     
     return {
         project_id,
         sprint_ids,
         sprints,
         is_loading,
-        sprint_width_mode
+        sprint_width_mode,
+        list_key,
+        deadline_list_key,
+        sprint_deadlines_by_id
     }
 }
 

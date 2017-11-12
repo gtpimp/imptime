@@ -43,7 +43,7 @@ class SprintDeadlineViewSet(BaseViewSet):
                 sprint_deadlines_data = s.data
                 context['sprint_deadlines'] = sprint_deadlines_data
                 context['pagination'] = pagination
-                data = {'status': 'success', 'payload': context}
+            data = {'status': 'success', 'payload': context}
                 
         except Exception, ex:
             logger.exception(ex)
@@ -132,4 +132,9 @@ class SprintDeadlineViewSet(BaseViewSet):
                                                                         pk=deadline_data.pop('deadline_type_id', deadline_data.pop('deadline_type', None))).id
 
         return deadline_data
-    
+
+    def apply_filter(self, qs, raw_filter_args):
+        project_id = raw_filter_args.pop('project_id', None)
+        if project_id:
+            qs = qs.filter(project__business_id=project_id) #sic
+        return super(SprintDeadlineViewSet, self).apply_filter(qs, raw_filter_args)

@@ -310,6 +310,18 @@ export function getItems(state, entity_key, item_ids) {
     }))
 }
 
+export function getItemsById(state, entity_key, item_ids) {
+    const item_objs = (state.item || {})[entity_key]
+    const items_by_id = (item_objs && item_objs.items_by_id) || {}
+    const items = items_by_id && item_ids && compact(item_ids.map(function (item_id, index) {
+        return items_by_id[item_id] || {
+            'id': item_id,
+            'loaded': false
+        }
+    }))
+    return keyBy(items, 'id')
+}
+
 export function fetchItemsIfNeeded(entity_key, list_key) {
     const matching_items_key = entity_key
     const matching_items_promise_func =

@@ -1,6 +1,5 @@
 import logging
 from sprint_serializer import SprintSerializer
-from sprint_roadmap_serializer import SprintRoadmapSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -48,16 +47,9 @@ class SprintViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in sprints.values_list(
                     'id', flat=True)]
             else:
-
-                if format_args.get('roadmap'):
-                    sprints = sprints.select_related("status3")
-                    sprints = sprints.annotate(num_issues=Count('issues'))
-                    s = SprintRoadmapSerializer(sprints, many=True)
-                else:
-                    sprints = sprints.select_related("status3")
-                    sprints = sprints.annotate(num_issues=Count('issues'))
-                    s = SprintSerializer(sprints, many=True)
-                    
+                sprints = sprints.select_related("status3")
+                sprints = sprints.annotate(num_issues=Count('issues'))
+                s = SprintSerializer(sprints, many=True)
                 sprints_data = s.data
                 context['sprints'] = sprints_data
             context['pagination'] = pagination
