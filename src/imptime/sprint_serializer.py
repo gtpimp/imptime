@@ -23,8 +23,6 @@ class SprintSerializer(BaseSerializer):
     sprint_template_id = serializers.CharField(source="cloned_from_sprint_id")
     sprint_clone_ids = serializers.ListField(child=serializers.CharField())
     deadline_ids = serializers.ListField(child=serializers.CharField(), source="ordered_deadline_ids")
-    first_deadline_at = serializers.DateTimeField()
-    last_deadline_at = serializers.DateTimeField()
 
     def to_representation(self, sprint, *args, **kwargs):
         sprint.status_name = sprint.status3 and sprint.status3.name
@@ -40,11 +38,4 @@ class SprintSerializer(BaseSerializer):
         sprint.sprint_clone_ids = SprintTemplate.objects.filter(sprint=sprint).values_list('clones__id', flat=True)
         sprint.ordered_deadline_ids = sprint.deadlines.order_by("deadline").values_list('id', flat=True)
 
-        first_deadline = SprintDeadline.objects.filter(project_id=sprint.id).order_by("deadline").first()
-        sprint.first_deadline_at = first_deadline.deadline if first_deadline else None
-
-        last_deadline = SprintDeadline.objects.filter(project_id=sprint.id).order_by("deadline").last()
-        sprint.last_deadline_at = last_deadline.deadline if last_deadline else None
-        
-        return super(SprintSerializer, self).to_representation(
-            sprint, *args, **kwargs)
+        return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)

@@ -13,8 +13,17 @@ import {
     update_list_filter,
     update_list_format
 } from '../actions/ItemList'
-import { getSprintWidthMode, setSprintWidthMode } from '../actions/ProjectRoadmap'
-import { fetchSprintDeadlinesIfNeeded, getSprintDeadlinesById } from '../actions/SprintDeadlines'
+import {
+    getSprintWidthMode,
+    setSprintWidthMode,
+    getSprintRoadmapsById,
+    getSprintRoadmapIdsFromSprintIds,
+    fetchSprintRoadmapsIfNeeded
+} from '../actions/SprintRoadmaps'
+import {
+    fetchSprintDeadlinesIfNeeded,
+    getSprintDeadlinesById,
+} from '../actions/SprintDeadlines'
 import {
     ENTITY_KEY__SPRINT
 } from '../actions/ItemListKeyRegistry'
@@ -33,33 +42,39 @@ class ProjectRoadmap extends Component {
     }
     
     componentDidMount() {
-	const { dispatch, list_key, deadline_list_key, project_id } = this.props
+	const { dispatch, list_key, deadline_list_key, project_id, sprint_ids, roadmap_list_key } = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(update_list_filter(list_key, {project_id: project_id}))
             dispatch(update_list_format(list_key, {roadmap: true}))
             dispatch(fetchSprintsIfNeeded(list_key))
-
             dispatch(update_list_filter(deadline_list_key, {project_id: project_id}))
             dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
+
+            dispatch(update_list_filter(roadmap_list_key, {project_id: project_id}))
+            dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
         }
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, list_key} = this.props
+        const {dispatch, list_key, roadmap_list_key} = this.props
         const { project_id } = new_props
         if ( project_id != this.props.project_id ) {
             dispatch(update_list_filter(list_key, {project_id: project_id}))
+            dispatch(update_list_filter(roadmap_list_key, {project_id: project_id}))
             dispatch(invalidateList(list_key))
+            dispatch(invalidateList(roadmap_list_key))
         }
         if (project_id) {
             dispatch(fetchSprintsIfNeeded(list_key))
+            dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
         }
     }
 
     getSprintDimensions(sprint) {
-        const { sprint_width_mode } = this.props
-
+        const { sprint_width_mode, sprint_roadmaps_by_id } = this.props
+        const sprint_roadmap = sprint_roadmaps_by_id[sprint.id] || {}
+        
         const dimensions = {start: moment(),
                             end: moment(),
                             width: null}
@@ -70,8 +85,8 @@ class ProjectRoadmap extends Component {
                 dimensions.end = (sprint.last_entry && moment(sprint.last_entry.end_time)) || moment()
                 break
             case 'deadline':
-                dimensions.start = (sprint.first_deadline_at && moment(sprint.first_deadline_at)) || moment()
-                dimensions.end = (sprint.last_deadline_at && moment(sprint.last_deadline_at)) || moment()
+                dimensions.start = (sprint_roadmap.first_deadline_at && moment(sprint_roadmap.first_deadline_at)) || moment()
+                dimensions.end = (sprint_roadmap.last_deadline_at && moment(sprint_roadmap.last_deadline_at)) || moment()
                 break
         }
         dimensions.width_days = dimensions.end.diff(dimensions.start, 'days')
@@ -113,7 +128,7 @@ class ProjectRoadmap extends Component {
             <div>
               { map(sprint.deadline_ids, function(deadline_id) {
                     return (
-                        <div>
+                        <div key={deadline_id}>
                           <SprintDeadline deadline_id={deadline_id} />
                         </div>
                     )
@@ -164,8 +179,11 @@ class ProjectRoadmap extends Component {
 function mapStateToProps(state, props) {
     const { list_key, project_id } = props
     const deadline_list_key = list_key + "_DEADLINES"
+    const roadmap_list_key = list_key + "_ROADMAPS"
     const sprint_ids = getVisibleItemIds(state, list_key)
     const sprints = getVisibleItems(state, list_key, ENTITY_KEY__SPRINT)
+    const sprint_roadmap_ids = getSprintRoadmapIdsFromSprintIds(sprint_ids)
+    const sprint_roadmaps_by_id = getSprintRoadmapsById(state, sprint_roadmap_ids)
     const is_loading = isLoading(state, list_key) || getLoadingItemIds(state, list_key).length > 0 || !haveItemsBeenRetrieved(state, sprint_ids, ENTITY_KEY__SPRINT)
     const sprint_width_mode = getSprintWidthMode(state, list_key)
     const sprint_deadline_ids = getVisibleItemIds(deadline_list_key)
@@ -174,6 +192,7 @@ function mapStateToProps(state, props) {
     return {
         project_id,
         sprint_ids,
+        sprint_roadmaps_by_id,
         sprints,
         is_loading,
         sprint_width_mode,

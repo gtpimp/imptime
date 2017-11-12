@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import {
     LIST_KEY__PROJECT_ROADMAP
 } from '../../actions/ItemListKeyRegistry'
-import { setSprintWidthMode, getSprintWidthMode } from '../../actions/ProjectRoadmap'
+import { setSprintWidthMode, getSprintWidthMode } from '../../actions/SprintRoadmaps'
 
 class ProjectRoadmapToolbarPanel extends Component {
 

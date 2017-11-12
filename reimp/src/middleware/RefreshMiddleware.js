@@ -13,6 +13,7 @@ import { invalidateVisualSpecDocuments, invalidateAllVisualSpecDocuments } from 
 import { invalidateVisualSpecIssues } from '../actions/VisualSpecIssues'
 import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { addAsyncMessage } from '../actions/Async'
+import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 
 import {
     invalidateList
@@ -41,6 +42,8 @@ function triggerInvalidateEntity(d, dispatch) {
 
     } else if ( d.entity_name === 'sprint' ) {
         dispatch(invalidateSprints([d.entity_ref]))
+        const sprint_roadmap_ids = getSprintRoadmapIdsFromSprintIds([d.entity_ref])
+        dispatch(invalidateSprintRoadmaps(sprint_roadmap_ids))
 
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateIssues([d.entity_ref]))
