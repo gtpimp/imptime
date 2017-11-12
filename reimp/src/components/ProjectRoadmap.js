@@ -148,7 +148,7 @@ class ProjectRoadmap extends Component {
         return (
             <div>
               { dimensions.width_days &&
-                <div>Estimate {dimensions.width_days} days (dev+testing+management+velocity+scopecreep)</div>
+                <div>Total sprint estimate</div>
               }
               { !dimensions.width_days &&
                 <div>No estimate</div>
@@ -163,7 +163,7 @@ class ProjectRoadmap extends Component {
         
         return (
             <div key={sprint.id} className="project-roadmap__sprint">
-              <div>
+              <div className="project-roadmap__sprint-fixed-content">
                 <div className="project-roadmap__sprint-heading">
                   <SprintName sprint_id={sprint.id} />
                   <div className="project-roadmap__sprint-heading-status">
@@ -174,11 +174,13 @@ class ProjectRoadmap extends Component {
                 { sprint_width_mode=='deadline' && this.renderSprintContent__Deadline(sprint, dimensions) }
                 { sprint_width_mode=='estimate' && this.renderSprintContent__Estimate(sprint, dimensions) }
               </div>
-              { dimensions.width_days>0 &&
-                <div className="project-roadmap__duration" style={{width:dimensions.width_percentage}}>
-                  {dimensions.width_days} days
-                </div>
-              }
+              <div className="project-roadmap__sprint-variable-content" style={{width:dimensions.width_percentage||0}}>
+                { dimensions.width_days>0 &&
+                  <div className="project-roadmap__duration_text">
+                    {dimensions.width_days} days
+                  </div>
+                }
+              </div>
             </div>
         )
     }

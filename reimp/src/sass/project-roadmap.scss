@@ -5,15 +5,31 @@
 }
 
 .project-roadmap__sprint {
-    border: 1px solid $form-field-border;
     padding: 5px;
     display: block;
     margin: 10px;
-    background-color: ghostwhite;
+    display: flex;
+    flex-direction: row;
+}
+
+.project-roadmap__sprint-fixed-content {
+    background-color: $variable-width-background-color;
+    border-left: 1px solid $form-field-border;
+    border-bottom: 1px solid $form-field-border;
+    border-top: 1px solid $form-field-border;
+    width: 25%;
+    overflow: visible;
+}
+
+.project-roadmap__sprint-variable-content {
+    background-color: $variable-width-background-color;
+    border-right: 1px solid $form-field-border;
+    border-bottom: 1px solid $form-field-border;
+    border-top: 1px solid $form-field-border;
 }
 
 .project-roadmap__sprint-heading {
-    font: $bold-extra-large;
+    font: $bold-extra-large; 
     display: flex;
     flex-direction: row;
     margin-bottom: 3px;
@@ -27,8 +43,7 @@
 .project-roadmap__sprint-content  {
 }
 
-.project-roadmap__duration {
-    background-color:  cadetblue;
+.project-roadmap__duration_text {
 }
 
 .project-roadmap__sprint-time-entry  {
