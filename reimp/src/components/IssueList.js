@@ -47,6 +47,7 @@ class IssueList extends Component {
         this.closeTagEditor = this.closeTagEditor.bind(this)
         this.openEstimateEditor = this.openEstimateEditor.bind(this)
         this.closeEstimateEditor = this.closeEstimateEditor.bind(this)
+        this.keyDown = this.keyDown.bind(this)
     }
 
     componentDidMount() {
@@ -78,7 +79,7 @@ class IssueList extends Component {
     }
 
     onClickedIssue(event, issue_id) {
-        const {onSelectIssues, selected_ids} = this.props
+        const {dispatch, onSelectIssues, selected_ids} = this.props
         event.stopPropagation()
 
         let selected_issue_ids = []
@@ -94,6 +95,7 @@ class IssueList extends Component {
             selected_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(issue_id)
         }
         onSelectIssues(selected_issue_ids)
+        dispatch(cancelCandidateIssue())
     }
 
     findHiddenIssuesRelatingToTargetIssueId(target_issue_id) {
@@ -239,6 +241,14 @@ class IssueList extends Component {
 
     closeEstimateEditor() {
         this.setState({'estimate_editor_open': false})
+    }
+
+    keyDown(event) {
+        const { dispatch } = this.props
+        if (event.keyCode === 27) {
+            event.preventDefault()
+            dispatch(cancelCandidateIssue())
+        }
     }
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
@@ -426,7 +436,7 @@ class IssueList extends Component {
         }
 
         return (
-            <div>
+            <div onKeyDown={this.keyDown}>
               { is_collapsed && this.render_collapsed() }
               { is_expanded && this.render_expanded() }
             </div>

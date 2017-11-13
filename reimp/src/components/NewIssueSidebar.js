@@ -5,6 +5,7 @@ import Sidebar from './Sidebar'
 import {
     getCandidateIssue,
     updateCandidateSubject,
+    cancelCandidateIssue,
     saveCandidateIssue
 } from '../actions/Issues'
 import IssueTitleForm from './form/IssueTitleForm'
@@ -14,6 +15,15 @@ class NewIssueSidebar extends Component {
     constructor(props) {
         super(props)
         this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
+        this.keyDown = this.keyDown.bind(this)
+    }
+
+    keyDown(event) {
+        const { dispatch } = this.props
+        if (event.keyCode === 27) {
+            event.preventDefault()
+            dispatch(cancelCandidateIssue())
+        }
     }
 
     onSaveCandidateIssue(new_value) {
@@ -30,13 +40,13 @@ class NewIssueSidebar extends Component {
 
         return (
             <Sidebar>
-                <PropertyStack>
-                    <div>
-                        <div>
-                            <IssueTitleForm onSubmitted={this.onSaveCandidateIssue}/>
-                        </div>
-                    </div>
-                </PropertyStack>
+              <PropertyStack>
+                <div onKeyDown={this.keyDown}>
+                  <div>
+                    <IssueTitleForm onSubmitted={this.onSaveCandidateIssue}/>
+                  </div>
+                </div>
+              </PropertyStack>
             </Sidebar>
         )
     }
