@@ -16,6 +16,10 @@ class IssueDescriptionForm extends Component {
         fieldOnChange(e)
     }
 
+    componentDidMount() {
+        this.description_el.refs.textarea.focus()
+    }
+
     keyDown(event) {
         const { onKeyDown } = this.props
         if (onKeyDown) {
@@ -32,6 +36,7 @@ class IssueDescriptionForm extends Component {
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                ref={(ref)=> this.description_el=ref}
                 value={input.value}
                 onKeyDown={this.keyDown}
             />

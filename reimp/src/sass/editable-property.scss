@@ -1,5 +1,9 @@
 @import 'variables.scss';
 
+.editable-property {
+    cursor: pointer;
+}
+
 .editable-property-modal {
     background-color: $color-2;
     border-radius: 2px;

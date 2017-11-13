@@ -12,6 +12,11 @@ class IssueTitleForm extends Component {
         this.keyDown = this.keyDown.bind(this)
     }
 
+    componentDidMount() {
+        this.title_el.focus()
+    }
+
+
     keyDown(event) {
         const { onKeyDown } = this.props
         if (onKeyDown) {
@@ -22,13 +27,13 @@ class IssueTitleForm extends Component {
     renderTextarea(field) {
         const {input, data, onChange, ...rest} = field
         return (
-            <Textarea
-                rows="1"
+            <input
                 maxLength="3000"
                 className="textarea textarea--text-component textarea--title"
                 placeholder="Title"
                 onChange={input.onChange}
                 value={input.value}
+                ref={(ref)=> this.title_el=ref}
                 onKeyDown={this.keyDown}
             />
         )

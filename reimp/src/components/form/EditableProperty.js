@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import classNames from 'classnames'
 import Modal from 'react-modal';
 import '../../sass/editable-property.scss'
 import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode } from '../../actions/EditableProperty'
@@ -97,7 +98,7 @@ class EditableProperty extends Component {
         }
 
         return (
-            <div className={class_name} onClick={this.startEditing}>
+            <div className={classNames(class_name, "editable-property")} onClick={this.startEditing}>
               <div>
                 { is_editing && edit_as_modal &&
                   <Modal isOpen={true}
