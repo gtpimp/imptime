@@ -13,6 +13,7 @@ from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import Issue
+from timepiece.models import ProjectReview as SprintReview
 from imptime.models import SprintTemplate
 from rest_framework.decorators import detail_route
 
@@ -84,6 +85,11 @@ class SprintViewSet(BaseViewSet):
                     if self.logged_in_permissions(sprint.business).has_edit_sprint:
                         after_sprint = self.allowed_sprint(new_value)
                         sprint.move_after(after_sprint)
+                elif field_name == 'review_cycle_days':
+                    if self.logged_in_permissions(sprint.business).has_edit_review_cycle:
+                        sprint_review = SprintReview.objects.get_or_create(project=sprint)[0]
+                        sprint_review.review_cycle_days = new_value
+                        sprint_review.save()
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 sprint.save()

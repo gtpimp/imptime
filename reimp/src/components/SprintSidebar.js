@@ -10,7 +10,9 @@ import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintDeadline from '../components/EditableSprintDeadline'
+import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
 import SprintName from './SprintName'
+import { has_permission } from '../actions/Users'
 
 class SprintSidebar extends Component {
 
@@ -48,63 +50,67 @@ class SprintSidebar extends Component {
 
     render() {
 
-        const { sprint_id, sprint, project } = this.props
+        const { sprint_id, sprint, project, has_edit_review_cycle_permission } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
-                <PropertyStack>
+              <PropertyStack>
 
-                    <PropertyStackComponent>
-                        { sprint.sprint_template_id &&
-                          <div className="property-text">
-                            Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
-                          </div>
-                        }
-                        
-                    </PropertyStackComponent>
+                <PropertyStackComponent>
+                  { sprint.sprint_template_id &&
+                    <div className="property-text">
+                      Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
+                    </div>
+                  }
+                  
+                </PropertyStackComponent>
 
-                    <PropertyStackComponent>
-                        <div className="property--title">
-                            <EditableSprintName sprint_id={sprint_id} />
-                        </div>
-                    </PropertyStackComponent>
-                    <PropertyStackComponent>
-                        <div className="property-text">{sprint.description}
-                        </div>
-                    </PropertyStackComponent>
+                <PropertyStackComponent>
+                  <div className="property--title">
+                    <EditableSprintName sprint_id={sprint_id} />
+                  </div>
+                </PropertyStackComponent>
+                <PropertyStackComponent>
+                  <div className="property-text">{sprint.description}
+                  </div>
+                </PropertyStackComponent>
 
-                    <PropertyStackComponent>
-                      <div onClick={this.showEmacsSprint}>
-                        Sprint
-                        <div className="sprint_sidebar__emacs_copy_img" />
-                      </div>
-                    </PropertyStackComponent>
-                    
-                    <PropertyStackComponent>
-                        <div className="property-text">
-                            Status: <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
-                        </div>
-                    </PropertyStackComponent>
-                    
-                    <PropertyStackComponent>
-                        <div className="named-property">
-                            <div className="named-property__name">Created</div>
-                            <div className="named-property__value"><Timestamp format="short-date" value={moment(sprint.created)}/></div>
-                        </div>
-                    </PropertyStackComponent>
-                    <PropertyStackComponent>
-                        <div className="named-property">
-                            <div className="named-property__name">First Activity</div>
-                            <div className="named-property__value"><Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/></div>
-                        </div>
-                    </PropertyStackComponent>
-                    <PropertyStackComponent>
-                        <div className="named-property">
-                            <div className="named-property__name">Last Activity</div>
-                            <div className="named-property__value"><Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/></div>
-                        </div>
-                    </PropertyStackComponent>
-                </PropertyStack>
+                <PropertyStackComponent>
+                  <div onClick={this.showEmacsSprint}>
+                    Sprint
+                    <div className="sprint_sidebar__emacs_copy_img" />
+                  </div>
+                </PropertyStackComponent>
+                
+                <PropertyStackComponent>
+                  <div className="property-text">
+                    Status: <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                  </div>
+                </PropertyStackComponent>
+                
+                <PropertyStackComponent>
+                  <div className="named-property">
+                    <div className="named-property__name">Created</div>
+                    <div className="named-property__value"><Timestamp format="short-date" value={moment(sprint.created)}/></div>
+                  </div>
+                </PropertyStackComponent>
+                <PropertyStackComponent>
+                  <div className="named-property">
+                    <div className="named-property__name">First Activity</div>
+                    <div className="named-property__value"><Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/></div>
+                  </div>
+                </PropertyStackComponent>
+                <PropertyStackComponent>
+                  <div className="named-property">
+                    <div className="named-property__name">Last Activity</div>
+                    <div className="named-property__value"><Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/></div>
+                  </div>
+                </PropertyStackComponent>
+                { has_edit_review_cycle_permission &&
+                  <PropertyStackComponent title="Review cycle">
+                    <EditableSprintReviewCycle sprint_ids={[sprint.id]}/>
+                  </PropertyStackComponent>
+                }
 
                 <PropertyStackComponent title="Deadlines">
                   { map(sprint.deadline_ids, function (deadline_id, index) {
@@ -113,6 +119,9 @@ class SprintSidebar extends Component {
                   }
                   <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
                 </PropertyStackComponent>
+                
+              </PropertyStack>
+              
             </div>
         )
     }
@@ -122,11 +131,14 @@ function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
+    const has_edit_review_cycle_permission = has_permission(state, project_id, "has_edit_review_cycle")
+    
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
-        project: project
+        project: project,
+        has_edit_review_cycle_permission
     }
 }
 

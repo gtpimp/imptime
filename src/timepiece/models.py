@@ -448,11 +448,13 @@ class BusinessPermissions(BaseModel):
     can_view_calendar = models.BooleanField(default=False, verbose_name="Can View Calendar")
     can_import_actual_hours = models.BooleanField(default=False, verbose_name="Can Import Actual Hours")
     can_edit_business_comments = models.BooleanField(default=False, verbose_name="Can edit project comments")
+    can_view_review_cycle = models.BooleanField(default=False, verbose_name="Can View Review Cycle")
 
     can_do_dev_checklist = models.BooleanField(default=False, verbose_name="Do dev checklist")
     can_do_traffic_checklist = models.BooleanField(default=False, verbose_name="Traffic checklist")
     can_do_finance_checklist = models.BooleanField(default=False, verbose_name="Finance checklist")
 
+    can_edit_review_cycle = models.BooleanField(default=False, verbose_name="Can Edit Review Cycle")
     can_edit_permissions = models.BooleanField(default=False, verbose_name="Can Edit Permissions")
     can_view_permissions = models.BooleanField(default=False, verbose_name="Can View Permissions")
     can_toggle_graphs = models.BooleanField(default=False, verbose_name="Can Toggle Graphs")
@@ -567,6 +569,14 @@ class BusinessPermissions(BaseModel):
     def has_is_active_member_of_business(self):
         return self.user.is_superuser or self.is_active_member_of_business or self.user.has_perm('timepiece.belongs_to_all_projects')
 
+    @property
+    def has_edit_review_cycle(self):
+        return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_review_cycle or self.user.has_perm('timepiece.belongs_to_all_projects'))
+
+    @property
+    def has_view_review_cycle(self):
+        return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_view_review_cycle or self.user.has_perm('timepiece.belongs_to_all_projects'))
+    
     @property
     def has_edit_permissions(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects'))
@@ -4501,4 +4511,12 @@ class ProjectDeadline(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-        
+
+class ProjectReview(BaseModel):
+    project = ProtectedForeignKey(Project, null=False, related_name='reviews')
+    review_cycle_days = models.IntegerField(default=14, null=False)
+            
+class IssueReview(BaseModel):
+    issue = ProtectedForeignKey(Issue, null=False, related_name='reviews')
+    last_reviewed_at = models.DateTimeField(null=True)
+    reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)

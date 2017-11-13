@@ -72,7 +72,7 @@ function mapStateToProps(state, props) {
     })
 
     return {
-        initialValues: {assigned_to: props.initial_value},
+        initialValues: {},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         status_options: status_options,
