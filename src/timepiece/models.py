@@ -4515,18 +4515,25 @@ class ProjectDeadline(BaseModel):
 class ProjectReview(BaseModel):
     project = ProtectedForeignKey(Project, null=False, related_name='reviews')
     review_cycle_days = models.IntegerField(default=14, null=False)
+
+    def save(self, *args, **kwargs):
+        super(ProjectReview, self).save(*args, **kwargs)
+        IssueReview.refresh_for_project(self.project)
             
 class IssueReview(BaseModel):
     issue = models.ForeignKey(Issue, null=False, related_name='reviews')
     last_reviewed_at = models.DateTimeField(null=True)
     reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)
     review_due_at = models.DateTimeField(null=True)
+    auto_recalculate = models.BooleanField(default=True)
     
     class Meta:
         ordering = ('last_reviewed_at',)
 
     def save(self, *args, **kwargs):
-        self.review_due_at = IssueReview._calculate_next_review_time_from_now(issue=self.issue)
+        if self.auto_recalculate:
+            self.review_due_at = IssueReview._calculate_next_review_time_from_now(issue=self.issue)
+            
         was_created = not self.id
         super(IssueReview, self).save(*args, **kwargs)
         if was_created:
@@ -4549,6 +4556,14 @@ class IssueReview(BaseModel):
             return self._calculate_next_review_time_from_now(issue)
         else:
             return review.review_due_at
+
+    @classmethod
+    def refresh_for_project(self, project):
+        for issue_review in IssueReview.objects.filter(issue__project_id=project.id, auto_recalculate=True):
+            due_at = IssueReview._calculate_next_review_time_from_now(issue=issue_review.issue)
+            if issue_review.review_due_at != due_at:
+                issue_review.review_due_at = due_at
+                issue_review.save()
         
     @classmethod
     def reviewed(self, issue, logged_in_user):
