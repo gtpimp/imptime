@@ -3907,8 +3907,8 @@ class IssueComment(BaseModel):
 
 class ProjectIssueOrder(BaseModel):
     order = models.FloatField()
-    issue = ProtectedForeignKey(Issue)
-    project = ProtectedForeignKey(Project)
+    issue = ForeignKey(Issue)
+    project = ForeignKey(Project)
 
     class Meta:
         unique_together = ('project', 'issue')
