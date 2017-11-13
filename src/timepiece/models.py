@@ -3907,8 +3907,8 @@ class IssueComment(BaseModel):
 
 class ProjectIssueOrder(BaseModel):
     order = models.FloatField()
-    issue = ForeignKey(Issue)
-    project = ForeignKey(Project)
+    issue = models.ForeignKey(Issue)
+    project = models.ForeignKey(Project)
 
     class Meta:
         unique_together = ('project', 'issue')
@@ -4517,7 +4517,7 @@ class ProjectReview(BaseModel):
     review_cycle_days = models.IntegerField(default=14, null=False)
             
 class IssueReview(BaseModel):
-    issue = ForeignKey(Issue, null=False, related_name='reviews')
+    issue = models.ForeignKey(Issue, null=False, related_name='reviews')
     last_reviewed_at = models.DateTimeField(null=True)
     reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)
     review_due_at = models.DateTimeField(null=True)
@@ -4526,7 +4526,7 @@ class IssueReview(BaseModel):
         ordering = ('last_reviewed_at',)
 
     def save(self, *args, **kwargs):
-        self.review_due_at = IssueReview._calculate_next_review_time_from_now(issue=issue)
+        self.review_due_at = IssueReview._calculate_next_review_time_from_now(issue=self.issue)
         was_created = not self.id
         super(IssueReview, self).save(*args, **kwargs)
         if was_created:

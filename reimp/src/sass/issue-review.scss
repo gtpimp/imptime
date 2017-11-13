@@ -1,0 +1,10 @@
+@import 'variables.scss';
+
+.issue-review {
+    display: flex;
+    flex-direction: row;
+}
+
+.issue-review__part {
+    padding-left: 2px;
+}

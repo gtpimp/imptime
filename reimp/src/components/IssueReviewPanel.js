@@ -52,20 +52,20 @@ class IssueReviewPanel extends Component {
         }
 
         return (
-            <div className="issue-review">
-              <div className="issue-review__next-review-due-at">
+            <div className="issue-review-panel">
+              <div>
                 { review_due_at_by_any_user &&
-                  <div>
-                    Next review due at: <Timestamp value={review_due_at_by_any_user} />
+                  <div className="issue-review-panel__next-review-due-at">
+                    Last available review date&nbsp; <Timestamp value={review_due_at_by_any_user} format='from_now' />
                   </div>
                 }
                 { !review_due_at_by_any_user &&
-                  <div>
+                  <div className="issue-review-panel__next-review-due-at">
                     Has never been reviewed
                   </div>
                 }
               </div>
-              <div className="issue-review__review_due_per_user">
+              <div className="issue-review-panel__review_due_per_user">
                 { map(issue_review_ids, (issue_review_id) => <IssueReview issue_review_id={issue_review_id} />) }
               </div>
             </div>
@@ -80,7 +80,7 @@ function mapStateToProps(state, props) {
     const issue_reviews = getIssueReviews(state, issue.review_ids || []) || []
     const sprint = (issue.sprint_id && getSprint(state, issue.sprint_id)) || {}
     const can_view = (sprint.id && has_permission(state, sprint.project_id, 'has_view_review_cycle')) || false
-    const review_due_at_by_any_user = (issue_reviews.length > 0 && issue_reviews.review_due_at_by_any_user) || null
+    const review_due_at_by_any_user = (issue_reviews.length > 0 && issue_reviews[0].review_due_at_by_any_user) || null
     
     return {
         issue,

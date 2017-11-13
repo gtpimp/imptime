@@ -40,10 +40,20 @@ class IssueReview extends Component {
 
         return (
             <div className="issue-review">
-              <div className="issue-review--type">
-                <OtherUser user_id={issue_review.reviewed_by} />
-                at
-                <Timestamp value={issue_review.last_reviewed_at} />
+              <div className="issue-review__part">
+                Reviewed by
+              </div>
+              <div className="issue-review__part">
+                <OtherUser user_id={issue_review.reviewed_by_id} />
+              </div>
+              <div className="issue-review__part">
+                <Timestamp value={issue_review.last_reviewed_at} format='from_now' />
+              </div>
+              <div className="issue-review__part">
+                , due
+              </div>
+              <div className="issue-review__part">
+                <Timestamp value={issue_review.review_due_at} format='from_now' />
               </div>
             </div>
         )

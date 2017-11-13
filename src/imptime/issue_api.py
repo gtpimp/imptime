@@ -19,6 +19,7 @@ from timepiece.models import Issue, IssueHistory, Feature
 from imptime.models import VisualSpecIssue
 from timepiece.models import TagCategory, Tag, Entry, IssueStatus, IssuePoints
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
+from timepiece.models import IssueReview
 
 logger = logging.getLogger(__name__)
 
@@ -124,14 +125,14 @@ class IssueViewSet(BaseViewSet):
                         old_subject = issue.subject
                         issue.subject = new_value
                         IssueHistory.add_history(
-                            self.request.user, issue, "changed subject",
+                            request.user, issue, "changed subject",
                             old_subject, issue.subject)
                 elif field_name == "description":
                     if self.logged_in_permissions(issue.project.business).has_edit_description:
                         old_description = issue.description
                         issue.description = new_value
                         IssueHistory.add_history(
-                            self.request.user, issue, "changed description",
+                            request.user, issue, "changed description",
                             old_description, issue.description)
                 elif field_name == "status_name":
                     if self.logged_in_permissions(issue.project.business).has_edit_issue_states:
@@ -140,7 +141,7 @@ class IssueViewSet(BaseViewSet):
                                                                        name=new_value)[0]
                         issue.status2_id = new_status.id
                         IssueHistory.add_history(
-                            self.request.user, issue, "changed status",
+                            request.user, issue, "changed status",
                             old_status.name if old_status else '',
                             new_status.name)
                 elif field_name == "feature_name":
@@ -149,7 +150,7 @@ class IssueViewSet(BaseViewSet):
                         issue.feature = Feature.objects.get_or_create(
                             business=issue.project.business, name=new_value)[0]
                         IssueHistory.add_history(
-                            self.request.user, issue, "changed feature",
+                            request.user, issue, "changed feature",
                             old_feature_name, issue.feature.name)
                 elif field_name == 'issue_id_after':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
@@ -165,14 +166,14 @@ class IssueViewSet(BaseViewSet):
                             User.objects.get(pk=new_value).username \
                             if new_value else "no-one"
                         IssueHistory.add_history(
-                            self.request.user, issue, "changed assigned to",
+                            request.user, issue, "changed assigned to",
                             old_assigned_to, new_assigned_to)
                 elif field_name == 'can_group_issues':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
                         old_can_group_issues = issue.can_group_issues
                         issue.can_group_issues = new_value
                         IssueHistory.add_history(
-                            self.request.user, issue, "changed can group issues to",
+                            request.user, issue, "changed can group issues to",
                             old_can_group_issues, new_value)
                 elif field_name == 'parent_group_id':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
@@ -182,7 +183,7 @@ class IssueViewSet(BaseViewSet):
                             old_parent_group_id = issue.parent_group_id
                             issue.parent_group_id = new_value
                             IssueHistory.add_history(
-                                self.request.user, issue, "changed parent group id",
+                                request.user, issue, "changed parent group id",
                                 old_parent_group_id, new_value)
                 elif field_name == 'sprint_id':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
@@ -204,6 +205,7 @@ class IssueViewSet(BaseViewSet):
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()
+                IssueReview.reviewed(issue, request.user)
 
             data = {'status': 'success', 'payload': issue_pks}
 
@@ -237,8 +239,9 @@ class IssueViewSet(BaseViewSet):
                     issue_before = self.allowed_issue(issue_id_before)
                     SprintIssueOrder.insert_after(issue, set_after_this_issue=issue_before)
                 
-                IssueHistory.add_history(self.request.user, issue,
+                IssueHistory.add_history(request.user, issue,
                                              "created", "", issue.number)
+                IssueReview.reviewed(issue, request.user)
                 return issue
 
             if issue_id_before:
@@ -292,7 +295,7 @@ class IssueViewSet(BaseViewSet):
             issue = self.allowed_issue(issue_id)
 
             if self.logged_in_permissions(issue.project.business).has_delete_issue:
-                IssueHistory.add_history(self.request.user, issue,
+                IssueHistory.add_history(request.user, issue,
                                          "deleted", issue.id, "")
                 VisualSpecIssue.objects.filter(issue=issue).delete()
                 issue.delete()

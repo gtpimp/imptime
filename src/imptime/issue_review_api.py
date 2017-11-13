@@ -1,5 +1,5 @@
 import logging
-from sprint_roadmap_serializer import SprintRoadmapSerializer
+from issue_review_serializer import IssueReviewSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -25,11 +25,11 @@ class IssueReviewViewSet(BaseViewSet):
             issue_reviews = self.allowed_issue_reviews().order_by("last_reviewed_at")
             issue_reviews = self.apply_filter(qs=issue_reviews,
                                               raw_filter_args=filter_args)
-            issue_reviews = self.apply_pagination(qs=sprints,
+            issue_reviews = self.apply_pagination(qs=issue_reviews,
                                                   pagination=pagination)
             
             if format_args.get('ids_only'):
-                context['ids'] = [str(x) for x in sprints.values_list(
+                context['ids'] = [str(x) for x in issue_reviews.values_list(
                     'id', flat=True)]
             else:
                 s = IssueReviewSerializer(issue_reviews, many=True)

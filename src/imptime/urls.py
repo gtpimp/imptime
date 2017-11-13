@@ -8,6 +8,7 @@ import issue_attachment_api
 import issue_clock_api
 import issue_comment_api
 import issue_estimate_api
+import issue_review_api
 import issue_tag_api
 import testable_api
 import project_api
@@ -54,6 +55,8 @@ router.register(r'issue/attachment', issue_attachment_api.IssueAttachmentViewSet
                 base_name='issue_attachment')
 router.register(r'issue/estimate', issue_estimate_api.IssueEstimateViewSet,
                 base_name='issue_estimate')
+router.register(r'issue_review', issue_review_api.IssueReviewViewSet,
+                base_name='issue_review')
 router.register(r'issue/clock', issue_clock_api.IssueClockViewSet,
                 base_name='issue_clock')
 router.register(r'issue/testable', testable_api.TestableViewSet,

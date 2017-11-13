@@ -8,8 +8,8 @@ logger = logging.getLogger(__name__)
 class IssueReviewSerializer(BaseModelSerializer):
     reviewed_by_id = serializers.CharField()
     issue_id = serializers.CharField()
-    sprint_id = serializers.CharField(source='issue.sprint_id')
-    review_due_at_by_any_user = serializers.DateField()
+    sprint_id = serializers.CharField(source='issue.project_id')
+    review_due_at_by_any_user = serializers.DateTimeField()
     
     class Meta:
         model = IssueReview
