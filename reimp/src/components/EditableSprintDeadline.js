@@ -99,7 +99,7 @@ class EditableSprintDeadline extends Component {
                 </div>
               }
 
-              { ! deadline.id &&
+              { ! deadline.id && can_edit &&
                 <div>
                   <EditableProperty property_key={'sprint_deadline_'+sprint_id}
                                     initial_value=''

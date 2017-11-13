@@ -12,6 +12,7 @@ import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintDeadline from '../components/EditableSprintDeadline'
 import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
 import SprintName from './SprintName'
+import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
 
 class SprintSidebar extends Component {
@@ -106,12 +107,11 @@ class SprintSidebar extends Component {
                     <div className="named-property__value"><Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/></div>
                   </div>
                 </PropertyStackComponent>
-                { has_edit_review_cycle_permission &&
-                  <PropertyStackComponent title="Review cycle">
-                    <EditableSprintReviewCycle sprint_ids={[sprint.id]}/>
-                  </PropertyStackComponent>
-                }
 
+                <PropertyStackComponent title="Reviews">
+                  <SprintReviewPanel sprint_id={sprint.id} />
+                </PropertyStackComponent>
+                
                 <PropertyStackComponent title="Deadlines">
                   { map(sprint.deadline_ids, function (deadline_id, index) {
                         return <EditableSprintDeadline key={sprint.id, deadline_id} sprint_id={sprint.id} deadline_id={deadline_id}/>

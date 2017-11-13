@@ -26,6 +26,7 @@ export const ENTITY_KEY__VISUAL_SPEC_DOCUMENT = 'visual_spec_document'
 export const ENTITY_KEY__VISUAL_SPEC_ISSUE = 'visual_spec_issue'
 export const ENTITY_KEY__RELEASE_NOTE = 'release_note'
 export const ENTITY_KEY__SPRINT_DEADLINE = 'sprint_deadline'
+export const ENTITY_KEY__SPRINT_REVIEW = 'sprint_review'
 export const ENTITY_KEY__SPRINT_ROADMAP = 'sprint_roadmap'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js

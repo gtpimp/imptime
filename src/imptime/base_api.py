@@ -7,6 +7,7 @@ from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import Issue, IssueReview
+from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
@@ -165,6 +166,9 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_sprint_deadlines(self):
         return SprintDeadline.objects.filter(project__in=self.allowed_sprints()) #sic
+
+    def allowed_sprint_reviews(self):
+        return SprintReview.objects.filter(project__in=self.allowed_sprints()) #sic
     
     def logged_in_permissions(self, project):
         if project.id in self._logged_in_permissions_by_project:

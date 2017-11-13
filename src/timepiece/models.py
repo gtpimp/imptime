@@ -4514,7 +4514,8 @@ class ProjectDeadline(BaseModel):
 
 class ProjectReview(BaseModel):
     project = ProtectedForeignKey(Project, null=False, related_name='reviews')
-    review_cycle_days = models.IntegerField(default=14, null=False)
+    review_cycle_days = models.IntegerField(null=False)
+    review_by = models.ForeignKey(User, related_name='project_reviews', null=False)
 
     def save(self, *args, **kwargs):
         super(ProjectReview, self).save(*args, **kwargs)
