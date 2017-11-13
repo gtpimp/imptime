@@ -1,8 +1,16 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import { reduxForm, Field } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
+
+const DEFAULT_TIME_ESTIMATES = [ "0:00", "0:15", "0:30", "0:45",
+                                 "1:00", "1:15", "1.30", "1.45",
+                                 "2:00", "2:30",
+                                 "3:00", "3:30",
+                                 "4:00", "5:00", "6:00", "7:00", "8:00",
+                                 "16:00", "32:00", "40:00", "80:00", "120:00", "160:00" ]
 
 class IssueEstimateForm extends Component {
 
@@ -10,6 +18,7 @@ class IssueEstimateForm extends Component {
         super(props)
         this.renderInput = this.renderInput.bind(this)
         this.keyDown = this.keyDown.bind(this)
+        this.quickSelectDefaultEstimate = this.quickSelectDefaultEstimate.bind(this)
     }
 
     componentDidMount() {
@@ -22,6 +31,10 @@ class IssueEstimateForm extends Component {
         if (onKeyDown) {
             onKeyDown(event)
         }
+    }
+    
+    quickSelectDefaultEstimate(time_estimate) {
+        this.props.change("estimate", time_estimate)
     }
 
     renderInput(field) {
@@ -42,12 +55,25 @@ class IssueEstimateForm extends Component {
 
     render() {
         const { handleSubmit } = this.props
+        const that = this
 
         return (
             <form onSubmit={handleSubmit}>
               <div>
                 <div className="issue_sidebar--textarea">
                   <Field name="estimate" component={this.renderInput} />
+                </div>
+                <div className="issue-estimate-form__default_estimates">
+                  { map(DEFAULT_TIME_ESTIMATES, function(time_estimate) {
+                        return (
+                            <div key={time_estimate} className="issue-estimate-form__default_estimate"
+                                 onClick={() => that.quickSelectDefaultEstimate(time_estimate)}
+                                >
+                              {time_estimate}
+                            </div>
+                        )
+                    })
+                  }
                 </div>
                 <button className="button issue_sidebar--textarea" type="submit">Submit</button>
               </div>

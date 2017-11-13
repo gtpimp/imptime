@@ -1,0 +1,16 @@
+@import 'variables.scss';
+@import 'list-table.scss';
+
+.issue-estimate-form__default_estimates {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.issue-estimate-form__default_estimate {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.issue-estimate-form__default_estimate:hover {
+    @extend .list-table__cell--hover;
+}
