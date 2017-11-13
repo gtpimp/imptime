@@ -66,7 +66,7 @@ class IssueReviewPanel extends Component {
                 }
               </div>
               <div className="issue-review-panel__review_due_per_user">
-                { map(issue_review_ids, (issue_review_id) => <IssueReview issue_review_id={issue_review_id} />) }
+                { map(issue_review_ids, (issue_review_id) => <IssueReview key={issue_review_id} issue_review_id={issue_review_id} />) }
               </div>
             </div>
         )

@@ -39,13 +39,15 @@ export class SingleValueSelector extends Component {
     }
 
     getOptionLabel(option) {
-        return (option.index + 1) + ". " + option.label
+        return " " + (option.index + 1) + ". " + option.label
     }
 
     getFilteredOptions() {
         const {options} = this.props
         const that = this
         const filter_term = (this.state || {}).filter_term || undefined
+        const filter_lower = (filter_term || "").toLowerCase()
+        let option_lower = ""
         let index = 0
         return filter(options, function(option) {
             option.index = index
@@ -53,8 +55,9 @@ export class SingleValueSelector extends Component {
             if ( filter_term === undefined || filter_term.length === 0 ) {
                 res = true
             }
-
-            if ( that.getOptionLabel(option).indexOf(filter_term) > -1 ) {
+            option_lower = (that.getOptionLabel(option) || "").toLowerCase()
+                
+            if ( option_lower.indexOf(filter_lower) > -1 ) {
                 res = true
             }
             index += 1
