@@ -14,7 +14,7 @@ import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
 import EditableIssueEstimate from './EditableIssueEstimate'
-import IssueReview from './IssueReview'
+import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
 import OtherUser from './OtherUser'
@@ -164,16 +164,10 @@ class IssueSidebar extends Component {
                           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids} />
                           <EditableIssueVisualSpecDocument issue_id={issue.id} visual_spec_document_id={null}/>
                         </PropertyStackComponent>
-
-                        { issue.last_due_date_for_review && 
-                          <PropertyStackComponent title="Reviews">
-                            Next review due at: <Timestamp value={issue.last_due_date_for_review} />
-                            { map(issue.review_ids, function(issue_review_id, index) {
-                                  return <IssueReview key={index} issue_review_id={issue_review_id} />
-                              })
-                            }
-                          </PropertyStackComponent>
-                        }
+                        
+                        <PropertyStackComponent title="Reviews">
+                          <IssueReviewPanel issue_id={issue.id} />
+                        </PropertyStackComponent>
                         
                       </div>
                     }

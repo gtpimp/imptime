@@ -56,7 +56,7 @@ function mapStateToProps(state, props) {
     const { issue_review_id } = props
     const issue_review = getIssueReview(state, issue_review_id) || {}
     const sprint = (issue_review.sprint_id && getSprint(state, issue_review.sprint_id)) || {}
-    const can_view = (sprint.id && has_permission(state, sprint.project_id, 'has_view_issue_reviews')) || false
+    const can_view = (sprint.id && has_permission(state, sprint.project_id, 'has_view_review_cycle')) || false
     
     return {
         issue_review_id: issue_review_id,
