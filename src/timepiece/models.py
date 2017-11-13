@@ -4517,7 +4517,7 @@ class ProjectReview(BaseModel):
     review_cycle_days = models.IntegerField(default=14, null=False)
             
 class IssueReview(BaseModel):
-    issue = ProtectedForeignKey(Issue, null=False, related_name='reviews')
+    issue = ForeignKey(Issue, null=False, related_name='reviews')
     last_reviewed_at = models.DateTimeField(null=True)
     reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)
     review_due_at = models.DateTimeField(null=True)
