@@ -20,6 +20,10 @@ export class SingleValueSelector extends Component {
         onChange(selected_option.value)
     }
 
+    componentDidMount() {
+        this.selection_filter_el.focus()
+    }
+    
     onSelectionFilterChanged() {
         this.setState({filter_term:this.selection_filter_el.value})
     }
