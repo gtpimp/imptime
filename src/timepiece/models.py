@@ -4520,3 +4520,38 @@ class IssueReview(BaseModel):
     issue = ProtectedForeignKey(Issue, null=False, related_name='reviews')
     last_reviewed_at = models.DateTimeField(null=True)
     reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)
+    review_due_at = models.DateTimeField(null=True)
+    
+    class Meta:
+        ordering = ('last_reviewed_at',)
+
+    def save(self, *args, **kwargs):
+        self.review_due_at = IssueReview._calculate_next_review_time_from_now(issue=issue)
+        was_created = not self.id
+        super(IssueReview, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+
+    @classmethod
+    def _calculate_next_review_time_from_now(self, issue):
+        review_cycle_days = ProjectReview.objects.get_or_create(project=issue.project,
+                                                                defaults={'review_cycle_days':settings.DEFAULT_REVIEW_CYCLE_DAYS})[0]\
+                                                 .review_cycle_days
+        return timezone.now()+relativedelta(days=review_cycle_days)
+        
+    @classmethod
+    def get_last_due_date_for_review(self, issue):
+        review = IssueReview.objects.filter(issue=issue).order_by("-review_due_at").first()
+        if review is None:
+            return self._calculate_next_review_time_from_now(issue)
+        else:
+            return review.review_due_at
+        
+    @classmethod
+    def reviewed(self, issue, logged_in_user):
+        review = IssueReview.objects.get_or_create(issue=issue, reviewed_by=logged_in_user)[0]
+        review.last_reviewed_at = timezone.now()
+        review.save()

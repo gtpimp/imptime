@@ -79,6 +79,7 @@ class IssueViewSet(BaseViewSet):
                        .prefetch_related('tags__category')\
                        .prefetch_related('issue_points__user')\
                        .prefetch_related('group_children')\
+                       .prefetch_related('reviews')\
                        .prefetch_related(Prefetch('entries', to_attr='active_clocks',
                                                   queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
                        .prefetch_related(Prefetch('entries', to_attr='my_entries',
@@ -89,6 +90,7 @@ class IssueViewSet(BaseViewSet):
                        .prefetch_related(Prefetch('issue_points__user'))\
                        .prefetch_related(Prefetch('entries', to_attr='my_clocked_in_entries',
                                                   queryset=Entry.objects.filter(user=self.request.user).select_related('user').filter(end_time__isnull=True)))
+
         issues = issues.annotate(actual_hours=Sum('entries__hours'))
         for issue in issues:
             for attachment in issue.attachments.all():

@@ -1,5 +1,6 @@
 import logging
 from rest_framework import serializers
+from django.conf import settings
 from base_serializer import BaseSerializer
 from clock_entry_serializer import ClockEntrySerializer
 from timepiece.models import Entry
@@ -39,6 +40,8 @@ class SprintSerializer(BaseSerializer):
 
         sprint.sprint_clone_ids = SprintTemplate.objects.filter(sprint=sprint).values_list('clones__id', flat=True)
         sprint.ordered_deadline_ids = sprint.deadlines.order_by("deadline").values_list('id', flat=True)
-        sprint.review_every_num_days = SprintReview.objects.get_or_create(project=sprint, defaults={'review_cycle_days':30})[0].review_cycle_days
+        sprint.review_every_num_days = SprintReview.objects.get_or_create(project=sprint,
+                                                                          defaults={'review_cycle_days':settings.DEFAULT_REVIEW_CYCLE_DAYS})[0]\
+                                                           .review_cycle_days
 
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)

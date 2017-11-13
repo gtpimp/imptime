@@ -6,6 +6,7 @@ import moment from 'moment'
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateIssues } from '../actions/Issues'
+import { invalidateIssueReviews } from '../actions/IssueReviews'
 import { invalidateUsers } from '../actions/Users'
 import { invalidatePups } from '../actions/ProjectUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
@@ -67,6 +68,8 @@ function triggerInvalidateEntity(d, dispatch) {
 
     } else if ( d.entity_name === 'visualspecissue' ) {
         dispatch(invalidateVisualSpecIssues([d.entity_ref]))
+    } else if ( d.entity_name === 'issuereview' ) {
+        dispatch(invalidateIssueReviews([d.entity_ref]))
     } else if ( d.entity_name === 'projectdeadline' ) {
         dispatch(invalidateSprintDeadlines([d.entity_ref]))
     }

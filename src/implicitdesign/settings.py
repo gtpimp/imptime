@@ -34,6 +34,9 @@ NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS=2
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+# Number of days to review sprints and issues, unless over-ridden
+DEFAULT_REVIEW_CYCLE_DAYS = 30
+
 # Maximum number of days before expecting a new development timesheet
 # entry for a particular project. This is used to raise an alarm if
 # either nothing is happening in a sprint or if the timesheet isn't

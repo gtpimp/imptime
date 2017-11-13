@@ -135,6 +135,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_issue(self, pk):
         return self.allowed_issues().get(pk=pk)
 
+    def allowed_issue_reviews(self):
+        return IssueReview.objects.filter(issue__in=self.allowed_issues())
+    
     def allowed_timesheet_entries(self):
         return TimesheetEntry.objects.all()\
           .filter_by_logged_in_user(self.request.user).distinct()
