@@ -12,6 +12,11 @@ class IssueEstimateForm extends Component {
         this.keyDown = this.keyDown.bind(this)
     }
 
+    componentDidMount() {
+        this.input_el.focus()
+        this.input_el.setSelectionRange(0, this.input_el.value.length);
+    }
+
     keyDown(event) {
         const { onKeyDown } = this.props
         if (onKeyDown) {
@@ -29,6 +34,7 @@ class IssueEstimateForm extends Component {
                 placeholder="estimate"
                 onChange={input.onChange}
                 value={input.value}
+                ref={(ref)=> this.input_el=ref}
                 onKeyDown={this.keyDown}
             />
         )

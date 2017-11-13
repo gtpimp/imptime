@@ -26,6 +26,8 @@ class EditableIssueEstimate extends Component {
             <EditableProperty property_key='issue_estimate'
                               initial_value={format_hours(estimate_hours)}
                               onChange={this.onChange}
+                              edit_as_modal={true}
+                              actionLabel="Issue Estimate"
                               class_name={class_name}
                               can_edit={can_edit}
             >
