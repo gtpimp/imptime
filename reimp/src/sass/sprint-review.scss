@@ -1,0 +1,27 @@
+@import 'variables.scss';
+
+.sprint-review {
+    margin-bottom: 3px;
+    border-bottom: 1px solid $form-field-border;
+}
+
+.sprint-review__summary {
+    display: flex;
+}
+
+.sprint-review__review_by {
+    padding-left: 3px
+}
+
+.sprint-review__review_cycle_days {
+    padding-left: 3px
+}
+
+.sprint-review__must_always_review {
+    padding-left: 3px
+}
+
+.sprint-review__need_not_always_review {
+    padding-left: 3px
+}
+

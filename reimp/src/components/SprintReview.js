@@ -40,13 +40,25 @@ class SprintReview extends Component {
 
         return (
             <div className="sprint-review">
-              <div className="sprint-review--heading">
-                <div className="sprint-review--type">
-                  <OtherUser user_id={sprint_review.review_by_id} />
+              <div className="sprint-review__summary">
+                <div className="sprint-review--heading">
+                  <div className="sprint-review__review_by">
+                    <OtherUser user_id={sprint_review.review_by_id} />
+                  </div>
                 </div>
-              </div>
-              <div className="sprint-review--description">
-                to review every {sprint_review.review_cycle_days} days
+                <div className="sprint-review__review_cycle_days">
+                  to review every {sprint_review.review_cycle_days} days
+                </div>
+                { sprint_review.must_always_review && 
+                  <div className="sprint-review__must_always_review">
+                    regardless of other reviews
+                  </div>
+                }
+                { !sprint_review.must_always_review && 
+                  <div className="sprint-review__need_not_always_review">
+                    only if no-one else has reviewed
+                  </div>
+                }
               </div>
             </div>
         )

@@ -89,7 +89,7 @@ class SprintReviewForm extends Component {
                   </div>
                   <div className="sprint_sidebar--textarea">
                     Must always review:
-                    <Field name="must_always_reveiw"
+                    <Field name="must_always_review"
                            component={this.renderCheckbox} />
                   </div>
                 </div>
