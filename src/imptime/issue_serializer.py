@@ -44,7 +44,6 @@ class IssueSerializer(BaseSerializer):
     created_by_id = serializers.CharField()
     modified_at = serializers.DateTimeField(source='modified')
     review_ids = serializers.ListField(child=serializers.CharField())
-    last_due_date_for_review = serializers.DateTimeField()
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -67,7 +66,6 @@ class IssueSerializer(BaseSerializer):
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
         issue.visual_spec_document_ids = issue.visual_spec_documents.all().order_by("order", "id").values_list('id', flat=True)
         issue.review_ids = [x.id for x in issue.reviews.all()]
-        issue.last_due_date_for_review = IssueReview.get_last_due_date_for_review(issue)
 
         if not bp.has_see_other_user_points:
             issue.all_estimates = None

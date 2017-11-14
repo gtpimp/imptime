@@ -32,7 +32,7 @@ class IssueReviewViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in issue_reviews.values_list(
                     'id', flat=True)]
             else:
-                s = IssueReviewSerializer(issue_reviews, many=True)
+                s = IssueReviewSerializer(issue_reviews, many=True, logged_in_user=request.user)
                 context['issue_reviews'] = s.data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}

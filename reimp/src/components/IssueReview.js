@@ -53,7 +53,7 @@ class IssueReview extends Component {
                 , due
               </div>
               <div className="issue-review__part">
-                <Timestamp value={issue_review.review_due_at} format='from_now' />
+                <Timestamp value={issue_review.review_due_at_by_reviewer} format='from_now' />
               </div>
             </div>
         )

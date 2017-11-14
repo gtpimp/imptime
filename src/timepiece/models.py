@@ -4546,6 +4546,12 @@ class IssueReview(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
 
+    def get_review_due_dates(self):
+        due_dates = []
+        for project_review in ProjectReview.objects.filter(project_id=self.issue.project_id).order_by("review_by__username"):
+            due_dates.append({'user_id': project_review.review_by_id,
+                              'review_at': IssueReview.get_next_due_date_for_review(self.issue, project_review.review_by)})
+        return due_dates
 
     @classmethod
     def get_next_due_date_for_review(self, issue, user):
