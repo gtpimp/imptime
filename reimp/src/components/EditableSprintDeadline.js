@@ -108,7 +108,8 @@ class EditableSprintDeadline extends Component {
                                     edit_as_modal={true}
                                     can_edit={can_edit}
                     >
-                    <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id} sprint_id={sprint_id} />
+                    <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id}
+                                        sprint_id={sprint_id} />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">
                       <button className="button button--primary sprint_sidebar--button">Create deadline</button>

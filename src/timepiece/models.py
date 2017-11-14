@@ -4517,9 +4517,17 @@ class ProjectReview(BaseModel):
     review_cycle_days = models.IntegerField(null=False)
     review_by = models.ForeignKey(User, related_name='project_reviews', null=False)
 
+    class Meta:
+        unique_together = (('project', 'review_by'),)
+    
     def save(self, *args, **kwargs):
+        was_created = not self.id
         super(ProjectReview, self).save(*args, **kwargs)
         IssueReview.refresh_for_project(self.project)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
             
 class IssueReview(BaseModel):
     issue = models.ForeignKey(Issue, null=False, related_name='reviews')

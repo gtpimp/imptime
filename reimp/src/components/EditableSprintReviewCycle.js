@@ -39,10 +39,10 @@ class EditableSprintReviewCycle extends Component {
     
     onChange(new_values) {
         const { dispatch, sprint_review_id, sprint_id } = this.props
+        new_values.sprint_id = sprint_id
         if ( sprint_review_id ) {
             dispatch(updateSprintReview([sprint_review_id], new_values))
         } else {
-            new_values.sprint_id = sprint_id
             dispatch(createSprintReview(new_values))
         }
     }
@@ -57,7 +57,7 @@ class EditableSprintReviewCycle extends Component {
     }
 
     render() {
-        const { sprint_review_id, sprint_review, can_view, can_edit } = this.props
+        const { sprint_id, sprint_review_id, sprint_review, can_view, can_edit } = this.props
 
         if ( ! can_view ) {
             return null
@@ -66,14 +66,15 @@ class EditableSprintReviewCycle extends Component {
         return (
             <div>
               { sprint_review_id && 
-                <EditableProperty property_key='review_every_num_days'
+                <EditableProperty property_key={'sprint_review_'+sprint_id+'_'+sprint_review_id}
                                   initial_value={sprint_review}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                                   edit_as_modal={true}
                                   actionLabel="Edit Sprint Review Cycle Days"
-                >
-                  <SprintReviewForm />
+                    >
+                  <SprintReviewForm form={'sprint_review_form_'+sprint_id+'_'+sprint_review_id}
+                                    sprint_id={sprint_id} />
                   <div className="sprint-review__card">
                     <SprintReview  sprint_review_id={sprint_review.id} />
                     <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
@@ -81,14 +82,15 @@ class EditableSprintReviewCycle extends Component {
                 </EditableProperty>
               }
               { ! sprint_review_id && can_edit &&  
-                <EditableProperty property_key='review_every_num_days'
-                                  initial_value={null}
+                <EditableProperty property_key={'sprint_review_'+sprint_id}
+                                  initial_value=''
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                                   edit_as_modal={true}
                                   actionLabel="Edit Sprint Review Cycle Days"
-                >
-                  <SprintReviewForm />
+                    >
+                  <SprintReviewForm form={'sprint_review_form_'+sprint_id}
+                                    sprint_id={sprint_id} />
                   <div className="text-component--readonly"></div>
                   <div className="text-component--empty">
                     <button className="button button--primary sprint_sidebar--button">Create review</button>
