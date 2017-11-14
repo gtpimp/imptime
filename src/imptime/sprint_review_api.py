@@ -121,6 +121,7 @@ class SprintReviewViewSet(BaseViewSet):
         sprint_id = review_data['sprint_id']
         review_data['project'] = review_data['sprint_id']
         review_data['review_by'] = review_data.pop('review_by_id')
+        review_data['must_always_review'] = review_data.get('must_always_review', False) or False
         return review_data
 
     def apply_filter(self, qs, raw_filter_args):
