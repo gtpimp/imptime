@@ -216,6 +216,10 @@ export function updateIssueToggleAsFeature(issue_ids, value) {
     return updateIssue(issue_ids, 'can_group_issues', value)
 }
 
+export function reviewNow(issue_ids, value) {
+    return updateIssue(issue_ids, 'review_now', value)
+}
+
 export function updateIssueEstimate(issue_ids, value) {
     return updateIssue(issue_ids, 'my_estimate', value)
 }

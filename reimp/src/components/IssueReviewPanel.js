@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map, keyBy } from 'lodash'
+import { map, keyBy, includes, keys } from 'lodash'
 import Timestamp from '../components/Timestamp'
 import { has_permission } from '../actions/Users'
 import { getIssueReviews,
@@ -9,7 +9,8 @@ import { getIssueReviews,
 import { getSprintReviews,
          ensureSprintReviewsLoaded
 } from '../actions/SprintReviews'
-import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
+import { getIssue, ensureIssuesLoaded, reviewNow} from '../actions/Issues'
+import { logged_in_user } from '../actions/Auth'
 import {
     ensureSprintsLoaded,
     getSprint
@@ -21,6 +22,11 @@ import SprintReview from './SprintReview'
 
 class IssueReviewPanel extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onReviewed = this.onReviewed.bind(this)
+    }
+    
     componentDidMount() {
         const { dispatch, issue_id, issue, issue_review_ids, sprint_id, sprint_review_ids } = this.props
         if ( issue_id ) {
@@ -51,10 +57,16 @@ class IssueReviewPanel extends Component {
         }
     }
 
+    onReviewed() {
+        const { dispatch, issue_id } = this.props
+        dispatch(reviewNow([issue_id]))
+    }
+
     render() {
 
         const {review_due_at_by_any_user, sprint_reviews, issue_review_ids, can_view,
-               has_ever_been_reviewed, issue_reviews_by_user_id} = this.props
+               has_ever_been_reviewed, issue_reviews_by_user_id, logged_in_user_id} = this.props
+        const that = this
         if ( ! can_view ) {
             return (<div></div>)
         }
@@ -78,10 +90,16 @@ class IssueReviewPanel extends Component {
                           <div key={sprint_review.id}>
                             <SprintReview sprint_review_id={sprint_review.id} />
                             { issue_review && <IssueReview issue_review_id={issue_review.id} /> }
+                            { sprint_review.review_by_id == logged_in_user_id &&
+                              <button className="button button--primary sprint_sidebar--button" onClick={that.onReviewed}>Reviewed</button>
+                            }
                           </div>
                       )
                   })
                 }
+              </div>
+              <div>
+                
               </div>
             </div>
         )
@@ -99,18 +117,22 @@ function mapStateToProps(state, props) {
     const review_due_at_by_any_user = (issue_reviews.length > 0 && issue_reviews[0].review_due_at_by_any_user) || null
     const has_ever_been_reviewed = issue_reviews.length > 0
     const issue_reviews_by_user_id = keyBy(issue_reviews, 'reviewed_by_id')
-    
+    const logged_in_user_id = "" + logged_in_user().user_id
+        
     return {
+        issue_id,
         issue,
         issue_review_ids: issue.review_ids || [],
         issue_reviews,
         sprint_review_ids: sprint.review_ids || [],
         sprint_reviews,
         sprint_id: issue.sprint_id,
+        logged_in_user_id,
         can_view,
+        logged_in_user_id,
         review_due_at_by_any_user,
         has_ever_been_reviewed,
-        issue_reviews_by_user_id
+        issue_reviews_by_user_id,
     }
 }
 

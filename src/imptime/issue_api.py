@@ -20,6 +20,7 @@ from imptime.models import VisualSpecIssue
 from timepiece.models import TagCategory, Tag, Entry, IssueStatus, IssuePoints
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueReview
+from timepiece.models import ProjectReview as SprintReview
 
 logger = logging.getLogger(__name__)
 
@@ -201,7 +202,9 @@ class IssueViewSet(BaseViewSet):
                         estimate.save()
                         IssueHistory.add_history(request.user, issue,
                                                  "changed estimate for %s" % request.user, old_estimate_hours, new_value)
-                        
+                elif field_name == "review_now":
+                    if SprintReview.objects.filter(project_id=issue.project_id, review_by=request.user).first() is not None:
+                        IssueReview.reviewed(issue, request.user)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()
