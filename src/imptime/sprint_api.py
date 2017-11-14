@@ -49,7 +49,7 @@ class SprintViewSet(BaseViewSet):
             else:
                 sprints = sprints.select_related("status3")
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                sprints = self._enrich_sprint_qs(self, sprints)
+                sprints = self._enrich_sprint_qs(sprints)
                 
                 s = SprintSerializer(sprints, many=True)
                 sprints_data = s.data

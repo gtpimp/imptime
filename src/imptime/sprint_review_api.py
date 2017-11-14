@@ -10,7 +10,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import ProjectReview as SprintReview
-from sprint_review_serializer import SprintReviewModelSerializer, SprintReviewSerializer
+from sprint_review_serializer import SprintReviewSerializer
 logger = logging.getLogger(__name__)
 
 
@@ -27,7 +27,7 @@ class SprintReviewViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             sprint_reviews = self.allowed_sprint_reviews()
-            sprint_reviews = sprint_reviews.order_by("review")
+            sprint_reviews = sprint_reviews.order_by("review_by__username")
             sprint_reviews = self.apply_filter(qs=sprint_reviews,
                                                  raw_filter_args=filter_args)
             sprint_reviews = self.apply_pagination(qs=sprint_reviews,

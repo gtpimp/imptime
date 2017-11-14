@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import SprintReviewForm from './form/SprintReviewForm'
-import { updateSprintReviewCycle, getSprint } from '../actions/Sprints'
+import { getSprint } from '../actions/Sprints'
 import { has_permission } from '../actions/Users'
 import {
     ensureSprintReviewsLoaded,
@@ -11,7 +11,8 @@ import {
     deleteSprintReview,
     getSprintReview
 } from '../actions/SprintReviews'
-import SprintReview from 'SprintReview'
+import SprintReview from './SprintReview'
+import OtherUser from './OtherUser'
 
 class EditableSprintReviewCycle extends Component {
 
@@ -42,7 +43,7 @@ class EditableSprintReviewCycle extends Component {
             dispatch(updateSprintReview([sprint_review_id], new_values))
         } else {
             new_values.sprint_id = sprint_id
-            dispatch(createSprintReview(new_value))
+            dispatch(createSprintReview(new_values))
         }
     }
 
@@ -59,9 +60,9 @@ class EditableSprintReviewCycle extends Component {
         const { sprint_review, can_view, can_edit } = this.props
 
         if ( ! can_view ) {
-            return (<div>No permission to view review parameters</div>)
+            return null
         }
-        
+
         return (
             <div>
               { sprint_review.id && 
@@ -79,21 +80,21 @@ class EditableSprintReviewCycle extends Component {
                   </div>
                 </EditableProperty>
               }
-                { ! sprint_review.id && can_edit &&  
-                  <EditableProperty property_key='review_every_num_days'
-                                    initial_value={sprint_review}
-                                    onChange={this.onChange}
-                                    can_edit={can_edit}
-                                    edit_as_modal={true}
-                                    actionLabel="Edit Sprint Review Cycle Days"
-                  >
-                    <SprintReviewForm />
-                    <div className="text-component--readonly"></div>
-                    <div className="text-component--empty">
-                      <button className="button button--primary sprint_sidebar--button">Create review</button>
-                    </div>
-                  </EditableProperty>
-                }
+              { ! sprint_review.id && can_edit &&  
+                <EditableProperty property_key='review_every_num_days'
+                                  initial_value={sprint_review}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                                  edit_as_modal={true}
+                                  actionLabel="Edit Sprint Review Cycle Days"
+                >
+                  <SprintReviewForm />
+                  <div className="text-component--readonly"></div>
+                  <div className="text-component--empty">
+                    <button className="button button--primary sprint_sidebar--button">Create review</button>
+                  </div>
+                </EditableProperty>
+              }
             </div>
         )
     }
@@ -103,8 +104,8 @@ function mapStateToProps(state, props) {
     const { sprint_review_id, sprint_id } = props
     const sprint_review = (sprint_review_id && getSprintReview(state, sprint_review_id)) || {}
     const sprint = (sprint_id && getSprint(state, sprint_id)) || {}
-    const can_edit = has_permission(state, sprint.project_id, 'has_edit_review_cycle')
     const can_view = has_permission(state, sprint.project_id, 'has_view_review_cycle')
+    const can_edit = has_permission(state, sprint.project_id, 'has_edit_review_cycle')
 
     return {
         sprint_review_id,

@@ -52,7 +52,7 @@ class SprintReviewPanel extends Component {
                                                      sprint_review_id={sprint_review_id} />
                       )})
                 }
-                { can_edit && <EditableSprintReviewCycle sprint_review_id={null} sprint_ids={[sprint_id]}/> }
+                { can_edit && <EditableSprintReviewCycle sprint_review_id={null} sprint_id={sprint_id}/> }
               </div>
             </div>
         )
@@ -69,9 +69,10 @@ function mapStateToProps(state, props) {
     
     return {
         sprint,
+        loaded: sprint.id || false,
         sprint_review_ids: sprint.review_ids || [],
         sprint_reviews,
-        sprint_id: sprint.sprint_id,
+        sprint_id: sprint.id,
         can_view,
         can_edit
     }

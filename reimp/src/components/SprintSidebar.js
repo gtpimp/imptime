@@ -51,7 +51,7 @@ class SprintSidebar extends Component {
 
     render() {
 
-        const { sprint_id, sprint, project, has_edit_review_cycle_permission } = this.props
+        const { sprint_id, sprint, project, has_view_review_cycle_permission } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -108,9 +108,11 @@ class SprintSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
-                <PropertyStackComponent title="Reviews">
-                  <SprintReviewPanel sprint_id={sprint.id} />
-                </PropertyStackComponent>
+                { has_view_review_cycle_permission && 
+                  <PropertyStackComponent title="Reviews">
+                    <SprintReviewPanel sprint_id={sprint.id} />
+                  </PropertyStackComponent>
+                }
                 
                 <PropertyStackComponent title="Deadlines">
                   { map(sprint.deadline_ids, function (deadline_id, index) {
@@ -131,14 +133,14 @@ function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
-    const has_edit_review_cycle_permission = has_permission(state, project_id, "has_edit_review_cycle")
+    const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
     
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
         project: project,
-        has_edit_review_cycle_permission
+        has_view_review_cycle_permission
     }
 }
 

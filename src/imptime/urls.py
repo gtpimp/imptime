@@ -18,6 +18,7 @@ import project_user_permission_api
 import release_note_api
 import sprint_api
 import sprint_deadline_api
+import sprint_review_api
 import sprint_roadmap_api
 import time_chart_api
 import time_summary_api
@@ -45,6 +46,8 @@ router.register(r'sprint_deadline', sprint_deadline_api.SprintDeadlineViewSet,
                 base_name='sprint_deadline')
 router.register(r'sprint_roadmap', sprint_roadmap_api.SprintRoadmapViewSet,
                 base_name='sprint_roadmap')
+router.register(r'sprint_review', sprint_review_api.SprintReviewViewSet,
+                base_name='sprint_review')
 router.register(r'sprint', sprint_api.SprintViewSet,
                 base_name='sprint')
 router.register(r'issue/tag', issue_tag_api.IssueTagViewSet,
