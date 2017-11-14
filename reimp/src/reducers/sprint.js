@@ -21,17 +21,12 @@ import {
     ANNOUNCE_SAVING_NEW_SPRINT,
     ANNOUNCE_SAVED_NEW_SPRINT,
     ANNOUNCE_SAVING_NEW_SPRINT_FAILED,
-    DISPLAY_ALL_MODE,
 
     ANNOUNCE_CLONING_SPRINT,
     ANNOUNCE_CLONED_SPRINT,
 
     
 } from '../actions/Sprints.js'
-
-const displayStatus = {
-    display_all: false
-}
 
 const initialState = {
     items_by_id: [],
@@ -123,11 +118,6 @@ export default function sprint(state = initialState, action) {
 		{candidate_sprint: Object.assign({},
 						 state.candidate_sprint || {},
 						 {is_saving: false})})
-
-        case DISPLAY_ALL_MODE:
-            l = Object.assign({}, displayStatus, state_copy[action.page_key] || {})
-	    state_copy[action.page_key] = Object.assign({}, l, {"display_all": action.display_all})
-	    return state_copy
 
         case ANNOUNCE_CLONING_SPRINT:
             return Object.assign({}, state,

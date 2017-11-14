@@ -38,6 +38,7 @@ class SprintsPage extends Component {
         dispatch(update_list_filter(list_key, Object.assign({},
                                                             default_filter,
                                                             {project_id: project.id,
+                                                             sprint_status: 'open',
                                                              sprint_type: 'sprint'})))
         dispatch(ensureProjectsLoaded([project_id]))
         this.refresh(project)

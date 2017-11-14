@@ -17,8 +17,6 @@ import {
 } from '../../actions/ItemList'
 import {
     startCandidateSprint,
-    get_display_all,
-    set_display_all
 } from '../../actions/Sprints.js'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
@@ -87,9 +85,15 @@ class SprintsToolbarPanel extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/'+sprint.id+'/issues');
     }
 
-    onSprintShowClosedToggleButtonClick(display_all) {
+    onSprintShowClosedToggleButtonClick(new_value) {
         const { dispatch } = this.props
-        dispatch(set_display_all(PAGE_KEY__SPRINTS_TOOLBAR, display_all))
+        const open_only = new_value
+        if ( open_only ) {
+            dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {'sprint_status': 'open'}))
+        } else {
+            dispatch(clear_list_filter_option(LIST_KEY__SPRINT_LIST, 'sprint_status'))
+        }
+        dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
     }
 
     onBulkCreateIssuesClick() {
@@ -99,14 +103,15 @@ class SprintsToolbarPanel extends Component {
 
     render() {
 
-        const { sprint, display_all, selected_sprint_type_filter, sprint_type_filter_options } = this.props
+        const { sprint, selected_sprint_type_filter,
+                sprint_type_filter_options, selected_sprint_status_filter } = this.props
 
         return (
             <div className="toolbar-panel">
-              <ToggleButton value={display_all}
+              <ToggleButton value={selected_sprint_status_filter==='open'}
                             onChange={this.onSprintShowClosedToggleButtonClick}
-                            on_label={"All"}
-                            off_label={"Open"}
+                            on_label={"Open only"}
+                            off_label={"All"}
               />
               <div className="sprints-toolbar-panel__sprint_type_filter">
                 <Select value={selected_sprint_type_filter}
@@ -146,18 +151,18 @@ function mapStateToProps(state, props) {
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
     const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__SPRINTS_PAGE)
     const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
-    const display_all = get_display_all(state, PAGE_KEY__SPRINTS_TOOLBAR)
     const selected_sprint_type_filter = (getListFilter(state, LIST_KEY__SPRINT_LIST) || {}).sprint_type || "_all_"
     const sprint_type_filter_options = concat( [{value:'_all_', label: 'all'}], map(project.allowed_sprint_type_names, (name) => ( {value: name, label: name })))
+    const selected_sprint_status_filter = (getListFilter(state, LIST_KEY__SPRINT_LIST) || {}).sprint_status || null
     
     return {
         sprint_ids: selected_sprint_ids,
         sprint: sprint,
         last_selected_sprint_id: sprint.id,
         project_id: project.id,
-        display_all: display_all,
         selected_sprint_type_filter,
-        sprint_type_filter_options
+        sprint_type_filter_options,
+        selected_sprint_status_filter
     }
 }
 

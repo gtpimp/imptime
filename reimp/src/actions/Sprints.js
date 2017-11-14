@@ -20,7 +20,6 @@ export const CANCEL_CREATING_NEW_SPRINT = 'CANCEL_CREATING_NEW_SPRINT'
 export const ANNOUNCE_SAVING_NEW_SPRINT = 'ANNOUNCE_SAVING_NEW_SPRINT'
 export const ANNOUNCE_SAVED_NEW_SPRINT = 'ANNOUNCE_SAVED_NEW_SPRINT'
 export const ANNOUNCE_SAVING_NEW_SPRINT_FAILED = 'ANNOUNCE_SAVING_NEW_SPRINT_FAILED'
-export const DISPLAY_ALL_MODE = 'DISPLAY_ALL_MODE'
 
 export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
@@ -154,19 +153,6 @@ export function updateSprintReviewCycle(sprint_ids, value) {
 
 export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
     return updateSprint([sprint_id_before], "sprint_id_after", sprint_id_after, on_done)
-}
-
-export function get_display_all(state, page_key) {
-    return (state.sprint[page_key] || {}).display_all || false
-}
-
-export function set_display_all(page_key, display_all) {
-
-    return {
-        type: DISPLAY_ALL_MODE,
-        page_type: page_key,
-        display_all: display_all
-    }
 }
 
 export function saveCandidateSprint() {

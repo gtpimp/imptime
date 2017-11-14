@@ -843,6 +843,8 @@ class Project(BaseModel):
     PROJECT_TYPES = ( ('sprint', 'Sprint'),
                       ('template', 'Template'),
                       ('sprinkle', 'Sprinkle'),
+                      ('backlog', 'Backlog'),
+                      ('spec', 'Spec'),
                       ('inbox', 'Inbox') )
     
     code = models.CharField(max_length=255,blank=True,null=True)
@@ -1311,6 +1313,10 @@ class Project(BaseModel):
     def hopeful_states(self):
         return ( 'gathering specs', 'on hold' )
 
+    @classmethod
+    def open_states(self):
+        return self.hopeful_states() + self.pending_states() + self.active_states()
+    
     @classmethod
     def can_add_dev_time_states(self):
         return ( 'open', 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent' )

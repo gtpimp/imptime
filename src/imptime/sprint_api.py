@@ -33,7 +33,7 @@ class SprintViewSet(BaseViewSet):
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             pagination = params.get('pagination', {})
-            filter_args = params.get('filter', {})
+            filter_args = self._set_default_filter(params.get('filter', {}))
             format_args = params.get('format', {})
 
             sprints = self.allowed_sprints().order_by("order")
@@ -210,3 +210,13 @@ class SprintViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
+
+        
+    def _set_default_filter(self, filter_args):
+        sprint_status = filter_args.pop('sprint_status', None)
+        if sprint_status == 'open':
+            filter_args['status3__name__in'] = Sprint.open_states()
+        return filter_args
+    
+
+    
