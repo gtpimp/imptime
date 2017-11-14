@@ -4532,18 +4532,13 @@ class ProjectReview(BaseModel):
             
 class IssueReview(BaseModel):
     issue = models.ForeignKey(Issue, null=False, related_name='reviews')
-    last_reviewed_at = models.DateTimeField(null=True)
+    last_reviewed_at = models.DateTimeField(null=True, db_index=True)
     reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)
-    review_due_at = models.DateTimeField(null=True)
-    auto_recalculate = models.BooleanField(default=True)
     
     class Meta:
         ordering = ('last_reviewed_at',)
 
     def save(self, *args, **kwargs):
-        if self.auto_recalculate:
-            self.review_due_at = IssueReview._calculate_next_review_time_from_now(issue=self.issue)
-            
         was_created = not self.id
         super(IssueReview, self).save(*args, **kwargs)
         if was_created:
@@ -4553,27 +4548,28 @@ class IssueReview(BaseModel):
 
 
     @classmethod
-    def _calculate_next_review_time_from_now(self, issue):
-        review_cycle_days = ProjectReview.objects.get_or_create(project=issue.project,
-                                                                defaults={'review_cycle_days':settings.DEFAULT_REVIEW_CYCLE_DAYS})[0]\
-                                                 .review_cycle_days
-        return timezone.now()+relativedelta(days=review_cycle_days)
+    def get_next_due_date_for_review(self, issue, user):
+        project_review = ProjectReview.objects.filter(project=issue.project,
+                                                      review_by=user).first()
+        if project_review is None:
+            return None
         
-    @classmethod
-    def get_last_due_date_for_review(self, issue):
-        review = IssueReview.objects.filter(issue=issue).order_by("-review_due_at").first()
-        if review is None:
-            return self._calculate_next_review_time_from_now(issue)
+        if not project_review.must_always_review:
+            issue_review = IssueReview.objects.filter(issue=issue).order_by("-last_reviewed_at").first()
         else:
-            return review.review_due_at
+            issue_review = IssueReview.objects.filter(issue=issue, reviewed_by=user).first()
+
+        if issue_review is None:
+            last_reviewed_at = issue.created
+        else:
+            last_reviewed_at = issue_review.last_reviewed_at
+
+        return last_reviewed_at + relativedelta(days=project_review.review_cycle_days)
 
     @classmethod
     def refresh_for_project(self, project):
-        for issue_review in IssueReview.objects.filter(issue__project_id=project.id, auto_recalculate=True):
-            due_at = IssueReview._calculate_next_review_time_from_now(issue=issue_review.issue)
-            if issue_review.review_due_at != due_at:
-                issue_review.review_due_at = due_at
-                issue_review.save()
+        # Hook that indicates the project's review settings have changed.
+        pass
         
     @classmethod
     def reviewed(self, issue, logged_in_user):
