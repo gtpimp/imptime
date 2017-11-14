@@ -225,6 +225,7 @@ class Command(BaseCommand):
                                               name=sprint_name,
                                               defaults={'status3': SprintStatus.objects.get_or_create(name='pending',
                                                                                                       business=project)[0],
+                                                        'sprint_type': 'inbox',
                                                         'description': "For incoming unprocessed issues"})[0]
         return user, project, sprint, subject
         

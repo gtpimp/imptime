@@ -41,3 +41,11 @@
 .sprint-cell__status:hover {
     @extend .list-table__cell--hover;
 }
+
+.sprint-cell__type {
+    @extend .list-table__cell--default;
+}
+
+.sprint-cell__type:hover {
+    @extend .list-table__cell--hover;
+}

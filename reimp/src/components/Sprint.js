@@ -7,6 +7,7 @@ import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
 import Timestamp from '../components/Timestamp'
 import EditableSprintStatus from '../components/EditableSprintStatus'
+import EditableSprintType  from '../components/EditableSprintType'
 import moment from 'moment'
 import '../sass/sprint.css'
 
@@ -72,6 +73,9 @@ class Sprint extends Component {
 		{ false && <td className="list-table__cell"><Progress issue={sprint} /></td> }
 		<td className="list-table__cell">
                   <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                </td>
+		<td className="list-table__cell">
+                  <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
                 </td>
 		</tr>
             ))

@@ -33,7 +33,7 @@ class SprintViewSet(BaseViewSet):
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             pagination = params.get('pagination', {})
-            filter_args = self._set_default_filter(params.get('filter', {}))
+            filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
             sprints = self.allowed_sprints().order_by("order")
@@ -210,11 +210,3 @@ class SprintViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-
-        
-    def _set_default_filter(self, filter_args):
-        if 'ids' not in filter_args and 'sprint_type' not in filter_args:
-            filter_args.setdefault('sprint_type', 'sprint')
-        return filter_args
-
-    

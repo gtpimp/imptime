@@ -57,8 +57,12 @@ class SprintsToolbarPanel extends Component {
     }
 
     onNewSprintClick() {
-        const { dispatch, project_id, last_selected_sprint_id } = this.props
-        dispatch(startCandidateSprint(project_id, last_selected_sprint_id))
+        const { dispatch, project_id, last_selected_sprint_id, selected_sprint_type_filter } = this.props
+        const default_sprint_args = {}
+        if ( selected_sprint_type_filter != "_all_" ) {
+            default_sprint_args.sprint_type = selected_sprint_type_filter
+        }
+        dispatch(startCandidateSprint(project_id, last_selected_sprint_id, default_sprint_args))
     }
 
     onDashboardClick() {
