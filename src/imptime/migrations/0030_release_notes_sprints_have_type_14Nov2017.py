@@ -6,7 +6,7 @@ from django.db import migrations
 def forwards(apps, schema_editor):
     ReleaseNote = apps.get_model('imptime', 'ReleaseNote')
     ReleaseNote(header="sprints have type",
-                content="sprint types can be edited, and options are template, inbox and sprinkle, as well as just sprint").save()
+                content="sprints have a type, including sprinkle, inbox, spec, backlog and template. These can also be filtered on to prevent clutter.").save()
 
 class Migration(migrations.Migration):
 
