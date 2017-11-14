@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
+import SprintTemplateSidebar from '../components/SprintTemplateSidebar'
 import NewSprintSidebar from '../components/NewSprintSidebar'
 import MultipleSprintSidebar from '../components/MultipleSprintSidebar'
 import {setBreadcrumbs} from '../actions/Breadcrumbs'
@@ -91,11 +92,16 @@ class SprintsPage extends Component {
                       <NewSprintSidebar />
                   </div>
                 }
-                { ! is_creating_sprint && is_single_selection && project_id && selected_sprint &&
-                  <div className="list-layout__sidebar">
-                      <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
-                  </div>
-                }
+                  { ! is_creating_sprint && is_single_selection && project_id && selected_sprint &&
+                    <div className="list-layout__sidebar">
+                      { selected_sprint.sprint_type === 'template' &&
+                        <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                      }
+                      { selected_sprint.sprint_type !== 'template' &&
+                        <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                      }
+                    </div>
+                  }
                 { ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids &&
                   <div className="list-layout__sidebar">
                       <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>

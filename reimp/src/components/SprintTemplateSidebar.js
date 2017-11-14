@@ -71,16 +71,6 @@ class SprintTemplateSidebar extends Component {
 
                     <PropertyStackComponent>
                         <div className="property-text">
-                            <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>
-                                Issues
-                            </button>
-                        </div>
-                        <div className="property-text">
-                            <button className="button button--large button--primary" onClick={this.navigateToDashboardPage}>
-                                Dashboard
-                            </button>
-                        </div>
-                        <div className="property-text">
                             <button className="button button--large button--primary" onClick={this.cloneSprint}>
                                 Clone now
                             </button>
@@ -135,4 +125,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(SprintTemplateSidebar)
-

@@ -20,7 +20,6 @@ import UserTimesheetPage from './containers/UserTimesheetPage'
 import ProjectRoadmapPage from './containers/ProjectRoadmapPage'
 import ReleaseNotesPage from './containers/ReleaseNotesPage'
 import SprintsPage from './containers/SprintsPage'
-import SprintTemplatesPage from './containers/SprintTemplatesPage'
 import VisualSpecDocumentPage from './components/visual_spec/VisualSpecDocumentPage'
 import TeamPage from './containers/TeamPage'
 import configureStore from './store/configureStore'
@@ -59,7 +58,6 @@ ReactDOM.render(
           <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
           <Route path="projects/:projectId/sprints" component={SprintsPage}/>
           <Route path="projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
-          <Route path="projects/:projectId/sprintTemplates" component={SprintTemplatesPage}/>
           <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
