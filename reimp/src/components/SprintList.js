@@ -15,7 +15,8 @@ import {
     initList,
     invalidateList,
     collapse_list,
-    expand_list
+    expand_list,
+    update_list_filter
 } from '../actions/ItemList'
 import {
     invalidateAllSprints,

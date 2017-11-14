@@ -14,6 +14,7 @@ import {
     INVALIDATE_LIST,
     UPDATE_LIST_PAGINATION,
     UPDATE_LIST_FILTER,
+    CLEAR_LIST_FILTER_OPTION,
     UPDATE_LIST_FORMAT,
     UPDATE_LIST_SELECTION,
     HIGHLIGHT_LIST_SELECTION,
@@ -101,6 +102,13 @@ export default function item_list(state = initialState, action) {
 		filter: Object.assign({}, (state_copy[action.list_key] || {}).filter, action.filter)
 	    })
 	    return state_copy
+        case CLEAR_LIST_FILTER_OPTION:
+	    state_copy[action.list_key] = Object.assign({}, l, {
+		filter: Object.assign({}, (state_copy[action.list_key] || {}).filter)
+	    })
+            delete state_copy[action.list_key].filter[action.filter_option]
+	    return state_copy
+            
         case UPDATE_LIST_FORMAT:
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		format: Object.assign({}, (state_copy[action.list_key] || {}).format, action.format)

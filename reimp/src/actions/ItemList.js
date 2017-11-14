@@ -12,6 +12,7 @@ export const SET_ITEMS_FLAG = 'SET_ITEMS_FLAG'
 export const INVALIDATE_LIST = 'INVALIDATE_LIST'
 export const UPDATE_LIST_PAGINATION = 'UPDATE_LIST_PAGINATION'
 export const UPDATE_LIST_FILTER = 'UPDATE_LIST_FILTER'
+export const CLEAR_LIST_FILTER_OPTION = 'CLEAR_LIST_FILTER_OPTION'
 export const UPDATE_LIST_FORMAT = 'UPDATE_LIST_FORMAT'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
@@ -40,6 +41,18 @@ export function update_list_filter(list_key, filter) {
         list_key: list_key,
         filter: filter
     }
+}
+
+export function clear_list_filter_option(list_key, filter_option) {
+    return {
+        type: CLEAR_LIST_FILTER_OPTION,
+        list_key: list_key,
+        filter_option: filter_option
+    }
+}
+
+export function getListFilter(state, list_key) {
+    return (((state || {}).item_list || {})[list_key] ||  {}).filter || {}
 }
 
 export function update_list_format(list_key, format) {
