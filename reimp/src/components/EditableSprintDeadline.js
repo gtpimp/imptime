@@ -90,7 +90,8 @@ class EditableSprintDeadline extends Component {
                                     can_edit={can_edit}
                   >
                     <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
-                                        sprint_id={sprint_id} deadline={deadline}/>
+                                        sprint_id={sprint_id}
+                                        deadline={deadline}/>
                     <div className="sprint-deadline__card">
                       <SprintDeadline deadline_id={deadline.id} />
                       <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>

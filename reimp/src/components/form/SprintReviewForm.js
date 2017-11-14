@@ -68,7 +68,7 @@ class SprintReviewForm extends Component {
               <form onSubmit={handleSubmit}>
                 <div>
                   <div className="sprint_sidebar--textarea">
-                    <Field name="review_by"
+                    <Field name="review_by_id"
                            validate={[required]}
                            component={this.renderUserField} />
                   </div>
@@ -86,12 +86,11 @@ class SprintReviewForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSubmitted, sprint_id, review } = props
+    const { onSubmitted, sprint_id, sprint_review } = props
     const sprint = getSprint(state, sprint_id)
-    const initial_values = review || {}
+    const initial_values = sprint_review || {}
     
     return {
-        review: review,
         initialValues: initial_values,
         enableReinitialize: true,
         onSubmit: onSubmitted

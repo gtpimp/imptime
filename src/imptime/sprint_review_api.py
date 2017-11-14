@@ -56,7 +56,7 @@ class SprintReviewViewSet(BaseViewSet):
             sprint = self.allowed_sprint(sprint_pk)
             if not self.logged_in_permissions(sprint.business).has_edit_review_cycle:
                 raise Exception("Permission denied")
-            
+
             s = SprintReviewInboundSerializer(data=review_data)
             s.is_valid(raise_exception=True)
             review = s.save()
@@ -120,6 +120,7 @@ class SprintReviewViewSet(BaseViewSet):
     def fix_review_data_from_params(self, review_data):
         sprint_id = review_data['sprint_id']
         review_data['project'] = review_data['sprint_id']
+        review_data['review_by'] = review_data.pop('review_by_id')
         return review_data
 
     def apply_filter(self, qs, raw_filter_args):

@@ -18,5 +18,9 @@ class SprintReviewInboundSerializer(BaseModelSerializer):
     
     class Meta:
         model = SprintReview
-        fields = ('review_by', 'review_cycle_days', 'project') 
+        fields = ('review_by', 'review_cycle_days', 'project')
         
+    def create(self, validated_data):
+        return SprintReview.objects.create(review_by=validated_data['review_by'],
+                                           review_cycle_days=validated_data['review_cycle_days'],
+                                           project=validated_data['project'])

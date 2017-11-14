@@ -74,7 +74,8 @@ class EditableSprintReviewCycle extends Component {
                                   actionLabel="Edit Sprint Review Cycle Days"
                     >
                   <SprintReviewForm form={'sprint_review_form_'+sprint_id+'_'+sprint_review_id}
-                                    sprint_id={sprint_id} />
+                                    sprint_id={sprint_id}
+                                    sprint_review={sprint_review}/>
                   <div className="sprint-review__card">
                     <SprintReview  sprint_review_id={sprint_review.id} />
                     <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
