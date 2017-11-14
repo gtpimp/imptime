@@ -13,7 +13,7 @@ class IssueTitleForm extends Component {
     }
 
     componentDidMount() {
-        this.title_el.focus()
+        this.title_el && this.title_el.focus()
     }
 
 

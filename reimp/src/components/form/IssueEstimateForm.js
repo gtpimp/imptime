@@ -22,8 +22,8 @@ class IssueEstimateForm extends Component {
     }
 
     componentDidMount() {
-        this.input_el.focus()
-        this.input_el.setSelectionRange(0, this.input_el.value.length);
+        this.input_el && this.input_el.focus()
+        this.input_el && this.input_el.setSelectionRange(0, this.input_el.value.length);
     }
 
     keyDown(event) {

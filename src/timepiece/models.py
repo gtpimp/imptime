@@ -4516,6 +4516,7 @@ class ProjectReview(BaseModel):
     project = ProtectedForeignKey(Project, null=False, related_name='reviews')
     review_cycle_days = models.IntegerField(null=False)
     review_by = models.ForeignKey(User, related_name='project_reviews', null=False)
+    must_always_review = models.BooleanField(default=False)
 
     class Meta:
         unique_together = (('project', 'review_by'),)

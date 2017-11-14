@@ -21,7 +21,7 @@ export class SingleValueSelector extends Component {
     }
 
     componentDidMount() {
-        this.selection_filter_el.focus()
+        this.selection_filter_el && this.selection_filter_el.focus()
     }
     
     onSelectionFilterChanged() {

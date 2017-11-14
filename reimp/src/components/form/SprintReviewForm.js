@@ -19,6 +19,7 @@ class SprintReviewForm extends Component {
         super(props)
         this.renderUserField = this.renderUserField.bind(this)
         this.renderDaysField = this.renderDaysField.bind(this)
+        this.renderCheckbox = this.renderCheckbox.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
         this.keyDown = this.keyDown.bind(this)
     }
@@ -59,6 +60,15 @@ class SprintReviewForm extends Component {
         )
     }
 
+    renderCheckbox(field) {
+        const { input } = field
+        return (
+            <input type="checkbox"
+                   checked={input.value}
+                   onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}/>
+        )
+    }
+
     render() {
 
         const { review, handleSubmit } = this.props
@@ -76,6 +86,11 @@ class SprintReviewForm extends Component {
                     <Field name="review_cycle_days"
                            validate={[required]}
                            component={this.renderDaysField} />
+                  </div>
+                  <div className="sprint_sidebar--textarea">
+                    Must always review:
+                    <Field name="must_always_reveiw"
+                           component={this.renderCheckbox} />
                   </div>
                 </div>
                 <button className="button sprint_sidebar--textarea" type="submit">Submit</button>

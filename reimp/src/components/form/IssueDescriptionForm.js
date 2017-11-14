@@ -17,7 +17,7 @@ class IssueDescriptionForm extends Component {
     }
 
     componentDidMount() {
-        this.description_el.refs.textarea.focus()
+        this.description_el.refs.textarea && this.description_el.refs.textarea.focus()
     }
 
     keyDown(event) {
