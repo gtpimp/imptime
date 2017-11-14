@@ -2,6 +2,7 @@ import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer, BaseModelSerializer
 from timepiece.models import Feature, IssueStatus
+from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
 from timepiece.models import BusinessPermissions as ProjectPermissions
@@ -26,6 +27,7 @@ class ProjectSerializer(BaseSerializer):
     invited_user_ids = serializers.ListField(child=serializers.CharField())
     allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
+    allowed_sprint_type_names = serializers.ListField(child=serializers.CharField())
     allowed_deadline_types = serializers.ListField(child=ProjectDeadlineTypeSerializer())
     feature_names = serializers.ListField(child=serializers.CharField())
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
@@ -43,6 +45,7 @@ class ProjectSerializer(BaseSerializer):
         project_user_ids = project.allowed_user_ids #sic
         project.invited_user_ids = project_user_ids.filter(invites_received__accepted=False)
         project.feature_names = Feature.objects.filter(business=project).order_by("name")  # sic
+        project.allowed_sprint_type_names = [ k for k,v in Sprint.PROJECT_TYPES ] #sic
 
         project.allowed_issue_status_names =  [x for x in IssueStatus.objects.all()\
                                                .filter(business=project)\

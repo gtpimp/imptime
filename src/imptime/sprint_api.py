@@ -86,6 +86,9 @@ class SprintViewSet(BaseViewSet):
                     if self.logged_in_permissions(sprint.business).has_edit_issue_states:
                         new_status = SprintStatus.objects.get_or_create(business_id=sprint.business_id, name=new_value)[0]
                         sprint.status3_id = new_status.id
+                elif field_name == "sprint_type":
+                    if self.logged_in_permissions(sprint.business).has_edit_sprint_type:
+                        sprint.project_type = new_value
                 elif field_name == 'sprint_id_after':
                     if self.logged_in_permissions(sprint.business).has_edit_sprint:
                         after_sprint = self.allowed_sprint(new_value)

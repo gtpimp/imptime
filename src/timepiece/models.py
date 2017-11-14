@@ -435,7 +435,8 @@ class BusinessPermissions(BaseModel):
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
     can_edit_tags = models.BooleanField(default=True, verbose_name="Can Edit Tags")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
-    can_edit_sprint_status = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
+    can_edit_sprint_status = models.BooleanField(default=True, verbose_name="Can Edit Sprint Status")
+    can_edit_sprint_type = models.BooleanField(default=True, verbose_name="Can Edit Sprint Type")
     can_edit_sprint = models.BooleanField(default=True, verbose_name="Can Edit Sprint")
     can_assign_user = models.BooleanField(default=True, verbose_name="Can Assign User")
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
@@ -702,7 +703,11 @@ class BusinessPermissions(BaseModel):
     @property
     def has_edit_sprint_status(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_sprint_status or self.user.has_perm('timepiece.belongs_to_all_projects'))
-
+    
+    @property
+    def has_edit_sprint_type(self):
+        return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_sprint_type or self.user.has_perm('timepiece.belongs_to_all_projects'))
+    
     @property
     def has_edit_sprint(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_sprint or self.user.has_perm('timepiece.belongs_to_all_projects'))
@@ -836,7 +841,9 @@ class Project(BaseModel):
                          ('closed', 'closed') )
 
     PROJECT_TYPES = ( ('sprint', 'Sprint'),
-                      ('template', 'Template') )
+                      ('template', 'Template'),
+                      ('sprinkle', 'Sprinkle'),
+                      ('inbox', 'Inbox') )
     
     code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)

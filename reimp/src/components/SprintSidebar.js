@@ -9,6 +9,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
+import EditableSprintType from '../components/EditableSprintType'
 import EditableSprintDeadline from '../components/EditableSprintDeadline'
 import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
 import SprintName from './SprintName'
@@ -86,6 +87,12 @@ class SprintSidebar extends Component {
                 <PropertyStackComponent>
                   <div className="property-text">
                     Status: <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                  </div>
+                </PropertyStackComponent>
+
+                <PropertyStackComponent>
+                  <div className="property-text">
+                    Type: <EditableSprintType sprint_ids={[sprint.id]} project_id={sprint.project_id} />
                   </div>
                 </PropertyStackComponent>
                 

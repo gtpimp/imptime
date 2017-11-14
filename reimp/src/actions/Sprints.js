@@ -144,6 +144,10 @@ export function updateSprintStatus(sprint_ids, value) {
     return updateSprint(sprint_ids, "status_name", value)
 }
 
+export function updateSprintType(sprint_ids, value) {
+    return updateSprint(sprint_ids, "sprint_type", value)
+}
+
 export function updateSprintReviewCycle(sprint_ids, value) {
     return updateSprint(sprint_ids, "review_cycle_days", value)
 }
