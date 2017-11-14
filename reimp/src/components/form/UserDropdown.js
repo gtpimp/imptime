@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
-import OtherUser from '../components/OtherUser'
 import Select from 'react-select';
 import { connect } from 'react-redux'
 import {
-    ensureUsersLoaded
+    ensureUsersLoaded,
+    getUsers
 } from '../../actions/Users'
 
 export class UserDropdown extends Component {
@@ -14,15 +14,16 @@ export class UserDropdown extends Component {
     }
     
     componentDidMount() {
-        refresh()
+        this.refresh()
     }
 
-    componentWillReceiveProps() {
-        refresh()
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
     }
 
-    refresh() {
-	const { dispatch, user_ids } = this.props
+    refresh(these_props) {
+        const props = these_props || this.props
+	const { dispatch, user_ids } = props
 	dispatch(ensureUsersLoaded(user_ids))
     }
 
@@ -33,15 +34,6 @@ export class UserDropdown extends Component {
         }
 	onChange(selected_option.value)
     }
-    
-    /* renderReadonly() {
-       const { value } = this.props
-       return (
-       <OtherUser user_id={value}
-       render_mode="inline--small"
-       loading_value={value} />
-       )
-     * }*/
     
     render() {
 	const { options, value } = this.props
@@ -56,10 +48,9 @@ export class UserDropdown extends Component {
 }
 
 function mapStateToProps(state, props) {
-
     const { user_ids } = props
     const { user } = state
-    const users = getUsers(user_ids)
+    const users = getUsers(state, user_ids) || []
     const options = users.map( (user) => ({ value: user.id, label: user.username }) )
     
     return {

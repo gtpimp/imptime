@@ -102,7 +102,7 @@ export function getLoggedInUser(state) {
 }
 
 export function getUsers(state, user_ids) {
-    const user_objs = state.user
+    const user_objs = (state || {}).user || {}
     const items_by_id = (user_objs && user_objs.items_by_id) || {}
     return items_by_id && user_ids && user_ids.map(function (user_id, index) {
         return items_by_id[user_id] || {
