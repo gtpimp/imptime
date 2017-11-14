@@ -91,7 +91,7 @@ class IssueReviewPanel extends Component {
                             <SprintReview sprint_review_id={sprint_review.id} />
                             { issue_review && <IssueReview issue_review_id={issue_review.id} /> }
                             { sprint_review.review_by_id == logged_in_user_id &&
-                              <button className="button button--primary sprint_sidebar--button" onClick={that.onReviewed}>Reviewed</button>
+                              <button className="button button--primary sprint_sidebar--button" onClick={that.onReviewed}>Reviewed now</button>
                             }
                           </div>
                       )
