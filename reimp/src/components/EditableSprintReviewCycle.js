@@ -57,7 +57,7 @@ class EditableSprintReviewCycle extends Component {
     }
 
     render() {
-        const { sprint_review, can_view, can_edit } = this.props
+        const { sprint_review_id, sprint_review, can_view, can_edit } = this.props
 
         if ( ! can_view ) {
             return null
@@ -65,7 +65,7 @@ class EditableSprintReviewCycle extends Component {
 
         return (
             <div>
-              { sprint_review.id && 
+              { sprint_review_id && 
                 <EditableProperty property_key='review_every_num_days'
                                   initial_value={sprint_review}
                                   onChange={this.onChange}
@@ -80,9 +80,9 @@ class EditableSprintReviewCycle extends Component {
                   </div>
                 </EditableProperty>
               }
-              { ! sprint_review.id && can_edit &&  
+              { ! sprint_review_id && can_edit &&  
                 <EditableProperty property_key='review_every_num_days'
-                                  initial_value={sprint_review}
+                                  initial_value={null}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                                   edit_as_modal={true}

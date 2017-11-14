@@ -13,3 +13,11 @@ class SprintReviewSerializer(BaseModelSerializer):
     class Meta:
         model = SprintReview
         fields = ('id', 'review_by_id', 'review_cycle_days', 'sprint_id', 'modified')
+
+class SprintReviewInboundSerializer(BaseModelSerializer):
+    review_by_id = serializers.CharField()
+    
+    class Meta:
+        model = SprintReview
+        fields = ('review_by_id', 'review_cycle_days', 'project') 
+        

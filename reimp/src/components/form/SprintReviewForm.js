@@ -50,7 +50,10 @@ class SprintReviewForm extends Component {
     renderDaysField(field) {
         const { input } = field
         return (
-            <input value={input.value}
+            <input className="textarea textarea--text-component textarea--description"
+                   value={input.value}
+                   placeholder="Days before review is due"
+                   onKeyDown={this.keyDown}
                    onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
             />
         )

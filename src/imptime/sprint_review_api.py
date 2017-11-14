@@ -10,7 +10,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import ProjectReview as SprintReview
-from sprint_review_serializer import SprintReviewSerializer
+from sprint_review_serializer import SprintReviewSerializer, SprintReviewInboundSerializer
 logger = logging.getLogger(__name__)
 
 
@@ -54,10 +54,10 @@ class SprintReviewViewSet(BaseViewSet):
             review_data = self.fix_review_data_from_params(params['item'])
             sprint_pk = review_data['sprint_id']
             sprint = self.allowed_sprint(sprint_pk)
-            if not self.logged_in_permissions(sprint.business).can_edit_review_cycle:
+            if not self.logged_in_permissions(sprint.business).has_edit_review_cycle:
                 raise Exception("Permission denied")
             
-            s = SprintReviewModelSerializer(data=review_data)
+            s = SprintReviewInboundSerializer(data=review_data)
             s.is_valid(raise_exception=True)
             review = s.save()
             sprint.save()
@@ -81,10 +81,10 @@ class SprintReviewViewSet(BaseViewSet):
             sprint = self.allowed_sprint(sprint_pk)
             review = SprintReview.objects.filter(project=sprint).get(pk=review_id)
 
-            if not self.logged_in_permissions(sprint.business).can_edit_review_cycle:
+            if not self.logged_in_permissions(sprint.business).has_edit_review_cycle:
                 raise Exception("Permission denied")
             
-            s = SprintReviewModelSerializer(data=review_data, instance=review)
+            s = SprintReviewInboundSerializer(data=review_data, instance=review)
             s.is_valid(raise_exception=True)
             review = s.save()
             sprint.save()
@@ -104,7 +104,7 @@ class SprintReviewViewSet(BaseViewSet):
             review = self.allowed_sprint_reviews().get(pk=review_id)
             sprint = review.project #sic
 
-            if not self.logged_in_permissions(sprint.business).has_edit_reviews:
+            if not self.logged_in_permissions(sprint.business).has_edit_review_cycle:
                 raise Exception("Permission denied")
             
             review.delete()
@@ -119,10 +119,7 @@ class SprintReviewViewSet(BaseViewSet):
 
     def fix_review_data_from_params(self, review_data):
         sprint_id = review_data['sprint_id']
-        review_data['project'] = sprint_id
-        review_data['represents_project_start'] = review_data.pop('represents_sprint_start', False) or False
-        review_data['represents_project_end'] = review_data.pop('represents_sprint_end', False) or False
-        review_data['is_hard_review'] = review_data.pop('is_hard_review', False) or False
+        review_data['project'] = review_data['sprint_id']
         return review_data
 
     def apply_filter(self, qs, raw_filter_args):
