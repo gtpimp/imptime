@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 const  { DOM: { input, select, textarea } } = React
 import {connect} from 'react-redux'
+import PropertyStack from '../PropertyStack'
+import PropertyStackComponent from '../PropertyStackComponent'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
@@ -89,27 +91,26 @@ class SprintReviewForm extends Component {
     render() {
 
         const { review, handleSubmit } = this.props
-
         return (
             <div>
               <form onSubmit={handleSubmit}>
                 <div>
-                  <div className="sprint_sidebar--textarea">
+                  <PropertyStack>
+                    <PropertyStackComponent title="Reviewer">
+                    </PropertyStackComponent>
                     <Field name="review_by_id"
                            validate={[required]}
                            component={this.renderUserField} />
-                  </div>
-                  <div className="sprint_sidebar--textarea">
-                    Days between each review: 
-                    <Field name="review_cycle_days"
-                           validate={[required]}
-                           component={this.renderDaysField} />
-                  </div>
-                  <div className="sprint_sidebar--textarea">
-                    Must always review:
-                    <Field name="must_always_review"
-                           component={this.renderCheckbox} />
-                  </div>
+                    <PropertyStackComponent title="Days between each review">
+                      <Field name="review_cycle_days"
+                             validate={[required]}
+                             component={this.renderDaysField} />
+                    </PropertyStackComponent>
+                    <PropertyStackComponent title="Must always review">
+                      <Field name="must_always_review"
+                             component={this.renderCheckbox} />
+                    </PropertyStackComponent>
+                  </PropertyStack>
                 </div>
                 <button className="button sprint_sidebar--textarea" type="submit">Submit</button>
               </form>
