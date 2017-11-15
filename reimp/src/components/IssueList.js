@@ -254,7 +254,12 @@ class IssueList extends Component {
 
     reorderIssue(moving_issue_id, move_after_issue_id) {
         const {dispatch, list_key} = this.props
-        const selected_ids = concat(this.props.selected_ids || [], this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id))
+
+        let selected_ids = this.props.selected_ids || []
+        if ( ! includes(selected_ids, moving_issue_id) ) {
+            selected_ids = [moving_issue_id]
+        }
+        selected_ids = concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id))
 
         const target_hidden_child_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
