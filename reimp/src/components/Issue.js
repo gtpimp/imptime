@@ -200,7 +200,7 @@ class Issue extends Component {
                 >
                   {includes(visible_header_keys, "number") &&
                    <td className="list-table__cell list-table__cell--issue-number">
-                     <div>{issue.number}</div>
+                     <div>{issue.number} #{issue.id}</div>
                    </td>
                   }
                   {includes(visible_header_keys, "expand_feature") &&

@@ -3949,11 +3949,13 @@ class ProjectIssueOrder(BaseModel):
                 pio.order = order
                 pio.save()
             order += self.INCREMENT
+        ProjectIssueOrder.objects.filter(project_id=project_id).exclude(issue__project_id=project_id).delete()
 
     @classmethod
     def insert_before(self, issue, set_before_this_issue):
         if issue.project_id != set_before_this_issue.project_id:
             raise Exception("Cannot reorder, must be in the same project")
+        self.renumber(issue.project_id)
         pio = self.objects.get_or_create(project_id=set_before_this_issue.project_id,
                                          issue_id=set_before_this_issue.id,
                                          defaults={'order':self.MAX_ORDER})[0]
@@ -3968,10 +3970,11 @@ class ProjectIssueOrder(BaseModel):
     def insert_after(self, issue, set_after_this_issue):
         if issue.project_id != set_after_this_issue.project_id:
             raise Exception("Cannot reorder, must be in the same project")
-        pio = self.objects.get_or_create(project_id=set_after_this_issue.project_id,
-                                         issue_id=set_after_this_issue.id,
-                                         defaults={'order':self.MAX_ORDER})[0]
-        new_order = pio.order+1
+        self.renumber(issue.project_id)
+        pio_target = self.objects.get_or_create(project_id=set_after_this_issue.project_id,
+                                                issue_id=set_after_this_issue.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio_target.order+1
         pio, is_new = self.objects.get_or_create(project_id=issue.project_id,
                                                  issue_id=issue.id,
                                                  defaults={'order':new_order})
@@ -4006,6 +4009,7 @@ class ProjectIssueOrder(BaseModel):
             
     @classmethod
     def get_next_order(self, project_id, issue_qs=None):
+        self.renumber(issue.project_id)
         if issue_qs is None:
             issue_qs = Issue.objects.filter(project_id=project_id)
         max_order = self.objects.filter(project_id=project_id, issue__in=issue_qs)\

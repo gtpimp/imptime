@@ -117,7 +117,7 @@ class IssueViewSet(BaseViewSet):
                     issue_pks = issue_pks.reverse()
             else:
                 issue_pks = [pk]
-                
+
             for issue_pk in issue_pks:
                 issue = self.allowed_issue(issue_pk)
 
