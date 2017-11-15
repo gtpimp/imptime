@@ -72,6 +72,11 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':"#",
                                        'assignee': "Assignee",
                                        'status': "Status"}
 
+export var ISSUE_HEADER_LIST_FEATURE = {'number': "#",
+                                        'expand_feature': '',
+                                        'name': "Name"}
+
+
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':'#',
     'name': 'Name',

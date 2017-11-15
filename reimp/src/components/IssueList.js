@@ -5,6 +5,7 @@ import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
 import TagEditor from '../components/TagEditor'
 import EstimateEditor from '../components/EstimateEditor'
+import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js';
 import {
     initList,
     invalidateList,
@@ -353,8 +354,8 @@ class IssueList extends Component {
                         is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
                         issue_id={issue.parent_group_id}
-                        subject_prefix="..."
-                        issue_header_list={issue_header_list}
+                        subject_prefix="...(continued) "
+                        issue_header_list={ISSUE_HEADER_LIST_FEATURE}
                     />
                 )
                 running_parent_issue_id = issue.parent_group_id
@@ -375,9 +376,9 @@ class IssueList extends Component {
                         is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}
-                        issue_header_list={issue_header_list}
+                        issue_header_list={(issue.can_group_issues && ISSUE_HEADER_LIST_FEATURE) || issue_header_list}
                     />
-                )
+                        )
             }
 
             if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
