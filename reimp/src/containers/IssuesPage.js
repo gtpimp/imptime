@@ -6,7 +6,7 @@ import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
-import includes from 'lodash/includes'
+import { includes, compact } from 'lodash'
 import {
     LIST_KEY__ISSUE_LIST,
     PAGE_KEY__ISSUES_PAGE
@@ -160,7 +160,7 @@ function mapStateToProps(state, props) {
         selected_issues: selected_items,
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
-        is_multiple_selection: selected_items.length > 1,
+        is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue: is_creating_issue,
         issue_header_list: issue_header_list
     }

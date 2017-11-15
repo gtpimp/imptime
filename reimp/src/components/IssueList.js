@@ -341,6 +341,7 @@ class IssueList extends Component {
                 issue_rows.push(
                     <Issue
                         key={list_key + issue.id + "fakefeature" + running_parent_issue_id}
+                        is_fake={true}
                         list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
@@ -353,6 +354,7 @@ class IssueList extends Component {
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
                         issue_id={issue.parent_group_id}
                         subject_prefix="..."
+                        issue_header_list={issue_header_list}
                     />
                 )
                 running_parent_issue_id = issue.parent_group_id
