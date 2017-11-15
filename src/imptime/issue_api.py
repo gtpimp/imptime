@@ -205,6 +205,14 @@ class IssueViewSet(BaseViewSet):
                 elif field_name == "review_now":
                     if SprintReview.objects.filter(project_id=issue.project_id, review_by=request.user).first() is not None:
                         IssueReview.reviewed(issue, request.user)
+
+                elif field_name == "make_feature_issues_successive":
+                    sprint_id = new_value
+                    feature_issue = issue
+                    child_issues = Issue.objects.filter(parent_group=feature_issue, project_id=sprint_id)\
+                                                .order_by_project_id(project_id=sprint_id, descending=True) #sic
+                    for child_issue in child_issues:
+                        SprintIssueOrder.insert_after(child_issue, set_after_this_issue=feature_issue)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()

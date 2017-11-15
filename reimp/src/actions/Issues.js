@@ -232,6 +232,10 @@ export function groupIssuesIntoFeature(children_issue_ids, feature_issue_id) {
     return updateIssue(children_issue_ids, "parent_group_id", feature_issue_id)
 }
 
+export function makeFeatureIssuesSuccessive(feature_issue_id, sprint_id) {
+    return updateIssue([feature_issue_id], "make_feature_issues_successive", sprint_id)
+}
+
 export function updateIssueComment(issue_id, comment_id, new_comment) {
 
     return (dispatch, getState) => {

@@ -25,7 +25,8 @@ import Sidebar from './Sidebar'
 import {
     ensureIssuesLoaded,
     getIssue,
-    populateEstimates
+    populateEstimates,
+    makeFeatureIssuesSuccessive
 } from '../actions/Issues'
 import { ensureUsersLoaded } from '../actions/Users'
 import {format_hours} from '../actions/lib'
@@ -39,6 +40,7 @@ class IssueSidebar extends Component {
         this.showEmacsIssue = this.showEmacsIssue.bind(this)
         this.showEmacsSprint = this.showEmacsSprint.bind(this)
         this.showGitCommitMessage = this.showGitCommitMessage.bind(this)
+        this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
     }
 
     componentDidMount() {
@@ -65,6 +67,11 @@ class IssueSidebar extends Component {
         const { issue, sprint } = this.props
         const text = "#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject
         window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    }
+
+    makeFeatureIssuesSuccessive() {
+        const { dispatch, issue_id, sprint_id } = this.props
+        dispatch(makeFeatureIssuesSuccessive(issue_id, sprint_id))
     }
     
     refresh(props) {
@@ -166,6 +173,15 @@ class IssueSidebar extends Component {
                           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids} />
                           <EditableIssueVisualSpecDocument issue_id={issue.id} visual_spec_document_id={null}/>
                         </PropertyStackComponent>
+
+                        { issue.can_group_issues &&
+                          <PropertyStackComponent title="Feature">
+                            Make this feature's issues
+                            <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
+                              successive
+                            </button>
+                          </PropertyStackComponent>
+                        }
                         
                         <PropertyStackComponent title="Reviews">
                           <IssueReviewPanel issue_id={issue.id} />

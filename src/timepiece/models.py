@@ -3613,10 +3613,11 @@ class IssueQuerySet(QuerySet):
             return self
         return self.filter(project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
-    def order_by_project_id(self, project_id):
+    def order_by_project_id(self, project_id, descending=False):
         if project_id:
+            direction = ("-" if descending else "") + "order"
             issue_ids_in_order = ProjectIssueOrder.objects.filter(project_id=project_id)\
-                                                          .order_by("order")\
+                                                          .order_by(direction)\
                                                           .values_list("issue_id", flat=True)
             if issue_ids_in_order.count() == 0:
                 return self
