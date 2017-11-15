@@ -278,7 +278,7 @@ class IssueList extends Component {
               <div className="panel-heading" onClick={this.onExpand}>
                 <div className="panel__title">{ selected_items.map((issue, index) =>
                     <Issue
-                        key={list_key + issue.id + index}
+                        key={list_key + issue.id}
                         list_key={list_key}
                         is_collapsed={true}
                         show_children={includes(expanded_issues, issue.id)}
@@ -340,7 +340,7 @@ class IssueList extends Component {
                 // so insert a 'fake' feature issue
                 issue_rows.push(
                     <Issue
-                        key={list_key + issue.id + index + "fakefeature"}
+                        key={list_key + issue.id + "fakefeature" + running_parent_issue_id}
                         list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
@@ -361,7 +361,7 @@ class IssueList extends Component {
             if (show_issue) {
                 issue_rows.push(
                     <Issue
-                        key={list_key + issue.id + index}
+                        key={list_key + issue.id}
                         list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
