@@ -50,10 +50,17 @@ class NudgeList extends Component {
                 <div>Loading...</div>
             )
         }
-        
+
         return (
             <div className="nudge-list">
               { map(nudge_ids, (nudge_id) =>  <Nudge nudge_id={nudge_id} />) }
+              { !nudge_ids || nudge_ids.length == 0 &&
+                (
+                    <div className="nudge-list__empty">
+                      No nudges. Go in peace.
+                    </div>
+                )
+              }
             </div>
         )
     }

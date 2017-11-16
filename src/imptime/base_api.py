@@ -11,7 +11,7 @@ from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
-from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote
+from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 
 class PermissionHelper():
     @classmethod
@@ -169,6 +169,9 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_sprint_reviews(self):
         return SprintReview.objects.filter(project__in=self.allowed_sprints()) #sic
+
+    def allowed_nudges(self):
+        return Nudge.objects.filter(user=self.request.user)
     
     def logged_in_permissions(self, project):
         if project.id in self._logged_in_permissions_by_project:
