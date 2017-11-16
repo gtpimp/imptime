@@ -1187,11 +1187,12 @@ class Project(BaseModel):
 
 
         super(Project, self).save(*args, **kwargs)
+        params = { 'project_id': self.business_id }
         if new_project:
             self._sync_from_previous_project()
-            RefreshNotifier().notify_model_create(self)
+            RefreshNotifier().notify_model_create(self, params)
         else:
-            RefreshNotifier().notify_model_update(self)
+            RefreshNotifier().notify_model_update(self, params)
 
 
     @property
@@ -1311,7 +1312,7 @@ class Project(BaseModel):
 
     @classmethod
     def hopeful_states(self):
-        return ( 'gathering specs', 'on hold' )
+        return ( 'gathering specs', 'on hold', 'hopeful' )
 
     @classmethod
     def open_states(self):
