@@ -163,7 +163,7 @@ class Issue extends Component {
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
             issue_id, visible_header_keys,
-            isFeatureOfSelectedIssue, belongsToSelectedFeature
+            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -205,6 +205,7 @@ class Issue extends Component {
                                 'issue--fake': is_fake===true,
                                 'issue--feature': isFeature,
                                 'issue--grouped': belongsToAFeature,
+                                'issue--cursor-item': is_cursor_item,
                                 'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
                                 'issue--belongs-to-selected-feature': belongsToSelectedFeature,
                                 /*'tr--selected': is_selected,*/
@@ -347,7 +348,7 @@ function mapStateToProps(state, props) {
     const {
         issue_id, is_selected, is_highlighted, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children, is_fake,
-        subject_prefix, subject_suffix, issue_header_list, list_key
+        subject_prefix, subject_suffix, issue_header_list, list_key, is_cursor_item
     } = props
 
     const issue = getIssue(state, issue_id) || {'loaded': false}
@@ -382,6 +383,7 @@ function mapStateToProps(state, props) {
         is_collapsed: is_collapsed,
         is_expanded: !is_collapsed,
         is_fake,
+        is_cursor_item,
         is_invalidated: is_invalidated || false,
         assignable_user_ids: assignable_user_ids,
         show_children: show_children,

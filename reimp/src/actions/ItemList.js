@@ -18,6 +18,7 @@ export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
 export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
 export const HIGHLIGHT_LIST_SELECTION = 'HIGHLIGHT_LIST_SELECTION'
+export const SET_CURSOR_ITEM = 'SET_CURSOR_ITEM'
 import { GENERIC_ENTITIES } from './ItemListKeyRegistry'
 
 export function initList(list_key) {
@@ -123,6 +124,18 @@ export function selectItems(list_key, selected_ids) {
 	      list_key: list_key,
 	      selected_ids: selected_ids
     }
+}
+
+export function setCursorItem(list_key, item_id) {
+    return {
+        type: SET_CURSOR_ITEM,
+        list_key: list_key,
+        cursor_item_id: item_id
+    }
+}
+
+export function getCursorItemId(state, list_key) {
+    return (((state || {}).item_list || {})[list_key] || {}).cursor_item_id
 }
 
 export function highlightItems(list_key, highlighted_ids) {

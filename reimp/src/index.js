@@ -42,6 +42,7 @@ if (RAVEN_DSN) {
     Raven.config(RAVEN_DSN).install()
 }
 
+
 ReactDOM.render(
     <Provider store={store}>
       <Router history={history}>

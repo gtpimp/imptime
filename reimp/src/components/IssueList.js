@@ -11,7 +11,9 @@ import {
     invalidateList,
     collapse_list,
     expand_list,
-    setItemFlag
+    setItemFlag,
+    setCursorItem,
+    getCursorItemId
 } from '../actions/ItemList'
 import {
     invalidateAllIssues,
@@ -27,6 +29,7 @@ import {
 } from '../actions/Issues'
 import Issue from '../components/Issue'
 import ListTable from './ListTable'
+import { Shortcuts } from 'react-shortcuts'
 
 class IssueList extends Component {
 
@@ -48,7 +51,7 @@ class IssueList extends Component {
         this.closeTagEditor = this.closeTagEditor.bind(this)
         this.openEstimateEditor = this.openEstimateEditor.bind(this)
         this.closeEstimateEditor = this.closeEstimateEditor.bind(this)
-        this.keyDown = this.keyDown.bind(this)
+        this.handleShortcuts = this.handleShortcuts.bind(this)
     }
 
     componentDidMount() {
@@ -69,6 +72,70 @@ class IssueList extends Component {
         dispatch(fetchIssuesIfNeeded(list_key))
     }
 
+    handleShortcuts(action, event) {
+        const { dispatch } = this.props
+        switch(action) {
+            case 'NEW':
+                alert("create new issue")
+                break
+            case 'CANCEL':
+                dispatch(cancelCandidateIssue())
+                break
+            case 'UP':
+                this.moveCursorUp()
+                break
+            case 'DOWN':
+                this.moveCursorDown()
+                break
+        }
+    }
+
+    moveCursorDown() {
+        const { dispatch, list_key, issue_ids, selected_ids, cursor_item_id } = this.props
+        if ( !cursor_item_id || !issue_ids ) {
+            this.moveCursorDefault()
+        } else {
+            let cursor_item_id;
+            let cursor_item_index = issue_ids.indexOf(cursor_item_id)
+            let next_item_index = cursor_item_index + 1
+            if ( next_item_index < issue_ids.length ) {
+                cursor_item_id = issue_ids[next_item_index]
+            }
+            if ( cursor_item_id ) {
+                dispatch(setCursorItem(list_key, cursor_item_id))
+            }
+        }
+    }
+
+    moveCursorUp() {
+        const { dispatch, list_key, issue_ids, selected_ids, cursor_item_id } = this.props
+        if ( !cursor_item_id || !issue_ids ) {
+            this.moveCursorDefault()
+        } else {
+            let cursor_item_id;
+            let prev_issue_id = issue_ids.indexOf(cursor_item_id)-1
+            if ( prev_issue_id >= 0 ) {
+                cursor_item_id = issue_ids[prev_issue_id]
+            }
+            if ( cursor_item_id ) {
+                dispatch(setCursorItem(list_key, cursor_item_id))
+            }
+        }
+    }
+
+    moveCursorDefault() {
+        const { dispatch, list_key, issue_ids, selected_ids } = this.props
+        let cursor_item_id = null
+        if ( selected_ids && selected_ids.length > 0 ) {
+            cursor_item_id = selected_ids[selected_ids.length-1]
+        } else if ( issue_ids && issue_ids.length > 0 ) {
+            cursor_item_id = issue_ids[issue_ids.length-1]
+        }
+        if ( cursor_item_id ) {
+            dispatch(setCursorItem(list_key, cursor_item_id))
+        }
+    }
+    
     onCollapse() {
         const {dispatch, list_key} = this.props
         dispatch(collapse_list(list_key))
@@ -244,14 +311,6 @@ class IssueList extends Component {
         this.setState({'estimate_editor_open': false})
     }
 
-    keyDown(event) {
-        const { dispatch } = this.props
-        if (event.keyCode === 27) {
-            event.preventDefault()
-            dispatch(cancelCandidateIssue())
-        }
-    }
-
     reorderIssue(moving_issue_id, move_after_issue_id) {
         const {dispatch, list_key} = this.props
 
@@ -276,7 +335,7 @@ class IssueList extends Component {
         const {
             selected_items,
             selected_ids, highlighted_ids, loading_item_ids, list_key,
-            expanded_issues
+            expanded_issues, cursor_item_id, 
         } = this.props
 
         return (
@@ -293,6 +352,7 @@ class IssueList extends Component {
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
                         is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
+                        is_cursor_item={""+issue.id==""+cursor_item_id}
                         issue_id={issue.id}/>
                 )}
                 </div>
@@ -319,7 +379,7 @@ class IssueList extends Component {
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
-            issue_header_list
+            issue_header_list, cursor_item_id
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
@@ -356,6 +416,7 @@ class IssueList extends Component {
                         is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
                         is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
                         is_highlighted={highlighted_ids.indexOf(issue.parent_group_id) !== -1}
+                        is_cursor_item={""+issue.id==""+cursor_item_id}
                         is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
                         issue_id={issue.parent_group_id}
@@ -378,12 +439,13 @@ class IssueList extends Component {
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
                         is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
+                        is_cursor_item={""+issue.id==""+cursor_item_id}
                         is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}
                         issue_header_list={(issue.can_group_issues && ISSUE_HEADER_LIST_FEATURE) || issue_header_list}
                     />
-                        )
+                )
             }
 
             if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
@@ -448,10 +510,12 @@ class IssueList extends Component {
         }
 
         return (
-            <div onKeyDown={this.keyDown}>
-              { is_collapsed && this.render_collapsed() }
-              { is_expanded && this.render_expanded() }
-            </div>
+            <Shortcuts name='ISSUE_LIST' handler={this.handleShortcuts} >
+              <div>
+                { is_collapsed && this.render_collapsed() }
+                { is_expanded && this.render_expanded() }
+              </div>
+            </Shortcuts>
         )
     }
 }
@@ -490,6 +554,7 @@ function mapStateToProps(state, props) {
 
     const candidate_issue = (issue && issue.candidate_issue) || null
     const is_creating_issue = candidate_issue || false
+    const cursor_item_id = getCursorItemId(state, list_key)
 
     return {
         list_key: list_key,
@@ -499,6 +564,7 @@ function mapStateToProps(state, props) {
         issue_ids: map(items, 'id'),
         selected_ids: l.selected_ids || [],
         highlighted_ids: l.highlighted_ids || [],
+        cursor_item_id,
         invalidated_issue_ids: invalidated_item_ids,
         saving_issue_ids: saving_item_ids,
         selected_items: selected_items || [],

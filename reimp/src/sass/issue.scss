@@ -45,6 +45,12 @@
     font: $font-1;
 }
 
+.issue--cursor-item td {
+    -webkit-box-shadow:inset 0px 0px 0px 2px $color-25;
+    -moz-box-shadow:inset 0px 0px 0px 2px $color-25;
+    box-shadow:inset 0px 0px 0px 2px $color-25;
+}
+
 .issue--grouped .list-table__cell:first-child {
     padding-left: 50px;
 }

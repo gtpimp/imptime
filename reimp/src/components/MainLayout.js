@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import Header from '../components/Header'
@@ -9,10 +9,17 @@ import { DragDropContext } from 'react-dnd';
 import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
+import { ShortcutManager } from 'react-shortcuts'
+import keymap from '../actions/Keymap'
+const shortcut_manager = new ShortcutManager(keymap)
 var HTML5Backend = require('react-dnd-html5-backend');
 
 class MainLayout extends Component {
 
+    getChildContext() {
+        return { shortcuts: shortcut_manager }
+    }
+    
     componentDidMount() {
         const { dispatch } = this.props
         const that = this
@@ -62,22 +69,22 @@ class MainLayout extends Component {
         if ( ! is_logged_in && ! allow_non_auth  ) {
             return (
                 <div className="app app--login">
-                    <LoginPage />
+                  <LoginPage />
                 </div>
             )
         }
         
         return (
             <div className="app">
-                <Websocket/>
-                <Header/>
-                <div className="main">
+              <Websocket/>
+              <Header/>
+              <div className="main">
                 {this.props.children}
-                </div>
-                <ModalDialog isOpen={has_error} title="Imp Down">
-                    <div>{error_message}</div>
-                    <button className="button button--default button--large">Reload</button>
-                </ModalDialog>
+              </div>
+              <ModalDialog isOpen={has_error} title="Imp Down">
+                <div>{error_message}</div>
+                <button className="button button--default button--large">Reload</button>
+              </ModalDialog>
             </div>
         )
     }
@@ -103,3 +110,7 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(DragDropContext(HTML5Backend)(MainLayout))
+
+MainLayout.childContextTypes = {
+  shortcuts: PropTypes.object.isRequired
+}

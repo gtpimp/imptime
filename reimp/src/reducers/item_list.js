@@ -19,7 +19,8 @@ import {
     UPDATE_LIST_SELECTION,
     HIGHLIGHT_LIST_SELECTION,
     UPDATE_LIST_DISPLAY_MODE,
-    UPDATE_VISIBLE_ITEM_IDS
+    UPDATE_VISIBLE_ITEM_IDS,
+    SET_CURSOR_ITEM
 } from '../actions/ItemList.js'
 
 const initialState = {}
@@ -145,7 +146,12 @@ export default function item_list(state = initialState, action) {
             state_copy[action.list_key] = Object.assign({}, l, {
                 visible_item_ids: action.visible_item_ids})
             return state_copy
-            
+
+        case SET_CURSOR_ITEM:
+            state_copy[action.list_key] = Object.assign({}, l, {
+                cursor_item_id: action.cursor_item_id})
+            return state_copy
+        
         default:
             return state
     }
