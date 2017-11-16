@@ -4009,7 +4009,7 @@ class ProjectIssueOrder(BaseModel):
             
     @classmethod
     def get_next_order(self, project_id, issue_qs=None):
-        self.renumber(issue.project_id)
+        self.renumber(project_id)
         if issue_qs is None:
             issue_qs = Issue.objects.filter(project_id=project_id)
         max_order = self.objects.filter(project_id=project_id, issue__in=issue_qs)\
