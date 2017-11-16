@@ -64,7 +64,7 @@ class IssueReviewPanel extends Component {
 
     render() {
 
-        const {review_due_at_by_any_user, sprint_reviews, issue_review_ids, can_view,
+        const {review_due_at_by_any_user, sprint_reviews, issue_review_ids, can_view, sprint,
                has_ever_been_reviewed, issue_reviews_by_user_id, logged_in_user_id} = this.props
         const that = this
         if ( ! can_view ) {
@@ -90,9 +90,15 @@ class IssueReviewPanel extends Component {
                           <div key={sprint_review.id}>
                             <SprintReview sprint_review_id={sprint_review.id} />
                             { issue_review && <IssueReview issue_review_id={issue_review.id} /> }
-                            { sprint_review.review_by_id == logged_in_user_id &&
+                            { sprint.sprint_type !== "inbox" && sprint_review.review_by_id == logged_in_user_id &&
                               <button className="button button--primary sprint_sidebar--button" onClick={that.onReviewed}>Reviewed now</button>
                             }
+                            { sprint.sprint_type === "inbox" && sprint_review.review_by_id == logged_in_user_id &&
+                              <div>
+                                Inbox issues are reviewed by moving them to a different sprint
+                              </div>
+                            }
+                            
                           </div>
                       )
                   })
@@ -126,6 +132,7 @@ function mapStateToProps(state, props) {
         issue_reviews,
         sprint_review_ids: sprint.review_ids || [],
         sprint_reviews,
+        sprint,
         sprint_id: issue.sprint_id,
         logged_in_user_id,
         can_view,
