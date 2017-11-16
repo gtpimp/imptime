@@ -969,6 +969,10 @@ class Project(BaseModel):
 
         return None
 
+    @property
+    def issues_can_be_reviewed(self):
+        return self.project_type != "inbox"
+    
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
