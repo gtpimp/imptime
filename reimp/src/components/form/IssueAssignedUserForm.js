@@ -68,7 +68,7 @@ function mapStateToProps(state, props) {
     const users = getUsers(state, assignable_user_ids)
 
     const assignable_user_options = users.map(function (user) {
-        return {value: user.id, label: user.username}
+        return {value: user.id, label: user.visible_name}
     })
 
     return {

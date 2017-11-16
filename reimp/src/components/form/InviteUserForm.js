@@ -118,7 +118,7 @@ function mapStateToProps(state, props) {
     const invitable_users = getUsers(state, invitable_user_ids)
 
     const invitable_user_options = invitable_users.map(function (user) {
-        return {value: user.email, label: "" + user.username + " (" + user.email + ") "}
+        return {value: user.email, label: "" + user.visible_name + " (" + user.email + ") "}
     })
 
 
