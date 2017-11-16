@@ -4,7 +4,7 @@ import {DragSource, DropTarget} from 'react-dnd';
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
-import { getSelectedItems } from '../actions/ItemList'
+import { getSelectedItems, setItemFlag } from '../actions/ItemList'
 import {
     updateIssueStatus,
     updateIssueFeature,
@@ -66,6 +66,9 @@ class Issue extends Component {
         this.onClockIn = this.onClockIn.bind(this)
         this.onClockOut = this.onClockOut.bind(this)
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
+        this.onCollapseFeaturesClick = this.onCollapseFeaturesClick.bind(this)
+        this.onExpandFeaturesClick = this.onExpandFeaturesClick.bind(this)
+
     }
 
     componentDidMount() {
@@ -116,6 +119,16 @@ class Issue extends Component {
         const { issue, dispatch } = this.props
         console.log(issue.id)
         dispatch(deleteIssue(issue.id))
+    }
+
+    onCollapseFeaturesClick() {
+        const {dispatch, issue_id, list_key} = this.props
+        dispatch(setItemFlag(list_key, [issue_id], 'expanded_issues', false))
+    }
+
+    onExpandFeaturesClick() {
+        const {dispatch, issue_id, list_key} = this.props
+        dispatch(setItemFlag(list_key, [issue_id], 'expanded_issues', true))
     }
 
     renderEstimates() {
@@ -208,11 +221,17 @@ class Issue extends Component {
                   {includes(visible_header_keys, "expand_feature") &&
                    <td className="list-table__cell list-table__cell--issue-icon">
                      { issue.can_group_issues &&
-                       <div className="icon--feature">
+                       <div>
                          { show_children &&
-                           <div className="icon--more"></div>
+                           <div className="icon--collapse" onClick={this.onCollapseFeaturesClick}></div>
+                         }
+                         { !show_children &&
+                           <div className="icon--expand" onClick={this.onExpandFeaturesClick}></div>
                          }
                        </div>
+                     }
+                     { !issue.can_group_issues && issue.parent_group_id &&
+                       <div className="icon--child"></div>
                      }
                    </td>
                   }
@@ -239,11 +258,11 @@ class Issue extends Component {
                      <Timestamp value={issue.created_at} format="from_now"/>
                    </td>
                   }
-                   {includes(visible_header_keys, "status") &&
-                    <td className="list-table__cell list-table__cell--issue-status">
-                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
-                    </td>
-                   }
+                  {includes(visible_header_keys, "status") &&
+                   <td className="list-table__cell list-table__cell--issue-status">
+                     <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                   </td>
+                  }
                   {includes(visible_header_keys, "progress") &&
                    <td className="list-table__cell list-table__cell--issue-progress">
                      <Progress issue={issue}/>
@@ -251,7 +270,7 @@ class Issue extends Component {
                   }
                   {includes(visible_header_keys, "estimated") &&
                    <td className="list-table__cell list-table__cell--issue-estimates">
-                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
+                     <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                    </td>
                   }
                   {includes(visible_header_keys, "tags") &&
