@@ -76,7 +76,7 @@ class ProjectDashboardViewSet(BaseViewSet):
 
         bp = BusinessPermissions.for_user(user, project)  # sic
         entries = Entry.objects.all().filter(issue__project__business=project)
-        sprint_infos = self.get_open_sprints(entries)
+        sprint_infos = self.get_open_sprints(entries, project)
         if bp.has_view_ctc_billable_rates:
             most_recent_entries_per_user = entries.order_by('user_id').values('user_id').annotate(Max('end_time'), Min('start_time')).order_by('-end_time__max')
             d['most_recent_entry_per_user'] = most_recent_entries_per_user
@@ -93,11 +93,13 @@ class ProjectDashboardViewSet(BaseViewSet):
         d['user_ids'] = entries.values_list('user_id', flat=True).distinct()
         return d
 
-    def get_open_sprints(self, entries):
-        entries_for_open_sprints = entries.exclude(issue__project__status3__name__in=Sprint.closed_states())\
-                                          .values("issue__project_id").distinct()
+    def get_open_sprints(self, entries, project):
+        open_sprints = Sprint.objects.all().filter(business_id=project.id)\
+                                           .filter_open()\
+                                           .values_list('id', flat=True)
+        
         d = {}
-        [ d.setdefault(x['issue__project_id'], {'users':{}, 'budget':{}}) for x in entries_for_open_sprints ]
+        [ d.setdefault(pk, {'users':{}, 'budget':{}}) for pk in open_sprints ]
         return d
     
     def set_users(self, sprint_infos, entries_for_open_sprints):
