@@ -31,6 +31,7 @@ class ProjectSerializer(BaseSerializer):
     allowed_deadline_types = serializers.ListField(child=ProjectDeadlineTypeSerializer())
     feature_names = serializers.ListField(child=serializers.CharField())
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
+    num_open_sprints = serializers.IntegerField()
 
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user')
@@ -63,6 +64,7 @@ class ProjectSerializer(BaseSerializer):
         
         project.user_permissions = ProjectPermissions.for_user(user=self.logged_in_user,
                                                                business=project) #sic
+        project.num_open_sprints = Sprint.objects.filter(business=project).filter_open().count() #sic
 
         return super(ProjectSerializer, self).to_representation(
             project, *args, **kwargs)

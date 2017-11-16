@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd';
+import {browserHistory} from 'react-router'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
@@ -7,6 +8,16 @@ import '../sass/project.css'
 
 class Project extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onSprintsClick = this.onSprintsClick.bind(this)
+    }
+    
+    onSprintsClick() {
+        const { project_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/sprints/');
+    }
+    
     render_collapsed() {
 	const { project } = this.props
 	return (
@@ -39,9 +50,16 @@ class Project extends Component {
 		<tr key={this.key+"."+project.id}
 		    onClick={onClickedProject}
 		    className={classNames('project', {'tr--selected': is_selected, 'tr--drop-target': isOver, 'list-table__row--unselected': !is_selected,
-                'list-table__row--selected': is_selected})}
-		    >
-		    <td className="list-table__cell">{project.name}</td>
+                                                      'list-table__row--selected': is_selected})}
+		>
+		  <td className="list-table__cell">{project.name}</td>
+                  <td className="list-table__cell project__num-sprints-column" onClick={this.onSprintsClick}>
+                    { project.num_open_sprints > 0 && 
+                      <div>
+                        {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
+                      </div>
+                    }
+                  </td>
 		</tr>
             ))
 	}
