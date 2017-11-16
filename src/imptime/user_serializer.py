@@ -12,6 +12,7 @@ class UserSerializer(BaseSerializer):
     username = serializers.CharField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
+    visible_name = serializers.CharField()
     known_user_ids = serializers.ListField(child=serializers.CharField()) # only set for the logged in user
     
     def __init__(self, *args, **kwargs):
@@ -28,6 +29,9 @@ class UserSerializer(BaseSerializer):
         else:
             user.known_user_ids = None
 
+        if user.username == "gtp":
+            user.visible_name = "gtp"
+        else:
+            user.visible_name = user.first_name + " " + user.last_name
+
         return super(UserSerializer, self).to_representation(user, *args, **kwargs)
-        
-        

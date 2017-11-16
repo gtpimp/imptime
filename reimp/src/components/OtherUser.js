@@ -22,17 +22,18 @@ class OtherUser extends Component {
     }
 
     render_inline_small() {
-	      const { user, loading_value, onClick } = this.props
+	const { user, loading_value, onClick, display_mode } = this.props
 
-	      return (
-	          <div className="other_user"
-                       key={this.key+".collapsed_user."+user.id}
-		       onClick={onClick}
-	          >
-		          { user.username && user.username }
-		          { ! user.username && loading_value }
-	          </div>
-	      )
+	return (
+	    <div className="other_user"
+                 key={this.key+".collapsed_user."+user.id}
+		 onClick={onClick}
+	    >
+	      { ! user.username && loading_value }
+	      { display_mode=="username" && user.username && user.username }
+              { display_mode=="visible_name" && user.username && user.visible_name }
+	    </div>
+	)
     }
 
     render() {
@@ -55,16 +56,17 @@ class OtherUser extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { render_mode, loading_value } = props
+    const { render_mode, loading_value, display_mode } = props
     let { user_id, value } = props
     user_id = user_id || value
     const user = ((user_id && (getUser(state, user_id))) || { 'loaded': false, 'id': user_id }) || { 'username': 'no-one' }
 
     return {
-	user: user,
-        user_id: user_id,
+	user,
+        user_id,
 	render_mode: render_mode || "inline--small",
-	loading_value: loading_value || "..."
+	loading_value: loading_value || "...",
+        display_mode: display_mode || "visible_name"
     }
 }
 
