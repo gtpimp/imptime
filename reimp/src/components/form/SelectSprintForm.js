@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { concat, partition, sortBy } from 'lodash'
 import { Field, reduxForm } from 'redux-form'
 import { getSprints, fetchSprintsIfNeeded } from '../../actions/Sprints'
 import {
@@ -76,9 +77,16 @@ function mapStateToProps(state, props) {
     const sprint_ids = l.visible_item_ids || []
     const sprints = getSprints(state, sprint_ids)
     
-    const sprint_options = sprints.map(function(sprint) {
-	return { value: sprint.id, label: sprint.name }
+    let sprint_options = sprints.map(function(sprint) {
+
+        let label = sprint.name
+        if ( ! sprint.is_open ) {
+            label += " (closed) "
+        }
+	return { value: sprint.id, label: label, is_open: sprint.is_open }
     })
+    const partitioned = partition(sprint_options, 'is_open')
+    sprint_options = concat(sortBy(partitioned[0], 'label'), sortBy(partitioned[1], 'label'))
     
     return {
         initialValues: {sprint_id:props.initial_value},

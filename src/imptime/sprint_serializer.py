@@ -15,6 +15,7 @@ class SprintSerializer(BaseSerializer):
     number = serializers.CharField()
     name = serializers.CharField()
     status_name = serializers.CharField()
+    is_open = serializers.BooleanField()
     project_id = serializers.CharField(source="business_id") #sic
     description = serializers.CharField()
     first_entry = ClockEntrySerializer()
