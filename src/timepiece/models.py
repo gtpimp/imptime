@@ -842,6 +842,7 @@ class Project(BaseModel):
 
     PROJECT_TYPES = ( ('sprint', 'Sprint'),
                       ('template', 'Template'),
+                      ('checklist', 'Checklist'),
                       ('sprinkle', 'Sprinkle'),
                       ('backlog', 'Backlog'),
                       ('spec', 'Spec'),

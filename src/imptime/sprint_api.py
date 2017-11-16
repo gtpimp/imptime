@@ -162,7 +162,7 @@ class SprintViewSet(BaseViewSet):
                 name=new_name,
                 order=999,
                 status3=new_status,
-                project_type='sprint', #sic
+                project_type='checklist', #sic
                 code=Sprint.get_code_from_name(new_name))
 
             sprint_template = template_sprint.templates.all().first()
