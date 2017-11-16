@@ -223,7 +223,9 @@ class Issue extends Component {
                      { issue.can_group_issues &&
                        <div>
                          { show_children &&
-                           <div className="icon--collapse" onClick={this.onCollapseFeaturesClick}></div>
+                           <div className={classNames("icon--collapse",
+                                                      {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
+                                onClick={this.onCollapseFeaturesClick}></div>
                          }
                          { !show_children &&
                            <div className="icon--expand" onClick={this.onExpandFeaturesClick}></div>
@@ -231,7 +233,8 @@ class Issue extends Component {
                        </div>
                      }
                      { !issue.can_group_issues && issue.parent_group_id &&
-                       <div className="icon--child"></div>
+                       <div className={classNames({"icon--child":true,
+                                                  "icon--child--highlight":belongsToSelectedFeature})}></div>
                      }
                    </td>
                   }
@@ -361,9 +364,14 @@ function mapStateToProps(state, props) {
      *     }
      * )*/
 
-    const isFeatureOfSelectedIssue = includes(flatMap(selectedIssues, function(o) { return ["" + o.parent_group_id] }), "" + issue_id)
-    const belongsToSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
+    const isParentOfSelectedIssue = includes(flatMap(selectedIssues, function(o) { return ["" + o.parent_group_id] }), "" + issue_id)
+    const isSelectedFeature = is_selected && issue.can_group_issues
+    const isFeatureOfSelectedIssue = isParentOfSelectedIssue || isSelectedFeature
 
+    const isChildOfSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
+    const isSiblingOfSelectedIssue = includes(keys(keyBy(selectedIssues, 'parent_group_id')), issue.parent_group_id)
+    const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
+    
     return {
         issue: issue,
         issue_id: issue_id,

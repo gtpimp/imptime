@@ -38,13 +38,26 @@
 }
 
 .icon--expand {
-    @include icon(24px, 24px, 'ic_chevron_right_black_24dp_1x.png')
+    @include icon(24px, 24px, 'ic_chevron_right_black_24dp_1x.png');
+    opacity: 0.2;
 }
 
 .icon--collapse {
-    @include icon(24px, 24px, 'ic_expand_more_black_24dp_1x.png')
+    @include icon(24px, 24px, 'ic_expand_more_black_24dp_1x.png');
+    opacity: 0.2    ;
+}
+
+.icon--collapse--highlight {
+    @include icon(24px, 24px, 'ic_arrow_drop_down_circle_black_24dp_1x.png');
+    opacity: 1.0;
 }
 
 .icon--child {
-    @include icon(24px, 24px, 'ic_subdirectory_arrow_right_black_24dp_1x.png')
+    @include icon(24px, 24px, 'ic_subdirectory_arrow_right_black_24dp_1x.png');
+    opacity: 0.2;
+}
+
+.icon--child--highlight {
+    //@include icon(24px, 24px, 'ic_arrow_forward_black_24dp_1x.png');
+    opacity: 1.0;
 }
