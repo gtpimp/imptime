@@ -8,6 +8,9 @@ import {
 
 import { isLoadingItems } from '../actions/Item'
 import Nudge from './Nudge'
+import IssueName from './IssueName'
+import SprintName from './SprintName'
+import ProjectName from './ProjectName'
 
 class NudgeList extends Component {
 
@@ -38,7 +41,15 @@ class NudgeList extends Component {
         
         return (
             <div className="nudge">
-              I am nudge
+              <div className="nudge__project">
+                <ProjectName project_id={nudge.project_id} />
+              </div>
+              <div className="nudge__sprint">
+                <SprintName sprint_id={nudge.sprint_id} />
+              </div>
+              <div className="nudge__issue">
+                <IssueName issue_id={nudge.issue_id} />
+              </div>
             </div>
         )
     }
@@ -50,7 +61,7 @@ function mapStateToProps(state, props) {
 
     return {
         nudge,
-        is_loading: nudge.id || true
+        is_loading: !nudge.id
     }
 }
 

@@ -9,6 +9,8 @@ import {
     expand_list,
     getVisibleItemIds,
     getVisibleItems,
+    getNestedObjects,
+    ensureNestedObjectsLoaded,
     isLoading,
     getLastUpdated,
     getLoadingItemIds,
@@ -30,14 +32,16 @@ class NudgeList extends Component {
     }
     
     componentDidMount() {
-	const { dispatch, list_key } = this.props
+	const { dispatch, list_key, nested_objects } = this.props
 	dispatch(initList(list_key))
 	dispatch(fetchNudgesIfNeeded(list_key))
+        dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
     componentWillReceiveProps() {
-        const { dispatch, list_key } = this.props
+        const { dispatch, list_key, nested_objects } = this.props
         dispatch(fetchNudgesIfNeeded(list_key))
+        dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
     render() {
@@ -53,7 +57,7 @@ class NudgeList extends Component {
 
         return (
             <div className="nudge-list">
-              { map(nudge_ids, (nudge_id) =>  <Nudge nudge_id={nudge_id} />) }
+              { map(nudge_ids, (nudge_id) =>  <Nudge key={nudge_id} nudge_id={nudge_id} />) }
               { !nudge_ids || nudge_ids.length == 0 &&
                 (
                     <div className="nudge-list__empty">
@@ -71,11 +75,13 @@ function mapStateToProps(state, props) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__NUDGE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
+    const nested_objects = getNestedObjects(state, list_key)
 
     return {
         nudge_ids: visible_item_ids,
         is_loading,
         last_updated,
+        nested_objects
     }
 }
 

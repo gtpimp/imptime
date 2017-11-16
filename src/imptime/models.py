@@ -98,8 +98,19 @@ class ReleaseNoteSeen(BaseModel):
     seen_at = models.DateTimeField(null=False, auto_now=True)
 
 class Nudge(BaseModel):
+
+    NUDGE_REASONS = [ ('assigned_issues', 'Assigned issues'),
+                      ('pending_reviews', 'Pending reviews'),
+                      ('deadlines', 'Deadlines'),
+                      ('invalid_rates', 'Invalid rates'),
+                      ('invalid_budgets', 'Invalid budgets'),
+                      ('invalid_timesheets', 'Invalid timesheets'),
+                      ('appointments', 'Appointments'),
+                      ('inactive_projects', 'Inactive projects') ]
+    
     user = models.ForeignKey(User, related_name='nudges', null=False, blank=False)
     sprint = ProtectedForeignKey(Sprint, related_name='nudges', null=False)
-    issue_id = ProtectedForeignKey(Issue, related_name='nudges', null=False)
-    reason = models.TextField(null=True, blank=True)
+    issue = ProtectedForeignKey(Issue, related_name='nudges', null=True)
+    reason = models.CharField(max_length=255, choices=NUDGE_REASONS, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     nudginess_percent = models.FloatField()

@@ -3619,6 +3619,17 @@ class IssueQuerySet(QuerySet):
             return self
         return self.filter(project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
+    def filter_open(self, user):
+        return self.filter(Q(project__rate__user=user,
+                             project__rate__time_tracking_mode='developer',
+                             status2__name__in=Issue.STATUSES_INDICATING_INCOMPLETE['developer'])|
+                           Q(project__rate__user=user,
+                             project__rate__time_tracking_mode='tester',
+                             status2__name__in=Issue.STATUSES_INDICATING_INCOMPLETE['tester'])|
+                           Q(project__rate__user=user,
+                             project__rate__time_tracking_mode='manager',
+                             status2__name__in=Issue.STATUSES_INDICATING_INCOMPLETE['manager']))
+    
     def order_by_project_id(self, project_id, descending=False):
         if project_id:
             direction = ("-" if descending else "") + "order"

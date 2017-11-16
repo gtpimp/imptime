@@ -20,6 +20,10 @@ export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
 export const HIGHLIGHT_LIST_SELECTION = 'HIGHLIGHT_LIST_SELECTION'
 import { GENERIC_ENTITIES } from './ItemListKeyRegistry'
 
+import { ensureProjectsLoaded } from './Projects'
+import { ensureSprintsLoaded } from './Sprints'
+import { ensureIssuesLoaded } from './Issues'
+
 export function initList(list_key) {
     return {
 	      type: INIT_LIST,
@@ -165,13 +169,14 @@ function announceMatchingItemsLoading(list_key) {
     }
 }
 
-function announceListLoaded(list_key, payload) {
+function announceListLoaded(list_key, payload, nested_objects) {
 
     return {
         type: ANNOUNCE_LIST_LOADED,
         visible_item_ids: payload.ids,
-	      pagination: payload.pagination,
-	      list_key: list_key,
+        nested_objects: nested_objects,
+	pagination: payload.pagination,
+	list_key: list_key,
         received_at: Date.now()
     }
 }
@@ -322,7 +327,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 		if (json.status !== 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
-		    dispatch(announceListLoaded(list_key, json.payload))
+		    dispatch(announceListLoaded(list_key, json.payload, json.nested_objects || {}))
 		    const required_item_ids = json.payload.ids || []
 		    dispatch(tryFetchMatchingItems(list_key,
 						   required_item_ids,
@@ -370,6 +375,25 @@ export function getVisibleItemIds(state, list_key) {
     return visible_item_ids
 }
 
+export function getNestedObjects(state, list_key) {
+    const item_list = ((state || {}).item_list || {})[list_key] || {}
+    return  item_list.nested_objects || {}
+}
+
+export function ensureNestedObjectsLoaded(nested_objects) {
+    return (dispatch, getState) => {
+        map(nested_objects, function(ids, id_name) {
+            if ( id_name == "project_ids" ) {
+                dispatch(ensureProjectsLoaded(ids))
+            } else if ( id_name == "sprint_ids" ) {
+                dispatch(ensureSprintsLoaded(ids))
+            } else if ( id_name == "issue_ids" ) {
+                dispatch(ensureIssuesLoaded(ids))
+            }
+        })
+    }
+}
+
 function getItemsById(state, entity_key) {
     const is_generic_item = includes(GENERIC_ENTITIES, entity_key)
     if ( is_generic_item === true ) {
@@ -404,7 +428,7 @@ export function getSelectedItems(state, list_key, entity_key) {
 }
 
 export function isLoading(state, list_key) {
-    return (state.item_list || {}).is_loading || false
+    return !(state.item_list && state.item_list[list_key] && !state.item_list[list_key].is_loading)
 }
 
 export function getLastUpdated(state, list_key) {

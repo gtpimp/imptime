@@ -7,6 +7,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+from imptime.nudger import Nudger
 
 logger = logging.getLogger(__name__)
 
@@ -22,21 +23,28 @@ class NudgeViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
+            Nudger().update_nudges_for_user(request.user)
+            
             nudges = self.allowed_nudges()
             nudges = nudges.order_by("-created")
-            nudges = self.apply_filter(qs=nudges,
-                                         raw_filter_args=filter_args)
-            nudges = self.apply_pagination(qs=nudges,
-                                             pagination=pagination)
+            nudges = self.apply_filter(qs=nudges, raw_filter_args=filter_args)
+            nudges = self.apply_pagination(qs=nudges, pagination=pagination)
 
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in nudges.values_list('id', flat=True)]
             else:
-                s = NudgeSerializer(nudges, many=True, logged_in_user=request.user)
+                s = NudgeSerializer(nudges, many=True)
                 nudges_data = s.data
                 context['nudges'] = nudges_data
             context['pagination'] = pagination
-            data = {'status': 'success', 'payload': context}
+            data = {'status': 'success',
+                    'payload': context,
+                    'nested_objects': {
+                        'project_ids': nudges.values_list('sprint__business_id', flat=True),
+                        'sprint_ids': nudges.values_list('sprint_id', flat=True),
+                        'issue_ids': nudges.values_list('issue_id', flat=True)
+                    }
+            }
             
         except Exception, ex:
             logger.exception(ex)

@@ -10,7 +10,11 @@ class NudgeSerializer(BaseModelSerializer):
     user_id = serializers.CharField()
     sprint_id = serializers.CharField()
     issue_id = serializers.CharField()
+    project_id = serializers.CharField(source="sprint.business_id") #sic
 
     class Meta:
         model = Nudge
-        fields = ('id', 'user_id', 'sprint_id', 'issue_id', 'reason', 'nudginess_percent')
+        fields = ('id', 'user_id', 'sprint_id', 'issue_id',
+                  'reason', 'nudginess_percent', 'project_id')
+
+        
