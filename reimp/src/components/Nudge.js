@@ -62,6 +62,9 @@ class NudgeList extends Component {
               <div className="nudge__issue">
                 <IssueName issue_id={nudge.issue_id} />
               </div>
+              <div className="nudge__description">
+                {nudge.description}
+              </div>
             </div>
         )
     }
