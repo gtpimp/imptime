@@ -73,11 +73,12 @@ class Issue extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        this.refresh()
+        this.refresh(new_props)
     }
 
-    refresh() {
-        const {dispatch, assignable_user_ids} = this.props
+    refresh(these_props) {
+        const props = these_props || this.props
+        const {dispatch, assignable_user_ids} = props
         dispatch(ensureUsersLoaded(assignable_user_ids))
     }
 
@@ -201,7 +202,7 @@ class Issue extends Component {
                 >
                   {includes(visible_header_keys, "number") &&
                    <td className="list-table__cell list-table__cell--issue-number">
-                     <div>{issue.number} #{issue.id}</div>
+                     <div>{issue.number}</div>
                    </td>
                   }
                   {includes(visible_header_keys, "expand_feature") &&
