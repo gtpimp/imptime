@@ -69,13 +69,13 @@ class ProjectDashboardPage extends Component {
     render() {
 
         const { sprint, sprint_id, project_id } = this.props
-
+        
         return (
             <div>
               <PropertyStackComponent className="property-stack-component__small">
               <EditableSprintName sprint_id={sprint_id}/>
               </PropertyStackComponent>
-              <SprintTimeSummary sprint_id={sprint.id} project_id={project_id} />
+              <SprintTimeSummary sprint_id={sprint_id} project_id={project_id} />
             </div>
         )
     }

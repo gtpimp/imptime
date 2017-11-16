@@ -166,6 +166,8 @@ class SprintViewSet(BaseViewSet):
                 code=Sprint.get_code_from_name(new_name))
 
             sprint_template = template_sprint.templates.all().first()
+            if sprint_template is None:
+                sprint_template = SprintTemplate.objects.create(sprint=template_sprint)
             sprint_template.clones.add(sprint_clone)
             sprint_template.save()
 

@@ -278,7 +278,7 @@ export function getMissingItemIds(state, required_item_ids, matching_items_key) 
     item_ids_to_load = compact(item_ids_to_load)
     item_ids_to_load = map(item_ids_to_load, _unstringify_id)
 
-    return item_ids_to_load
+    return difference(item_ids_to_load, ["undefined"])
 }
 
 function tryFetchListAndItems(list_key, matching_items_key, matching_items_promise_func, args) {
