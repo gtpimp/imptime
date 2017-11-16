@@ -23,7 +23,8 @@ class Nudger(object):
         issues = Issue.objects.all()\
                               .filter_by_logged_in_user(self.user)\
                               .filter(project__in=sprints,
-                                      assigned_to=self.user)\
+                                      assigned_to=self.user,
+                                      adhoc=False)\
                               .filter_open(self.user)
         sprints_requiring_nudging = issues.order_by("project_id")\
                                           .values("project_id")\

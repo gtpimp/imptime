@@ -16,7 +16,8 @@ import {
     getLoadingItemIds,
     getSelectedItemIds,
     getSelectedItems,
-    getDisplayMode
+    getDisplayMode,
+    update_list_pagination
 } from '../actions/ItemList'
 import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
 import {
@@ -34,6 +35,7 @@ class NudgeList extends Component {
     componentDidMount() {
 	const { dispatch, list_key, nested_objects } = this.props
 	dispatch(initList(list_key))
+        dispatch(update_list_pagination(list_key, { 'page_size': 10 }))
 	dispatch(fetchNudgesIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }

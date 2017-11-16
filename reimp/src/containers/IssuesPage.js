@@ -53,18 +53,18 @@ class IssuesPage extends Component {
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name) {
+            dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
             this.refresh(new_props.sprint, new_props.project)
         }
     }
 
     refresh(sprint, project) {
-        const {dispatch, selected_issue_ids} = this.props
+        const {dispatch, selected_issue_ids, default_issue_id} = this.props
         if ( sprint.id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
 
-            const default_issue_id = this.props.params.issueId
             if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
                 dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
@@ -146,6 +146,7 @@ function mapStateToProps(state, props) {
 
     const sprint_id = props.params.sprintId
     const project_id = props.params.projectId
+    const default_issue_id = props.params.issueId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const candidate_issue = getCandidateIssue(state) || null
@@ -157,6 +158,7 @@ function mapStateToProps(state, props) {
         sprint: sprint,
         project_id: project_id,
         project: project,
+        default_issue_id,
         selected_issues: selected_items,
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
