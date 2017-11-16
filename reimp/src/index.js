@@ -17,6 +17,7 @@ import ReactDOM from 'react-dom';
 import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
+import NudgePage from './containers/NudgePage'
 import ProjectRoadmapPage from './containers/ProjectRoadmapPage'
 import ReleaseNotesPage from './containers/ReleaseNotesPage'
 import SprintsPage from './containers/SprintsPage'
@@ -48,6 +49,7 @@ ReactDOM.render(
         <Route component={MainLayout}>
           <IndexRoute component={ProjectsPage}/>
           <Route path="/" component={ProjectsPage}/>
+          <Route path="/nudge" component={NudgePage}/>
           <Route path="/password/change" component={ChangePasswordPage}/>
           <Route path="/password/forgot" component={ForgotPasswordPage}/>
           <Route path="/password/reminded" component={PasswordReminderSentPage}/>
