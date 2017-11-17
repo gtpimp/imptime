@@ -40,7 +40,7 @@ class EstimateSummaryViewSet(BaseViewSet):
         user_infos = self._get_user_infos(sprint)
         context = { 'project_id':sprint.business_id, #sic
                     'sprint_id':sprint.id,
-                    'all_user_ids': comparative_estimates.keys(),
+                    'all_user_ids': comparative_estimates['by_user'].keys(),
                     'user_infos': user_infos,
                     'comparative_estimates': comparative_estimates }
         return context

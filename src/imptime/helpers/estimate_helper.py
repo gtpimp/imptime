@@ -14,7 +14,7 @@ def get_comparative_estimates(sprint, logged_in_user):
                                                   .values('user_id')\
                                                   .annotate(total_hours=Sum('points'))
 
-    estimates = {}
+    estimates = {'by_user':{}, 'aggregates':{}}
     slowest_user_id = None
     fastest_user_id = None
     for user_estimate_info in developer_estimate_hours:
@@ -53,29 +53,29 @@ def get_comparative_estimates(sprint, logged_in_user):
         if fastest_user_id is None or total_hours < estimates[fastest_user_id]['total_hours']:
             fastest_user_id = user_estimate_info['user_id']
         
-        estimates[user_estimate_info['user_id']] = { 'user_id': user_estimate_info['user_id'],
-                                                     'developer_original_hours': user_estimate_info['total_hours'],
-                                                     'developer_velocity': rate.velocity,
-                                                     'developer_adjusted_hours': developer_velocity_adjusted_hours,
-                                                     'developer_rate': developer_rate,
-                                                     'developer_rate_with_commission': developer_rate_with_commission,
-                                                     'developer_cost': developer_cost,
-                                                     'tester_ratio': sprint.ratio_testing,
-                                                     'tester_adjusted_hours': tester_adjusted_hours,
-                                                     'tester_rate': tester_rate,
-                                                     'tester_rate_with_commission': tester_rate_with_commission,
-                                                     'tester_cost': tester_cost,
-                                                     'manager_ratio': sprint.ratio_management,
-                                                     'manager_adjusted_hours': manager_adjusted_hours,
-                                                     'manager_rate': manager_rate,
-                                                     'manager_rate_with_commission': manager_rate_with_commission,
-                                                     'manager_cost': manager_cost,
-                                                     'working_cost': working_cost,
-                                                     'ratio_scope_creep': sprint.ratio_scope_creep,
-                                                     'total_hours':  total_hours,
-                                                     'total_cost': total_cost }
-    estimates['slowest_user_id'] = slowest_user_id
-    estimates['fastest_user_id'] = fastest_user_id
+        estimates['by_user'][user_estimate_info['user_id']] = { 'user_id': user_estimate_info['user_id'],
+                                                                'developer_original_hours': user_estimate_info['total_hours'],
+                                                                'developer_velocity': rate.velocity,
+                                                                'developer_adjusted_hours': developer_velocity_adjusted_hours,
+                                                                'developer_rate': developer_rate,
+                                                                'developer_rate_with_commission': developer_rate_with_commission,
+                                                                'developer_cost': developer_cost,
+                                                                'tester_ratio': sprint.ratio_testing,
+                                                                'tester_adjusted_hours': tester_adjusted_hours,
+                                                                'tester_rate': tester_rate,
+                                                                'tester_rate_with_commission': tester_rate_with_commission,
+                                                                'tester_cost': tester_cost,
+                                                                'manager_ratio': sprint.ratio_management,
+                                                                'manager_adjusted_hours': manager_adjusted_hours,
+                                                                'manager_rate': manager_rate,
+                                                                'manager_rate_with_commission': manager_rate_with_commission,
+                                                                'manager_cost': manager_cost,
+                                                                'working_cost': working_cost,
+                                                                'ratio_scope_creep': sprint.ratio_scope_creep,
+                                                                'total_hours':  total_hours,
+                                                                'total_cost': total_cost }
+    estimates['aggregates']['slowest_user_id'] = slowest_user_id
+    estimates['aggregates']['fastest_user_id'] = fastest_user_id
         
     return estimates
 

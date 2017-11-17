@@ -77,9 +77,9 @@ class SprintEstimateSummary extends Component {
                 <th>Total cost</th>
               </thead>
               <tbody>
-                { map(keys(comparative_estimates),
+                { map(keys(comparative_estimates.by_user),
                       function(user_id) {
-                          const estimates = comparative_estimates[user_id]
+                          const estimates = comparative_estimates.by_user[user_id]
                           return (
                               <tr key={user_id}>
                                 <td><OtherUser user_id={user_id}/></td>
