@@ -20,7 +20,7 @@ class EditableSprintName extends Component {
         const { sprint } = this.props
 
         return (
-            <EditableProperty property_key='sprint_name'
+            <EditableProperty property_key={'sprint_name'+sprint.id}
                               initial_value={sprint.name}
                               onChange={this.onChange}
                               can_edit={true}

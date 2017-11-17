@@ -24,7 +24,7 @@ class EditableIssueInSprint extends Component {
 
         return (
             <div>
-                <EditableProperty property_key='issue_sprint_id'
+                <EditableProperty property_key={'issue_sprint_id'}
                                   initial_value={sprint_id}
                                   edit_as_modal={true}
                                   onChange={this.onChange}

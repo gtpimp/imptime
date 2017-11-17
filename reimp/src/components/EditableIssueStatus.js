@@ -23,7 +23,7 @@ class EditableIssueStatus extends Component {
         const { issue, project_id, can_edit, class_name } = this.props
 
         return (
-            <EditableProperty property_key='issue_status_name'
+            <EditableProperty property_key={'issue_status_name_'+issue.id}
                               initial_value={issue && issue.status_name || null}
                               edit_as_modal={true}
                               class_name={class_name}

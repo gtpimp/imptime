@@ -23,7 +23,7 @@ class EditableIssueAssignedUser extends Component {
         const { project_id, issue, can_edit, class_name} = this.props
 
         return (
-            <EditableProperty property_key='issue_assigned_to'
+            <EditableProperty property_key={'issue_assigned_to'+issue.id}
                               initial_value={issue && issue.assigned_to_id || null}
                               edit_as_modal={true}
                               onChange={this.onChange}

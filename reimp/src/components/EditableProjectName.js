@@ -20,7 +20,7 @@ class EditableProjectName extends Component {
         const { project } = this.props
         
         return (
-            <EditableProperty property_key='project_name'
+            <EditableProperty property_key={'project_name'+project.id}
                               initial_value={project.name}
                               onChange={this.onChange}
             >

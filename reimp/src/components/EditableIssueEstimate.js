@@ -24,7 +24,7 @@ class EditableIssueEstimate extends Component {
         const { issue, can_edit, estimate_hours, class_name } = this.props
 
         return (
-            <EditableProperty property_key='issue_estimate'
+            <EditableProperty property_key={'issue_estimate' + issue.id}
                               initial_value={format_hours(estimate_hours)}
                               onChange={this.onChange}
                               edit_as_modal={true}

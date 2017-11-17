@@ -21,7 +21,7 @@ class EditableIssueTitle extends Component {
         const { issue, can_edit } = this.props
 
         return (
-            <EditableProperty property_key='issue_title'
+            <EditableProperty property_key={'issue_title'+issue.id}
                               initial_value={issue.subject}
                               onChange={this.onChange}
                               can_edit={can_edit}

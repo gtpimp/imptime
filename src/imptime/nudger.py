@@ -24,7 +24,6 @@ class Nudger(object):
     #     self._nudge_for_inactive_projects()
  
     def refresh_all(self, user=None):
-
         from django.contrib.auth.models import User
         user = User.objects.get(username='rhoberman')
         
@@ -42,7 +41,7 @@ class Nudger(object):
             self.update_nudges_for_sprints_and_user(user, sprint_ids)
         
     def update_nudges_for_sprints_and_user(self, user, sprint_ids):
-        # self._nudge_for_assigned_issues(sprint_ids, user)
+        self._nudge_for_assigned_issues(sprint_ids, user)
         self._nudge_for_pending_reviews(sprint_ids, user)
         
     def _nudge_for_assigned_issues(self, sprint_ids, user):

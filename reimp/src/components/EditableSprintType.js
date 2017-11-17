@@ -26,7 +26,7 @@ class EditableSprintType extends Component {
         const { sprint, project_id, can_edit, class_name } = this.props
         
         return (
-            <EditableProperty property_key='sprint_type_name'
+            <EditableProperty property_key={'sprint_type_name'+sprint.id}
                               initial_value={sprint && sprint.type_name || null}
                               edit_as_modal={true}
                               class_name={class_name}
