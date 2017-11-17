@@ -10,7 +10,7 @@ import issue_comment_api
 import issue_estimate_api
 import issue_review_api
 import issue_tag_api
-import testable_api
+import nudge_api
 import project_api
 import project_dashboard_api
 import project_statement_api
@@ -20,6 +20,7 @@ import sprint_api
 import sprint_deadline_api
 import sprint_review_api
 import sprint_roadmap_api
+import testable_api
 import time_chart_api
 import time_summary_api
 import user_api
@@ -72,6 +73,8 @@ router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')
 router.register(r'user', user_api.UserViewSet,
                 base_name='user')
+router.register(r'nudge', nudge_api.NudgeViewSet,
+                base_name='nudge')
 router.register(r'filter', filter_api.FilterViewSet,
                 base_name='filter')
 router.register(r'cost_summary', cost_summary_api.CostSummaryViewSet,

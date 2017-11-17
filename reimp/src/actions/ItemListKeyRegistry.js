@@ -12,6 +12,7 @@ export const LIST_KEY__USER_TIMESHEET_LIST = 'user_timesheets'
 export const LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST = 'visual_spec_document_issue_list'
 export const LIST_KEY__RELEASE_NOTES_LIST = 'release_notes_list'
 export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
+export const LIST_KEY__NUDGE_LIST = 'nudge_list'
 
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
@@ -28,6 +29,7 @@ export const ENTITY_KEY__RELEASE_NOTE = 'release_note'
 export const ENTITY_KEY__SPRINT_DEADLINE = 'sprint_deadline'
 export const ENTITY_KEY__SPRINT_REVIEW = 'sprint_review'
 export const ENTITY_KEY__SPRINT_ROADMAP = 'sprint_roadmap'
+export const ENTITY_KEY__NUDGE = 'nudge'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.

@@ -1,0 +1,12 @@
+@import 'variables.scss';
+
+.nudge-list {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+}
+
+.nudge-list__empty {
+    margin-left: 30%;
+    margin-top: 10%;
+}

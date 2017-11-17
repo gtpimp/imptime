@@ -63,6 +63,7 @@ export default function item_list(state = initialState, action) {
 		is_loading: false,
 		received_at: action.received_at,
 		visible_item_ids: action.visible_item_ids,
+                nested_objects: action.nested_objects,
 		pagination: action.pagination
 	    })
 	    return state_copy
