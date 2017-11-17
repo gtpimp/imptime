@@ -18,7 +18,7 @@ class IssueName extends Component {
         const { issue, is_loading } = this.props
 
         return (
-            <div class="issue-name">
+            <div className="issue-name">
               { is_loading && "..." }
               { ! is_loading &&
               <div>
