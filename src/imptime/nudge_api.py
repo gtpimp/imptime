@@ -23,7 +23,7 @@ class NudgeViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            Nudger().update_nudges_for_user(request.user)
+            Nudger().refresh_all(user=request.user)
             
             nudges = self.allowed_nudges()
             nudges = nudges.order_by("-created")
