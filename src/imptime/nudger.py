@@ -29,7 +29,7 @@ class Nudger(object):
     
     def update_nudges_for_project(self, project_id, user=None):
         sprint_ids = Sprint.objects.all().filter(business_id=project_id)\
-                                         .filter_open()\
+                                         .filter_assigned_tasks_are_active()\
                                          .values_list("pk", flat=True)
         users = BusinessPermissions.active_users_for_business(project_id) #sic
         if user is not None:

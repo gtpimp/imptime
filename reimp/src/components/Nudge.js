@@ -41,12 +41,6 @@ class NudgeList extends Component {
         const { nudge, is_loading } = this.props
         const that = this
 
-        if ( is_loading ) {
-            return (
-                <div>Loading...</div>
-            )
-        }
-        
         return (
             <div className="nudge" onClick={this.onClickNudge}>
               <div className="nudge__reason">
@@ -63,13 +57,15 @@ class NudgeList extends Component {
               <div className="nudge__issue">
                 <IssueName issue_id={nudge.issue_id} />
               </div>
-              <div className="nudge__description">
-                {nudge.description}
+              <div className="nudge__footer">
+                <div className="nudge__description">
+                  {nudge.description}
+                </div>
+                <div className="nudge__modified">
+                  as of <Timestamp value={nudge.modified} format="from_now" />
+                </div>
               </div>
-              <div className="nudge__modified">
-                as of <Timestamp value={nudge.modified} format="from_now" />
-              </div>
-              </div>
+            </div>
         )
     }
 }

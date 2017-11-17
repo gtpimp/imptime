@@ -30,11 +30,18 @@
 
 .nudge__modified {
     display:flex;
-    font-size: $font-size-tiny;
-    float: right;
-    margin-top: 15px;
 }
 
 .nudge__modified .timestamp__wrapper {
     margin-left:2px;
+}
+
+.nudge__footer {
+    font-size: $font-size-tiny;
+    display:flex;
+    margin-top: 15px;
+}
+
+.nudge__description {
+    margin-right: 2px;
 }

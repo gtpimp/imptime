@@ -1,8 +1,11 @@
 import logging
 from nudge_serializer import NudgeSerializer
 from rest_framework.decorators import list_route
+import math
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
+from django.db.models import Count
+from django.conf import settings
 from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
@@ -26,10 +29,12 @@ class NudgeViewSet(BaseViewSet):
             nudges = self.allowed_nudges()
             nudges = nudges.order_by("-created")
             nudges = self.apply_filter(qs=nudges, raw_filter_args=filter_args)
+            if format_args.get('spread', None) and format_args.get('ids_only'):
+                nudges = self._spread(nudges, pagination.get('page_size', settings.PAGINATION_DEFAULT_PAGINATION))
             nudges = self.apply_pagination(qs=nudges, pagination=pagination)
 
             if format_args.get('ids_only'):
-                context['ids'] = [str(x) for x in nudges.values_list('id', flat=True)]
+                context['ids'] = [str(x.id) for x in nudges]
             else:
                 s = NudgeSerializer(nudges, many=True)
                 nudges_data = s.data
@@ -38,9 +43,9 @@ class NudgeViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': context,
                     'nested_objects': {
-                        'project_ids': nudges.values_list('sprint__business_id', flat=True),
-                        'sprint_ids': nudges.values_list('sprint_id', flat=True),
-                        'issue_ids': nudges.values_list('issue_id', flat=True)
+                        'project_ids': [x.sprint.business_id for x in nudges],
+                        'sprint_ids': [x.sprint_id for x in nudges],
+                        'issue_ids': [x.issue_id for x in nudges]
                     }
             }
             
@@ -60,3 +65,11 @@ class NudgeViewSet(BaseViewSet):
             logger.exception(ex)
             return self.error_response(ex)
         
+        
+    def _spread(self, qs, page_size):
+        nudge_reasons = [x['reason'] for x in qs.order_by("reason").values("reason").annotate(reasons=Count("reason"))]
+        num_per_reason = math.ceil(float(page_size) / len(nudge_reasons))
+        results = []
+        for nudge_reason in nudge_reasons:
+            results.extend([x for x in qs.filter(reason=nudge_reason).order_by("reason")[:num_per_reason]])
+        return results

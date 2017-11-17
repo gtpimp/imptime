@@ -17,6 +17,7 @@ class NudgeSerializer(BaseModelSerializer):
     class Meta:
         model = Nudge
         fields = ('id', 'user_id', 'sprint_id', 'issue_id', 'reason_name',
+                  'description',
                   'reason', 'nudginess_percent', 'project_id', 'modified')
 
     def to_representation(self, nudge, *args, **kwargs):
