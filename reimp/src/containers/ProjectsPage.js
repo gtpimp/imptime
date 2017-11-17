@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {includes} from 'lodash'
 import {browserHistory} from 'react-router'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
@@ -32,7 +33,22 @@ class ProjectsPage extends Component {
     componentDidMount() {
         const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+    
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, selected_project_ids, default_project_id } = props
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'} ]))
+        
+        if ( default_project_id !== undefined && !includes(selected_project_ids, default_project_id) ) {
+            dispatch(selectItems(LIST_KEY__PROJECT_LIST, [default_project_id]))
+            dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, [default_project_id]))
+        }
     }
 
     onSelectProjects(project_ids) {
@@ -82,6 +98,7 @@ function mapStateToProps(state, props) {
     const {project} = state
     const items_by_id = (project && project.items_by_id) || {}
     const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__PROJECTS_PAGE)
+    const default_project_id = props.params.projectId
 
     const selected_items = items_by_id && selected_project_ids && selected_project_ids.map(function (selected_id, index) {
         return items_by_id[selected_id] || {'id': selected_id,
@@ -96,8 +113,8 @@ function mapStateToProps(state, props) {
         selected_project_ids: selected_project_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
-        is_creating_project: is_creating_project
-        
+        is_creating_project: is_creating_project,
+        default_project_id
     }
 }
 

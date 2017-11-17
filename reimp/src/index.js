@@ -57,11 +57,13 @@ ReactDOM.render(
           <Route path="dev" component={DevPage}/>
           <Route path="release_notes_editor" component={ReleaseNotesPage}/>
           <Route path="projects" component={ProjectsPage}/>
-          <Route path="projects/:projectId" component={ProjectDashboardPage}/>
+          <Route path="projects/:projectId" component={ProjectsPage}/>
+          <Route path="projects/:projectId/dashboard" component={ProjectDashboardPage}/>
           <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
           <Route path="projects/:projectId/sprints" component={SprintsPage}/>
           <Route path="projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
-          <Route path="projects/:projectId/sprints/:sprintId" component={SprintDashboardPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>

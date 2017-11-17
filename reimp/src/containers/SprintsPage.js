@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {includes} from 'lodash'
 import {browserHistory} from 'react-router'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
@@ -55,7 +56,7 @@ class SprintsPage extends Component {
     }
 
     refresh(project) {
-        const {dispatch, list_key, page_key, default_filter} = this.props
+        const {dispatch, list_key, page_key, default_filter, default_sprint_id, selected_sprint_ids} = this.props
         if (project.id) {
             dispatch(update_list_filter(list_key, Object.assign({},
                                                                 default_filter,
@@ -66,12 +67,20 @@ class SprintsPage extends Component {
                 {to: '/projects/' + project.id, label: project.name},
                 {to: '/projects/' + project.id + '/sprints', label: 'Sprints'}]))
         }
+        if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
+            dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
+            dispatch(select_sprints(page_key, [default_sprint_id]))
+        }
     }
 
     onSelectSprints(sprint_ids) {
         const {dispatch, project_id, list_key, page_key} = this.props
         dispatch(selectItems(list_key, sprint_ids))
         dispatch(select_sprints(page_key, sprint_ids))
+        
+        if ( sprint_ids && sprint_ids.length === 1 ) {
+            browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);
+        }
     }
 
     render() {
@@ -127,6 +136,7 @@ function mapStateToProps(state, props) {
     })
 
     const project_id = props.params.projectId
+    const default_sprint_id = props.params.sprintId
     const project = getProject(state, project_id) || {}
     const candidate_sprint = getCandidateSprint(state) || null
     const is_creating_sprint = candidate_sprint || false
@@ -135,6 +145,7 @@ function mapStateToProps(state, props) {
         list_key,
         page_key,
         default_filter,
+        default_sprint_id,
         project_id: project_id,
         project: project,
         selected_sprints: selected_items,

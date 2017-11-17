@@ -44,7 +44,7 @@ class ProjectsToolbarPanel extends Component {
 
     onDashboardClick() {
         const {project_id} = this.props
-        browserHistory.push('/projects/' + project_id);
+        browserHistory.push('/projects/' + project_id + '/dashboard/');
     }
 
     onRoadmapClick() {

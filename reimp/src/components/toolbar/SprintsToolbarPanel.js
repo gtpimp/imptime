@@ -64,8 +64,8 @@ class SprintsToolbarPanel extends Component {
     }
 
     onDashboardClick() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id);
+        const { project_id, last_selected_sprint_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/sprints/'+last_selected_sprint_id+'/dashboard');
     }
 
     onChangeFilterSprintType(new_value) {
