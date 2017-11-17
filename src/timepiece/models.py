@@ -797,8 +797,9 @@ class ProjectQuerySet(QuerySet):
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_assigned_tasks_are_active(self):
-        return self.filter(status3__name__in=['in dev', 'pending'],
-                           project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
+        return self.filter(Q(project_type='inbox')|
+                           Q(status3__name__in=['in dev', 'pending'],
+                             project_type__in=['sprint', 'checklist', 'sprinkle', 'spec']))
     
     def filter_active(self):
         return self.filter(status3__name__in=Project.active_states())

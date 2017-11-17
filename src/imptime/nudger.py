@@ -70,6 +70,7 @@ class Nudger(object):
                                              .filter(num_issues__gt=0)
 
         for sprint_review in sprint_reviews:
+
             review_by_date = timezone.now()-relativedelta(days=sprint_review.review_cycle_days)
             if sprint_review.must_always_review:
 
@@ -88,6 +89,10 @@ class Nudger(object):
                                                     sprint_id=sprint_review.project_id,
                                                     reason='pending_reviews',
                                                     defaults={'nudginess_percent':0})[0]
+
+                if sprint_review.project.project_type == "inbox":
+                    nudge.reason = "inbox"
+                
                 nudge.description = "%s reviews to do" % issues_to_review.count()
                 nudge.issue_id = issue_to_review.id
                 nudge.nudginess_percent = issues_to_review.count()*100/MAGIC_CONSTANT #meaningless calculation

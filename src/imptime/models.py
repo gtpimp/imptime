@@ -101,6 +101,7 @@ class Nudge(BaseModel):
 
     NUDGE_REASONS = [ ('assigned_issues', 'Assigned issues'),
                       ('pending_reviews', 'Pending reviews'),
+                      ('inbox', 'Inbox'),
                       ('deadlines', 'Deadlines'),
                       ('invalid_rates', 'Invalid rates'),
                       ('invalid_budgets', 'Invalid budgets'),
