@@ -797,9 +797,8 @@ class ProjectQuerySet(QuerySet):
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_assigned_tasks_are_active(self):
-        return self.filter(Q(project_type='inbox')|
-                           Q(status3__name__in=['in dev', 'pending'],
-                             project_type__in=['sprint', 'checklist', 'sprinkle', 'spec']))
+        return self.filter(status3__name__in=['in dev', 'pending'],
+                           project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
     
     def filter_active(self):
         return self.filter(status3__name__in=Project.active_states())
@@ -3674,7 +3673,7 @@ class Issue(BaseModel):
            ('quick_clocker', 'quick clocker')
         )
 
-    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear'],
+    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear', 'discuss_with_client', 'needscodereview'],
                                        'manager': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
 

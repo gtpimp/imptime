@@ -28,21 +28,21 @@ class Nudger(object):
             self.update_nudges_for_project(project_id, user=user)
     
     def update_nudges_for_project(self, project_id, user=None):
-        sprint_ids = Sprint.objects.all().filter(business_id=project_id)\
-                                         .filter_assigned_tasks_are_active()\
-                                         .values_list("pk", flat=True)
+        sprint_qs = Sprint.objects.all().filter(business_id=project_id)
         users = BusinessPermissions.active_users_for_business(project_id) #sic
         if user is not None:
             users = users.filter(pk=user.id)
         for user in users:
-            self.update_nudges_for_sprints_and_user(user, sprint_ids)
+            self.update_nudges_for_sprints_and_user(user, sprint_qs)
         
-    def update_nudges_for_sprints_and_user(self, user, sprint_ids):
-        Nudge.objects.filter(user=user, sprint_id__in=sprint_ids).delete()
-        self._nudge_for_assigned_issues(sprint_ids, user)
-        self._nudge_for_pending_reviews(sprint_ids, user)
+    def update_nudges_for_sprints_and_user(self, user, sprint_qs):
+        Nudge.objects.filter(user=user, sprint__in=sprint_qs).delete()
+        self._nudge_for_assigned_issues(sprint_qs, user)
+        self._nudge_for_pending_reviews(sprint_qs, user)
         
-    def _nudge_for_assigned_issues(self, sprint_ids, user):
+    def _nudge_for_assigned_issues(self, sprint_qs, user):
+        sprint_ids = sprint_qs.filter_assigned_tasks_are_active()\
+                              .values_list("pk", flat=True)
         sprints = Sprint.objects.all().filter(pk__in=sprint_ids)
         issues = Issue.objects.all()\
                               .filter_by_logged_in_user(user)\
@@ -64,7 +64,8 @@ class Nudger(object):
             nudge.nudginess_percent = to_nudge['num_issues']*100/MAGIC_CONSTANT #meaningless calculation
             nudge.save()
 
-    def _nudge_for_pending_reviews(self, sprint_ids, user):
+    def _nudge_for_pending_reviews(self, sprint_qs, user):
+        sprint_ids = sprint_qs.values_list("pk", flat=True)
         sprint_reviews = SprintReview.objects.filter(review_by=user, project_id__in=sprint_ids)\
                                              .annotate(num_issues=Count('project__issues'))\
                                              .filter(num_issues__gt=0)
@@ -92,8 +93,9 @@ class Nudger(object):
 
                 if sprint_review.project.project_type == "inbox":
                     nudge.reason = "inbox"
-                
-                nudge.description = "%s reviews to do" % issues_to_review.count()
+                    nudge.description = "%s issues to process" % issues_to_review.count()
+                else:
+                    nudge.description = "%s reviews to do" % issues_to_review.count()
                 nudge.issue_id = issue_to_review.id
                 nudge.nudginess_percent = issues_to_review.count()*100/MAGIC_CONSTANT #meaningless calculation
                 nudge.save()
