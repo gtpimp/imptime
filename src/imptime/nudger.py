@@ -70,6 +70,7 @@ class Nudger(object):
         sprint_reviews = SprintReview.objects.filter(review_by=user, project_id__in=sprint_ids)\
                                              .annotate(num_issues=Count('project__issues'))\
                                              .filter(num_issues__gt=0)
+
         for sprint_review in sprint_reviews:
             review_by_date = timezone.now()-relativedelta(days=sprint_review.review_cycle_days)
             if sprint_review.must_always_review:

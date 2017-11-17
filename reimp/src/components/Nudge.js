@@ -12,6 +12,7 @@ import Nudge from './Nudge'
 import IssueName from './IssueName'
 import SprintName from './SprintName'
 import ProjectName from './ProjectName'
+import Timestamp from './Timestamp'
 
 class NudgeList extends Component {
 
@@ -65,7 +66,10 @@ class NudgeList extends Component {
               <div className="nudge__description">
                 {nudge.description}
               </div>
-            </div>
+              <div className="nudge__modified">
+                as of <Timestamp value={nudge.modified} format="from_now" />
+              </div>
+              </div>
         )
     }
 }

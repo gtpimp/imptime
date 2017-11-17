@@ -15,6 +15,7 @@ import { invalidateVisualSpecIssues } from '../actions/VisualSpecIssues'
 import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { invalidateSprintReviews } from '../actions/SprintReviews'
 import { invalidateProjectDashboards } from '../actions/ProjectDashboards'
+import { invalidateNudges } from '../actions/Nudges'
 import { addAsyncMessage } from '../actions/Async'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 
@@ -77,6 +78,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateSprintDeadlines([d.entity_ref]))
     } else if ( d.entity_name === 'projectreview' ) {
         dispatch(invalidateSprintReviews([d.entity_ref]))
+    } else if ( d.entity_name === 'nudge' ) {
+        dispatch(invalidateNudges([d.entity_ref]))
     }
 }
 

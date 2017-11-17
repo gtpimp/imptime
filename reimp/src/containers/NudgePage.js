@@ -4,11 +4,15 @@ import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__NUDGE_LIST,
+    PAGE_KEY__NUDGE_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     selectItems,
     invalidateList
 } from '../actions/ItemList'
+import {
+    set_toolbars,
+} from '../actions/Page'
 import NudgeList from '../components/NudgeList'
 
 class NudgePage extends Component {
@@ -19,6 +23,7 @@ class NudgePage extends Component {
 
     componentDidMount() {
         const {dispatch} = this.props
+        dispatch(set_toolbars(PAGE_KEY__NUDGE_PAGE, ['nudge']))
     }
             
     render() {

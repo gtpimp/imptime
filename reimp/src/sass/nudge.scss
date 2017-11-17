@@ -25,6 +25,16 @@
     justify-content: space-between;
     font-style: italic;
     margin-top: 3px;
-    margin-bottom: 3px;
+    margin-bottom: 10px;
 }
 
+.nudge__modified {
+    display:flex;
+    font-size: $font-size-tiny;
+    float: right;
+    margin-top: 15px;
+}
+
+.nudge__modified .timestamp__wrapper {
+    margin-left:2px;
+}

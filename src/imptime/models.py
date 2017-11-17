@@ -114,3 +114,11 @@ class Nudge(BaseModel):
     reason = models.CharField(max_length=255, choices=NUDGE_REASONS, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     nudginess_percent = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Nudge, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)

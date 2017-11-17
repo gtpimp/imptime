@@ -23,7 +23,7 @@ import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
 import {
     fetchNudgesIfNeeded
 } from '../actions/Nudges'
-import { isLoadingItems } from '../actions/Item'
+import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
 
 class NudgeList extends Component {
@@ -36,7 +36,7 @@ class NudgeList extends Component {
 	const { dispatch, list_key, nested_objects } = this.props
 	dispatch(initList(list_key))
         dispatch(update_list_pagination(list_key, { 'page_size': 10 }))
-	dispatch(fetchNudgesIfNeeded(list_key))
+        dispatch(fetchNudgesIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
@@ -78,10 +78,12 @@ function mapStateToProps(state, props) {
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__NUDGE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
     const nested_objects = getNestedObjects(state, list_key)
+    const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__NUDGE, visible_item_ids)
 
     return {
         nudge_ids: visible_item_ids,
         is_loading,
+        is_invalidated,
         last_updated,
         nested_objects
     }

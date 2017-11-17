@@ -344,6 +344,14 @@ export function ensureItemsLoaded(entity_key, item_ids) {
     }
 }
 
+export function areAnyItemsInvalidated(state, entity_key, item_ids) {
+    if ( ! item_ids ) {
+        return false
+    }
+    const invalidated_ids = (((state || {}).item || {})[entity_key] || {}).invalidated_item_ids
+    return difference(invalidated_ids, item_ids).length > 0
+}
+
 export function isLoadingItems(state, entity_key, item_ids) {
     if ( ! item_ids ) {
         return false

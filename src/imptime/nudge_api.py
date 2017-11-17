@@ -23,8 +23,6 @@ class NudgeViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            Nudger().refresh_all(user=request.user)
-            
             nudges = self.allowed_nudges()
             nudges = nudges.order_by("-created")
             nudges = self.apply_filter(qs=nudges, raw_filter_args=filter_args)
@@ -51,3 +49,14 @@ class NudgeViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
+
+    @list_route(methods=['POST'])
+    def recalculate(self, request):
+        try:
+            Nudger().refresh_all(user=request.user)
+            data = {'status': 'success'}
+            return HttpResponse(JSONRenderer().render(data))
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        

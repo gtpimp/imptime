@@ -70,3 +70,31 @@ export function deleteNudge(nudge_id) {
         dispatch(deleteItem(ENTITY_KEY__NUDGE, nudge_id))
     }
 }
+
+export function recalculateNudges() {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceItemsSaving(ENTITY_KEY__NUDGE, []))
+	let data = {}
+	return impfetch( state, "imp/" + ENTITY_KEY__NUDGE + "/recalculate/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceItemSaveFailed(ENTITY_KEY__NUDGE, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceItemsSaved(ENTITY_KEY__NUDGE, []))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceItemSaveFailed(ENTITY_KEY__NUDGE, error))
+	 })
+    }
+}

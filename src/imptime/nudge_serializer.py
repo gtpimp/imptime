@@ -12,11 +12,12 @@ class NudgeSerializer(BaseModelSerializer):
     issue_id = serializers.CharField()
     project_id = serializers.CharField(source="sprint.business_id") #sic
     reason_name = serializers.CharField()
+    modified = serializers.DateTimeField()
 
     class Meta:
         model = Nudge
         fields = ('id', 'user_id', 'sprint_id', 'issue_id', 'reason_name',
-                  'reason', 'nudginess_percent', 'project_id')
+                  'reason', 'nudginess_percent', 'project_id', 'modified')
 
     def to_representation(self, nudge, *args, **kwargs):
         nudge.reason_name = dict(Nudge.NUDGE_REASONS)[nudge.reason]
