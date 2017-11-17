@@ -97,8 +97,8 @@ class SprintsToolbarPanel extends Component {
     }
 
     onBulkCreateIssuesClick() {
-        const { dispatch, project_id, sprint_id } = this.props
-        browserHistory.push("/projects/" + project_id + "/sprints/" + sprint_id + "/bulkCreate")
+        const { dispatch, project_id, last_selected_sprint_id } = this.props
+        browserHistory.push("/projects/" + project_id + "/sprints/" + last_selected_sprint_id + "/bulkCreate")
     }
 
     render() {
