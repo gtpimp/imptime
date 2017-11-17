@@ -73,16 +73,16 @@ class IssueList extends Component {
         const { dispatch } = this.props
         switch(action) {
             case 'NEW':
-                alert("create new issue")
+                //alert("create new issue")
                 break
             case 'CANCEL':
                 dispatch(cancelCandidateIssue())
                 break
             case 'UP':
-                this.moveCursorUp()
+                //this.moveCursorUp()
                 break
             case 'DOWN':
-                this.moveCursorDown()
+                //this.moveCursorDown()
                 break
         }
     }
