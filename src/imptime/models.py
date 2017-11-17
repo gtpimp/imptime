@@ -122,3 +122,8 @@ class Nudge(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
+
+    def delete(self, *args, **kwargs):
+        super(Nudge, self).delete(*args, **kwargs)
+        RefreshNotifier().notify_model_delete(self)
+        

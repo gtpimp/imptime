@@ -38,6 +38,7 @@ class Nudger(object):
             self.update_nudges_for_sprints_and_user(user, sprint_ids)
         
     def update_nudges_for_sprints_and_user(self, user, sprint_ids):
+        Nudge.objects.filter(user=user, sprint_id__in=sprint_ids).delete()
         self._nudge_for_assigned_issues(sprint_ids, user)
         self._nudge_for_pending_reviews(sprint_ids, user)
         
@@ -53,9 +54,6 @@ class Nudger(object):
                                           .values("project_id")\
                                           .annotate(num_issues=Count("project_id"))
 
-        Nudge.objects.filter(reason='assigned_issues')\
-                     .exclude(sprint_id__in=[x['project_id'] for x in sprints_requiring_nudging])\
-                     .delete()
         for to_nudge in sprints_requiring_nudging:
             nudge = Nudge.objects.get_or_create(user=user, sprint_id=to_nudge['project_id'],
                                                 defaults={'nudginess_percent':0})[0]
@@ -85,11 +83,6 @@ class Nudger(object):
                                         .filter(Q(num_reviews=0)|Q(reviews__last_reviewed_at__lt=review_by_date))
 
             issue_to_review = issues_to_review.order_by_project_id(sprint_review.project_id).first()
-            if issue_to_review is None:
-                Nudge.objects.filter(user=user,
-                                     sprint_id=sprint_review.project_id,
-                                     reason='pending_reviews').delete()
-                
             if issue_to_review is not None:
                 nudge = Nudge.objects.get_or_create(user=user,
                                                     sprint_id=sprint_review.project_id,

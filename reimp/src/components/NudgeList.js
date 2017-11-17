@@ -40,8 +40,8 @@ class NudgeList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
-    componentWillReceiveProps() {
-        const { dispatch, list_key, nested_objects } = this.props
+    componentWillReceiveProps(new_props) {
+        const { dispatch, list_key, nested_objects } = new_props
         dispatch(fetchNudgesIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }

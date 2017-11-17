@@ -28,6 +28,7 @@ import {
     LIST_KEY__SPRINT_LIST,
     LIST_KEY__SPRINT_TEMPLATE_LIST,
     LIST_KEY__ISSUE_LIST,
+    LIST_KEY__NUDGE_LIST,
     LIST_KEY__PROJECT_USER_LIST,
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
     LIST_KEY__RELEASE_NOTES_LIST,
@@ -114,6 +115,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         
     } else if ( d.entity_name == 'projectissueorder' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
+    } else if ( d.entity_name === 'nudge' ) {
+        list_keys_to_invalidate[LIST_KEY__NUDGE_LIST] = true
     }
 }
 
