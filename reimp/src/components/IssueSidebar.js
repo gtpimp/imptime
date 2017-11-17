@@ -41,6 +41,7 @@ class IssueSidebar extends Component {
         this.showEmacsSprint = this.showEmacsSprint.bind(this)
         this.showGitCommitMessage = this.showGitCommitMessage.bind(this)
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
+        this.closeIssueSidebar = this.closeIssueSidebar.bind(this)
     }
 
     componentDidMount() {
@@ -49,6 +50,11 @@ class IssueSidebar extends Component {
 
     componentWillReceiveProps(new_props) {
         this.refresh(new_props)
+    }
+
+    closeIssueSidebar() {
+        const { dispatch } = this.props
+        
     }
 
     showEmacsIssue() {
@@ -99,6 +105,9 @@ class IssueSidebar extends Component {
                             </div>
                             <EditableIssueTitle issue_id={issue.id}/>
                           </div>
+                          <div className="issue_sidebar__close" onClick={this.closeIssueSidebar}>
+                          </div>
+                          
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Description">
@@ -151,10 +160,10 @@ class IssueSidebar extends Component {
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Estimates">
-                          <IssueEstimatesSummary issue_id={issue.id} />
                           <div>
-                            My estimate: <EditableIssueEstimate issue_id={issue.id} />
+                            <EditableIssueEstimate issue_id={issue.id} />
                           </div>
+                          <IssueEstimatesSummary issue_id={issue.id} />
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Sprint Name">

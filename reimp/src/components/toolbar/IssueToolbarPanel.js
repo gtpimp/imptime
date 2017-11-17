@@ -15,6 +15,11 @@ import {
 import {
     setItemFlag
 } from '../../actions/ItemList'
+import {
+    setPageFlag,
+    getPageFlag
+} from '../../actions/Page'
+import ToggleButton from './ToggleButton'
 
 class IssueToolbarPanel extends Component {
 
@@ -30,6 +35,7 @@ class IssueToolbarPanel extends Component {
         this.onExpandFeaturesClick = this.onExpandFeaturesClick.bind(this)
         this.onGroupClick = this.onGroupClick.bind(this)
         this.onUngroupClick = this.onUngroupClick.bind(this)
+        this.onIssueSidebarToggleClick = this.onIssueSidebarToggleClick.bind(this)
         /* this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
          * this.groupTogether = this.groupTogether.bind(this)
          * this.ungroupTogether = this.ungroupTogether.bind(this)
@@ -85,6 +91,11 @@ class IssueToolbarPanel extends Component {
         dispatch(ungroupIssuesIntoFeature(issue_ids))
     }
 
+    onIssueSidebarToggleClick(show_sidebar) {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__ISSUES_PAGE, "show_sidebar", show_sidebar))
+    }
+
     onAttachClick() {
         console.log('attach clicked')
     }
@@ -99,7 +110,7 @@ class IssueToolbarPanel extends Component {
 
     render() {
 
-        const { issue_ids, issue } = this.props
+        const { issue_ids, issue, show_sidebar } = this.props
 
         if (issue_ids.length === 0 ) {
             return null
@@ -110,6 +121,11 @@ class IssueToolbarPanel extends Component {
 
         return (
             <div className="toolbar-panel">
+              <ToggleButton value={show_sidebar}
+                            onChange={this.onIssueSidebarToggleClick}
+                            on_label={"Sidebar"}
+                            off_label={"No sidebar"}
+              />
               <ToolbarButton flavour="toggle" tooltip="Favourite" icon="stars" isEnabled={issue.can_group_issues} onEnable={this.onMakeFeatureClick} onDisable={this.onUnmakeFeatureClick}/>
               <ToolbarButton tooltip="Label" icon="label" onClick={this.onNewLabelClick}/>
               <ToolbarButton tooltip="Expand" icon="expand_more" onClick={this.onExpandFeaturesClick}/>
@@ -129,10 +145,12 @@ function mapStateToProps(state, props) {
 
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const issue = selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[0])
+    const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar") || false
 
     return {
         issue_ids: selected_issue_ids,
-        issue: issue
+        issue: issue,
+        show_sidebar
     }
 }
 

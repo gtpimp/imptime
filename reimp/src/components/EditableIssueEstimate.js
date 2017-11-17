@@ -5,6 +5,7 @@ import IssueEstimateForm from './form/IssueEstimateForm'
 import { getIssue, updateIssueEstimate } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 import Hours from './Hours'
+import Progress from './Progress'
 import { format_hours } from '../actions/lib'
 
 class EditableIssueEstimate extends Component {
@@ -33,7 +34,7 @@ class EditableIssueEstimate extends Component {
             >
               <IssueEstimateForm />
               <div className="text-component--readonly">
-                <Hours hours={estimate_hours} />
+                <Progress issue={issue} estimate={issue.my_estimate.estimate_hours} />
               </div>
               <div className="text-component--empty">0</div>
             </EditableProperty>

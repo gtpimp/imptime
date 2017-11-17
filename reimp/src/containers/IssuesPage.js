@@ -22,7 +22,8 @@ import {
     get_selected_issue_ids,
     select_sprints,
     get_header_list,
-    set_wide_column_mode
+    set_wide_column_mode,
+    getPageFlag
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -101,7 +102,7 @@ class IssuesPage extends Component {
 
         const { sprint_id, project_id, selected_issues, selected_issue_ids,
                 is_single_selection, is_multiple_selection, is_creating_issue,
-                issue_header_list
+                issue_header_list, show_sidebar
         } = this.props
 
         const selected_issue = ( selected_issues && selected_issues.length > 0 && selected_issues[0] ) || null
@@ -114,17 +115,17 @@ class IssuesPage extends Component {
                            issue_header_list={issue_header_list}
                 />
               </div>
-              { is_creating_issue &&
+              { is_creating_issue && 
                 <div className="list-layout__sidebar">
                   <NewIssueSidebar onCreatedIssues={this.onSelectIssues} />
                 </div>
               }
-              { ! is_creating_issue && is_single_selection && sprint_id && selected_issue &&
+              { ! is_creating_issue && is_single_selection && sprint_id && selected_issue && show_sidebar &&
                 <div className="list-layout__sidebar">
                   <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
                 </div>
               }
-              { ! is_creating_issue && is_multiple_selection && sprint_id && selected_issue_ids &&
+              { ! is_creating_issue && is_multiple_selection && sprint_id && selected_issue_ids && show_sidebar &&
                 <div className="list-layout__sidebar">
                   <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
                 </div>
@@ -151,6 +152,7 @@ function mapStateToProps(state, props) {
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
     const issue_header_list = get_header_list(state, PAGE_KEY__ISSUES_PAGE)
+    const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar") || false
 
     return {
         sprint_id: sprint_id,
@@ -162,7 +164,8 @@ function mapStateToProps(state, props) {
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue: is_creating_issue,
-        issue_header_list: issue_header_list
+        issue_header_list: issue_header_list,
+        show_sidebar
     }
 }
 

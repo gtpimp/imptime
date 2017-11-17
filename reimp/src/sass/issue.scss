@@ -123,3 +123,7 @@
 .list-table__cell--issue-name:hover {
     @extend .list-table__cell--hover;
 }
+
+.issue__cell__secondary {
+    opacity: 0.5;
+}

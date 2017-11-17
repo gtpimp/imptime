@@ -59,9 +59,9 @@ export var ISSUE_HEADER_LIST_WIDE = {'number':"#",
                                      'assignee': "Assignee",
                                      'created_at': "Created at", 
                                      'status': "Status",
-                                     // 'estimated': "Estimates",
+                                     'estimated': "Estimates",
                                      'tags': "Tags",
-                                     'progress': "Progress",
+                                     // 'progress': "Progress",
                                      'my_time': "My Time",
                                      'clock_in': "Clock in",
                                      'delete': "Delete"}
@@ -70,7 +70,8 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':"#",
                                        'expand_feature': '',
                                        'name': "Name",
                                        'assignee': "Assignee",
-                                       'status': "Status"}
+                                       'status': "Status",
+                                       'estimated': "Estimated",}
 
 export var ISSUE_HEADER_LIST_FEATURE = {'number': "#",
                                         'expand_feature': '',

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, change } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
 
@@ -9,8 +9,7 @@ const DEFAULT_TIME_ESTIMATES = [ "0:00", "0:15", "0:30", "0:45",
                                  "1:00", "1:15", "1.30", "1.45",
                                  "2:00", "2:30",
                                  "3:00", "3:30",
-                                 "4:00", "5:00", "6:00", "7:00", "8:00",
-                                 "16:00", "32:00", "40:00", "80:00", "120:00", "160:00" ]
+                                 "4:00" ]
 
 class IssueEstimateForm extends Component {
 
@@ -34,7 +33,8 @@ class IssueEstimateForm extends Component {
     }
     
     quickSelectDefaultEstimate(time_estimate) {
-        this.props.change("estimate", time_estimate)
+        const { dispatch } = this.props
+        dispatch(change("issue_estimate_form", "estimate", time_estimate))
     }
 
     renderInput(field) {

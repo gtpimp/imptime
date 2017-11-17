@@ -124,12 +124,15 @@ export function get_selected_user_ids(state, page_key) {
     return (((state ||{}).page || {})[page_key] || {}).user_ids || []
 }
 
-export function setPageFlag(page_key, flag_name) {
+export function setPageFlag(page_key, flag_name, value) {
+    if ( value === undefined ) {
+        value = true
+    }
     return {
         type: SET_PAGE_FLAG,
         page_key: page_key,
         flag_name: "flag_" + flag_name,
-        flag_value: true
+        flag_value: value
     }
 }
 

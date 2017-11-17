@@ -8,10 +8,11 @@ import { format_hours } from '../actions/lib'
 class Progress extends Component {
 
     render() {
-        const {issue} = this.props
+        const {issue, estimate} = this.props
+        const estimate_to_use = estimate || issue.dev_estimate_hours || 0
         const active = issue.currently_clocked_in_by_user_ids && issue.currently_clocked_in_by_user_ids.length > 0
         const current = format_hours(issue.actual_hours || 0)
-        const max = format_hours(issue.dev_estimate_hours || 0)
+        const max = format_hours(estimate_to_use)
         return (
             <div className="progress">
                 <div className="progress__component progress__component--timer">
@@ -37,7 +38,12 @@ class Progress extends Component {
 }
 
 function mapStateToProps(state, props) {
-    return {}
+    const { issue, estimate } = props
+    
+    return {
+        issue,
+        estimate: estimate || null
+    }
 }
 
 

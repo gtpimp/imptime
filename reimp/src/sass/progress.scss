@@ -1,9 +1,9 @@
 @import 'variables.scss';
 
 .progress {
-  display: table;
-  height: 100%;
-  min-width: 136px;
+    display: table;
+    height: 100%;
+    font-size: $font-size-small;
 }
 
 .progress__time {

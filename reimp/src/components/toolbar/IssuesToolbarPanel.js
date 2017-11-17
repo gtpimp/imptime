@@ -68,11 +68,6 @@ class IssuesToolbarPanel extends Component {
         const { wide_column_mode } = this.props
         return (
             <div className="toolbar-panel">
-              <ToggleButton value={wide_column_mode}
-                            onChange={this.onIssueWideViewToggleButtonClick}
-                            on_label={"Wide"}
-                            off_label={"Narrow"}
-              />
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewFeatureClick}>+ New Feature</div>
               <div>
@@ -80,7 +75,11 @@ class IssuesToolbarPanel extends Component {
                   + Bulk Issues
                 </div>
               </div>
-              
+              <ToggleButton value={wide_column_mode}
+                            onChange={this.onIssueWideViewToggleButtonClick}
+                            on_label={"Wide"}
+                            off_label={"Narrow"}
+              />
             </div>
         )
     }
