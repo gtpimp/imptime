@@ -17,6 +17,7 @@ import {
     startCandidateItem,
     saveCandidateItem,
     deleteItem,
+    isLoadingItems,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving
@@ -73,4 +74,8 @@ export function deleteSprintReview(sprint_review_id) {
     return (dispatch, getState) => {
         dispatch(deleteItem(ENTITY_KEY__SPRINT_REVIEW, sprint_review_id))
     }
+}
+
+export function isLoadingSprintReviews(state, item_ids) {
+    return isLoadingItems(state, ENTITY_KEY__SPRINT_REVIEW, item_ids)
 }

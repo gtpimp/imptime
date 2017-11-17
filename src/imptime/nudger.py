@@ -24,6 +24,10 @@ class Nudger(object):
     #     self._nudge_for_inactive_projects()
  
     def refresh_all(self, user=None):
+
+        from django.contrib.auth.models import User
+        user = User.objects.get(username='rhoberman')
+        
         for project_id in Project.objects.all().values_list("pk", flat=True):
             self.update_nudges_for_project(project_id, user=user)
     
@@ -38,7 +42,7 @@ class Nudger(object):
             self.update_nudges_for_sprints_and_user(user, sprint_ids)
         
     def update_nudges_for_sprints_and_user(self, user, sprint_ids):
-        self._nudge_for_assigned_issues(sprint_ids, user)
+        # self._nudge_for_assigned_issues(sprint_ids, user)
         self._nudge_for_pending_reviews(sprint_ids, user)
         
     def _nudge_for_assigned_issues(self, sprint_ids, user):
@@ -71,16 +75,16 @@ class Nudger(object):
         for sprint_review in sprint_reviews:
             review_by_date = timezone.now()-relativedelta(days=sprint_review.review_cycle_days)
             if sprint_review.must_always_review:
-                issues_to_review = Issue.objects\
-                                        .filter(project_id=sprint_review.project_id,
-                                                reviews__reviewed_by=user)\
-                                        .annotate(num_reviews=Count('reviews'))\
-                                        .filter(Q(num_reviews=0)|Q(reviews__last_reviewed_at__lt=review_by_date))
+
+                issues_to_review = Issue.objects.filter(project_id=sprint_review.project_id)\
+                                                .exclude(reviews__reviewed_by=user, reviews__last_reviewed_at__gte=review_by_date)
+                
             else:
                 issues_to_review = Issue.objects\
                                         .filter(project_id=sprint_review.project_id)\
                                         .annotate(num_reviews=Count('reviews'))\
                                         .filter(Q(num_reviews=0)|Q(reviews__last_reviewed_at__lt=review_by_date))
+
             issue_to_review = issues_to_review.order_by_project_id(sprint_review.project_id).first()
             if issue_to_review is not None:
                 nudge = Nudge.objects.get_or_create(user=user, sprint_id=sprint_review.project_id,

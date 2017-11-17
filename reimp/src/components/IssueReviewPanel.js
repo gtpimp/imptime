@@ -7,7 +7,8 @@ import { getIssueReviews,
          ensureIssueReviewsLoaded
 } from '../actions/IssueReviews'
 import { getSprintReviews,
-         ensureSprintReviewsLoaded
+         ensureSprintReviewsLoaded,
+         isLoadingSprintReviews
 } from '../actions/SprintReviews'
 import { getIssue, ensureIssuesLoaded, reviewNow} from '../actions/Issues'
 import { logged_in_user } from '../actions/Auth'
@@ -28,7 +29,16 @@ class IssueReviewPanel extends Component {
     }
     
     componentDidMount() {
-        const { dispatch, issue_id, issue, issue_review_ids, sprint_id, sprint_review_ids } = this.props
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, issue_id, issue, issue_review_ids, sprint_id, sprint_review_ids } = props
         if ( issue_id ) {
             dispatch(ensureIssuesLoaded([issue_id]))
         }
@@ -42,21 +52,7 @@ class IssueReviewPanel extends Component {
             dispatch(ensureSprintReviewsLoaded(sprint_review_ids))
         }
     }
-
-    componentWillReceiveProps(new_props) {
-        const { dispatch } = this.props
-        const { issue_id, issue_review_ids, sprint_id } = new_props
-        if ( issue_id ) {
-            dispatch(ensureIssuesLoaded([issue_id]))
-        }
-        if ( sprint_id ) {
-            dispatch(ensureSprintsLoaded([sprint_id]))
-        }
-        if ( issue_review_ids ) {
-            dispatch(ensureIssueReviewsLoaded(issue_review_ids))
-        }
-    }
-
+    
     onReviewed() {
         const { dispatch, issue_id } = this.props
         dispatch(reviewNow([issue_id]))
@@ -124,7 +120,8 @@ function mapStateToProps(state, props) {
     const has_ever_been_reviewed = issue_reviews.length > 0
     const issue_reviews_by_user_id = keyBy(issue_reviews, 'reviewed_by_id')
     const logged_in_user_id = "" + logged_in_user().user_id
-        
+    const is_loading = isLoadingSprintReviews(state, sprint.review_ids)
+    
     return {
         issue_id,
         issue,
@@ -136,6 +133,7 @@ function mapStateToProps(state, props) {
         sprint_id: issue.sprint_id,
         logged_in_user_id,
         can_view,
+        is_loading,
         logged_in_user_id,
         review_due_at_by_any_user,
         has_ever_been_reviewed,
