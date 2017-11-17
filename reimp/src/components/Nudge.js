@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map } from 'lodash'
 import {browserHistory} from 'react-router'
+import classNames from 'classnames'
 import {
     ensureNudgesLoaded,
     getNudge
@@ -41,28 +42,34 @@ class NudgeList extends Component {
         const { nudge, is_loading } = this.props
         const that = this
 
+        const reason_class_name = "nudge__reason--" + nudge.reason_name.replace(" ","_").toLowerCase()
+
         return (
             <div className="nudge" onClick={this.onClickNudge}>
-              <div className="nudge__reason">
-                {nudge.reason_name}
-              </div>
-              <div className="nudge__header">
-                <div className="nudge__project">
-                  <ProjectName project_id={nudge.project_id} />
-                </div>
-                <div className="nudge__sprint">
-                  <SprintName sprint_id={nudge.sprint_id} />
+              <div className="nudge__title">
+                <div className={classNames("nudge__reason", reason_class_name)}>
+                  {nudge.reason_name}
                 </div>
               </div>
-              <div className="nudge__issue">
-                <IssueName issue_id={nudge.issue_id} />
-              </div>
-              <div className="nudge__footer">
-                <div className="nudge__description">
-                  {nudge.description}
+              <div className="nudge__content">
+                <div className="nudge__header">
+                  <div className="nudge__project">
+                    <ProjectName project_id={nudge.project_id} />
+                  </div>
+                  <div className="nudge__sprint">
+                    <SprintName sprint_id={nudge.sprint_id} display_mode={["status", "type"]} />
+                  </div>
                 </div>
-                <div className="nudge__modified">
-                  as of <Timestamp value={nudge.modified} format="from_now" />
+                <div className="nudge__issue">
+                  <IssueName issue_id={nudge.issue_id} />
+                </div>
+                <div className="nudge__footer">
+                  <div className="nudge__description">
+                    {nudge.description}
+                  </div>
+                  <div className="nudge__modified">
+                    as of <Timestamp value={nudge.modified} format="from_now" />
+                  </div>
                 </div>
               </div>
             </div>

@@ -6,8 +6,14 @@
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
     max-width: 25%;
     margin: 50px;
-    padding: 20px;
     cursor: pointer;
+}
+
+.nudge__content {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 .nudge:hover {
@@ -18,6 +24,15 @@
 
 .nudge__reason {
     font: $bold-large;
+    padding: 2px;
+}
+
+.nudge__reason--assigned_issues {
+    background-color: lightblue;
+}
+
+.nudge__reason--pending_reviews {
+    background-color: lightpurple;
 }
 
 .nudge__header {
@@ -44,4 +59,16 @@
 
 .nudge__description {
     margin-right: 2px;
+}
+
+.nudge__sprint {
+    display: flex;
+}
+
+.nudge__sprint .sprint_name__status {
+    font-size: $font-size-tiny;
+}
+
+.nudge__sprint .sprint_name__type {
+    font-size: $font-size-tiny;
 }
