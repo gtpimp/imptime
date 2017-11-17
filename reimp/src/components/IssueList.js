@@ -66,6 +66,9 @@ class IssueList extends Component {
     componentWillReceiveProps(new_props) {
         const {dispatch, list_key} = this.props
         const {onSelectIssues} = this.props
+        if ( this.props.sprint_id != new_props.sprint_id ) {
+            onSelectIssues([])
+        }
         dispatch(fetchIssuesIfNeeded(list_key))
     }
 
