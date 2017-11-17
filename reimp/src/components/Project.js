@@ -13,8 +13,9 @@ class Project extends Component {
         this.onSprintsClick = this.onSprintsClick.bind(this)
     }
     
-    onSprintsClick() {
+    onSprintsClick(event) {
         const { project_id } = this.props
+        event.stopPropagation()
         browserHistory.push('/projects/'+project_id+'/sprints/');
     }
     

@@ -31,21 +31,10 @@ class ProjectsPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch} = this.props
+        const {dispatch, selected_project_ids, default_project_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
-        this.refresh()
-    }
-
-    componentWillReceiveProps(new_props) {
-        this.refresh(new_props)
-    }
-    
-    refresh(these_props) {
-        const props = these_props || this.props
-        const { dispatch, selected_project_ids, default_project_id } = props
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'} ]))
-        
-        if ( default_project_id !== undefined && !includes(selected_project_ids, default_project_id) ) {
+        if ( default_project_id !== undefined ) {
             dispatch(selectItems(LIST_KEY__PROJECT_LIST, [default_project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, [default_project_id]))
         }
@@ -53,12 +42,11 @@ class ProjectsPage extends Component {
 
     onSelectProjects(project_ids) {
         const { dispatch } = this.props
-         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
-        /* if ( project_ids && project_ids.length === 1 ) {
-         *     browserHistory.push('/projects/' + project_ids[0] + '/sprints');
-         * } else {*/
+        dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
         dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
-        //}
+        if ( project_ids && project_ids.length === 1 ) {
+            browserHistory.push('/projects/' + project_ids[0]);
+        }
     }
             
     render() {
