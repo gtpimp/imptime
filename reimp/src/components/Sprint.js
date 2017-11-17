@@ -18,8 +18,9 @@ class Sprint extends Component {
         this.onIssuesClick = this.onIssuesClick.bind(this)
     }
     
-    onIssuesClick() {
+    onIssuesClick(event) {
         const { sprint } = this.props
+        event.stopPropagation()
         browserHistory.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues');
     }
     
