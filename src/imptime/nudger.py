@@ -24,9 +24,6 @@ class Nudger(object):
     #     self._nudge_for_inactive_projects()
  
     def refresh_all(self, user=None):
-        from django.contrib.auth.models import User
-        user = User.objects.get(username='rhoberman')
-        
         for project_id in Project.objects.all().values_list("pk", flat=True):
             self.update_nudges_for_project(project_id, user=user)
     
@@ -56,6 +53,9 @@ class Nudger(object):
                                           .values("project_id")\
                                           .annotate(num_issues=Count("project_id"))
 
+        Nudge.objects.filter(reason='assigned_issues')\
+                     .exclude(sprint_id__in=[x['project_id'] for x in sprints_requiring_nudging])\
+                     .delete()
         for to_nudge in sprints_requiring_nudging:
             nudge = Nudge.objects.get_or_create(user=user, sprint_id=to_nudge['project_id'],
                                                 defaults={'nudginess_percent':0})[0]
@@ -65,7 +65,6 @@ class Nudger(object):
                                    .order_by_project_id(to_nudge['project_id']).values('pk')[0]['pk']
             nudge.nudginess_percent = to_nudge['num_issues']*100/MAGIC_CONSTANT #meaningless calculation
             nudge.save()
-
 
     def _nudge_for_pending_reviews(self, sprint_ids, user):
         sprint_reviews = SprintReview.objects.filter(review_by=user, project_id__in=sprint_ids)\
@@ -85,10 +84,16 @@ class Nudger(object):
                                         .filter(Q(num_reviews=0)|Q(reviews__last_reviewed_at__lt=review_by_date))
 
             issue_to_review = issues_to_review.order_by_project_id(sprint_review.project_id).first()
+            if issue_to_review is None:
+                Nudge.objects.filter(user=user,
+                                     sprint_id=sprint_review.project_id,
+                                     reason='pending_reviews').delete()
+                
             if issue_to_review is not None:
-                nudge = Nudge.objects.get_or_create(user=user, sprint_id=sprint_review.project_id,
+                nudge = Nudge.objects.get_or_create(user=user,
+                                                    sprint_id=sprint_review.project_id,
+                                                    reason='pending_reviews',
                                                     defaults={'nudginess_percent':0})[0]
-                nudge.reason = "pending_reviews"
                 nudge.description = "%s reviews to do" % issues_to_review.count()
                 nudge.issue_id = issue_to_review.id
                 nudge.nudginess_percent = issues_to_review.count()*100/MAGIC_CONSTANT #meaningless calculation
