@@ -7,6 +7,7 @@ import {
     selectItems,
     collapse_list,
     expand_list,
+    shouldFetchList,
     getVisibleItemIds,
     getVisibleItems,
     getNestedObjects,
@@ -78,12 +79,14 @@ function mapStateToProps(state, props) {
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__NUDGE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
     const nested_objects = getNestedObjects(state, list_key)
+    const should_fetch_list = shouldFetchList(state, list_key)
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__NUDGE, visible_item_ids)
 
     return {
         nudge_ids: visible_item_ids,
         is_loading,
         is_invalidated,
+        should_fetch_list,
         last_updated,
         nested_objects
     }
