@@ -68,7 +68,7 @@ class NudgeViewSet(BaseViewSet):
         
     def _spread(self, qs, page_size):
         nudge_reasons = [x['reason'] for x in qs.order_by("reason").values("reason").annotate(reasons=Count("reason"))]
-        num_per_reason = math.ceil(float(page_size) / len(nudge_reasons))
+        num_per_reason = math.ceil(float(page_size) / (len(nudge_reasons) or 1))
         results = []
         for nudge_reason in nudge_reasons:
             results.extend([x for x in qs.filter(reason=nudge_reason).order_by("reason")[:num_per_reason]])
