@@ -80,7 +80,7 @@ class ReleaseNotes extends Component {
                                 { release_note.seen_by_user_ids.length > 0 &&
                                   <div>
                                     Seen by:
-                                    {map(release_note.seen_by_user_ids, (user_id) => <OtherUser user_id={user_id} />)}
+                                    {map(release_note.seen_by_user_ids, (user_id) => <div><OtherUser user_id={user_id} /><br/></div>)}
                                   </div>
                                 }
                               </div>
