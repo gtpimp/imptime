@@ -19,6 +19,7 @@ import {
     getSelectedItems,
     getDisplayMode,
     update_list_pagination,
+    update_list_ordering,
     update_list_format
 } from '../actions/ItemList'
 import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
@@ -39,6 +40,7 @@ class NudgeList extends Component {
 	dispatch(initList(list_key))
         dispatch(update_list_pagination(list_key, { 'page_size': 10 }))
         dispatch(update_list_format(list_key, { 'spread': true }))
+        dispatch(update_list_ordering(list_key, { 'due_date': 'asc' }))
         dispatch(fetchNudgesIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }

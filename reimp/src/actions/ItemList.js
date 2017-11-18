@@ -16,6 +16,7 @@ export const CLEAR_LIST_FILTER_OPTION = 'CLEAR_LIST_FILTER_OPTION'
 export const UPDATE_LIST_FORMAT = 'UPDATE_LIST_FORMAT'
 export const UPDATE_LIST_SELECTION = 'UPDATE_LIST_SELECTION'
 export const UPDATE_LIST_DISPLAY_MODE = 'UPDATE_LIST_DISPLAY_MODE'
+export const UPDATE_LIST_ORDERING = 'UPDATE_LIST_ORDERING'
 export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
 export const HIGHLIGHT_LIST_SELECTION = 'HIGHLIGHT_LIST_SELECTION'
 export const SET_CURSOR_ITEM = 'SET_CURSOR_ITEM'
@@ -58,6 +59,18 @@ export function clear_list_filter_option(list_key, filter_option) {
 
 export function getListFilter(state, list_key) {
     return (((state || {}).item_list || {})[list_key] ||  {}).filter || {}
+}
+
+export function update_list_ordering(list_key, ordering) {
+    return {
+        type: UPDATE_LIST_ORDERING,
+        list_key: list_key,
+        ordering: ordering
+    }
+}
+
+export function get_list_ordering(state, list_key) {
+    return ((state.item_list || {})[list_key] || {}).ordering
 }
 
 export function update_list_format(list_key, format) {
@@ -332,6 +345,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
         
 	const params = { filter: l.filter || {},
 			 format: format,
+                         ordering: l.ordering || {},
                          detail_level: l.detail_level || {},
 			 pagination: l.pagination || {} }
         return impfetch(state, fetch_item_ids_url, dispatch, {params:params})

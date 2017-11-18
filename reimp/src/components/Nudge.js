@@ -68,7 +68,7 @@ class NudgeList extends Component {
         return (
             <div className="nudge" onClick={this.onClickNudge}>
               <div className="nudge__title">
-                <div style={{"background-color":stringToColour(nudge.reason)}}
+                <div style={{"backgroundColor":stringToColour(nudge.reason)}}
                      className={classNames("nudge__reason", reason_class_name)}>
                   {nudge.reason.replace(/_/g, " ")}
                 </div>

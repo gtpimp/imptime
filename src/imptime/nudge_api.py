@@ -25,10 +25,11 @@ class NudgeViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
+            ordering = params.get('ordering', {})
 
             nudges = self.allowed_nudges()
-            nudges = nudges.order_by("-created")
             nudges = self.apply_filter(qs=nudges, raw_filter_args=filter_args)
+            nudges = self.apply_ordering(qs=nudges, ordering=ordering)
             if format_args.get('spread', None) and format_args.get('ids_only'):
                 nudges = self._spread(nudges, pagination.get('page_size', settings.PAGINATION_DEFAULT_PAGINATION))
             nudges = self.apply_pagination(qs=nudges, pagination=pagination)
@@ -71,5 +72,5 @@ class NudgeViewSet(BaseViewSet):
         num_per_reason = math.ceil(float(page_size) / (len(nudge_reasons) or 1))
         results = []
         for nudge_reason in nudge_reasons:
-            results.extend([x for x in qs.filter(reason=nudge_reason).order_by("reason")[:num_per_reason]])
+            results.extend([x for x in qs.filter(reason=nudge_reason)[:num_per_reason]])
         return results
