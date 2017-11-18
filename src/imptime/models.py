@@ -106,7 +106,7 @@ class VisualSpecIssue(BaseModel):
 
     def save(self, *args, **kwargs):
         was_created = not self.id
-        super(VisualSpecProject, self).save(*args, **kwargs)
+        super(VisualSpecIssue, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)
         else:

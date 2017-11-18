@@ -161,7 +161,7 @@ class BaseViewSet(viewsets.ViewSet):
         return self.allowed_users().get(pk=pk)
 
     def allowed_visual_spec_documents(self):
-        return VisualSpecDocument.objects.filter(issue__in=self.allowed_issues())
+        return VisualSpecDocument.objects.filter(visual_spec_projects__project__in=self.allowed_projects())
 
     def allowed_visual_spec_issues(self):
         return VisualSpecIssue.objects.filter(issue__in=self.allowed_issues())

@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import EditableProperty from '../form/EditableProperty'
 import { deleteIssueVisualSpecDocument, getIssue } from '../../actions/Issues'
-import IssueVisualSpecDocumentForm from './IssueVisualSpecDocumentForm'
+import VisualSpecDocumentForm from './VisualSpecDocumentForm'
 import FileLabel from '../form/FileLabel'
 import Blank from '../form/Blank'
 import {browserHistory} from 'react-router'
@@ -19,7 +19,7 @@ class EditableIssueVisualSpecDocument extends Component {
 
     onChange() {
         // do nothing, the file has already been uploaded by the
-        // IssueVisualSpecDocumentForm
+        // VisualSpecDocumentForm
     }
 
     onDelete(new_value) {
@@ -35,7 +35,7 @@ class EditableIssueVisualSpecDocument extends Component {
     }
 
     render() {
-        const {issue_id, visual_spec_document} = this.props
+        const {issue_id, project_id, visual_spec_document} = this.props
 
 	return (
 
@@ -45,7 +45,7 @@ class EditableIssueVisualSpecDocument extends Component {
                                   can_edit={true}
                                   onChange={this.onChange}
                 >
-                  <IssueVisualSpecDocumentForm issue_id={issue_id} />
+                  <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id} />
                   <div>
                     { visual_spec_document.id &&
                       <FileLabel value={visual_spec_document}
@@ -54,7 +54,7 @@ class EditableIssueVisualSpecDocument extends Component {
                       />
                     }
                     { ! visual_spec_document.id &&
-                      <IssueVisualSpecDocumentForm issue_id={issue_id} />
+                      <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id} />
                     }
                   </div>
                   <Blank />

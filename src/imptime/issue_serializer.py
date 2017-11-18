@@ -7,6 +7,7 @@ from tag_serializer import TagSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
 from issue_comment_serializer import IssueCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
+from imptime.models import VisualSpecDocument
 from timepiece.models import BusinessPermissions, IssueReview
 from testable_serializer import TestableSerializer
 logger = logging.getLogger(__name__)
@@ -64,7 +65,9 @@ class IssueSerializer(BaseSerializer):
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
-        issue.visual_spec_document_ids = issue.visual_spec_documents.all().order_by("order", "id").values_list('id', flat=True)
+        issue.visual_spec_document_ids = VisualSpecDocument.objects.filter(visual_spec_issues__issue=issue)\
+                                                                   .order_by("visual_spec_issues__order")\
+                                                                   .values_list('id', flat=True)
         issue.review_ids = [x.id for x in issue.reviews.all()]
 
         if not bp.has_see_other_user_points:

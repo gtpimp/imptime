@@ -32,7 +32,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            visual_spec_documents = self.allowed_visual_spec_documents().order_by("order", "id")
+            visual_spec_documents = self.allowed_visual_spec_documents()
             visual_spec_documents = self.apply_filter(qs=visual_spec_documents,
                                                       raw_filter_args=filter_args)
             visual_spec_documents = self.apply_pagination(qs=visual_spec_documents,
@@ -62,8 +62,10 @@ class VisualSpecDocumentViewSet(BaseViewSet):
     
     def create(self, request):
         try:
-            issue_pk = request.POST['issue_id']
-            issue = self.allowed_issue(issue_pk)
+            project_pk = request.POST['project_id']
+            project = self.allowed_project(project_pk)
+            issue_pk = request.POST.get('issue_id')
+            issue = self.allowed_issue(issue_pk) if issue_pk else None
             for name, f in request.FILES.items():
                 if not f.content_type.startswith('image'):
                     raise Exception("Document must be an image, not %s" % f.content_type)
@@ -76,14 +78,14 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                                                         name=f.name,
                                                         content_type=f.content_type)
                 VisualSpecProject.objects.create(visual_spec_document = vsd,
-                                                 project=issue.project.business, #sic
-                                                 order=VisualSpecProject.get_next_order(issue.project.business_id))
-                VisualSpecIssue.objects.create(visual_spec_document = vsd,
-                                               issue=issue,
-                                               order=VisualSpecIssue.get_next_order(issue.id))
-                
-                issue.save()
-                IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
+                                                 project_id=project.id,
+                                                 order=VisualSpecProject.get_next_order(project.id))
+                if issue is not None:
+                    VisualSpecIssue.objects.create(visual_spec_document = vsd,
+                                                   issue=issue,
+                                                   order=VisualSpecIssue.get_next_order(issue.id))
+                    issue.save()
+                    IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
             data = {'status': 'success'}
             
         except Exception, ex:
