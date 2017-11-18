@@ -10,7 +10,8 @@
 }
 
 .nudge__title {
-    padding: 3px;
+    padding-bottom: 3px;
+    padding-top: 3px;
 }
 
 .nudge__content {
@@ -28,7 +29,9 @@
 
 .nudge__reason {
     font: $bold-extra-large;
-    padding: 2px;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    padding-left: 10px;
 }
 
 .nudge__reason--assigned_issues {
