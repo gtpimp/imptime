@@ -31,8 +31,8 @@ var stringToColour = function(str) {
     var value = (hash >> (i * 8)) & 0xFF;
     colour += ('00' + value.toString(16)).substr(-2);
   }
-  colour = shadeColor2(colour, 0.7)
-  return colour;
+    colour = shadeColor2(colour, 0.7)
+    return colour;
 }
 
 
@@ -86,11 +86,24 @@ class NudgeList extends Component {
                   <IssueName issue_id={nudge.issue_id} />
                 </div>
                 <div className="nudge__footer">
+                  { nudge.due_date_reason &&
+                    <div className="nudge__due_date">
+                      <div>
+                        {nudge.due_date_reason}
+                      </div>
+                      <div className="nudge__due_date__date">
+                        { nudge.due_date && <Timestamp value={nudge.due_date} format="from_now" /> }
+                        { !nudge.due_date && <div>never</div> }
+                      </div>
+                    </div>
+                  }
                   <div className="nudge__description">
-                    {nudge.description}
-                  </div>
-                  <div className="nudge__modified">
-                    as of <Timestamp value={nudge.modified} format="from_now" />
+                    <div>
+                      {nudge.description}
+                    </div>
+                    <div className="nudge__modified">
+                      as of <Timestamp value={nudge.modified} format="from_now" />
+                    </div>
                   </div>
                 </div>
               </div>

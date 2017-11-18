@@ -104,7 +104,8 @@ class Nudge(BaseModel):
     issue = ProtectedForeignKey(Issue, related_name='nudges', null=True)
     reason = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    nudginess_percent = models.FloatField()
+    due_date = models.DateTimeField(null=True)
+    due_date_reason = models.CharField(max_length=255, null=True)
 
     def save(self, *args, **kwargs):
         was_created = not self.id

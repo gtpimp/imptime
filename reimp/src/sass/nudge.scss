@@ -34,6 +34,19 @@
     padding-left: 10px;
 }
 
+.nudge__due_date {
+    display: flex;
+    font-size: $font-size-tiny;
+}
+
+.nudge__modified {
+    margin-left:2px;
+}
+
+.nudge__modified .timestamp__wrapper {
+    margin-left:2px;
+}
+
 .nudge__reason--assigned_issues {
     background-color: lightblue;
 }
@@ -58,18 +71,18 @@
     display:flex;
 }
 
-.nudge__modified .timestamp__wrapper {
+.nudge__due_date__date {
     margin-left:2px;
 }
 
 .nudge__footer {
     font-size: $font-size-tiny;
-    display:flex;
     margin-top: 15px;
 }
 
 .nudge__description {
     margin-right: 2px;
+    display:flex;
 }
 
 .nudge__sprint {

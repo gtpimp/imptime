@@ -17,5 +17,5 @@ class NudgeSerializer(BaseModelSerializer):
     class Meta:
         model = Nudge 
         fields = ('id', 'user_id', 'sprint_id', 'issue_id',
-                  'description',
-                  'reason', 'nudginess_percent', 'project_id', 'modified')
+                  'description', 'due_date', 'due_date_reason',
+                  'reason', 'project_id', 'modified')

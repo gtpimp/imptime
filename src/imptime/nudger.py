@@ -7,8 +7,6 @@ from timepiece.models import Project as Sprint
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import Issue, BusinessPermissions
 
-MAGIC_CONSTANT=50
-
 class Nudger(object):
 
     # def update_nudges_for_user(self, user):
@@ -55,13 +53,14 @@ class Nudger(object):
                                           .annotate(num_issues=Count("project_id"))
 
         for to_nudge in sprints_requiring_nudging:
-            nudge = Nudge.objects.get_or_create(user=user, sprint_id=to_nudge['project_id'],
-                                                defaults={'nudginess_percent':0})[0]
+            nudge = Nudge.objects.get_or_create(user=user, sprint_id=to_nudge['project_id'])[0]
             nudge.reason = "assigned_issues_%s" % sprints.get(pk=to_nudge['project_id']).status3.name
             nudge.description = "%s open issues assigned to you" % to_nudge['num_issues']
             nudge.issue_id = issues.filter(project_id=to_nudge['project_id'])\
                                    .order_by_project_id(to_nudge['project_id']).values('pk')[0]['pk']
-            nudge.nudginess_percent = to_nudge['num_issues']*100/MAGIC_CONSTANT #meaningless calculation
+            nudge.due_date = issues.filter(project_id=to_nudge['project_id'])\
+                                   .order_by("modified").values('modified')[0]['modified']
+            nudge.due_date_reason = "oldest issue was modified"
             nudge.save()
 
     def _nudge_for_pending_reviews(self, sprint_qs, user):
@@ -88,15 +87,18 @@ class Nudger(object):
             if issue_to_review is not None:
                 nudge = Nudge.objects.get_or_create(user=user,
                                                     sprint_id=sprint_review.project_id,
-                                                    reason='pending_reviews_%s' % sprint_review.project.project_type,
-                                                    defaults={'nudginess_percent':0})[0]
+                                                    reason='reviews_%s' % sprint_review.project.project_type)[0]
 
                 if sprint_review.project.project_type == "inbox":
                     nudge.description = "%s issues to process" % issues_to_review.count()
+                    nudge.due_date = issues_to_review.order_by("created").values("created")[0]['created']
+                    nudge.due_date_reason = "oldest issue was created"
                 else:
                     nudge.description = "%s reviews to do" % issues_to_review.count()
+                    nudge.due_date = issues_to_review.order_by("reviews__last_reviewed_at").values("reviews__last_reviewed_at")[0]['reviews__last_reviewed_at']
+                    nudge.due_date_reason = "oldest issue was reviewed"
                 nudge.issue_id = issue_to_review.id
-                nudge.nudginess_percent = issues_to_review.count()*100/MAGIC_CONSTANT #meaningless calculation
+                
                 nudge.save()
 
     # def _nudge_for_deadlines(self):

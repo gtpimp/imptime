@@ -49,7 +49,7 @@ ReactDOM.render(
       <Router history={history}>
         <Route component={MainLayout}>
           <IndexRoute component={ProjectsPage}/>
-          <Route path="/" component={ProjectsPage}/>
+          <Route path="/" component={NudgePage}/>
           <Route path="/nudge" component={NudgePage}/>
           <Route path="/password/change" component={ChangePasswordPage}/>
           <Route path="/password/forgot" component={ForgotPasswordPage}/>
