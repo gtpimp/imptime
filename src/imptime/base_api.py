@@ -74,6 +74,14 @@ class BaseViewSet(viewsets.ViewSet):
         qs = qs.filter(**filter_args)
         return qs
 
+    def apply_ordering(self, qs, ordering):
+        if not ordering:
+            return qs
+
+        ordering_args = [ "-%s"%field if direction=='asc' else "%s"%field for field, direction in ordering.items() ]
+        qs = qs.order_by(*ordering_args)
+        return qs
+    
     def apply_pagination(self, qs, pagination):
 
         if not pagination.get('enabled', True):
