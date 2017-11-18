@@ -65,6 +65,10 @@ class NudgeList extends Component {
 
         const reason_class_name = "nudge__reason--" + nudge.reason
 
+        if ( ! nudge.id ) {
+            return null
+        }
+        
         return (
             <div className="nudge" onClick={this.onClickNudge}>
               <div className="nudge__title">
@@ -114,7 +118,7 @@ class NudgeList extends Component {
 
 function mapStateToProps(state, props) {
     const { nudge_id } = props
-    const nudge = getNudge(state, nudge_id)
+    const nudge = getNudge(state, nudge_id) || {}
 
     return {
         nudge,

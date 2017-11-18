@@ -56,7 +56,7 @@ class NudgeList extends Component {
         const { nudge_ids, is_loading } = this.props
         const that = this
 
-        if ( is_loading ) {
+        if ( is_loading && !nudge_ids && nudge_ids.length == 0 ) {
             return (
                 <div>Loading...</div>
             )
@@ -68,7 +68,8 @@ class NudgeList extends Component {
               { !nudge_ids || nudge_ids.length == 0 &&
                 (
                     <div className="nudge-list__empty">
-                      No nudges. Go in peace.
+                      { ! is_loading && "No nudges. Go in peace." }
+                      { is_loading && "Loading..." }
                     </div>
                 )
               }
