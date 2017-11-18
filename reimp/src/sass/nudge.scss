@@ -9,6 +9,10 @@
     cursor: pointer;
 }
 
+.nudge__title {
+    padding: 3px;
+}
+
 .nudge__content {
     padding-left: 20px;
     padding-right: 20px;
@@ -23,7 +27,7 @@
 }
 
 .nudge__reason {
-    font: $bold-large;
+    font: $bold-extra-large;
     padding: 2px;
 }
 

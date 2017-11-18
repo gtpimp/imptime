@@ -44,8 +44,8 @@ class NudgeViewSet(BaseViewSet):
                     'payload': context,
                     'nested_objects': {
                         'project_ids': [x.sprint.business_id for x in nudges],
-                        'sprint_ids': [x.sprint_id for x in nudges],
-                        'issue_ids': [x.issue_id for x in nudges]
+                        'sprint_ids': [x.sprint_id for x in nudges if x.sprint_id is not None],
+                        'issue_ids': [x.issue_id for x in nudges if x.issue_id is not None]
                     }
             }
             

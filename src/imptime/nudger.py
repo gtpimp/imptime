@@ -57,7 +57,7 @@ class Nudger(object):
         for to_nudge in sprints_requiring_nudging:
             nudge = Nudge.objects.get_or_create(user=user, sprint_id=to_nudge['project_id'],
                                                 defaults={'nudginess_percent':0})[0]
-            nudge.reason = "assigned_issues"
+            nudge.reason = "assigned_issues_%s" % sprints.get(pk=to_nudge['project_id']).status3.name
             nudge.description = "%s open issues assigned to you" % to_nudge['num_issues']
             nudge.issue_id = issues.filter(project_id=to_nudge['project_id'])\
                                    .order_by_project_id(to_nudge['project_id']).values('pk')[0]['pk']
@@ -88,11 +88,10 @@ class Nudger(object):
             if issue_to_review is not None:
                 nudge = Nudge.objects.get_or_create(user=user,
                                                     sprint_id=sprint_review.project_id,
-                                                    reason='pending_reviews',
+                                                    reason='pending_reviews_%s' % sprint_review.project.project_type,
                                                     defaults={'nudginess_percent':0})[0]
 
                 if sprint_review.project.project_type == "inbox":
-                    nudge.reason = "inbox"
                     nudge.description = "%s issues to process" % issues_to_review.count()
                 else:
                     nudge.description = "%s reviews to do" % issues_to_review.count()
