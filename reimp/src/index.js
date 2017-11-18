@@ -62,6 +62,8 @@ ReactDOM.render(
           <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
           <Route path="projects/:projectId/sprints" component={SprintsPage}/>
           <Route path="projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
+          <Route path="projects/:projectId/gallery/" component={VisualSpecDocumentPage}/>
+          <Route path="projects/:projectId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
           <Route path="projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>

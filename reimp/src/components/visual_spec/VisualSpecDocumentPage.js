@@ -5,7 +5,6 @@ import { map, includes, compact } from 'lodash'
 import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
-import PreCacheImg from 'react-precache-img'
 import IssueList from '../../components/IssueList'
 import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument, getVisualSpecDocuments
@@ -59,10 +58,14 @@ class VisualSpecDocumentPage extends Component {
                 project, project_id, sprint, sprint_id, issue, issue_id, visual_spec_document_ids,
                 issue_ids_for_active_visual_spec_document } = props
 
-        dispatch(update_list_filter(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, {parent_group_id: issue_id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
-        dispatch(ensureSprintsLoaded([sprint_id]))
-        dispatch(ensureIssuesLoaded([issue_id]))
+        if ( sprint_id ) {
+            dispatch(ensureSprintsLoaded([sprint_id]))
+        }
+        if ( issue_id ) {
+            dispatch(ensureIssuesLoaded([issue_id]))
+            dispatch(update_list_filter(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, {parent_group_id: issue_id || -1}))
+        }
         dispatch(ensureVisualSpecDocumentsLoaded([active_visual_spec_document_id]))
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
         if ( project && project.id && sprint && sprint.id && issue && issue.id ) {
@@ -83,6 +86,15 @@ class VisualSpecDocumentPage extends Component {
                                    [active_visual_spec_document.issue_id]))
             dispatch(setItemFlag(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue_id], 'expanded_issues', true))
             dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, issue_ids_for_active_visual_spec_document))
+            
+        } else if ( project && project.id ) {
+            dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
+                                     {to: '/projects/' + project.id, label: project.name},
+                                     {to: '/projects/'+project.id+'/gallery/'+active_visual_spec_document_id,
+                                      label: active_visual_spec_document.name}]))
+
+            dispatch(select_projects(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
+                                     [active_visual_spec_document.project_id]))
         }
     }
 
@@ -109,8 +121,6 @@ class VisualSpecDocumentPage extends Component {
         
         return (
             <div>
-              <PreCacheImg images={visual_spec_documents_editor_urls} />
-
               <div className="visual_spec_document_page__gallery">
                 { issue.id &&
                   <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
@@ -148,7 +158,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id)
     const issue = getIssue(state, issue_id) || {}
     const is_loaded = project && project.id && sprint && sprint.id && issue && issue.id
-    const visual_spec_document_ids = issue.visual_spec_document_ids || []
+    const visual_spec_document_ids = (issue && issue.visual_spec_document_ids) || (project && project.visual_spec_document_ids) || []
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
     const visual_spec_documents_editor_urls = map(visual_spec_documents, (vsd) => { return vsd.lores_url })
     const issue_header_list = ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE

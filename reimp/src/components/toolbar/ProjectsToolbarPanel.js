@@ -22,6 +22,7 @@ class ProjectsToolbarPanel extends Component {
         this.onDashboardClick = this.onDashboardClick.bind(this)
         this.onSprintsClick = this.onSprintsClick.bind(this)
         this.onRoadmapClick = this.onRoadmapClick.bind(this)
+        this.onGalleryClick = this.onGalleryClick.bind(this)
     }
 
     componentDidMount() {
@@ -52,6 +53,11 @@ class ProjectsToolbarPanel extends Component {
         browserHistory.push('/projects/' + project_id + '/roadmap/');
     }
 
+    onGalleryClick() {
+        const {project_id} = this.props
+        browserHistory.push('/projects/' + project_id + '/gallery/');
+    }
+
     onSprintsClick() {
         const {project_id} = this.props
         browserHistory.push('/projects/' + project_id + '/sprints');
@@ -78,6 +84,11 @@ class ProjectsToolbarPanel extends Component {
               { project_id && 
                 <div className="button button--large button--primary" onClick={this.onRoadmapClick}>
                   Roadmap
+                </div>
+              }
+              { project_id &&
+                <div className="button button--large button--primary" onClick={this.onGalleryClick}>
+                  Gallery
                 </div>
               }
               
