@@ -55,28 +55,28 @@ class VisualSpecDocumentGallery extends Component {
         return (
             <div className="visual_spec_document_gallery">
               {map(image_set, function(image, index) {
-              return (
-              <div key={image.visual_spec_document.id}>
-                <VisualSpecDocumentGalleryImage visual_spec_document_id={image.visual_spec_document.id}
-                                                onReorder={that.reorderDocuments}
-                                                is_active={active_visual_spec_document_id===image.visual_spec_document.id}
-                                                onSelected={(event) => that.selectDocument(event, image.visual_spec_document)} />
-                { allow_edit &&
-                  <EditableIssueVisualSpecDocument issue_id={issue_id}
-                                                   project_id={project_id}
-                                                   onDeleteDocument={onDeleteDocument}
-                                                   visual_spec_document_id={image.visual_spec_document.id} />
-                }
-              </div>
-              )
-              })}
+                   return (
+                       <div key={image.visual_spec_document.id} className="visual_spec_document_gallery__card">
+                         <VisualSpecDocumentGalleryImage visual_spec_document_id={image.visual_spec_document.id}
+                                                         onReorder={that.reorderDocuments}
+                                                         is_active={active_visual_spec_document_id===image.visual_spec_document.id}
+                                                         onSelected={(event) => that.selectDocument(event, image.visual_spec_document)} />
+                         { allow_edit &&
+                           <EditableIssueVisualSpecDocument issue_id={issue_id}
+                                                            project_id={project_id}
+                                                            onDeleteDocument={onDeleteDocument}
+                                                            visual_spec_document_id={image.visual_spec_document.id} />
+                         }
+                       </div>
+                   )
+               })}
               { allow_edit && 
-              <VisualSpecDocumentForm issue_id={issue_id}
-                                      project_id={project_id}
-                                      onChange={()=>{}}
-              />
+                <VisualSpecDocumentForm issue_id={issue_id}
+                                        project_id={project_id}
+                                        onChange={()=>{}}
+                />
               }
-            </div>
+              </div>
         )
     }
 }

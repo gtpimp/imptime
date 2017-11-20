@@ -42,15 +42,16 @@ class EditableIssueVisualSpecDocument extends Component {
 
             <EditableProperty property_key={'issue_visual_spec_document_'+visual_spec_document_id}
                               initial_value={visual_spec_document}
+                              class_name="issue_visual_spec_document__editable_property"
                               can_edit={true}
                               onChange={this.onChange}
             >
-              <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id}
-                                      visual_spec_document={visual_spec_document}
-                                      onDelete={this.onDelete}
-                                      onOpen={this.onOpen} />
-              <div>
-                Edit
+            <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id}
+            visual_spec_document={visual_spec_document}
+            onDelete={this.onDelete}
+            onOpen={this.onOpen} />
+            <div>
+            <div className="icon--edit"/>
               </div>
               <Blank />
             </EditableProperty>

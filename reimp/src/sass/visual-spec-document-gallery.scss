@@ -9,6 +9,13 @@
     display: flex;
 }
 
+
+.visual_spec_document_gallery__image:hover {
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.30);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.30);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.30);
+}
+
 .visual_spec_document_gallery__image {
     width: 130px;
     height: 130px;
@@ -25,7 +32,7 @@
     -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
 }
- 
+
 .visual_spec_document_gallery__image--dnd-target {
     margin-right: 150px;
 }
