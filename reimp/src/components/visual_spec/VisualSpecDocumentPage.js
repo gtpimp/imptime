@@ -53,6 +53,7 @@ class VisualSpecDocumentPage extends Component {
         if ( new_props.active_visual_spec_document_id != this.props.active_visual_spec_document_id ||
              new_props.active_visual_spec_document.loaded != this.props.active_visual_spec_document.loaded ||
              new_props.is_loaded != this.props.is_loaded ||
+             new_props.project.id != this.props.project.id ||
              new_props.issue_is_invalidated != this.props.issue_is_invalidated ) {
             this.refresh(new_props)
         }
@@ -106,8 +107,8 @@ class VisualSpecDocumentPage extends Component {
         } else if ( project && project.id ) {
             dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
                                      {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/'+project.id+'/gallery/'+active_visual_spec_document_id,
-                                      label: active_visual_spec_document.name}]))
+                                     {to: '/projects/'+project.id+'/gallery/', label: "Gallery"},
+                                     {to: '/projects/'+project.id+'/gallery/'+active_visual_spec_document_id, label: active_visual_spec_document.name}]))
 
             dispatch(select_projects(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
                                      [active_visual_spec_document.project_id]))
@@ -188,7 +189,7 @@ function mapStateToProps(state, props) {
         active_visual_spec_document,
         visual_spec_documents,
         visual_spec_documents_editor_urls,
-        project,
+        project: project || {},
         project_id,
         sprint,
         sprint_id,
