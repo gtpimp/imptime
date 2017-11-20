@@ -2,7 +2,7 @@ import logging
 from visual_spec_issue_serializer import VisualSpecIssueSerializer
 from django_downloadview import HTTPDownloadView
 from django.contrib.auth.decorators import login_required
-from visual_spec_issue_serializer import VisualSpecIssueSerializer
+from visual_spec_issue_serializer import VisualSpecIssueAnnotationSerializer
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User

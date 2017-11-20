@@ -164,13 +164,17 @@ class VisualSpecDocumentPage extends Component {
         const selected_issue_id = selected_issue_ids[0]
         if ( ! includes(issue_ids_for_active_visual_spec_document, selected_issue_id) ) {
             const vsd_id = compact(map(visual_spec_documents, (vsd) => { return includes(vsd.issue_ids, selected_issue_id) && vsd.id }))[0]
-            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + vsd_id);
+            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + vsd_id)
         }
     }
 
     onSelectDocument(visual_spec_document_id) {
         const {project_id, sprint_id, issue_id} = this.props
-        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document_id);
+        if ( issue_id ) {
+            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document_id)
+        } else {
+            browserHistory.push('/visualSpec/' + visual_spec_document_id)
+        }
     }
 
     renderSelectForIssue() {
