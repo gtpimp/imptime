@@ -122,13 +122,13 @@ class VisualSpecDocumentPage extends Component {
         return (
             <div>
               <div className="visual_spec_document_page__gallery">
-                { issue.id &&
-                  <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+                { visual_spec_document_ids &&
+                  <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids}
                                              active_visual_spec_document_id={active_visual_spec_document_id} />
                 }
-                  { ! issue.id &&
-                    <div>Loading...</div>
-                  }
+                { ! visual_spec_document_ids &&
+                  <div>Loading...</div>
+                }
               </div>
               <div className="visual_spec_document_page__content">
                 <div className="visual_spec_document_page__issue_list">
