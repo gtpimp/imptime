@@ -84,11 +84,17 @@ class VisualSpecDocumentPage extends Component {
 
     unassociateDocumentWithIssue(visual_spec_document_id) {
         const { dispatch, issue_id } = this.props
+        if ( ! confirm( "Remove this document from this issue? (It will still appear in the project gallery)") ) {
+            return
+        }
         dispatch(unassociateVisualSpecDocumentWithIssue(visual_spec_document_id, issue_id))
     }
 
     unassociateDocumentWithProject(visual_spec_document_id) {
         const { dispatch, project_id } = this.props
+        if ( ! confirm( "Permanently remove this document from this project?") ) {
+            return
+        }
         dispatch(unassociateVisualSpecDocumentWithProject(visual_spec_document_id, project_id))
     }
 
