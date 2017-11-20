@@ -133,7 +133,7 @@ class SprintsToolbarPanel extends Component {
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onBulkCreateIssuesClick}>
                 + Bulk Issues
               </div>
-              { sprint &&
+              { sprint && sprint.id &&
                 <div>
                   <div className="button button--large button--primary" onClick={this.onDashboardClick}>
                     Dashboard
