@@ -42,7 +42,7 @@ class IssueSerializer(BaseSerializer):
     testables = TestableSerializer(many=True, source="testables_in_order")
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
-    visual_spec_annotation_ids_by_doc_id = ListField(VisualSpecIssueAnnotationSerializer)
+    visual_spec_annotation_ids_by_doc_id = serializers.DictField(child=ListField(child=serializers.IntegerField()))
     created_at = serializers.DateTimeField(source='created')
     created_by_id = serializers.CharField()
     modified_at = serializers.DateTimeField(source='modified')
