@@ -5,7 +5,6 @@ import {DndTypes} from '../../actions/Dnd'
 import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
-import { getVisualSpecIssue } from '../../actions/VisualSpecIssues'
 import { getIssue } from '../../actions/Issues'
 import EditableIssueTitle from '../EditableIssueTitle'
 import EditableIssueDescription from '../EditableIssueDescription'

@@ -11,7 +11,7 @@ import { invalidateUsers } from '../actions/Users'
 import { invalidatePups } from '../actions/ProjectUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
 import { invalidateVisualSpecDocuments, invalidateAllVisualSpecDocuments } from '../actions/VisualSpecDocuments'
-import { invalidateVisualSpecIssues } from '../actions/VisualSpecIssues'
+import { invalidateVisualSpecIssueAnnotations } from '../actions/VisualSpecIssueAnnotations'
 import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { invalidateSprintReviews } from '../actions/SprintReviews'
 import { invalidateProjectDashboards } from '../actions/ProjectDashboards'
@@ -71,8 +71,8 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'visualspecdocument' ) {
         dispatch(invalidateVisualSpecDocuments([d.entity_ref]))
 
-    } else if ( d.entity_name === 'visualspecissue' ) {
-        dispatch(invalidateVisualSpecIssues([d.entity_ref]))
+    } else if ( d.entity_name === 'visualspecissueannotation' ) {
+        dispatch(invalidateVisualSpecIssueAnnotations([d.entity_ref]))
     } else if ( d.entity_name === 'issuereview' ) {
         dispatch(invalidateIssueReviews([d.entity_ref]))
     } else if ( d.entity_name === 'projectdeadline' ) {

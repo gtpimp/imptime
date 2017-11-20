@@ -240,10 +240,11 @@ class VisualSpecDocumentPage extends Component {
                     <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
                                issue_header_list={issue_header_list}
                                onSelectIssues={this.onSelectIssues}
-                    />
+                    /> 
                   </div>
                   <div>
-                    <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id} />
+                    <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id}
+                                              issue_id={issue_id} />
                     { this.renderSelectForIssue() }
                   </div>
                 </div>
