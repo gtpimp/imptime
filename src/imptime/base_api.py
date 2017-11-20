@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.db.models import Q
 import math
 from django.http import HttpResponse
 from rest_framework.renderers import JSONRenderer
@@ -161,7 +162,8 @@ class BaseViewSet(viewsets.ViewSet):
         return self.allowed_users().get(pk=pk)
 
     def allowed_visual_spec_documents(self):
-        return VisualSpecDocument.objects.filter(visual_spec_projects__project__in=self.allowed_projects())
+        return VisualSpecDocument.objects.filter(Q(visual_spec_projects__project__in=self.allowed_projects())|
+                                                 Q(visual_spec_issues__issue__in=self.allowed_issues()))
 
     def allowed_visual_spec_issues(self):
         return VisualSpecIssue.objects.filter(issue__in=self.allowed_issues())

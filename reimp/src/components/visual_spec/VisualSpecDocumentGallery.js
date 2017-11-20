@@ -4,9 +4,7 @@ import map from 'lodash/map'
 import classNames from 'classnames'
 import {browserHistory} from 'react-router'
 import { getVisualSpecDocuments,
-         ensureVisualSpecDocumentsLoaded,
-         invalidateVisualSpecDocuments,
-         reorderVisualSpecDocument
+         ensureVisualSpecDocumentsLoaded
 } from '../../actions/VisualSpecDocuments'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import '../../sass/visual-spec-document-gallery.scss'
@@ -33,11 +31,8 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
-        const {dispatch, visual_spec_document_ids} = this.props
-        dispatch(reorderVisualSpecDocument(visual_spec_document_ids, moving_visual_spec_document_id, move_after_visual_spec_document_id,
-                              function () {
-                                  dispatch(invalidateVisualSpecDocuments(visual_spec_document_ids))
-                              }))
+        const {dispatch, reorderDocuments} = this.props
+        reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id)
     }
 
     selectDocument(event, visual_spec_document) {
@@ -66,7 +61,7 @@ class VisualSpecDocumentGallery extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { visual_spec_document_ids, active_visual_spec_document_id } = props
+    const { visual_spec_document_ids, active_visual_spec_document_id, reorderDocuments } = props
 
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
     const image_set = map(visual_spec_documents, function(vsd) {
@@ -81,7 +76,8 @@ function mapStateToProps(state, props) {
     return {
         image_set,
         active_visual_spec_document_id,
-        visual_spec_document_ids
+        visual_spec_document_ids,
+        reorderDocuments
     }
 }
 

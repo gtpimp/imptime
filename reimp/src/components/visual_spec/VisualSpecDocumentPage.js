@@ -7,7 +7,12 @@ import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
 import IssueList from '../../components/IssueList'
 import {
-    ensureVisualSpecDocumentsLoaded, getVisualSpecDocument, getVisualSpecDocuments
+    ensureVisualSpecDocumentsLoaded,
+    getVisualSpecDocument,
+    getVisualSpecDocuments,
+    invalidateVisualSpecDocuments,
+    reorderVisualSpecDocument
+    
 } from '../../actions/VisualSpecDocuments'
 import {
     update_list_filter, setItemFlag, selectItems, update_list_format
@@ -34,6 +39,7 @@ class VisualSpecDocumentPage extends Component {
     constructor(props) {
         super(props)
         this.onSelectIssues = this.onSelectIssues.bind(this)
+        this.reorderDocuments = this.reorderDocuments.bind(this)
     }
     
     componentDidMount() {
@@ -50,6 +56,16 @@ class VisualSpecDocumentPage extends Component {
              new_props.issue_is_invalidated != this.props.issue_is_invalidated ) {
             this.refresh(new_props)
         }
+    }
+
+    reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
+        const {dispatch, visual_spec_document_ids, issue_id, project_id} = this.props
+        const on_done = function () {
+            dispatch(invalidateVisualSpecDocuments(visual_spec_document_ids))
+        }
+        const extra_post_data = { project_id: project_id, issue_id: issue_id }
+        dispatch(reorderVisualSpecDocument(visual_spec_document_ids, moving_visual_spec_document_id,
+                                           move_after_visual_spec_document_id, on_done, extra_post_data))
     }
 
     refresh(these_props) {
@@ -124,7 +140,8 @@ class VisualSpecDocumentPage extends Component {
               <div className="visual_spec_document_page__gallery">
                 { visual_spec_document_ids &&
                   <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids}
-                                             active_visual_spec_document_id={active_visual_spec_document_id} />
+                                             active_visual_spec_document_id={active_visual_spec_document_id}
+                                             reorderDocuments={this.reorderDocuments}/>
                 }
                 { ! visual_spec_document_ids &&
                   <div>Loading...</div>
@@ -133,10 +150,10 @@ class VisualSpecDocumentPage extends Component {
               <div className="visual_spec_document_page__content">
                 <div className="visual_spec_document_page__issue_list">
                   { issue.id && 
-                    <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
-                               issue_header_list={issue_header_list}
-                               onSelectIssues={this.onSelectIssues}
-                    />
+                  <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
+                             issue_header_list={issue_header_list}
+                             onSelectIssues={this.onSelectIssues}
+                  />
                   }
                 </div>
                 <div>

@@ -52,7 +52,8 @@ export function getVisualSpecDocuments(state, visual_spec_document_ids) {
     return getItems(state, ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_ids)
 }
 
-export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visual_spec_document_id, visual_spec_document_id_after, on_done) {
+export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visual_spec_document_id,
+                                          visual_spec_document_id_after, on_done, extra_post_data) {
     return (dispatch, getState) => {
         const state = getState()
         const item_id_to_move = moving_visual_spec_document_id
@@ -72,6 +73,7 @@ export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visua
             dispatch(setIssueStoreValue([vsd.issue_id], 'visual_spec_document_ids', reordered_item_ids))
         }
         dispatch(updateItem(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [moving_visual_spec_document_id],
-                            "visual_spec_document_id_after", visual_spec_document_id_after, on_done))
+                            "visual_spec_document_id_after", visual_spec_document_id_after, on_done,
+                            extra_post_data))
     }
 }

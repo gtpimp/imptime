@@ -61,29 +61,27 @@ class VisualSpecProject(BaseModel):
             order += self.INCREMENT
 
     @classmethod
-    def insert_after(self, visual_spec_document, set_after_this_visual_spec_document):
-        if visual_spec_document.project_id != set_after_this_visual_spec_document.project_id:
-            raise Exception("Cannot reorder, must be in the same project")
-        self.renumber(visual_spec_document.project_id)
-        vsp_target = self.objects.get_or_create(project_id=set_after_this_visual_spec_document.project_id,
+    def insert_after(self, project_id, visual_spec_document, set_after_this_visual_spec_document):
+        self.renumber(project_id)
+        vsp_target = self.objects.get_or_create(project_id=project_id,
                                                 visual_spec_document_id=set_after_this_visual_spec_document.id,
                                                 defaults={'order':self.MAX_ORDER})[0]
         new_order = vsp_target.order+1
-        vsp, is_new = self.objects.get_or_create(project_id=visual_spec_document.project_id,
+        vsp, is_new = self.objects.get_or_create(project_id=project_id,
                                                  visual_spec_document_id=visual_spec_document.id,
                                                  defaults={'order':new_order})
         if not is_new:
             vsp.order = new_order
             vsp.save()
-        self.renumber(visual_spec_document.project_id)
+        self.renumber(project_id)
         
     @classmethod
-    def insert_at_the_end(self, visual_spec_document):
-        new_order = self.get_next_order(visual_spec_document.project_id)
-        self.objects.get_or_create(project_id=visual_spec_document.project_id,
-                                    visual_spec_document=visual_spec_document,
+    def insert_at_the_end(self, project_id, visual_spec_document):
+        new_order = self.get_next_order(project_id)
+        self.objects.get_or_create(project_id=project_id,
+                                   visual_spec_document=visual_spec_document,
                                    defaults={'order':new_order})
-        self.renumber(visual_spec_document.project_id)
+        self.renumber(project_id)
 
     @classmethod
     def get_next_order(self, project_id):
@@ -123,29 +121,27 @@ class VisualSpecIssue(BaseModel):
             order += self.INCREMENT
 
     @classmethod
-    def insert_after(self, visual_spec_document, set_after_this_visual_spec_document):
-        if visual_spec_document.issue_id != set_after_this_visual_spec_document.issue_id:
-            raise Exception("Cannot reorder, must be in the same issue")
+    def insert_after(self, issue_id, visual_spec_document, set_after_this_visual_spec_document):
         self.renumber(visual_spec_document.issue_id)
-        vsi_target = self.objects.get_or_create(issue_id=set_after_this_visual_spec_document.issue_id,
+        vsi_target = self.objects.get_or_create(issue_id=issue_id,
                                                 visual_spec_document_id=set_after_this_visual_spec_document.id,
                                                 defaults={'order':self.MAX_ORDER})[0]
         new_order = vsi_target.order+1
-        vsi, is_new = self.objects.get_or_create(issue_id=visual_spec_document.issue_id,
+        vsi, is_new = self.objects.get_or_create(issue_id=issue_id,
                                                  visual_spec_document_id=visual_spec_document.id,
                                                  defaults={'order':new_order})
         if not is_new:
             vsi.order = new_order
             vsi.save()
-        self.renumber(visual_spec_document.issue_id)
+        self.renumber(issue_id)
         
     @classmethod
-    def insert_at_the_end(self, visual_spec_issue):
-        new_order = self.get_next_order(visual_spec_issue.issue_id)
-        self.objects.get_or_create(issue_id=visual_spec_issue.issue_id,
-                                    visual_spec_issue=visual_spec_issue,
+    def insert_at_the_end(self, issue_id, visual_spec_issue):
+        new_order = self.get_next_order(issue_id)
+        self.objects.get_or_create(issue_id=issue_id,
+                                   visual_spec_issue=visual_spec_issue,
                                    defaults={'order':new_order})
-        self.renumber(visual_spec_issue.issue_id)
+        self.renumber(issue_id)
 
     @classmethod
     def get_next_order(self, issue_id):

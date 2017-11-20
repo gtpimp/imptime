@@ -8,8 +8,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from django.db.models import Prefetch
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q, Prefetch
 from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
@@ -94,30 +93,35 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             
         return HttpResponse(JSONRenderer().render(data))
 
-    # def update(self, request, pk):
-    #     try:
-    #         params = request.data
-    #         field_name = params['field_name']
-    #         new_value = params['value']
+    def update(self, request, pk):
+        try:
+            params = request.data
+            field_name = params['field_name']
+            new_value = params['value']
+            project_id = params.get('project_id')
+            issue_id = params.get('issue_id', None)
 
-    #         visual_spec_document_ids = params.pop('issue_ids', [pk])
+            visual_spec_document_ids = params.pop('visual_spec_document_ids', [pk])
 
-    #         for vsd_id in visual_spec_document_ids:
-    #             vsd = self.allowed_visual_spec_documents().get(pk=vsd_id) 
+            for vsd_id in visual_spec_document_ids:
+                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id) 
 
-    #             if field_name == 'visual_spec_document_id_after':
-    #                 after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
-    #                 vsd.move_after(after_vsd)
-    #             else:
-    #                 raise Exception("Unsupported field name: %s" % field_name)
+                if field_name == 'visual_spec_document_id_after':
+                    after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
+                    if issue_id is not None:
+                        VisualSpecIssue.insert_after(issue_id, vsd, after_vsd)
+                    else:
+                        VisualSpecProject.insert_after(project_id, vsd, after_vsd)
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
 
-    #         data = {'status': 'success', 'payload': visual_spec_document_ids}
+            data = {'status': 'success', 'payload': visual_spec_document_ids}
 
-    #     except Exception, ex:
-    #         logger.exception(ex)
-    #         return self.error_response(ex)
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
 
-    #     return HttpResponse(JSONRenderer().render(data))
+        return HttpResponse(JSONRenderer().render(data))
     
     def delete(self, request, pk):
         try:

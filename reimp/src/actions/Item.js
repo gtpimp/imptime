@@ -176,13 +176,14 @@ function announceItemDeleteFailed(entity_key, item_id, error) {
     }
 }
 
-export function updateItem(entity_key, item_ids, field_name, new_value, on_done) {
+export function updateItem(entity_key, item_ids, field_name, new_value, on_done, extra_post_data) {
     return (dispatch, getState) => {
         const state = getState()
 	dispatch(announceItemsSaving(entity_key, item_ids, field_name, new_value))
-	let data = {item_ids: item_ids,
-                    field_name: field_name,
-		    value: new_value }
+	let data = Object.assign({},{item_ids: item_ids,
+                                     field_name: field_name,
+		                     value: new_value},
+                                 extra_post_data || {})
 	return impfetch(state, "imp/"+entity_key +"/"+item_ids[0]+"/", dispatch,
 			{method: "PUT",
 			 credentials: 'same-origin',
