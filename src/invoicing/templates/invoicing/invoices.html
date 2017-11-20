@@ -16,7 +16,7 @@
 <input class="btn btn-primary" type="submit" value="Apply Filter"/>
 <br/><br/>
 
-(Showing 30 invoices out of {{invoices|length}})
+(Showing 100 invoices out of {{invoices|length}})
 
 <table class="table table-striped">
   <thead>
@@ -85,7 +85,7 @@
   </thead>
 
   <tbody>
-    {% for invoice in invoices|slice:"0:30" %}
+    {% for invoice in invoices|slice:"0:100" %}
     <tr class="clickable" onclick="window.location='{% url 'invoicing:edit_invoice' invoice.id %}'; return false;">
       <td>
         {% if bp.has_edit_invoices %}
