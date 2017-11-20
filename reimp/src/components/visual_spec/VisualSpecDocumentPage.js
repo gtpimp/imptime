@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
+import Modal from 'react-modal';
 import { map, includes, compact } from 'lodash'
 import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
@@ -11,8 +12,9 @@ import {
     getVisualSpecDocument,
     getVisualSpecDocuments,
     invalidateVisualSpecDocuments,
-    reorderVisualSpecDocument
-    
+    reorderVisualSpecDocument,
+    associateVisualSpecDocumentWithIssue,
+    unassociateVisualSpecDocumentWithIssue
 } from '../../actions/VisualSpecDocuments'
 import {
     update_list_filter, setItemFlag, selectItems, update_list_format
@@ -40,6 +42,10 @@ class VisualSpecDocumentPage extends Component {
         super(props)
         this.onSelectIssues = this.onSelectIssues.bind(this)
         this.reorderDocuments = this.reorderDocuments.bind(this)
+        this.addFromProjectGallery = this.addFromProjectGallery.bind(this)
+        this.closeAddFromProjectGallery = this.closeAddFromProjectGallery.bind(this)
+        this.associateDocumentWithIssue = this.associateDocumentWithIssue.bind(this)
+        this.state = { selecting_from_gallery: false }
     }
     
     componentDidMount() {
@@ -57,6 +63,20 @@ class VisualSpecDocumentPage extends Component {
              new_props.issue_is_invalidated != this.props.issue_is_invalidated ) {
             this.refresh(new_props)
         }
+    }
+    
+    addFromProjectGallery() {
+        this.setState({selecting_from_gallery: true})
+    }
+
+    closeAddFromProjectGallery() {
+        this.setState({selecting_from_gallery: false})
+    }
+
+    associateDocumentWithIssue(visual_spec_document_id) {
+        const { dispatch, issue_id } = this.props
+        dispatch(associateVisualSpecDocumentWithIssue(visual_spec_document_id, issue_id))
+        this.closeAddFromProjectGallery()
     }
 
     reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
@@ -127,6 +147,38 @@ class VisualSpecDocumentPage extends Component {
             browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + vsd_id);
         }
     }
+
+    renderSelectForIssue() {
+        const { issue_id, visual_spec_document_ids_for_project, project_id } = this.props
+        const { selecting_from_gallery } = this.state
+
+        if ( ! selecting_from_gallery ) {
+            return (
+                <div>
+                  <button className="button button--primary" onClick={this.addFromProjectGallery}>Add from Gallery</button>
+                </div>
+            )
+        }
+
+        if ( selecting_from_gallery ) {
+            return (
+                <Modal isOpen={true}
+                       className="visual_spec_document_page__project_gallery_modal"
+                       overlayClassName="visual_spec_document_page__project_gallery_modal__overlay"
+                       onRequestClose={this.closeAddFromProjectGallery}
+                       contentLabel={"Select from project gallery"}>
+                  <div>
+                    <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids_for_project}
+                                               reorderDocuments={this.reorderDocuments}
+                                               project_id={project_id}
+                                               allow_edit={false}
+                                               onSelect={this.associateDocumentWithIssue} />
+                    <button className="button button--primary" onClick={this.closeAddFromProjectGallery}>Cancel</button>
+                  </div>
+                </Modal>
+            )
+        }
+    }
     
     render() {
 
@@ -153,14 +205,15 @@ class VisualSpecDocumentPage extends Component {
               <div className="visual_spec_document_page__content">
                 <div className="visual_spec_document_page__issue_list">
                   { issue.id && 
-                  <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
-                             issue_header_list={issue_header_list}
-                             onSelectIssues={this.onSelectIssues}
-                  />
+                    <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
+                               issue_header_list={issue_header_list}
+                               onSelectIssues={this.onSelectIssues}
+                    />
                   }
                 </div>
                 <div>
                   <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id} />
+                  { issue_id && this.renderSelectForIssue() }
                 </div>
               </div>
             </div>
@@ -179,6 +232,7 @@ function mapStateToProps(state, props) {
     const issue = getIssue(state, issue_id) || {}
     const is_loaded = project && project.id && sprint && sprint.id && issue && issue.id
     const visual_spec_document_ids = (issue && issue.visual_spec_document_ids) || (project && project.visual_spec_document_ids) || []
+    const visual_spec_document_ids_for_project = (project && project.visual_spec_document_ids) || []
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
     const visual_spec_documents_editor_urls = map(visual_spec_documents, (vsd) => { return vsd.lores_url })
     const issue_header_list = ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
@@ -188,11 +242,13 @@ function mapStateToProps(state, props) {
     return {
         active_visual_spec_document_id,
         visual_spec_document_ids,
+        visual_spec_document_ids_for_project,
         active_visual_spec_document,
         visual_spec_documents,
         visual_spec_documents_editor_urls,
         project: project || {},
         project_id,
+        
         sprint,
         sprint_id,
         issue,

@@ -15,9 +15,6 @@ import '../../sass/visual-spec-document-gallery.scss'
 class VisualSpecDocumentGallery extends Component {
     constructor(props) {
         super(props)
-        this.state = { selecting_from_gallery: false }
-        this.addFromProjectGallery = this.addFromProjectGallery.bind(this)
-        this.cancelAddFromProjectGallery = this.cancelAddFromProjectGallery.bind(this)
         this.selectDocument = this.selectDocument.bind(this)
         this.reorderDocuments  = this.reorderDocuments.bind(this)
     }
@@ -42,39 +39,15 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     selectDocument(event, visual_spec_document) {
-        const { dispatch } = this.props
+        const { dispatch, onSelect } = this.props
         const vsd = visual_spec_document
-        browserHistory.push('/visualSpec/' + vsd.id);
-    }
-
-    addFromProjectGallery() {
-        this.setState({selecting_from_gallery: true})
-    }
-
-    cancelAddFromProjectGallery() {
-        this.setState({selecting_from_gallery: false})
-    }
-
-    renderSelectForIssue() {
-        const { issue_id } = this.props
-        const { selecting_from_gallery } = this.state
-
-        if ( ! selecting_from_gallery ) {
-            <div>
-              <button className="button button--primary" onClick={this.addFromProjectGallery}>Add from Gallery</button>
-            </div>
-        }
-
-        if ( selecting_from_gallery ) {
-            return (
-                <div>
-                  Select me
-                  <button className="button button--primary" onClick={this.cancelAddFromProjectGallery}>Cancel</button>
-                </div>
-            )
+        if ( onSelect ){
+            onSelect(vsd.id)
+        } else {
+            browserHistory.push('/visualSpec/' + vsd.id);
         }
     }
-    
+
     render() {
         const { image_set, active_visual_spec_document_id, connectDragSource, connectDropTarget,
                 issue_id, project_id, allow_edit } = this.props
@@ -102,7 +75,6 @@ class VisualSpecDocumentGallery extends Component {
                                         onChange={()=>{}}
                 />
               }
-              { issue_id && this.renderSelectForIssue() }
             </div>
         )
     }
@@ -111,7 +83,7 @@ class VisualSpecDocumentGallery extends Component {
 function mapStateToProps(state, props) {
 
     const { visual_spec_document_ids, active_visual_spec_document_id, reorderDocuments,
-            issue_id, project_id, allow_edit } = props
+            issue_id, project_id, allow_edit, onSelect } = props
 
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
     const image_set = map(visual_spec_documents, function(vsd) {
@@ -129,7 +101,8 @@ function mapStateToProps(state, props) {
         visual_spec_document_ids,
         reorderDocuments,
         project_id,
-        allow_edit: allow_edit !== false
+        allow_edit: allow_edit !== false,
+        onSelect
     }
 }
 

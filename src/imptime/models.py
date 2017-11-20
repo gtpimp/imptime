@@ -76,10 +76,10 @@ class VisualSpecProject(BaseModel):
         self.renumber(project_id)
         
     @classmethod
-    def insert_at_the_end(self, project_id, visual_spec_document):
+    def insert_at_the_end(self, project_id, visual_spec_document_id):
         new_order = self.get_next_order(project_id)
         self.objects.get_or_create(project_id=project_id,
-                                   visual_spec_document=visual_spec_document,
+                                   visual_spec_document_id=visual_spec_document_id,
                                    defaults={'order':new_order})
         self.renumber(project_id)
 
@@ -122,7 +122,7 @@ class VisualSpecIssue(BaseModel):
 
     @classmethod
     def insert_after(self, issue_id, visual_spec_document, set_after_this_visual_spec_document):
-        self.renumber(visual_spec_document.issue_id)
+        self.renumber(issue_id)
         vsi_target = self.objects.get_or_create(issue_id=issue_id,
                                                 visual_spec_document_id=set_after_this_visual_spec_document.id,
                                                 defaults={'order':self.MAX_ORDER})[0]
@@ -136,10 +136,10 @@ class VisualSpecIssue(BaseModel):
         self.renumber(issue_id)
         
     @classmethod
-    def insert_at_the_end(self, issue_id, visual_spec_issue):
+    def insert_at_the_end(self, issue_id, visual_spec_document_id):
         new_order = self.get_next_order(issue_id)
         self.objects.get_or_create(issue_id=issue_id,
-                                   visual_spec_issue=visual_spec_issue,
+                                   visual_spec_document_id=visual_spec_document_id,
                                    defaults={'order':new_order})
         self.renumber(issue_id)
 

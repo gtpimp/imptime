@@ -111,8 +111,12 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                     after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
                     if issue_id is not None:
                         VisualSpecIssue.insert_after(issue_id, vsd, after_vsd)
+                        issue = self.allowed_issue(issue_id)
+                        issue.save()
                     else:
                         VisualSpecProject.insert_after(project_id, vsd, after_vsd)
+                        project = self.allowed_project(project_id)
+                        project.save()
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
 
@@ -146,3 +150,46 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['POST'])
+    def associateWithIssue(self, request, pk):
+        try:
+            params = request.data
+            visual_spec_document_id = pk
+            issue_id = params['issue_id']
+            visual_spec_document_id = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id).id
+            issue = self.allowed_issues().get(pk=issue_id)
+            issue_id = issue.id
+            VisualSpecIssue.insert_at_the_end(issue_id, visual_spec_document_id)
+            issue.save()
+            data = {'status': 'success', 'payload': [visual_spec_document_id]}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['POST'])
+    def unassociateWithIssue(self, request, pk):
+        try:
+            params = request.data
+            visual_spec_document_id = pk
+            issue_id = params['issue_id']
+            visual_spec_document_id = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id).id
+            issue = self.allowed_issues().get(pk=issue_id)
+            issue_id = issue.id
+            vsi = VisualSpecIssue.objects.filter(issue_id=issue_id, visual_spec_document_id=visual_spec_document_id).first()
+            if vsi is not None:
+                vsi.delete()
+            issue.save()
+            data = {'status': 'success', 'payload': [visual_spec_document_id]}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+    
+
+    

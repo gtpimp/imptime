@@ -6,3 +6,16 @@
 .visual_spec_document_page__content {
     display: flex;
 }
+
+.visual_spec_document_page__project_gallery_modal {
+    @extend .editable-property-modal;
+    bottom: 5%;
+    top: 5%;
+    left: 20%;
+    right: 20%;
+    width: auto;
+}
+
+.visual_spec_document_page__project_gallery_modal__overlay {
+    @extend .editable-property-modal__overlay;
+}

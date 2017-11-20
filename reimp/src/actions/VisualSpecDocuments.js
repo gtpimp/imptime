@@ -8,6 +8,9 @@ import { ENTITY_KEY__VISUAL_SPEC_DOCUMENT } from '../actions/ItemListKeyRegistry
 import {
     invalidateAllItems,
     invalidateItems,
+    announceItemsSaving,
+    announceItemsSaved,
+    announceItemSaveFailed,
     fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
@@ -77,5 +80,63 @@ export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visua
         dispatch(updateItem(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [moving_visual_spec_document_id],
                             "visual_spec_document_id_after", visual_spec_document_id_after, on_done,
                             extra_post_data))
+    }
+}
+
+export function associateVisualSpecDocumentWithIssue(visual_spec_document_id, issue_id) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
+	let data = { visual_spec_document_id: visual_spec_document_id,
+                     issue_id: issue_id }
+	return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/associateWithIssue/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
+	 })
+    }
+}
+
+export function unassociateVisualSpecDocumentWithIssue(visual_spec_document_id, issue_id) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
+	let data = { visual_spec_document_id: visual_spec_document_id,
+                     issue_id: issue_id }
+	return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/unassociateWithIssue/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
+	 })
     }
 }
