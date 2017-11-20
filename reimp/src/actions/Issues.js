@@ -442,34 +442,6 @@ export function deleteIssueAttachment(issue_id, attachment_id) {
     }
 }
 
-export function deleteIssueVisualSpecDocument(issue_id, visual_spec_document_id) {
-    return (dispatch, getState) => {
-        const state = getState()
-	dispatch(announceIssuesSaving([issue_id], 'visual_spec_document', "deleting"))
-        let data = { issue_id: issue_id }
-	return impfetch( state, "imp/visual_spec_document/"+visual_spec_document_id+"/", dispatch,
-			 {method: "DELETE",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceIssueSaveFailed(issue_id, json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceIssuesSaved([issue_id]))
-             }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-	     dispatch(announceIssueSaveFailed(issue_id, error))
-	 })
-    }
-}
-
 export function groupUnsortedIssuesIntoFeature(issue_ids) {
 
     return (dispatch, getState) => {

@@ -14,7 +14,8 @@ import {
     invalidateVisualSpecDocuments,
     reorderVisualSpecDocument,
     associateVisualSpecDocumentWithIssue,
-    unassociateVisualSpecDocumentWithIssue
+    unassociateVisualSpecDocumentWithIssue,
+    unassociateVisualSpecDocumentWithProject
 } from '../../actions/VisualSpecDocuments'
 import {
     update_list_filter, setItemFlag, selectItems, update_list_format
@@ -46,6 +47,7 @@ class VisualSpecDocumentPage extends Component {
         this.closeAddFromProjectGallery = this.closeAddFromProjectGallery.bind(this)
         this.associateDocumentWithIssue = this.associateDocumentWithIssue.bind(this)
         this.unassociateDocumentWithIssue = this.unassociateDocumentWithIssue.bind(this)
+        this.unassociateDocumentWithProject = this.unassociateDocumentWithProject.bind(this)
         this.state = { selecting_from_gallery: false }
     }
     
@@ -83,6 +85,11 @@ class VisualSpecDocumentPage extends Component {
     unassociateDocumentWithIssue(visual_spec_document_id) {
         const { dispatch, issue_id } = this.props
         dispatch(unassociateVisualSpecDocumentWithIssue(visual_spec_document_id, issue_id))
+    }
+
+    unassociateDocumentWithProject(visual_spec_document_id) {
+        const { dispatch, project_id } = this.props
+        dispatch(unassociateVisualSpecDocumentWithProject(visual_spec_document_id, project_id))
     }
 
     reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
@@ -198,24 +205,24 @@ class VisualSpecDocumentPage extends Component {
             <div>
               <div className="visual_spec_document_page__gallery">
                 { visual_spec_document_ids &&
-                <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids}
-                                           active_visual_spec_document_id={active_visual_spec_document_id}
-                                           reorderDocuments={this.reorderDocuments}
-                                           onDeleteDocument={(issue_id && this.unassociateDocumentWithIssue) || null}
-                                           project_id={project_id}
-                                           issue_id={issue_id} />
+                  <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids}
+                                             active_visual_spec_document_id={active_visual_spec_document_id}
+                                             reorderDocuments={this.reorderDocuments}
+                                             onDeleteDocument={(issue_id && this.unassociateDocumentWithIssue) || this.unassociateDocumentWithProject}
+                                             project_id={project_id}
+                                             issue_id={issue_id} />
                 }
-                                           { ! visual_spec_document_ids &&
+                { ! visual_spec_document_ids &&
                   <div>Loading...</div>
-                  }
+                }
               </div>
               <div className="visual_spec_document_page__content">
                 <div className="visual_spec_document_page__issue_list">
                   { issue.id && 
-                  <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
-                             issue_header_list={issue_header_list}
-                             onSelectIssues={this.onSelectIssues}
-                  />
+                    <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
+                               issue_header_list={issue_header_list}
+                               onSelectIssues={this.onSelectIssues}
+                    />
                   }
                 </div>
                 <div>

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import EditableProperty from '../form/EditableProperty'
-import { deleteIssueVisualSpecDocument, getIssue } from '../../actions/Issues'
+import { getIssue } from '../../actions/Issues'
 import VisualSpecDocumentForm from './VisualSpecDocumentForm'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import Blank from '../form/Blank'
@@ -24,11 +24,7 @@ class EditableIssueVisualSpecDocument extends Component {
 
     onDelete() {
         const { dispatch, issue_id, visual_spec_document_id, onDeleteDocument } = this.props
-        if( onDeleteDocument ) {
-            onDeleteDocument(visual_spec_document_id)
-        } else {
-            dispatch(deleteIssueVisualSpecDocument(issue_id, visual_spec_document_id))
-        }
+        onDeleteDocument(visual_spec_document_id)
     }
 
     onOpen() {

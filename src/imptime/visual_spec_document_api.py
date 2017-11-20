@@ -131,18 +131,15 @@ class VisualSpecDocumentViewSet(BaseViewSet):
     def delete(self, request, pk):
         try:
             params = request.data
-            issue_pk = params['issue_id']
-            visual_spec_document_id = pk
-            issue = self.allowed_issue(issue_pk)
-            visual_spec_document = VisualSpecDocument.objects.filter(issue=issue).get(pk=visual_spec_document_id)
-            IssueHistory.add_history(request.user,
-                                     issue,
-                                     "deleted visual spec document %s"%visual_spec_document.id,
-                                     visual_spec_document.hires.name,
-                                     "")
+            project_id = params['project_id']
+            project = self.allowed_project(project_id)
+            vsd = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
             visual_spec_document.deleted = True
             visual_spec_document.save()
-            issue.save()
+            
+            vsp = VisualSpecProject.objects.get(project=project, visual_spec_document=vsd)
+            vsp.delete()
+            project.save()
             data = {'status': 'success'}
             
         except Exception, ex:
