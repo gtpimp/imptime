@@ -28,10 +28,8 @@ class EditableIssueVisualSpecDocument extends Component {
     }
 
     onOpen() {
-        const {visual_spec_document, visual_spec_document_id, project_id, sprint_id, issue_id} = this.props
-        if ( issue_id ) {
-            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document.id);
-        }
+        const { dispatch, issue_id, visual_spec_document_id, onOpenDocument } = this.props
+        onOpenDocument(visual_spec_document_id)
     }
 
     render() {
@@ -46,12 +44,12 @@ class EditableIssueVisualSpecDocument extends Component {
                               can_edit={true}
                               onChange={this.onChange}
             >
-            <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id}
-            visual_spec_document={visual_spec_document}
-            onDelete={this.onDelete}
-            onOpen={this.onOpen} />
-            <div>
-            <div className="icon--edit"/>
+              <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id}
+                                      visual_spec_document={visual_spec_document}
+                                      onDelete={this.onDelete}
+                                      onOpen={this.onOpen} />
+              <div>
+                <div className="icon--edit"/>
               </div>
               <Blank />
             </EditableProperty>
@@ -62,7 +60,7 @@ class EditableIssueVisualSpecDocument extends Component {
 function mapStateToProps(state, props) {
 
     const { issue_id, project_id, visual_spec_document_id,
-            selectDocument, onDeleteDocument, reorderDocuments, is_active } = props
+            selectDocument, onDeleteDocument, onOpenDocument, reorderDocuments, is_active } = props
     const issue = getIssue(state, issue_id) || {}
     let visual_spec_document = { id: visual_spec_document_id || null}
     map(issue.visual_spec_documents || [], function(issue_visual_spec_document, index) {
@@ -79,6 +77,7 @@ function mapStateToProps(state, props) {
         visual_spec_document: visual_spec_document,
         selectDocument,
         onDeleteDocument,
+        onOpenDocument,
         reorderDocuments,
         is_active
     }

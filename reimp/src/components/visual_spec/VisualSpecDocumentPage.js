@@ -48,6 +48,7 @@ class VisualSpecDocumentPage extends Component {
         this.associateDocumentWithIssue = this.associateDocumentWithIssue.bind(this)
         this.unassociateDocumentWithIssue = this.unassociateDocumentWithIssue.bind(this)
         this.unassociateDocumentWithProject = this.unassociateDocumentWithProject.bind(this)
+        this.onSelectDocument = this.onSelectDocument.bind(this)
         this.state = { selecting_from_gallery: false }
     }
     
@@ -167,6 +168,11 @@ class VisualSpecDocumentPage extends Component {
         }
     }
 
+    onSelectDocument(visual_spec_document_id) {
+        const {project_id, sprint_id, issue_id} = this.props
+        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document_id);
+    }
+
     renderSelectForIssue() {
         const { issue_id, visual_spec_document_ids_for_project, project_id } = this.props
         const { selecting_from_gallery } = this.state
@@ -216,26 +222,28 @@ class VisualSpecDocumentPage extends Component {
                                              reorderDocuments={this.reorderDocuments}
                                              onDeleteDocument={(issue_id && this.unassociateDocumentWithIssue) || this.unassociateDocumentWithProject}
                                              project_id={project_id}
-                                             issue_id={issue_id} />
+                                             issue_id={issue_id}
+                                             onSelect={this.onSelectDocument}
+                  />
                 }
                 { ! visual_spec_document_ids &&
                   <div>Loading...</div>
                 }
               </div>
-              <div className="visual_spec_document_page__content">
-                <div className="visual_spec_document_page__issue_list">
-                  { issue.id && 
+              { issue.id && 
+                <div className="visual_spec_document_page__content">
+                  <div className="visual_spec_document_page__issue_list">
                     <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
                                issue_header_list={issue_header_list}
                                onSelectIssues={this.onSelectIssues}
                     />
-                  }
+                  </div>
+                  <div>
+                    <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id} />
+                    { this.renderSelectForIssue() }
+                  </div>
                 </div>
-                <div>
-                  <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id} />
-                  { issue_id && this.renderSelectForIssue() }
-                </div>
-              </div>
+              }
             </div>
         )
     }
@@ -268,7 +276,6 @@ function mapStateToProps(state, props) {
         visual_spec_documents_editor_urls,
         project: project || {},
         project_id,
-        
         sprint,
         sprint_id,
         issue,
