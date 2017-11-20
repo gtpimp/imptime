@@ -3,9 +3,11 @@ from lib.fields import UploadTo, ProtectedForeignKey
 from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
 from django.contrib.auth.models import User
 from timepiece.models import Issue
+from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from impasync.refresh_notifier import RefreshNotifier
 from django.db import models
+from django.db.models import Max
 import logging
 logger = logging.getLogger(__name__)
 
@@ -15,14 +17,11 @@ class VisualSpecDocument(BaseModel):
     hires = HiResImageField(upload_to=upload_to_visual_spec_documents)
     lores = LoResImageField(upload_to=upload_to_visual_spec_documents)
     thumbnail = ThumbnailImageField(upload_to=upload_to_visual_spec_documents)
-
     hires_width = models.IntegerField()
     hires_height = models.IntegerField()
     
     name = models.CharField(max_length=255)
     content_type = models.CharField(max_length=255, null=True)
-    issue = ProtectedForeignKey(Issue, related_name='visual_spec_documents')
-    order = models.IntegerField(default=1)
 
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -32,36 +31,78 @@ class VisualSpecDocument(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
 
-    def move_after(self, other_visual_spec_document):
-        self.order = other_visual_spec_document.order + 1
-        self.save()
-        self.renumber_visual_spec_document_order()
+class VisualSpecProject(BaseModel):
+    visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_projects')
+    project = ProtectedForeignKey(Project, related_name='visual_spec_projects')
+    order = models.IntegerField(default=1)
 
-    def renumber_visual_spec_document_order(self):
-        """ Doesn't re-sort, just makes the numbers sequential """
+    INCREMENT=10
+    MAX_ORDER=999999
+    
+    class Meta:
+        unique_together = ('project', 'visual_spec_document')
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(VisualSpecProject, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    @classmethod
+    def renumber(self, project_id):
+        vsps = self.objects.filter(project_id=project_id).order_by("order")
         order = 0
-        at_least_one_changed = False
-        for vsd in self.issue.visual_spec_documents\
-                               .all().order_by("order", "id"):
-            old_order = vsd.order
-            if old_order != order:
-                vsd.order = order
-                vsd.save()
-                at_least_one_changed = True
-            order += 10
-        if at_least_one_changed:
-            self.issue.save() # force invalidation
+        for vsp in vsps:
+            if vsp.order != order:
+                vsp.order = order
+                vsp.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def insert_after(self, visual_spec_document, set_after_this_visual_spec_document):
+        if visual_spec_document.project_id != set_after_this_visual_spec_document.project_id:
+            raise Exception("Cannot reorder, must be in the same project")
+        self.renumber(visual_spec_document.project_id)
+        vsp_target = self.objects.get_or_create(project_id=set_after_this_visual_spec_document.project_id,
+                                                visual_spec_document_id=set_after_this_visual_spec_document.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = vsp_target.order+1
+        vsp, is_new = self.objects.get_or_create(project_id=visual_spec_document.project_id,
+                                                 visual_spec_document_id=visual_spec_document.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            vsp.order = new_order
+            vsp.save()
+        self.renumber(visual_spec_document.project_id)
+        
+    @classmethod
+    def insert_at_the_end(self, visual_spec_document):
+        new_order = self.get_next_order(visual_spec_document.project_id)
+        self.objects.get_or_create(project_id=visual_spec_document.project_id,
+                                    visual_spec_document=visual_spec_document,
+                                   defaults={'order':new_order})
+        self.renumber(visual_spec_document.project_id)
+
+    @classmethod
+    def get_next_order(self, project_id):
+        self.renumber(project_id)
+        max_order = self.objects.filter(project_id=project_id)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+
 
 class VisualSpecIssue(BaseModel):
-
-    SHAPES = [ ('circle', 'Circle'),
-               ('pointer', 'Pointer') ]
-    
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues')
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_issues')
-    shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
-    x_pos = models.FloatField()
-    y_pos = models.FloatField()
+    order = models.IntegerField(default=1)
+
+    INCREMENT=10
+    MAX_ORDER=999999
+    
+    class Meta:
+        unique_together = ('issue', 'visual_spec_document')
 
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -70,6 +111,59 @@ class VisualSpecIssue(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
+
+    @classmethod
+    def renumber(self, issue_id):
+        vsis = self.objects.filter(issue_id=issue_id).order_by("order")
+        order = 0
+        for vsi in vsis:
+            if vsi.order != order:
+                vsi.order = order
+                vsi.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def insert_after(self, visual_spec_document, set_after_this_visual_spec_document):
+        if visual_spec_document.issue_id != set_after_this_visual_spec_document.issue_id:
+            raise Exception("Cannot reorder, must be in the same issue")
+        self.renumber(visual_spec_document.issue_id)
+        vsi_target = self.objects.get_or_create(issue_id=set_after_this_visual_spec_document.issue_id,
+                                                visual_spec_document_id=set_after_this_visual_spec_document.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = vsi_target.order+1
+        vsi, is_new = self.objects.get_or_create(issue_id=visual_spec_document.issue_id,
+                                                 visual_spec_document_id=visual_spec_document.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            vsi.order = new_order
+            vsi.save()
+        self.renumber(visual_spec_document.issue_id)
+        
+    @classmethod
+    def insert_at_the_end(self, visual_spec_issue):
+        new_order = self.get_next_order(visual_spec_issue.issue_id)
+        self.objects.get_or_create(issue_id=visual_spec_issue.issue_id,
+                                    visual_spec_issue=visual_spec_issue,
+                                   defaults={'order':new_order})
+        self.renumber(visual_spec_issue.issue_id)
+
+    @classmethod
+    def get_next_order(self, issue_id):
+        self.renumber(issue_id)
+        max_order = self.objects.filter(issue_id=issue_id)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+
+
+class VisualSpecIssueAnnotation(BaseModel):
+    
+    SHAPES = [ ('circle', 'Circle'),
+               ('pointer', 'Pointer') ]
+    visual_spec_issue = ProtectedForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
+    shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
+    x_pos = models.FloatField()
+    y_pos = models.FloatField()
+
     
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)

@@ -24,9 +24,10 @@ class VisualSpecDocumentHiresView(APIView):
         # jump through hoops because we want to download from a url
         # but the login token is normally passed in a custom header.
         user = get_user_by_token(request)
-        visual_spec_document = VisualSpecDocument.objects.filter(issue__in=PermissionHelper.allowed_issues(user)).get(pk=visual_spec_document_id)
+        visual_spec_document = VisualSpecDocument.objects.filter(visual_spec_projects__project__in=PermissionHelper.allowed_projects(user))\
+                                                         .get(pk=visual_spec_document_id)
 
-        bp = ProjectPermissions.for_user(user, visual_spec_document.issue.project.business)
+        bp = ProjectPermissions.for_user(user, visual_spec_document.visual_spec_projects.all()[0].project)
         if not bp.has_view_issues:
             return PermissionDenied()
 

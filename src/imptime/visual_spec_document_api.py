@@ -15,7 +15,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import IssueHistory
-from imptime.models import VisualSpecDocument
+from imptime.models import VisualSpecDocument, VisualSpecProject, VisualSpecIssue
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            visual_spec_documents = self.allowed_visual_spec_documents().order_by("order", "id")
+            visual_spec_documents = self.allowed_visual_spec_documents()
             visual_spec_documents = self.apply_filter(qs=visual_spec_documents,
                                                       raw_filter_args=filter_args)
             visual_spec_documents = self.apply_pagination(qs=visual_spec_documents,
@@ -62,22 +62,30 @@ class VisualSpecDocumentViewSet(BaseViewSet):
     
     def create(self, request):
         try:
-            issue_pk = request.POST['issue_id']
-            issue = self.allowed_issue(issue_pk)
+            project_pk = request.POST['project_id']
+            project = self.allowed_project(project_pk)
+            issue_pk = request.POST.get('issue_id')
+            issue = self.allowed_issue(issue_pk) if issue_pk else None
             for name, f in request.FILES.items():
                 if not f.content_type.startswith('image'):
                     raise Exception("Document must be an image, not %s" % f.content_type)
                 width, height = PIL.Image.open(f).size
-                VisualSpecDocument.objects.create(issue=issue,
-                                                  hires=f,
-                                                  lores=f,
-                                                  hires_width=width,
-                                                  hires_height=height,
-                                                  thumbnail=f,
-                                                  name=f.name,
-                                                  content_type=f.content_type)
-                issue.save()
-                IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
+                vsd = VisualSpecDocument.objects.create(hires=f,
+                                                        lores=f,
+                                                        hires_width=width,
+                                                        hires_height=height,
+                                                        thumbnail=f,
+                                                        name=f.name,
+                                                        content_type=f.content_type)
+                VisualSpecProject.objects.create(visual_spec_document = vsd,
+                                                 project_id=project.id,
+                                                 order=VisualSpecProject.get_next_order(project.id))
+                if issue is not None:
+                    VisualSpecIssue.objects.create(visual_spec_document = vsd,
+                                                   issue=issue,
+                                                   order=VisualSpecIssue.get_next_order(issue.id))
+                    issue.save()
+                    IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
             data = {'status': 'success'}
             
         except Exception, ex:
@@ -86,30 +94,30 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             
         return HttpResponse(JSONRenderer().render(data))
 
-    def update(self, request, pk):
-        try:
-            params = request.data
-            field_name = params['field_name']
-            new_value = params['value']
+    # def update(self, request, pk):
+    #     try:
+    #         params = request.data
+    #         field_name = params['field_name']
+    #         new_value = params['value']
 
-            visual_spec_document_ids = params.pop('issue_ids', [pk])
+    #         visual_spec_document_ids = params.pop('issue_ids', [pk])
 
-            for vsd_id in visual_spec_document_ids:
-                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id) 
+    #         for vsd_id in visual_spec_document_ids:
+    #             vsd = self.allowed_visual_spec_documents().get(pk=vsd_id) 
 
-                if field_name == 'visual_spec_document_id_after':
-                    after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
-                    vsd.move_after(after_vsd)
-                else:
-                    raise Exception("Unsupported field name: %s" % field_name)
+    #             if field_name == 'visual_spec_document_id_after':
+    #                 after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
+    #                 vsd.move_after(after_vsd)
+    #             else:
+    #                 raise Exception("Unsupported field name: %s" % field_name)
 
-            data = {'status': 'success', 'payload': visual_spec_document_ids}
+    #         data = {'status': 'success', 'payload': visual_spec_document_ids}
 
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
+    #     except Exception, ex:
+    #         logger.exception(ex)
+    #         return self.error_response(ex)
 
-        return HttpResponse(JSONRenderer().render(data))
+    #     return HttpResponse(JSONRenderer().render(data))
     
     def delete(self, request, pk):
         try:
@@ -123,7 +131,8 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                                      "deleted visual spec document %s"%visual_spec_document.id,
                                      visual_spec_document.hires.name,
                                      "")
-            visual_spec_document.delete()
+            visual_spec_document.deleted = True
+            visual_spec_document.save()
             issue.save()
             data = {'status': 'success'}
             
