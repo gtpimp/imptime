@@ -39,8 +39,11 @@ class EditableProperty extends Component {
         }
     }
 
-    cancelEditing() {
+    cancelEditing(event) {
         const {dispatch, property_key} = this.props
+        if ( event ) {
+            event.stopPropagation()
+        }
         dispatch(setReadonly(property_key))
     }
 
@@ -78,7 +81,8 @@ class EditableProperty extends Component {
                 editing_child = React.cloneElement(child, {
                     initial_value: initial_value,
                     onSubmitted: that.onEdited,
-                    onKeyDown: that.keyDown
+                    onKeyDown: that.keyDown,
+                    onCancel: that.cancelEditing
                 })
             } else if ( index === 1 ) {
                 readonly_child = React.cloneElement(child, {

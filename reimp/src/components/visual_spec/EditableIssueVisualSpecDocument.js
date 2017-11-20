@@ -22,9 +22,13 @@ class EditableIssueVisualSpecDocument extends Component {
         // VisualSpecDocumentForm
     }
 
-    onDelete(new_value) {
-        const { dispatch, issue_id, visual_spec_document_id } = this.props
-        dispatch(deleteIssueVisualSpecDocument(issue_id, visual_spec_document_id))
+    onDelete() {
+        const { dispatch, issue_id, visual_spec_document_id, onDeleteDocument } = this.props
+        if( onDeleteDocument ) {
+            onDeleteDocument(visual_spec_document_id)
+        } else {
+            dispatch(deleteIssueVisualSpecDocument(issue_id, visual_spec_document_id))
+        }
     }
 
     onOpen() {
@@ -61,9 +65,9 @@ class EditableIssueVisualSpecDocument extends Component {
 function mapStateToProps(state, props) {
 
     const { issue_id, project_id, visual_spec_document_id,
-            selectDocument, reorderDocuments, is_active } = props
+            selectDocument, onDeleteDocument, reorderDocuments, is_active } = props
     const issue = getIssue(state, issue_id) || {}
-    let visual_spec_document = { id: null}
+    let visual_spec_document = { id: visual_spec_document_id || null}
     map(issue.visual_spec_documents || [], function(issue_visual_spec_document, index) {
         if ( issue_visual_spec_document.id === visual_spec_document_id ) {
             visual_spec_document = issue_visual_spec_document
@@ -77,6 +81,7 @@ function mapStateToProps(state, props) {
         visual_spec_document_id: visual_spec_document_id,
         visual_spec_document: visual_spec_document,
         selectDocument,
+        onDeleteDocument,
         reorderDocuments,
         is_active
     }

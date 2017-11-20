@@ -9,11 +9,18 @@ class VisualSpecDocumentForm extends Component {
 
     render() {
         const { issue_id, project_id,
-                onChange, onDelete, onOpen, visual_spec_document } = this.props
+                onChange, onDelete, onOpen, onCancel, visual_spec_document } = this.props
 
         const upload_params = {project_id: project_id}
+
+        const extra_buttons = [<button onClick={onCancel}>cancel</button>]
+        
         if ( issue_id ) {
             upload_params.issue_id = issue_id
+            extra_buttons.push(<button onClick={onOpen}>spec</button>)
+            extra_buttons.push(<button onClick={onDelete}>remove</button>)
+        } else {
+            extra_buttons.push(<button onClick={onDelete}>delete</button>)
         }
         
         return (
@@ -26,8 +33,7 @@ class VisualSpecDocumentForm extends Component {
               />
               { visual_spec_document && visual_spec_document.id &&
                 <FileLabel value={visual_spec_document}
-                           extra_buttons={[<button onClick={onDelete}>delete</button>,
-                                           <button onClick={onOpen}>spec</button>]} />
+                           extra_buttons={extra_buttons} />
               }
             </div>
         )
@@ -37,7 +43,7 @@ class VisualSpecDocumentForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onChange, issue_id, project_id, onDelete,
-            onOpen, visual_spec_document } = props
+            onOpen, onCancel, visual_spec_document } = props
     
     return {
         onSubmit: onChange,
@@ -45,7 +51,8 @@ function mapStateToProps(state, props) {
         issue_id,
         project_id,
         onDelete,
-        onOpen
+        onOpen,
+        onCancel
     }
 }
 
