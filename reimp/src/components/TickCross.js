@@ -7,8 +7,8 @@ class TickCross extends Component {
 
         return (
             <div className="tickcross">
-              { value == true && <div className="tickcross__tick">Yes</div> }
-              { value == false && <div className="tickcross__cross">No</div> }
+              { value === true && <div className="tickcross__tick">Yes</div> }
+              { value === false && <div className="tickcross__cross">No</div> }
             </div>
         )
     }

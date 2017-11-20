@@ -1,17 +1,12 @@
 import React, {Component} from 'react'
-const  { DOM: { input, select, textarea } } = React
 import {connect} from 'react-redux'
 import PropertyStack from '../PropertyStack'
 import PropertyStackComponent from '../PropertyStackComponent'
 import { Field, reduxForm } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
 import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
-import Select from 'react-select';
 import 'react-select/dist/react-select.css';
-import DatePicker from 'react-datepicker';
 import UserDropdown from './UserDropdown';
-import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const required = value => value ? undefined : 'Required'
@@ -90,7 +85,7 @@ class SprintReviewForm extends Component {
 
     render() {
 
-        const { review, handleSubmit } = this.props
+        const { handleSubmit } = this.props
         return (
             <div>
               <form onSubmit={handleSubmit}>

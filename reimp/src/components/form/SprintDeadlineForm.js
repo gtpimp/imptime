@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-const  { DOM: { input, select, textarea } } = React
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
@@ -83,7 +82,7 @@ class SprintDeadlineForm extends Component {
 
     render() {
 
-        const { deadline, handleSubmit } = this.props
+        const { handleSubmit } = this.props
 
         return (
             <div>

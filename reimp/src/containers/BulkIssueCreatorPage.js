@@ -4,7 +4,6 @@ import {browserHistory} from 'react-router'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import includes from 'lodash/includes'
 import {
     PAGE_KEY__BULK_CREATE_ISSUES_PAGE,
     PAGE_KEY__ISSUES_PAGE,
@@ -51,7 +50,7 @@ class BulkIssueCreatorPage extends Component {
     }
 
     onCancel() {
-        const { dispatch, project_id, sprint_id, sprint } = this.props
+        const { project_id, sprint_id } = this.props
         browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id)
     }
 
@@ -68,17 +67,17 @@ class BulkIssueCreatorPage extends Component {
     }
 
     refresh(sprint, project) {
-        const {dispatch, selected_issue_ids} = this.props
+        const {dispatch} = this.props
         if ( sprint.id ) {
             dispatch(select_sprints(PAGE_KEY__BULK_CREATE_ISSUES_PAGE, [sprint.id]))
 
-            if ( sprint.sprint_type == 'sprint' ) {
+            if ( sprint.sprint_type === 'sprint' ) {
                 dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
                                           {to: '/projects/'+project.id, label: project.name},
                                           {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
                                           {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                           {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/bulkCreateIssues', label: 'Bulk Create'}]))
-            } else if ( sprint.sprint_type == 'template' ) {
+            } else if ( sprint.sprint_type === 'template' ) {
                 dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
                                           {to: '/projects/'+project.id, label: project.name},
                                           {to: '/projects/'+project.id+'/sprintTemplates', label: 'Templates'},

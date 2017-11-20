@@ -30,15 +30,12 @@ class FileUploader extends Component {
     
     render() {
 
-        const { upload_url, upload_params, request_headers, onSuccess, onFailure } = this.props
+        const { upload_url, onSuccess, onFailure } = this.props
         
         return (
 
             <FileUploadProgress key="upload_url"
                                 url={upload_url}
-                                onLoad={ (e, request) => {console.log('load', e, request);}}
-                                onError={ (e, request) => {console.log('error', e, request);}}
-                                onAbort={ (e, request) => {console.log('abort', e, request);}}
                                 beforeSend={this.beforeSend}
                                 onError={onFailure}
                                 onLoad={onSuccess}
