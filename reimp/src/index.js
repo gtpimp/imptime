@@ -72,7 +72,7 @@ ReactDOM.render(
           <Route path="projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
           <Route path="projects/:projectId/users" component={ProjectUserPage}/>
           <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
-          <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+          <Route path="visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
 
           <Route path="dashboard" component={DashboardPage}/>
           <Route path="usertimesheets" component={UserTimesheetPage}/>

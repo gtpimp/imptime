@@ -41,7 +41,7 @@ class VisualSpecDocumentGallery extends Component {
     selectDocument(event, visual_spec_document) {
         const { dispatch } = this.props
         const vsd = visual_spec_document
-        browserHistory.push('/projects/' + vsd.project_id + '/sprints/' + vsd.sprint_id + '/issues/' + vsd.issue_id + '/visualSpec/' + vsd.id);
+        browserHistory.push('/visualSpec/' + vsd.id);
     }
 
     render() {
