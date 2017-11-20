@@ -19,6 +19,7 @@ class SearchBox extends Component {
         this.onClickSprintResult = this.onClickSprintResult.bind(this)
         this.onClickProjectResult = this.onClickProjectResult.bind(this)
         this.onShowResults = this.onShowResults.bind(this)
+        this.onHideResults = this.onHideResults.bind(this)
         this.keyDown = this.keyDown.bind(this)
     }
 
@@ -142,12 +143,26 @@ class SearchBox extends Component {
     renderResults(results) {
         return (
             <div className="search-box__results_by_category" onKeyDown={this.keyDown}>
-                { results.sprints_within_active_projects.length > 0 && this.renderSprintResults("Sprint results within active projects", results.sprints_within_active_projects) }
-                { results.issues_within_active_sprints.length > 0 && this.renderIssueResults("Issue results within active sprints", results.issues_within_active_sprints) }
-                { results.issues_within_active_issues.length > 0 && this.renderIssueResults("Issue results within active issues", results.issues_within_active_issues) }
-                { results.all_issues.length > 0 && this.renderIssueResults("Other issues", results.all_issues) }
-                { results.all_projects.length > 0 && this.renderProjectResults("Other projects", results.all_projects) }
-                { results.all_sprints.length > 0 && this.renderSprintResults("Other sprints", results.all_sprints) }
+              { results.sprints_within_active_projects.length > 0 && this.renderSprintResults("Sprint results within active projects", results.sprints_within_active_projects) }
+              { results.issues_within_active_sprints.length > 0 && this.renderIssueResults("Issue results within active sprints", results.issues_within_active_sprints) }
+              { results.issues_within_active_issues.length > 0 && this.renderIssueResults("Issue results within active issues", results.issues_within_active_issues) }
+              { results.all_issues.length > 0 && this.renderIssueResults("Other issues", results.all_issues) }
+              { results.all_projects.length > 0 && this.renderProjectResults("Other projects", results.all_projects) }
+              { results.all_sprints.length > 0 && this.renderSprintResults("Other sprints", results.all_sprints) }
+
+              { results.sprints_within_active_projects.length === 0 &&
+                results.issues_within_active_sprints.length === 0 &&
+                results.issues_within_active_issues.length === 0 &&
+                results.all_issues.length === 0 &&
+                results.all_projects.length === 0 &&
+                results.all_sprints.length === 0 &&
+                <div className="search-box__no-results">
+                  No results
+                </div>
+              }
+              
+              
+              
             </div>
         )
     }
@@ -158,20 +173,23 @@ class SearchBox extends Component {
 
         return (
             <div className="search-box" onKeyDown={this.keyDown}>
-                <SearchInput termRef={(ref) => this.filter_term_el = ref} placeholder="Search Imptime" onOpenDropDown={this.onShowResults} onChange={this.onFilterTermChanged}/>
+              <SearchInput termRef={(ref) => this.filter_term_el = ref}
+                           placeholder="Search Imptime"
+                           onOpenDropDown={this.onShowResults}
+                           onChange={this.onFilterTermChanged}/>
 
-                { is_loading &&
+              { is_loading &&
                 <div className="search-box__search-results--loading">
-                    <div>Loading...</div>
+                  <div>Loading...</div>
                 </div>
-                }
+              }
 
-                { show_results && results &&
+              { show_results && results &&
                 <div className="search-box__search-results--loaded">
-                    { this.renderResults(results) }
+                  <button className="button button--primary search-box__close" onClick={this.onHideResults}>Close</button>
+                  { this.renderResults(results) }
                 </div>
-                }
-
+              }
             </div>
         )
     }

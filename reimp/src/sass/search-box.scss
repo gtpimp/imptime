@@ -87,6 +87,16 @@
     width: 33%
 }
 
-search-box__component search-box__icon {
+.search-input__show-results-icon {
     cursor: pointer;
 }
+
+.search-box__close {
+    float: right;
+}
+
+
+search-box__no-results {
+    font-style: italic;
+}
+
