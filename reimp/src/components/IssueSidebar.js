@@ -42,6 +42,7 @@ class IssueSidebar extends Component {
         this.showGitCommitMessage = this.showGitCommitMessage.bind(this)
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
         this.closeIssueSidebar = this.closeIssueSidebar.bind(this)
+        this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
     }
 
     componentDidMount() {
@@ -73,6 +74,11 @@ class IssueSidebar extends Component {
         const { issue, sprint } = this.props
         const text = "#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject
         window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    }
+    
+    showIssueVisualSpecGallery() {
+        const { issue } = this.props
+        browserHistory.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id+'/gallery/')
     }
 
     makeFeatureIssuesSuccessive() {
@@ -179,8 +185,8 @@ class IssueSidebar extends Component {
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Visual Spec Documents">
-                          <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids} />
-                          <EditableIssueVisualSpecDocument issue_id={issue.id} visual_spec_document_id={null}/>
+                          <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids} allow_edit={false} />
+                          <button className="button button--primary" onClick={this.showIssueVisualSpecGallery}>Open</button>
                         </PropertyStackComponent>
 
                         { issue.can_group_issues &&
