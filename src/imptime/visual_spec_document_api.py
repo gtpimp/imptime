@@ -127,26 +127,6 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-    
-    def delete(self, request, pk):
-        try:
-            params = request.data
-            project_id = params['project_id']
-            project = self.allowed_project(project_id)
-            vsd = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
-            visual_spec_document.deleted = True
-            visual_spec_document.save()
-            
-            vsp = VisualSpecProject.objects.get(project=project, visual_spec_document=vsd)
-            vsp.delete()
-            project.save()
-            data = {'status': 'success'}
-            
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
-        
-        return HttpResponse(JSONRenderer().render(data))
 
     @detail_route(methods=['POST'])
     def associateWithIssue(self, request, pk):
@@ -188,5 +168,25 @@ class VisualSpecDocumentViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
     
+    @detail_route(methods=['POST'])
+    def unassociateWithProject(self, request, pk):
+        try:
+            params = request.data
+            visual_spec_document_id = pk
+            project_id = params['project_id']
+            vsd = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
+            project = self.allowed_projects().get(pk=project_id)
+            project_id = project.id
+            vsi = VisualSpecProject.objects.filter(project_id=project_id, visual_spec_document_id=visual_spec_document_id).first()
+            if vsi is not None:
+                vsi.delete()
+            vsd.deleted = True
+            vsd.save()
+            project.save()
+            data = {'status': 'success', 'payload': [visual_spec_document_id]}
 
-    
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))

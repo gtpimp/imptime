@@ -140,3 +140,32 @@ export function unassociateVisualSpecDocumentWithIssue(visual_spec_document_id, 
 	 })
     }
 }
+
+export function unassociateVisualSpecDocumentWithProject(visual_spec_document_id, project_id) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
+	let data = { visual_spec_document_id: visual_spec_document_id,
+                     project_id: project_id }
+	return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/unassociateWithProject/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
+	 })
+    }
+}
