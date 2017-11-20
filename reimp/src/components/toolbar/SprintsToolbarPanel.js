@@ -113,7 +113,7 @@ class SprintsToolbarPanel extends Component {
                             on_label={"Open only"}
                             off_label={"All"}
               />
-              <div className="sprints-toolbar-panel__sprint_type_filter">
+              <div className="sprints-toolbar-panel__sprint_type_filter big-select">
                 <Select value={selected_sprint_type_filter}
                         name='sprint_type'
                         options={sprint_type_filter_options}

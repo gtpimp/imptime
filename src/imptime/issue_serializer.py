@@ -37,7 +37,7 @@ class IssueSerializer(BaseSerializer):
     parent_group_id = serializers.CharField(source="parent_group.id")
     group_children = ListField(source="group_children_ids")
     comments = IssueCommentSerializer(many=True)
-    testables = TestableSerializer(many=True)
+    testables = TestableSerializer(many=True, source="testables_in_order")
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
     created_at = serializers.DateTimeField(source='created')
