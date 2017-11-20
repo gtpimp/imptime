@@ -133,7 +133,7 @@ class VisualSpecDocumentPage extends Component {
         const { visual_spec_document_ids,
                 active_visual_spec_document_id,
                 visual_spec_documents_editor_urls,
-                issue,
+                issue, issue_id, project_id, 
                 issue_header_list } = this.props
         
         return (
@@ -142,7 +142,9 @@ class VisualSpecDocumentPage extends Component {
                 { visual_spec_document_ids &&
                   <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids}
                                              active_visual_spec_document_id={active_visual_spec_document_id}
-                                             reorderDocuments={this.reorderDocuments}/>
+                                             reorderDocuments={this.reorderDocuments}
+                                             project_id={project_id}
+                                             issue_id={issue_id} />
                 }
                 { ! visual_spec_document_ids &&
                   <div>Loading...</div>

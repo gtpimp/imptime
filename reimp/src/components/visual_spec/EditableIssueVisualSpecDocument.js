@@ -4,6 +4,7 @@ import map from 'lodash/map'
 import EditableProperty from '../form/EditableProperty'
 import { deleteIssueVisualSpecDocument, getIssue } from '../../actions/Issues'
 import VisualSpecDocumentForm from './VisualSpecDocumentForm'
+import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import FileLabel from '../form/FileLabel'
 import Blank from '../form/Blank'
 import {browserHistory} from 'react-router'
@@ -28,46 +29,43 @@ class EditableIssueVisualSpecDocument extends Component {
     }
 
     onOpen() {
-        const {visual_spec_document, project_id, sprint_id, issue_id} = this.props
+        const {visual_spec_document, visual_spec_document_id, project_id, sprint_id, issue_id} = this.props
         if ( issue_id ) {
             browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document.id);
         }
     }
 
     render() {
-        const {issue_id, project_id, visual_spec_document} = this.props
+        const {issue_id, project_id, visual_spec_document, visual_spec_document_id,
+               selectDocument, reorderDocuments, is_active} = this.props
 
 	return (
 
-            <div>
-                <EditableProperty property_key={'issue_visual_spec_document_'+visual_spec_document.id}
-                                  initial_value={visual_spec_document}
-                                  can_edit={true}
-                                  onChange={this.onChange}
-                >
-                  <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id} />
-                  <div>
-                    { visual_spec_document.id &&
-                      <FileLabel value={visual_spec_document}
-                                 extra_buttons={[<button onClick={this.onDelete}>delete</button>,
-                                                 <button onClick={this.onOpen}>spec</button>]}
-                      />
-                    }
-                    { ! visual_spec_document.id &&
-                      <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id} />
-                    }
-                  </div>
-                  <Blank />
-                    
-                </EditableProperty>
-            </div>
+            <EditableProperty property_key={'issue_visual_spec_document_'+visual_spec_document_id}
+                              initial_value={visual_spec_document}
+                              can_edit={true}
+                              onChange={this.onChange}
+            >
+              <div>
+                <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id} />
+                <FileLabel value={visual_spec_document}
+                           extra_buttons={[<button onClick={this.onDelete}>delete</button>,
+                                           <button onClick={this.onOpen}>spec</button>]} />
+              </div>
+              <div>
+                Edit
+              </div>
+              <Blank />
+              
+            </EditableProperty>
         )
     }
 }
 
 function mapStateToProps(state, props) {
 
-    const { issue_id, visual_spec_document_id } = props
+    const { issue_id, project_id, visual_spec_document_id,
+            selectDocument, reorderDocuments, is_active } = props
     const issue = getIssue(state, issue_id) || {}
     let visual_spec_document = { id: null}
     map(issue.visual_spec_documents || [], function(issue_visual_spec_document, index) {
@@ -78,10 +76,13 @@ function mapStateToProps(state, props) {
     
     return {
         issue_id: issue_id,
-        project_id: issue.project_id,
+        project_id: project_id,
         sprint_id: issue.sprint_id,
         visual_spec_document_id: visual_spec_document_id,
-        visual_spec_document: visual_spec_document
+        visual_spec_document: visual_spec_document,
+        selectDocument,
+        reorderDocuments,
+        is_active
     }
 }
 
