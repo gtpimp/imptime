@@ -8,7 +8,8 @@ import { getVisualSpecDocuments,
 } from '../../actions/VisualSpecDocuments'
 import EditableIssueVisualSpecDocument from './EditableIssueVisualSpecDocument'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
-
+import VisualSpecDocumentForm from './VisualSpecDocumentForm'
+import FileUploader from '../form/FileUploader'
 import '../../sass/visual-spec-document-gallery.scss'
 
 class VisualSpecDocumentGallery extends Component {
@@ -51,7 +52,7 @@ class VisualSpecDocumentGallery extends Component {
             <div className="visual_spec_document_gallery">
               {map(image_set, function(image, index) {
                    return (
-                       <div key={image.id}>
+                       <div key={image.visual_spec_document.id}>
                          <VisualSpecDocumentGalleryImage visual_spec_document_id={image.visual_spec_document.id}
                                                          onReorder={that.reorderDocuments}
                                                          is_active={active_visual_spec_document_id===image.visual_spec_document.id}
@@ -62,6 +63,10 @@ class VisualSpecDocumentGallery extends Component {
                        </div>
                    )
                })}
+              <VisualSpecDocumentForm issue_id={issue_id}
+                                      project_id={project_id}
+                                      onChange={()=>{}}
+              />
             </div>
         )
     }

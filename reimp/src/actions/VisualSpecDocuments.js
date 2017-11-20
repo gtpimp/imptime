@@ -16,6 +16,8 @@ import {
     updateItem
 } from '../actions/Item'
 
+export const UPLOAD_RELATIVE_URL = 'imp/visual_spec_document/'
+
 export function invalidateAllVisualSpecDocuments() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__VISUAL_SPEC_DOCUMENT))

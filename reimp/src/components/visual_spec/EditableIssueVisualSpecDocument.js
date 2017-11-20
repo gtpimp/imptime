@@ -5,7 +5,6 @@ import EditableProperty from '../form/EditableProperty'
 import { deleteIssueVisualSpecDocument, getIssue } from '../../actions/Issues'
 import VisualSpecDocumentForm from './VisualSpecDocumentForm'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
-import FileLabel from '../form/FileLabel'
 import Blank from '../form/Blank'
 import {browserHistory} from 'react-router'
 
@@ -46,17 +45,14 @@ class EditableIssueVisualSpecDocument extends Component {
                               can_edit={true}
                               onChange={this.onChange}
             >
-              <div>
-                <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id} />
-                <FileLabel value={visual_spec_document}
-                           extra_buttons={[<button onClick={this.onDelete}>delete</button>,
-                                           <button onClick={this.onOpen}>spec</button>]} />
-              </div>
+              <VisualSpecDocumentForm issue_id={issue_id} project_id={project_id}
+                                      visual_spec_document={visual_spec_document}
+                                      onDelete={this.onDelete}
+                                      onOpen={this.onOpen} />
               <div>
                 Edit
               </div>
               <Blank />
-              
             </EditableProperty>
         )
     }

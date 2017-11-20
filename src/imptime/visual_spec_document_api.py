@@ -63,7 +63,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
         try:
             project_pk = request.POST['project_id']
             project = self.allowed_project(project_pk)
-            issue_pk = request.POST.get('issue_id')
+            issue_pk = request.POST.get('issue_id', None)
             issue = self.allowed_issue(issue_pk) if issue_pk else None
             for name, f in request.FILES.items():
                 if not f.content_type.startswith('image'):
@@ -79,6 +79,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                 VisualSpecProject.objects.create(visual_spec_document = vsd,
                                                  project_id=project.id,
                                                  order=VisualSpecProject.get_next_order(project.id))
+                project.save()
                 if issue is not None:
                     VisualSpecIssue.objects.create(visual_spec_document = vsd,
                                                    issue=issue,
