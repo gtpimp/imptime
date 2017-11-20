@@ -4,13 +4,17 @@
     position: absolute;
 }
 
+.visual-spec-issue.visual-spec-issue--empty {
+    display: block;
+    position: relative;
+}
+
 .visual-spec-issue__image {
     background-image: url('../../public/images2/visual_spec_issue__circle.png');
     background-repeat: no-repeat;
     width: 60px;
     height: 60px;
 }
-
 
 .toolbar-panel__visual_spec {
     height:36px;

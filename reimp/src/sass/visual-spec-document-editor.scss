@@ -1,6 +1,7 @@
 @import 'variables.scss';
 
 .vsd-editor {
+    display: flex;
 }
 
 .vsd-editor__doc_image_container {
@@ -24,3 +25,15 @@
     padding: 5px;
     color: white;
 }
+
+.vsd-editor__annotation_toolbar {
+    margin-left: 20px;
+    padding: 3px;
+    -webkit-box-shadow: 5px 7px 4px 10px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 7px 4px 10px rgba(0,0,0,0.75);
+    box-shadow: 5px 7px 4px 10px rgba(0,0,0,0.75);
+}
+
+.vsd-editor__annotation_toolbar__title {
+}
+

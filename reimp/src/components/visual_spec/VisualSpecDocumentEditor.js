@@ -7,19 +7,23 @@ import {DropTarget} from 'react-dnd';
 import {
     ensureVisualSpecDocumentsLoaded, getVisualSpecDocument
 } from '../../actions/VisualSpecDocuments'
-import {
-    ensureVisualSpecIssuesLoaded
-} from '../../actions/VisualSpecIssues'
-import { ensureIssuesLoaded } from '../../actions/Issues'
+import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import '../../sass/visual-spec-document-editor.scss'
-import VisualSpecIssue from './VisualSpecIssue'
-import { getVisualSpecIssueAnnotations } from '../../actions/VisualSpecIssueAnnotations'
+import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
+import {
+    ensureVisualSpecIssueAnnotationsLoaded,
+    getVisualSpecIssueAnnotations,
+    createVisualSpecIssueAnnotation,
+    updateVisualSpecIssueAnnotation
+} from '../../actions/VisualSpecIssueAnnotations'
 
 class VisualSpecDocumentEditor extends Component {
 
     constructor(props) {
         super(props)
         this.onVisualSpecDocumentImageLoaded = this.onVisualSpecDocumentImageLoaded.bind(this)
+        this.createVisualSpecAnnotation = this.createVisualSpecAnnotation.bind(this)
+        this.updateVisualSpecAnnotation = this.updateVisualSpecAnnotation.bind(this)
     }
     
     componentDidMount() {
@@ -32,15 +36,17 @@ class VisualSpecDocumentEditor extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-	const { dispatch, visual_spec_document_id, visual_spec_document, visual_spec_issue_ids } = props
-	if ( visual_spec_document_id && visual_spec_document && visual_spec_document.loaded === false ) {
+	const { dispatch, visual_spec_document_id, visual_spec_document, issue_id,
+                visual_spec_issue_annotation_ids } = props
+        
+	if ( visual_spec_document_id ) {
 	    dispatch(ensureVisualSpecDocumentsLoaded([visual_spec_document_id]))
 	}
-        if ( visual_spec_issue_ids ) {
-            dispatch(ensureVisualSpecIssuesLoaded(visual_spec_issue_ids))
+        if ( issue_id ) {
+            dispatch(ensureIssuesLoaded(issue_id))
         }
-        if ( visual_spec_document && visual_spec_document.issue_ids ) {
-            dispatch(ensureIssuesLoaded(visual_spec_document.issue_ids))
+        if ( visual_spec_issue_annotation_ids ) {
+            dispatch(ensureVisualSpecIssueAnnotationsLoaded(visual_spec_issue_annotation_ids))
         }
         if ( !these_props || this.props.visual_spec_document_id != these_props.visual_spec_document_id ) {
             this.setState({visual_spec_document_image_loaded: false})
@@ -51,9 +57,31 @@ class VisualSpecDocumentEditor extends Component {
         this.setState({visual_spec_document_image_loaded: true})
     }
 
+    createVisualSpecAnnotation(params) {
+        const { dispatch, visual_spec_document_id, issue_id } = this.props
+        dispatch(createVisualSpecIssueAnnotation(visual_spec_document_id, issue_id, params))
+    }
+
+    updateVisualSpecAnnotation(visual_spec_issue_annotation_id, params) {
+        const { dispatch, visual_spec_document_id, issue_id } = this.props
+        dispatch(updateVisualSpecIssueAnnotation(visual_spec_issue_annotation_id, visual_spec_document_id, issue_id, params))
+    }
+
+    renderAnnotationToolbar() {
+        return (
+            <div className="vsd-editor__annotation_toolbar">
+              <h1 className="vsd-editor__annotation_toolbar__title">Annotations</h1>
+              <VisualSpecIssueAnnotation
+                  onUpdate={this.updateVisualSpecAnnotation}
+                  onCreate={this.createVisualSpecAnnotation}
+              />
+            </div>
+        )
+    }
+
     render() {
         const { visual_spec_document_id, visual_spec_document,
-                connectDropTarget, visual_spec_issue_ids } = this.props
+                connectDropTarget, visual_spec_issue_annotation_ids } = this.props
         const { visual_spec_document_image_loaded } = this.state || {}
         
         if ( ! visual_spec_document_id ) {
@@ -62,6 +90,7 @@ class VisualSpecDocumentEditor extends Component {
 
         return (
             <div className="vsd-editor">
+
               {connectDropTarget(
                    <div className="vsd-editor__doc_image_container">
                      { visual_spec_document.lores_url &&
@@ -72,32 +101,39 @@ class VisualSpecDocumentEditor extends Component {
                        />
                      }
 
-                       { !visual_spec_document_image_loaded &&
-                         <div className="vsd-editor__image_loading">
-                           <h2>Loading Image...</h2>
-                         </div>
-                       }
+                     { !visual_spec_document_image_loaded &&
+                       <div className="vsd-editor__image_loading">
+                         <h2>Loading Image...</h2>
+                       </div>
+                     }
 
-                         { visual_spec_document_image_loaded &&
-                           map(visual_spec_issue_ids, (visual_spec_issue_id) => {
-                               return (
-                                   <VisualSpecIssue key={visual_spec_issue_id}
-                                                    visual_spec_issue_id={visual_spec_issue_id} />
-                               )
-                           })
-                         }
+                     { visual_spec_document_image_loaded &&
+                       map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
+                           return (
+                               <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
+                                                          onUpdate={this.updateVisualSpecAnnotation}
+                                                          onCreate={this.createVisualSpecAnnotation}
+                                                          visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
+                           )
+                       })
+                     }
 
                    </div>
 
                    
                )}
+
+               { this.renderAnnotationToolbar() }
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_document_id, annotation_ids, issue_id } = props
+    const { visual_spec_document_id, issue_id } = props
+    const issue = getIssue(state, issue_id) || {}
+    const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
+    const annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
     const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || { 'name': 'loading', 'loaded': false }
     const annotations = getVisualSpecIssueAnnotations(state, annotation_ids) || []
         
@@ -137,4 +173,4 @@ function collectDrop(connect, monitor) {
     }
 }
 
-export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ISSUE, headingTarget, collectDrop)(VisualSpecDocumentEditor))
+export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingTarget, collectDrop)(VisualSpecDocumentEditor))

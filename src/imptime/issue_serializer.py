@@ -7,7 +7,8 @@ from tag_serializer import TagSerializer
 from issue_estimate_serializer import IssueEstimateSerializer
 from issue_comment_serializer import IssueCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
-from imptime.models import VisualSpecDocument
+from visual_spec_issue_annotation_serializer import VisualSpecIssueAnnotationSerializer
+from imptime.models import VisualSpecDocument, VisualSpecIssueAnnotation
 from timepiece.models import BusinessPermissions, IssueReview
 from testable_serializer import TestableSerializer
 logger = logging.getLogger(__name__)
@@ -41,6 +42,7 @@ class IssueSerializer(BaseSerializer):
     testables = TestableSerializer(many=True, source="testables_in_order")
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
+    visual_spec_annotation_ids_by_doc_id = ListField(VisualSpecIssueAnnotationSerializer)
     created_at = serializers.DateTimeField(source='created')
     created_by_id = serializers.CharField()
     modified_at = serializers.DateTimeField(source='modified')
@@ -68,6 +70,10 @@ class IssueSerializer(BaseSerializer):
         issue.visual_spec_document_ids = VisualSpecDocument.objects.filter(visual_spec_issues__issue=issue)\
                                                                    .order_by("visual_spec_issues__order")\
                                                                    .values_list('id', flat=True)
+        issue.visual_spec_annotation_ids_by_doc_id = {}
+        for x in VisualSpecIssueAnnotation.objects.filter(visual_spec_issue__issue=issue).values('visual_spec_issue__visual_spec_document_id', 'id'):
+            issue.visual_spec_annotation_ids_by_doc_id.setdefault(x['visual_spec_issue__visual_spec_document_id'], []).append(x['id'])
+                                                                              
         issue.review_ids = [x.id for x in issue.reviews.all()]
 
         if not bp.has_see_other_user_points:

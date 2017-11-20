@@ -2,20 +2,8 @@ import logging
 from base_serializer import BaseModelSerializer
 from rest_framework import serializers
 from imptime.models import VisualSpecIssue
-from rest_framework.reverse import reverse
+from visual_spec_issue_annotation_serializer import VisualSpecIssueAnnotationSerializer
 logger = logging.getLogger(__name__)
-
-class VisualSpecIssueAnnotationSerializer(BaseModelSerializer):
-    id = serializers.CharField()
-    issue_id = serializers.CharField()
-    
-    class Meta:
-        model = VisualSpecIssue
-        fields = ['id',
-                  'issue_id',
-                  'shape',
-                  'x_pos',
-                  'y_pos']
 
 class VisualSpecIssueSerializer(BaseModelSerializer):
     id = serializers.CharField(required=False)

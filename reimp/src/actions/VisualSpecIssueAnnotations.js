@@ -34,8 +34,14 @@ export function invalidateVisualSpecIssueAnnotations(visual_spec_issue_annotatio
     }
 }
 
-export function updateVisualSpecIssueAnnotation(visual_spec_issue_annotation_ids, field_name, new_value, on_done) {
-    return updateItem(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, visual_spec_issue_annotation_ids, field_name, new_value, on_done)
+export function updateVisualSpecIssueAnnotation(visual_spec_document_id, issue_id,
+                                                visual_spec_issue_annotation_ids, params) {
+    const data = Object.assign({},
+                               {visual_spec_document_id: visual_spec_document_id,
+                                issue_id: issue_id},
+                               params)
+    return updateItem(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, visual_spec_issue_annotation_ids,
+                      "update", data)
 }
 
 export function fetchVisualSpecIssueAnnotationsIfNeeded(list_key) {
@@ -56,13 +62,12 @@ export function getVisualSpecIssueAnnotations(state, visual_spec_issue_annotatio
     return getItems(state, ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, visual_spec_issue_annotation_ids)
 }
 
-export function createVisualSpecIssueAnnotation(visual_spec_document_id, issue_id, shape, x_pos, y_pos) {
+export function createVisualSpecIssueAnnotation(visual_spec_document_id, issue_id, params) {
     return (dispatch, getState) => {
-        const data = { visual_spec_document_id: visual_spec_document_id,
-                       issue_id: issue_id,
-                       shape: shape,
-                       x_pos: x_pos,
-                       y_pos: y_pos }
+        const data = Object.assign({},
+                                   {visual_spec_document_id: visual_spec_document_id,
+                                    issue_id: issue_id},
+                                   params)
         dispatch(startCandidateItem(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, data))
         dispatch(saveCandidateItem(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION))
     }
@@ -72,4 +77,8 @@ export function deleteVisualSpecIssueAnnotation(visual_spec_issue_annotation_id)
     return (dispatch, getState) => {
         dispatch(deleteItem(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, visual_spec_issue_annotation_id))
     }
+}
+
+export function is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id) {
+    return ((((state.item || {}).visual_spec_issue_annotation || {}).invalidated_item_ids) || []).indexOf(visual_spec_issue_annotation_id) !== -1
 }

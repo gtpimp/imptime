@@ -1,0 +1,172 @@
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import ReactDOM from 'react-dom';
+import {DndTypes} from '../../actions/Dnd'
+import {DragSource} from 'react-dnd';
+import classNames from 'classnames'
+import '../../sass/visual-spec-issue.scss'
+import { getVisualSpecIssue } from '../../actions/VisualSpecIssues'
+import { getIssue } from '../../actions/Issues'
+import EditableIssueTitle from '../EditableIssueTitle'
+import EditableIssueDescription from '../EditableIssueDescription'
+import EditableIssueAssignedUser from '../EditableIssueAssignedUser'
+import EditableIssueStatus from '../EditableIssueStatus'
+import EditableIssueEstimate from '../EditableIssueEstimate'
+import ToolTip from 'react-portal-tooltip'
+import {
+    LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST
+} from '../../actions/ItemListKeyRegistry'
+import {
+    ensureVisualSpecIssueAnnotationsLoaded,
+    is_visual_spec_issue_annotation_invalidated,
+    getVisualSpecIssueAnnotation
+} from '../../actions/VisualSpecIssueAnnotations'
+import { highlightItems } from '../../actions/ItemList'
+
+class VisualSpecIssueAnnotation extends Component {
+
+    state = {
+        isTooltipActive: false
+    }
+    
+    constructor(props) {
+        super(props)
+        this.showTooltip = this.showTooltip.bind(this)
+        this.hideTooltip = this.hideTooltip.bind(this)
+    }
+    
+    componentDidMount() {
+        this.refresh()
+    }
+
+    componentWillReceiveProps(props) {
+        this.refresh(props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, visual_spec_issue_annotation_id } = props
+        dispatch(ensureVisualSpecIssueAnnotationsLoaded([visual_spec_issue_annotation_id]))
+    }
+
+    showTooltip() {
+        const { dispatch, issue } = this.props
+        this.setState({isTooltipActive: true})
+    }
+    
+    hideTooltip() {
+        const { dispatch } = this.props
+        this.setState({isTooltipActive: false})
+    }
+
+    render() {
+        const { visual_spec_issue_annotation, isDragging, connectDragSource } = this.props
+        const { isTooltipActive } = this.state
+
+        const style = {}
+        if ( !isDragging && visual_spec_issue_annotation.x_pos ) {
+            if ( visual_spec_issue_annotation.y_pos > 100 ) {
+                visual_spec_issue_annotation.y_pos = 90
+            }
+            if ( visual_spec_issue_annotation.x_pos > 100 ) {
+                visual_spec_issue_annotation.x_pos = 90
+            }
+            
+            style.top = visual_spec_issue_annotation.y_pos + "%"
+            style.left = visual_spec_issue_annotation.x_pos + "%"
+        }
+        
+        return ( 
+            <div>
+              {connectDragSource(
+                   <div id={"visual_spec_issue_annotation_"+visual_spec_issue_annotation.id}
+                        key={visual_spec_issue_annotation.id || "empty"}
+                        ref={(element) => { this.tooltip_parent = element }}
+                        className={classNames("visual-spec-issue",
+                                              {"visual-spec-issue--dragging": isDragging,
+                                               "visual-spec-issue--empty": !visual_spec_issue_annotation.id})}
+                        style={style}
+                   >
+                     { ! visual_spec_issue_annotation.id &&
+                       <div className="visual-spec-issue__image"> </div>
+                     }
+
+                       { visual_spec_issue_annotation.id &&
+                         <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
+                           <div className="visual-spec-issue__image"> </div>
+                         </div>
+                       }
+                   </div>
+               )}
+
+              { visual_spec_issue_annotation.id && !isDragging &&
+                <ToolTip active={isTooltipActive}
+                         position="right"
+                         arrow="center"
+                         parent={"#visual_spec_issue_annotation_"+visual_spec_issue_annotation.id}>
+                  <div className="visual-spec-issue--tooltip">
+                    {/* <EditableIssueTitle issue_id={issue.id} />
+                    <EditableIssueDescription issue_id={issue.id} />
+                    <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                    <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+                    <EditableIssueEstimate issue_id={issue.id} /> */}
+                  </div>
+                </ToolTip>
+              }
+
+            </div>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+    const { visual_spec_issue_annotation_id,
+            onUpdate, onCreate} = props
+    const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
+    const is_invalidated = is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
+
+    return {
+        visual_spec_issue_annotation_id,
+        visual_spec_issue_annotation,
+        is_invalidated: is_invalidated || false,
+        onUpdate,
+        onCreate
+    }
+}
+
+const headingSource = {
+    beginDrag(props, monitor, component) {
+        return {
+            id: props.visual_spec_issue_annotation_id || "new"
+        }
+    },
+    endDrag(props, monitor, component) {
+        const { dispatch, visual_spec_issue_annotation, onUpdate, onCreate } = props
+        const drop_result = monitor.getDropResult()
+        const { child_pos, parent_pos, distance_moved } = drop_result
+        let x_pos
+        let y_pos
+        if ( props.visual_spec_issue_annotation_id ) {
+            x_pos = visual_spec_issue_annotation.x_pos + (100*distance_moved.x / parent_pos.width)
+            y_pos = visual_spec_issue_annotation.y_pos + (100*distance_moved.y / parent_pos.height)
+            dispatch(onUpdate([props.visual_spec_issue_annotation_id], {shape:"pointer",
+                                                                        x_pos:x_pos,
+                                                                        y_pos:y_pos}))
+        } else {
+            x_pos = 100*(child_pos.x-parent_pos.left)/ parent_pos.width
+            y_pos = 100*(child_pos.y-parent_pos.top)/ parent_pos.height
+            dispatch(onCreate({shape:"pointer",
+                               x_pos: x_pos,
+                               y_pos: y_pos}))
+        }
+    }
+}
+
+function collect(connect, monitor) {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging()
+    };
+}
+
+export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingSource, collect)(VisualSpecIssueAnnotation))
