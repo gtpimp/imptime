@@ -13,6 +13,7 @@ import {
 import { ensureIssuesLoaded } from '../../actions/Issues'
 import '../../sass/visual-spec-document-editor.scss'
 import VisualSpecIssue from './VisualSpecIssue'
+import { getVisualSpecIssueAnnotations } from '../../actions/VisualSpecIssueAnnotations'
 
 class VisualSpecDocumentEditor extends Component {
 
@@ -96,14 +97,16 @@ class VisualSpecDocumentEditor extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_document_id } = props
-
+    const { visual_spec_document_id, annotation_ids, issue_id } = props
     const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || { 'name': 'loading', 'loaded': false }
-    
+    const annotations = getVisualSpecIssueAnnotations(state, annotation_ids) || []
+        
     return {
         visual_spec_document_id,
         visual_spec_document,
-        visual_spec_issue_ids: visual_spec_document.visual_spec_issue_ids
+        annotation_ids,
+        annotations,
+        issue_id
     }
 }
 
