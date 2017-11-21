@@ -32,6 +32,15 @@ class Testable(models.Model):
     def most_recent_result(self):
         return self.testable_results.order_by("-checked_at").first()
 
+    @classmethod
+    def renumber(self, issue_id):
+        c = 1
+        for t in Testable.objects.filter(issue_id=issue_id).order_by("order"):
+            if t.order != c:
+                t.order = c
+                t.save()
+            c += 1
+    
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)

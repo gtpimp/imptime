@@ -81,6 +81,7 @@ class TestableViewSet(BaseViewSet):
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
             IssueHistory.add_history(request.user, issue, "deleted testable %s" % testable.id, testable.steps, "")
             testable.delete()
+            Testable.renumber(issue.id)
             issue.save()
 
             data = {'status': 'success'}
@@ -116,6 +117,7 @@ class TestableViewSet(BaseViewSet):
             testable.save()
             new_issue.save()
             SprintIssueOrder.insert_after(new_issue, issue)
+            Testable.renumber(issue.id)
             issue.save()
             
             new_issue_id = new_issue.id
