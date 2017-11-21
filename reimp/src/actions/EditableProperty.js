@@ -16,7 +16,7 @@ export function setReadonly(property_key) {
     return setMode(property_key, 'read')
 }
 
-function getMode(state, property_key) {
+export function getMode(state, property_key) {
     return (((state ||{}).editable_property || {})[property_key] || {}).mode || null
 }
 

@@ -8,7 +8,8 @@ import {
     deleteIssueTestable,
     ensureIssuesLoaded,
     getIssue,
-    is_issue_invalidated
+    is_issue_invalidated,
+    promoteIssueTestableToIssue
 } from '../actions/Issues'
 import IssueTestableForm from './form/IssueTestableForm'
 import Label from './form/Label'
@@ -21,6 +22,7 @@ class EditableIssueTestable extends Component {
         super(props)
         this.onChange = this.onChange.bind(this)
         this.onDelete = this.onDelete.bind(this)
+        this.onPromoteToIssue = this.onPromoteToIssue.bind(this)
     }
 
     componentWillMount() {
@@ -43,11 +45,17 @@ class EditableIssueTestable extends Component {
         }
     }
 
-
-
     onDelete(new_value) {
         const { dispatch, issue_id, testable_id } = this.props
         dispatch(deleteIssueTestable(issue_id, testable_id))
+    }
+
+    onPromoteToIssue() {
+        const { dispatch, issue_id, testable_id } = this.props
+        if ( ! confirm( "Convert this testable to a new issue?" ) ) {
+            return
+        }
+        dispatch(promoteIssueTestableToIssue(issue_id, testable_id))
     }
 
     render() {
@@ -62,7 +70,7 @@ class EditableIssueTestable extends Component {
                                   can_edit={can_edit}
                     >
                   <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
-                                    issue_id={issue_id} testable={testable}/>
+                                     issue_id={issue_id} testable={testable}/>
                   <div className="text-component--readonly text-component--testable">
                     <div className="issue_sidebar--textarea--readonly" >
                       {testable.steps}
@@ -72,6 +80,7 @@ class EditableIssueTestable extends Component {
                 </EditableProperty>
               }
 
+            <div className="issue-testable__button-bar">
               { ! testable.id &&
                 <div>
                   <EditableProperty property_key={'issue_testable_'+issue_id}
@@ -89,6 +98,8 @@ class EditableIssueTestable extends Component {
               }
 
               { testable.id && <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button> }
+              { testable.id && issue_id && <button className="button button--secondary issue_sidebar--button" onClick={this.onPromoteToIssue}>promote to issue</button> }
+            </div>
             </div>
         )
     }
@@ -109,6 +120,8 @@ function mapStateToProps(state, props) {
 
     return {
         issue_id: issue_id,
+        issue,
+        sprint_id: issue.sprint_id,
         testable_id: testable_id,
         testable: testable,
         can_edit: can_edit,

@@ -6,8 +6,10 @@ logger = logging.getLogger(__name__)
 class TestableSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     steps = serializers.CharField()
+    name = serializers.CharField()
 
     def to_representation(self, obj, *args, **kwargs):
+        obj.name = "Testable %s" % obj.order
         return super(TestableSerializer, self).to_representation(obj, *args, **kwargs)
 
     def get_modified(self, obj):

@@ -851,6 +851,37 @@ export function bulkCreateIssues(sprint_id, bulk_issue_text, on_done) {
     }
 }
 
+export function promoteIssueTestableToIssue(issue_id, testable_id, on_done) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceIssuesSaving([issue_id], "testable_promotion", testable_id))
+	let data = {}
+	return impfetch( state, "imp/issue/testable/" + testable_id + "/promoteToIssue/", dispatch,
+			 {method: "POST",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceIssueSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceIssuesSaved([json.payload.new_issues_id]))
+                 if ( on_done ) {
+                     on_done(json.payload.new_issue_ids)
+                 }
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceIssueSaveFailed(error))
+	 })
+    }
+}
+
 export function isBulkCreatingIssues(state, sprint_id) {
     return (((state || {}).sprint || {}).bulk_creating_issues || {}).sprint_id === sprint_id
 }
