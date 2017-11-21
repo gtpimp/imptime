@@ -4,6 +4,7 @@ from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
+from lib.quality_helper import Quality
 from timepiece.models import Issue, Business
 import re
 
@@ -14,9 +15,6 @@ class Testable(models.Model):
     order = models.IntegerField(null=False, default=0)
     quality_error = models.CharField(max_length=255, null=True)
 
-    MINIMUM_NUM_LETTERS_FOR_LONG_WORD = 4
-    MAX_WORDS_FOR_GOOD_QUALITY = 7
-    
     def __init__(self, *args, **kwargs):
         super(Testable, self).__init__(*args, **kwargs)
         self._step_groups = None
@@ -26,14 +24,7 @@ class Testable(models.Model):
         self.quality_error = self.check_quality()
 
     def check_quality(self):
-        lines = self.steps.split("\n")
-        quality_error = None
-        for line_number, line in enumerate(lines):
-            words = line.split(" ")
-            long_words = [w for w in words if len(w) >= self.MINIMUM_NUM_LETTERS_FOR_LONG_WORD]
-            if len(long_words) > self.MAX_WORDS_FOR_GOOD_QUALITY:
-                quality_error = "Line %d has too many long words, max %d words allowed" % ((line_number+1), self.MAX_WORDS_FOR_GOOD_QUALITY)
-                break
+        quality_error = Quality().check_sequence_of_short_steps(self.steps)
         if quality_error != self.quality_error:
             self.quality_error = quality_error
             super(Testable, self).save()

@@ -3681,6 +3681,7 @@ class Issue(BaseModel):
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField(db_index=True)
+    subject_quality_error = models.TextField(null=True)
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)
     order_deprecated = models.FloatField(null=True,blank=True) #deprecated
