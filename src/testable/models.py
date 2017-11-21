@@ -12,10 +12,31 @@ class Testable(models.Model):
     issue = models.ForeignKey(Issue, blank=True, null=False, related_name='testables')
     steps = models.TextField(null=False)
     order = models.IntegerField(null=False, default=0)
+    quality_error = models.CharField(max_length=255, null=True)
 
+    MINIMUM_NUM_LETTERS_FOR_LONG_WORD = 4
+    MAX_WORDS_FOR_GOOD_QUALITY = 7
+    
     def __init__(self, *args, **kwargs):
         super(Testable, self).__init__(*args, **kwargs)
         self._step_groups = None
+
+    def save(self, *args, **kwargs):
+        super(Testable, self).save(*args, **kwargs)
+        self.quality_error = self.check_quality()
+
+    def check_quality(self):
+        lines = self.steps.split("\n")
+        quality_error = None
+        for line_number, line in enumerate(lines):
+            words = line.split(" ")
+            long_words = [w for w in words if len(w) >= self.MINIMUM_NUM_LETTERS_FOR_LONG_WORD]
+            if len(long_words) > self.MAX_WORDS_FOR_GOOD_QUALITY:
+                quality_error = "Line %d has too many long words, max %d words allowed" % ((line_number+1), self.MAX_WORDS_FOR_GOOD_QUALITY)
+                break
+        if quality_error != self.quality_error:
+            self.quality_error = quality_error
+            super(Testable, self).save()
 
     @property
     def clean_steps(self):

@@ -7,3 +7,12 @@
 .issue-testable__testable-name {
     font: $bold-large;
 }
+
+.issue-testable__quality_error {
+    background-color: $error-background-color;
+}
+
+.issue_testable__quality_error_reason {
+    font: $bold-extra-large;
+    color: $error-color;
+}

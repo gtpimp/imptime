@@ -7,6 +7,7 @@ class TestableSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     steps = serializers.CharField()
     name = serializers.CharField()
+    quality_error = serializers.CharField()
 
     def to_representation(self, obj, *args, **kwargs):
         obj.name = "Testable %s" % obj.order

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
+import classNames from 'classnames'
 import EditableProperty from './form/EditableProperty'
 import {
     updateIssueTestable,
@@ -65,45 +66,51 @@ class EditableIssueTestable extends Component {
 
             <div>
               { testable.id &&
-                <EditableProperty property_key={'issue_testable_'+issue_id+'_'+testable.id}
-                                  initial_value={testable.steps}
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
-                    >
-                  <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
-                                     issue_id={issue_id} testable={testable}/>
-                  <div className="text-component--readonly text-component--testable">
-                    <div className="issue_sidebar--textarea--readonly" >
-                      <h1 className="issue-testable__testable-name">{testable.name}</h1>
-                      <ReactMarkdown source={testable.steps} />
+              <EditableProperty property_key={'issue_testable_'+issue_id+'_'+testable.id}
+                                initial_value={testable.steps}
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
+                                   issue_id={issue_id} testable={testable}/>
+                <div className="text-component--readonly text-component--testable">
+                  <div className={classNames("issue_sidebar--textarea--readonly",
+                                             {"issue-testable__quality_error":testable.quality_error})}>
+                    <h1 className="issue-testable__testable-name">{testable.name}</h1>
+                    { testable.quality_error &&
+                    <div className="issue_testable__quality_error_reason">
+                    Low quality testable: {testable.quality_error}
+                    </div>
+                    }
+                    <ReactMarkdown source={testable.steps} />
+                    </div>
+                    </div>
+                    <div className="text-component--empty"></div>
+                    </EditableProperty>
+                    }
+
+                    <div className="issue-testable__button-bar">
+                      { ! testable.id &&
+                      <div>
+                        <EditableProperty property_key={'issue_testable_'+issue_id}
+                                          initial_value=''
+                                          onChange={this.onChange}
+                                          can_edit={can_edit}
+                        >
+                          <IssueTestableForm form={'issue_testable_form_'+issue_id} issue_id={issue_id} />
+                          <div className="text-component--readonly"></div>
+                          <div className="text-component--empty">
+                            <button className="button button--primary issue_sidebar--button">Create testable</button>
+                          </div>
+                        </EditableProperty>
+                      </div>
+                      }
+
+                      { testable.id && <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button> }
+                      { testable.id && issue_id && <button className="button button--secondary issue_sidebar--button" onClick={this.onPromoteToIssue}>promote to issue</button> }
                     </div>
                   </div>
-                  <div className="text-component--empty"></div>
-                </EditableProperty>
-              }
-
-              <div className="issue-testable__button-bar">
-                { ! testable.id &&
-                  <div>
-                    <EditableProperty property_key={'issue_testable_'+issue_id}
-                                      initial_value=''
-                                      onChange={this.onChange}
-                                      can_edit={can_edit}
-                      >
-                      <IssueTestableForm form={'issue_testable_form_'+issue_id} issue_id={issue_id} />
-                      <div className="text-component--readonly"></div>
-                      <div className="text-component--empty">
-                        <button className="button button--primary issue_sidebar--button">Create testable</button>
-                      </div>
-                    </EditableProperty>
-                  </div>
-                }
-
-                { testable.id && <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button> }
-                { testable.id && issue_id && <button className="button button--secondary issue_sidebar--button" onClick={this.onPromoteToIssue}>promote to issue</button> }
-              </div>
-            </div>
-        )
+                  )
     }
 }
 
