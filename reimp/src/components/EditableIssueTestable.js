@@ -73,6 +73,7 @@ class EditableIssueTestable extends Component {
                                      issue_id={issue_id} testable={testable}/>
                   <div className="text-component--readonly text-component--testable">
                     <div className="issue_sidebar--textarea--readonly" >
+                      <h1 className="issue-testable__testable-name">{testable.name}</h1>
                       {testable.steps}
                     </div>
                   </div>
