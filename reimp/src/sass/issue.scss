@@ -127,3 +127,12 @@
 .issue__cell__secondary {
     opacity: 0.5;
 }
+
+.issue_title__quality_error {
+    background-color: $error-background-color;
+}
+
+.issue_subject__quality_error_reason {
+    font: $bold-extra-large;
+    color: $error-color;
+}

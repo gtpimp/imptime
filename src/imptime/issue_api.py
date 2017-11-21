@@ -5,7 +5,7 @@ from issue_serializer import IssueGeneralDetailsSerializer
 from lib import hours_helper
 from imptime.bulk_text_parser import BulkTextParser
 from issue_serializer import IssueWithEstimatesSerializer
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse

@@ -3,9 +3,9 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import Modal from 'react-modal';
 import '../../sass/editable-property.scss'
-import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode } from '../../actions/EditableProperty'
+import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode, getMode } from '../../actions/EditableProperty'
 
-class EditableProperty extends Component {
+class EditableProperty extends Component {n
 
     // The first child must be the editing component for the property
     // The (optional) second child must be the readonly component for the property
@@ -26,9 +26,10 @@ class EditableProperty extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, property_key, initial_mode} = this.props
-        if (new_props.initial_mode !== initial_mode) {
-            dispatch(setMode(property_key, new_props.initial_mode))
+        const {dispatch, property_key} = this.props
+        if ( new_props.mode === undefined || new_props.property_key != property_key ) {
+            const initial_mode = new_props.initial_mode || 'read'
+            dispatch(setMode(new_props.property_key, initial_mode))
         }
     }
 
@@ -140,7 +141,8 @@ function mapStateToProps(state, props) {
         is_editing: can_edit && isEditing(state, property_key),
         is_readonly: isReadonly(state, property_key),
         is_empty: !initial_value,
-        class_name: class_name || ""
+        class_name: class_name || "",
+        mode: getMode(state, property_key)
     }
 }
 

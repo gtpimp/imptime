@@ -2,6 +2,7 @@ import logging
 from issue_serializer import IssueSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from issue_serializer import IssueWithEstimatesSerializer
+from django.utils import timezone
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
@@ -13,6 +14,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from testable.models import Testable
 
 logger = logging.getLogger(__name__)
@@ -79,6 +81,7 @@ class TestableViewSet(BaseViewSet):
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
             IssueHistory.add_history(request.user, issue, "deleted testable %s" % testable.id, testable.steps, "")
             testable.delete()
+            Testable.renumber(issue.id)
             issue.save()
 
             data = {'status': 'success'}
@@ -88,3 +91,42 @@ class TestableViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['POST'])
+    def promoteToIssue(self, request, pk):
+        try:
+            params = request.data
+            testable_id = pk
+            testable = Testable.objects.get(pk=testable_id)
+            issue = self.allowed_issue(testable.issue_id)
+            if not self.logged_in_permissions(issue.project.business).has_add_issue:
+                raise Exception("Can't add issues")
+            new_issue = Issue.objects.create(project=issue.project,
+                                             subject="%s (Testable %s)" % (issue.subject, testable.order),
+                                             adhoc=False,
+                                             status2=issue.status2,
+                                             feature=issue.feature,
+                                             assigned_to=issue.assigned_to,
+                                             number=Issue.get_next_issue_number(issue.project.business), #sic
+                                             description=issue.description,
+                                             story_points=issue.story_points,
+                                             created=timezone.now(),
+                                             modified=timezone.now())
+            testable.issue = new_issue
+            testable.order = 1
+            testable.save()
+            new_issue.save()
+            SprintIssueOrder.insert_after(new_issue, issue)
+            Testable.renumber(issue.id)
+            issue.save()
+            
+            new_issue_id = new_issue.id
+            data = {'status': 'success', 'payload': {'new_issue_id': new_issue_id}}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+        
+
+    

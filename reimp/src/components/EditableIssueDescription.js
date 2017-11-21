@@ -5,6 +5,7 @@ import IssueDescriptionForm from './form/IssueDescriptionForm'
 import { updateIssueDescription, getIssue } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 import Blank from './form/Blank'
+import ReactMarkdown from 'react-markdown'
 
 class EditableIssueDescription extends Component {
 
@@ -29,7 +30,9 @@ class EditableIssueDescription extends Component {
                               can_edit={can_edit}
             >
               <IssueDescriptionForm />
-              <div className="text-component--readonly text-component--description">{issue.description}</div>
+              <div className="text-component--readonly text-component--description">
+                <ReactMarkdown source={issue.description} />
+              </div>
               <div className="text-component--empty text-component--description">
                 ...
               </div>

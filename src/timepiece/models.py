@@ -1,7 +1,7 @@
 import datetime
 import timings
 from django.db.models import Case, When
-
+from lib.quality_helper import Quality
 from django.core.urlresolvers import reverse
 import os
 from dateutil.relativedelta import relativedelta
@@ -3681,6 +3681,7 @@ class Issue(BaseModel):
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
     subject = models.TextField(db_index=True)
+    subject_quality_error = models.TextField(null=True)
     description = models.TextField(blank=True)
     story_points = models.FloatField(null=True,blank=True)
     order_deprecated = models.FloatField(null=True,blank=True) #deprecated
@@ -3705,11 +3706,19 @@ class Issue(BaseModel):
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(Issue, self).save(*args, **kwargs)
+        self.check_quality()
         if was_created:
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
 
+    def check_quality(self):
+        quality_error = Quality().check_short_sentence(self.subject)
+        if quality_error != self.subject_quality_error:
+            self.subject_quality_error = quality_error
+            super(Issue, self).save()
+        
+            
     @classmethod
     def get_last_issue_number(self, business):
         largest_number =  Issue.objects.filter(project__business=business).filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']

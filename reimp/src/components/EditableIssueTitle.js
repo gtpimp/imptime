@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import classNames from 'classnames'
 import EditableProperty from './form/EditableProperty'
 import IssueTitleForm from './form/IssueTitleForm'
 import { updateIssueSubject, getIssue } from '../actions/Issues'
@@ -27,7 +28,15 @@ class EditableIssueTitle extends Component {
                               can_edit={can_edit}
             >
               <IssueTitleForm />
-              <div className="text-component--readonly">{issue.subject}</div>
+              <div className={classNames("text-component--readonly",
+                                         {issue_title__quality_error:issue.subject_quality_error})}>
+                { issue.subject_quality_error && 
+                   <div className="issue_subject__quality_error_reason">
+                     Low quality title: {issue.subject_quality_error}
+                   </div>
+                }
+                {issue.subject}
+              </div>
               <div className="text-component--empty">Title</div>
             </EditableProperty>
         )

@@ -4,6 +4,7 @@ from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
+from lib.quality_helper import Quality
 from timepiece.models import Issue, Business
 import re
 
@@ -12,10 +13,21 @@ class Testable(models.Model):
     issue = models.ForeignKey(Issue, blank=True, null=False, related_name='testables')
     steps = models.TextField(null=False)
     order = models.IntegerField(null=False, default=0)
+    quality_error = models.CharField(max_length=255, null=True)
 
     def __init__(self, *args, **kwargs):
         super(Testable, self).__init__(*args, **kwargs)
         self._step_groups = None
+
+    def save(self, *args, **kwargs):
+        super(Testable, self).save(*args, **kwargs)
+        self.quality_error = self.check_quality()
+
+    def check_quality(self):
+        quality_error = Quality().check_sequence_of_short_steps(self.steps)
+        if quality_error != self.quality_error:
+            self.quality_error = quality_error
+            super(Testable, self).save()
 
     @property
     def clean_steps(self):
@@ -32,6 +44,15 @@ class Testable(models.Model):
     def most_recent_result(self):
         return self.testable_results.order_by("-checked_at").first()
 
+    @classmethod
+    def renumber(self, issue_id):
+        c = 1
+        for t in Testable.objects.filter(issue_id=issue_id).order_by("order"):
+            if t.order != c:
+                t.order = c
+                t.save()
+            c += 1
+    
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
