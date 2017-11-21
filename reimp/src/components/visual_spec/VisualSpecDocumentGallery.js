@@ -58,6 +58,7 @@ class VisualSpecDocumentGallery extends Component {
                    return (
                        <div key={image.visual_spec_document.id} className="visual_spec_document_gallery__card">
                          <VisualSpecDocumentGalleryImage visual_spec_document_id={image.visual_spec_document.id}
+                                                         issue_id_for_annotations={issue_id}
                                                          onReorder={that.reorderDocuments}
                                                          is_active={active_visual_spec_document_id===image.visual_spec_document.id}
                                                          onSelected={(event) => that.selectDocument(event, image.visual_spec_document)} />

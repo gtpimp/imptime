@@ -59,7 +59,7 @@ class VisualSpecIssueAnnotation extends Component {
     }
 
     render() {
-        const { visual_spec_issue_annotation, isDragging, connectDragSource, shape } = this.props
+        const { visual_spec_issue_annotation, isDragging, connectDragSource, shape, size } = this.props
         const { isTooltipActive } = this.state
 
         const style = {}
@@ -87,12 +87,14 @@ class VisualSpecIssueAnnotation extends Component {
                         style={style}
                    >
                      { ! visual_spec_issue_annotation.id &&
-                       <div className={classNames("visual-spec-issue__image", "visual-spec-issue__image--"+shape)}> </div>
+                       <div className={classNames("visual-spec-issue__image--"+size,
+                                                  "visual-spec-issue__image--"+shape)}> </div>
                      }
 
                        { visual_spec_issue_annotation.id &&
                          <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
-                           <div className={classNames("visual-spec-issue__image", "visual-spec-issue__image--"+shape)}> </div>
+                           <div className={classNames("visual-spec-issue__image--"+size,
+                                                      "visual-spec-issue__image--"+shape)}> </div>
                          </div>
                        }
                    </div>
@@ -120,7 +122,7 @@ class VisualSpecIssueAnnotation extends Component {
 
 function mapStateToProps(state, props) {
     const { visual_spec_issue_annotation_id, default_shape,
-            onUpdate, onCreate} = props
+            onUpdate, onCreate, can_edit, size} = props
     const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
     const is_invalidated = is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
 
@@ -130,7 +132,9 @@ function mapStateToProps(state, props) {
         is_invalidated: is_invalidated || false,
         onUpdate,
         onCreate,
-        shape: visual_spec_issue_annotation.shape || default_shape || "circle"
+        shape: visual_spec_issue_annotation.shape || default_shape || "circle",
+        can_edit: can_edit !== false,
+        size: size || "normal"
     }
 }
 
@@ -141,7 +145,10 @@ const headingSource = {
         }
     },
     endDrag(props, monitor, component) {
-        const { visual_spec_issue_annotation, onUpdate, onCreate, shape } = props
+        const { visual_spec_issue_annotation, onUpdate, onCreate, shape, can_edit } = props
+        if ( ! can_edit ) {
+            return
+        }
         const drop_result = monitor.getDropResult()
         if ( drop_result === null ) {
             return

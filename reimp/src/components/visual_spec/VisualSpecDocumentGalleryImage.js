@@ -6,6 +6,14 @@ import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../ac
 import {DragSource, DropTarget} from 'react-dnd';
 import {DndTypes} from '../../actions/Dnd'
 import '../../sass/visual-spec-document-gallery.scss'
+import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
+import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
+import {
+    ensureVisualSpecIssueAnnotationsLoaded,
+    getVisualSpecIssueAnnotations,
+    createVisualSpecIssueAnnotation,
+    updateVisualSpecIssueAnnotation
+} from '../../actions/VisualSpecIssueAnnotations'
 
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
@@ -22,13 +30,19 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, visual_spec_document_id } = props
+        const { dispatch, visual_spec_document_id, issue_id_for_annotations, visual_spec_issue_annotation_ids } = props
         dispatch(ensureVisualSpecDocumentsLoaded([visual_spec_document_id]))
+        if ( issue_id_for_annotations ) {
+            dispatch(ensureIssuesLoaded(issue_id_for_annotations))
+        }
+        if ( visual_spec_issue_annotation_ids ) {
+            dispatch(ensureVisualSpecIssueAnnotationsLoaded(visual_spec_issue_annotation_ids))
+        }
     }
 
     render() {
         const { visual_spec_document_id, image_url, is_active, isOver, isDragging,
-                connectDragSource, connectDropTarget, onSelected } = this.props
+                connectDragSource, connectDropTarget, onSelected, visual_spec_issue_annotation_ids } = this.props
         const that = this
 
         if ( isDragging ) {
@@ -36,7 +50,7 @@ class VisualSpecDocumentGalleryImage extends Component {
         }
         
         return connectDragSource(connectDropTarget(
-            <div key={visual_spec_document_id}>
+            <div className="visual-spec-document-gallery-image__container" key={visual_spec_document_id}>
               <img className={classNames("visual_spec_document_gallery__image",
                                          {"visual_spec_document_gallery__image--selected": is_active,
                                           "visual_spec_document_gallery__image--dnd-target": isOver
@@ -44,20 +58,37 @@ class VisualSpecDocumentGalleryImage extends Component {
                    
                    src={image_url}
                    onClick={onSelected} />
+
+
+              { map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
+                    return (
+                        <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
+                                                   can_edit={false}
+                                                   size="small"
+                                                   visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
+                    )
+                })
+              }              
             </div>
         ))
     }
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_document_id, is_active, onSelected } = props
+    const { visual_spec_document_id, is_active, onSelected, issue_id_for_annotations } = props
     const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || []
+    const issue = (issue_id_for_annotations && getIssue(state, issue_id_for_annotations)) || {}
+    const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
+    const visual_spec_issue_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
+    const visual_spec_issue_annotations = getVisualSpecIssueAnnotations(state, visual_spec_issue_annotation_ids) || []
     
     return {
         image_url: visual_spec_document.preview_url,
         visual_spec_document_id,
         is_active,
-        onSelected
+        onSelected,
+        visual_spec_issue_annotation_ids,
+        visual_spec_issue_annotations,
     }
 }
 

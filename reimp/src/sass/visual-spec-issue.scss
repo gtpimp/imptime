@@ -9,10 +9,17 @@
     position: relative;
 }
 
-.visual-spec-issue__image {
+.visual-spec-issue__image--normal {
     background-repeat: no-repeat;
     width: 60px;
     height: 60px;
+}
+
+.visual-spec-issue__image--small {
+    background-repeat: no-repeat;
+    background-size: 15px;
+    width: 15px;
+    height: 15px;
 }
 
 .visual-spec-issue__image--circle {
