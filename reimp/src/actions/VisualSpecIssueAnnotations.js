@@ -17,7 +17,8 @@ import {
     deleteItem,
     announceItemSaveFailed,
     announceItemsSaved,
-    announceItemsSaving
+    announceItemsSaving,
+    UPDATE_ENTIRE_ITEM_FIELD_NAME
 } from '../actions/Item'
 
 export function invalidateAllVisualSpecIssueAnnotations() {
@@ -41,7 +42,7 @@ export function updateVisualSpecIssueAnnotation(visual_spec_document_id, issue_i
                                 issue_id: issue_id},
                                params)
     return updateItem(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, visual_spec_issue_annotation_ids,
-                      "update", data)
+                      UPDATE_ENTIRE_ITEM_FIELD_NAME, data)
 }
 
 export function fetchVisualSpecIssueAnnotationsIfNeeded(list_key) {

@@ -23,7 +23,8 @@ import {
     ANNOUNCE_ITEMS_SAVED,
     ANNOUNCE_ITEMS_SAVING,
     ANNOUNCE_DELETE_ITEM_FAILED,
-    SET_ITEM_STORE_VALUE
+    SET_ITEM_STORE_VALUE,
+    UPDATE_ENTIRE_ITEM_FIELD_NAME
 } from '../actions/Item.js'
 
 const initialState = {
@@ -81,9 +82,13 @@ export default function item(state = initialState, action) {
             s = cloneItemState(state, action)
             s.items_by_id = Object.assign({}, s.items_by_id)
             s.saving_item_ids = union(s.saving_item_ids, item_ids)
-            
-	    const new_item_props = {}
-	    new_item_props[action.field_name] = action.new_value
+
+	    let new_item_props = {}
+            if ( action.field_name == UPDATE_ENTIRE_ITEM_FIELD_NAME ) {
+                new_item_props = Object.assign({}, action.new_value)
+            } else {
+	        new_item_props[action.field_name] = action.new_value
+            }
             map(item_ids, function(item_id, index) {
                 s.items_by_id[item_id] = Object.assign({}, s.items_by_id[item_id],
 		                                       new_item_props)
@@ -93,6 +98,7 @@ export default function item(state = initialState, action) {
 	case ANNOUNCE_ITEMS_SAVED:
             s = cloneItemState(state, action)
             s.saving_item_ids = difference(s.saving_item_ids || [], action.item_ids)
+            s.items_by_id = Object.assign(s.items_by_id, action.items_by_id)
             return setItemState(state, action, s)
             
 	case ANNOUNCE_CAPTURING_NEW_ITEM:

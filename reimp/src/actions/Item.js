@@ -25,6 +25,8 @@ export const ANNOUNCE_ITEM_DELETED = 'ANNOUNCE_ITEM_DELETED'
 export const ANNOUNCE_DELETE_ITEM_FAILED = 'ANNOUNCE_DELETE_ITEM_FAILED'
 export const SET_ITEM_STORE_VALUE = 'SET_ITEM_STORE_VALUE'
 
+export const UPDATE_ENTIRE_ITEM_FIELD_NAME = "__all__"
+
 export function invalidateAllItems(entity_key) {
     return {
         type: INVALIDATE_ALL_ITEMS,
@@ -109,12 +111,13 @@ export function announceItemSaveFailed(entity_key, error) {
     }
 }
 
-export function announceItemsSaved(entity_key, item_ids) {
+export function announceItemsSaved(entity_key, item_ids, items) {
     return {
         type: ANNOUNCE_ITEMS_SAVED,
         entity_key: entity_key, 
         item_ids: item_ids,
-        saved_at: Date.now()
+        saved_at: Date.now(),
+        items_by_id: keyBy(items || {}, 'id'),
     }
 }
 
@@ -197,7 +200,7 @@ export function updateItem(entity_key, item_ids, field_name, new_value, on_done,
 		 dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
-                 dispatch(announceItemsSaved(entity_key, item_ids))
+                 dispatch(announceItemsSaved(entity_key, item_ids, json.payload.items))
              }
 	     if ( on_done ) {
 		 on_done()
