@@ -70,7 +70,7 @@ class VisualSpecIssueAnnotationViewSet(BaseViewSet):
                 return self.error_response(Exception("Invalid post data: %s" % s.errors))
             
             data = {'status': 'success',
-                    'payload': {'visual_spec_issue_annotation':VisualSpecIssueAnnotationSerializer(instance=annotation).data}}
+                    'payload': {'item':VisualSpecIssueAnnotationSerializer(instance=annotation).data}}
             
         except Exception, ex:
             logger.exception(ex)

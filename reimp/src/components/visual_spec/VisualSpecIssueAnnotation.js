@@ -140,23 +140,26 @@ const headingSource = {
         }
     },
     endDrag(props, monitor, component) {
-        const { dispatch, visual_spec_issue_annotation, onUpdate, onCreate } = props
+        const { visual_spec_issue_annotation, onUpdate, onCreate } = props
         const drop_result = monitor.getDropResult()
+        if ( drop_result === null ) {
+            return
+        }
         const { child_pos, parent_pos, distance_moved } = drop_result
         let x_pos
         let y_pos
         if ( props.visual_spec_issue_annotation_id ) {
             x_pos = visual_spec_issue_annotation.x_pos + (100*distance_moved.x / parent_pos.width)
             y_pos = visual_spec_issue_annotation.y_pos + (100*distance_moved.y / parent_pos.height)
-            dispatch(onUpdate([props.visual_spec_issue_annotation_id], {shape:"pointer",
-                                                                        x_pos:x_pos,
-                                                                        y_pos:y_pos}))
+            onUpdate([props.visual_spec_issue_annotation_id], {shape:"pointer",
+                                                               x_pos:x_pos,
+                                                               y_pos:y_pos})
         } else {
             x_pos = 100*(child_pos.x-parent_pos.left)/ parent_pos.width
             y_pos = 100*(child_pos.y-parent_pos.top)/ parent_pos.height
-            dispatch(onCreate({shape:"pointer",
-                               x_pos: x_pos,
-                               y_pos: y_pos}))
+            onCreate({shape:"pointer",
+                      x_pos: x_pos,
+                      y_pos: y_pos})
         }
     }
 }

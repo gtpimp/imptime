@@ -72,6 +72,7 @@ class VisualSpecDocumentEditor extends Component {
             <div className="vsd-editor__annotation_toolbar">
               <h1 className="vsd-editor__annotation_toolbar__title">Annotations</h1>
               <VisualSpecIssueAnnotation
+                  visual_spec_issue_annotation_id={null}
                   onUpdate={this.updateVisualSpecAnnotation}
                   onCreate={this.createVisualSpecAnnotation}
               />
@@ -132,16 +133,16 @@ class VisualSpecDocumentEditor extends Component {
 function mapStateToProps(state, props) {
     const { visual_spec_document_id, issue_id } = props
     const issue = getIssue(state, issue_id) || {}
-    const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
-    const annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
     const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || { 'name': 'loading', 'loaded': false }
-    const annotations = getVisualSpecIssueAnnotations(state, annotation_ids) || []
-        
+    const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
+    const visual_spec_issue_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
+    const visual_spec_issue_annotations = getVisualSpecIssueAnnotations(state, visual_spec_issue_annotation_ids) || []
+    
     return {
         visual_spec_document_id,
         visual_spec_document,
-        annotation_ids,
-        annotations,
+        visual_spec_issue_annotation_ids,
+        visual_spec_issue_annotations,
         issue_id
     }
 }

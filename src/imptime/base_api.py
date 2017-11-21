@@ -13,6 +13,7 @@ from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
+from imptime.models import VisualSpecIssueAnnotation
 
 class PermissionHelper():
     @classmethod
@@ -167,6 +168,9 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_visual_spec_issues(self):
         return VisualSpecIssue.objects.filter(issue__in=self.allowed_issues())
+
+    def allowed_visual_spec_issue_annotations(self):
+        return VisualSpecIssueAnnotation.objects.filter(visual_spec_issue__issue__in=self.allowed_issues())
     
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
