@@ -78,33 +78,30 @@ class VisualSpecIssueAnnotationViewSet(BaseViewSet):
             
         return HttpResponse(JSONRenderer().render(data))
 
-    # def update(self, request, pk):
-    #     try:
-    #         params = json.loads(request.body)
-    #         visual_spec_issue_ids = params.pop('visual_spec_issue_ids')
-    #         self.allowed_visual_spec_documents().get(pk=params['visual_spec_document_id'])
-    #         visual_spec_issues = self.allowed_visual_spec_issues().filter(pk__in=visual_spec_issue_ids)
-    #         for vsi in visual_spec_issues:
-    #             params['id'] = vsi.id
-    #             params['issue_id'] = vsi.issue_id
-    #             s = VisualSpecIssueSerializer(data=params, instance=vsi)
-    #             if s.is_valid():
-    #                 s.save()
-    #             else:
-    #                 return self.error_response(Exception("Invalid post data: %s" % s.errors))
+    def update(self, request, pk):
+        try:
+            params = request.data
+            visual_spec_issue_annotation_ids = params.get('visual_spec_issue_annotation_ids', [pk])
+            self.allowed_issue(params['value']['issue_id'])
+            self.allowed_visual_spec_documents().get(pk=params['value']['visual_spec_document_id'])
+            items = []
+            for vsia_id in visual_spec_issue_annotation_ids:
+                visual_spec_issue_annotation = self.allowed_visual_spec_issue_annotations().get(pk=vsia_id)
+                s = VisualSpecIssueAnnotationInboundSerializer(instance=visual_spec_issue_annotation, data=params['value'])
+                if s.is_valid():
+                    s.save()
+                items.append(visual_spec_issue_annotation)
 
-    #         s = VisualSpecIssueSerializer(visual_spec_issues, many=True)
-    #         visual_spec_issues_data = s.data
-    #         context = {'visual_spec_issues': visual_spec_issues_data}
-                
-    #         data = {'status': 'success',
-    #                 'payload': context}
+            s = VisualSpecIssueAnnotationSerializer(items, many=True)
+            context = {'items': s.data}
+            data = {'status': 'success',
+                    'payload': context}
             
-    #     except Exception, ex:
-    #         logger.exception(ex)
-    #         return self.error_response(ex)
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
             
-    #     return HttpResponse(JSONRenderer().render(data))
+        return HttpResponse(JSONRenderer().render(data))
     
     # def delete(self, request, pk):
     #     try:

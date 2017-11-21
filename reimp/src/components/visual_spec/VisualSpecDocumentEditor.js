@@ -64,7 +64,8 @@ class VisualSpecDocumentEditor extends Component {
 
     updateVisualSpecAnnotation(visual_spec_issue_annotation_id, params) {
         const { dispatch, visual_spec_document_id, issue_id } = this.props
-        dispatch(updateVisualSpecIssueAnnotation(visual_spec_issue_annotation_id, visual_spec_document_id, issue_id, params))
+        dispatch(updateVisualSpecIssueAnnotation(visual_spec_document_id, issue_id,
+                                                 [visual_spec_issue_annotation_id], params))
     }
 
     renderAnnotationToolbar() {

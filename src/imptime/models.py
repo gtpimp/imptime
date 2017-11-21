@@ -160,6 +160,14 @@ class VisualSpecIssueAnnotation(BaseModel):
     x_pos = models.FloatField()
     y_pos = models.FloatField()
 
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(VisualSpecIssueAnnotation, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+    
     
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)
