@@ -185,7 +185,9 @@ class IssueSidebar extends Component {
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Visual Spec Documents">
-                          <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids} allow_edit={false} />
+                          <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+                                                     issue_id={issue.id}
+                                                     allow_edit={false} />
                           <button className="button button--primary" onClick={this.showIssueVisualSpecGallery}>Open</button>
                         </PropertyStackComponent>
 
