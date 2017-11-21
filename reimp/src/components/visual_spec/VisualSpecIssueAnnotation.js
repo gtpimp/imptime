@@ -59,7 +59,7 @@ class VisualSpecIssueAnnotation extends Component {
     }
 
     render() {
-        const { visual_spec_issue_annotation, isDragging, connectDragSource } = this.props
+        const { visual_spec_issue_annotation, isDragging, connectDragSource, shape } = this.props
         const { isTooltipActive } = this.state
 
         const style = {}
@@ -87,12 +87,12 @@ class VisualSpecIssueAnnotation extends Component {
                         style={style}
                    >
                      { ! visual_spec_issue_annotation.id &&
-                       <div className="visual-spec-issue__image"> </div>
+                       <div className={classNames("visual-spec-issue__image", "visual-spec-issue__image--"+shape)}> </div>
                      }
 
                        { visual_spec_issue_annotation.id &&
                          <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
-                           <div className="visual-spec-issue__image"> </div>
+                           <div className={classNames("visual-spec-issue__image", "visual-spec-issue__image--"+shape)}> </div>
                          </div>
                        }
                    </div>
@@ -119,7 +119,7 @@ class VisualSpecIssueAnnotation extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_issue_annotation_id,
+    const { visual_spec_issue_annotation_id, default_shape,
             onUpdate, onCreate} = props
     const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
     const is_invalidated = is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
@@ -129,7 +129,8 @@ function mapStateToProps(state, props) {
         visual_spec_issue_annotation,
         is_invalidated: is_invalidated || false,
         onUpdate,
-        onCreate
+        onCreate,
+        shape: visual_spec_issue_annotation.shape || default_shape || "circle"
     }
 }
 
@@ -140,7 +141,7 @@ const headingSource = {
         }
     },
     endDrag(props, monitor, component) {
-        const { visual_spec_issue_annotation, onUpdate, onCreate } = props
+        const { visual_spec_issue_annotation, onUpdate, onCreate, shape } = props
         const drop_result = monitor.getDropResult()
         if ( drop_result === null ) {
             return
@@ -151,13 +152,13 @@ const headingSource = {
         if ( props.visual_spec_issue_annotation_id ) {
             x_pos = visual_spec_issue_annotation.x_pos + (100*distance_moved.x / parent_pos.width)
             y_pos = visual_spec_issue_annotation.y_pos + (100*distance_moved.y / parent_pos.height)
-            onUpdate([props.visual_spec_issue_annotation_id], {shape:"pointer",
+            onUpdate([props.visual_spec_issue_annotation_id], {shape:shape,
                                                                x_pos:x_pos,
                                                                y_pos:y_pos})
         } else {
             x_pos = 100*(child_pos.x-parent_pos.left)/ parent_pos.width
             y_pos = 100*(child_pos.y-parent_pos.top)/ parent_pos.height
-            onCreate({shape:"pointer",
+            onCreate({shape: shape,
                       x_pos: x_pos,
                       y_pos: y_pos})
         }

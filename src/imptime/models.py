@@ -154,6 +154,7 @@ class VisualSpecIssue(BaseModel):
 class VisualSpecIssueAnnotation(BaseModel):
     
     SHAPES = [ ('circle', 'Circle'),
+               ('square', 'Square'),
                ('pointer', 'Pointer') ]
     visual_spec_issue = ProtectedForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
@@ -167,7 +168,6 @@ class VisualSpecIssueAnnotation(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-    
     
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)

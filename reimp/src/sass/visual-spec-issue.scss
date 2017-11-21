@@ -10,10 +10,17 @@
 }
 
 .visual-spec-issue__image {
-    background-image: url('../../public/images2/visual_spec_issue__circle.png');
     background-repeat: no-repeat;
     width: 60px;
     height: 60px;
+}
+
+.visual-spec-issue__image--circle {
+    background-image: url('../../public/images2/visual_spec_issue__circle.png');
+}
+
+.visual-spec-issue__image--square {
+    background-image: url('../../public/images2/visual_spec_issue__square.png');
 }
 
 .toolbar-panel__visual_spec {
