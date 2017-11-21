@@ -43,8 +43,8 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             else:
 
                 for vsd in visual_spec_documents:
-                    vsd.download_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
-                    vsd.hires_url = vsd.download_url
+                    vsd.download_url = VisualSpecDocumentSerializer.get_download_url(self.request, vsd)
+                    vsd.hires_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
                     vsd.lores_url = VisualSpecDocumentSerializer.get_lores_url(self.request, vsd)
                     vsd.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd)
                 
@@ -66,16 +66,23 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             issue_pk = request.POST.get('issue_id', None)
             issue = self.allowed_issue(issue_pk) if issue_pk else None
             for name, f in request.FILES.items():
-                if not f.content_type.startswith('image'):
-                    raise Exception("Document must be an image, not %s" % f.content_type)
-                width, height = PIL.Image.open(f).size
-                vsd = VisualSpecDocument.objects.create(hires=f,
-                                                        lores=f,
+                is_image = f.content_type.startswith('image')
+                if is_image:
+                    width, height = PIL.Image.open(f).size
+                    f_image = f
+                else:
+                    width=None
+                    height=None
+                    f_image = None
+                vsd = VisualSpecDocument.objects.create(original_doc=f,
+                                                        hires=f_image,
+                                                        lores=f_image,
                                                         hires_width=width,
                                                         hires_height=height,
-                                                        thumbnail=f,
+                                                        thumbnail=f_image,
                                                         name=f.name,
-                                                        content_type=f.content_type)
+                                                        content_type=f.content_type,
+                                                        is_image=is_image)
                 VisualSpecProject.objects.create(visual_spec_document = vsd,
                                                  project_id=project.id,
                                                  order=VisualSpecProject.get_next_order(project.id))

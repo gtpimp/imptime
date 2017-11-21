@@ -38,6 +38,13 @@ class VisualSpecDocumentHiresView(APIView):
     def get(self, request, visual_spec_document_id):
         return self._get(request, visual_spec_document_id)
 
+class VisualSpecDocumentDownloadView(VisualSpecDocumentHiresView):
+    def get(self, request, visual_spec_document_id):
+        return self._get(request, visual_spec_document_id, download=True)
+
+    def _get_doc_field(self, visual_spec_document):
+        return visual_spec_document.original_doc
+    
 class VisualSpecDocumentPreviewView(VisualSpecDocumentHiresView):
     def get(self, request, visual_spec_document_id):
         return self._get(request, visual_spec_document_id, download=False)

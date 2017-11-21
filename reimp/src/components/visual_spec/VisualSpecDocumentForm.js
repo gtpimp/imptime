@@ -17,7 +17,6 @@ class VisualSpecDocumentForm extends Component {
         
         if ( issue_id ) {
             upload_params.issue_id = issue_id
-            extra_buttons.push(<button onClick={onOpen}>spec</button>)
             extra_buttons.push(<button onClick={onDelete}>remove</button>)
         } else {
             extra_buttons.push(<button onClick={onDelete}>delete</button>)
@@ -25,7 +24,6 @@ class VisualSpecDocumentForm extends Component {
         
         return (
             <div>
-              <label htmlFor="visual_spec_document">Visual spec document</label>
               <FileUploader upload_relative_url={UPLOAD_RELATIVE_URL}
                             upload_params={upload_params}
                             onSuccess={onChange}

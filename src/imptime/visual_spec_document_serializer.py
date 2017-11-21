@@ -13,6 +13,8 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     preview_url = serializers.CharField()
     hires_width = serializers.IntegerField()
     hires_height = serializers.IntegerField()
+    content_type = serializers.CharField()
+    is_image = serializers.BooleanField()
     visual_spec_issue_ids = serializers.ListField(child=serializers.CharField())
     issue_ids = serializers.ListField(child=serializers.CharField())
     visual_spec_project_ids = serializers.ListField(child=serializers.CharField())
@@ -24,6 +26,10 @@ class VisualSpecDocumentSerializer(BaseSerializer):
         obj.visual_spec_project_ids = obj.visual_spec_projects.all().values_list('id', flat=True)
         obj.project_ids = obj.visual_spec_project_ids.all().values_list('project_id', flat=True)
         return super(VisualSpecDocumentSerializer, self).to_representation(obj, *args, **kwargs)
+
+    @classmethod
+    def get_download_url(self, request, visual_spec_document):
+        return self._base_url(request) + '/imp/visual_spec_document/%s/download?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
     
     @classmethod
     def get_hires_url(self, request, visual_spec_document):
