@@ -85,7 +85,7 @@ class VisualSpecIssueAnnotation extends Component {
         return ( 
             <div>
               {connectDragSource(
-                  <div id={tooltip_target_id}
+                   <div id={tooltip_target_id}
                         key={visual_spec_issue_annotation.id || "empty"}
                         ref={(element) => { this.tooltip_parent = element }}
                         className={classNames("visual-spec-issue",
@@ -107,20 +107,20 @@ class VisualSpecIssueAnnotation extends Component {
                    </div>
                )}
 
-              { visual_spec_issue_annotation.id && !isDragging && tooltips_enabled &&
-                <ToolTip active={isTooltipActive}
-                         position="right"
-                         arrow="center"
-                         parent={tooltip_target_id}>
-                  <div className="visual-spec-issue--tooltip">
-                    {/* <EditableIssueTitle issue_id={issue.id} />
-                    <EditableIssueDescription issue_id={issue.id} />
-                    <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-                    <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-                    <EditableIssueEstimate issue_id={issue.id} /> */}
-                  </div>
-                </ToolTip>
-              }
+               { visual_spec_issue_annotation.id && !isDragging && tooltips_enabled &&
+                 <ToolTip active={isTooltipActive}
+                          position="right"
+                          arrow="center"
+                          parent={tooltip_target_id}>
+                   <div className="visual-spec-issue--tooltip">
+                     {/* <EditableIssueTitle issue_id={issue.id} />
+                     <EditableIssueDescription issue_id={issue.id} />
+                     <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                     <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+                     <EditableIssueEstimate issue_id={issue.id} /> */}
+                   </div>
+                 </ToolTip>
+               }
 
             </div>
         )

@@ -76,6 +76,7 @@ class VisualSpecDocumentEditor extends Component {
               <h1 className="vsd-editor__annotation_toolbar__title">Annotations</h1>
               {map(ANNOTATION_SHAPES, (shape) => (
                    <VisualSpecIssueAnnotation
+                       key={shape}
                        visual_spec_issue_annotation_id={null}
                        default_shape={shape}
                        onUpdate={this.updateVisualSpecAnnotation}
