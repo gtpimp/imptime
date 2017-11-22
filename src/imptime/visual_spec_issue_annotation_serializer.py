@@ -20,5 +20,7 @@ class VisualSpecIssueAnnotationSerializer(BaseModelSerializer):
         fields = ['id',
                   'shape',
                   'x_pos',
-                  'y_pos']
+                  'y_pos',
+                  'x_offset_to_target',
+                  'y_offset_to_target']
 
