@@ -88,7 +88,8 @@ class VisualSpecDocumentEditor extends Component {
 
     render() {
         const { visual_spec_document_id, visual_spec_document,
-                connectDropTarget, visual_spec_issue_annotation_ids } = this.props
+                connectDropTarget, visual_spec_issue_annotation_ids,
+                img_element_unique_id } = this.props
         const { visual_spec_document_image_loaded } = this.state || {}
         
         if ( ! visual_spec_document_id ) {
@@ -103,6 +104,7 @@ class VisualSpecDocumentEditor extends Component {
                      { visual_spec_document.lores_url &&
                        <img className="vsd-editor__doc_image"
                             role="presentation"
+                            id={img_element_unique_id}
                             src={visual_spec_document.lores_url}
                             onLoad={this.onVisualSpecDocumentImageLoaded}
                        />
@@ -143,26 +145,30 @@ function mapStateToProps(state, props) {
     const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
     const visual_spec_issue_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
     const visual_spec_issue_annotations = getVisualSpecIssueAnnotations(state, visual_spec_issue_annotation_ids) || []
+    const img_element_unique_id = "vsd-editor__doc_image__visual_spec_document_id_" + issue_id + "_" + visual_spec_document_id
     
     return {
         visual_spec_document_id,
         visual_spec_document,
         visual_spec_issue_annotation_ids,
         visual_spec_issue_annotations,
-        issue_id
+        issue_id,
+        img_element_unique_id
     }
 }
 
 const headingTarget = {
     drop: (props, monitor, component) => {
-        const {dispatch, visual_spec_document_id} = props 
+        const {dispatch, visual_spec_document_id, img_element_unique_id} = props 
         const distance_moved = monitor.getDifferenceFromInitialOffset()
         const dragging_item = monitor.getItem()
         const child_pos = monitor.getClientOffset()
+        const img_element = document.getElementById(img_element_unique_id)
+        const img_size = img_element.getBoundingClientRect()
         return { visual_spec_document_id: visual_spec_document_id,
                  child_pos: child_pos,
                  distance_moved: distance_moved,
-                 parent_pos: ReactDOM.findDOMNode(component).getBoundingClientRect() }
+                 parent_pos: img_size }
     },
     hover: (props, monitor, component) => {
     },
