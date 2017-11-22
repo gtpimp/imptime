@@ -155,31 +155,6 @@ function mapStateToProps(state, props) {
     }
 }
 
-function moveRenderOffsetToCenterOffset(x_pos_percent, y_pos_percent, annotation_size_px, parent_pos, visual_spec_issue_annotation) {
-    const { x_offset_to_target, y_offset_to_target } = visual_spec_issue_annotation
-    let x_pos_px = x_pos_percent * parent_pos.width
-    let y_pos_px = y_pos_percent * parent_pos.height
-    x_pos_px += annotation_size_px * x_offset_to_target/100
-    y_pos_px += annotation_size_px * y_offset_to_target/100
-    x_pos_percent = x_pos_px / parent_pos.width
-    y_pos_percent = y_pos_px / parent_pos.height
-    return { 'x': x_pos_percent,
-             'y': y_pos_percent }
-}
-
-function moveCenterOffsetToRenderOffset(x_pos_percent, y_pos_percent, annotation_size_px, parent_pos, visual_spec_issue_annotation) {
-    const { x_offset_to_target, y_offset_to_target } = visual_spec_issue_annotation
-    let x_pos_px = x_pos_percent * parent_pos.width
-    let y_pos_px = y_pos_percent * parent_pos.height
-    x_pos_px -= annotation_size_px * x_offset_to_target/100
-    y_pos_px -= annotation_size_px * y_offset_to_target/100
-    x_pos_percent = x_pos_px / parent_pos.width
-    y_pos_percent = y_pos_px / parent_pos.height
-    return { 'x': x_pos_percent,
-             'y': y_pos_percent }
-}
-
-
 const headingSource = {
     beginDrag(props, monitor, component) {
         return {
@@ -201,11 +176,9 @@ const headingSource = {
         if ( props.visual_spec_issue_annotation_id ) {
             x_pos = visual_spec_issue_annotation.x_pos + (100*distance_moved.x / parent_pos.width)
             y_pos = visual_spec_issue_annotation.y_pos + (100*distance_moved.y / parent_pos.height)
-            const pos = moveRenderOffsetToCenterOffset(x_pos, y_pos, annotation_size_px, parent_pos,
-                                                       visual_spec_issue_annotation)
             onUpdate([props.visual_spec_issue_annotation_id], {shape:shape,
-                                                               x_pos:pos.x,
-                                                               y_pos:pos.y})
+                                                               x_pos:x_pos,
+                                                               y_pos:y_pos})
         } else {
             x_pos = 100*(child_pos.x-parent_pos.left)/ parent_pos.width
             y_pos = 100*(child_pos.y-parent_pos.top)/ parent_pos.height

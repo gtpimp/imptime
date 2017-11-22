@@ -64,7 +64,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                     return (
                         <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
                                                    can_edit={false}
-                                                   annotation_size_px={15}
+                                                   annotation_size_px={5}
                                                    tooltips_enabled={false}
                                                    visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
                     )
