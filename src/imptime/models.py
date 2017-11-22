@@ -157,14 +157,23 @@ class VisualSpecIssueAnnotation(BaseModel):
     
     SHAPES = [ ('circle', 'Circle'),
                ('square', 'Square'),
-               ('pointer', 'Pointer') ]
+               ('arrow', 'Arrow') ]
+
+    TARGET_OFFSET_PERCENTAGES = { 'circle': { 'x': 50, 'y': 50 },
+                                  'square': { 'x': 50, 'y': 50 },
+                                  'arrow': { 'x': 100, 'y': 100 } }
+    
     visual_spec_issue = ProtectedForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
     x_pos = models.FloatField()
     y_pos = models.FloatField()
+    x_offset_to_target = models.FloatField()
+    y_offset_to_target = models.FloatField()
 
     def save(self, *args, **kwargs):
         was_created = not self.id
+        self.x_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['x']
+        self.y_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['y']
         super(VisualSpecIssueAnnotation, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)

@@ -21,8 +21,8 @@
 }
 
 .visual_spec_document_gallery__image {
-    width: 130px;
-    height: 130px;
+    max-width: 130px;
+    max-height: 130px;
     cursor: pointer;
     margin-left: 20px;
     margin-right: 20px;
