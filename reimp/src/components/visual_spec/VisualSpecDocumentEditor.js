@@ -79,6 +79,8 @@ class VisualSpecDocumentEditor extends Component {
                        key={shape}
                        visual_spec_issue_annotation_id={null}
                        default_shape={shape}
+                       annotation_size_px={60}
+                       tooltips_enabled={false}
                        onUpdate={this.updateVisualSpecAnnotation}
                        onCreate={this.createVisualSpecAnnotation}
                    />
@@ -121,6 +123,8 @@ class VisualSpecDocumentEditor extends Component {
                        map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
                            return (
                                <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
+                                                          annotation_size_px={60}
+                                                          tooltips_enabled={true}
                                                           onUpdate={this.updateVisualSpecAnnotation}
                                                           onCreate={this.createVisualSpecAnnotation}
                                                           visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />

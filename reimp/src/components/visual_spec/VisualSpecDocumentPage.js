@@ -243,9 +243,9 @@ class VisualSpecDocumentPage extends Component {
                     /> 
                   </div>
                   <div>
+                    { this.renderSelectForIssue() }
                     <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id}
                                               issue_id={issue_id} />
-                    { this.renderSelectForIssue() }
                   </div>
                 </div>
               }

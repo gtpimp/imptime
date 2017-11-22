@@ -64,10 +64,11 @@ class VisualSpecIssueAnnotation extends Component {
 
     render() {
         const { visual_spec_issue_annotation, isDragging, connectDragSource,
-                shape, size_name, tooltips_enabled } = this.props
+                shape, tooltips_enabled, annotation_size_px } = this.props
         const { isTooltipActive } = this.state
 
-        const style = {}
+        const container_style = {}
+        const annotation_style = {}
         if ( !isDragging && visual_spec_issue_annotation.x_pos ) {
             if ( visual_spec_issue_annotation.y_pos > 100 ) {
                 visual_spec_issue_annotation.y_pos = 90
@@ -76,12 +77,16 @@ class VisualSpecIssueAnnotation extends Component {
                 visual_spec_issue_annotation.x_pos = 90
             }
             
-            style.top = visual_spec_issue_annotation.y_pos + "%"
-            style.left = visual_spec_issue_annotation.x_pos + "%"
+            container_style.top = visual_spec_issue_annotation.y_pos + "%"
+            container_style.left = visual_spec_issue_annotation.x_pos + "%"
+
+            annotation_style["background-size"] = annotation_size_px + "px"
+            annotation_style.width = annotation_size_px + "px"
+            annotation_style.height = annotation_size_px + "px"
         }
 
         const tooltip_target_id = (tooltips_enabled && "visual_spec_issue_annotation_"+visual_spec_issue_annotation.id) || "dummy_vsia_"+visual_spec_issue_annotation.id
-        
+
         return ( 
             <div>
               {connectDragSource(
@@ -91,19 +96,23 @@ class VisualSpecIssueAnnotation extends Component {
                         className={classNames("visual-spec-issue",
                                               {"visual-spec-issue--dragging": isDragging,
                                                "visual-spec-issue--empty": !visual_spec_issue_annotation.id})}
-                        style={style}
+                        style={container_style}
                    >
                      { ! visual_spec_issue_annotation.id &&
-                       <div className={classNames("visual-spec-issue__image--"+size_name,
-                                                  "visual-spec-issue__image--"+shape)}> </div>
+                       <div className={classNames("visual-spec-issue__image--"+shape)}
+                            style={annotation_style}
+                       >
+                       </div>
                      }
 
-                       { visual_spec_issue_annotation.id &&
-                         <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
-                           <div className={classNames("visual-spec-issue__image--"+size_name,
-                                                      "visual-spec-issue__image--"+shape)}> </div>
+                     { visual_spec_issue_annotation.id &&
+                       <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
+                         <div className={classNames("visual-spec-issue__image--"+shape)}
+                              style={annotation_style}
+                         >
                          </div>
-                       }
+                       </div>
+                     }
                    </div>
                )}
 
@@ -129,12 +138,9 @@ class VisualSpecIssueAnnotation extends Component {
 
 function mapStateToProps(state, props) {
     const { visual_spec_issue_annotation_id, default_shape,
-            onUpdate, onCreate, can_edit, size} = props
+            onUpdate, onCreate, can_edit, annotation_size_px, tooltips_enabled} = props
     const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
     const is_invalidated = is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
-
-    const size_name = size || "normal"
-    const size_px = (size_name == "normal" && 60) || 15 // hack: coupled to visual-spec-issue.scss
     
     return {
         visual_spec_issue_annotation_id,
@@ -144,9 +150,8 @@ function mapStateToProps(state, props) {
         onCreate,
         shape: visual_spec_issue_annotation.shape || default_shape || "circle",
         can_edit: can_edit !== false,
-        size_name,
-        size_px,
-        tooltips_enabled: size !== "small"
+        annotation_size_px: annotation_size_px || 60,
+        tooltips_enabled: tooltips_enabled !== false
     }
 }
 

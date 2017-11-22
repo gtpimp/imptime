@@ -48,7 +48,7 @@ class EditableIssueVisualSpecDocument extends Component {
                                       visual_spec_document={visual_spec_document}
                                       onDelete={this.onDelete}
                                       onOpen={this.onOpen} />
-              <div>
+              <div style={{display:"none"}} className="issue_visual_spec_document__edit">
                 <div className="icon--edit"/>
               </div>
               <Blank />
