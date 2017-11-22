@@ -157,7 +157,7 @@ class VisualSpecIssueAnnotation(BaseModel):
     
     SHAPES = [ ('circle', 'Circle'),
                ('square', 'Square'),
-               ('pointer', 'Pointer') ]
+               ('arrow', 'Arrow') ]
     visual_spec_issue = ProtectedForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
     x_pos = models.FloatField()

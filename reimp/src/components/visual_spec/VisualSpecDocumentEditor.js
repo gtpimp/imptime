@@ -17,6 +17,8 @@ import {
     updateVisualSpecIssueAnnotation
 } from '../../actions/VisualSpecIssueAnnotations'
 
+const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
+
 class VisualSpecDocumentEditor extends Component {
 
     constructor(props) {
@@ -72,18 +74,14 @@ class VisualSpecDocumentEditor extends Component {
         return (
             <div className="vsd-editor__annotation_toolbar">
               <h1 className="vsd-editor__annotation_toolbar__title">Annotations</h1>
-              <VisualSpecIssueAnnotation
-                  visual_spec_issue_annotation_id={null}
-                  default_shape="circle"
-                  onUpdate={this.updateVisualSpecAnnotation}
-                  onCreate={this.createVisualSpecAnnotation}
-              />
-              <VisualSpecIssueAnnotation
-                  visual_spec_issue_annotation_id={null}
-                  default_shape="square"
-                  onUpdate={this.updateVisualSpecAnnotation}
-                  onCreate={this.createVisualSpecAnnotation}
-              />
+              {map(ANNOTATION_SHAPES, (shape) => (
+                   <VisualSpecIssueAnnotation
+                       visual_spec_issue_annotation_id={null}
+                       default_shape={shape}
+                       onUpdate={this.updateVisualSpecAnnotation}
+                       onCreate={this.createVisualSpecAnnotation}
+                   />
+               ))}
             </div>
         )
     }
