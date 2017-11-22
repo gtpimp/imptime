@@ -628,7 +628,7 @@ def view_person_time_sheet(request, user_id):
             from_date, to_date = year_month_form.save()
     entries_qs = timepiece.Entry.objects.filter(user=user)
     month_qs = entries_qs.timespan(from_date, span='month')
-    extra_values = ('start_time', 'end_time', 'comments', 'seconds_paused', 'issue__project__status__label',
+    extra_values = ('start_time', 'end_time', 'comments', 'seconds_paused', 'issue__project__status3__name',
             'id', 'location__name', 'issue__project__name', 'activity__name', 'issue__project__business__name',
             'status')
     month_entries = month_qs.date_trunc('month', extra_values)
