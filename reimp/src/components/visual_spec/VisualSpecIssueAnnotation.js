@@ -68,7 +68,6 @@ class VisualSpecIssueAnnotation extends Component {
         const { isTooltipActive } = this.state
 
         const container_style = {}
-        const annotation_style = {}
         if ( !isDragging && visual_spec_issue_annotation.x_pos ) {
             if ( visual_spec_issue_annotation.y_pos > 100 ) {
                 visual_spec_issue_annotation.y_pos = 90
@@ -80,10 +79,11 @@ class VisualSpecIssueAnnotation extends Component {
             container_style.top = visual_spec_issue_annotation.y_pos + "%"
             container_style.left = visual_spec_issue_annotation.x_pos + "%"
 
-            annotation_style["background-size"] = annotation_size_px + "px"
-            annotation_style.width = annotation_size_px + "px"
-            annotation_style.height = annotation_size_px + "px"
         }
+        const annotation_style = {}
+        annotation_style["background-size"] = annotation_size_px + "px"
+        annotation_style.width = annotation_size_px + "px"
+        annotation_style.height = annotation_size_px + "px"
 
         const tooltip_target_id = (tooltips_enabled && "visual_spec_issue_annotation_"+visual_spec_issue_annotation.id) || "dummy_vsia_"+visual_spec_issue_annotation.id
 

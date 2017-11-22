@@ -102,6 +102,7 @@ class VisualSpecDocumentEditor extends Component {
         return (
             <div className="vsd-editor">
 
+              { this.renderAnnotationToolbar() }
               {connectDropTarget(
                    <div className="vsd-editor__doc_image_container">
                      { visual_spec_document.lores_url &&
@@ -137,7 +138,6 @@ class VisualSpecDocumentEditor extends Component {
                    
                )}
 
-               { this.renderAnnotationToolbar() }
             </div>
         )
     }
