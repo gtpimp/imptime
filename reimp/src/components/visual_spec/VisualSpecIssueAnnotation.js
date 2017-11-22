@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import ReactDOM from 'react-dom';
 import {DndTypes} from '../../actions/Dnd'
-import {DragSource} from 'react-dnd';
+import {DragSource, DragLayer} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
 import { getIssue } from '../../actions/Issues'
@@ -21,6 +21,14 @@ import {
     getVisualSpecIssueAnnotation
 } from '../../actions/VisualSpecIssueAnnotations'
 import { highlightItems } from '../../actions/ItemList'
+
+class VisualSpecIssueAnnotationDragLayer extends Component {
+    render() {
+        return (
+            <div>Dragging</div>
+        )
+    }
+}
 
 class VisualSpecIssueAnnotation extends Component {
 
@@ -63,7 +71,7 @@ class VisualSpecIssueAnnotation extends Component {
     }
 
     render() {
-        const { visual_spec_issue_annotation, isDragging, connectDragSource,
+        const { visual_spec_issue_annotation, isDragging, connectDragSource, connectDragPreview,
                 shape, tooltips_enabled, annotation_size_px } = this.props
         const { isTooltipActive } = this.state
 
@@ -89,6 +97,7 @@ class VisualSpecIssueAnnotation extends Component {
 
         return ( 
             <div>
+
               {connectDragSource(
                    <div id={tooltip_target_id}
                         key={visual_spec_issue_annotation.id || "empty"}
@@ -131,6 +140,8 @@ class VisualSpecIssueAnnotation extends Component {
                  </ToolTip>
                }
 
+            { false && isDragging && <VisualSpecIssueAnnotationDragLayer {...this.props} /> }
+            
             </div>
         )
     }
@@ -189,11 +200,21 @@ const headingSource = {
     }
 }
 
+function dragLayer(monitor, options) {
+    return {
+        item: monitor.getItem(),
+        currentOffset: monitor.getSourceClientOffset(),
+        isDragging: monitor.isDragging()
+    }
+}
+
 function collect(connect, monitor) {
     return {
         connectDragSource: connect.dragSource(),
+        connectDragPreview: connect.dragPreview(),
         isDragging: monitor.isDragging()
-    };
+    }
 }
 
+//export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingSource, collect)(DragLayer(dragLayer)(VisualSpecIssueAnnotation)))
 export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingSource, collect)(VisualSpecIssueAnnotation))
