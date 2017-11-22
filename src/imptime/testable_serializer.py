@@ -18,8 +18,13 @@ class TestableSerializer(BaseSerializer):
         return obj.created.strftime('%b, %d, %Y, %I:%M %p')
 
     def convert_list_to_numbered_list(self, steps):
+        if not steps or len(steps) == 0:
+            return steps
         if steps[0] == "-":
             steps = "1." + steps[1:]
         steps = steps.replace("\n-", "\n1.")
         return steps
         
+
+
+    
