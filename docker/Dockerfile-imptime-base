@@ -33,6 +33,7 @@ RUN apt-get update && apt-get install -y --force-yes \
   
 # Install node
 RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+npm install -g npm@latest
 
 # Build sassc
 WORKDIR /tmp/
