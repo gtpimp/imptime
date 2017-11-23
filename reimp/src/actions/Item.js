@@ -26,7 +26,7 @@ export const ANNOUNCE_DELETE_ITEM_FAILED = 'ANNOUNCE_DELETE_ITEM_FAILED'
 export const SET_ITEM_STORE_VALUE = 'SET_ITEM_STORE_VALUE'
 
 export const UPDATE_ENTIRE_ITEM_FIELD_NAME = "__all__"
-
+ 
 export function invalidateAllItems(entity_key) {
     return {
         type: INVALIDATE_ALL_ITEMS,
