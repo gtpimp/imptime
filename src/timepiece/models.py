@@ -3712,6 +3712,10 @@ class Issue(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
 
+    def delete(self, *args, **kwargs):
+        RefreshNotifier().notify_model_delete(self)
+        super(Issue, self).delete(*args, **kwargs)
+            
     def check_quality(self):
         quality_error = Quality().check_short_sentence(self.subject)
         if quality_error != self.subject_quality_error:

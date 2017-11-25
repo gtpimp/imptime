@@ -99,6 +99,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
 
     } else if ( d.entity_name === 'issue' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
+        list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
     } else if ( d.entity_name === 'projectinvite' ) {
         list_keys_to_invalidate[LIST_KEY__PROJECT_USER_LIST] = true
 
@@ -115,6 +116,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         
     } else if ( d.entity_name == 'projectissueorder' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
+        list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
     } else if ( d.entity_name === 'nudge' ) {
         list_keys_to_invalidate[LIST_KEY__NUDGE_LIST] = true
     }
