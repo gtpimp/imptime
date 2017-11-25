@@ -7,6 +7,7 @@ import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
 import IssueList from '../../components/IssueList'
+import IssueSidebar from '../../components/IssueSidebar'
 import {
     ensureVisualSpecDocumentsLoaded,
     getVisualSpecDocument,
@@ -247,7 +248,12 @@ class VisualSpecDocumentPage extends Component {
                                onSelectIssues={this.onSelectIssues}
                     /> 
                   </div>
-                  <div>
+                  { issue.id && 
+                    <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
+                      <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id} project_id={issue.project_id}/>
+                    </div>
+                  }
+                  <div className="visual_spec_document_page__doc_editor">
                     { this.renderSelectForIssue() }
                     <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id}
                                               issue_id={issue_id} />
