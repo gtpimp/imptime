@@ -163,7 +163,7 @@ class VisualSpecIssueAnnotation(BaseModel):
                                   'square': { 'x': 50, 'y': 50 },
                                   'arrow': { 'x': 100, 'y': 50 } }
     
-    visual_spec_issue = ProtectedForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
+    visual_spec_issue = models.ForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
     x_pos = models.FloatField()
     y_pos = models.FloatField()

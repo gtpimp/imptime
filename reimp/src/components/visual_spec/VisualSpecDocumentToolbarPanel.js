@@ -51,10 +51,10 @@ class VisualSpecDocumentToolbarPanel extends Component {
     }
 
     render() {
-        const { selected_issue_id } = this.props
+        const { selected_issue_id, active_visual_spec_document_id } = this.props
         return (
             <div className="toolbar-panel">
-              { selected_issue_id &&
+              { selected_issue_id && active_visual_spec_document_id &&
                 <div className="button toolbar-button--small button--large button--primary"
                      onClick={this.onCloneIssueClick}>
                   + Copy

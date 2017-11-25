@@ -115,10 +115,16 @@ class Issue extends Component {
         dispatch(clock(issue.id, 'clock_out'))
     }
 
-    onDeleteIssue() {
-        const { issue, dispatch } = this.props
-        console.log(issue.id)
+    onDeleteIssue(event) {
+        const { issue, dispatch, onDelete } = this.props
+        event.stopPropagation()
+        if ( ! confirm( "Delete this issue?") ) {
+            return
+        }
         dispatch(deleteIssue(issue.id))
+        if ( onDelete ) {
+            onDelete(issue.id)
+        }
     }
 
     onCollapseFeaturesClick() {
@@ -348,7 +354,8 @@ function mapStateToProps(state, props) {
     const {
         issue_id, is_selected, is_highlighted, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children, is_fake,
-        subject_prefix, subject_suffix, issue_header_list, list_key, is_cursor_item
+        subject_prefix, subject_suffix, issue_header_list, list_key, is_cursor_item,
+        onDelete
     } = props
 
     const issue = getIssue(state, issue_id) || {'loaded': false}
@@ -391,7 +398,8 @@ function mapStateToProps(state, props) {
         subject_suffix: subject_suffix || "",
         visible_header_keys: keys(issue_header_list),
         isFeatureOfSelectedIssue,
-        belongsToSelectedFeature
+        belongsToSelectedFeature,
+        onDelete: onDelete || null
     }
 }
 

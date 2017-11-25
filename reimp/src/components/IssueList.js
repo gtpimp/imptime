@@ -52,6 +52,7 @@ class IssueList extends Component {
         this.openEstimateEditor = this.openEstimateEditor.bind(this)
         this.closeEstimateEditor = this.closeEstimateEditor.bind(this)
         this.handleShortcuts = this.handleShortcuts.bind(this)
+        this.onDeleteIssue = this.onDeleteIssue.bind(this)
     }
 
     componentDidMount() {
@@ -134,6 +135,17 @@ class IssueList extends Component {
         if ( cursor_item_id ) {
             dispatch(setCursorItem(list_key, cursor_item_id))
         }
+    }
+
+    onDeleteIssue(issue_id) {
+        const {dispatch, visible_item_ids} = this.props
+        const {onSelectIssues} = this.props
+        const issue_index = indexOf(visible_item_ids, issue_id)
+        let next_index = issue_index - 1
+        if ( next_index < 0 ) {
+            next_index = visible_item_ids.length-1
+        }
+        onSelectIssues([visible_item_ids[next_index]])
     }
     
     onCollapse() {
@@ -335,7 +347,7 @@ class IssueList extends Component {
         const {
             selected_items,
             selected_ids, highlighted_ids, loading_item_ids, list_key,
-            expanded_issues, cursor_item_id, 
+            expanded_issues, cursor_item_id
         } = this.props
 
         return (
@@ -353,7 +365,8 @@ class IssueList extends Component {
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
                         is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
                         is_cursor_item={""+issue.id==""+cursor_item_id}
-                        issue_id={issue.id}/>
+                        issue_id={issue.id}
+                        onDelete={this.onDeleteIssue} />
                 )}
                 </div>
               </div>
@@ -422,6 +435,7 @@ class IssueList extends Component {
                         issue_id={issue.parent_group_id}
                         subject_prefix="...(continued) "
                         issue_header_list={ISSUE_HEADER_LIST_FEATURE}
+                        onDelete={this.onDeleteIssue}
                     />
                 )
                 running_parent_issue_id = issue.parent_group_id
@@ -444,6 +458,7 @@ class IssueList extends Component {
                         is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}
                         issue_header_list={(issue.can_group_issues && ISSUE_HEADER_LIST_FEATURE) || issue_header_list}
+                        onDelete={that.onDeleteIssue}
                     />
                 )
             }
