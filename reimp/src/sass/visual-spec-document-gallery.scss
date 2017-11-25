@@ -16,7 +16,12 @@
     box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.30);
 }
 
-.visual-spec-document-gallery-image__container {
+.visual-spec-document-gallery-image__img_container {
+    margin-left: 20px;
+    margin-right: 20px;
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
+    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
     position: relative;
 }
 
@@ -24,11 +29,6 @@
     max-width: 130px;
     max-height: 130px;
     cursor: pointer;
-    margin-left: 20px;
-    margin-right: 20px;
-    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
-    -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
-    box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.14);
 }
 
 .visual_spec_document_gallery__image--selected {

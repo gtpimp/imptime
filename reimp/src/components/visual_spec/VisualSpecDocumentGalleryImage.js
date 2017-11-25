@@ -58,15 +58,28 @@ class VisualSpecDocumentGalleryImage extends Component {
         
         return connectDragSource(connectDropTarget(
             <div className="visual-spec-document-gallery-image__container" key={visual_spec_document_id}>
-              <img id={img_element_unique_id}
-                   className={classNames("visual_spec_document_gallery__image",
+              <div className={classNames("visual-spec-document-gallery-image__img_container",
                                          {"visual_spec_document_gallery__image--selected": is_active,
                                           "visual_spec_document_gallery__image--dnd-target": isOver
-                                         })}
-                   src={image_url}
-                   onClick={onSelected}
-                   onLoad={this.onVisualSpecDocumentImageLoaded}
-              />
+                                         })}>
+                <img id={img_element_unique_id}
+                     className="visual_spec_document_gallery__image"
+                     src={image_url}
+                     onClick={onSelected}
+                     onLoad={this.onVisualSpecDocumentImageLoaded}
+                />
+                { visual_spec_document_image_loaded && map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
+                      return (
+                          <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
+                                                     can_edit={false}
+                                                     container_img_element_unique_id={img_element_unique_id}
+                                                     annotation_size_px={25}
+                                                     tooltips_enabled={false}
+                                                     visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
+                      )
+                  })
+                }
+              </div>
 
               { !visual_spec_document_image_loaded &&
                 <div className="visual_spec_document_gallery__image_loading">
@@ -74,17 +87,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                 </div>
               }
 
-                { visual_spec_document_image_loaded && map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
-                    return (
-                        <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
-                                                   can_edit={false}
-                                                   container_img_element_unique_id={img_element_unique_id}
-                                                   annotation_size_px={25}
-                                                   tooltips_enabled={false}
-                                                   visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
-                    )
-                })
-              }              
+
             </div>
         ))
     }

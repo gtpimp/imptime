@@ -93,8 +93,8 @@ class VisualSpecIssueAnnotation extends Component {
                 visual_spec_issue_annotation.x_pos = 90
             }
 
-            container_style.left = visual_spec_issue_annotation.x_pos + offset.x + "%"
-            container_style.top = visual_spec_issue_annotation.y_pos + offset.y + "%"
+            container_style.left = (visual_spec_issue_annotation.x_pos - offset.x) + "%"
+            container_style.top = (visual_spec_issue_annotation.y_pos - offset.y) + "%"
 
         }
         const annotation_style = {}
