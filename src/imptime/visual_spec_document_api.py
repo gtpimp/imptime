@@ -13,7 +13,8 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import IssueHistory
+from timepiece.models import IssueHistory, Issue
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from imptime.models import VisualSpecDocument, VisualSpecProject, VisualSpecIssue
 
 logger = logging.getLogger(__name__)
@@ -197,3 +198,41 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+
+    @detail_route(methods=['POST'])
+    def cloneIssueForDoc(self, request, pk):
+        try:
+            params = request.data
+            visual_spec_document_id = pk
+            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
+            import pdb; pdb.set_trace()
+            issue_id = params['issue_id']
+            issue_to_clone = self.allowed_issue(issue_id)
+            if not self.logged_in_permissions(issue_to_clone.project.business).has_edit_issues:
+                raise Exception("Can't add issues")
+
+            new_issue = Issue.objects.create(
+                project_id=issue_to_clone.project_id,   # sic
+                status2=issue_to_clone.status2,
+                number=Issue.get_next_issue_number(issue_to_clone.project.business),
+                subject=issue_to_clone.subject + " (clone)",
+                created_by=request.user)
+
+            SprintIssueOrder.insert_after(new_issue, set_after_this_issue=issue_to_clone)
+            IssueHistory.add_history(request.user, new_issue,
+                                         "created", "", new_issue.number)
+
+            VisualSpecIssue.objects.create(visual_spec_document=visual_spec_document,
+                                           issue=new_issue,
+                                           order=0)
+
+            data = { 'status': 'success',
+                     'payload': { 'new_issue_id': new_issue.id,
+                                  'new_visual_spec_document_id': visual_spec_document.id } }
+            return HttpResponse(JSONRenderer().render(data))
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+    

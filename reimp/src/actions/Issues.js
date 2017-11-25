@@ -882,6 +882,7 @@ export function promoteIssueTestableToIssue(issue_id, testable_id, on_done) {
     }
 }
 
+
 export function isBulkCreatingIssues(state, sprint_id) {
     return (((state || {}).sprint || {}).bulk_creating_issues || {}).sprint_id === sprint_id
 }

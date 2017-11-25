@@ -164,7 +164,7 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_visual_spec_documents(self):
         return VisualSpecDocument.objects.filter(Q(visual_spec_projects__project__in=self.allowed_projects())|
-                                                 Q(visual_spec_issues__issue__in=self.allowed_issues()))
+                                                 Q(visual_spec_issues__issue__in=self.allowed_issues())).distinct()
 
     def allowed_visual_spec_issues(self):
         return VisualSpecIssue.objects.filter(issue__in=self.allowed_issues())
