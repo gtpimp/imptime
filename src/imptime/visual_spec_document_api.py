@@ -206,7 +206,6 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             params = request.data
             visual_spec_document_id = pk
             visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
-            import pdb; pdb.set_trace()
             issue_id = params['issue_id']
             issue_to_clone = self.allowed_issue(issue_id)
             if not self.logged_in_permissions(issue_to_clone.project.business).has_edit_issues:

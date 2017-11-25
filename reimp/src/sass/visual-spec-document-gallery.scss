@@ -40,3 +40,14 @@
 .visual_spec_document_gallery__image--dnd-target {
     margin-right: 150px;
 }
+
+.visual_spec_document_gallery__image_loading {
+    position: absolute;
+    top: 10px;
+    background: black;
+    border-color: 1px solid white;
+    padding: 5px;
+    color: white;
+    font-size: $font-size-small;
+}
+

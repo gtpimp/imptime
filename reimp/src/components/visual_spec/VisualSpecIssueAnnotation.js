@@ -72,8 +72,17 @@ class VisualSpecIssueAnnotation extends Component {
 
     render() {
         const { visual_spec_issue_annotation, isDragging, connectDragSource, connectDragPreview,
-                shape, tooltips_enabled, annotation_size_px } = this.props
+                shape, tooltips_enabled, annotation_size_px, container_img_element_unique_id,
+                container_img_size} = this.props
         const { isTooltipActive } = this.state
+
+        let offset = { width: 0, height: 0 }
+        if ( visual_spec_issue_annotation.id && container_img_size ) {
+            if ( container_img_size.width > 0 && container_img_size.height > 0 ) {
+                offset = { x:(annotation_size_px * visual_spec_issue_annotation.x_offset_to_target / container_img_size.width),
+                           y: (annotation_size_px * visual_spec_issue_annotation.y_offset_to_target / container_img_size.height) }
+            }
+        }
 
         const container_style = {}
         if ( !isDragging && visual_spec_issue_annotation.x_pos ) {
@@ -84,8 +93,8 @@ class VisualSpecIssueAnnotation extends Component {
                 visual_spec_issue_annotation.x_pos = 90
             }
 
-            container_style.top = visual_spec_issue_annotation.y_pos + "%"
-            container_style.left = visual_spec_issue_annotation.x_pos + "%"
+            container_style.left = visual_spec_issue_annotation.x_pos + offset.x + "%"
+            container_style.top = visual_spec_issue_annotation.y_pos + offset.y + "%"
 
         }
         const annotation_style = {}
@@ -149,9 +158,12 @@ class VisualSpecIssueAnnotation extends Component {
 
 function mapStateToProps(state, props) {
     const { visual_spec_issue_annotation_id, default_shape,
-            onUpdate, onCreate, can_edit, annotation_size_px, tooltips_enabled} = props
+            onUpdate, onCreate, can_edit, annotation_size_px, tooltips_enabled,
+            container_img_element_unique_id } = props
     const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
     const is_invalidated = is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
+    const container_img_element = (container_img_element_unique_id && document.getElementById(container_img_element_unique_id)) || null
+    const container_img_size = (container_img_element && container_img_element.getBoundingClientRect()) || { width:0, height:0 }
     
     return {
         visual_spec_issue_annotation_id,
@@ -162,7 +174,8 @@ function mapStateToProps(state, props) {
         shape: visual_spec_issue_annotation.shape || default_shape || "circle",
         can_edit: can_edit !== false,
         annotation_size_px: annotation_size_px || 60,
-        tooltips_enabled: tooltips_enabled !== false
+        tooltips_enabled: tooltips_enabled !== false,
+        container_img_size
     }
 }
 
@@ -185,8 +198,10 @@ const headingSource = {
         let x_pos
         let y_pos
         if ( props.visual_spec_issue_annotation_id ) {
-            x_pos = visual_spec_issue_annotation.x_pos + (100*distance_moved.x / parent_pos.width)
-            y_pos = visual_spec_issue_annotation.y_pos + (100*distance_moved.y / parent_pos.height)
+            x_pos = visual_spec_issue_annotation.x_pos + (100*distance_moved.x / parent_pos.width) //-
+                    //(annotation_size_px * visual_spec_issue_annotation.x_offset_to_target / parent_pos.width)
+            y_pos = visual_spec_issue_annotation.y_pos + (100*distance_moved.y / parent_pos.height) //-
+                    //(annotation_size_px * visual_spec_issue_annotation.y_offset_to_target / parent_pos.height)
             onUpdate([props.visual_spec_issue_annotation_id], {shape:shape,
                                                                x_pos:x_pos,
                                                                y_pos:y_pos})

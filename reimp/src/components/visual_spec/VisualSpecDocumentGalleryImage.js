@@ -18,6 +18,7 @@ import {
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
         super(props)
+        this.onVisualSpecDocumentImageLoaded = this.onVisualSpecDocumentImageLoaded.bind(this)
     }
 
     componentDidMount() {
@@ -40,9 +41,15 @@ class VisualSpecDocumentGalleryImage extends Component {
         }
     }
 
+    onVisualSpecDocumentImageLoaded() {
+        this.setState({visual_spec_document_image_loaded: true})
+    }
+
     render() {
         const { visual_spec_document_id, image_url, is_active, isOver, isDragging,
-                connectDragSource, connectDropTarget, onSelected, visual_spec_issue_annotation_ids } = this.props
+                connectDragSource, connectDropTarget, onSelected, visual_spec_issue_annotation_ids,
+                img_element_unique_id} = this.props
+        const { visual_spec_document_image_loaded } = this.state || {}
         const that = this
 
         if ( isDragging ) {
@@ -51,20 +58,28 @@ class VisualSpecDocumentGalleryImage extends Component {
         
         return connectDragSource(connectDropTarget(
             <div className="visual-spec-document-gallery-image__container" key={visual_spec_document_id}>
-              <img className={classNames("visual_spec_document_gallery__image",
+              <img id={img_element_unique_id}
+                   className={classNames("visual_spec_document_gallery__image",
                                          {"visual_spec_document_gallery__image--selected": is_active,
                                           "visual_spec_document_gallery__image--dnd-target": isOver
                                          })}
-                   
                    src={image_url}
-                   onClick={onSelected} />
+                   onClick={onSelected}
+                   onLoad={this.onVisualSpecDocumentImageLoaded}
+              />
 
+              { !visual_spec_document_image_loaded &&
+                <div className="visual_spec_document_gallery__image_loading">
+                  <h2>Loading Image...</h2>
+                </div>
+              }
 
-              { map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
+                { visual_spec_document_image_loaded && map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
                     return (
                         <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
                                                    can_edit={false}
-                                                   annotation_size_px={5}
+                                                   container_img_element_unique_id={img_element_unique_id}
+                                                   annotation_size_px={25}
                                                    tooltips_enabled={false}
                                                    visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
                     )
@@ -82,6 +97,7 @@ function mapStateToProps(state, props) {
     const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
     const visual_spec_issue_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
     const visual_spec_issue_annotations = getVisualSpecIssueAnnotations(state, visual_spec_issue_annotation_ids) || []
+    const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + issue_id_for_annotations + "_" + visual_spec_document_id
     
     return {
         image_url: visual_spec_document.preview_url,
@@ -90,6 +106,7 @@ function mapStateToProps(state, props) {
         onSelected,
         visual_spec_issue_annotation_ids,
         visual_spec_issue_annotations,
+        img_element_unique_id
     }
 }
 
