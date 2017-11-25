@@ -103,17 +103,16 @@ class VisualSpecIssueAnnotationViewSet(BaseViewSet):
             
         return HttpResponse(JSONRenderer().render(data))
     
-    # def delete(self, request, pk):
-    #     try:
-    #         params = request.data
-    #         visual_spec_issue_id = params['visual_spec_issue_id']
-    #         visual_spec_issue = self.allowed_visual_spec_issues().filter(pk=visual_spec_issue_id)
-    #         visual_spec_issue.delete()
-    #         issue = self.allowed_issues().get(pk=visual_spec_issue.issue_id)
-    #         issue.delete()
-    #         data = {'status': 'success'}
-    #     except Exception, ex:
-    #         logger.exception(ex)
-    #         return self.error_response(ex)
+    def delete(self, request, pk):
+        try:
+            visual_spec_issue_annotation_id = pk
+            visual_spec_issue_annotation = self.allowed_visual_spec_issue_annotations().get(pk=visual_spec_issue_annotation_id)
+            issue = visual_spec_issue_annotation.visual_spec_issue.issue
+            visual_spec_issue_annotation.delete()
+            issue.save()
+            data = {'status': 'success'}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
         
-    #     return HttpResponse(JSONRenderer().render(data))
+        return HttpResponse(JSONRenderer().render(data))

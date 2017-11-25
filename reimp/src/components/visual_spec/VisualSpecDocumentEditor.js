@@ -14,7 +14,8 @@ import {
     ensureVisualSpecIssueAnnotationsLoaded,
     getVisualSpecIssueAnnotations,
     createVisualSpecIssueAnnotation,
-    updateVisualSpecIssueAnnotation
+    updateVisualSpecIssueAnnotation,
+    deleteVisualSpecIssueAnnotation
 } from '../../actions/VisualSpecIssueAnnotations'
 
 const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
@@ -26,6 +27,7 @@ class VisualSpecDocumentEditor extends Component {
         this.onVisualSpecDocumentImageLoaded = this.onVisualSpecDocumentImageLoaded.bind(this)
         this.createVisualSpecAnnotation = this.createVisualSpecAnnotation.bind(this)
         this.updateVisualSpecAnnotation = this.updateVisualSpecAnnotation.bind(this)
+        this.deleteVisualSpecAnnotation = this.deleteVisualSpecAnnotation.bind(this)
     }
     
     componentDidMount() {
@@ -68,6 +70,11 @@ class VisualSpecDocumentEditor extends Component {
         const { dispatch, visual_spec_document_id, issue_id } = this.props
         dispatch(updateVisualSpecIssueAnnotation(visual_spec_document_id, issue_id,
                                                  [visual_spec_issue_annotation_id], params))
+    }
+
+    deleteVisualSpecAnnotation(visual_spec_issue_annotation_id) {
+        const { dispatch, visual_spec_document_id } = this.props
+        dispatch(deleteVisualSpecIssueAnnotation(visual_spec_issue_annotation_id))
     }
 
     renderAnnotationToolbar() {
@@ -130,6 +137,7 @@ class VisualSpecDocumentEditor extends Component {
                                                           container_img_element_unique_id={img_element_unique_id}
                                                           onUpdate={this.updateVisualSpecAnnotation}
                                                           onCreate={this.createVisualSpecAnnotation}
+                                                          onDelete={this.deleteVisualSpecAnnotation}
                                                           visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
                            )
                        })

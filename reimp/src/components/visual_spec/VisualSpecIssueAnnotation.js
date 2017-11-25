@@ -186,12 +186,16 @@ const headingSource = {
         }
     },
     endDrag(props, monitor, component) {
-        const { visual_spec_issue_annotation, annotation_size_px, onUpdate, onCreate, shape, can_edit } = props
+        const { visual_spec_issue_annotation, annotation_size_px,
+                onUpdate, onCreate, onDelete, shape, can_edit } = props
         if ( ! can_edit ) {
             return
         }
         const drop_result = monitor.getDropResult()
         if ( drop_result === null ) {
+            if ( visual_spec_issue_annotation.id && onDelete ) {
+                onDelete(visual_spec_issue_annotation.id)
+            }
             return
         }
         const { child_pos, parent_pos, distance_moved } = drop_result
