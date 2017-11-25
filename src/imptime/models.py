@@ -161,7 +161,7 @@ class VisualSpecIssueAnnotation(BaseModel):
 
     TARGET_OFFSET_PERCENTAGES = { 'circle': { 'x': 50, 'y': 50 },
                                   'square': { 'x': 50, 'y': 50 },
-                                  'arrow': { 'x': 100, 'y': 100 } }
+                                  'arrow': { 'x': 100, 'y': 50 } }
     
     visual_spec_issue = ProtectedForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
