@@ -1,0 +1,17 @@
+@import "variables.scss";
+
+
+.div-table {
+    display: flex;
+    flex-direction: column
+}
+
+.div-table__header {
+    display: flex;
+    flex-direction: row
+}
+
+.div-table__row {
+    display: flex;
+    flex-direction: row
+}

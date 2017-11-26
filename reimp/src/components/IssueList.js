@@ -28,7 +28,7 @@ import {
     ungroupIssuesIntoFeature,
 } from '../actions/Issues'
 import Issue from '../components/Issue'
-import ListTable from './ListTable'
+import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
 
 class IssueList extends Component {
@@ -379,9 +379,12 @@ class IssueList extends Component {
         const {list_key} = this.props
 
         return (
-            <tr key={list_key + ".candidate_issue"} className="issue_list__candidate_issue">
-              <td colSpan="20">Creating new issue here</td>
-            </tr>
+            <div key={list_key + ".candidate_issue"}
+                 className="div-table__row issue_list__candidate_issue">
+              <div className="div-table__cell" colSpan="20">
+                Creating new issue here
+              </div>
+            </div>
         )
     }
 
@@ -476,18 +479,11 @@ class IssueList extends Component {
         })
 
         const renderHeader = (() => {
-            return (
-                <tr className="list-table__headers">
-                  { map(keys(issue_header_list),
+            return map(keys(issue_header_list),
                         function(header_key){
                             var header_name = issue_header_list[header_key]
-                            return <th key={header_key} className="list-table__header">{header_name}</th>
+                            return <div className="div-table__cell" key={header_key}>{header_name}</div>
                         })
-                  }
-                  { false && <th className="list-table__header">Feature</th>} {/* These were here before mapping was introducted but may need to be removed */}
-                  { false && <th className="list-table__header">Sprint</th>}
-
-                </tr>)
         })
 
         return (
@@ -502,15 +498,15 @@ class IssueList extends Component {
                               selected_ids={selected_ids}
                               closeEstimateEditor={this.closeEstimateEditor}/>
 
-              <ListTable renderHeader={renderHeader}>
+              <DivTable renderHeader={renderHeader}>
                 {issue_rows.length > 0 && issue_rows}
                 {issue_rows.length === 0 &&
                  (
-                     <tr>
-                       <td colSpan="20">No issues</td>
-                     </tr>
+                     <div className="div-table__row">
+                       <div className="div-table__cell">No issues</div>
+                     </div>
                  )}
-              </ListTable>
+              </DivTable>
             </div>
 
         )
