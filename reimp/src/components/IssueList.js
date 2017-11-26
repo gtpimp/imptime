@@ -437,7 +437,7 @@ class IssueList extends Component {
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
                         issue_id={issue.parent_group_id}
                         subject_prefix="...(continued) "
-                        issue_header_list={ISSUE_HEADER_LIST_FEATURE}
+                        issue_header_list={issue_header_list}
                         onDelete={that.onDeleteIssue}
                     />
                 )
@@ -479,11 +479,14 @@ class IssueList extends Component {
         })
 
         const renderHeader = (() => {
-            return map(keys(issue_header_list),
-                        function(header_key){
-                            var header_name = issue_header_list[header_key]
-                            return <div className="div-table__cell" key={header_key}>{header_name}</div>
-                        })
+            return []
+            /* return map(keys(issue_header_list),
+             *             function(header_key){
+             *                 let header_info = issue_header_list[header_key]
+             *                 return <div className="div-table__cell"
+             *                             style={{width:header_info.width}}
+             *                             key={header_key}>{header_info.label}</div>
+             *             })*/
         })
 
         return (

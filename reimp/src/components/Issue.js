@@ -168,7 +168,7 @@ class Issue extends Component {
             is_invalidated, is_saving, is_fake,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
-            issue_id, visible_header_keys,
+            issue_id, visible_header_keys, header_list,
             isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item
         } = this.props
 
@@ -194,7 +194,7 @@ class Issue extends Component {
                   <div className="div-table__cell">
                     <div className="issue_list__issue_number_button">{issue.number}</div>
                   </div>
-                  <div classNmae="div-table__cell">Loading...</div>
+                  <div className="div-table__cell">Loading...</div>
                 </div>
             )
         } else {
@@ -204,132 +204,156 @@ class Issue extends Component {
 
             return connectDragSource(connectDropTarget(
                 <div key={this.key + "." + issue.id}
-                onClick={onClickedIssue}
-                className={classNames(
-                    "div-table__row", 'issue', 'list-table__row--compact', {
-                        'list-table__row--unselected': !is_selected,
-                        'list-table__row--selected': is_selected,
-                        'list-table__row--highlighted': is_highlighted,
-                        'issue--standalone': isStandalone,
-                        'issue--fake': is_fake===true,
-                        'issue--feature': isFeature,
-                        'issue--grouped': belongsToAFeature,
-                        'issue--cursor-item': is_cursor_item,
-                        'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
-                        'issue--belongs-to-selected-feature': belongsToSelectedFeature,
-                        /*'tr--selected': is_selected,*/
-                        'tr--invalidated': is_invalidated,
-                        'tr--saving': is_saving,
-                        'tr--drop-target': isOver
-                    })}
+                     onClick={onClickedIssue}
+                     className={classNames(
+                             "div-table__row", 'issue', 'list-table__row--compact', {
+                                 'list-table__row--unselected': !is_selected,
+                                 'list-table__row--selected': is_selected,
+                                 'list-table__row--highlighted': is_highlighted,
+                                 'issue--standalone': isStandalone,
+                                 'issue--fake': is_fake===true,
+                                 'issue--feature': isFeature,
+                                 'issue--grouped': belongsToAFeature,
+                                 'issue--cursor-item': is_cursor_item,
+                                 'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
+                                 'issue--belongs-to-selected-feature': belongsToSelectedFeature,
+                                 /*'tr--selected': is_selected,*/
+                                 'tr--invalidated': is_invalidated,
+                                 'tr--saving': is_saving,
+                                 'tr--drop-target': isOver
+                             })}
                 >
-                {includes(visible_header_keys, "number") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-number">
-                   <div>{issue.number}</div>
-                 </div>
-                }
-                {includes(visible_header_keys, "expand_feature") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-icon">
-                   { issue.can_group_issues &&
-                     <div>
-                       { show_children &&
-                         <div className={classNames("icon--collapse",
-                                                    {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
-                              onClick={this.onCollapseFeaturesClick}></div>
+                  {includes(visible_header_keys, "number") &&
+                   <div className="div-table__cell list-table__cell list-table__cell--issue-number"
+                        style={{width:header_list.number.width}}>
+                     <div>{issue.number}</div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "expand_feature") &&
+                   <div className="div-table__cell list-table__cell list-table__cell--issue-icon"
+                        style={{width:header_list.expand_feature.width}}>
+                     { issue.can_group_issues &&
+                       <div>
+                         { show_children &&
+                           <div className={classNames("icon--collapse",
+                                                      {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
+                                onClick={this.onCollapseFeaturesClick}></div>
+                         }
+                           { !show_children &&
+                             <div className="icon--expand" onClick={this.onExpandFeaturesClick}></div>
+                           }
+                       </div>
+                     }
+                       { !issue.can_group_issues && issue.parent_group_id &&
+                         <div className={classNames({"icon--child":true,
+                                                     "icon--child--highlight":belongsToSelectedFeature})}></div>
                        }
-                       { !show_children &&
-                         <div className="icon--expand" onClick={this.onExpandFeaturesClick}></div>
-                       }
-                     </div>
-                   }
-                   { !issue.can_group_issues && issue.parent_group_id &&
-                     <div className={classNames({"icon--child":true,
-                                                 "icon--child--highlight":belongsToSelectedFeature})}></div>
-                   }
-                 </div>
-                }
-                {includes(visible_header_keys, "name") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-name">
-                   {subject_prefix}{issue.subject}{subject_suffix}
-                   { issue.group_children && issue.group_children.length > 0 &&
-                     <span>
-                       ({issue.group_children.length}
-                       {issue.group_children.length === 1 && <span>child</span>}
-                       {issue.group_children.length > 1 && <span>children</span>}
-                       )
-                     </span>
-                   }
-                 </div>
-                }
-                {includes(visible_header_keys, "assignee") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-assignee  issue__cell__secondary">
-                   <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
-                 </div>
-                }
-                {includes(visible_header_keys, "created_at") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-created-at  issue__cell__secondary">
-                   <Timestamp value={issue.created_at} format="from_now"/>
-                 </div>
-                }
-                {includes(visible_header_keys, "status") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-status  issue__cell__secondary">
-                   <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
-                 </div>
-                }
-                {includes(visible_header_keys, "progress") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-progress  issue__cell__secondary">
-                   <Progress issue={issue}/>
-                 </div>
-                }
-                {includes(visible_header_keys, "estimated") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-estimates  issue__cell__secondary">
-                   <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
-                 </div>
-                }
-                {includes(visible_header_keys, "tags") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-tags">
-                   { map(issue.tags, function (tag, index) {
-                         return (<Tag key={index}
-                                      category={tag.category_name}
-                                      name={tag.name}
-                                      deleteTag={() => onDeleteTag(tag)}
-                         />)
-                     })}
-                 </div>
-                }
-                {includes(visible_header_keys, "my_time") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-tracking-control  issue__cell__secondary">
-                   <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
-                 </div>
-                }
-                {includes(visible_header_keys, "clock_in") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-tracking-control  issue__cell__secondary">
-                   <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
-                     <TimerSwitch
-                         active={issue.am_i_clocked_in}
-                         onStart={this.onClockIn}
-                         onStop={this.onClockOut}
-                     />
                    </div>
-                 </div>
-                }
-                {includes(visible_header_keys, "delete") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-delete  issue__cell__secondary">
-                   <div className={"reveal-on-hover--block"}>
-                     <DeleteIssue
-                         onDelete ={this.onDeleteIssue}
-                     />
-                   </div>
-                 </div>
-                }
-                {includes(visible_header_keys, "small_delete") &&
-                 <div className="div-table__cell list-table__cell list-table__cell--issue-small-delete  issue__cell__secondary">
-                   <div className={"reveal-on-hover--block"}>
-                     <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
-                   </div>
-                 </div>
-                }
-            </div>
+                  }
+                   {includes(visible_header_keys, "name") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-name"
+                         style={{width:header_list.name.width}}
+                    >
+                      {subject_prefix}{issue.subject}{subject_suffix}
+                      { issue.group_children && issue.group_children.length > 0 &&
+                        <span>
+                          ({issue.group_children.length}
+                          {issue.group_children.length === 1 && <span>child</span>}
+                          {issue.group_children.length > 1 && <span>children</span>}
+                          )
+                        </span>
+                      }
+                    </div>
+                   }
+                   {includes(visible_header_keys, "assignee") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-assignee  issue__cell__secondary"
+                         style={{width:header_list.assignee.width}}
+                    >
+                      <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                    </div>
+                   }
+                   {includes(visible_header_keys, "created_at") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-created-at  issue__cell__secondary"
+                         style={{width:header_list.created_at.width}}
+                    >
+                      <Timestamp value={issue.created_at} format="from_now"/>
+                    </div>
+                   }
+                   {includes(visible_header_keys, "status") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-status  issue__cell__secondary"
+                         style={{width:header_list.status.width}}
+                    >
+                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                    </div>
+                   }
+                   {includes(visible_header_keys, "progress") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-progress  issue__cell__secondary"
+                         style={{width:header_list.progress.width}}
+                    >
+                      <Progress issue={issue}/>
+                    </div>
+                   }
+                   {includes(visible_header_keys, "estimated") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-estimates  issue__cell__secondary"
+                         style={{width:header_list.estimated.width}}
+                    >
+                      <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
+                    </div>
+                   }
+                   {includes(visible_header_keys, "tags") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-tags"
+                         style={{width:header_list.tags.width}}
+                    >
+                      { map(issue.tags, function (tag, index) {
+                            return (<Tag key={index}
+                                         category={tag.category_name}
+                                         name={tag.name}
+                                         deleteTag={() => onDeleteTag(tag)}
+                                    />)
+                        })}
+                    </div>
+                   }
+                   {includes(visible_header_keys, "my_time") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-tracking-control  issue__cell__secondary"
+                         style={{width:header_list.my_time.width}}
+                    >
+                      <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                    </div>
+                   }
+                   {includes(visible_header_keys, "clock_in") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-tracking-control  issue__cell__secondary"
+                         style={{width:header_list.clock_in.width}}
+                    >
+                      <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                        <TimerSwitch
+                            active={issue.am_i_clocked_in}
+                            onStart={this.onClockIn}
+                            onStop={this.onClockOut}
+                        />
+                      </div>
+                    </div>
+                   }
+                   {includes(visible_header_keys, "delete") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-delete  issue__cell__secondary"
+                         style={{width:header_list.delete.width}}
+                    >
+                      <div className={"reveal-on-hover--block"}>
+                        <DeleteIssue
+                            onDelete ={this.onDeleteIssue}
+                        />
+                      </div>
+                    </div>
+                   }
+                   {includes(visible_header_keys, "small_delete") &&
+                    <div className="div-table__cell list-table__cell list-table__cell--issue-small-delete  issue__cell__secondary"
+                         style={{width:header_list.small_delete.width}}
+                    >
+                      <div className={"reveal-on-hover--block"}>
+                        <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
+                      </div>
+                    </div>
+                   }
+                </div>
             ))
         }
     }
@@ -400,6 +424,7 @@ function mapStateToProps(state, props) {
         subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || "",
         visible_header_keys: keys(issue_header_list),
+        header_list: issue_header_list,
         isFeatureOfSelectedIssue,
         belongsToSelectedFeature,
         onDelete: onDelete || null
