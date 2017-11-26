@@ -7,8 +7,13 @@
 
 .visual_spec_document_gallery {
     display: flex;
+    flex-flow: row wrap;
 }
 
+
+.visual_spec_document_gallery__card {
+    margin-top: 20px;
+}
 
 .visual_spec_document_gallery__image:hover {
     -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.30);
