@@ -2,6 +2,7 @@
 import sys
 import os
 from django.utils.translation import ugettext_lazy as _
+from corsheaders.defaults import default_headers
 
 DEBUG = True
 PROJECT_HOME = os.path.dirname(os.path.realpath(__file__))
@@ -33,6 +34,10 @@ NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS=5
 NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS=2
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_HEADERS = default_headers + (
+    'cache-control',
+)
 
 # Number of days to review sprints and issues, unless over-ridden
 DEFAULT_REVIEW_CYCLE_DAYS = 30
