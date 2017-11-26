@@ -1,5 +1,8 @@
 import logging
 from issue_serializer import IssueSerializer
+from django.conf import settings
+from django.core.files import File
+import os
 import PIL
 from django_downloadview import HTTPDownloadView
 from django.contrib.auth.decorators import login_required
@@ -69,12 +72,10 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             for name, f in request.FILES.items():
                 is_image = f.content_type.startswith('image')
                 if is_image:
-                    width, height = PIL.Image.open(f).size
                     f_image = f
                 else:
-                    width=None
-                    height=None
-                    f_image = None
+                    f_image = File(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
+                width, height = PIL.Image.open(f_image).size
                 vsd = VisualSpecDocument.objects.create(original_doc=f,
                                                         hires=f_image,
                                                         lores=f_image,
