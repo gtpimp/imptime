@@ -435,7 +435,7 @@ class IssueList extends Component {
                         issue_id={issue.parent_group_id}
                         subject_prefix="...(continued) "
                         issue_header_list={ISSUE_HEADER_LIST_FEATURE}
-                        onDelete={this.onDeleteIssue}
+                        onDelete={that.onDeleteIssue}
                     />
                 )
                 running_parent_issue_id = issue.parent_group_id
