@@ -5,6 +5,7 @@ import EditableProperty from '../form/EditableProperty'
 import { getIssue } from '../../actions/Issues'
 import VisualSpecDocumentForm from './VisualSpecDocumentForm'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
+import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
 import Blank from '../form/Blank'
 import {browserHistory} from 'react-router'
 
@@ -17,6 +18,20 @@ class EditableIssueVisualSpecDocument extends Component {
         this.onOpen = this.onOpen.bind(this)
     }
 
+    componentDidMount() {
+        const { dispatch, visual_spec_document_id } = this.props
+        if ( visual_spec_document_id ) {
+            dispatch(ensureVisualSpecDocumentsLoaded([visual_spec_document_id]))
+        }
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { dispatch, visual_spec_document_id } = new_props
+        if ( visual_spec_document_id ) {
+            dispatch(ensureVisualSpecDocumentsLoaded([visual_spec_document_id]))
+        }
+    }
+    
     onChange() {
         // do nothing, the file has already been uploaded by the
         // VisualSpecDocumentForm
@@ -39,7 +54,7 @@ class EditableIssueVisualSpecDocument extends Component {
 	return (
 
             <EditableProperty property_key={'issue_visual_spec_document_'+visual_spec_document_id}
-                              initial_value={visual_spec_document}
+                              initial_value={visual_spec_document.id}
                               class_name="issue_visual_spec_document__editable_property"
                               can_edit={true}
                               onChange={this.onChange}
@@ -48,7 +63,7 @@ class EditableIssueVisualSpecDocument extends Component {
                                       visual_spec_document={visual_spec_document}
                                       onDelete={this.onDelete}
                                       onOpen={this.onOpen} />
-              <div style={{display:"none"}} className="issue_visual_spec_document__edit">
+              <div className="issue_visual_spec_document__edit">
                 <div className="icon--edit"/>
               </div>
               <Blank />
@@ -62,12 +77,7 @@ function mapStateToProps(state, props) {
     const { issue_id, project_id, visual_spec_document_id,
             selectDocument, onDeleteDocument, onOpenDocument, reorderDocuments, is_active } = props
     const issue = getIssue(state, issue_id) || {}
-    let visual_spec_document = { id: visual_spec_document_id || null}
-    map(issue.visual_spec_documents || [], function(issue_visual_spec_document, index) {
-        if ( issue_visual_spec_document.id === visual_spec_document_id ) {
-            visual_spec_document = issue_visual_spec_document
-        }
-    })
+    const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || []
     
     return {
         issue_id: issue_id,
