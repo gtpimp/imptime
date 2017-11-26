@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import classNames from 'classnames'
 import {browserHistory} from 'react-router'
+import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import { getVisualSpecDocuments,
          ensureVisualSpecDocumentsLoaded
 } from '../../actions/VisualSpecDocuments'
@@ -29,8 +30,9 @@ class VisualSpecDocumentGallery extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, visual_spec_document_ids } = props
+        const { dispatch, visual_spec_document_ids, issue_id } = props
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
+        dispatch(ensureIssuesLoaded([issue_id]))
     }
 
     reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
@@ -39,12 +41,16 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     selectDocument(event, visual_spec_document) {
-        const { dispatch, onSelect } = this.props
+        const { dispatch, onSelect, issue } = this.props
         const vsd = visual_spec_document
         if ( onSelect ){
             onSelect(vsd.id)
         } else {
-            browserHistory.push('/visualSpec/' + vsd.id);
+            if ( issue.id ) {
+                browserHistory.push('/projects/' + issue.project_id + '/sprints/' + issue.sprint_id + '/issues/' + issue.id + '/visualSpec/' + vsd.id)
+            } else {
+                browserHistory.push('/visualSpec/' + vsd.id)
+            }
         }
     }
 
@@ -87,6 +93,7 @@ function mapStateToProps(state, props) {
     const { visual_spec_document_ids, active_visual_spec_document_id, reorderDocuments,
             issue_id, project_id, allow_edit, onSelect, onDeleteDocument } = props
 
+    const issue = getIssue(state, issue_id) || {}
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
     const image_set = map(visual_spec_documents, function(vsd) {
         return {
@@ -99,6 +106,7 @@ function mapStateToProps(state, props) {
     
     return {
         image_set,
+        issue,
         active_visual_spec_document_id,
         visual_spec_document_ids,
         reorderDocuments,

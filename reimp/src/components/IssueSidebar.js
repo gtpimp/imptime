@@ -175,20 +175,22 @@ class IssueSidebar extends Component {
                         <PropertyStackComponent title="Sprint Name">
                           <EditableIssueInSprint issue_ids={[issue.id]}/>
                         </PropertyStackComponent>
-                        
-                        <PropertyStackComponent title="Attachments">
-                          { map(attachments, function (attachment, index) {
-                                return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
-                            })
-                          }
-                          <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
-                        </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Visual Spec Documents">
+                        { false &&
+                          <PropertyStackComponent title="Attachments">
+                            { map(attachments, function (attachment, index) {
+                                  return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
+                              })
+                            }
+                            <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
+                          </PropertyStackComponent>
+                        }
+
+                        <PropertyStackComponent title="Attachments">
                           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                                      issue_id={issue.id}
                                                      allow_edit={false} />
-                          <button className="button button--primary" onClick={this.showIssueVisualSpecGallery}>Open</button>
+                          <button className="button button--primary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
                         </PropertyStackComponent>
 
                         { issue.can_group_issues &&

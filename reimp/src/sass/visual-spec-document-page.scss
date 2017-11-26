@@ -8,6 +8,10 @@
     display: flex;
 }
 
+.visual_spec_document_page__issue_list {
+    max-width: 30%;
+}
+
 .visual_spec_document_page__project_gallery_modal {
     @extend .editable-property-modal;
     bottom: 5%;
