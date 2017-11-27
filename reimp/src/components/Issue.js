@@ -186,10 +186,9 @@ class Issue extends Component {
             return (
                 <div key={this.key + "." + issue.id}
                     onClick={onClickedIssue}
-                className={classNames("div-table__row", 'issue',
-                                      {'tr--selected': is_selected,
-                                       'tr--drop-target': isOver,
-                                       'issue--drop-target': isOver})}
+                     className={classNames("div-table__row", 'issue',
+                                           {'div-table__row--selected': is_selected,
+                                            'div-table__row--drop-target': isOver})}
                 >
                   <div className="div-table__cell">
                     <div className="issue_list__issue_number_button">{issue.number}</div>
@@ -205,32 +204,33 @@ class Issue extends Component {
             return connectDragSource(connectDropTarget(
                 <div key={this.key + "." + issue.id}
                      onClick={onClickedIssue}
-                     className={classNames(
-                             "div-table__row", 'issue', 'list-table__row--compact', {
-                                 'list-table__row--unselected': !is_selected,
-                                 'list-table__row--selected': is_selected,
-                                 'list-table__row--highlighted': is_highlighted,
-                                 'issue--standalone': isStandalone,
-                                 'issue--fake': is_fake===true,
-                                 'issue--feature': isFeature,
-                                 'issue--grouped': belongsToAFeature,
-                                 'issue--cursor-item': is_cursor_item,
-                                 'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
-                                 'issue--belongs-to-selected-feature': belongsToSelectedFeature,
-                                 /*'tr--selected': is_selected,*/
-                                 'tr--invalidated': is_invalidated,
-                                 'tr--saving': is_saving,
-                                 'tr--drop-target': isOver
-                             })}
+                     className={classNames("div-table__row",
+                                           'issue',
+                                           'list-table__row--compact',
+                                           {
+                                               'div-table__row--selected': is_selected,
+                                               'div-table__row--highlighted': is_highlighted,
+                                               'div-table__row--drop-target': isOver,
+                                               'issue--standalone': isStandalone,
+                                               'issue--fake': is_fake===true,
+                                               'issue--feature': isFeature,
+                                               'issue--grouped': belongsToAFeature,
+                                               'issue--cursor-item': is_cursor_item,
+                                               'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
+                                               'issue--belongs-to-selected-feature': belongsToSelectedFeature,
+                                               /*'tr--selected': is_selected,*/
+                                               'div-table__row--invalidated': is_invalidated,
+                                               'div-table__row--saving': is_saving,
+                                           })}
                 >
                   {includes(visible_header_keys, "number") &&
-                   <div className="div-table__cell list-table__cell list-table__cell--issue-number"
+                   <div className="div-table__cell div-table__cell--issue-number"
                         style={{width:header_list.number.width}}>
                      <div>{issue.number}</div>
                    </div>
                   }
                   {includes(visible_header_keys, "expand_feature") &&
-                   <div className="div-table__cell list-table__cell list-table__cell--issue-icon"
+                   <div className="div-table__cell div-table__cell div-table__cell--issue-icon"
                         style={{width:header_list.expand_feature.width}}>
                      { issue.can_group_issues &&
                        <div>
@@ -251,7 +251,7 @@ class Issue extends Component {
                    </div>
                   }
                    {includes(visible_header_keys, "name") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-name"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-name"
                          style={{width:header_list.name.width}}
                     >
                       {subject_prefix}{issue.subject}{subject_suffix}
@@ -266,42 +266,42 @@ class Issue extends Component {
                     </div>
                    }
                    {includes(visible_header_keys, "assignee") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-assignee  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-assignee  issue__cell__secondary"
                          style={{width:header_list.assignee.width}}
                     >
                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "created_at") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-created-at  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-created-at  issue__cell__secondary"
                          style={{width:header_list.created_at.width}}
                     >
                       <Timestamp value={issue.created_at} format="from_now"/>
                     </div>
                    }
                    {includes(visible_header_keys, "status") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-status  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-status  issue__cell__secondary"
                          style={{width:header_list.status.width}}
                     >
                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "progress") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-progress  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-progress  issue__cell__secondary"
                          style={{width:header_list.progress.width}}
                     >
                       <Progress issue={issue}/>
                     </div>
                    }
                    {includes(visible_header_keys, "estimated") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-estimates  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-estimates  issue__cell__secondary"
                          style={{width:header_list.estimated.width}}
                     >
                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                     </div>
                    }
                    {includes(visible_header_keys, "tags") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-tags"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-tags"
                          style={{width:header_list.tags.width}}
                     >
                       { map(issue.tags, function (tag, index) {
@@ -314,14 +314,14 @@ class Issue extends Component {
                     </div>
                    }
                    {includes(visible_header_keys, "my_time") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-tracking-control  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-tracking-control  issue__cell__secondary"
                          style={{width:header_list.my_time.width}}
                     >
                       <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                     </div>
                    }
                    {includes(visible_header_keys, "clock_in") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-tracking-control  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-tracking-control  issue__cell__secondary"
                          style={{width:header_list.clock_in.width}}
                     >
                       <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
@@ -334,7 +334,7 @@ class Issue extends Component {
                     </div>
                    }
                    {includes(visible_header_keys, "delete") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-delete  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-delete  issue__cell__secondary"
                          style={{width:header_list.delete.width}}
                     >
                       <div className={"reveal-on-hover--block"}>
@@ -345,7 +345,7 @@ class Issue extends Component {
                     </div>
                    }
                    {includes(visible_header_keys, "small_delete") &&
-                    <div className="div-table__cell list-table__cell list-table__cell--issue-small-delete  issue__cell__secondary"
+                    <div className="div-table__cell div-table__cell div-table__cell--issue-small-delete  issue__cell__secondary"
                          style={{width:header_list.small_delete.width}}
                     >
                       <div className={"reveal-on-hover--block"}>

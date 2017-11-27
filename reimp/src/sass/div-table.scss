@@ -15,3 +15,53 @@
     display: flex;
     flex-direction: row
 }
+
+.div-table__row--selected {
+    background-color: $color-3;
+}
+
+.div-table__row--unselected {
+    background-color: $color-3;
+}
+
+div-table__row--highlighted {
+    font-weight: bold;
+}
+
+div-table__row--invalidated {
+}
+
+div-table__row--saving {
+}
+
+.div-table__row--drop-target {
+    border-bottom: 50px solid #efefef;
+    padding-bottom: 50px;
+    background-color: black;
+}
+
+.div-table__cell {
+    height: 35px;
+    padding-left: 16px;
+    padding-right: 16px;
+    vertical-align: middle;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &:first-child {
+	padding-left: 26px;
+    }
+}
+
+.div-table__cell--default {
+    @extend .list-table__cell;
+    display: flex;
+    align-items: center;
+}
+
+.div-table__cell--hover {
+    -webkit-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+    -moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+    box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+}
