@@ -20,6 +20,7 @@
 
 .div-table__row:hover {
     box-shadow: inset 0 -1px 0 0 #E0E0E0;
+    background-color: $row-hover-color;
 }
  
 .div-table__row--selected {
@@ -62,7 +63,9 @@ div-table__row--saving {
 .div-table__cell--default {
     @extend .div-table__cell;
     display: flex;
-    align-items: center;
+    align-items: start;
+    height: 100%;
+    width: 100%;
 }
 
 .div-table__cell--hover {

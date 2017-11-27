@@ -57,36 +57,39 @@ export const PAGE_KEY__NUDGE_PAGE = 'nudge_page'
 export const SELECTOR__SPRINTS = 'selector_sprints'
 export const FILTER_KEY__GLOBAL = 'global_filter'
 
-export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:"10px"},
-                                     'expand_feature': {label:'', width:"10px"},
-                                     'name': {label:"Name", width:"30%"},
-                                     'assignee': {label:"Assignee", width:"10%"},
-                                     'created_at': {label:"Created at", width:"10% "},
-                                     'status': {label:"Status", width:"10%"},
-                                     'tags': {label:"Tags", width:"10%"},
+const small_col_width = "150px"
+const tiny_col_width = "10px"
+
+export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width},
+                                     'expand_feature': {label:'', width:tiny_col_width},
+                                     'name': {label:"Name", width:"50%"},
+                                     'assignee': {label:"Assignee", width:small_col_width},
+                                     'created_at': {label:"Created at", width:small_col_width},
+                                     'status': {label:"Status", width:small_col_width},
+                                     'tags': {label:"Tags", width:small_col_width},
                                      'progress': {label:"Progress", width:"10%"},
                                      'my_time': {label:"My Time", width:"10%"},
                                      'clock_in': {label:"Clock in", width:"10%"},
-                                     'small_delete': {label:"", width:"10px"}
+                                     'small_delete': {label:"", width:tiny_col_width}
 }
 
-export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:"10px"},
-                                       'expand_feature': {label:'', width:"10px"},
+export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width},
+                                       'expand_feature': {label:'', width:tiny_col_width},
                                        'name': {label:"Name", width:"50%"},
-                                       'assignee': {label:"Assignee", width:"20%"},
-                                       'status': {label:"Status", width:"20%"}
+                                       'assignee': {label:"Assignee", width:small_col_width},
+                                       'status': {label:"Status", width:small_col_width}
 }
 
-export var ISSUE_HEADER_LIST_FEATURE = {'number': {label:"#", width:"10px"},
-                                        'expand_feature': {label:'', width:"10px"},
+export var ISSUE_HEADER_LIST_FEATURE = {'number': {label:"#", width:tiny_col_width},
+                                        'expand_feature': {label:'', width:tiny_col_width},
                                         'name': {label:"Name", width:"50%"}
 }
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
-    'number':{label:'#', width:"10px"},
+    'number':{label:'#', width:tiny_col_width},
     'name': {label:'Name', width:"70%"},
     'status': {label:'Status', width:"10%"},
     'estimates': {label:"Estimates", width:"10%"},
-    'small_delete': {label:"", width:"10px"}
+    'small_delete': {label:"", width:tiny_col_width}
 }
 

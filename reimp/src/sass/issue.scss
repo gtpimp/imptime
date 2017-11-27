@@ -111,11 +111,15 @@
     @extend .div-table__cell--default;
 }
 
-.div-table__cell--issue-name {
+.issue-cell__my-estimate:hover {
+    @extend .div-table__cell--hover;
+}
+
+.issue-cell__issue-name {
     @extend .div-table__cell--default;
 }
 
-.div-table__cell--issue-name:hover {
+.issue-cell__issue-name:hover {
     @extend .div-table__cell--hover;
 }
 
