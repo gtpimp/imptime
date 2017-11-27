@@ -145,6 +145,10 @@ export function clearPageFlag(page_key, flag_name) {
     }
 }
 
-export function getPageFlag(state, page_key, flag_name) {
-    return (((state || {}).page || {})[page_key] || {})["flag_"+flag_name] || false
+export function getPageFlag(state, page_key, flag_name, default_value) {
+    let v = (((state || {}).page || {})[page_key] || {})["flag_"+flag_name]
+    if ( v === undefined ) {
+        v = default_value
+    }
+    return v
 }
