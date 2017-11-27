@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { concat, each, indexOf, map, keys, union, difference, includes } from 'lodash'
+import { uniq, concat, each, indexOf, map, keys, union, difference, includes } from 'lodash'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -28,7 +28,7 @@ import {
     ungroupIssuesIntoFeature,
 } from '../actions/Issues'
 import Issue from '../components/Issue'
-import ListTable from './ListTable'
+import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
 
 class IssueList extends Component {
@@ -323,19 +323,29 @@ class IssueList extends Component {
         this.setState({'estimate_editor_open': false})
     }
 
-    reorderIssue(moving_issue_id, move_after_issue_id) {
-        const {dispatch, list_key} = this.props
+    reorderIssue(index_of_row_being_moved, original_index_of_destination) {
+        const {dispatch, list_key, visible_item_ids} = this.props
 
+        let index_of_destination = original_index_of_destination
+        
+        if ( index_of_row_being_moved > index_of_destination ) {
+            index_of_destination -= 1;
+        }
+        
+        const moving_issue_id = visible_item_ids[index_of_row_being_moved]
+        const move_after_issue_id = (index_of_destination>=0 && visible_item_ids[index_of_destination]) || null
+        
         let selected_ids = this.props.selected_ids || []
         if ( ! includes(selected_ids, moving_issue_id) ) {
             selected_ids = [moving_issue_id]
         }
-        selected_ids = concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id))
+        selected_ids = uniq(concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id)))
 
-        const target_hidden_child_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)
+        const target_hidden_child_issue_ids = (move_after_issue_id && this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)) || [null]
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
         
         dispatch(reorderIssue(selected_ids, target_issue_id, list_key,
+                              original_index_of_destination,
                               function () {
                                   dispatch(invalidateList(list_key))
                                   dispatch(fetchIssuesIfNeeded(list_key))
@@ -367,7 +377,7 @@ class IssueList extends Component {
                         is_cursor_item={""+issue.id==""+cursor_item_id}
                         issue_id={issue.id}
                         onDelete={this.onDeleteIssue} />
-                )}
+                    )}
                 </div>
               </div>
             </div>
@@ -379,9 +389,12 @@ class IssueList extends Component {
         const {list_key} = this.props
 
         return (
-            <tr key={list_key + ".candidate_issue"} className="issue_list__candidate_issue">
-              <td colSpan="20">Creating new issue here</td>
-            </tr>
+            <div key={list_key + ".candidate_issue"}
+                 className="div-table__row issue_list__candidate_issue">
+              <div className="div-table__cell" colSpan="20">
+                Creating new issue here
+              </div>
+            </div>
         )
     }
 
@@ -424,7 +437,6 @@ class IssueList extends Component {
                         list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
-                        reorderIssue={that.reorderIssue}
                         onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
                         is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
                         is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
@@ -434,7 +446,7 @@ class IssueList extends Component {
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
                         issue_id={issue.parent_group_id}
                         subject_prefix="...(continued) "
-                        issue_header_list={ISSUE_HEADER_LIST_FEATURE}
+                        issue_header_list={issue_header_list}
                         onDelete={that.onDeleteIssue}
                     />
                 )
@@ -448,7 +460,6 @@ class IssueList extends Component {
                         list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
-                        reorderIssue={that.reorderIssue}
                         onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
@@ -476,20 +487,24 @@ class IssueList extends Component {
         })
 
         const renderHeader = (() => {
-            return (
-                <tr className="list-table__headers">
-                  { map(keys(issue_header_list),
-                        function(header_key){
-                            var header_name = issue_header_list[header_key]
-                            return <th key={header_key} className="list-table__header">{header_name}</th>
-                        })
-                  }
-                  { false && <th className="list-table__header">Feature</th>} {/* These were here before mapping was introducted but may need to be removed */}
-                  { false && <th className="list-table__header">Sprint</th>}
-
-                </tr>)
+            return []
+            /* return map(keys(issue_header_list),
+             *             function(header_key){
+             *                 let header_info = issue_header_list[header_key]
+             *                 return <div className="div-table__cell"
+             *                             style={{width:header_info.width}}
+             *                             key={header_key}>{header_info.label}</div>
+             *             })*/
         })
 
+        if ( issue_rows.legnth === 0 ) {
+            issue_rows.push(
+                <div className="div-table__row">
+                  <div className="div-table__cell">No issues</div>
+                </div>
+            )
+        }
+        
         return (
 
             <div>
@@ -502,17 +517,11 @@ class IssueList extends Component {
                               selected_ids={selected_ids}
                               closeEstimateEditor={this.closeEstimateEditor}/>
 
-              <ListTable renderHeader={renderHeader}>
-                {issue_rows.length > 0 && issue_rows}
-                {issue_rows.length === 0 &&
-                 (
-                     <tr>
-                       <td colSpan="20">No issues</td>
-                     </tr>
-                 )}
-              </ListTable>
+              <DivTable renderHeader={renderHeader}
+                        onReorder={this.reorderIssue}>
+                {issue_rows}
+              </DivTable>
             </div>
-
         )
     }
 

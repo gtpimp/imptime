@@ -57,36 +57,50 @@ export const PAGE_KEY__NUDGE_PAGE = 'nudge_page'
 export const SELECTOR__SPRINTS = 'selector_sprints'
 export const FILTER_KEY__GLOBAL = 'global_filter'
 
-export var ISSUE_HEADER_LIST_WIDE = {'number':"#",
-                                     'expand_feature': '',
-                                     'name': "Name",
-                                     'assignee': "Assignee",
-                                     'created_at': "Created at", 
-                                     'status': "Status",
-                                     'estimated': "Estimates",
-                                     'tags': "Tags",
-                                     // 'progress': "Progress",
-                                     'my_time': "My Time",
-                                     'clock_in': "Clock in",
-                                     'delete': "Delete"}
+const medium_col_width = "150px"
+const small_col_width = "90px"
+const tiny_col_width = "10px"
 
-export var ISSUE_HEADER_LIST_NARROW = {'number':"#",
-                                       'expand_feature': '',
-                                       'name': "Name",
-                                       'assignee': "Assignee",
-                                       'status': "Status",
-                                       'estimated': "Estimated",}
+export var SPRINT_HEADER_LIST = {'number': {label:"#", width:tiny_col_width},
+                                 'name': {label:"Name", width:"50%"},
+                                 'start_time': {label:"Start time", width:small_col_width},
+                                 'end_time': {label:"End time", width:small_col_width},
+                                 'num_issues': {label:"Issues", width: small_col_width},
+                                 //'progress': {label:"Progress", width: small_col_width},
+                                 'status': {label:"Status", width:small_col_width},
+                                 'type': {label:"Type", width:small_col_width}
+}
 
-export var ISSUE_HEADER_LIST_FEATURE = {'number': "#",
-                                        'expand_feature': '',
-                                        'name': "Name"}
+export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width},
+                                     'expand_feature': {label:'', width:tiny_col_width},
+                                     'name': {label:"Name", width:"50%"},
+                                     'assignee': {label:"Assignee", width:medium_col_width},
+                                     'created_at': {label:"Created at", width:medium_col_width},
+                                     'status': {label:"Status", width:medium_col_width},
+                                     'tags': {label:"Tags", width:medium_col_width},
+                                     'progress': {label:"Progress", width:"10%"},
+                                     'my_time': {label:"My Time", width:"10%"},
+                                     'clock_in': {label:"Clock in", width:"10%"},
+                                     'small_delete': {label:"", width:tiny_col_width}
+}
 
+export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width},
+                                       'expand_feature': {label:'', width:tiny_col_width},
+                                       'name': {label:"Name", width:"50%"},
+                                       'assignee': {label:"Assignee", width:medium_col_width},
+                                       'status': {label:"Status", width:medium_col_width}
+}
+
+export var ISSUE_HEADER_LIST_FEATURE = {'number': {label:"#", width:tiny_col_width},
+                                        'expand_feature': {label:'', width:tiny_col_width},
+                                        'name': {label:"Name", width:"50%"}
+}
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
-    'number':'#',
-    'name': 'Name',
-    'status': 'Status',
-    'estimates': "Estimates",
-    'small_delete': ""
+    'number':{label:'#', width:tiny_col_width},
+    'name': {label:'Name', width:"70%"},
+    'status': {label:'Status', width:"10%"},
+    'estimates': {label:"Estimates", width:"10%"},
+    'small_delete': {label:"", width:tiny_col_width}
 }
 

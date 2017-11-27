@@ -1,5 +1,9 @@
 @import 'variables.scss';
 
+.issue-sidebar {
+    max-width: 700px;
+}
+
 .issue_sidebar__title {
     font: $bold-extra-larger;
     display: flex;

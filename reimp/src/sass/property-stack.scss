@@ -3,14 +3,12 @@
 
 .property-stack {
   width: 100%;
-  background-color: $color-8;
   box-shadow: inset 1px 0 0 0 $color-12;
 
 }
 
 .property-stack-component {
     align-items: flex-start;
-    background-color: $color-8;
     box-sizing: border-box;
     display: flex;
     justify-content: space-between;

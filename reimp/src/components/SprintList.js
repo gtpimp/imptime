@@ -28,7 +28,7 @@ import {
     saveCandidateSprint
 } from '../actions/Sprints'
 import Sprint from './Sprint'
-import ListTable from './ListTable'
+import DivTable from './DivTable'
 
 class SprintList extends Component {
 
@@ -121,9 +121,20 @@ class SprintList extends Component {
         dispatch(cancelCandidateSprint())
     }
 
-    reorderSprints(moving_sprint_id, move_after_sprint_id) {
-        const {dispatch, list_key} = this.props
-        dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id,
+    reorderSprints(index_of_row_being_moved, original_index_of_destination) {
+        const {dispatch, list_key, visible_item_ids} = this.props
+
+        let index_of_destination = original_index_of_destination
+
+        if ( index_of_row_being_moved > index_of_destination ) {
+            index_of_destination -= 1;
+        }
+
+        const moving_sprint_id = visible_item_ids[index_of_row_being_moved]
+        const move_after_sprint_id = (index_of_destination>=0 && visible_item_ids[index_of_destination]) || null
+        
+        dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id, list_key,
+                                original_index_of_destination,
                                 function () {
                                     dispatch(invalidateList(list_key))
                                     dispatch(fetchSprintsIfNeeded(list_key))
@@ -168,27 +179,23 @@ class SprintList extends Component {
         const {list_key} = this.props
 
         return (
-            <tr key={list_key + ".candidate_sprint"} className="sprint_list__candidate_sprint">
-              <td colSpan="20">Creating new sprint here</td>
-              { false &&
-                <td>
-                  <RIEModeToggler propName="candidate_sprint_title"
-                                  initialValue=""
-                                  initialState="editing"
-                                  onChange={this.onSaveCandidateSprint}
-                                  onCancel={this.onCancelCandidateSprint}>
-                    <RIEInput/>
-                  </RIEModeToggler>
-                </td>
-              }
-            </tr>
+            <div key={list_key + ".candidate_sprint"}
+                 className="div-list__row sprint_list__candidate_sprint">
+              <div className="div-list__cell">
+                Creating new sprint here
+              </div>
+            </div>
         )
     }
 
-    render_sprint(sprint, list_key, index, that, loading_item_ids, selected_ids) {
+    render_sprint(sprint, list_key, index, that, loading_item_ids,
+                  selected_ids) {
+        const { header_list } = this.props
+
         return (
             <Sprint key={list_key + sprint.id + index}
                     is_collapsed={false}
+                    header_list={header_list}
                     reorderSprints={that.reorderSprints}
                     onClickedSprint={(event) => that.onClickedSprint(event, sprint.id)}
                     is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
@@ -222,9 +229,9 @@ class SprintList extends Component {
         })
 
         return (
-            <ListTable>
+            <DivTable onReorder={this.reorderSprints}>
               {sprint_rows}
-            </ListTable>
+            </DivTable>
         )
     }
 
@@ -243,7 +250,7 @@ class SprintList extends Component {
 
 function mapStateToProps(state, props) {
     const {sprint, item_list} = state
-    const {list_key} = props
+    const {list_key, header_list} = props
     const items_by_id = (sprint && sprint.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
@@ -271,6 +278,7 @@ function mapStateToProps(state, props) {
         list_key: list_key,
         project_id: project_id,
         sprints: items,
+        visible_item_ids,
         sprint_ids: map(items, 'id'),
         selected_ids: l.selected_ids || [],
         selected_items: selected_items || [],
@@ -282,7 +290,8 @@ function mapStateToProps(state, props) {
         is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
         candidate_sprint: candidate_sprint,
-        is_creating_sprint: is_creating_sprint
+        is_creating_sprint: is_creating_sprint,
+        header_list: header_list
     }
 }
 

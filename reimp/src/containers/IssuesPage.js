@@ -144,7 +144,7 @@ function mapStateToProps(state, props) {
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
     const issue_header_list = get_header_list(state, PAGE_KEY__ISSUES_PAGE)
-    const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar") || true
+    const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", false)
 
     return {
         sprint_id: sprint_id,

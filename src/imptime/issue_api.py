@@ -157,8 +157,11 @@ class IssueViewSet(BaseViewSet):
                             old_feature_name, issue.feature.name)
                 elif field_name == 'issue_id_after':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
-                        after_issue = self.allowed_issue(new_value)
-                        SprintIssueOrder.insert_after(issue, set_after_this_issue=after_issue)
+                        if new_value is None:
+                            SprintIssueOrder.insert_at_the_beginning(issue)
+                        else:
+                            after_issue = self.allowed_issue(new_value)
+                            SprintIssueOrder.insert_after(issue, set_after_this_issue=after_issue)
                 elif field_name == 'assigned_to_id':
                     if self.logged_in_permissions(issue.project.business).has_assign_user:
                         old_assigned_to = \

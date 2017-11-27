@@ -1,0 +1,88 @@
+@import "variables.scss";
+
+
+.div-table {
+    display: flex;
+    flex-direction: column;
+}
+
+.div-table__header {
+    display: flex;
+    flex-direction: row;
+}
+ 
+.div-table__row {
+    display: flex;
+    flex-direction: row;
+    min-height: 35px;
+    font: $plain;
+}
+
+.div-table__row:hover {
+    box-shadow: inset 0 -1px 0 0 #E0E0E0;
+    background-color: $row-hover-color;
+}
+ 
+.div-table__row--selected {
+    background-color: $color-3;
+}
+
+.div-table__row--unselected {
+    background-color: $color-3;
+}
+
+div-table__row--highlighted {
+    font-weight: bold;
+}
+
+div-table__row--invalidated {
+}
+
+div-table__row--saving {
+}
+
+.div-table__row--drop-target {
+    border-bottom: 50px solid #efefef;
+    padding-bottom: 50px;
+    background-color: black;
+}
+
+.div-table-wrapper--dragging {
+    
+}
+
+.div-table__row-wrapper--dragging {
+    userSelect: 'none';
+    background-color: $row-hover-color;
+}
+
+.div-table__cell {
+    padding-left: 16px;
+    padding-right: 16px;
+    vertical-align: middle;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    &:first-child {
+	//padding-left: 26px;
+    }
+}
+
+.div-table__cell--default {
+    @extend .div-table__cell;
+    display: flex;
+    align-items: start;
+    height: 100%;
+    width: 100%;
+}
+
+.div-table__cell--hover {
+    -webkit-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+    -moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+    box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+}
+
+.div-table__cell--secondary {
+    opacity: 0.5;
+} 
