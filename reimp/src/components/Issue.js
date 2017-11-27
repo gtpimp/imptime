@@ -225,15 +225,15 @@ class Issue extends Component {
                 >
                   {includes(visible_header_keys, "number") &&
                    <div className="div-table__cell"
-                        style={{"min-width":header_list.number.width,
-                                "max-width":header_list.number.width}}>
+                        style={{"minWidth":header_list.number.width,
+                                "maxWidth":header_list.number.width}}>
                      <div>{issue.number}</div>
                    </div>
                   }
                   {includes(visible_header_keys, "expand_feature") &&
                    <div className="div-table__cell"
-                        style={{"min-width":header_list.expand_feature.width,
-                                "max-width":header_list.expand_feature.width}}>
+                        style={{"minWidth":header_list.expand_feature.width,
+                                "maxWidth":header_list.expand_feature.width}}>
                      { issue.can_group_issues &&
                        <div>
                          { show_children &&
@@ -254,8 +254,8 @@ class Issue extends Component {
                   }
                    {includes(visible_header_keys, "name") &&
                     <div className="div-table__cell"
-                         style={{"min-width":header_list.name.width,
-                                 "max-width":header_list.name.width}}
+                         style={{"minWidth":header_list.name.width,
+                                 "maxWidth":header_list.name.width}}
                     >
                       <div className="issue-cell__issue-name">
                         {subject_prefix}{issue.subject}{subject_suffix}
@@ -272,16 +272,16 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "assignee") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.assignee.width,
-                                 "max-width":header_list.assignee.width}}
+                         style={{"minWidth":header_list.assignee.width,
+                                 "maxWidth":header_list.assignee.width}}
                     >
                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "created_at") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.created_at.width,
-                                 "max-width":header_list.created_at.width}}
+                         style={{"minWidth":header_list.created_at.width,
+                                 "maxWidth":header_list.created_at.width}}
                     >
                       <div className="issue-cell__created-at">
                         <Timestamp value={issue.created_at} format="from_now"/>
@@ -290,16 +290,16 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "status") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.status.width,
-                                 "max-width":header_list.status.width}}
+                         style={{"minWidth":header_list.status.width,
+                                 "maxWidth":header_list.status.width}}
                     >
                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "progress") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.progress.width,
-                                 "max-width":header_list.progress.width}}
+                         style={{"minWidth":header_list.progress.width,
+                                 "maxWidth":header_list.progress.width}}
                     >
                       <div className="issue-cell--progress">
                         <Progress issue={issue}/>
@@ -308,16 +308,16 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "estimated") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.estimated.width,
-                                 "max-width":header_list.estimated.width}}
+                         style={{"minWidth":header_list.estimated.width,
+                                 "maxWidth":header_list.estimated.width}}
                     >
                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                     </div>
                    }
                    {includes(visible_header_keys, "tags") &&
                     <div className="div-table__cell"
-                         style={{"min-width":header_list.tags.width,
-                                 "max-width":header_list.tags.width}}
+                         style={{"minWidth":header_list.tags.width,
+                                 "maxWidth":header_list.tags.width}}
                     >
                       <div className="issue__cell--issue-tags">
                         { map(issue.tags, function (tag, index) {
@@ -332,8 +332,8 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "my_time") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.my_time.width,
-                                 "max-width":header_list.my_time.width}}
+                         style={{"minWidth":header_list.my_time.width,
+                                 "maxWidth":header_list.my_time.width}}
                     >
                       <div className="issue__cell--elapsed-time">
                         <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
@@ -342,8 +342,8 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "clock_in") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.clock_in.width,
-                                 "max-width":header_list.clock_in.width}}
+                         style={{"minWidth":header_list.clock_in.width,
+                                 "maxWidth":header_list.clock_in.width}}
                     >
                       <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                         <TimerSwitch
@@ -356,8 +356,8 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "delete") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.delete.width,
-                                 "max-width":header_list.delete.width}}
+                         style={{"minWidth":header_list.delete.width,
+                                 "maxWidth":header_list.delete.width}}
                     >
                       <div className="reveal-on-hover--block  issue__cell--issue-delete">
                         <DeleteIssue
@@ -368,8 +368,8 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "small_delete") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={{"min-width":header_list.small_delete.width,
-                                 "max-width":header_list.small_delete.width}}
+                         style={{"minWidth":header_list.small_delete.width,
+                                 "maxWidth":header_list.small_delete.width}}
                     >
                       <div className={"reveal-on-hover--block"}>
                         <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />

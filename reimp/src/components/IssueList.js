@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { concat, each, indexOf, map, keys, union, difference, includes } from 'lodash'
+import { uniq, concat, each, indexOf, map, keys, union, difference, includes } from 'lodash'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -323,9 +323,11 @@ class IssueList extends Component {
         this.setState({'estimate_editor_open': false})
     }
 
-    reorderIssue(index_of_row_being_moved, index_of_destination) {
+    reorderIssue(index_of_row_being_moved, original_index_of_destination) {
         const {dispatch, list_key, visible_item_ids} = this.props
 
+        let index_of_destination = original_index_of_destination
+        
         if ( index_of_row_being_moved > index_of_destination ) {
             index_of_destination -= 1;
         }
@@ -337,12 +339,13 @@ class IssueList extends Component {
         if ( ! includes(selected_ids, moving_issue_id) ) {
             selected_ids = [moving_issue_id]
         }
-        selected_ids = concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id))
+        selected_ids = uniq(concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id)))
 
         const target_hidden_child_issue_ids = (move_after_issue_id && this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)) || [null]
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
         
         dispatch(reorderIssue(selected_ids, target_issue_id, list_key,
+                              original_index_of_destination,
                               function () {
                                   dispatch(invalidateList(list_key))
                                   dispatch(fetchIssuesIfNeeded(list_key))
