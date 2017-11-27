@@ -21,7 +21,6 @@ import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
-import Sidebar from './Sidebar'
 import {
     ensureIssuesLoaded,
     getIssue,
@@ -100,7 +99,7 @@ class IssueSidebar extends Component {
 
             return (
 
-                <Sidebar>
+                <div className="sidebar issue-sidebar">
                   <PropertyStack>
                     { issue.id &&
                       <div>
@@ -209,7 +208,7 @@ class IssueSidebar extends Component {
                       </div>
                     }
                   </PropertyStack>
-                </Sidebar>
+                </div>
             )
         } else {
             return null
