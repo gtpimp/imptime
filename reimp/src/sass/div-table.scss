@@ -3,19 +3,21 @@
 
 .div-table {
     display: flex;
-    flex-direction: column
+    flex-direction: column;
 }
 
 .div-table__header {
     display: flex;
-    flex-direction: row
+    flex-direction: row;
 }
-
+ 
 .div-table__row {
     display: flex;
-    flex-direction: row
+    flex-direction: row;
+    min-height: 35px;
+    font-size: $font-size-small;
 }
-
+ 
 .div-table__row--selected {
     background-color: $color-3;
 }
@@ -41,7 +43,6 @@ div-table__row--saving {
 }
 
 .div-table__cell {
-    height: 35px;
     padding-left: 16px;
     padding-right: 16px;
     vertical-align: middle;
@@ -55,7 +56,7 @@ div-table__row--saving {
 }
 
 .div-table__cell--default {
-    @extend .list-table__cell;
+    @extend .div-table__cell;
     display: flex;
     align-items: center;
 }
