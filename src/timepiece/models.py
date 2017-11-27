@@ -930,7 +930,10 @@ class Project(BaseModel):
         return project
 
     def move_after(self, other_project):
-        self.order = other_project.order + 0.00001
+        if other_project is None:
+            self.order = -1
+        else:
+            self.order = other_project.order + 0.00001
         self.save()
         self.renumber_project_order()
 

@@ -121,9 +121,20 @@ class SprintList extends Component {
         dispatch(cancelCandidateSprint())
     }
 
-    reorderSprints(moving_sprint_id, move_after_sprint_id) {
-        const {dispatch, list_key} = this.props
-        dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id,
+    reorderSprints(index_of_row_being_moved, original_index_of_destination) {
+        const {dispatch, list_key, visible_item_ids} = this.props
+
+        let index_of_destination = original_index_of_destination
+
+        if ( index_of_row_being_moved > index_of_destination ) {
+            index_of_destination -= 1;
+        }
+
+        const moving_sprint_id = visible_item_ids[index_of_row_being_moved]
+        const move_after_sprint_id = (index_of_destination>=0 && visible_item_ids[index_of_destination]) || null
+        
+        dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id, list_key,
+                                original_index_of_destination,
                                 function () {
                                     dispatch(invalidateList(list_key))
                                     dispatch(fetchSprintsIfNeeded(list_key))
@@ -218,7 +229,7 @@ class SprintList extends Component {
         })
 
         return (
-            <DivTable>
+            <DivTable onReorder={this.reorderSprints}>
               {sprint_rows}
             </DivTable>
         )
@@ -267,6 +278,7 @@ function mapStateToProps(state, props) {
         list_key: list_key,
         project_id: project_id,
         sprints: items,
+        visible_item_ids,
         sprint_ids: map(items, 'id'),
         selected_ids: l.selected_ids || [],
         selected_items: selected_items || [],

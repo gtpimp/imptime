@@ -1,7 +1,7 @@
 import { impfetch } from './lib.js'
 import indexOf from 'lodash/indexOf'
 import keyBy from 'lodash/keyBy'
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
+import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
 import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_SPRINTS_SAVING = 'ANNOUNCE_SPRINTS_SAVING'
@@ -151,8 +151,11 @@ export function updateSprintReviewCycle(sprint_ids, value) {
     return updateSprint(sprint_ids, "review_cycle_days", value)
 }
 
-export function reorderSprints(sprint_id_before, sprint_id_after, on_done) {
-    return updateSprint([sprint_id_before], "sprint_id_after", sprint_id_after, on_done)
+export function reorderSprints(sprint_id_before, sprint_id_after, list_key, index_of_destination, on_done) {
+    return (dispatch, getState) => {
+        dispatch(updateVisibleItemIdAbove(list_key, sprint_id_before, sprint_id_after, index_of_destination))
+        dispatch(updateSprint([sprint_id_before], "sprint_id_after", sprint_id_after, on_done))
+    }
 }
 
 export function saveCandidateSprint() {

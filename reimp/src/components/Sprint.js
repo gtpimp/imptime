@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
-import { DragSource, DropTarget } from 'react-dnd';
 import { includes, keys } from 'lodash';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {browserHistory} from 'react-router'
-import { DndTypes } from '../actions/Dnd'
 import Progress from '../components/Progress'
 import Timestamp from '../components/Timestamp'
 import EditableSprintStatus from '../components/EditableSprintStatus'
@@ -62,7 +60,7 @@ class Sprint extends Component {
 		</div>
 	    )
 	} else {
-            return connectDragSource(connectDropTarget(
+            return (
 		<div key={this.key+"."+sprint.id}
                 onClick={onClickedSprint}
                 className={classNames("div-table__row",
@@ -148,7 +146,7 @@ class Sprint extends Component {
                    </div>
                   }
                 </div>
-            ))
+            )
 	}
     }
 
@@ -183,48 +181,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-const headingSource = {
-    beginDrag(props) {
-	      return { id: props.sprint_id }
-    }
-};
-
-const headingTarget = {
-    drop: (props, monitor, component) => {
-	      const { sprint_id } = props
-	      const dragging_item = monitor.getItem()
-	      if ( ! dragging_item ) {
-	          return;
-	      }
-	      const dragging_sprint_id = dragging_item.id
-	      if ( sprint_id === dragging_sprint_id ) {
-	          console.log("ignoring dnd on the same element: " + sprint_id)
-	          return;
-	      }
-
-	      props.reorderSprints(dragging_sprint_id, sprint_id)
-    },
-    hover: (props, monitor, component) => {
-    },
-    canDrop: (props, monitor) => {
-	      return true;
-    }
-
-}
-
-function collect(connect, monitor) {
-    return {
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
-    };
-}
-
-function collectDrop(connect, monitor) {
-    return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
-    }
-}
-
-export default connect(mapStateToProps) (DragSource(DndTypes.SPRINT, headingSource, collect) (DropTarget(DndTypes.SPRINT, headingTarget, collectDrop)(Sprint)))
+export default connect(mapStateToProps)(Sprint)

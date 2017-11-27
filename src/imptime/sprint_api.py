@@ -90,7 +90,7 @@ class SprintViewSet(BaseViewSet):
                         sprint.project_type = new_value
                 elif field_name == 'sprint_id_after':
                     if self.logged_in_permissions(sprint.business).has_edit_sprint:
-                        after_sprint = self.allowed_sprint(new_value)
+                        after_sprint = self.allowed_sprint(new_value) if new_value else None
                         sprint.move_after(after_sprint)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
