@@ -47,6 +47,15 @@ div-table__row--saving {
     background-color: black;
 }
 
+.div-table-wrapper--dragging {
+    
+}
+
+.div-table__row-wrapper--dragging {
+    userSelect: 'none';
+    background-color: $row-hover-color;
+}
+
 .div-table__cell {
     padding-left: 16px;
     padding-right: 16px;
@@ -73,3 +82,4 @@ div-table__row--saving {
     -moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
     box-shadow:inset 0px 0px 0px 2px $button-hover-background;
 }
+

@@ -323,16 +323,23 @@ class IssueList extends Component {
         this.setState({'estimate_editor_open': false})
     }
 
-    reorderIssue(moving_issue_id, move_after_issue_id) {
-        const {dispatch, list_key} = this.props
+    reorderIssue(index_of_row_being_moved, index_of_destination) {
+        const {dispatch, list_key, visible_item_ids} = this.props
 
+        if ( index_of_row_being_moved > index_of_destination ) {
+            index_of_destination -= 1;
+        }
+        
+        const moving_issue_id = visible_item_ids[index_of_row_being_moved]
+        const move_after_issue_id = (index_of_destination>=0 && visible_item_ids[index_of_destination]) || null
+        
         let selected_ids = this.props.selected_ids || []
         if ( ! includes(selected_ids, moving_issue_id) ) {
             selected_ids = [moving_issue_id]
         }
         selected_ids = concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id))
 
-        const target_hidden_child_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)
+        const target_hidden_child_issue_ids = (move_after_issue_id && this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)) || [null]
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
         
         dispatch(reorderIssue(selected_ids, target_issue_id, list_key,
@@ -367,7 +374,7 @@ class IssueList extends Component {
                         is_cursor_item={""+issue.id==""+cursor_item_id}
                         issue_id={issue.id}
                         onDelete={this.onDeleteIssue} />
-                )}
+                    )}
                 </div>
               </div>
             </div>
@@ -427,7 +434,6 @@ class IssueList extends Component {
                         list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
-                        reorderIssue={that.reorderIssue}
                         onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
                         is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
                         is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
@@ -451,7 +457,6 @@ class IssueList extends Component {
                         list_key={list_key}
                         is_collapsed={false}
                         show_children={includes(expanded_issues, issue.id)}
-                        reorderIssue={that.reorderIssue}
                         onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
@@ -489,6 +494,14 @@ class IssueList extends Component {
              *             })*/
         })
 
+        if ( issue_rows.legnth === 0 ) {
+            issue_rows.push(
+                <div className="div-table__row">
+                  <div className="div-table__cell">No issues</div>
+                </div>
+            )
+        }
+        
         return (
 
             <div>
@@ -501,17 +514,11 @@ class IssueList extends Component {
                               selected_ids={selected_ids}
                               closeEstimateEditor={this.closeEstimateEditor}/>
 
-              <DivTable renderHeader={renderHeader}>
-                {issue_rows.length > 0 && issue_rows}
-                {issue_rows.length === 0 &&
-                 (
-                     <div className="div-table__row">
-                       <div className="div-table__cell">No issues</div>
-                     </div>
-                 )}
+              <DivTable renderHeader={renderHeader}
+                        onReorder={this.reorderIssue}>
+                {issue_rows}
               </DivTable>
             </div>
-
         )
     }
 

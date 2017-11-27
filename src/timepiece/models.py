@@ -4018,9 +4018,21 @@ class ProjectIssueOrder(BaseModel):
         self.renumber(issue.project_id)
 
     @classmethod
+    def insert_at_the_beginning(self, issue):
+        new_order = -1
+        pio, is_new = self.objects.get_or_create(project_id=issue.project_id, issue_id=issue.id, defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(issue.project_id)
+
+    @classmethod
     def insert_at_the_end(self, issue):
         new_order = self.get_next_order(issue.project_id)
-        self.objects.get_or_create(project_id=issue.project_id, issue_id=issue.id, defaults={'order':new_order})
+        pio, is_new = self.objects.get_or_create(project_id=issue.project_id, issue_id=issue.id, defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
         self.renumber(issue.project_id)
 
     @classmethod
