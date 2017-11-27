@@ -28,7 +28,7 @@ import {
     saveCandidateSprint
 } from '../actions/Sprints'
 import Sprint from './Sprint'
-import ListTable from './ListTable'
+import DivTable from './DivTable'
 
 class SprintList extends Component {
 
@@ -168,27 +168,23 @@ class SprintList extends Component {
         const {list_key} = this.props
 
         return (
-            <tr key={list_key + ".candidate_sprint"} className="sprint_list__candidate_sprint">
-              <td colSpan="20">Creating new sprint here</td>
-              { false &&
-                <td>
-                  <RIEModeToggler propName="candidate_sprint_title"
-                                  initialValue=""
-                                  initialState="editing"
-                                  onChange={this.onSaveCandidateSprint}
-                                  onCancel={this.onCancelCandidateSprint}>
-                    <RIEInput/>
-                  </RIEModeToggler>
-                </td>
-              }
-            </tr>
+            <div key={list_key + ".candidate_sprint"}
+                 className="div-list__row sprint_list__candidate_sprint">
+              <div className="div-list__cell">
+                Creating new sprint here
+              </div>
+            </div>
         )
     }
 
-    render_sprint(sprint, list_key, index, that, loading_item_ids, selected_ids) {
+    render_sprint(sprint, list_key, index, that, loading_item_ids,
+                  selected_ids) {
+        const { header_list } = this.props
+
         return (
             <Sprint key={list_key + sprint.id + index}
                     is_collapsed={false}
+                    header_list={header_list}
                     reorderSprints={that.reorderSprints}
                     onClickedSprint={(event) => that.onClickedSprint(event, sprint.id)}
                     is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
@@ -222,9 +218,9 @@ class SprintList extends Component {
         })
 
         return (
-            <ListTable>
+            <DivTable>
               {sprint_rows}
-            </ListTable>
+            </DivTable>
         )
     }
 
@@ -243,7 +239,7 @@ class SprintList extends Component {
 
 function mapStateToProps(state, props) {
     const {sprint, item_list} = state
-    const {list_key} = props
+    const {list_key, header_list} = props
     const items_by_id = (sprint && sprint.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
@@ -282,7 +278,8 @@ function mapStateToProps(state, props) {
         is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
         candidate_sprint: candidate_sprint,
-        is_creating_sprint: is_creating_sprint
+        is_creating_sprint: is_creating_sprint,
+        header_list: header_list
     }
 }
 

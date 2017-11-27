@@ -10,7 +10,8 @@ import MultipleSprintSidebar from '../components/MultipleSprintSidebar'
 import {setBreadcrumbs} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__SPRINT_LIST,
-    PAGE_KEY__SPRINTS_PAGE
+    PAGE_KEY__SPRINTS_PAGE,
+    SPRINT_HEADER_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
     selectItems,
@@ -86,7 +87,8 @@ class SprintsPage extends Component {
     render() {
 
         const {project_id, selected_sprints, selected_sprint_ids, sprint_id,
-               is_single_selection, is_multiple_selection, is_creating_sprint, list_key } = this.props
+               is_single_selection, is_multiple_selection, is_creating_sprint,
+               list_key, sprint_header_list } = this.props
         const selected_sprint = ( selected_sprints && selected_sprints.length > 0 && selected_sprints[0] ) || null
 
         return (
@@ -94,6 +96,7 @@ class SprintsPage extends Component {
                 <div className="list-layout__list">
                     <SprintList list_key={list_key}
                                 project_id={project_id}
+                                header_list={sprint_header_list}
                                 onSelectSprints={this.onSelectSprints}
                     />
                 </div>
@@ -140,6 +143,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const candidate_sprint = getCandidateSprint(state) || null
     const is_creating_sprint = candidate_sprint || false
+    const sprint_header_list = SPRINT_HEADER_LIST
 
     return {
         list_key,
@@ -152,7 +156,8 @@ function mapStateToProps(state, props) {
         selected_sprint_ids: selected_sprint_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
-        is_creating_sprint: is_creating_sprint
+        is_creating_sprint: is_creating_sprint,
+        sprint_header_list
     }
 }
 

@@ -359,7 +359,7 @@ class Issue extends Component {
                          style={{"minWidth":header_list.delete.width,
                                  "maxWidth":header_list.delete.width}}
                     >
-                      <div className="reveal-on-hover--block  issue__cell--issue-delete">
+                      <div className="reveal-on-hover--block issue__cell--issue-delete">
                         <DeleteIssue
                             onDelete ={this.onDeleteIssue}
                         />

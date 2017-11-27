@@ -124,7 +124,7 @@
 }
 
 .issue__cell__secondary {
-    opacity: 0.5;
+    @extend .div-table__cell--secondary;
 }
 
 .issue_title__quality_error {

@@ -1,8 +1,7 @@
 @import 'variables.scss';
-@import 'list-table.scss';
+@import 'div-table.scss';
 
 .sprint {
-    box-shadow: inset 0 -1px 0 0 #E0E0E0, 0 0 5px 0 rgba(0,0,0,0.16);
 }
 
 .sprint--unselected {
@@ -26,26 +25,30 @@
     background-color: $color-34;
 }
 
-.sprint__num-issues-column {
-    @extend .list-table__cell--default;
+.sprint__cell__secondary {
+    @extend .div-table__cell--secondary;
+} 
+
+.sprint__cell--num-issues {
+    @extend .div-table__cell--default;
 }
 
-.sprint__num-issues-column:hover {
-    @extend .list-table__cell--hover;
+.sprint__cell--num-issues:hover {
+    @extend .div-table__cell--hover;
 }
 
-.sprint-cell__status {
-    @extend .list-table__cell--default;
+.sprint__cell--status {
+    @extend .div-table__cell--default;
 }
 
-.sprint-cell__status:hover {
-    @extend .list-table__cell--hover;
+.sprint__cell--status:hover {
+    @extend .div-table__cell--hover;
 }
 
-.sprint-cell__type {
-    @extend .list-table__cell--default;
+.sprint__cell--type {
+    @extend .div-table__cell--default;
 }
 
-.sprint-cell__type:hover {
-    @extend .list-table__cell--hover;
+.sprint__cell--type:hover {
+    @extend .div-table__cell--hover;
 }
