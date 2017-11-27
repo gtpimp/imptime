@@ -24,12 +24,11 @@ class VisualSpecDocumentForm extends Component {
         
         return (
             <div>
-              { false && 
               <FileUploader upload_relative_url={UPLOAD_RELATIVE_URL}
                             upload_params={upload_params}
                             onSuccess={onChange}
                             onFailure={onChange}
-              /> }
+              />
               { visual_spec_document && visual_spec_document.id &&
                 <FileLabel value={visual_spec_document}
                            extra_buttons={extra_buttons} />
