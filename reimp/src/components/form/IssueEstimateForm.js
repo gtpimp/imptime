@@ -9,7 +9,8 @@ const DEFAULT_TIME_ESTIMATES = [ "0:00", "0:15", "0:30", "0:45",
                                  "1:00", "1:15", "1.30", "1.45",
                                  "2:00", "2:30",
                                  "3:00", "3:30",
-                                 "4:00" ]
+                                 "4:00",
+                                 "8:00", "12:00", "16:00"]
 
 class IssueEstimateForm extends Component {
 
