@@ -9,7 +9,8 @@ import MultipleProjectSidebar from '../components/MultipleProjectSidebar'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
-    PAGE_KEY__PROJECTS_PAGE
+    PAGE_KEY__PROJECTS_PAGE,
+    PROJECT_HEADER_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -52,7 +53,8 @@ class ProjectsPage extends Component {
     render() {
 
         const {selected_projects, selected_project_ids,
-               is_single_selection, is_multiple_selection, is_creating_project } = this.props
+               is_single_selection, is_multiple_selection, is_creating_project,
+               project_header_list} = this.props
         const selected_project = ( selected_projects && selected_projects.length > 0 && selected_projects[0] ) || null
         
         return (
@@ -60,6 +62,7 @@ class ProjectsPage extends Component {
                 <div className="list-layout__list">
                     <ProjectList key="projects"
                                  list_key={LIST_KEY__PROJECT_LIST}
+                                 header_list={project_header_list}
                                  onSelectProjects={this.onSelectProjects} />
                 </div>
                 { is_creating_project &&
@@ -95,6 +98,7 @@ function mapStateToProps(state, props) {
 
     const candidate_project = getCandidateProject(state) || null
     const is_creating_project = candidate_project || false
+    const project_header_list = PROJECT_HEADER_LIST
     
     return {
         selected_projects: selected_items,
@@ -102,7 +106,8 @@ function mapStateToProps(state, props) {
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
         is_creating_project: is_creating_project,
-        default_project_id
+        default_project_id,
+        project_header_list
     }
 }
 

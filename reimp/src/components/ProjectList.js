@@ -24,7 +24,7 @@ import {
     fetchProjectsIfNeeded
 } from '../actions/Projects'
 import Project from './Project'
-import ListTable from './ListTable'
+import DivTable from './DivTable'
 import '../sass/project-list.scss'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 
@@ -134,7 +134,7 @@ class ProjectList extends Component {
     }
 
     renderExpandedProject(project, index) {
-        const { list_key, loading_item_ids, selected_ids } = this.props
+        const { list_key, loading_item_ids, selected_ids, header_list } = this.props
         const that = this
 
         const is_loading = loading_item_ids.indexOf(project.id) !== -1 || project.loaded === false
@@ -145,6 +145,7 @@ class ProjectList extends Component {
                      reorderProjects={that.reorderProjects}
                      onClickedProject={(event) => that.onClickedProject(event, project.id)}
                      is_loading={is_loading}
+                     header_list={header_list}
                      is_selected={selected_ids.indexOf(project.id) !== -1}
                      project_id={project.id}
             />
@@ -156,9 +157,9 @@ class ProjectList extends Component {
         const { projects} = this.props
 
         return (
-            <ListTable>
+            <DivTable>
                 {projects.map((project, index) => this.renderExpandedProject(project, index))}
-            </ListTable>
+            </DivTable>
         )
 
     }
@@ -174,7 +175,7 @@ class ProjectList extends Component {
 
 function mapStateToProps(state, props) {
     const { project, item_list } = state
-    const { list_key } = props
+    const { list_key, header_list } = props
     const items_by_id = (project && project.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = getVisibleItemIds(state, list_key)
@@ -197,7 +198,8 @@ function mapStateToProps(state, props) {
         is_loading,
 	is_collapsed: display_mode === "collapsed",
 	is_expanded: display_mode === "expanded" || display_mode,
-        last_updated
+        last_updated,
+        header_list
     }
 }
 

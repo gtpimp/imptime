@@ -1,17 +1,17 @@
 @import 'variables.scss';
-@import 'list-table.scss';
+@import 'div-table.scss';
 
 .project {
-    border: 1px solid $color-12;
-    box-sizing: border-box;
-    background-color: $color-8;
 }
 
-
-.project__num-sprints-column {
-    @extend .list-table__cell--default;
+.project__cell--name {
+    @extend .div-table__cell--default;
 }
 
-.project__num-sprints-column:hover {
-    @extend .list-table__cell--hover;
+.project__cell--num-sprints {
+    @extend .div-table__cell--default;
+}
+
+.project__cell--num-sprints:hover {
+    @extend .div-table__cell--hover;
 }

@@ -60,6 +60,10 @@ const medium_col_width = "150px"
 const small_col_width = "90px"
 const tiny_col_width = "20px"
 
+export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"50%"},
+                                  'num_sprints': {label:"Sprints", width: medium_col_width},
+}
+
 export var SPRINT_HEADER_LIST = {//'number': {label:"#", width:tiny_col_width},
                                  'name': {label:"Name", width:"50%"},
                                  'start_time': {label:"Start time", width:small_col_width},

@@ -17,6 +17,9 @@ class DivTable extends Component {
         if (!result.destination) {
             return;
         }
+        if ( ! onReorder ) {
+            return;
+        }
         const index_of_row_being_moved = result.source.index
         const index_of_destination = result.destination.index
         onReorder(index_of_row_being_moved, index_of_destination)
