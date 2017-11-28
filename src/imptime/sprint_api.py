@@ -40,8 +40,8 @@ class SprintViewSet(BaseViewSet):
             sprints = self.allowed_sprints()
             sprints = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
 
-            if 'business_id' in filter_args:
-                sprints = sprints.order_by_business_id(business_id=filter_args['business_id']) #sic
+            if 'project_id' in filter_args:
+                sprints = sprints.order_by_business_id(business_id=filter_args['project_id']) #sic
             
             sprints = self.apply_pagination(qs=sprints,
                                             pagination=pagination)
@@ -99,7 +99,7 @@ class SprintViewSet(BaseViewSet):
                             ProjectSprintOrder.insert_at_the_beginning(sprint)
                         else:
                             after_sprint = self.allowed_sprint(new_value) if new_value else None
-                            ProjectSprintOrder.insert_after(sprint, set_after_this_sprint=after_sprint)
+                            ProjectSprintOrder.insert_after(sprint, set_after_this_project=after_sprint) #sic
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 sprint.save()
@@ -134,7 +134,7 @@ class SprintViewSet(BaseViewSet):
                     ProjectSprintOrder.insert_at_the_end(sprint)
                 else:
                     sprint_before = self.allowed_sprint(sprint_id_before)
-                    ProjectSprintOrder.insert_after(sprint, set_after_this_sprint=sprint_before)
+                    ProjectSprintOrder.insert_after(sprint, set_after_this_project=sprint_before) #sic
 
                 if default_sprint_args.get('sprint_type', None) == 'template':
                     sprint_template = SprintTemplate.objects.create(sprint=sprint)

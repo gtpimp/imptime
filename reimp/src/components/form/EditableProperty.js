@@ -20,16 +20,20 @@ class EditableProperty extends Component {n
     }
 
     componentDidMount() {
-        const {property_key, dispatch} = this.props
+        const {property_key, dispatch, mode} = this.props
         const initial_mode = this.props.initial_mode || 'read'
-        dispatch(setMode(property_key, initial_mode))
+        if ( mode != initial_mode ) {
+            dispatch(setMode(property_key, initial_mode))
+        }
     }
 
     componentWillReceiveProps(new_props) {
         const {dispatch, property_key} = this.props
         if ( new_props.mode === undefined || new_props.property_key != property_key ) {
             const initial_mode = new_props.initial_mode || 'read'
-            dispatch(setMode(new_props.property_key, initial_mode))
+            if ( new_props.mode != initial_mode ) {
+                dispatch(setMode(new_props.property_key, initial_mode))
+            }
         }
     }
 

@@ -1,7 +1,6 @@
 
 export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
-export const LIST_KEY__SPRINT_TEMPLATE_LIST = 'sprint_templates'
 export const LIST_KEY__ISSUE_LIST = 'issues'
 export const LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details'
 export const LIST_KEY__USER_LIST = 'users'
