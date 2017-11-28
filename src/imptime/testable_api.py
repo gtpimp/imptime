@@ -104,7 +104,7 @@ class TestableViewSet(BaseViewSet):
             new_issue = Issue.objects.create(project=issue.project,
                                              subject="%s (Testable %s)" % (issue.subject, testable.order),
                                              adhoc=False,
-                                             status2=issue.status2,
+                                             status2=IssueStatus.objects.get_or_create(name='new', business=issue.project.business)[0],
                                              feature=issue.feature,
                                              assigned_to=issue.assigned_to,
                                              parent_group_id=issue.parent_group_id,
