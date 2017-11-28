@@ -39,27 +39,35 @@ const item_list_template = {
 
 export default function item_list(state = initialState, action) {
 
-    let state_copy = Object.assign({}, state)
-    let l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
+    let state_copy
+    let l
     
     switch (action.type) {
         case INIT_LIST:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l)
 	    return state_copy
 	    
         case INVALIDATE_LIST:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_loading: false,
                 items_invalidated: true
             })
 	    return state_copy
         case ANNOUNCE_LIST_LOADING:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_loading: true,
                 items_invalidated: false
 	    })
 	    return state_copy
 	case ANNOUNCE_LIST_LOADED:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		is_loading: false,
 		received_at: action.received_at,
@@ -69,6 +77,8 @@ export default function item_list(state = initialState, action) {
 	    })
 	    return state_copy
         case ANNOUNCE_LIST_LOAD_FAILED:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
             setErrorMessage("Failed to load: " + action.error_message)
 	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_loading: false,
@@ -76,11 +86,15 @@ export default function item_list(state = initialState, action) {
 	    })
             return state_copy;
         case ANNOUNCE_MATCHING_ITEMS_LOADING:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
                 loading_matching_items: true
 	    })
 	    return state_copy
         case ANNOUNCE_MATCHING_ITEMS_LOADED:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		is_loading: false,
 		loading_matching_items: false,
@@ -88,6 +102,8 @@ export default function item_list(state = initialState, action) {
 	    })
 	    return state_copy
         case ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
             setErrorMessage("Failed to load matching items: " + action.error_message)
 	    state_copy[action.list_key] = Object.assign({}, l, {
                 is_loading: false,
@@ -96,21 +112,29 @@ export default function item_list(state = initialState, action) {
 	    })
             return state_copy;
 	case UPDATE_LIST_PAGINATION:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		pagination: Object.assign({}, (state_copy[action.list_key] || {}).pagination, action.pagination)
 	    })
 	    return state_copy
 	case UPDATE_LIST_FILTER:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		filter: Object.assign({}, (state_copy[action.list_key] || {}).filter, action.filter)
 	    })
 	    return state_copy
         case UPDATE_LIST_ORDERING:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
             state_copy[action.list_key] = Object.assign({}, l, {
                 ordering: Object.assign({}, action.ordering)
             })
             return state_copy
         case CLEAR_LIST_FILTER_OPTION:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		filter: Object.assign({}, (state_copy[action.list_key] || {}).filter)
 	    })
@@ -118,23 +142,33 @@ export default function item_list(state = initialState, action) {
 	    return state_copy
             
         case UPDATE_LIST_FORMAT:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		format: Object.assign({}, (state_copy[action.list_key] || {}).format, action.format)
 	    })
 	    return state_copy            
 	case UPDATE_LIST_SELECTION:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		selected_ids: action.selected_ids})
 	    return state_copy
         case HIGHLIGHT_LIST_SELECTION:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		highlighted_ids: action.highlighted_ids})
 	    return state_copy
 	case UPDATE_LIST_DISPLAY_MODE:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
 		display_mode: action.display_mode})
 	    return state_copy
         case SET_ITEMS_FLAG:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 
             const flag_name = "flag_" + action.flag_name
             const flag_value = action.flag_value
@@ -150,11 +184,15 @@ export default function item_list(state = initialState, action) {
 	    return state_copy
 
         case UPDATE_VISIBLE_ITEM_IDS:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
             state_copy[action.list_key] = Object.assign({}, l, {
                 visible_item_ids: action.visible_item_ids})
             return state_copy
 
         case SET_CURSOR_ITEM:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
             state_copy[action.list_key] = Object.assign({}, l, {
                 cursor_item_id: action.cursor_item_id})
             return state_copy

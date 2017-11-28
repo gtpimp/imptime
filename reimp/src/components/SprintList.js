@@ -134,11 +134,7 @@ class SprintList extends Component {
         const move_after_sprint_id = (index_of_destination>=0 && visible_item_ids[index_of_destination]) || null
         
         dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id, list_key,
-                                original_index_of_destination,
-                                function () {
-                                    dispatch(invalidateList(list_key))
-                                    dispatch(fetchSprintsIfNeeded(list_key))
-                                }))
+                                original_index_of_destination))
     }
 
     // renderCollapsedSprint(sprint) {

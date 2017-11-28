@@ -36,7 +36,7 @@ const initialState = {
 
 export default function sprint(state = initialState, action) {
 
-    let state_copy = Object.assign({}, state)
+    let state_copy
     let new_items_by_id = null
     let l
 

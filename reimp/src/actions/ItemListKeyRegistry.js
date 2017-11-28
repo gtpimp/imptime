@@ -60,7 +60,7 @@ const medium_col_width = "150px"
 const small_col_width = "90px"
 const tiny_col_width = "20px"
 
-export var SPRINT_HEADER_LIST = {'number': {label:"#", width:tiny_col_width},
+export var SPRINT_HEADER_LIST = {//'number': {label:"#", width:tiny_col_width},
                                  'name': {label:"Name", width:"50%"},
                                  'start_time': {label:"Start time", width:small_col_width},
                                  'end_time': {label:"End time", width:small_col_width},
