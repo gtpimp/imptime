@@ -3887,7 +3887,7 @@ def issue_points_update(request,  template="timepiece/project/issue_detail.html"
     else:
         new_estimate = request.POST["new_value"]
 
-    edited_issue_points.points = float(new_estimate)
+    edited_issue_points.points = float(new_estimate or 0)
     edited_issue_points.save()
     context['issue_number_form'] = timepiece_forms.IssueNumberForm(instance=edited_issue_points.issue)
     timepiece.IssueHistory.add_history(request.user, edited_issue_points.issue, "changed estimate for %s"%edited_issue_points.user, old_points, edited_issue_points.points)
