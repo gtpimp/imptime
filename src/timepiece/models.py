@@ -217,18 +217,7 @@ class Business(BaseModel):
         return Project.objects.filter(business=self)
 
     def get_ordered_projects(self):
-        all_business_projects = Project.objects.filter(business=self)
-
-        orderless_projects = all_business_projects.filter(order__isnull=True).order_by("-id")
-        ordered_projects = all_business_projects.exclude(order__isnull=True).order_by("order")
-
-        if len(orderless_projects) > 0:
-            all_projects = [ project for project in orderless_projects ] + [project for project in ordered_projects]
-            for index, project in enumerate(all_projects):
-                project.order = index
-                project.save()
-
-        return Project.objects.filter(business=self).order_by("order")
+        return Project.objects.filter(business=self).order_by_business_id(self.id)
 
     def get_users_allowed_to_estimate_on_business(self, current_user):
         business_permissions_by_user = BusinessPermissions.by_user(self)
@@ -796,6 +785,20 @@ class ProjectQuerySet(QuerySet):
             return self
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
+    def order_by_business_id(self, business_id, descending=False):
+        if business_id:
+            direction = ("-" if descending else "") + "order"
+            project_ids_in_order = BusinessProjectOrder.objects.filter(business_id=business_id)\
+                                                          .order_by(direction)\
+                                                          .values_list("project_id", flat=True)
+            if project_ids_in_order.count() == 0:
+                return self
+            preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(project_ids_in_order)])
+            
+            return self.order_by(preserved)
+        else:
+            return self
+    
     def filter_assigned_tasks_are_active(self):
         return self.filter(status3__name__in=['in dev', 'pending'],
                            project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
@@ -893,7 +896,6 @@ class Project(BaseModel):
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
-    order = models.FloatField(null=True,blank=True)
     objects = ProjectQuerySet.as_manager()
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
 
@@ -930,23 +932,7 @@ class Project(BaseModel):
         return project
 
     def move_after(self, other_project):
-        if other_project is None:
-            self.order = -1
-        else:
-            self.order = other_project.order + 0.00001
-        self.save()
-        self.renumber_project_order()
-
-    def renumber_project_order(self):
-        """ Doesn''t re-sort, just makes the numbers sequential """
-        order = 1
-        for project in self.business.new_business_projects\
-                                    .all().order_by("order"):
-            old_order = project.order
-            if old_order != order:
-                project.order = order
-                project.save()
-            order += 1
+        BusinessProjectOrder.insert_after(self, other_project)
 
     @property
     def spendable_budget(self):
@@ -2099,6 +2085,116 @@ class Project(BaseModel):
 
         return totals
 
+class BusinessProjectOrder(BaseModel):
+    order = models.FloatField()
+    project = models.ForeignKey(Project)
+    business = models.ForeignKey(Business)
+
+    class Meta:
+        unique_together = ('business', 'project')
+    
+    INCREMENT=10
+    MAX_ORDER=999999
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(BusinessProjectOrder, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+    
+    @classmethod
+    def renumber(self, business_id):
+        project_ids = Project.objects.filter(business_id=business_id).order_by_business_id(business_id).values_list('pk', flat=True)
+        order = 0
+        for project_id in project_ids:
+            pio = BusinessProjectOrder.objects.get_or_create(business_id=business_id, project_id=project_id,
+                                                             defaults={'order':order})[0]
+            if pio.order != order:
+                pio.order = order
+                pio.save()
+            order += self.INCREMENT
+        BusinessProjectOrder.objects.filter(business_id=business_id).exclude(project__business_id=business_id).delete()
+
+    @classmethod
+    def insert_before(self, project, set_before_this_project):
+        if project.business_id != set_before_this_project.business_id:
+            raise Exception("Cannot reorder, must be in the same business")
+        self.renumber(project.business_id)
+        pio = self.objects.get_or_create(business_id=set_before_this_project.business_id,
+                                         project_id=set_before_this_project.id,
+                                         defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio.order-1
+        pio, is_new = self.objects.get_or_create(business_id=project.business_id, project_id=project.id)
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(project.business_id)
+            
+    @classmethod
+    def insert_after(self, project, set_after_this_project):
+        if project.business_id != set_after_this_project.business_id:
+            raise Exception("Cannot reorder, must be in the same business")
+        self.renumber(project.business_id)
+        pio_target = self.objects.get_or_create(business_id=set_after_this_project.business_id,
+                                                project_id=set_after_this_project.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio_target.order+1
+        pio, is_new = self.objects.get_or_create(business_id=project.business_id,
+                                                 project_id=project.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(project.business_id)
+
+    @classmethod
+    def insert_at_the_beginning(self, project):
+        new_order = -1
+        pio, is_new = self.objects.get_or_create(business_id=project.business_id, project_id=project.id, defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(project.business_id)
+
+    @classmethod
+    def insert_at_the_end(self, project):
+        new_order = self.get_next_order(project.business_id)
+        pio, is_new = self.objects.get_or_create(business_id=project.business_id, project_id=project.id, defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(project.business_id)
+
+    @classmethod
+    def order_like_this(self, business_id, ordered_project_ids):
+        order = 0
+        for project_id in ordered_project_ids:
+            pio = BusinessProjectOrder.objects.get_or_create(business_id=business_id, project_id=project_id,
+                                                          defaults={'order':order})[0]
+            if pio.order != order:
+                pio.order = order
+                pio.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def sort_these_project_ids(self, business_id, unordered_project_ids):
+        return BusinessProjectOrder.objects.filter(business=business_id)\
+                                        .filter(project_id__in=unordered_project_ids)\
+                                        .order_by("order")\
+                                        .values_list("project_id", flat=True)
+            
+    @classmethod
+    def get_next_order(self, business_id, project_qs=None):
+        self.renumber(business_id)
+        if project_qs is None:
+            project_qs = Project.objects.filter(business_id=business_id)
+        max_order = self.objects.filter(business_id=business_id, project__in=project_qs)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+
+    
 class BusinessInvite(BaseModel):
     business = models.ForeignKey(Business, related_name='invites', null=False)
     user = models.ForeignKey(User, related_name='invites_received', null=False)

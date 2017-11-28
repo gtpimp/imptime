@@ -25,6 +25,10 @@ class EditableSprintStatus extends Component {
 
     render() {
         const { sprint, project_id, can_edit, class_name } = this.props
+
+        if ( ! sprint.id ) {
+            return null
+        }
         
         return (
             <EditableProperty property_key={'sprint_status_name'+sprint.id}

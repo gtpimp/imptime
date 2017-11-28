@@ -13,6 +13,7 @@ from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import Issue
+from timepiece.models import BusinessProjectOrder as ProjectSprintOrder
 from imptime.models import SprintTemplate
 from rest_framework.decorators import detail_route
 
@@ -36,8 +37,12 @@ class SprintViewSet(BaseViewSet):
             filter_args = self._set_default_filter(params.get('filter', {}))
             format_args = params.get('format', {})
 
-            sprints = self.allowed_sprints().order_by("order")
+            sprints = self.allowed_sprints()
             sprints = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
+
+            if 'business_id' in filter_args:
+                sprints = sprints.order_by_business_id(business_id=filter_args['business_id']) #sic
+            
             sprints = self.apply_pagination(qs=sprints,
                                             pagination=pagination)
 
@@ -90,8 +95,11 @@ class SprintViewSet(BaseViewSet):
                         sprint.project_type = new_value
                 elif field_name == 'sprint_id_after':
                     if self.logged_in_permissions(sprint.business).has_edit_sprint:
-                        after_sprint = self.allowed_sprint(new_value) if new_value else None
-                        sprint.move_after(after_sprint)
+                        if new_value is None:
+                            ProjectSprintOrder.insert_at_the_beginning(sprint)
+                        else:
+                            after_sprint = self.allowed_sprint(new_value) if new_value else None
+                            ProjectSprintOrder.insert_after(sprint, set_after_this_sprint=after_sprint)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 sprint.save()
@@ -110,25 +118,23 @@ class SprintViewSet(BaseViewSet):
             project_id = params['project_id']
             default_sprint_args = params.get('default_sprint_args', {})
             fixed_default_sprint_args = self._apply_business_project_switch(default_sprint_args)
-            project = Project.objects.get(pk=project_id)
+            project = self.allowed_project(project_id)
             sprint_id_before = params.get('sprint_id_before', None)
-            if sprint_id_before:
-                sprint_before = self.allowed_sprint(sprint_id_before)
-                order = sprint_before.order + 0.5
-            else:
-                order = 0
-                project = self.allowed_project(project_id)
 
             if self.logged_in_permissions(project).has_create_sprint:
                 new_status = SprintStatus.objects.get_or_create(business_id=project_id, name='pending')[0]
                 sprint = Sprint.objects.create(
                     business=project, #sic
-                    order=order,
                     status3=new_status,
                     code=Sprint.get_code_from_name(params['name']),
                     name=params['name'],
                     **fixed_default_sprint_args)
-                sprint.renumber_project_order()
+
+                if sprint_id_before is None:
+                    ProjectSprintOrder.insert_at_the_end(sprint)
+                else:
+                    sprint_before = self.allowed_sprint(sprint_id_before)
+                    ProjectSprintOrder.insert_after(sprint, set_after_this_sprint=sprint_before)
 
                 if default_sprint_args.get('sprint_type', None) == 'template':
                     sprint_template = SprintTemplate.objects.create(sprint=sprint)
@@ -160,10 +166,10 @@ class SprintViewSet(BaseViewSet):
             sprint_clone = Sprint.objects.create(
                 business=template_sprint.business, #sic
                 name=new_name,
-                order=999,
                 status3=new_status,
                 project_type='checklist', #sic
                 code=Sprint.get_code_from_name(new_name))
+            ProjectSprintOrder.insert_at_the_end(sprint_clone)
 
             sprint_template = template_sprint.templates.all().first()
             if sprint_template is None:

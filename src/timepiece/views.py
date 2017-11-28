@@ -1798,9 +1798,8 @@ def create_project(request):
     if form.is_valid():
         project = form.save()
         project.save()
-        return HttpResponseRedirect(
-            reverse('view_project', args=(project.id,))
-            )
+        timepiece.BusinessProjectOrder.insert_at_the_end(project)
+        return HttpResponseRedirect(reverse('view_project', args=(project.id,)))
 
     context = {
         'business':business,
@@ -4587,17 +4586,15 @@ def sortable_project_update(request):
     for index in request.POST['ordered_ids'].split(","):
         try:
             int_index = int(index)
-            ordered_project_ids.append(int_index)
+            if int_index > 0:
+                ordered_project_ids.append(int_index)
         except ValueError:
             continue
 
     first_project = timepiece.Project.objects.get(id=ordered_project_ids[0])
-    first_project.business.get_ordered_projects()
-    for item_order_count, project_id in enumerate(ordered_project_ids):
-        project= timepiece.Project.objects.get(pk=project_id)
-        project.order = item_order_count
-        project.save()
 
+    timepiece.BusinessProjectOrder.order_like_this(business_id=first_project.business_id,
+                                                   ordered_project_ids=ordered_project_ids)
     return HttpResponse("")
 
 
@@ -5590,7 +5587,9 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     running_amount_paid = 0
     running_amount_owed = 0
     running_costs_per_role = {}
-    for project in timepiece.Project.objects.all().filter(business=business).filter_by_logged_in_user(request.user).order_by("order"):
+    for project in timepiece.Project.objects.all().filter(business=business)\
+                                                  .filter_by_logged_in_user(request.user)\
+                                                  .order_by_business_id(business.id):
         stats = project.stats
         project_info = { 'project': project,
                          'status': project.status3.name,
