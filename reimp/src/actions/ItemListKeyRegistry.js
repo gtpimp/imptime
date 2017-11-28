@@ -81,9 +81,9 @@ export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width}
                                      'created_at': {label:"Created at", width:medium_col_width},
                                      'status': {label:"Status", width:medium_col_width},
                                      'tags': {label:"Tags", width:medium_col_width},
-                                     'progress': {label:"Progress", width:"10%"},
-                                     'my_time': {label:"My Time", width:"10%"},
-                                     'clock_in': {label:"Clock in", width:"10%"},
+                                     'progress': {label:"Progress", width:medium_col_width},
+                                     'my_time': {label:"My Time", width:medium_col_width},
+                                     'clock_in': {label:"Clock in", width:small_col_width},
                                      'small_delete': {label:"", width:tiny_col_width}
 }
 
@@ -102,9 +102,9 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':{label:'#', width:tiny_col_width},
-    'name': {label:'Name', width:"70%"},
-    'status': {label:'Status', width:"10%"},
-    'estimates': {label:"Estimates", width:"10%"},
+    'name': {label:'Name', width:"auto", flex:1},
+    'status': {label:'Status', width:medium_col_width},
+    'estimates': {label:"Estimates", width:medium_col_width},
     'small_delete': {label:"", width:tiny_col_width}
 }
 
