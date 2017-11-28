@@ -6066,8 +6066,8 @@ def _get_quick_clocker_issue(project, user):
                                                created_by=user,
                                                number=timepiece.Issue.get_next_issue_number(project.business),
                                                description="General work",
-                                               story_points=0,
-                                               order=timepiece.Issue.get_next_order(project))
+                                               story_points=0)
+        timepiece.ProjectIssueOrder.insert_at_the_end(issue)
     return issue
 
 @permission_required('timepiece.scheduler')

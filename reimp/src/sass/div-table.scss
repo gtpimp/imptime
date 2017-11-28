@@ -19,7 +19,7 @@
 }
 
 .div-table__row:hover {
-    box-shadow: inset 0 -1px 0 0 #E0E0E0;
+    //box-shadow: inset 0 -1px 0 0 #E0E0E0;
     background-color: $row-hover-color;
 }
  
@@ -57,8 +57,8 @@ div-table__row--saving {
 }
 
 .div-table__cell {
-    padding-left: 16px;
-    padding-right: 16px;
+    padding-left: 10px;
+    padding-right: 10px;
     vertical-align: middle;
     cursor: pointer;
     display: flex;
@@ -78,9 +78,10 @@ div-table__row--saving {
 }
 
 .div-table__cell--hover {
-    -webkit-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
-    -moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
-    box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+    background-color: $cell-hover-color;
+    /* -webkit-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+       -moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
+       box-shadow:inset 0px 0px 0px 2px $button-hover-background; */
 }
 
 .div-table__cell--secondary {

@@ -468,7 +468,7 @@ class IssueList extends Component {
                         is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}
-                        issue_header_list={(issue.can_group_issues && ISSUE_HEADER_LIST_FEATURE) || issue_header_list}
+                        issue_header_list={issue_header_list}
                         onDelete={that.onDeleteIssue}
                     />
                 )

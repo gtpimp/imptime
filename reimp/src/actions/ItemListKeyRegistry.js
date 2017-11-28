@@ -59,7 +59,7 @@ export const FILTER_KEY__GLOBAL = 'global_filter'
 
 const medium_col_width = "150px"
 const small_col_width = "90px"
-const tiny_col_width = "10px"
+const tiny_col_width = "20px"
 
 export var SPRINT_HEADER_LIST = {'number': {label:"#", width:tiny_col_width},
                                  'name': {label:"Name", width:"50%"},
@@ -91,10 +91,10 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width
                                        'status': {label:"Status", width:medium_col_width}
 }
 
-export var ISSUE_HEADER_LIST_FEATURE = {'number': {label:"#", width:tiny_col_width},
-                                        'expand_feature': {label:'', width:tiny_col_width},
-                                        'name': {label:"Name", width:"50%"}
-}
+/* export var ISSUE_HEADER_LIST_FEATURE = {'number': {label:"#", width:tiny_col_width},
+ *                                         'expand_feature': {label:'', width:tiny_col_width},
+ *                                         'name': {label:"Name", width:"50%"}
+ * }*/
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':{label:'#', width:tiny_col_width},
