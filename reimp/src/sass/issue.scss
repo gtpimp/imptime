@@ -1,6 +1,7 @@
 @import 'variables.scss';
 @import 'div-table.scss';
-
+@import 'icon.scss';
+ 
 .issue {
     color: $color-1;
     width: 100%;
@@ -114,6 +115,12 @@ issue--grouped {
     @extend .div-table__cell--default;
 }
 
+.issue-cell__issue-adhoc-icon {
+    @extend .div-table__cell--default;
+    @extend .icon--adhoc;
+    opacity: 0.5;
+}
+
 .div-table__row.issue--feature .issue-cell__issue-name {
     font: $font-2;
 }
@@ -134,3 +141,4 @@ issue--grouped {
     font: $bold-extra-large;
     color: $error-color;
 }
+ 

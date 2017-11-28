@@ -3608,7 +3608,7 @@ class Rate(BaseModel):
     @classmethod
     def for_business(self, user_id, business_id):
         """ best guess """
-        return Rate.objects.filter(user_id=user_id, project__business_id=business_id).order_by("project__order").first()
+        return Rate.objects.filter(user_id=user_id, project__business_id=business_id).order_by("-id").first()
 
 class Expense(BaseModel):
     date = models.DateField()

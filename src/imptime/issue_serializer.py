@@ -22,6 +22,7 @@ class IssueSerializer(BaseSerializer):
     subject_quality_error = serializers.CharField()
     description = serializers.CharField()
     status_name = serializers.CharField(source='status2_name')
+    type_name = serializers.CharField()
     assigned_to_id = serializers.CharField()
     feature_name = serializers.CharField()
     number = serializers.IntegerField()
@@ -61,6 +62,7 @@ class IssueSerializer(BaseSerializer):
         
         issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.status2_name = issue.status2.name if issue.status2_id else None
+        issue.type_name = "adhoc" if issue.adhoc else "issue"
         issue.sprint_id = str(issue.project_id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
         issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate

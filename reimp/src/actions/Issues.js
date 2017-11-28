@@ -200,6 +200,10 @@ export function updateIssueStatus(issue_ids, value) {
     return updateIssue(issue_ids, "status_name", value)
 }
 
+export function updateIssueType(issue_ids, value) {
+    return updateIssue(issue_ids, "type_name", value)
+}
+
 export function updateIssueFeature(issue_ids, value) {
     return updateIssue(issue_ids, "feature_name", value)
 }

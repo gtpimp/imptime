@@ -9,6 +9,7 @@ import {browserHistory} from 'react-router'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
 import EditableIssueStatus from '../components/EditableIssueStatus'
+import EditableIssueType from '../components/EditableIssueType'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -44,7 +45,15 @@ class MultipleIssueSidebar extends Component {
                     <EditableIssueStatus issue_ids={issue_ids} project_id={project_id} />
                   </div>
                 </PropertyStackComponent>
+                
+                <PropertyStackComponent>
+                  <div>
+                    Type:
+                    <EditableIssueType issue_ids={issue_ids} project_id={project_id} />
+                  </div>
+                </PropertyStackComponent>
 
+                
                 <PropertyStackComponent>
                   <div>
                     Sprint:

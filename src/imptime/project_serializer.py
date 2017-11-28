@@ -27,6 +27,7 @@ class ProjectSerializer(BaseSerializer):
     allowed_user_ids = serializers.ListField(child=serializers.CharField())
     invited_user_ids = serializers.ListField(child=serializers.CharField())
     allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
+    allowed_issue_type_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_type_names = serializers.ListField(child=serializers.CharField())
     allowed_deadline_types = serializers.ListField(child=ProjectDeadlineTypeSerializer())
@@ -55,6 +56,8 @@ class ProjectSerializer(BaseSerializer):
                                                .order_by("name")\
                                                .values_list('name', flat=True)] #sic
 
+        project.allowed_issue_type_names = ['issue', 'adhoc']
+        
         project.allowed_sprint_status_names = [x for x in SprintStatus.objects.all()\
                                                .filter(business=project)\
                                                .order_by("name")\

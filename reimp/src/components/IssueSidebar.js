@@ -12,6 +12,7 @@ import EditableIssueTestable from './EditableIssueTestable'
 import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueStatus from './EditableIssueStatus'
+import EditableIssueType from './EditableIssueType'
 import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
 import EditableIssueEstimate from './EditableIssueEstimate'
 import IssueReviewPanel from './IssueReviewPanel'
@@ -164,6 +165,10 @@ class IssueSidebar extends Component {
                           <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
                         </PropertyStackComponent>
 
+                        <PropertyStackComponent title="Issue Type">
+                          <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
+                        </PropertyStackComponent>
+                        
                         <PropertyStackComponent title="Estimates">
                           <div>
                             <EditableIssueEstimate issue_id={issue.id} />

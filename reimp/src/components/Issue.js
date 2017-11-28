@@ -228,6 +228,13 @@ class Issue extends Component {
                      <div>{issue.number}</div>
                    </div>
                   }
+                  {includes(visible_header_keys, "type") &&
+                   <div className="div-table__cell"
+                        style={{"minWidth":header_list.type.width,
+                                "maxWidth":header_list.type.width}}>
+                     <div className={classNames({'issue-cell__issue-adhoc-icon':issue.type_name==='adhoc'})}></div>
+                   </div>
+                  }
                   {includes(visible_header_keys, "expand_feature") &&
                    <div className="div-table__cell"
                         style={{"minWidth":header_list.expand_feature.width,
@@ -291,7 +298,7 @@ class Issue extends Component {
                          style={{"minWidth":header_list.status.width,
                                  "maxWidth":header_list.status.width}}
                     >
-                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                      <EditableIssueStatus class_nname="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "progress") &&

@@ -75,6 +75,7 @@ export var SPRINT_HEADER_LIST = {//'number': {label:"#", width:tiny_col_width},
 }
 
 export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width},
+                                     'adhoc': {label:'', width:tiny_col_width},
                                      'expand_feature': {label:'', width:tiny_col_width},
                                      'name': {label:"Name", width:"50%"},
                                      'assignee': {label:"Assignee", width:medium_col_width},
@@ -88,6 +89,7 @@ export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width}
 }
 
 export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width},
+                                       'type': {label:'', width:tiny_col_width},
                                        'expand_feature': {label:'', width:tiny_col_width},
                                        'name': {label:"Name", width:"50%"},
                                        'assignee': {label:"Assignee", width:medium_col_width},
