@@ -263,27 +263,22 @@ class Command(BaseCommand):
         return user
 
     def create_issue(self, message, user, project, sprint, raw_issue):
-        try:
-            issue = Issue.objects.filter(project=sprint, subject=raw_issue['subject']).order_by("-order").first()
-            if issue is None:
-                issue = Issue.objects.create(project=sprint,
-                                             subject=raw_issue['subject'],
-                                             auto_created_during_import=True,
-                                             adhoc=False,
-                                             status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
-                                             feature=raw_issue['feature'],
-                                             assigned_to=user,
-                                             number=Issue.get_next_issue_number(project),
-                                             description=raw_issue['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
-                                             story_points=0,
-                                             created=message['time'],
-                                             modified=message['time'])
-                SprintIssueOrder.insert_at_the_end(issue)
-                is_new = True
-            else:
-                is_new = False
-
-        if not is_new:
+        issue = Issue.objects.filter(project=sprint, subject=raw_issue['subject']).order_by("-order").first()
+        if issue is None:
+            issue = Issue.objects.create(project=sprint,
+                                         subject=raw_issue['subject'],
+                                         auto_created_during_import=True,
+                                         adhoc=False,
+                                         status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
+                                         feature=raw_issue['feature'],
+                                         assigned_to=user,
+                                         number=Issue.get_next_issue_number(project),
+                                         description=raw_issue['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
+                                         story_points=0,
+                                         created=message['time'],
+                                         modified=message['time'])
+            SprintIssueOrder.insert_at_the_end(issue)
+        else:
             IssueComment.objects.create(issue=issue,
                                         comment=raw_issue['description'],
                                         author=user,
