@@ -19,6 +19,14 @@ class Project extends Component {
         event.stopPropagation()
         browserHistory.push('/projects/'+project_id+'/sprints/');
     }
+
+    getStyle(s) {
+        return {
+            "minWidth":s.width,
+            "maxWidth":s.width,
+            "flex":s.flex || 0
+        }
+    }
     
     render_collapsed() {
 	const { project } = this.props
@@ -65,8 +73,7 @@ class Project extends Component {
 		>
                   {includes(visible_header_keys, "name") &&
 		   <div className="div-table__cell"
-                        style={{"minWidth":header_list.name.width,
-                                "maxWidth":header_list.name.width}}>
+                        style={this.getStyle(header_list.name)}>
                      <div className="project__cell--name">
                        {project.name}
                      </div>
@@ -75,8 +82,7 @@ class Project extends Component {
                   {includes(visible_header_keys, "num_sprints") &&
                    <div className="div-table__cell sprint__cell__secondary"
                         onClick={this.onSprintsClick}
-                        style={{"minWidth":header_list.num_sprints.width,
-                                "maxWidth":header_list.num_sprints.width}}>
+                        style={this.getStyle(header_list.num_sprints)}>
                      <div className="project__cell--num-sprints">
                        { project.num_open_sprints > 0 &&
                          <div>

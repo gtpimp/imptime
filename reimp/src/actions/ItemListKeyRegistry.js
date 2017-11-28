@@ -60,12 +60,11 @@ const medium_col_width = "150px"
 const small_col_width = "90px"
 const tiny_col_width = "20px"
 
-export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"50%"},
+export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'num_sprints': {label:"Sprints", width: medium_col_width},
 }
 
-export var SPRINT_HEADER_LIST = {//'number': {label:"#", width:tiny_col_width},
-                                 'name': {label:"Name", width:"50%"},
+export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                  'start_time': {label:"Start time", width:small_col_width},
                                  'end_time': {label:"End time", width:small_col_width},
                                  'num_issues': {label:"Issues", width: small_col_width},
@@ -77,7 +76,7 @@ export var SPRINT_HEADER_LIST = {//'number': {label:"#", width:tiny_col_width},
 export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width},
                                      'adhoc': {label:'', width:tiny_col_width},
                                      'expand_feature': {label:'', width:tiny_col_width},
-                                     'name': {label:"Name", width:"50%"},
+                                     'name': {label:"Name", width:"auto", flex:1},
                                      'assignee': {label:"Assignee", width:medium_col_width},
                                      'created_at': {label:"Created at", width:medium_col_width},
                                      'status': {label:"Status", width:medium_col_width},
@@ -91,7 +90,7 @@ export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width}
 export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width},
                                        'type': {label:'', width:tiny_col_width},
                                        'expand_feature': {label:'', width:tiny_col_width},
-                                       'name': {label:"Name", width:"50%"},
+                                       'name': {label:"Name", width:"auto", flex:1},
                                        'assignee': {label:"Assignee", width:medium_col_width},
                                        'status': {label:"Status", width:medium_col_width}
 }

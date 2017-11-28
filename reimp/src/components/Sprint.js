@@ -22,6 +22,14 @@ class Sprint extends Component {
         event.stopPropagation()
         browserHistory.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues');
     }
+
+    getStyle(s) {
+        return {
+            "minWidth":s.width,
+            "maxWidth":s.width,
+            "flex":s.flex || 0
+        }
+    }
     
     render_collapsed() {
 	      const { sprint } = this.props
@@ -74,8 +82,7 @@ class Sprint extends Component {
 		>
                   {includes(visible_header_keys, "number") &&
                    <div className="div-table__cell"
-                        style={{"minWidth":header_list.number.width,
-                                "maxWidth":header_list.number.width}}>
+                        style={this.getStyle(header_list.number)}>
                      <div className="sprint__cell--number">
                        {sprint.number}
                      </div>
@@ -83,8 +90,7 @@ class Sprint extends Component {
                   }
                   {includes(visible_header_keys, "name") &&
                    <div className="div-table__cell"
-                        style={{"minWidth":header_list.name.width,
-                                "maxWidth":header_list.name.width}} >
+                        style={this.getStyle(header_list.name)}>
                      <div className="sprint__cell--name">
                        {sprint.name}
                      </div>
@@ -92,8 +98,7 @@ class Sprint extends Component {
                   }
                   {includes(visible_header_keys, "start_time") &&
                    <div className="div-table__cell sprint__cell__secondary"
-                        style={{"minWidth":header_list.start_time.width,
-                                "maxWidth":header_list.start_time.width}}>
+                        style={this.getStyle(header_list.start_time)}>
                      <div className="sprint__cell--start-time">
                        <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
                      </div>
@@ -101,8 +106,7 @@ class Sprint extends Component {
                   }
                   {includes(visible_header_keys, "end_time") &&
                    <div className="div-table__cell sprint__cell__secondary"
-                        style={{"minWidth":header_list.end_time.width,
-                                "maxWidth":header_list.end_time.width}} >
+                        style={this.getStyle(header_list.end_time)}>
                      <div className="sprint__cell--end-time">
                        <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
                      </div>
@@ -111,8 +115,7 @@ class Sprint extends Component {
                   {includes(visible_header_keys, "num_issues") &&
                    <div className="div-table__cell sprint__cell__secondary"
                         onClick={this.onIssuesClick}
-                        style={{"minWidth":header_list.num_issues.width,
-                                "maxWidth":header_list.num_issues.width}} >
+                        style={this.getStyle(header_list.num_issues)}>
                      <div className="sprint__cell--num-issues">
                        {sprint.num_issues || 0} Issues
                      </div>
@@ -120,8 +123,7 @@ class Sprint extends Component {
                   }
                   {includes(visible_header_keys, "progress") &&
                    <div className="div-table__cell"
-                        style={{"minWidth":header_list.progress.width,
-                                "maxWidth":header_list.progress.width}} >
+                        style={this.getStyle(header_list.progress)}>
                      <div className="sprint__cell--progress">
                        <Progress issue={sprint} />
                      </div>
@@ -129,8 +131,7 @@ class Sprint extends Component {
                   }
                   {includes(visible_header_keys, "status") &&
                    <div className="div-table__cell sprint__cell__secondary"
-                        style={{"minWidth":header_list.status.width,
-                                "maxWidth":header_list.status.width}} >
+                        style={this.getStyle(header_list.status)}>
                      <div className="sprint__cell--status">
                        <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
                      </div>
@@ -138,8 +139,7 @@ class Sprint extends Component {
                   }
                   {includes(visible_header_keys, "type") &&
                    <div className="div-table__cell sprint__cell__secondary"
-                        style={{"minWidth":header_list.type.width,
-                                "maxWidth":header_list.type.width}} >
+                        style={this.getStyle(header_list.type)}>
                      <div className="sprint__cell--type">
                        <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
                      </div>
