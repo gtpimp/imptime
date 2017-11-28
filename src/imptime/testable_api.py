@@ -107,6 +107,7 @@ class TestableViewSet(BaseViewSet):
                                              status2=issue.status2,
                                              feature=issue.feature,
                                              assigned_to=issue.assigned_to,
+                                             parent_group_id=issue.parent_group_id,
                                              number=Issue.get_next_issue_number(issue.project.business), #sic
                                              description=issue.description,
                                              story_points=issue.story_points,
