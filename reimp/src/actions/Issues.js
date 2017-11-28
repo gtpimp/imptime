@@ -446,7 +446,6 @@ export function groupUnsortedIssuesIntoFeature(issue_ids) {
 
     return (dispatch, getState) => {
         const state = getState()
-        event.stopPropagation()
         if (issue_ids.length === 1) {
             alert("Please select a single feature issue and at least one other issue to group together")
             return
