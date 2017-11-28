@@ -7,6 +7,7 @@ import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
+import SplitPane from 'react-split-pane'
 import {
     LIST_KEY__ISSUE_LIST,
     PAGE_KEY__ISSUES_PAGE
@@ -23,7 +24,8 @@ import {
     select_sprints,
     get_header_list,
     set_wide_column_mode,
-    getPageFlag
+    getPageFlag,
+    setPageFlag
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -34,6 +36,7 @@ class IssuesPage extends Component {
     constructor(props) {
         super(props)
         this.onSelectIssues = this.onSelectIssues.bind(this)
+        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
     }
 
     componentDidMount() {
@@ -89,40 +92,80 @@ class IssuesPage extends Component {
         }
     }
 
+    onChangeSplitterSize(size) {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__ISSUES_PAGE, 'splitter_size', size))
+    }
+
+    renderLeftPane() {
+        const { issue_header_list } = this.props
+        return (
+            <div className="list-layout__list">
+              <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                         onSelectIssues={this.onSelectIssues}
+                         issue_header_list={issue_header_list}
+              />
+            </div>
+        )
+    }
+
+    renderRightPane() {
+        const { sprint_id, project_id, selected_issue_ids,
+                is_single_selection, is_multiple_selection, is_creating_issue, selected_issue
+        } = this.props
+
+        if ( is_creating_issue ) {
+            return (
+                <div className="list-layout__sidebar">
+                  <NewIssueSidebar onCreatedIssues={this.onSelectIssues} />
+                </div>
+            )
+        } else if ( is_single_selection && sprint_id && selected_issue ) {
+            return (
+                <div className="list-layout__sidebar">
+                  <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+                </div>
+            )
+        } else if ( is_multiple_selection && sprint_id && selected_issue_ids ) {
+            return (
+                <div className="list-layout__sidebar">
+                  <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
+                </div>
+            )
+        }
+    }
+
     render() {
 
         const { sprint_id, project_id, selected_issues, selected_issue_ids,
                 is_single_selection, is_multiple_selection, is_creating_issue,
-                issue_header_list, show_sidebar
+                issue_header_list, show_sidebar, selected_issue, splitter_size
         } = this.props
 
-        const selected_issue = ( selected_issues && selected_issues.length > 0 && selected_issues[0] ) || null
-
-        return (
-            <div className="list-layout">
-              <div className="list-layout__list">
-                <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                           onSelectIssues={this.onSelectIssues}
-                           issue_header_list={issue_header_list}
-                />
-              </div>
-              { is_creating_issue && 
-                <div className="list-layout__sidebar">
-                  <NewIssueSidebar onCreatedIssues={this.onSelectIssues} />
+        if ( show_sidebar ) {
+            return (
+                <div className="list-layout">
+                  <SplitPane split="vertical" minSize={50} defaultSize={"80%"}
+                             defaultSize={splitter_size}
+                             onChange={this.onChangeSplitterSize}
+                  >
+                    <div className="left">
+                      {this.renderLeftPane()}
+                    </div>
+                    <div className="right">
+                      {this.renderRightPane()}
+                    </div>
+                  </SplitPane>
                 </div>
-              }
-              { ! is_creating_issue && is_single_selection && sprint_id && selected_issue && show_sidebar &&
-                <div className="list-layout__sidebar">
-                  <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+            )
+        }
+        if ( ! show_sidebar ) {
+            return (
+                <div className="list-layout">
+                  {this.renderLeftPane()}
                 </div>
-              }
-              { ! is_creating_issue && is_multiple_selection && sprint_id && selected_issue_ids && show_sidebar &&
-                <div className="list-layout__sidebar">
-                  <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
-                </div>
-              }
-            </div>
-        )
+            )
+        }
     }
 }
 
@@ -144,7 +187,9 @@ function mapStateToProps(state, props) {
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
     const issue_header_list = get_header_list(state, PAGE_KEY__ISSUES_PAGE)
-    const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", false)
+    const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
+    const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
+    const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")
 
     return {
         sprint_id: sprint_id,
@@ -152,13 +197,15 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         default_issue_id,
+        selected_issue,
+        splitter_size,
         selected_issues: selected_items,
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue: is_creating_issue,
         issue_header_list: issue_header_list,
-        show_sidebar
+        show_sidebar: (selected_issue && show_sidebar) || is_creating_issue
     }
 }
 

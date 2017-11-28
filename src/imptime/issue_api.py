@@ -121,8 +121,6 @@ class IssueViewSet(BaseViewSet):
             for issue_pk in issue_pks:
                 issue = self.allowed_issue(issue_pk)
 
-                sprint_issues_can_be_reviewed = issue.project.issues_can_be_reviewed #sic
-                
                 if field_name == "subject":
                     if self.logged_in_permissions(issue.project.business).has_edit_subject:
                         old_subject = issue.subject
