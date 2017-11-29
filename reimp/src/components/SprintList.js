@@ -137,40 +137,6 @@ class SprintList extends Component {
                                 original_index_of_destination))
     }
 
-    // renderCollapsedSprint(sprint) {
-    //     const {list_key} = this.props
-    //     return (
-    //         <div key={"collapsed_sprint_" + sprint.id + "_" + list_key}>
-    //             Sprint: {sprint.name}
-    //         </div>
-    //     )
-    // }
-    //
-    // render_collapsed() {
-    //     const {
-    //         sprint, selected_items, is_collapsed, selected_ids, reorderSprints,
-    //         loading_item_ids, list_key
-    //     } = this.props
-    //
-    //     return (
-    //         <div className="panel panel--collapsed">
-    //             <div className="panel-heading" onClick={this.onExpand}>
-    //                 <div className="panel__title">
-    //                     { selected_items.map((sprint, index) =>
-    //                         <Sprint key={list_key + sprint.id + index}
-    //                                 is_collapsed={true}
-    //                                 reorderSprints={reorderSprints}
-    //                                 onClickedSprint={() => this.onClickedSprint(sprint.id)}
-    //                                 is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
-    //                                 is_selected={selected_ids.indexOf(sprint.id) !== -1}
-    //                                 sprint_id={sprint.id}/>
-    //                     )}
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
-
     render_candidate_sprint() {
         const {list_key} = this.props
 
@@ -192,7 +158,6 @@ class SprintList extends Component {
             <Sprint key={list_key + sprint.id + index}
                     is_collapsed={false}
                     header_list={header_list}
-                    reorderSprints={that.reorderSprints}
                     onClickedSprint={(event) => that.onClickedSprint(event, sprint.id)}
                     is_loading={loading_item_ids.indexOf(sprint.id) !== -1}
                     is_selected={selected_ids.indexOf(sprint.id) !== -1}
@@ -201,50 +166,85 @@ class SprintList extends Component {
         )
     }
 
-    render_expanded() {
+    render_sprint_type_header(sprint_type) {
 
-        const {
-            sprints, list_key,
-            selected_ids,
-            is_creating_sprint, candidate_sprint,
-            loading_item_ids
-        } = this.props
-        const that = this
-        const sprint_rows = []
-        each(sprints, function (sprint, index) {
-
-            if (is_creating_sprint && index === 0 && !candidate_sprint.sprint_id_before) {
-                sprint_rows.push(that.render_candidate_sprint())
-            }
-            sprint_rows.push(
-                that.render_sprint(sprint, list_key, index, that, loading_item_ids, selected_ids)
-            )
-            if (is_creating_sprint && candidate_sprint.sprint_id_before === sprint.id) {
-                sprint_rows.push(that.render_candidate_sprint())
-            }
-        })
-
+        const readable_sprint_type = (sprint_type || "unknown").replace(/_/g, " ")
+        
         return (
-            <DivTable onReorder={this.reorderSprints}>
-              {sprint_rows}
-            </DivTable>
+            <div key={"sprint_type_header_" + sprint_type}
+                 className="sprint__sprint_type_header">
+              {readable_sprint_type}
+            </div>
         )
     }
 
+    create_sprint_rows(sprints) {
+        const { list_key, selected_ids, is_creating_sprint,
+                candidate_sprint, loading_item_ids, sprints_by_type } = this.props
+
+        const that = this
+        const sprint_rows = []
+        map(sprints, function(sprint, index) {
+            /* if (is_creating_sprint && index === 0 && !candidate_sprint.sprint_id_before) {
+             *     sprint_rows.push(that.render_candidate_sprint())
+             * }*/
+
+            sprint_rows.push(
+                that.render_sprint(sprint, list_key, index, that, loading_item_ids, selected_ids)
+            )
+            
+            /* if (is_creating_sprint && candidate_sprint.sprint_id_before === sprint.id) {
+             *     sprint_rows.push(that.render_candidate_sprint())
+             * }*/
+        })
+        return sprint_rows
+    }
+
     render() {
-        // const {is_visible, is_loading, is_collapsed, is_expanded} = this.props
+
+        const { sprints, list_key, selected_ids, is_creating_sprint,
+                candidate_sprint, loading_item_ids, sprints_by_type } = this.props
+        const that = this
+        const sprint_rows = []
 
         return (
-            <div>
-              {/*{ is_collapsed && this.render_collapsed() }*/}
-              {/*{ is_expanded && this.render_expanded() }*/}
-              { this.render_expanded() }
+            <div className="sprint_list__container">
+              { map(sprints_by_type, function(sprints, sprint_type) {
+                    const sprint_rows = that.create_sprint_rows(sprints)
+                    return (
+                        <div key={sprint_type}>
+                          <div className={"sprint_type_header sprint_type_header_" + sprint_type}>
+                            {sprint_type || ""}
+                          </div>
+                          <DivTable onReorder={that.reorderSprints}>
+                            {sprint_rows}
+                          </DivTable>
+                        </div>
+                    )
+                    
+                })}
             </div>
         )
     }
 }
 
-function mapStateToProps(state, props) {
+function collect_sprints_by_type(sprints) {
+    const sprints_by_type = {}
+    let running_sprint_type = null
+    each(sprints, function (sprint, index) {
+
+        if ( running_sprint_type !== sprint.sprint_type ) {
+            running_sprint_type = sprint.sprint_type
+            sprints_by_type[running_sprint_type] = []
+        }
+        sprints_by_type[running_sprint_type].push(sprint)
+        
+    })
+    
+    return sprints_by_type
+}
+
+            function mapStateToProps(state, props) {
     const {sprint, item_list} = state
     const {list_key, header_list} = props
     const items_by_id = (sprint && sprint.items_by_id) || {}
@@ -269,11 +269,13 @@ function mapStateToProps(state, props) {
 
     const candidate_sprint = (sprint && sprint.candidate_sprint) || null
     const is_creating_sprint = candidate_sprint || false
+    const sprints_by_type = collect_sprints_by_type(items)
 
     return {
         list_key: list_key,
         project_id: project_id,
         sprints: items,
+        sprints_by_type,
         visible_item_ids,
         sprint_ids: map(items, 'id'),
         selected_ids: l.selected_ids || [],

@@ -41,7 +41,8 @@ class SprintViewSet(BaseViewSet):
             sprints = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
 
             if 'project_id' in filter_args:
-                sprints = sprints.order_by_business_id(business_id=filter_args['project_id']) #sic
+                sprints = sprints.order_by_business_id(business_id=filter_args['project_id'],  #sic
+                                                       by_type_first=True)
             
             sprints = self.apply_pagination(qs=sprints,
                                             pagination=pagination)
@@ -224,6 +225,3 @@ class SprintViewSet(BaseViewSet):
         if sprint_status == 'open':
             filter_args['status3__name__in'] = Sprint.open_states()
         return filter_args
-    
-
-    

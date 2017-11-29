@@ -785,16 +785,19 @@ class ProjectQuerySet(QuerySet):
             return self
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
-    def order_by_business_id(self, business_id, descending=False):
+    def order_by_business_id(self, business_id, descending=False, by_type_first=False):
         if business_id:
-            direction = ("-" if descending else "") + "order"
+            orderings = []
+            if by_type_first:
+                orderings.append("project__project_type")
+            orderings.append(("-" if descending else "") + "order")
             project_ids_in_order = BusinessProjectOrder.objects.filter(business_id=business_id)\
-                                                          .order_by(direction)\
+                                                          .order_by(*orderings)\
                                                           .values_list("project_id", flat=True)
             if project_ids_in_order.count() == 0:
                 return self
             preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(project_ids_in_order)])
-            
+
             return self.order_by(preserved)
         else:
             return self

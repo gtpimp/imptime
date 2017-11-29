@@ -53,36 +53,26 @@ class ToolbarButton extends Component {
         const that = this
 
         return (
-            <div>
-              <div ref={(el) => { this.button_el = el }}
-                   className={classNames('toolbar-button', 'toolbar-button--' + flavour, {
-                           'toolbar-button--enabled': flavour === 'toggle' && this.props.isEnabled,
-                           'toolbar-button--disabled': flavour === 'toggle' && !this.props.isEnabled
-                   })}
-                   onClick={this.onClick}
-                   onMouseEnter={this.showTooltip}
-                   onMouseLeave={this.hideTooltip}
-              >
-                { this.props.icon &&
-                  <div className="toolbar-button__icon">
-                    <i className="material-icons">
-                      {this.props.icon}
-                    </i>
-                  </div>
-                }
-                { !this.props.icon &&
-                  <div className="toolbar-button__content">
-                    { this.props.children}
-                  </div>
-                }
-              </div>
-              { false && this.props.tooltip &&
-                <ToolTip active={isTooltipActive}
-                         position="right"
-                         arrow="center"
-                         parent={this.button_el}>
-                  {this.props.tooltip}
-                </ToolTip>
+            <div ref={(el) => { this.button_el = el }}
+                 className={classNames('toolbar-button', 'toolbar-button--' + flavour, {
+                         'toolbar-button--enabled': flavour === 'toggle' && this.props.isEnabled,
+                         'toolbar-button--disabled': flavour === 'toggle' && !this.props.isEnabled
+                 })}
+                 onClick={this.onClick}
+                 onMouseEnter={this.showTooltip}
+                 onMouseLeave={this.hideTooltip}
+            >
+              { this.props.icon &&
+                <div className="toolbar-button__icon">
+                  <i className="material-icons">
+                    {this.props.icon}
+                  </i>
+                </div>
+              }
+              { !this.props.icon &&
+                <div className="toolbar-button__content">
+                  { this.props.children}
+                </div>
               }
             </div>
         )
