@@ -7,6 +7,7 @@ import SprintSidebar from '../components/SprintSidebar'
 import SprintTemplateSidebar from '../components/SprintTemplateSidebar'
 import NewSprintSidebar from '../components/NewSprintSidebar'
 import MultipleSprintSidebar from '../components/MultipleSprintSidebar'
+import SplitPane from 'react-split-pane'
 import {setBreadcrumbs} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__SPRINT_LIST,
@@ -23,7 +24,9 @@ import {
     set_toolbars,
     select_sprints,
     select_projects,
-    get_selected_sprint_ids
+    get_selected_sprint_ids,
+    getPageFlag,
+    setPageFlag
 } from '../actions/Page'
 import {getCandidateSprint} from '../actions/Sprints'
 
@@ -32,6 +35,7 @@ class SprintsPage extends Component {
     constructor(props) {
         super(props)
         this.onSelectSprints = this.onSelectSprints.bind(this)
+        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
     }
 
     componentDidMount() {
@@ -64,13 +68,18 @@ class SprintsPage extends Component {
             dispatch(select_projects(page_key, [project.id]))
             dispatch(invalidateList(list_key))
             dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
-                {to: '/projects/' + project.id, label: project.name},
-                {to: '/projects/' + project.id + '/sprints', label: 'Sprints'}]))
+                                     {to: '/projects/' + project.id, label: project.name},
+                                     {to: '/projects/' + project.id + '/sprints', label: 'Sprints'}]))
         }
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
             dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
             dispatch(select_sprints(page_key, [default_sprint_id]))
         }
+    }
+
+    onChangeSplitterSize(size) {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__SPRINTS_PAGE, 'splitter_size', size))
     }
 
     onSelectSprints(sprint_ids) {
@@ -83,44 +92,83 @@ class SprintsPage extends Component {
         }
     }
 
-    render() {
+    renderLeftPane() {
 
         const {project_id, selected_sprints, selected_sprint_ids, sprint_id,
                is_single_selection, is_multiple_selection, is_creating_sprint,
-               list_key, sprint_header_list } = this.props
-        const selected_sprint = ( selected_sprints && selected_sprints.length > 0 && selected_sprints[0] ) || null
-
+               list_key, sprint_header_list, selected_sprint } = this.props
+        
         return (
-            <div className="list-layout">
-                <div className="list-layout__list">
-                    <SprintList list_key={list_key}
-                                project_id={project_id}
-                                header_list={sprint_header_list}
-                                onSelectSprints={this.onSelectSprints}
-                    />
-                </div>
-                { is_creating_sprint &&
-                  <div className="list-layout__sidebar">
-                      <NewSprintSidebar />
-                  </div>
-                }
-                  { ! is_creating_sprint && is_single_selection && project_id && selected_sprint &&
-                    <div className="list-layout__sidebar">
-                      { selected_sprint.sprint_type === 'template' &&
-                        <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
-                      }
-                      { selected_sprint.sprint_type !== 'template' &&
-                        <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
-                      }
-                    </div>
-                  }
-                { ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids &&
-                  <div className="list-layout__sidebar">
-                      <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>
-                  </div>
-                }                  
-            </div>
+            <SprintList list_key={list_key}
+                        project_id={project_id}
+                        header_list={sprint_header_list}
+                        onSelectSprints={this.onSelectSprints}
+            />
         )
+    }
+
+    renderRightPane() {
+        const { selected_sprint, project_id, is_multiple_selection,
+                selected_sprint_ids, is_creating_sprint, is_single_selection } = this.props
+        
+        if ( is_creating_sprint ) {
+            return (
+              <div className="list-layout__sidebar">
+                <NewSprintSidebar />
+              </div>
+            )
+        }
+        
+        if ( ! is_creating_sprint && is_single_selection && project_id && selected_sprint ) {
+            return (
+              <div className="list-layout__sidebar">
+                { selected_sprint.sprint_type === 'template' &&
+                  <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                }
+                { selected_sprint.sprint_type !== 'template' &&
+                  <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                }
+              </div>
+            )
+        }
+        
+        if ( ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids ) {
+            return (
+              <div className="list-layout__sidebar">
+                <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>
+              </div>
+            )
+        }                              
+    }
+
+    render() {
+
+        const {show_sidebar, splitter_size } = this.props
+
+        if ( show_sidebar ) {
+            return (
+                <div className="list-layout">
+                  <SplitPane split="vertical" minSize={50} defaultSize={"80%"}
+                             defaultSize={splitter_size}
+                             onChange={this.onChangeSplitterSize} >
+                    <div className="left">
+                      {this.renderLeftPane()}
+                    </div>
+                    <div className="right">
+                      {this.renderRightPane()}
+                    </div>
+                  </SplitPane>
+                </div>
+            )
+        }
+
+        if ( ! show_sidebar ) {
+            return (
+                <div className="list-layout__list">
+                  {this.renderLeftPane()}
+                </div>
+            )
+        }
     }
 }
 
@@ -143,6 +191,9 @@ function mapStateToProps(state, props) {
     const candidate_sprint = getCandidateSprint(state) || null
     const is_creating_sprint = candidate_sprint || false
     const sprint_header_list = SPRINT_HEADER_LIST
+    const selected_sprint = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
+    const splitter_size = getPageFlag(state, PAGE_KEY__SPRINTS_PAGE, 'splitter_size', "80%")
+    const show_sidebar = (is_creating_sprint || (selected_sprint && selected_sprint.id)) || false
 
     return {
         list_key,
@@ -152,11 +203,14 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         selected_sprints: selected_items,
+        selected_sprint,
         selected_sprint_ids: selected_sprint_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
         is_creating_sprint: is_creating_sprint,
-        sprint_header_list
+        sprint_header_list,
+        show_sidebar,
+        splitter_size
     }
 }
 
