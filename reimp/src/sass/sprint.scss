@@ -34,7 +34,7 @@
 }
 
 .sprint__cell--num-issues:hover {
-    @extend .div-table__cell--hover;
+    @extend .div-table__cell--link-hover; 
 }
 
 .sprint__cell--status {
