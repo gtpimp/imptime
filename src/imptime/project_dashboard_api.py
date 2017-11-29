@@ -120,7 +120,7 @@ class ProjectDashboardViewSet(BaseViewSet):
                 sprint_infos[x['project_id']]['users'][x['user_id']]['rate'] = x['billable_amount']
 
     def set_hours(self, sprint_infos, entries_for_open_sprints):
-        hours = entries_for_open_sprints.order_by("issue__project__order", "user_id")\
+        hours = entries_for_open_sprints.order_by("issue__project", "user_id")\
                                         .values('issue__project_id', 'user_id')\
                                         .annotate(total_hours=Sum('hours'))
         for x in hours:

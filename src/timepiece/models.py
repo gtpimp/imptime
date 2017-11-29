@@ -816,10 +816,10 @@ class ProjectQuerySet(QuerySet):
         return self.filter(status3__name__in=Project.hopeful_states())
 
     def filter_open(self):
-        return self.exclude(status3__name__in=Project.closed_states()).order_by("order")
+        return self.exclude(status3__name__in=Project.closed_states())
 
     def filter_has_time(self):
-        return self.exclude(status3__name__in=Project.closed_states()).order_by("order")
+        return self.exclude(status3__name__in=Project.closed_states())
 
     def filter_in_dev(self):
         return self.filter(status3__name='in dev')
