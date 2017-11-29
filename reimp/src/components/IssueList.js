@@ -161,7 +161,7 @@ class IssueList extends Component {
         event.stopPropagation()
 
         let selected_issue_ids = []
-        if (event.ctrlKey) {
+        if (event.ctrlKey || event.metaKey) {
             if (includes(selected_ids, issue_id)) {
                 selected_issue_ids = difference(selected_ids, [issue_id])
             } else {
