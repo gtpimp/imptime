@@ -15,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
+from timepiece.models import IssueStatus
 from testable.models import Testable
 
 logger = logging.getLogger(__name__)
