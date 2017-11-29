@@ -2,12 +2,33 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import '../../sass/toolbar-button.css'
+import ToolTip from 'react-portal-tooltip'
 
 class ToolbarButton extends Component {
 
+    state = {
+        isTooltipActive: false
+    }
+    
     constructor(props) {
         super(props)
         this.onClick = this.onClick.bind(this)
+        this.showTooltip = this.showTooltip.bind(this)
+        this.hideTooltip = this.hideTooltip.bind(this)
+    }
+
+    showTooltip() {
+        const { dispatch, issue, tooltips_enabled } = this.props
+        if ( tooltips_enabled ) {
+            this.setState({isTooltipActive: true})
+        }
+    }
+    
+    hideTooltip() {
+        const { dispatch, tooltips_enabled } = this.props
+        if ( tooltips_enabled ) {
+            this.setState({isTooltipActive: false})
+        }
     }
 
     onClick() {
@@ -28,22 +49,42 @@ class ToolbarButton extends Component {
 
     render() {
         const {flavour} = this.props
+        const { isTooltipActive } = this.state
+        const that = this
+
         return (
-            <div className={classNames('toolbar-button', 'toolbar-button--' + flavour, {
-                'toolbar-button--enabled': flavour === 'toggle' && this.props.isEnabled,
-                'toolbar-button--disabled': flavour === 'toggle' && !this.props.isEnabled
-            })}
-                 onClick={this.onClick}>
+            <div>
+              <div ref={(el) => { this.button_el = el }}
+                   className={classNames('toolbar-button', 'toolbar-button--' + flavour, {
+                           'toolbar-button--enabled': flavour === 'toggle' && this.props.isEnabled,
+                           'toolbar-button--disabled': flavour === 'toggle' && !this.props.isEnabled
+                   })}
+                   onClick={this.onClick}
+                   onMouseEnter={this.showTooltip}
+                   onMouseLeave={this.hideTooltip}
+              >
                 { this.props.icon &&
-                  <div className="toolbar-button__icon"><i data-tip={this.props.tooltip} className="material-icons">{this.props.icon}</i></div>
+                  <div className="toolbar-button__icon">
+                    <i className="material-icons">
+                      {this.props.icon}
+                    </i>
+                  </div>
                 }
                 { !this.props.icon &&
-                <div className="toolbar-button__content">
+                  <div className="toolbar-button__content">
                     { this.props.children}
-                </div>
+                  </div>
                 }
+              </div>
+              { false && this.props.tooltip &&
+                <ToolTip active={isTooltipActive}
+                         position="right"
+                         arrow="center"
+                         parent={this.button_el}>
+                  {this.props.tooltip}
+                </ToolTip>
+              }
             </div>
-
         )
     }
 }

@@ -61,6 +61,18 @@
     opacity: 0.2;
 }
 
+.icon--toggle_feature {
+    @include icon(24px, 24px, 'toggle_feature.png');
+}
+
+.icon--merge_feature {
+    @include icon(24px, 24px, 'merge_feature.png');
+}
+
+.icon--unmerge_feature {
+    @include icon(24px, 24px, 'unmerge_feature.png');
+}
+
 .icon--child--highlight {
     //@include icon(24px, 24px, 'ic_arrow_forward_black_24dp_1x.png');
     opacity: 1.0;

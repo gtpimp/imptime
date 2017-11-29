@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
+import classNames from 'classnames'
 import ToolbarButton from './ToolbarButton'
 import ReactTooltip from 'react-tooltip'
 import { get_selected_issue_ids } from '../../actions/Page'
@@ -126,16 +127,38 @@ class IssueToolbarPanel extends Component {
                             on_label={"Sidebar"}
                             off_label={"No sidebar"}
               />
-              <ToolbarButton flavour="toggle" tooltip="Favourite" icon="stars" isEnabled={issue.can_group_issues} onEnable={this.onMakeFeatureClick} onDisable={this.onUnmakeFeatureClick}/>
-              <ToolbarButton tooltip="Label" icon="label" onClick={this.onNewLabelClick}/>
-              <ToolbarButton tooltip="Expand" icon="expand_more" onClick={this.onExpandFeaturesClick}/>
-              <ToolbarButton tooltip="Contract" icon="expand_less" onClick={this.onCollapseFeaturesClick}/>
-              <ToolbarButton tooltip="Merge" icon="call_merge" onClick={this.onGroupClick}/>
-              <ToolbarButton tooltip="Split" icon="call_split" onClick={this.onUngroupClick}/>
-              <ToolbarButton tooltip="Attach" icon="attach_file" onClick={this.onAttachClick}/>
-              <ToolbarButton tooltip="Exit" icon="exit_to_app" onClick={this.onAssignClick}/>
-              <ToolbarButton tooltip="Alarm" icon="alarm" onClick={this.onEstimateClick}/>
-              <ReactTooltip place="bottom" type="info" />
+
+
+              <ToolbarButton tooltip="Toggle as feature"
+                             flavour='toggle'
+                             isEnabled={issue.can_group_issues}
+                             onEnable={this.onMakeFeatureClick}
+                             onDisable={this.onUnmakeFeatureClick}>
+                <div className="icon--toggle_feature"></div>
+              </ToolbarButton>
+              
+              <ToolbarButton onClick={this.onGroupClick}
+                             tooltip="Merge into the feature">
+                <div className="icon--merge_feature"/>
+              </ToolbarButton>
+              
+              <ToolbarButton onClick={this.onUngroupClick}
+                             tooltip="Remove from feature"
+              >
+                <div className="icon--unmerge_feature" />
+              </ToolbarButton>
+
+                { false &&
+                  <div>
+                    <ToolbarButton tooltip="Expand" icon="expand_more" onClick={this.onExpandFeaturesClick}/>
+                    <ToolbarButton tooltip="Contract" icon="expand_less" onClick={this.onCollapseFeaturesClick}/>
+                    <ToolbarButton tooltip="Label" icon="label" onClick={this.onNewLabelClick}/>
+                    <ToolbarButton tooltip="Attach" icon="attach_file" onClick={this.onAttachClick}/>
+                    <ToolbarButton tooltip="Exit" icon="exit_to_app" onClick={this.onAssignClick}/>
+                    <ToolbarButton tooltip="Alarm" icon="alarm" onClick={this.onEstimateClick}/>
+                  </div>
+                }
+                <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }
