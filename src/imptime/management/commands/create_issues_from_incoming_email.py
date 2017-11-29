@@ -263,7 +263,9 @@ class Command(BaseCommand):
         return user
 
     def create_issue(self, message, user, project, sprint, raw_issue):
-        issue = Issue.objects.filter(project=sprint, subject=raw_issue['subject']).order_by("-order").first()
+        issue = Issue.objects.filter(project=sprint, subject=raw_issue['subject'])\
+                             .order_by_project_id(project.id, descending=True)\
+                             .first()
         if issue is None:
             issue = Issue.objects.create(project=sprint,
                                          subject=raw_issue['subject'],
