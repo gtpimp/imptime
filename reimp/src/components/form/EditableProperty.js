@@ -37,8 +37,11 @@ class EditableProperty extends Component {n
         }
     }
 
-    startEditing() {
+    startEditing(event) {
         const {dispatch, property_key, can_edit} = this.props
+        if ( event ) {
+            event.stopPropagation()
+        }
         if ( can_edit ) {
             dispatch(setEditing(property_key))
         }
