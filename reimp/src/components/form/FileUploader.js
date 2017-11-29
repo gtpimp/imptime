@@ -9,26 +9,8 @@ class FileUploader extends Component {
 
     constructor(props) {
         super(props)
-        // this.beforeSend = this.beforeSend.bind(this)
-        // this.formCustomizer = this.formCustomizer.bind(this)
     }
-
-    /* beforeSend(request) {
-     *     const { request_headers } = this.props
-     *     map(request_headers, (v, k) => {
-     *         request.setRequestHeader(k, v);
-     *     })
-     *     return request
-     * }*/
-
-    /* formCustomizer(form) {
-     *     const { upload_params } = this.props
-     *     map(upload_params, (v, k) => {
-     *         form.append(k, v)
-     *     })
-     *     return form
-     * }*/
-
+    
     render() {
 
         const { upload_url, onSuccess, onFailure, upload_params, request_headers } = this.props
