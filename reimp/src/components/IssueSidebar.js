@@ -199,9 +199,9 @@ class IssueSidebar extends Component {
 
                         { issue.can_group_issues &&
                           <PropertyStackComponent title="Feature">
-                            Make this feature's issues
+                            Bring this feature's issues
                             <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
-                              successive
+                              together
                             </button>
                           </PropertyStackComponent>
                         }

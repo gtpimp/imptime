@@ -106,6 +106,7 @@ export default function issue(state = initialState, action) {
 				 { candidate_issue: Object.assign(
                                      {},
                                      {issue_id_before: action.issue_id_before,
+                                      selected_issue_ids: Object.assign([], action.selected_issue_ids),
 				      sprint_id: action.sprint_id},
                                      action.additional_props || {})
 				 })

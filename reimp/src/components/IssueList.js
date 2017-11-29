@@ -41,8 +41,6 @@ class IssueList extends Component {
         this.onExpand = this.onExpand.bind(this)
         this.onClickedIssue = this.onClickedIssue.bind(this)
         this.reorderIssue = this.reorderIssue.bind(this)
-        this.onStartCandidateIssue = this.onStartCandidateIssue.bind(this)
-        this.onCancelCandidateIssue = this.onCancelCandidateIssue.bind(this)
         this.toggleAsFeature = this.toggleAsFeature.bind(this)
         this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
         this.groupTogether = this.groupTogether.bind(this)
@@ -253,17 +251,6 @@ class IssueList extends Component {
         if (event) {
             event.stopPropagation()
         }
-    }
-
-    onStartCandidateIssue(event) {
-        const {dispatch, list_key} = this.props
-        event.stopPropagation()
-        dispatch(startCandidateIssue(list_key))
-    }
-
-    onCancelCandidateIssue() {
-        const {dispatch} = this.props
-        dispatch(cancelCandidateIssue())
     }
 
     toggleAsFeature(event) {

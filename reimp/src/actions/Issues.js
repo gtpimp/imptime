@@ -662,12 +662,13 @@ export function reorderIssue(moving_issue_ids, issue_id_after, list_key, index_o
     }
 }
 
-export function startCandidateIssue(sprint_id, issue_id_before) {
+export function startCandidateIssue(sprint_id, issue_id_before, selected_issue_ids) {
     return (dispatch, getState) => {
 	      const state = getState()
 	      dispatch({
 	          type: ANNOUNCE_CAPTURING_NEW_ISSUE,
 	          issue_id_before: issue_id_before,
+                  selected_issue_ids: selected_issue_ids || [issue_id_before],
 	          sprint_id: sprint_id
 	      })
     }

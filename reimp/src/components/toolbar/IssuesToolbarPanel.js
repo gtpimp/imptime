@@ -45,8 +45,8 @@ class IssuesToolbarPanel extends Component {
     }
 
     onNewIssueClick() {
-        const { dispatch, last_selected_issue_id, sprint_id } = this.props
-        dispatch(startCandidateIssue(sprint_id, last_selected_issue_id))
+        const { dispatch, last_selected_issue_id, sprint_id, selected_issue_ids } = this.props
+        dispatch(startCandidateIssue(sprint_id, last_selected_issue_id, selected_issue_ids))
     }
     
     onNewFeatureClick() {
@@ -87,14 +87,14 @@ class IssuesToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
-    const issue = (selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[0])) || {}
+    const issue = (selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[selected_issue_ids.length-1])) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__ISSUES_PAGE)
-    const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
+    const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[selected_sprint_ids.length-1])) || {}
     const wide_column_mode = get_wide_column_mode(state, PAGE_KEY__ISSUES_PAGE)
 
     return {
         issue_ids: selected_issue_ids,
-        issue: issue,
+        selected_issue_ids,
         last_selected_issue_id: issue.id,
         sprint_id: sprint.id || null,
         project_id: sprint.project_id,

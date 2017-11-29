@@ -251,6 +251,8 @@ class IssueViewSet(BaseViewSet):
             issue_id_before = params.get('issue_id_before', None)
 
             sprint = self.allowed_sprint(sprint_id)
+            if not self.logged_in_permissions(sprint.business).has_edit_issues:
+                raise Exception('Permission denied to create issues')
 
             def create_issue():
                 issue = Issue.objects.create(
@@ -266,23 +268,14 @@ class IssueViewSet(BaseViewSet):
                 else:
                     issue_before = self.allowed_issue(issue_id_before)
                     SprintIssueOrder.insert_after(issue, set_after_this_issue=issue_before)
+                    self._set_parent_group_for_new_issue(issue, params.get('selected_issue_ids'))
                 
                 IssueHistory.add_history(request.user, issue,
                                              "created", "", issue.number)
                 IssueReview.reviewed(issue, request.user)
                 return issue
 
-            if issue_id_before:
-                issue = self.allowed_issue(issue_id_before)
-                if self.logged_in_permissions(issue.project.business).has_edit_issues:
-                    issue = create_issue()
-                else:
-                    data = {'status': 'failed', 'error_message': 'Permission denied to create issues'}
-            elif not issue_id_before:
-                issue = create_issue()
-            else:
-                data = {'status': 'failed', 'error_message': 'Failed creating issue'}
-
+            issue = create_issue()
             issue = self._enrich_issues_qs(Issue.objects.filter(pk=issue.id)).first()
             context['issue'] = IssueSerializer(issue, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
@@ -294,6 +287,22 @@ class IssueViewSet(BaseViewSet):
         res = HttpResponse(JSONRenderer().render(data))
         return res
 
+    def _set_parent_group_for_new_issue(self, new_issue, selected_issue_ids):
+        if not selected_issue_ids or len(selected_issue_ids) == 0:
+            return
+        if new_issue.can_group_issues:
+            return
+
+        first_selected_issue = self.allowed_issue(selected_issue_ids[0])
+        last_selected_issue = self.allowed_issue(selected_issue_ids[-1])
+
+        if last_selected_issue.can_group_issues:
+            return
+
+        if first_selected_issue.parent_group_id == last_selected_issue.parent_group_id:
+            new_issue.parent_group_id = last_selected_issue.parent_group_id
+            new_issue.save()
+    
     @list_route(methods=['POST'])
     def bulk_create_issues(self, request):
         try:
