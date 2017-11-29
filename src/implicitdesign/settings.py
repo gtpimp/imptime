@@ -340,16 +340,16 @@ PDF_TEMP_FOLDER = "/tmp"
 CALDAV_TEMP_FOLDER = "/tmp"
 
 INVOICE_DETAILS={'name':'ImplicitDesign',
-                 'address1':'Unit 4, Tramber Place',
-                 'address2':'Blake Street',
+                 'address1':'Block B, North Building',
+                 'address2':'Black River Park, Observatory',
                  'city':'Cape Town',
                  'postal_code':'7700',
                  'country':'South Africa',
                  'company_reg':'2009/200508/23',
                  'company_vat_nr':'4330258874',
                  'contact_name':'Gareth Priede',
-                 'contact_phone':'+27 21 448 7424 / +27 72 679 1763',
-                 'contact_email':'gtp@implicitdesign.co.za',
+                 'contact_phone':'+27 21 300 1880 / +27 72 679 1763',
+                 'contact_email':'gtp@impd.co.za',
                  'vat_rate':0.14,
                  'vat_rate_percentage':14,
 
