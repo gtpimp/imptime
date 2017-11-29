@@ -73,7 +73,6 @@ div-table__row--saving {
 .div-table__cell--default {
     @extend .div-table__cell;
     display: flex;
-    align-items: start;
     height: 100%;
     width: 100%;
 }
