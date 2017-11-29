@@ -97,6 +97,14 @@ issue--grouped {
     @extend .div-table__cell--hover;
 }
 
+.issue-cell__progress {
+    @extend .div-table__cell--default;
+}
+
+.issue-cell__progress:hover {
+    @extend .div-table__cell--hover;
+}
+
 .issue-cell__issue-name {
     @extend .div-table__cell--default;
 }

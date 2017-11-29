@@ -295,13 +295,13 @@ class Issue extends Component {
                    {includes(visible_header_keys, "status") &&
                     <div className="div-table__cell issue__cell__secondary"
                          style={this.getStyle(header_list.status)}>
-                      <EditableIssueStatus class_nname="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "progress") &&
                     <div className="div-table__cell issue__cell__secondary"
                          style={this.getStyle(header_list.progress)}>
-                      <div className="issue-cell--progress">
+                      <div className="issue-cell__progress">
                         <Progress issue={issue}/>
                       </div>
                     </div>
