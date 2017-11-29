@@ -108,3 +108,4 @@ export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'small_delete': {label:"", width:tiny_col_width}
 }
 
+export var SPRINT_TYPE_ORDER = [ 'inbox', 'sprint', 'sprinkle', 'spec', 'checklist', 'backlog', 'template' ]

@@ -1,15 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
-import each from 'lodash/each'
-import map from 'lodash/map'
-import union from 'lodash/union'
-import includes from 'lodash/includes'
-import difference from 'lodash/difference'
+import { each, map, union, includes, difference, keys } from 'lodash'
 import {
-    PAGE_KEY__SPRINTS_TOOLBAR
+    PAGE_KEY__SPRINTS_TOOLBAR,
+    SPRINT_TYPE_ORDER
 } from '../actions/ItemListKeyRegistry'
 import {
     initList,
@@ -207,9 +203,15 @@ class SprintList extends Component {
         const that = this
         const sprint_rows = []
 
+        const sprint_types = union(SPRINT_TYPE_ORDER, keys(sprints_by_type))
+        
         return (
             <div className="sprint_list__container">
-              { map(sprints_by_type, function(sprints, sprint_type) {
+              { map(sprint_types, function(sprint_type) {
+                    const sprints = sprints_by_type[sprint_type]
+                    if ( !sprints || sprints.length == 0 ) {
+                        return null
+                    }
                     const sprint_rows = that.create_sprint_rows(sprints)
                     return (
                         <div key={sprint_type}>
