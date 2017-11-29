@@ -6,6 +6,7 @@ import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
 import NewProjectSidebar from '../components/NewProjectSidebar'
 import MultipleProjectSidebar from '../components/MultipleProjectSidebar'
+import SplitPane from 'react-split-pane'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
@@ -16,6 +17,8 @@ import {
     set_toolbars,
     select_projects,
     get_selected_project_ids,
+    getPageFlag,
+    setPageFlag
 } from '../actions/Page'
 import {
     selectItems,
@@ -29,6 +32,7 @@ class ProjectsPage extends Component {
     constructor(props) {
         super(props)
         this.onSelectProjects = this.onSelectProjects.bind(this)
+        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
     }
 
     componentDidMount() {
@@ -49,39 +53,82 @@ class ProjectsPage extends Component {
             browserHistory.push('/projects/' + project_ids[0]);
         }
     }
-            
-    render() {
 
-        const {selected_projects, selected_project_ids,
-               is_single_selection, is_multiple_selection, is_creating_project,
-               project_header_list} = this.props
-        const selected_project = ( selected_projects && selected_projects.length > 0 && selected_projects[0] ) || null
+    onChangeSplitterSize(size) {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__PROJECTS_PAGE, 'splitter_size', size))
+    }
+
+    renderLeftPane() {
+        const {selected_projects,
+               project_header_list, selected_project} = this.props
         
         return (
-            <div className="list-layout">
-                <div className="list-layout__list">
-                    <ProjectList key="projects"
-                                 list_key={LIST_KEY__PROJECT_LIST}
-                                 header_list={project_header_list}
-                                 onSelectProjects={this.onSelectProjects} />
-                </div>
-                { is_creating_project &&
-                  <div className="list-layout__sidebar">
-                      <NewProjectSidebar />
-                  </div>
-                }
-                { ! is_creating_project && is_single_selection && selected_project &&
-                  <div className="list-layout__sidebar">
-                      <ProjectSidebar project_id={selected_project.id}/>
-                  </div>
-                }
-                { ! is_creating_project && is_multiple_selection && selected_project_ids &&
-                  <div className="list-layout__sidebar">
-                      <MultipleProjectSidebar project_ids={selected_project_ids}/>
-                  </div>
-                }                  
-            </div>
+            <ProjectList key="projects"
+                         list_key={LIST_KEY__PROJECT_LIST}
+                         header_list={project_header_list}
+                         onSelectProjects={this.onSelectProjects} />
+            
         )
+    }
+
+    renderRightPane() {
+        const {selected_projects, selected_project_ids,
+               is_single_selection, is_multiple_selection, is_creating_project,
+               project_header_list, selected_project} = this.props
+
+        if ( is_creating_project ) {
+            return (
+              <div className="list-layout__sidebar">
+                <NewProjectSidebar />
+              </div>
+            )
+        }
+        if ( ! is_creating_project && is_single_selection && selected_project ) {
+            return (
+              <div className="list-layout__sidebar">
+                <ProjectSidebar project_id={selected_project.id}/>
+              </div>
+            )
+        }
+        if (! is_creating_project && is_multiple_selection && selected_project_ids ) {
+            return (
+              <div className="list-layout__sidebar">
+                <MultipleProjectSidebar project_ids={selected_project_ids}/>
+              </div>
+            )
+        }
+        
+    }
+    
+    render() {
+
+        const {show_sidebar, splitter_size} = this.props
+
+        if ( show_sidebar ) {
+            return (
+                <div className="list-layout">
+                  <SplitPane split="vertical" minSize={50} defaultSize={"80%"}
+                             defaultSize={splitter_size}
+                             onChange={this.onChangeSplitterSize} >
+                    <div className="left">
+                      {this.renderLeftPane()}
+                    </div>
+                    <div className="right">
+                      {this.renderRightPane()}
+                    </div>
+                  </SplitPane>
+                </div> 
+            )
+        }
+
+        if ( ! show_sidebar ) {
+            return (
+                <div className="list-layout__list">
+                  {this.renderLeftPane()}
+                </div>
+            )
+        }
     }
 }
 
@@ -99,6 +146,9 @@ function mapStateToProps(state, props) {
     const candidate_project = getCandidateProject(state) || null
     const is_creating_project = candidate_project || false
     const project_header_list = PROJECT_HEADER_LIST
+    const selected_project = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
+    const splitter_size = getPageFlag(state, PAGE_KEY__PROJECTS_PAGE, 'splitter_size', "80%")
+    const show_sidebar = (is_creating_project || (selected_project && selected_project.id)) || false
     
     return {
         selected_projects: selected_items,
@@ -107,7 +157,10 @@ function mapStateToProps(state, props) {
         is_multiple_selection: selected_items.length > 1,
         is_creating_project: is_creating_project,
         default_project_id,
-        project_header_list
+        project_header_list,
+        selected_project,
+        show_sidebar,
+        splitter_size
     }
 }
 
