@@ -296,12 +296,22 @@ class IssueViewSet(BaseViewSet):
         first_selected_issue = self.allowed_issue(selected_issue_ids[0])
         last_selected_issue = self.allowed_issue(selected_issue_ids[-1])
 
-        if last_selected_issue.can_group_issues:
-            return
-
-        if first_selected_issue.parent_group_id == last_selected_issue.parent_group_id:
+        if first_selected_issue.can_group_issues and first_selected_issue.id == last_selected_issue.id:
+            # a single feature issue has been selected, so add this issue to the beginning of that feature's issue list
+            # (to add to the end, the user would simply select the last issue of the expanded feature)
+            new_issue.parent_group_id = first_selected_issue.id
+            new_issue.save()
+            last_issue_of_feature = self.allowed_issues()\
+                                        .order_by_project_id(new_issue.project_id)\
+                                        .filter(parent_group_id=first_selected_issue.id).first()
+            SprintIssueOrder.insert_after(new_issue, last_issue_of_feature)
+        
+        elif first_selected_issue.parent_group_id == last_selected_issue.parent_group_id:
+            # all selected issues belong to the same feature, so add this issue to that same feature
             new_issue.parent_group_id = last_selected_issue.parent_group_id
             new_issue.save()
+
+            
     
     @list_route(methods=['POST'])
     def bulk_create_issues(self, request):
