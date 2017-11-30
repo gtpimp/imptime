@@ -1,7 +1,7 @@
 import { impfetch } from './lib.js'
 
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
-import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
+import { ENTITY_KEY__ISSUE, ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry'
 import map from 'lodash/map'
 import difference from 'lodash/difference'
 import keyBy from 'lodash/keyBy'
@@ -896,4 +896,62 @@ export function promoteIssueTestableToIssue(issue_id, testable_id, on_done) {
 
 export function isBulkCreatingIssues(state, sprint_id) {
     return (((state || {}).sprint || {}).bulk_creating_issues || {}).sprint_id === sprint_id
+}
+
+export function addTagToIssues(tag_name, tag_category_name, issue_ids) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceIssuesSaving(issue_ids, "tags", tag_name))
+	let data = { issue_ids: issue_ids,
+                     tag_name: tag_name,
+                     tag_category_name: tag_category_name }
+	return impfetch( state, "imp/" + ENTITY_KEY__TAG + "/add_to_issue/", dispatch,
+			 {method: "PUT",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceIssueSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceIssuesSaved(null))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceIssueSaveFailed(error))
+	 })
+    }
+}
+
+export function deleteTagFromIssues(tag_id, issue_ids) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceIssuesSaving(issue_ids, "tags", tag_id))
+	let data = { issue_ids: issue_ids }
+	return impfetch( state, "imp/" + ENTITY_KEY__TAG + "/" + tag_id + "/delete_from_issue/", dispatch,
+			 {method: "DELETE",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+                 dispatch(announceIssueSaveFailed(json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceIssuesSaved(null))
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceIssueSaveFailed(error))
+	 })
+    }
 }

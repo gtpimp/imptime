@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import Issue, IssueReview
+from timepiece.models import Issue, IssueReview, Tag
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
@@ -186,6 +186,9 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_nudges(self):
         return Nudge.objects.filter(user=self.request.user)
+
+    def allowed_tags(self):
+        return Tag.objects.filter(issues__in=self.allowed_issues())
     
     def logged_in_permissions(self, project):
         if project.id in self._logged_in_permissions_by_project:

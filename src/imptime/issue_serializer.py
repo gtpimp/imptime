@@ -28,7 +28,7 @@ class IssueSerializer(BaseSerializer):
     number = serializers.IntegerField()
     sprint_id = serializers.CharField()
     project_id = serializers.CharField()
-    tags = TagSerializer(many=True)
+    tag_ids = serializers.ListField(child=serializers.CharField())
     dev_estimate_hours = serializers.FloatField()
     dev_estimate_user_quick_name = serializers.CharField()
     all_estimates = IssueEstimateSerializer(many=True)
@@ -78,6 +78,7 @@ class IssueSerializer(BaseSerializer):
             issue.visual_spec_annotation_ids_by_doc_id.setdefault(x['visual_spec_issue__visual_spec_document_id'], []).append(x['id'])
                                                                               
         issue.review_ids = [x.id for x in issue.reviews.all()]
+        issue.tag_ids = [x.id for x in issue.tags.all()]
 
         if not bp.has_see_other_user_points:
             issue.all_estimates = None

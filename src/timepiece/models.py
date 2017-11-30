@@ -3647,7 +3647,7 @@ class TagCategory(BaseModel):
         unique_together = ('business', 'name')
 
     business = models.ForeignKey(Business, null=False, related_name='tag_categories')
-    name = models.CharField(max_length=100, default='tag_category', null=False, blank=True, db_index=True)
+    name = models.CharField(max_length=100, default='general', null=False, blank=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
