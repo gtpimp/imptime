@@ -5,6 +5,7 @@ import {browserHistory} from 'react-router'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import '../sass/project.css'
 
 class Project extends Component {
@@ -20,14 +21,6 @@ class Project extends Component {
         browserHistory.push('/projects/'+project_id+'/sprints/');
     }
 
-    getStyle(s) {
-        return {
-            "minWidth":s.width,
-            "maxWidth":s.width,
-            "flex":s.flex || 0
-        }
-    }
-    
     render_collapsed() {
 	const { project } = this.props
 	return (
@@ -73,7 +66,7 @@ class Project extends Component {
 		>
                   {includes(visible_header_keys, "name") &&
 		   <div className="div-table__cell"
-                        style={this.getStyle(header_list.name)}>
+                        style={getCellStyle(header_list.name)}>
                      <div className="project__cell--name">
                        {project.name}
                      </div>
@@ -82,7 +75,7 @@ class Project extends Component {
                   {includes(visible_header_keys, "num_sprints") &&
                    <div className="div-table__cell sprint__cell__secondary"
                         onClick={this.onSprintsClick}
-                        style={this.getStyle(header_list.num_sprints)}>
+                        style={getCellStyle(header_list.num_sprints)}>
                      <div className="project__cell--num-sprints">
                        { project.num_open_sprints > 0 &&
                          <div>

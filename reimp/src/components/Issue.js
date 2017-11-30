@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { keys, keyBy, map, includes, flatMap } from 'lodash'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
-import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
+import { ENTITY_KEY__ISSUE, getCellStyle } from '../actions/ItemListKeyRegistry'
 import { getSelectedItems, setItemFlag } from '../actions/ItemList'
 import {
     updateIssueStatus,
@@ -135,14 +135,6 @@ class Issue extends Component {
         dispatch(setItemFlag(list_key, [issue_id], 'expanded_issues', true))
     }
 
-    getStyle(s) {
-        return {
-            "minWidth":s.width,
-            "maxWidth":s.width,
-            "flex":s.flex || 0
-        }
-    }
-
     renderEstimates() {
         const {issue} = this.props
         return map(issue.all_estimates, function (estimate, index) {
@@ -231,19 +223,19 @@ class Issue extends Component {
                 >
                   {includes(visible_header_keys, "number") &&
                    <div className="div-table__cell"
-                        style={this.getStyle(header_list.number)}>
+                        style={getCellStyle(header_list.number)}>
                      <div>{issue.number}</div>
                    </div>
                   }
                   {includes(visible_header_keys, "type") &&
                    <div className="div-table__cell"
-                        style={this.getStyle(header_list.type)} >
+                        style={getCellStyle(header_list.type)} >
                      <div className={classNames({'issue-cell__issue-adhoc-icon':issue.type_name==='adhoc'})}></div>
                    </div>
                   }
                   {includes(visible_header_keys, "expand_feature") &&
                    <div className="div-table__cell"
-                        style={this.getStyle(header_list.expand_feature)}>
+                        style={getCellStyle(header_list.expand_feature)}>
                      { issue.can_group_issues &&
                        <div>
                          { show_children &&
@@ -264,7 +256,7 @@ class Issue extends Component {
                   }
                    {includes(visible_header_keys, "name") &&
                     <div className="div-table__cell"
-                         style={this.getStyle(header_list.name)}>
+                         style={getCellStyle(header_list.name)}>
                       <div className="issue-cell__issue-name">
                         {subject_prefix}{issue.subject}{subject_suffix}
                         { issue.group_children && issue.group_children.length > 0 &&
@@ -280,13 +272,13 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "assignee") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.assignee)}>
+                         style={getCellStyle(header_list.assignee)}>
                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "created_at") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.created_at)}>
+                         style={getCellStyle(header_list.created_at)}>
                       <div className="issue-cell__created-at">
                         <Timestamp value={issue.created_at} format="from_now"/>
                       </div>
@@ -294,13 +286,13 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "status") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.status)}>
+                         style={getCellStyle(header_list.status)}>
                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </div>
                    }
                    {includes(visible_header_keys, "progress") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.progress)}>
+                         style={getCellStyle(header_list.progress)}>
                       <div className="issue-cell__progress">
                         <Progress issue={issue}/>
                       </div>
@@ -308,13 +300,13 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "estimated") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.estimated)}>
+                         style={getCellStyle(header_list.estimated)}>
                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                     </div>
                    }
                    {includes(visible_header_keys, "tags") &&
                     <div className="div-table__cell"
-                         style={this.getStyle(header_list.tags)}>
+                         style={getCellStyle(header_list.tags)}>
                       <div className="issue__cell--issue-tags">
                         { map(issue.tags, function (tag, index) {
                               return (<Tag key={index}
@@ -328,7 +320,7 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "my_time") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.my_time)}>
+                         style={getCellStyle(header_list.my_time)}>
                       <div className="issue__cell--elapsed-time">
                         <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                       </div>
@@ -336,7 +328,7 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "clock_in") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.clock_in)}>
+                         style={getCellStyle(header_list.clock_in)}>
                       <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                         <TimerSwitch
                             active={issue.am_i_clocked_in}
@@ -348,7 +340,7 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "delete") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.delete)}>
+                         style={getCellStyle(header_list.delete)}>
                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                         <DeleteIssue
                             onDelete ={this.onDeleteIssue}
@@ -358,7 +350,7 @@ class Issue extends Component {
                    }
                    {includes(visible_header_keys, "small_delete") &&
                     <div className="div-table__cell issue__cell__secondary"
-                         style={this.getStyle(header_list.small_delete)}>
+                         style={getCellStyle(header_list.small_delete)}>
                       <div className={"reveal-on-hover--block"}>
                         <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
                       </div>

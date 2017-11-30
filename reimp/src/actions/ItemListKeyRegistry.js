@@ -60,6 +60,15 @@ const medium_col_width = "150px"
 const small_col_width = "90px"
 const tiny_col_width = "20px"
 
+export function getCellStyle(s) {
+    // For use with the header lists below
+    return {
+        "minWidth":s.width,
+        "maxWidth":s.width,
+        "flex":s.flex || 0
+    }
+}
+
 export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'num_sprints': {label:"Sprints", width: medium_col_width},
 }

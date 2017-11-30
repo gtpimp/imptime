@@ -6,11 +6,6 @@
     flex-direction: column;
 }
 
-.div-table__header {
-    display: flex;
-    flex-direction: row;
-}
- 
 .div-table__row {
     display: flex;
     flex-direction: row;
@@ -18,9 +13,13 @@
     font: $plain;
 }
 
+.div-table__header_row {
+    @extend .div-table__row;
+    background-color: $header-background-color;
+}
+
+
 .div-table__row:hover {
-    //box-shadow: inset 0 -1px 0 0 #E0E0E0;
-    //box-shadow: inset 0 -1px 0 0 $row-hover-border-color;
     background-color: $row-hover-color;
 }
  
@@ -62,16 +61,15 @@ div-table__row--saving {
 }
 
 .div-table__cell {
-    padding-left: 10px;
     padding-right: 10px;
     vertical-align: middle;
     cursor: pointer;
     display: flex;
     align-items: center;
+}
 
-    &:first-child {
-	//padding-left: 26px;
-    }
+.div-table__header_cell {
+    @extend .div-table__cell;
 }
 
 .div-table__cell--default {
@@ -83,12 +81,6 @@ div-table__row--saving {
  
 .div-table__cell--hover {
     background-color: inherit;
-    //background-color: $cell-hover-color;
-    //box-shadow: inset 0 -1px 0 0 $cell-hover-color;
-    
-    //-webkit-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
-    //-moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
-    //box-shadow:inset 0px 0px 0px 2px $button-hover-background;
 }
 
 .div-table__cell--link-hover {

@@ -5,7 +5,8 @@ import RIEModeToggler from '../widgets/RIEModeToggler'
 import { each, map, union, includes, difference, keys } from 'lodash'
 import {
     PAGE_KEY__SPRINTS_TOOLBAR,
-    SPRINT_TYPE_ORDER
+    SPRINT_TYPE_ORDER,
+    getCellStyle
 } from '../actions/ItemListKeyRegistry'
 import {
     initList,
@@ -39,6 +40,7 @@ class SprintList extends Component {
         this.onStartCandidateSprint = this.onStartCandidateSprint.bind(this)
         this.onSaveCandidateSprint = this.onSaveCandidateSprint.bind(this)
         this.onCancelCandidateSprint = this.onCancelCandidateSprint.bind(this)
+        this.renderHeader = this.renderHeader.bind(this)
     }
 
     componentDidMount() {
@@ -162,14 +164,19 @@ class SprintList extends Component {
         )
     }
 
-    render_sprint_type_header(sprint_type) {
-
-        const readable_sprint_type = (sprint_type || "unknown").replace(/_/g, " ")
-        
+    renderHeader(sprint_type) {
+        const { header_list } = this.props
         return (
-            <div key={"sprint_type_header_" + sprint_type}
-                 className="sprint__sprint_type_header">
-              {readable_sprint_type}
+            <div className="div-table__header_row sprint_type_header">
+              { map(header_list, (v, k) => (
+                    <div className="div-table__header_cell"
+                         style={getCellStyle(v)}>
+                      { k == "name" &&
+                        <div className="sprint_header__type">{sprint_type}</div>
+                      }
+                      { k != "name" && v.label }
+                    </div>
+                ))}
             </div>
         )
     }
@@ -215,10 +222,8 @@ class SprintList extends Component {
                     const sprint_rows = that.create_sprint_rows(sprints)
                     return (
                         <div key={sprint_type}>
-                          <div className={"sprint_type_header sprint_type_header_" + sprint_type}>
-                            {sprint_type || ""}
-                          </div>
-                          <DivTable onReorder={that.reorderSprints}>
+                          <DivTable onReorder={that.reorderSprints}
+                                    renderHeader={() => that.renderHeader(sprint_type || "")}>
                             {sprint_rows}
                           </DivTable>
                         </div>
