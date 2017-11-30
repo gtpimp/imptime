@@ -257,19 +257,22 @@ class IssueViewSet(BaseViewSet):
 
             def create_issue():
                 issue = Issue.objects.create(
-                        project_id=sprint.id,   # sic
-                        status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
-                        number=Issue.get_next_issue_number(sprint.business),
-                        subject=params['subject'],
-                        created_by=request.user,
-                        can_group_issues=params.get('can_group_issues', False))
+                    project_id=sprint.id,   # sic
+                    status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
+                    number=Issue.get_next_issue_number(sprint.business),
+                    subject=params['subject'],
+                    created_by=request.user,
+                    can_group_issues=params.get('can_group_issues', False))
 
                 if issue_id_before is None:
                     SprintIssueOrder.insert_at_the_end(issue)
                 else:
                     issue_before = self.allowed_issue(issue_id_before)
-                    SprintIssueOrder.insert_after(issue, set_after_this_issue=issue_before)
-                    self._set_parent_group_for_new_issue(issue, params.get('selected_issue_ids'))
+                    if issue_before.project_id != issue.project_id:
+                        SprintIssueOrder.insert_at_the_end(issue)
+                    else:
+                        SprintIssueOrder.insert_after(issue, set_after_this_issue=issue_before)
+                        self._set_parent_group_for_new_issue(issue, params.get('selected_issue_ids'))
                 
                 IssueHistory.add_history(request.user, issue,
                                              "created", "", issue.number)

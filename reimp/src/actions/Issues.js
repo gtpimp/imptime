@@ -693,6 +693,13 @@ export function updateCandidateSubject(subject) {
     }
 }
 
+export function updateCandidateSprint(sprint_id) {
+    return {
+	type: UPDATE_NEW_ISSUE_DETAILS,
+	candidate_issue: { "sprint_id": sprint_id }
+    }
+}
+
 export function cancelCandidateIssue() {
     return {
 	      type: CANCEL_CREATING_NEW_ISSUE

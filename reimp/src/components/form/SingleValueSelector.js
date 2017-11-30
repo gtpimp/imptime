@@ -22,7 +22,10 @@ export class SingleValueSelector extends Component {
     }
 
     componentDidMount() {
-        this.selection_filter_el && this.selection_filter_el.focus()
+        const { auto_focus } = this.props
+        if ( auto_focus ) {
+            this.selection_filter_el && this.selection_filter_el.focus()
+        }
     }
     
     onSelectionFilterChanged() {
@@ -117,11 +120,12 @@ export class SingleValueSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { options, value } = props
+    const { options, value, auto_focus } = props
 
     return {
         options: options,
-        value
+        value,
+        auto_focus: auto_focus !== false
     }
 }
 

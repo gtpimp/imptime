@@ -16,7 +16,7 @@ class NewIssueForm extends Component {
               <div>
                 <div className="issue_sidebar--textarea">
                   <IssueTitleField onKeyDown={onKeyDown} />
-                  <SprintSelectorField project_id={project_id} />
+                  <SprintSelectorField project_id={project_id} auto_focus={false} />
                 </div>
                 <button className="button issue_sidebar--textarea" type="submit">Submit</button>
               </div>

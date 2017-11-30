@@ -46,13 +46,14 @@ class SprintSelectorField extends Component {
     }
 
     renderSingleValueSelector(field) {
-        const { onChange } = this.props
+        const { onChange, auto_focus } = this.props
         const {input, data, ...rest} = field
         return (
             <SingleValueSelector
                 onChange={(e) => this.onFieldChange(e, input.onChange)}
                 value={input.value}
                 options={data}
+                auto_focus={auto_focus}
                 {...rest}
             />
         )
@@ -73,7 +74,7 @@ class SprintSelectorField extends Component {
 
 function mapStateToProps(state, props) {
     const { item_list } = state
-    const { onChange, project_id } = props
+    const { onChange, project_id, auto_focus } = props
     const l = (item_list && item_list[SELECTOR__SPRINTS]) || {}
     const sprint_ids = l.visible_item_ids || []
     const sprints = getSprints(state, sprint_ids)
@@ -94,7 +95,8 @@ function mapStateToProps(state, props) {
         sprints: sprints,
         sprint_ids: sprint_ids,
         sprint_options: sprint_options,
-        project_id
+        project_id,
+        auto_focus
     }
 }
 

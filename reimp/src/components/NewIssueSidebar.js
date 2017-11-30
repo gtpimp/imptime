@@ -5,6 +5,7 @@ import Sidebar from './Sidebar'
 import {
     getCandidateIssue,
     updateCandidateSubject,
+    updateCandidateSprint,
     cancelCandidateIssue,
     saveCandidateIssue
 } from '../actions/Issues'
@@ -29,7 +30,8 @@ class NewIssueSidebar extends Component {
     onSaveCandidateIssue(new_value) {
         const {onCreatedIssues, dispatch} = this.props
         dispatch(updateCandidateSubject(new_value.title))
-
+        dispatch(updateCandidateSprint(new_value.sprint_id))
+        
         const onDone = function(issue_id) {
             onCreatedIssues([issue_id])
         }
