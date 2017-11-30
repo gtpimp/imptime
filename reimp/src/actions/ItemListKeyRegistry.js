@@ -93,6 +93,7 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width
                                        'assignee': {label:"Assignee", width:medium_col_width},
                                        'status': {label:"Status", width:medium_col_width},
                                        'estimated': {label:"Estimates", width:medium_col_width},
+                                       'small_delete': {label:"", width:tiny_col_width}
 }
 
 /* export var ISSUE_HEADER_LIST_FEATURE = {'number': {label:"#", width:tiny_col_width},
