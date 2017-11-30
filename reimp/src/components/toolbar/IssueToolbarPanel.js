@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import { map } from 'lodash'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import classNames from 'classnames'
@@ -11,7 +12,8 @@ import {
     getIssue,
     groupUnsortedIssuesIntoFeature,
     updateIssueToggleAsFeature,
-    ungroupIssuesIntoFeature
+    ungroupIssuesIntoFeature,
+    deleteIssue
 } from '../../actions/Issues'
 import {
     setItemFlag
@@ -37,6 +39,7 @@ class IssueToolbarPanel extends Component {
         this.onGroupClick = this.onGroupClick.bind(this)
         this.onUngroupClick = this.onUngroupClick.bind(this)
         this.onIssueSidebarToggleClick = this.onIssueSidebarToggleClick.bind(this)
+        this.onDeleteClick = this.onDeleteClick.bind(this)
         /* this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
          * this.groupTogether = this.groupTogether.bind(this)
          * this.ungroupTogether = this.ungroupTogether.bind(this)
@@ -90,6 +93,14 @@ class IssueToolbarPanel extends Component {
     onUngroupClick() {
         const {issue_ids, dispatch} = this.props
         dispatch(ungroupIssuesIntoFeature(issue_ids))
+    }
+
+    onDeleteClick() {
+        const {issue_ids, dispatch} = this.props
+        if ( ! confirm("Delete selected issues?" ) ) {
+            return
+        }
+        map(issue_ids, (issue_id) => dispatch(deleteIssue(issue_id)))
     }
 
     onIssueSidebarToggleClick(show_sidebar) {
@@ -148,17 +159,24 @@ class IssueToolbarPanel extends Component {
                 <div className="icon--unmerge_feature" />
               </ToolbarButton>
 
-                { false &&
-                  <div>
-                    <ToolbarButton tooltip="Expand" icon="expand_more" onClick={this.onExpandFeaturesClick}/>
-                    <ToolbarButton tooltip="Contract" icon="expand_less" onClick={this.onCollapseFeaturesClick}/>
-                    <ToolbarButton tooltip="Label" icon="label" onClick={this.onNewLabelClick}/>
-                    <ToolbarButton tooltip="Attach" icon="attach_file" onClick={this.onAttachClick}/>
-                    <ToolbarButton tooltip="Exit" icon="exit_to_app" onClick={this.onAssignClick}/>
-                    <ToolbarButton tooltip="Alarm" icon="alarm" onClick={this.onEstimateClick}/>
-                  </div>
-                }
-                <ReactTooltip place="bottom" type="info" />
+              <ToolbarButton onClick={this.onDeleteClick}
+                             tooltip="Delete"
+              >
+                <div className="icon--delete" />
+              </ToolbarButton>
+              
+              
+              { false &&
+                <div>
+                  <ToolbarButton tooltip="Expand" icon="expand_more" onClick={this.onExpandFeaturesClick}/>
+                  <ToolbarButton tooltip="Contract" icon="expand_less" onClick={this.onCollapseFeaturesClick}/>
+                  <ToolbarButton tooltip="Label" icon="label" onClick={this.onNewLabelClick}/>
+                  <ToolbarButton tooltip="Attach" icon="attach_file" onClick={this.onAttachClick}/>
+                  <ToolbarButton tooltip="Exit" icon="exit_to_app" onClick={this.onAssignClick}/>
+                  <ToolbarButton tooltip="Alarm" icon="alarm" onClick={this.onEstimateClick}/>
+                </div>
+              }
+              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

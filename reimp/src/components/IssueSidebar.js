@@ -85,7 +85,7 @@ class IssueSidebar extends Component {
         const { dispatch, issue_id, sprint_id } = this.props
         dispatch(makeFeatureIssuesSuccessive(issue_id, sprint_id))
     }
-    
+
     refresh(props) {
         const {dispatch, issue_id, assignable_user_ids} = props
         dispatch(ensureIssuesLoaded([issue_id]))
@@ -209,7 +209,7 @@ class IssueSidebar extends Component {
                         <PropertyStackComponent title="Reviews">
                           <IssueReviewPanel issue_id={issue.id} />
                         </PropertyStackComponent>
-                        
+
                       </div>
                     }
                   </PropertyStack>

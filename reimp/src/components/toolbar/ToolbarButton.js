@@ -58,6 +58,7 @@ class ToolbarButton extends Component {
                          'toolbar-button--enabled': flavour === 'toggle' && this.props.isEnabled,
                          'toolbar-button--disabled': flavour === 'toggle' && !this.props.isEnabled
                  })}
+                 data-tip={this.props.tooltip}
                  onClick={this.onClick}
                  onMouseEnter={this.showTooltip}
                  onMouseLeave={this.hideTooltip}
