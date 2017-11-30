@@ -29,6 +29,13 @@ class RefreshNotifier(object):
         elif entity_name == 'businessinvite':
             entity_name = 'projectinvite'
 
+        if params:
+            for k, v in params.items():
+                if 'project' in k:
+                    params[k.replace("project", "sprint")] = params.pop(k)
+                if 'business' in k:
+                    params[k.replace("business", "project")] = params.pop(k)
+            
         try:
             post_data = {'entity_name': entity_name,
                          'entity_ref': obj.id,

@@ -98,6 +98,9 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name === 'issue' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
         list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
+
+        // So that the issue count within the sprint shows correctly
+        dispatch(invalidateSprints([d.params.sprint_id]))
     } else if ( d.entity_name === 'projectinvite' ) {
         list_keys_to_invalidate[LIST_KEY__PROJECT_USER_LIST] = true
 
