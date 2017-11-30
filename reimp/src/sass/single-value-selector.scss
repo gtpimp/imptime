@@ -46,3 +46,7 @@
     margin-top: 10px;
     cursor: pointer;
 }
+
+.single-value-selector__suggestion--selected {
+    background-color: $selected-row-hover-color;
+}

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import classNames from 'classnames'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
 import {ensureUsersLoaded} from '../../actions/Users'
@@ -70,21 +71,24 @@ export class SingleValueSelector extends Component {
     }
 
     render_suggestions() {
-        const {options} = this.props
+        const {options, value} = this.props
         const filter_term = (this.state || {}).filter_term || undefined
         const that = this
 
         const filtered_options = this.getFilteredOptions(options)
         const suggestions = map(filtered_options, function(option) {
             return (
-                <div className="single-value-selector__suggestion" key={'suggestion_' + option.index}
-                     onClick={() => that.onSelected(option)}>
-                    <div className="single-value-selector__suggestion-number">
-                        {(option.index + 1)}.
-                    </div>
-                    <div className="single-value-selector__suggestion-label">
-                        {option.label}
-                    </div>
+                <div className={classNames("single-value-selector__suggestion",
+                                           {"single-value-selector__suggestion--selected":value===option.value})}
+                     key={'suggestion_' + option.index}
+                     onClick={() => that.onSelected(option)}
+                >
+                  <div className="single-value-selector__suggestion-number">
+                    {(option.index + 1)}.
+                  </div>
+                  <div className="single-value-selector__suggestion-label">
+                    {option.label}
+                  </div>
                 </div>
             )
         })
@@ -113,10 +117,11 @@ export class SingleValueSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { options } = props
+    const { options, value } = props
 
     return {
-        options: options
+        options: options,
+        value
     }
 }
 

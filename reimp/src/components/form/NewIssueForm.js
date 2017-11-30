@@ -9,7 +9,7 @@ import IssueTitleField from './IssueTitleField';
 class NewIssueForm extends Component {
 
     render() {
-        const { handleSubmit, onKeyDown, project_id } = this.props
+        const { handleSubmit, onKeyDown, project_id, initialValues } = this.props
 
         return (
             <form onSubmit={handleSubmit}>
@@ -30,7 +30,7 @@ function mapStateToProps(state, props) {
     const { onSubmitted, onKeyDown, project_id, sprint_id } = props
 
     return {
-        initialValues: {title:props.initial_value,
+        initialValues: {title:'',
                         sprint_id: sprint_id},
         enableReinitialize: true,
         onSubmit: onSubmitted,
