@@ -11,7 +11,6 @@ import {
     update_list_filter,
     invalidateList
 } from '../../actions/ItemList'
-import SingleValueSelector from './SingleValueSelector'
 import SprintSelectorField from './SprintSelectorField'
 
 class SelectSprintForm extends Component {

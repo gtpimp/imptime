@@ -3,51 +3,20 @@ import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
+import SprintSelectorField from './SprintSelectorField'
+import IssueTitleField from './IssueTitleField';
 
 class NewIssueForm extends Component {
 
-    constructor(props) {
-        super(props)
-        this.renderTextarea = this.renderTextarea.bind(this)
-        this.keyDown = this.keyDown.bind(this)
-    }
-
-    componentDidMount() {
-        this.title_el && this.title_el.focus()
-    }
-
-
-    keyDown(event) {
-        const { onKeyDown } = this.props
-        if (onKeyDown) {
-            onKeyDown(event)
-        }
-    }
-
-    renderTextarea(field) {
-        const {input, data, onChange, ...rest} = field
-        return (
-            <input
-                maxLength="3000"
-                className="textarea textarea--text-component textarea--title"
-                placeholder="Title"
-                onChange={input.onChange}
-                value={input.value}
-                ref={(ref)=> this.title_el=ref}
-                onKeyDown={this.keyDown}
-            />
-        )
-    }
-
     render() {
-        const { handleSubmit } = this.props
+        const { handleSubmit, onKeyDown, project_id } = this.props
 
         return (
             <form onSubmit={handleSubmit}>
               <div>
                 <div className="issue_sidebar--textarea">
-                  <Field name="title"
-                         component={this.renderTextarea} />
+                  <IssueTitleField onKeyDown={onKeyDown} />
+                  <SprintSelectorField project_id={project_id} />
                 </div>
                 <button className="button issue_sidebar--textarea" type="submit">Submit</button>
               </div>
@@ -58,12 +27,15 @@ class NewIssueForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted } = props
+    const { onSubmitted, onKeyDown, project_id, sprint_id } = props
 
     return {
-        initialValues: {title:props.initial_value},
+        initialValues: {title:props.initial_value,
+                        sprint_id: sprint_id},
         enableReinitialize: true,
-        onSubmit: onSubmitted
+        onSubmit: onSubmitted,
+        onKeyDown,
+        project_id
     }
 }
 

@@ -57,7 +57,10 @@ class IssuesPage extends Component {
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name) {
-            dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
+
+            if ( new_props.sprint_id != this.props.sprint_id ) {
+                dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
+            }
             this.refresh(new_props.sprint, new_props.project)
         }
     }
@@ -117,7 +120,7 @@ class IssuesPage extends Component {
         if ( is_creating_issue ) {
             return (
                 <div className="list-layout__sidebar">
-                  <NewIssueSidebar onCreatedIssues={this.onSelectIssues} />
+                  <NewIssueSidebar onCreatedIssues={this.onSelectIssues} project_id={project_id} sprint_id={sprint_id} />
                 </div>
             )
         } else if ( is_single_selection && sprint_id && selected_issue ) {

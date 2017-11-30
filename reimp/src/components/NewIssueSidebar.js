@@ -8,7 +8,7 @@ import {
     cancelCandidateIssue,
     saveCandidateIssue
 } from '../actions/Issues'
-import IssueTitleForm from './form/IssueTitleForm'
+import NewIssueForm from './form/NewIssueForm'
 
 class NewIssueSidebar extends Component {
 
@@ -38,12 +38,16 @@ class NewIssueSidebar extends Component {
 
     render() {
 
+        const { project_id, sprint_id } = this.props
+        
         return (
             <Sidebar>
               <PropertyStack>
                 <div onKeyDown={this.keyDown}>
                   <div>
-                    <IssueTitleForm onSubmitted={this.onSaveCandidateIssue}/>
+                    <NewIssueForm onSubmitted={this.onSaveCandidateIssue}
+                                  project_id={project_id}
+                                  sprint_id={sprint_id} />
                   </div>
                 </div>
               </PropertyStack>
@@ -53,12 +57,14 @@ class NewIssueSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const { onSelectIssues, project_id, sprint_id } = props
 
     const candidate_issue = getCandidateIssue(state) || null
-    const { onSelectIssues } = props
     return {
         candidate_issue: candidate_issue,
-        onSelectIssues
+        onSelectIssues,
+        project_id,
+        sprint_id
     }
 }
 
