@@ -208,6 +208,7 @@ class IssueViewSet(BaseViewSet):
                         issue.save()
                         SprintIssueOrder.insert_at_the_end(issue)
                         IssueHistory.add_history(request.user, issue, "moved to sprint", unicode(old_sprint), unicode(new_sprint))
+                        old_sprint.save()
                 elif field_name == "my_estimate":
                     if self.logged_in_permissions(issue.project.business).has_estimate_own_points:
                         estimate = IssuePoints.objects.get_or_create(user=request.user, issue=issue)[0]
