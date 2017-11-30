@@ -169,7 +169,8 @@ class SprintList extends Component {
         return (
             <div className="div-table__header_row sprint_type_header">
               { map(header_list, (v, k) => (
-                    <div className="div-table__header_cell"
+                    <div key={k}
+                         className="div-table__header_cell"
                          style={getCellStyle(v)}>
                       { k == "name" &&
                         <div className="sprint_header__type">{sprint_type}</div>

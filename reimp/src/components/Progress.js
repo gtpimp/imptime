@@ -15,9 +15,6 @@ class Progress extends Component {
         const max = format_hours(estimate_to_use)
         return (
             <div className="progress">
-                <div className="progress__component progress__component--timer">
-                    { active && <div className={classNames('icon--timer-' + (active ? 'active' : 'inactive'))}></div> }
-                </div>
                 <div className="progress__component progress__component--progress">
                     <div className="progress__time">
                         <div className={classNames('progress__time', 'progress__time--' + ( current <= max ? 'progress' : 'over'))}>
@@ -31,6 +28,9 @@ class Progress extends Component {
                     <div className="progress__progress_bar">
                         <ProgressBar current={current} max={max}/>
                     </div>
+                </div>
+                <div className="progress__component progress__component--timer">
+                  { active && <div className={classNames('icon--timer-' + (active ? 'active' : 'inactive'))}></div> }
                 </div>
             </div>
         )

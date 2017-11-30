@@ -27,6 +27,7 @@ import Project from './Project'
 import DivTable from './DivTable'
 import '../sass/project-list.scss'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class ProjectList extends Component {
 
@@ -36,6 +37,7 @@ class ProjectList extends Component {
 	this.onChangePage = this.onChangePage.bind(this)
 	this.onCollapse = this.onCollapse.bind(this)
 	this.onExpand = this.onExpand.bind(this)
+        this.renderHeader = this.renderHeader.bind(this)
     }
 
     switchToSampleContext() {
@@ -103,6 +105,21 @@ class ProjectList extends Component {
 	}
     }
 
+    renderHeader() {
+        const { header_list } = this.props
+        return (
+            <div className="div-table__header_row">
+              { map(header_list, (v, k) => (
+                    <div key={k}
+                         className="div-table__header_cell"
+                         style={getCellStyle(v)}>
+                      {v.label }
+                    </div>
+                ))}
+            </div>
+        )
+    }
+    
     renderCollapsedProject(project) {
 	const { list_key, loading_item_ids } = this.props
         const is_loading=loading_item_ids.indexOf(project.id) !== -1
@@ -157,7 +174,7 @@ class ProjectList extends Component {
         const { projects} = this.props
 
         return (
-            <DivTable>
+            <DivTable renderHeader={this.renderHeader}>
                 {projects.map((project, index) => this.renderExpandedProject(project, index))}
             </DivTable>
         )

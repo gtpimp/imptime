@@ -30,6 +30,7 @@ import {
 import Issue from '../components/Issue'
 import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class IssueList extends Component {
 
@@ -51,6 +52,7 @@ class IssueList extends Component {
         this.closeEstimateEditor = this.closeEstimateEditor.bind(this)
         this.handleShortcuts = this.handleShortcuts.bind(this)
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
+        this.renderHeader = this.renderHeader.bind(this)
     }
 
     componentDidMount() {
@@ -339,6 +341,21 @@ class IssueList extends Component {
                               }))
     }
 
+    renderHeader() {
+        const { header_list } = this.props
+        return (
+            <div className="div-table__header_row">
+              { map(header_list, (v, k) => (
+                    <div key={k}
+                         className="div-table__header_cell"
+                         style={getCellStyle(v)}>
+                      {v.label }
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     render_collapsed() {
 
         const {
@@ -392,7 +409,7 @@ class IssueList extends Component {
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
-            issue_header_list, cursor_item_id
+            header_list, cursor_item_id
         } = this.props
 
         const tag_editor_open = (this.state || {}).tag_editor_open || false
@@ -433,7 +450,7 @@ class IssueList extends Component {
                         is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
                         issue_id={issue.parent_group_id}
                         subject_prefix="...(continued) "
-                        issue_header_list={issue_header_list}
+                        header_list={header_list}
                         onDelete={that.onDeleteIssue}
                     />
                 )
@@ -455,7 +472,7 @@ class IssueList extends Component {
                         is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
                         is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
                         issue_id={issue.id}
-                        issue_header_list={issue_header_list}
+                        header_list={header_list}
                         onDelete={that.onDeleteIssue}
                     />
                 )
@@ -471,17 +488,6 @@ class IssueList extends Component {
                 running_parent_issue_id = issue.parent_group_id
             }
             return
-        })
-
-        const renderHeader = (() => {
-            return []
-            /* return map(keys(issue_header_list),
-             *             function(header_key){
-             *                 let header_info = issue_header_list[header_key]
-             *                 return <div className="div-table__cell"
-             *                             style={{width:header_info.width}}
-             *                             key={header_key}>{header_info.label}</div>
-             *             })*/
         })
 
         if ( issue_rows.legnth === 0 ) {
@@ -504,7 +510,7 @@ class IssueList extends Component {
                               selected_ids={selected_ids}
                               closeEstimateEditor={this.closeEstimateEditor}/>
 
-              <DivTable renderHeader={renderHeader}
+              <DivTable renderHeader={this.renderHeader}
                         onReorder={this.reorderIssue}>
                 {issue_rows}
               </DivTable>
@@ -589,7 +595,7 @@ function mapStateToProps(state, props) {
         candidate_issue: candidate_issue,
         is_creating_issue: is_creating_issue,
         expanded_issues: l.flag_expanded_issues,
-        issue_header_list: issue_header_list
+        header_list: issue_header_list
     }
 }
 

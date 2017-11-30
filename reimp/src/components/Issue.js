@@ -384,7 +384,7 @@ function mapStateToProps(state, props) {
     const {
         issue_id, is_selected, is_highlighted, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children, is_fake,
-        subject_prefix, subject_suffix, issue_header_list, list_key, is_cursor_item,
+        subject_prefix, subject_suffix, header_list, list_key, is_cursor_item,
         onDelete
     } = props
 
@@ -426,8 +426,8 @@ function mapStateToProps(state, props) {
         show_children: show_children,
         subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || "",
-        visible_header_keys: keys(issue_header_list),
-        header_list: issue_header_list,
+        visible_header_keys: keys(header_list),
+        header_list: header_list,
         isFeatureOfSelectedIssue,
         belongsToSelectedFeature,
         onDelete: onDelete || null
