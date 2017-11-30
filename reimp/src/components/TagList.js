@@ -22,9 +22,14 @@ class TagList extends Component {
     
     render() {
         const {tags, onDelete} = this.props
+
         return (
             <div className="tag_list">
-              { map(tags, (tag) => <Tag tag_id={tag.id} onDelete={onDelete} />) }
+              { map(tags, function(tag) {
+                    return (
+                        <Tag key={tag.id} tag_id={tag.id} onDelete={onDelete} />
+                    )
+                })}
             </div>
         )
     }
