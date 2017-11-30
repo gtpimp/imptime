@@ -20,7 +20,7 @@
 
 .div-table__row:hover {
     //box-shadow: inset 0 -1px 0 0 #E0E0E0;
-    box-shadow: inset 0 -1px 0 0 $row-hover-border-color;
+    //box-shadow: inset 0 -1px 0 0 $row-hover-border-color;
     background-color: $row-hover-color;
 }
  
@@ -80,10 +80,11 @@ div-table__row--saving {
     height: 100%;
     width: 100%;
 }
-
+ 
 .div-table__cell--hover {
+    background-color: inherit;
     //background-color: $cell-hover-color;
-    box-shadow: inset 0 -1px 0 0 $cell-hover-color;
+    //box-shadow: inset 0 -1px 0 0 $cell-hover-color;
     
     //-webkit-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
     //-moz-box-shadow:inset 0px 0px 0px 2px $button-hover-background;
@@ -96,4 +97,8 @@ div-table__row--saving {
 
 .div-table__cell--secondary {
     opacity: 0.5;
-} 
+}
+
+.div-table__cell--secondary:hover {
+    opacity: 1.0;
+}
