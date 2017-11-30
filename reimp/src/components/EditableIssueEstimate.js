@@ -34,7 +34,7 @@ class EditableIssueEstimate extends Component {
             >
               <IssueEstimateForm />
               <div className="text-component--readonly">
-                <Progress issue={issue} estimate={issue.my_estimate.estimate_hours} />
+                <Progress issue={issue} estimate={estimate_hours} />
               </div>
               <div className="text-component--empty">0</div>
             </EditableProperty>
