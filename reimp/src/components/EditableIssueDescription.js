@@ -23,15 +23,17 @@ class EditableIssueDescription extends Component {
     render() {
         const { issue, can_edit } = this.props
 
+        const description = (issue.description || "").trim()
+        
         return (
             <EditableProperty property_key={'issue_description'+issue.id}
-                              initial_value={issue.description}
+                              initial_value={description}
                               onChange={this.onChange}
                               can_edit={can_edit}
             >
               <IssueDescriptionForm />
               <div className="text-component--readonly text-component--description">
-                <ReactMarkdown source={issue.description} />
+                <ReactMarkdown source={description} />
               </div>
               <div className="text-component--empty text-component--description">
                 ...
