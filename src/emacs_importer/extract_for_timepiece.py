@@ -153,7 +153,7 @@ class Extractor(object):
                                                                       'feature':feature,
                                                                       'assigned_to':timesheet_user,
                                                                       'number':Issue.get_next_issue_number(project.business),
-                                                                      'description':orgnode.CleanBody(),
+                                                                      'description':(orgnode.CleanBody() or "").strip(),
                                                                       'story_points':0})
                 ProjectIssueOrder.insert_at_the_end(issue)
                 if is_new:
