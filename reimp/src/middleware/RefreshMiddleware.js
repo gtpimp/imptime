@@ -6,6 +6,7 @@ import moment from 'moment'
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateIssues } from '../actions/Issues'
+import { invalidateTags } from '../actions/Tags'
 import { invalidateIssueReviews } from '../actions/IssueReviews'
 import { invalidateUsers } from '../actions/Users'
 import { invalidatePups } from '../actions/ProjectUserPermissions'
@@ -57,6 +58,7 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'issuetag' || d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {
         dispatch(invalidateIssues(d.params.issues))
         dispatch(invalidateIssueGeneralDetails(d.params.issues))
+        dispatch(invalidateTags([d.entity_ref]))
 
     } else if ( d.entity_name === 'projectinvite' ) {
         dispatch(invalidateUsers(d.params.users))

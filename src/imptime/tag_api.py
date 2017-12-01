@@ -33,7 +33,7 @@ class TagViewSet(BaseViewSet):
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in tags.values_list('id', flat=True)]
             else:
-                s = TagSerializer(tags, many=True, logged_in_user=request.user)
+                s = TagSerializer(tags, many=True)
                 tags_data = s.data
                 context['tags'] = tags_data
             context['pagination'] = pagination
@@ -77,19 +77,28 @@ class TagViewSet(BaseViewSet):
     def add_to_issue(self, request):
         try:
             context = {}
-            params = request.data['item']
+            params = request.data
             issue_ids = request.data['issue_ids']
-            name = params['name']
-            category_name = params['category_name']
+            tag_id = request.data.get('tag_id', None)
+            name = params['tag_name']
+            category_name = params['tag_category_name']
             issues = self.allowed_issues().filter(pk__in=issue_ids)
 
-            if self.logged_in_permissions(issues[0].project.business).has_edit_tags:
+            if not self.logged_in_permissions(issues[0].project.business).has_edit_tags:
                 raise Exception("Can't create tags")
 
-            tag_category = TagCategory.get_or_create(business=issues[0].project,
-                                                     name=category_name)[0]
-            tag = Tag.objects.get_or_create(category=tag_category,
-                                            name=name)[0]
+            if tag_id is not None:
+                tag = self.allowed_tags().get(pk=tag_id)
+                tag.name = name
+                tag.save()
+                tag_category = tag.category
+                tag_category.name = category_name
+                tag_category.save()
+            else:
+                tag_category = TagCategory.objects.get_or_create(business=issues[0].project.business,
+                                                                 name=category_name)[0]
+                tag = Tag.objects.get_or_create(category=tag_category,
+                                                name=name)[0]
 
             for issue in issues:
                 issue.tags.add(tag)
@@ -107,10 +116,10 @@ class TagViewSet(BaseViewSet):
     def remove_from_issues(self, request, pk):
         try:
             tag_id = pk
-            params = request.data['item']
-            issue_ids = params.data['issue_ids']
+            params = request.data
+            issue_ids = params['issue_ids']
             issues = self.allowed_issues().filter(pk__in=issue_ids)
-            if self.logged_in_permissions(issues[0].project.business).has_edit_tags:
+            if not self.logged_in_permissions(issues[0].project.business).has_edit_tags:
                 raise Exception("Can't delete tags")
 
             tag = self.allowed_tags().get(pk=tag_id)

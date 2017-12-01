@@ -5,10 +5,14 @@ import { ensureTagsLoaded, getTag } from '../../actions/Tags'
 
 class TagForm extends Component {
 
-    componentDidMount() {
-        this.refresh()
+    constructor(props) {
+        super(props)
         this.renderNameSelector = this.renderNameSelector.bind(this)
         this.renderCategorySelector = this.renderCategorySelector.bind(this)
+    }
+    
+    componentDidMount() {
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
@@ -75,7 +79,7 @@ class TagForm extends Component {
 function mapStateToProps(state, props) {
 
     const { tag_id, onSubmitted, onKeyDown, initialValues } = props
-    const tag = (tag_id && getTag(tag_id)) || {}
+    const tag = (tag_id && getTag(state, tag_id)) || {}
 
     const initial_values = { category_name: tag.category_name,
                              name: tag.name }

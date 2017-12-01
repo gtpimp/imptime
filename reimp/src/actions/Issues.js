@@ -835,11 +835,12 @@ export function isBulkCreatingIssues(state, sprint_id) {
     return (((state || {}).sprint || {}).bulk_creating_issues || {}).sprint_id === sprint_id
 }
 
-export function addTagToIssues(tag_name, tag_category_name, issue_ids) {
+export function addOrEditIssueTag(tag_name, tag_category_name, issue_ids, tag_id) {
     return (dispatch, getState) => {
 	const state = getState()
 	dispatch(announceIssuesSaving(issue_ids, "tags", tag_name))
 	let data = { issue_ids: issue_ids,
+                     tag_id: tag_id || null,
                      tag_name: tag_name,
                      tag_category_name: tag_category_name }
 	return impfetch( state, "imp/" + ENTITY_KEY__TAG + "/add_to_issue/", dispatch,
@@ -870,7 +871,7 @@ export function deleteTagFromIssues(tag_id, issue_ids) {
 	const state = getState()
 	dispatch(announceIssuesSaving(issue_ids, "tags", tag_id))
 	let data = { issue_ids: issue_ids }
-	return impfetch( state, "imp/" + ENTITY_KEY__TAG + "/" + tag_id + "/delete_from_issue/", dispatch,
+	return impfetch( state, "imp/" + ENTITY_KEY__TAG + "/" + tag_id + "/remove_from_issues/", dispatch,
 			 {method: "DELETE",
 			  credentials: 'same-origin',
 			  data: data,

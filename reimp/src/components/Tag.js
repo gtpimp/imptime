@@ -20,16 +20,8 @@ class Tag extends Component {
         }
     }
 
-    deleteTag() {
-        const { dispatch, tag_id, onDelete } = this.props
-        if ( ! confirm("Delete this tag?") ) {
-            return false
-        }
-        onDelete(tag_id)
-    }
-    
     render() {
-        const {deleteTag, tag} = this.props
+        const {tag} = this.props
 
         if ( ! tag.id ) {
             return null
@@ -40,7 +32,6 @@ class Tag extends Component {
               <div className="tag__component tag__component--category">{tag.category_name}</div>
               <div className="tag__component tag__component--separator">:</div>
               <div className="tag__component tag__component--name">{tag.name}</div>
-              <div onClick={deleteTag}>x</div>
             </div>
         )
     }
@@ -48,13 +39,12 @@ class Tag extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { tag_id, onDelete } = this.props
-    const tag = getTag(state, tag_id)
+    const { tag_id } = props
+    const tag = getTag(state, tag_id) || {}
     
     return {
         tag_id,
-        tag,
-        onDelete
+        tag
     }
     
 }
