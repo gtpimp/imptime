@@ -6,7 +6,7 @@ import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
 
 const DEFAULT_TIME_ESTIMATES = [ "0:00", "0:15", "0:30", "0:45",
-                                 "1:00", "1:15", "1.30", "1.45",
+                                 "1:00", "1:15", "1:30", "1:45",
                                  "2:00", "2:30",
                                  "3:00", "3:30",
                                  "4:00",
