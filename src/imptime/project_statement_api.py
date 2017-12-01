@@ -206,7 +206,7 @@ class ProjectStatementViewSet(BaseViewSet):
         return entries
 
     def _get_times_by_sprint(self, entries):
-        return entries.order_by("issue__project__order", "user_id")\
+        return entries.order_by("issue__project__name", "user_id")\
                       .values('issue__project_id', 'issue__project__name', 'user_id')\
                       .annotate(total_hours=Sum('hours'))
 
@@ -256,7 +256,7 @@ class ProjectStatementViewSet(BaseViewSet):
         sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
         for sprint in sprints:
             all_entries = Entry.objects.all().filter(issue__project=sprint) #sic
-            all_entries = all_entries.order_by("issue__project__order", "user_id")\
+            all_entries = all_entries.order_by("issue__project__name", "user_id")\
                                      .values('issue__project_id', 'user_id')\
                                      .annotate(total_hours=Sum('hours'))
             spent = sum([float(x['total_hours']) * self._get_rate(x['user_id'],
