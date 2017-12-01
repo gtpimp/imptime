@@ -36,8 +36,10 @@ export function invalidateTags(tag_ids_to_invalidate) {
     }
 }
 
-export function updateTags(tag_ids, field_name, new_value, on_done) {
-    return updateItem(ENTITY_KEY__TAG, tag_ids, field_name, new_value, on_done)
+export function updateTags(tag_ids, new_category_name, new_name, on_done) {
+    const new_value = {'category_name': new_category_name,
+                 'name': new_name}
+    return updateItem(ENTITY_KEY__TAG, tag_ids, "tag", new_value, on_done)
 }
 
 export function fetchTagsIfNeeded(list_key) {
@@ -57,13 +59,3 @@ export function getTag(state, tag_id) {
 export function getTags(state, tag_ids) {
     return getItems(state, ENTITY_KEY__TAG, tag_ids)
 }
-
-export function createTag(name, category_name, issue_ids) {
-    return (dispatch, getState) => {
-        dispatch(startCandidateItem(ENTITY_KEY__TAG, { name: name,
-                                                       category_name: category_name,
-                                                       issue_ids: issue_ids }))
-        dispatch(saveCandidateItem(ENTITY_KEY__TAG))
-    }
-}
-

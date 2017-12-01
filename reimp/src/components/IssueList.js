@@ -3,7 +3,6 @@ import { uniq, concat, each, indexOf, map, keys, union, difference, includes } f
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
-import TagEditor from '../components/TagEditor'
 import EstimateEditor from '../components/EstimateEditor'
 import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js';
 import {
@@ -46,8 +45,6 @@ class IssueList extends Component {
         this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
         this.groupTogether = this.groupTogether.bind(this)
         this.ungroupTogether = this.ungroupTogether.bind(this)
-        this.openTagEditor = this.openTagEditor.bind(this)
-        this.closeTagEditor = this.closeTagEditor.bind(this)
         this.openEstimateEditor = this.openEstimateEditor.bind(this)
         this.closeEstimateEditor = this.closeEstimateEditor.bind(this)
         this.handleShortcuts = this.handleShortcuts.bind(this)
@@ -283,21 +280,6 @@ class IssueList extends Component {
         dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
 
-    openTagEditor(event) {
-        const {selected_ids} = this.props
-        event.stopPropagation()
-        if (selected_ids.length === 0) {
-            alert("Please select at least one issue to tag")
-            return
-        }
-
-        this.setState({'tag_editor_open': true})
-    }
-
-    closeTagEditor() {
-        this.setState({'tag_editor_open': false})
-    }
-
     openEstimateEditor(event) {
         const {selected_ids} = this.props
         event.stopPropagation()
@@ -412,7 +394,6 @@ class IssueList extends Component {
             header_list, cursor_item_id
         } = this.props
 
-        const tag_editor_open = (this.state || {}).tag_editor_open || false
         const estimate_editor_open = (this.state || {}).estimate_editor_open || false
 
         if (!is_visible) {
@@ -501,10 +482,6 @@ class IssueList extends Component {
         return (
 
             <div>
-              <TagEditor isOpen={tag_editor_open}
-                         selected_items={selected_items}
-                         selected_ids={selected_ids}
-                         closeTagEditor={this.closeTagEditor}/>
               <EstimateEditor isOpen={estimate_editor_open}
                               selected_items={selected_items}
                               selected_ids={selected_ids}

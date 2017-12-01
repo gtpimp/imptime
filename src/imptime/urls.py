@@ -9,7 +9,6 @@ import issue_clock_api
 import issue_comment_api
 import issue_estimate_api
 import issue_review_api
-import issue_tag_api
 import nudge_api
 import project_api
 import project_dashboard_api
@@ -53,8 +52,6 @@ router.register(r'sprint_review', sprint_review_api.SprintReviewViewSet,
                 base_name='sprint_review')
 router.register(r'sprint', sprint_api.SprintViewSet,
                 base_name='sprint')
-router.register(r'issue/tag', issue_tag_api.IssueTagViewSet,
-                base_name='issue_tag')
 router.register(r'issue/comment', issue_comment_api.IssueCommentViewSet,
                 base_name='issue_comment')
 router.register(r'issue/attachment', issue_attachment_api.IssueAttachmentViewSet,

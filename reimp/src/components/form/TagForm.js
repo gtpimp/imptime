@@ -7,6 +7,8 @@ class TagForm extends Component {
 
     componentDidMount() {
         this.refresh()
+        this.renderNameSelector = this.renderNameSelector.bind(this)
+        this.renderCategorySelector = this.renderCategorySelector.bind(this)
     }
 
     componentWillReceiveProps(new_props) {
@@ -20,6 +22,40 @@ class TagForm extends Component {
             dispatch(ensureTagsLoaded([tag_id]))
         }
     }
+
+    renderCategorySelector(field) {
+        const { onKeyDown } = this.props
+        const {input, data, onChange, ...rest} = field
+        return (
+            <input
+                rows="1"
+                maxLength="20"
+                className="tagform--category"
+                placeholder="Category"
+                onChange={input.onChange}
+                value={input.value}
+                ref={(ref)=> this.category_input_el=ref}
+                onKeyDown={onKeyDown}
+            />
+        )
+    }
+    
+    renderNameSelector(field) {
+        const { onKeyDown } = this.props
+        const {input, data, onChange, ...rest} = field
+        return (
+            <input
+                rows="1"
+                maxLength="20"
+                className="tagform--name"
+                placeholder="Name"
+                onChange={input.onChange}
+                value={input.value}
+                ref={(ref)=> this.name_input_el=ref}
+                onKeyDown={onKeyDown} 
+            />
+        )
+    }
     
     render() {
         const { handleSubmit, onKeyDown } = this.props
@@ -27,8 +63,9 @@ class TagForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
               <div>
-                It's a form
-                <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                <Field component={this.renderCategorySelector} name="category_name"/>
+                <Field component={this.renderNameSelector} name="name"/>
+                <button className="button" type="submit">Submit</button>
               </div>
             </form>
         )
@@ -39,10 +76,12 @@ function mapStateToProps(state, props) {
 
     const { tag_id, onSubmitted, onKeyDown, initialValues } = props
     const tag = (tag_id && getTag(tag_id)) || {}
+
+    const initial_values = { category_name: tag.category_name,
+                             name: tag.name }
     
     return {
-        initialValues: { category_name: tag.category_name,
-                         name: tag.name },
+        initialValues: initial_values,
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onKeyDown

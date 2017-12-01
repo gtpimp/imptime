@@ -43,8 +43,6 @@ class IssueToolbarPanel extends Component {
         /* this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
          * this.groupTogether = this.groupTogether.bind(this)
          * this.ungroupTogether = this.ungroupTogether.bind(this)
-         * this.openTagEditor = this.openTagEditor.bind(this)
-         * this.closeTagEditor = this.closeTagEditor.bind(this)
          * this.openEstimateEditor = this.openEstimateEditor.bind(this)
          * this.closeEstimateEditor = this.closeEstimateEditor.bind(this)*/
     }

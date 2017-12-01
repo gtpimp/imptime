@@ -496,69 +496,6 @@ export function ungroupIssuesIntoFeature(issue_ids) {
     }
 }
 
-export function addTag(issue_ids, tag_category_name, tag_name, on_done) {
-    return (dispatch, getState) => {
-        const state = getState()
-	      dispatch(announceIssuesSaving(issue_ids, "tags", tag_category_name + ":" + tag_name))
-	      let data = {issue_ids: issue_ids,
-                    tag_category_name: tag_category_name,
-                    tag_name: tag_name}
-	      return impfetch(state, "imp/issue/tag/", dispatch,
-			                  {method: "POST",
-			                   credentials: 'same-origin',
-			                   data: data,
-			                   headers: {"Content-type": "application/json; charset=UTF-8"},
-			                   body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
-             if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announceIssueSaveFailed(json.error))
-             } else {
-		             console.log('Request succeeded with JSON response', json);
-                 dispatch(announceIssuesSaved(issue_ids))
-             }
-	           if ( on_done ) {
-		             on_done()
-	           }
-	       })
-	       .catch(function (error) {
-             console.log('Request failed', error);
-	           dispatch(announceIssueSaveFailed(error))
-	       })
-    }
-}
-
-export function deleteTag(issue_ids, tag_category_name, tag_name) {
-    return (dispatch, getState) => {
-        const state = getState()
-	      dispatch(announceIssuesSaving(issue_ids, "tags", tag_category_name + ":" + tag_name))
-	      let data = {issue_ids: issue_ids,
-                    tag_category_name: tag_category_name,
-                    tag_name: tag_name}
-	      return impfetch(state, "imp/issue/tag/", dispatch,
-			                  {method: "DELETE",
-			                   credentials: 'same-origin',
-			                   data: data,
-			                   headers: {"Content-type": "application/json; charset=UTF-8"},
-			                   body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
-             if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announceIssueSaveFailed(json.error))
-             } else {
-		             console.log('Request succeeded with JSON response', json);
-                 dispatch(announceIssuesSaved(issue_ids))
-             }
-	       })
-	       .catch(function (error) {
-             console.log('Request failed', error);
-	           dispatch(announceIssueSaveFailed(error))
-	       })
-    }
-}
-
 export function addEstimate(issue_ids, estimate_hours, on_done) {
     return (dispatch, getState) => {
         const state = getState()
