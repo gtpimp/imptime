@@ -251,32 +251,6 @@
       </div>
     {% endif %}
 
-    {% if issue.pk %}
-      {% has_permission has_edit_description issue.project.business %}
-      <br/>
-      {% for attachment in issue.attachments.all %}
-        <ul class="unstyled">
-          <li>
-            <a target="_blank" href="{{ attachment.download_url }}">{{attachment.name}}</a>
-            <img class="secret_link" onclick="return imp.delete_issue_attachment('{% url 'delete_issue_attachment' attachment.id %}');" src="{% static 'images/timepiece/icons/cross.png' %}"/>
-          </li>
-        </ul>
-      {% endfor %}
-
-      <div class="attachment_section">
-        <a href="#" class="small_button btn" onclick="return imp.attach_upload_issue_attachment($(this));">
-          <img src="{% static 'images/timepiece/icons/attach.png' %}"/>
-        </a>
-        <div class="new_attachment" style="display:none">
-          <input type="file" name="attachment" data-url="{% url 'add_issue_attachment' issue.pk %}"/>
-        </div>
-
-
-        {% end_permission %}
-
-    {% endif %}
-    <hr/>
-
     {% has_permission has_view_actual_hours project.business %}
     <a href="#" class="btn small_button" onclick="$(this).parent().find('.timesheet_entries').toggle(); return false;">
       <img src="{% static 'images/icons/clock.png' %}"/>
