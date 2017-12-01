@@ -9,7 +9,7 @@ import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
-import EditableIssueTag from './EditableIssueTag'
+import TagList from './TagList'
 import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueStatus from './EditableIssueStatus'
@@ -143,7 +143,7 @@ class IssueSidebar extends Component {
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Tags">
-                          <EditableIssueTag issue_ids={[issue.id]}/>
+                          <TagList issue_ids={[issue.id]}/>
                         </PropertyStackComponent>
                         
                         <PropertyStackComponent title="Testables">

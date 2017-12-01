@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import { intersection, map } from 'lodash'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
+import classNames from 'classnames' 
 import EditableProperty from './form/EditableProperty'
-import TagList from './TagList'
+import Tag from './Tag'
+import TagForm from './form/TagForm'
 import {
     updateIssueSubject,
     getIssues,
@@ -39,45 +40,50 @@ class EditableIssueTag extends Component {
     }
 
     render() {
-        const { issue, can_edit, selected_tag_ids } = this.props
+        const { issue, can_edit, tag, tag_id } = this.props
 
-        return null
-        
-        if ( !can_edit ) {
-            return (
-                <TagList tag_ids={selected_tag_ids} />
-            )
-        }
-        
         return (
-            <EditableProperty property_key={'issue_tags_'+issue.id}
-                              initial_value={selected_tag_ids}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-            >
-              <div>Nope</div>
-              <div>Nope</div>
-              <div className="text-component--empty"></div>
-            </EditableProperty>
+            <div>
+              { tag.id &&
+                <EditableProperty property_key={'issue_tag_'+tag_id}
+                                  initial_value={tag_id}
+                                  onChange={this.onChange}
+                                  can_edit={true}
+                    >
+                  <TagForm tag_id={tag_id} />
+                  <Tag tag_id={tag_id} />
+                  <div className="text-component--empty"></div>
+                </EditableProperty>
+              }
+              { tag.id &&
+                <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button>
+              }
+              { ! tag.id &&
+                <EditableProperty property_key={'issue_tag_new'}
+                                  initial_value=''
+                                  onChange={this.onChange}
+                                  can_edit={true}
+                    >
+                  <TagForm tag_id={tag_id} />
+                  <div className="text-component--readonly"></div>
+                  <div className="text-component--empty">
+                    <button className="button button--primary issue_sidebar--button">Create tag</button>
+                  </div>
+                </EditableProperty>
+              }
+            </div>
+                  
         )
     }
 
 }
 
 function mapStateToProps(state, props) {
-    const { issue_ids } = props
-    const issues = getIssues(state, issue_ids) || []
-    const issue = issues && issues.length > 0 && issues[0]
-    const can_edit = has_permission(state, issue.project_id, 'has_edit_tags')
-    const tag_ids_for_issues = map(issues, 'tag_ids')
-    //const selected_tag_ids = intersection(tag_ids_for_issues)
-    const selected_tag_ids = tag_ids_for_issues[0]
-    
+    const { issue_ids, tag_id } = props
+
     return {
         issue_ids,
-        issues: issues,
-        can_edit: can_edit,
-        selected_tag_ids
+        tag_id,
     }
 }
 

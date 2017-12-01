@@ -1,7 +1,12 @@
 @import 'variables.scss';
 
+.tag-list__empty {
+    font-style: italic;
+    opacity: 0.5;
+}
+
 .tag {
-  background-color: $color-11;
+    background-color: $color-11;
   border-radius: 3px;
   color: $color-1;
   display: inline-block;
