@@ -21,6 +21,7 @@ import sprint_deadline_api
 import sprint_review_api
 import sprint_roadmap_api
 import testable_api
+import tag_api
 import time_chart_api
 import time_summary_api
 import user_api
@@ -74,6 +75,8 @@ router.register(r'visual_spec_issue_annotation', visual_spec_issue_annotation_ap
                 base_name='visual_spec_issue_annotation')
 router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')
+router.register(r'tag', tag_api.TagViewSet,
+                base_name='tag')
 router.register(r'user', user_api.UserViewSet,
                 base_name='user')
 router.register(r'nudge', nudge_api.NudgeViewSet,

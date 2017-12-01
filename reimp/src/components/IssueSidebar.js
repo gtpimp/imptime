@@ -9,6 +9,7 @@ import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
+import EditableIssueTag from './EditableIssueTag'
 import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueStatus from './EditableIssueStatus'
@@ -141,6 +142,10 @@ class IssueSidebar extends Component {
                           </div>
                         </PropertyStackComponent>
 
+                        <PropertyStackComponent title="Tags">
+                          <EditableIssueTag issue_ids={[issue.id]}/>
+                        </PropertyStackComponent>
+                        
                         <PropertyStackComponent title="Testables">
                           { map(testables, function (testable, index) {
                                 return <EditableIssueTestable key={issue.id, testable.id} issue_id={issue.id} testable_id={testable.id}/>

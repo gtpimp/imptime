@@ -78,10 +78,10 @@ class IssueViewSet(BaseViewSet):
                        .prefetch_related('comments')\
                        .prefetch_related('attachments')\
                        .prefetch_related('group_children')\
-                       .prefetch_related('tags__category')\
                        .prefetch_related('issue_points__user')\
                        .prefetch_related('group_children')\
                        .prefetch_related('reviews')\
+                       .prefetch_related('tags')\
                        .prefetch_related(Prefetch('entries', to_attr='active_clocks',
                                                   queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
                        .prefetch_related(Prefetch('entries', to_attr='my_entries',

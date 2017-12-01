@@ -29,6 +29,7 @@ export const ENTITY_KEY__RELEASE_NOTE = 'release_note'
 export const ENTITY_KEY__SPRINT_DEADLINE = 'sprint_deadline'
 export const ENTITY_KEY__SPRINT_REVIEW = 'sprint_review'
 export const ENTITY_KEY__SPRINT_ROADMAP = 'sprint_roadmap'
+export const ENTITY_KEY__TAG = 'tag'
 export const ENTITY_KEY__NUDGE = 'nudge'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
