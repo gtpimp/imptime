@@ -11,9 +11,7 @@ import {
     addTagToIssues,
     deleteTagFromIssues
 } from '../actions/Issues'
-import {
-    updateTags
-} from '../actions/Tags'
+import { updateTags, ensureTagsLoaded, getTag } from '../actions/Tags'
 import { has_permission } from '../actions/Users'
 
 class EditableIssueTag extends Component {
@@ -24,6 +22,22 @@ class EditableIssueTag extends Component {
         this.onDelete = this.onDelete.bind(this)
     }
 
+    componentDidMount() {
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, tag_id } = props
+        if ( tag_id ) {
+            dispatch(ensureTagsLoaded([tag_id]))
+        }
+    }
+    
     onChange(new_value) {
         const { dispatch } = this.props
         dispatch(updateTags(new_value.tags))
@@ -72,7 +86,7 @@ class EditableIssueTag extends Component {
                 </EditableProperty>
               }
             </div>
-                  
+            
         )
     }
 
@@ -80,8 +94,10 @@ class EditableIssueTag extends Component {
 
 function mapStateToProps(state, props) {
     const { issue_ids, tag_id } = props
+    const tag = (tag_id && getTag(tag_id)) || {}
 
     return {
+        tag,
         issue_ids,
         tag_id,
     }

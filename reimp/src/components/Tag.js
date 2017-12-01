@@ -15,7 +15,9 @@ class Tag extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { tag_id, dispatch } = props
-        dispatch(ensureTagsLoaded([tag_id]))
+        if ( tag_id ) {
+            dispatch(ensureTagsLoaded([tag_id]))
+        }
     }
 
     deleteTag() {

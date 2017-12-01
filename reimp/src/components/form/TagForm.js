@@ -16,7 +16,9 @@ class TagForm extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, tag_id } = props
-        dispatch(ensureTagsLoaded([tag_id]))
+        if ( tag_id ) {
+            dispatch(ensureTagsLoaded([tag_id]))
+        }
     }
     
     render() {
@@ -36,7 +38,7 @@ class TagForm extends Component {
 function mapStateToProps(state, props) {
 
     const { tag_id, onSubmitted, onKeyDown, initialValues } = props
-    const tag = getTag(tag_id) || {}
+    const tag = (tag_id && getTag(tag_id)) || {}
     
     return {
         initialValues: { category_name: tag.category_name,
