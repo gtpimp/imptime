@@ -87,7 +87,7 @@ class EditableIssueComment extends Component {
                     <IssueCommentForm form={'issue_comment_form_'+issue_id} issue_id={issue_id} />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">
-                      <button className="button button--primary issue_sidebar--button">Create comment</button>
+                      <div className="icon--add" data-tooltip="Create comment"></div>
                     </div>
                   </EditableProperty>
                 </div>
