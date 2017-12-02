@@ -13,6 +13,7 @@ class TagForm extends Component {
     
     componentDidMount() {
         this.refresh()
+        this.category_input_el && this.category_input_el.focus()
     }
 
     componentWillReceiveProps(new_props) {
@@ -62,13 +63,24 @@ class TagForm extends Component {
     }
     
     render() {
-        const { handleSubmit, onKeyDown } = this.props
+        const { handleSubmit, onKeyDown, is_edit } = this.props
 
         return (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="tagform">
+              {  is_edit &&
+                 <div className="tag__edit_message">
+                   Warning: Editing this tag will affect other issues with this same tag.
+                 </div>
+              }
               <div>
+                <div>Category</div>
                 <Field component={this.renderCategorySelector} name="category_name"/>
+                <br/>
+                <br/>
+                <div>Name</div>
                 <Field component={this.renderNameSelector} name="name"/>
+                <br/>
+                <br/>
                 <button className="button" type="submit">Submit</button>
               </div>
             </form>
@@ -88,7 +100,8 @@ function mapStateToProps(state, props) {
         initialValues: initial_values,
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        onKeyDown
+        onKeyDown,
+        is_edit: tag_id || false
         
     }
 }

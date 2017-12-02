@@ -45,3 +45,23 @@
 .tag__component__delete:hover {
     border: 1px solid $tag-font-color;
 }
+
+.tag__edit_message {
+    font-size: $font-size-small;
+    color: $warning-color;
+}
+
+.tagform {
+    margin-bottom: 5px;
+}
+
+.tagform--category {
+    margin-right:  10px;
+    width: 100px;
+    padding: 5px;
+}
+
+.tagform--name {
+    width: 100px;
+    padding: 5px;
+}

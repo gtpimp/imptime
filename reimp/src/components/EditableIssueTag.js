@@ -59,32 +59,34 @@ class EditableIssueTag extends Component {
 
         return (
             <div>
-              { tag_id &&
-                <EditableProperty property_key={'issue_tag_'+tag_id}
-                                  initial_value={tag_id}
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
-                    >
-                  <TagForm tag_id={tag_id} can_edit={can_edit}/>
-                  <Tag tag_id={tag_id} can_edit={can_edit} onDelete={(ev) => this.onDelete(ev)} />
-                  <div className="text-component--empty"></div>
-                </EditableProperty>
-              }
-              { ! tag_id &&
-                <EditableProperty property_key={'issue_tag_new'}
-                                  initial_value=''
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
-                    >
-                  <TagForm tag_id={tag_id} />
-                  <div className="text-component--readonly"></div>
-                  <div className="text-component--empty">
-                    { can_edit && 
-                      <button className="button button--primary issue_sidebar--button">Create tag</button>
-                    }
-                  </div>
-                </EditableProperty>
-              }
+            { tag_id &&
+              <EditableProperty property_key={'issue_tag_'+tag_id}
+                                initial_value={tag_id}
+                                edit_as_modal={true}
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <TagForm tag_id={tag_id} can_edit={can_edit}/>
+                <Tag tag_id={tag_id} can_edit={can_edit} onDelete={(ev) => this.onDelete(ev)} />
+                <div className="text-component--empty"></div>
+              </EditableProperty>
+            }
+            { ! tag_id &&
+              <EditableProperty property_key={'issue_tag_new'}
+                                edit_as_modal={true}
+                                initial_value=''
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <TagForm tag_id={tag_id} />
+                <div className="text-component--readonly"></div>
+                <div className="text-component--empty">
+                  { can_edit && 
+                    <div className="icon--add" data-tooltip="Create tag"></div>
+                  }
+                </div>
+              </EditableProperty>
+            }
             </div>
             
         )

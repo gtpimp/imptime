@@ -64,6 +64,10 @@
     @include icon(10px, 10px, 'cross.png');
 }
 
+.icon--add {
+    @include icon(24px, 24px, 'plus.png');
+}
+
 .icon--child {
     @include icon(24px, 24px, 'ic_subdirectory_arrow_right_black_24dp_1x.png');
     opacity: 0.2;
