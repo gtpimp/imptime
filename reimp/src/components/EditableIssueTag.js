@@ -43,8 +43,11 @@ class EditableIssueTag extends Component {
         dispatch(addOrEditIssueTag(new_value.name, new_value.category_name, issue_ids, tag_id))
     }
 
-    onDelete() {
+    onDelete(ev) {
         const { dispatch, issue_ids, tag_id } = this.props
+        if ( ev ) {
+            ev.stopPropagation()
+        }
         if ( ! confirm("Delete this tag?") ) {
             return false
         }
@@ -62,13 +65,10 @@ class EditableIssueTag extends Component {
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                     >
-                  <TagForm tag_id={tag_id} />
-                  <Tag tag_id={tag_id} can_edit={can_edit} />
+                  <TagForm tag_id={tag_id} can_edit={can_edit}/>
+                  <Tag tag_id={tag_id} can_edit={can_edit} onDelete={(ev) => this.onDelete(ev)} />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
-              }
-              { tag_id && can_edit && 
-                <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button>
               }
               { ! tag_id &&
                 <EditableProperty property_key={'issue_tag_new'}
