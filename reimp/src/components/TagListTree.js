@@ -12,6 +12,7 @@ import {
     getVisibleItemIds,
     getVisibleItems
 } from '../actions/ItemList'
+import { getItems } from '../actions/Item'
 import { getIssues,
          addTagToIssues,
          deleteTagFromIssues
@@ -37,14 +38,14 @@ class TagListTree extends Component {
         const props = these_props || this.props
         const { tag_ids, dispatch, list_key, project_id } = props
         dispatch(ensureTagsLoaded(tag_ids))
-        if ( this.props.project_id != these_props.project_id ) {
+        if ( this.props.project_id != props.project_id ) {
             dispatch(update_list_filter(list_key, {'project_id':  project_id}))
         }
         dispatch(fetchTagsIfNeeded(list_key))
     }
 
     render() {
-        const {tags, project_tags_by_category, issue_ids} = this.props
+        const {project_tags_by_category, issue_ids} = this.props
         
         return (
             <div className="tag_list">
@@ -54,21 +55,19 @@ class TagListTree extends Component {
                 </div>
               }
 
-              { map(keys(project_tags_by_category), function(category_name, tags_for_category) {
+              { map(project_tags_by_category, function(tags_for_category, category_name) {
                     return (
                         <TreeView key={category_name}
                                   nodeLabel={category_name}
-                                  default_Collapsed={false}>
+                                  defaultCollapsed={false}>
 
-                          {map(tags_for_category, function(tag_name) {
+                          {map(tags_for_category, function(tag) {
                                return (
-                                   <TreeView key={tag_name}
-                                             nodeLabel={tag_name}
-                                             default_Collapsed={false}>
-                                   </TreeView>
+                                   <div className="taglisttree__tag-name">{tag.name}</div>
                                )
                            })
                           }
+
                           
                         </TreeView>
                         
@@ -86,7 +85,7 @@ function mapStateToProps(state, props) {
     const { project_id, list_key } = props
 
     const project_tag_ids = getVisibleItemIds(state, list_key) || []
-    const project_tags = getVisibleItems(state, list_key, ENTITY_KEY__TAG) || []
+    const project_tags = getItems(state, ENTITY_KEY__TAG, project_tag_ids) || []
     const project_tags_by_category = groupBy(project_tags, 'category_name')
     
     return {

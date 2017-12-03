@@ -7,21 +7,17 @@
 
 .tag {
     background-color: $color-11;
-  border-radius: 3px;
-  color: $color-1;
-  display: inline-block;
-  font: $font-1;
-  margin-bottom: 2px;
-  margin-right: 8px;
-  padding-bottom: 4px;
-  padding-left: 6px;
-  padding-right: 6px;
-  padding-top: 4px;
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-right: 8px;
+    padding-bottom: 4px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 4px;
 
-  &:last-child {
-    margin-bottom: 0;
-    margin-right: 0;
-  }
+    border-radius: 8px;
+    background-color: $tag-background-color;
+    color: $tag-font-color;
 }
 
 .tag__component {
@@ -31,9 +27,45 @@
 }
 
 .tag__component__category {
-    font-weight: bold;
+}
+
+.tag__component__separator {
+    width: 5px;
 }
 
 .tag__component__name {
+    font-weight: bold;
 }
 
+.tag__component__delete {
+    margin-left:  5px;
+    border: 1px solid $tag-background-color;
+}
+
+.tag__component__delete:hover {
+    border: 1px solid $tag-font-color;
+}
+
+.tag__edit_message {
+    font-size: $font-size-small;
+    color: $warning-color;
+}
+
+.tagform {
+    margin-bottom: 5px;
+}
+
+.tagform--category {
+    margin-right:  10px;
+    width: 100px;
+    padding: 5px;
+}
+
+.tagform--name {
+    width: 100px;
+    padding: 5px;
+}
+
+.taglisttree__tag-name {
+    
+}

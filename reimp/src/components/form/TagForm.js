@@ -15,6 +15,7 @@ class TagForm extends Component {
     
     componentDidMount() {
         this.refresh()
+        this.category_input_el && this.category_input_el.focus()
     }
 
     componentWillReceiveProps(new_props) {
@@ -67,7 +68,12 @@ class TagForm extends Component {
         const { handleSubmit, onKeyDown, is_edit, project_id } = this.props
 
         return (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="tagform">
+              {  is_edit &&
+                 <div className="tag__edit_message">
+                   Warning: Editing this tag will affect other issues with this same tag.
+                 </div>
+              }
               <div>
                 <TagListTree project_id={project_id} list_key={LIST_KEY__FORM_TAG_LIST} />
                 <div>Category</div>

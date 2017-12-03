@@ -43,8 +43,11 @@ class EditableIssueTag extends Component {
         dispatch(addOrEditIssueTag(new_value.name, new_value.category_name, issue_ids, tag_id))
     }
 
-    onDelete() {
+    onDelete(ev) {
         const { dispatch, issue_ids, tag_id } = this.props
+        if ( ev ) {
+            ev.stopPropagation()
+        }
         if ( ! confirm("Delete this tag?") ) {
             return false
         }
@@ -52,39 +55,40 @@ class EditableIssueTag extends Component {
     }
 
     render() {
-        const { issue, can_edit, tag_id } = this.props
+        const { issue, can_edit, tag_id, project_id } = this.props
 
         return (
             <div>
-              { tag_id &&
-                <EditableProperty property_key={'issue_tag_'+tag_id}
-                                  initial_value={tag_id}
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
-                    >
-                  <TagForm tag_id={tag_id} />
-                  <Tag tag_id={tag_id} can_edit={can_edit} />
-                  <div className="text-component--empty"></div>
-                </EditableProperty>
-              }
-              { tag_id && can_edit && 
-                <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button>
-              }
-              { ! tag_id &&
-                <EditableProperty property_key={'issue_tag_new'}
-                                  initial_value=''
-                                  onChange={this.onChange}
-                                  can_edit={can_edit}
-                    >
-                  <TagForm tag_id={tag_id} />
-                  <div className="text-component--readonly"></div>
-                  <div className="text-component--empty">
-                    { can_edit && 
-                      <button className="button button--primary issue_sidebar--button">Create tag</button>
-                    }
-                  </div>
-                </EditableProperty>
-              }
+            { tag_id &&
+              <EditableProperty property_key={'issue_tag_'+tag_id}
+                                initial_value={tag_id}
+                                edit_as_modal={true}
+                                action_label="Issue tags"
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <TagForm tag_id={tag_id} can_edit={can_edit} project_id={project_id}/>
+                <Tag tag_id={tag_id} can_edit={can_edit} onDelete={(ev) => this.onDelete(ev)} />
+                <div className="text-component--empty"></div>
+              </EditableProperty>
+            }
+            { ! tag_id &&
+              <EditableProperty property_key={'issue_tag_new'}
+                                edit_as_modal={true}
+                                initial_value=''
+                                action_label="Issue tags" 
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <TagForm tag_id={tag_id} />
+                <div className="text-component--readonly"></div>
+                <div className="text-component--empty">
+                  { can_edit && 
+                    <div className="icon--add" data-tooltip="Create tag"></div>
+                  }
+                </div>
+              </EditableProperty>
+            }
             </div>
             
         )
@@ -93,11 +97,12 @@ class EditableIssueTag extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { issue_ids, tag_id } = props
+    const { issue_ids, tag_id, project_id } = props
     const tag = (tag_id && getTag(tag_id)) || {}
 
     return {
         tag,
+        project_id,
         issue_ids,
         tag_id,
         can_edit: true

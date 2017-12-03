@@ -77,7 +77,7 @@ class EditableProperty extends Component {n
 
     render() {
 
-        const {children, initial_value, is_readonly, is_editing, is_empty, edit_as_modal, class_name} = this.props
+        const {children, initial_value, is_readonly, is_editing, is_empty, edit_as_modal, class_name, action_label} = this.props
 
         const that = this
         let editing_child = null
@@ -117,7 +117,7 @@ class EditableProperty extends Component {n
                          className="editable-property-modal"
                          overlayClassName="editable-property-modal__overlay"
                          onRequestClose={this.cancelEditing}
-                         contentLabel={this.props.actionLabel}>
+                         contentLabel={action_label || ""}>
                     <div className="editable-property-modal__row editable-property-modal__row--header">
                       <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
                       <div className="editable-property-modal__close"><i className="material-icons" onClick={this.cancelEditing}>close</i></div>
@@ -138,7 +138,7 @@ class EditableProperty extends Component {n
 
 function mapStateToProps(state, props) {
 
-    const {property_key, initial_value, edit_as_modal, can_edit, class_name} = props
+    const {property_key, initial_value, edit_as_modal, can_edit, class_name, action_label} = props
 
     return {
         property_key: property_key,
@@ -149,6 +149,7 @@ function mapStateToProps(state, props) {
         is_readonly: isReadonly(state, property_key),
         is_empty: !initial_value,
         class_name: class_name || "",
+        action_label,
         mode: getMode(state, property_key)
     }
 }

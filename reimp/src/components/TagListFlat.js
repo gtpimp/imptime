@@ -27,7 +27,7 @@ class TagListFlat extends Component {
     }
 
     render() {
-        const {tags, onDelete, can_edit, issue_ids} = this.props
+        const {tags, onDelete, can_edit, issue_ids, project_id} = this.props
         
         return (
             <div className="tag_list">
@@ -50,11 +50,11 @@ class TagListFlat extends Component {
                     <div>
                       { map(tags, function(tag) {
                             return (
-                                <EditableIssueTag key={tag.id} issue_ids={issue_ids} tag_id={tag.id} />
+                                <EditableIssueTag key={tag.id} issue_ids={issue_ids} tag_id={tag.id} project_id={project_id} />
                             )
                         })
                       }
-                      <EditableIssueTag issue_ids={issue_ids} tag_id={null}/>
+                      <EditableIssueTag issue_ids={issue_ids} tag_id={null} project_id={project_id}/>
                     </div>
               )}
               
@@ -68,6 +68,7 @@ function mapStateToProps(state, props) {
     const { tag_ids, onDelete, issue_ids } = props
     const issues = getIssues(state, issue_ids)
     const issue = (issues && issues.length > 0 && issues[0]) || {}
+    const project_id = issue.project_id
     const tag_ids_for_issues = map(issues, 'tag_ids')
     
     //const tag_ids = intersection(tag_ids_for_issues)
@@ -78,6 +79,7 @@ function mapStateToProps(state, props) {
     return {
         issue_ids,
         issues,
+        project_id,
         active_tag_ids,
         tags,
         onDelete,

@@ -21,7 +21,7 @@ class Tag extends Component {
     }
 
     render() {
-        const {tag} = this.props
+        const {tag,  onDelete} = this.props
 
         if ( ! tag.id ) {
             return null
@@ -29,9 +29,12 @@ class Tag extends Component {
         
         return (
             <div className="tag">
-              <div className="tag__component tag__component--category">{tag.category_name}</div>
-              <div className="tag__component tag__component--separator">:</div>
-              <div className="tag__component tag__component--name">{tag.name}</div>
+              <div className="tag__component tag__component__category">{tag.category_name}</div>
+              <div className="tag__component tag__component__separator"></div>
+              <div className="tag__component tag__component__name">{tag.name}</div>
+              {  onDelete &&
+                 <div className="tag__component tag__component__delete icon--small-cross" onClick={onDelete}></div>
+              }
             </div>
         )
     }
@@ -39,12 +42,13 @@ class Tag extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { tag_id } = props
+    const { tag_id, onDelete } = props
     const tag = getTag(state, tag_id) || {}
     
     return {
         tag_id,
-        tag
+        tag,
+        onDelete
     }
     
 }
