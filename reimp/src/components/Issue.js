@@ -28,7 +28,7 @@ import IssueEstimatesSummary from '../components/IssueEstimatesSummary'
 import TimerSwitch from '../components/TimerSwitch'
 import ElapsedTime from '../components/ElapsedTime'
 import DeleteIssue from '../components/DeleteIssue'
-import Tag from '../components/Tag'
+import TagListFlat from '../components/TagListFlat'
 import {format_hours} from '../actions/lib'
 import IssueStatusLabel from '../components/form/IssueStatusLabel'
 import Timestamp from './Timestamp'
@@ -243,119 +243,113 @@ class Issue extends Component {
                                                       {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
                                 onClick={this.onCollapseFeaturesClick}></div>
                          }
-                           { !show_children &&
-                             <div className="icon--expand" onClick={this.onExpandFeaturesClick}></div>
-                           }
+                         { !show_children &&
+                           <div className="icon--expand" onClick={this.onExpandFeaturesClick}></div>
+                         }
                        </div>
                      }
-                       { !issue.can_group_issues && issue.parent_group_id &&
-                         <div className={classNames({"icon--child":true,
-                                                     "icon--child--highlight":belongsToSelectedFeature})}></div>
-                       }
+                     { !issue.can_group_issues && issue.parent_group_id &&
+                       <div className={classNames({"icon--child":true,
+                                                   "icon--child--highlight":belongsToSelectedFeature})}></div>
+                     }
                    </div>
                   }
-                   {includes(visible_header_keys, "name") &&
-                    <div className="div-table__cell"
-                         style={getCellStyle(header_list.name)}>
-                      <div className="issue-cell__issue-name">
-                        {subject_prefix}{issue.subject}{subject_suffix}
-                        { issue.group_children && issue.group_children.length > 0 &&
-                          <span>
-                            ({issue.group_children.length}
-                            {issue.group_children.length === 1 && <span>child</span>}
-                            {issue.group_children.length > 1 && <span>children</span>}
-                            )
-                          </span>
-                        }
-                      </div>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "assignee") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.assignee)}>
-                      <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "created_at") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.created_at)}>
-                      <div className="issue-cell__created-at">
-                        <Timestamp value={issue.created_at} format="from_now"/>
-                      </div>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "status") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.status)}>
-                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "progress") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.progress)}>
-                      <div className="issue-cell__progress">
-                        <Progress issue={issue}/>
-                      </div>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "estimated") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.estimated)}>
-                      <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
-                    </div>
-                   }
-                   {includes(visible_header_keys, "tags") &&
-                    <div className="div-table__cell"
-                         style={getCellStyle(header_list.tags)}>
-                      <div className="issue__cell--issue-tags">
-                        { map(issue.tags, function (tag, index) {
-                              return (<Tag key={index}
-                                           category={tag.category_name}
-                                           name={tag.name}
-                                           deleteTag={() => onDeleteTag(tag)}
-                                      />)
-                          })}
-                      </div>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "my_time") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.my_time)}>
-                      <div className="issue__cell--elapsed-time">
-                        <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
-                      </div>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "clock_in") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.clock_in)}>
-                      <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
-                        <TimerSwitch
-                            active={issue.am_i_clocked_in}
-                            onStart={this.onClockIn}
-                            onStop={this.onClockOut}
-                        />
-                      </div>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "delete") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.delete)}>
-                      <div className="reveal-on-hover--block issue__cell--issue-delete">
-                        <DeleteIssue
-                            onDelete ={this.onDeleteIssue}
-                        />
-                      </div>
-                    </div>
-                   }
-                   {includes(visible_header_keys, "small_delete") &&
-                    <div className="div-table__cell issue__cell__secondary"
-                         style={getCellStyle(header_list.small_delete)}>
-                      <div className={"reveal-on-hover--block"}>
-                        <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
-                      </div>
-                    </div>
-                   }
+                  {includes(visible_header_keys, "name") &&
+                   <div className="div-table__cell"
+                        style={getCellStyle(header_list.name)}>
+                     <div className="issue-cell__issue-name">
+                       {subject_prefix}{issue.subject}{subject_suffix}
+                       { issue.group_children && issue.group_children.length > 0 &&
+                         <span>
+                           ({issue.group_children.length}
+                           {issue.group_children.length === 1 && <span>child</span>}
+                           {issue.group_children.length > 1 && <span>children</span>}
+                           )
+                         </span>
+                       }
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "assignee") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.assignee)}>
+                     <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "created_at") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.created_at)}>
+                     <div className="issue-cell__created-at">
+                       <Timestamp value={issue.created_at} format="from_now"/>
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "status") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.status)}>
+                     <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "progress") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.progress)}>
+                     <div className="issue-cell__progress">
+                       <Progress issue={issue}/>
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "tags") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.tags)}>
+                     <div className="issue-cell__tag">
+                       <TagListFlat issue_ids={[issue.id]}  can_edit={false} />
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "estimated") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.estimated)}>
+                     <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
+                   </div>
+                  }
+                  {includes(visible_header_keys, "my_time") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.my_time)}>
+                     <div className="issue__cell--elapsed-time">
+                       <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "clock_in") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.clock_in)}>
+                     <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                       <TimerSwitch
+                           active={issue.am_i_clocked_in}
+                           onStart={this.onClockIn}
+                           onStop={this.onClockOut}
+                       />
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "delete") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.delete)}>
+                     <div className="reveal-on-hover--block issue__cell--issue-delete">
+                       <DeleteIssue
+                           onDelete ={this.onDeleteIssue}
+                       />
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "small_delete") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.small_delete)}>
+                     <div className={"reveal-on-hover--block"}>
+                       <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
+                     </div>
+                   </div>
+                  }
                 </div>
             )
         }

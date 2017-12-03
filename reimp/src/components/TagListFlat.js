@@ -22,12 +22,12 @@ class TagListFlat extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { tag_ids, dispatch } = props
-        dispatch(ensureTagsLoaded(tag_ids))
+        const { active_tag_ids, dispatch } = props
+        dispatch(ensureTagsLoaded(active_tag_ids))
     }
 
     render() {
-        const {tags, onDelete, can_edit, issue_ids, project_id} = this.props
+        const {tags, can_edit, issue_ids, project_id} = this.props
         
         return (
             <div className="tag_list">
@@ -65,7 +65,7 @@ class TagListFlat extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { tag_ids, onDelete, issue_ids } = props
+    const { issue_ids, can_edit } = props
     const issues = getIssues(state, issue_ids)
     const issue = (issues && issues.length > 0 && issues[0]) || {}
     const project_id = issue.project_id
@@ -75,16 +75,15 @@ function mapStateToProps(state, props) {
     const active_tag_ids = tag_ids_for_issues[0]
     const tags = getTags(state, active_tag_ids) || []
     
-    const can_edit = issue.id && has_permission(state, issue.project_id, 'has_edit_tags')
     return {
         issue_ids,
         issues,
         project_id,
         active_tag_ids,
         tags,
-        onDelete,
-        can_edit,
+        can_edit: can_edit!==false && issue.id && has_permission(state, issue.project_id, 'has_edit_tags')
     }
 }
 
 export default connect(mapStateToProps)(TagListFlat)
+ 
