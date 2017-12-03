@@ -22,7 +22,7 @@ class TagViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
-
+            
             tags = self.allowed_tags()
             tags.order_by("category__name", "name")
             tags = self.apply_filter(qs=tags,
@@ -140,3 +140,10 @@ class TagViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
+
+    def apply_filter(self, qs, raw_filter_args):
+        project_id = raw_filter_args.pop('project_id', None)
+        if project_id:
+            qs = qs.filter(category__business_id=project_id) #sic
+        return super(TagViewSet, self).apply_filter(qs, raw_filter_args)
+    

@@ -25,14 +25,15 @@
 }
 
 .tag__component {
-  display: inline-block;
-  white-space: nowrap;
+    display: inline-block;
+    white-space: nowrap;
+    font-size:  $font-size-default;
 }
 
-.tag__component--category {
-
+.tag__component__category {
+    font-weight: bold;
 }
 
-.tag__component--name {
-
+.tag__component__name {
 }
+

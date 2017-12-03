@@ -10,7 +10,7 @@ import { getIssues,
          deleteTagFromIssues
 } from '../actions/Issues'
 
-class TagList extends Component {
+class TagListFlat extends Component {
 
     componentDidMount() {
         this.refresh()
@@ -85,4 +85,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(TagList)
+export default connect(mapStateToProps)(TagListFlat)

@@ -12,6 +12,7 @@ export const LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST = 'visual_spec_document_i
 export const LIST_KEY__RELEASE_NOTES_LIST = 'release_notes_list'
 export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
 export const LIST_KEY__NUDGE_LIST = 'nudge_list'
+export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'

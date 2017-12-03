@@ -2,13 +2,15 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
 import { ensureTagsLoaded, getTag } from '../../actions/Tags'
+import { LIST_KEY__FORM_TAG_LIST } from '../../actions/ItemListKeyRegistry'
+import TagListTree from '../TagListTree'
 
 class TagForm extends Component {
 
     constructor(props) {
         super(props)
-        this.renderNameSelector = this.renderNameSelector.bind(this)
-        this.renderCategorySelector = this.renderCategorySelector.bind(this)
+        this.renderNameInput = this.renderNameInput.bind(this)
+        this.renderCategoryInput = this.renderCategoryInput.bind(this)
     }
     
     componentDidMount() {
@@ -27,7 +29,7 @@ class TagForm extends Component {
         }
     }
 
-    renderCategorySelector(field) {
+    renderCategoryInput(field) {
         const { onKeyDown } = this.props
         const {input, data, onChange, ...rest} = field
         return (
@@ -44,7 +46,7 @@ class TagForm extends Component {
         )
     }
     
-    renderNameSelector(field) {
+    renderNameInput(field) {
         const { onKeyDown } = this.props
         const {input, data, onChange, ...rest} = field
         return (
@@ -62,13 +64,20 @@ class TagForm extends Component {
     }
     
     render() {
-        const { handleSubmit, onKeyDown } = this.props
+        const { handleSubmit, onKeyDown, is_edit, project_id } = this.props
 
         return (
             <form onSubmit={handleSubmit}>
               <div>
-                <Field component={this.renderCategorySelector} name="category_name"/>
-                <Field component={this.renderNameSelector} name="name"/>
+                <TagListTree project_id={project_id} list_key={LIST_KEY__FORM_TAG_LIST} />
+                <div>Category</div>
+                <Field component={this.renderCategoryInput} name="category_name"/>
+                <br/>
+                <br/>
+                <div>Name</div>
+                <Field component={this.renderNameInput} name="name"/>
+                <br/>
+                <br/>
                 <button className="button" type="submit">Submit</button>
               </div>
             </form>
@@ -78,7 +87,7 @@ class TagForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { tag_id, onSubmitted, onKeyDown, initialValues } = props
+    const { tag_id, onSubmitted, onKeyDown, initialValues, project_id } = props
     const tag = (tag_id && getTag(state, tag_id)) || {}
 
     const initial_values = { category_name: tag.category_name,
@@ -88,7 +97,9 @@ function mapStateToProps(state, props) {
         initialValues: initial_values,
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        onKeyDown
+        onKeyDown,
+        project_id,
+        is_edit: tag_id || false
         
     }
 }
