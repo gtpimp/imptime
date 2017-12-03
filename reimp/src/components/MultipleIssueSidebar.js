@@ -14,6 +14,7 @@ import EditableIssueType from '../components/EditableIssueType'
 import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
+import TagListFlat from './TagListFlat'
 import {ensureIssuesLoaded, getIssues} from '../actions/Issues'
 
 class MultipleIssueSidebar extends Component {
@@ -67,6 +68,14 @@ class MultipleIssueSidebar extends Component {
                     <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id} />
                   </div>
                 </PropertyStackComponent>
+
+                <PropertyStackComponent>
+                  <div>
+                    Common tags:
+                    <TagListFlat issue_ids={issue_ids}/>
+                  </div>
+                </PropertyStackComponent>
+
               </div>
 
             </Sidebar>

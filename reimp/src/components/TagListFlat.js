@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
+import { map, intersection } from 'lodash'
 import Tag from './Tag'
 import EditableIssueTag from './EditableIssueTag'
 import { getTags, ensureTagsLoaded } from '../actions/Tags'
@@ -38,24 +38,24 @@ class TagListFlat extends Component {
               }
 
               { !can_edit && (
-                    <div>
-                      { map(tags, function(tag) {
-                            return (
-                                <Tag key={tag.id} tag_id={tag.id} />
-                            )
-                        })}
-                    </div>
+              <div>
+                { map(tags, function(tag) {
+                return (
+                <Tag key={tag.id} tag_id={tag.id}/>
+                  )
+                  })}
+              </div>
               )}
               { can_edit && (
-                    <div>
-                      { map(tags, function(tag) {
-                            return (
-                                <EditableIssueTag key={tag.id} issue_ids={issue_ids} tag_id={tag.id} project_id={project_id} />
-                            )
-                        })
-                      }
-                      <EditableIssueTag issue_ids={issue_ids} tag_id={null} project_id={project_id}/>
-                    </div>
+              <div>
+                { map(tags, function(tag) {
+                return (
+                <EditableIssueTag key={tag.id} issue_ids={issue_ids} tag_id={tag.id} project_id={project_id} />
+                )
+                })
+                }
+                <EditableIssueTag issue_ids={issue_ids} tag_id={null} project_id={project_id}/>
+              </div>
               )}
               
             </div>
@@ -71,8 +71,8 @@ function mapStateToProps(state, props) {
     const project_id = issue.project_id
     const tag_ids_for_issues = map(issues, 'tag_ids')
     
-    //const tag_ids = intersection(tag_ids_for_issues)
-    const active_tag_ids = tag_ids_for_issues[0]
+    const active_tag_ids = intersection(...tag_ids_for_issues)
+    //const active_tag_ids = tag_ids_for_issues[0]
     const tags = getTags(state, active_tag_ids) || []
     
     return {

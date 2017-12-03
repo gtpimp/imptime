@@ -81,7 +81,9 @@ class TagListTree extends Component {
                                    <div key={tag.id}
                                         className="taglisttree__tag-name"
                                         onClick={(ev) =>  that.onTagClicked(ev, tag)}>
-                                     <Tag tag_id={tag.id} />
+                                     <div className="taglisttree__tag">
+                                       <Tag tag_id={tag.id} />
+                                     </div>
                                    </div>
                                )
                            })
