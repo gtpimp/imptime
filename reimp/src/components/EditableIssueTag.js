@@ -39,8 +39,11 @@ class EditableIssueTag extends Component {
     }
     
     onChange(new_value) {
-        const { dispatch, tag_id, issue_ids } = this.props
-        dispatch(addOrEditIssueTag(new_value.name, new_value.category_name, issue_ids, tag_id))
+        const { dispatch, issue_ids } = this.props
+        const tag_id = new_value.tag_id || this.props.tag_id
+        const name = new_value.name || null
+        const category_name = new_value.category_name || null
+        dispatch(addOrEditIssueTag(name, category_name, issue_ids, tag_id))
     }
 
     onDelete(ev) {

@@ -11,6 +11,7 @@ class TagForm extends Component {
         super(props)
         this.renderNameInput = this.renderNameInput.bind(this)
         this.renderCategoryInput = this.renderCategoryInput.bind(this)
+        this.onSelectExistingTag = this.onSelectExistingTag.bind(this)
     }
     
     componentDidMount() {
@@ -28,6 +29,11 @@ class TagForm extends Component {
         if ( tag_id ) {
             dispatch(ensureTagsLoaded([tag_id]))
         }
+    }
+
+    onSelectExistingTag(tag_id) {
+        const { onSubmit } = this.props
+        onSubmit({tag_id:tag_id})
     }
 
     renderCategoryInput(field) {
@@ -75,7 +81,10 @@ class TagForm extends Component {
                  </div>
               }
               <div>
-                <TagListTree project_id={project_id} list_key={LIST_KEY__FORM_TAG_LIST} />
+                <TagListTree project_id={project_id}
+                             list_key={LIST_KEY__FORM_TAG_LIST}
+                             onSelectTag={this.onSelectExistingTag}
+                />
                 <div>Category</div>
                 <Field component={this.renderCategoryInput} name="category_name"/>
                 <br/>

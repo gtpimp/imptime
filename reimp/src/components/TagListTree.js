@@ -22,6 +22,11 @@ import { ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry.js'
 
 class TagListTree extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onTagClicked = this.onTagClicked.bind(this)
+    }
+    
     componentDidMount() {
         const { dispatch, list_key, project_id } = this.props
         if ( project_id ) {
@@ -44,8 +49,17 @@ class TagListTree extends Component {
         dispatch(fetchTagsIfNeeded(list_key))
     }
 
+    onTagClicked(ev, tag) {
+        const { onSelectTag } = this.props
+        if ( onSelectTag ) {
+            ev.stopPropagation()
+            onSelectTag(tag.id)
+        }
+    }
+
     render() {
         const {project_tags_by_category, issue_ids} = this.props
+        const that = this
         
         return (
             <div className="tag_list">
@@ -63,11 +77,14 @@ class TagListTree extends Component {
 
                           {map(tags_for_category, function(tag) {
                                return (
-                                   <div className="taglisttree__tag-name">{tag.name}</div>
+                                   <div key={tag.id}
+                                        className="taglisttree__tag-name"
+                                        onClick={(ev) =>  that.onTagClicked(ev, tag)}>
+                                     {tag.name}
+                                   </div>
                                )
                            })
                           }
-
                           
                         </TreeView>
                         
@@ -82,7 +99,7 @@ class TagListTree extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project_id, list_key } = props
+    const { project_id, list_key, onSelectTag } = props
 
     const project_tag_ids = getVisibleItemIds(state, list_key) || []
     const project_tags = getItems(state, ENTITY_KEY__TAG, project_tag_ids) || []
@@ -90,7 +107,8 @@ function mapStateToProps(state, props) {
     
     return {
         project_tags_by_category,
-        list_key
+        list_key,
+        onSelectTag
     }
 }
 
