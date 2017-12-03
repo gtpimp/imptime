@@ -55,6 +55,15 @@
     margin-bottom: 5px;
 }
 
+.tagform__tag_creation_options {
+    display: flex;
+    flex-direction: row;
+}
+
+.tagform h2 {
+    font: $bold-extra-large;
+}
+
 .tagform--category {
     margin-right:  10px;
     width: 100px;
@@ -66,6 +75,14 @@
     padding: 5px;
 }
 
-.taglisttree__tag-name {
-    
+.taglisttree__category-name {
+    margin-top: 5px;
+    margin-bottom: 3px;
 }
+
+.tagform__select-existing-tag {
+}
+
+.tagform__new-tag {
+}
+

@@ -71,7 +71,7 @@ class TagForm extends Component {
     }
     
     render() {
-        const { handleSubmit, onKeyDown, is_edit, project_id } = this.props
+        const { handleSubmit, onKeyDown, is_edit, project_id, tag_id } = this.props
 
         return (
             <form onSubmit={handleSubmit} className="tagform">
@@ -80,20 +80,29 @@ class TagForm extends Component {
                    Warning: Editing this tag will affect other issues with this same tag.
                  </div>
               }
-              <div>
-                <TagListTree project_id={project_id}
-                             list_key={LIST_KEY__FORM_TAG_LIST}
-                             onSelectTag={this.onSelectExistingTag}
-                />
-                <div>Category</div>
-                <Field component={this.renderCategoryInput} name="category_name"/>
-                <br/>
-                <br/>
-                <div>Name</div>
-                <Field component={this.renderNameInput} name="name"/>
-                <br/>
-                <br/>
-                <button className="button" type="submit">Submit</button>
+              <div className="tagform__tag_creation_options">
+                <div className="tagform__select-existing-tag">
+                  <h2>Select an existing tag</h2>
+                  { ! tag_id &&
+                    <TagListTree project_id={project_id}
+                                 list_key={LIST_KEY__FORM_TAG_LIST}
+                                 itemClassName="tagform__tree_list_item"
+                                 onSelectTag={this.onSelectExistingTag}
+                    />
+                  }
+                </div>
+                <div className="tagform__new-tag">
+                  <h2>Create a new tag</h2>
+                  <div>Category</div>
+                  <Field component={this.renderCategoryInput} name="category_name"/>
+                  <br/>
+                  <br/>
+                  <div>Name</div>
+                  <Field component={this.renderNameInput} name="name"/>
+                  <br/>
+                  <br/>
+                  <button className="button" type="submit">Submit</button>
+                </div>
               </div>
             </form>
         )

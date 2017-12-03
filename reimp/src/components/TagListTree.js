@@ -73,6 +73,7 @@ class TagListTree extends Component {
                     return (
                         <TreeView key={category_name}
                                   nodeLabel={category_name}
+                                  itemClassName="taglisttree__category-name"
                                   defaultCollapsed={false}>
 
                           {map(tags_for_category, function(tag) {
@@ -80,7 +81,7 @@ class TagListTree extends Component {
                                    <div key={tag.id}
                                         className="taglisttree__tag-name"
                                         onClick={(ev) =>  that.onTagClicked(ev, tag)}>
-                                     {tag.name}
+                                     <Tag tag_id={tag.id} />
                                    </div>
                                )
                            })
