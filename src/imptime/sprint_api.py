@@ -161,14 +161,21 @@ class SprintViewSet(BaseViewSet):
             if not self.logged_in_permissions(project).has_create_sprint:
                 raise Exception("No permission to create a sprint")
 
+            if template_sprint.project_type == 'template':
+                new_project_type = 'checklist'
+            elif template_sprint.project_type == 'regression':
+                new_project_type = 'audit'
+            else:
+                new_project_type = 'checklist'
 
+                
             new_status = SprintStatus.objects.get_or_create(business_id=project.id, name='pending')[0]
             new_name = template_sprint.name + " " + timezone.now().strftime('%d %B %Y')
             sprint_clone = Sprint.objects.create(
                 business=template_sprint.business, #sic
                 name=new_name,
                 status3=new_status,
-                project_type='checklist', #sic
+                project_type=new_project_type,
                 code=Sprint.get_code_from_name(new_name))
             ProjectSprintOrder.insert_at_the_end(sprint_clone)
 
@@ -181,7 +188,6 @@ class SprintViewSet(BaseViewSet):
             mapped_issues = {}
             for template_issue in template_sprint.issues.all().order_by_project_id(template_sprint.id):
                 new_issue = Issue.objects.create(
-                    status = template_issue.status,
                     status2 = template_issue.status2,
                     number = template_issue.number,
                     project = sprint_clone, #sic

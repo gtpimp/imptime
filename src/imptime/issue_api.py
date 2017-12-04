@@ -41,6 +41,8 @@ class IssueViewSet(BaseViewSet):
 
             if 'sprint_id' in filter_args:
                 issues = issues.order_by_project_id(project_id=filter_args['sprint_id']) #sic
+            if 'copy_sprint_id' in filter_args:
+                issues = issues.order_by_project_id(project_id=filter_args['copy_sprint_id']) #sic
             
             issues = self.apply_pagination(qs=issues, pagination=pagination)
 
@@ -209,6 +211,16 @@ class IssueViewSet(BaseViewSet):
                         SprintIssueOrder.insert_at_the_end(issue)
                         IssueHistory.add_history(request.user, issue, "moved to sprint", unicode(old_sprint), unicode(new_sprint))
                         old_sprint.save()
+                elif field_name == 'copy_sprint_id':
+                    if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        old_sprint = issue.project
+                        new_sprint = self.allowed_sprint(new_value)
+                        new_issue = issue.copy(logged_in_user=request.user, add_suffix=False)
+                        new_issue.project = new_sprint
+                        new_issue.save()
+                        SprintIssueOrder.insert_at_the_end(new_issue)
+                        old_sprint.save()
+                        new_sprint.save()
                 elif field_name == "my_estimate":
                     if self.logged_in_permissions(issue.project.business).has_estimate_own_points:
                         estimate = IssuePoints.objects.get_or_create(user=request.user, issue=issue)[0]

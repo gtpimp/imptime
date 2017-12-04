@@ -50,6 +50,21 @@ class SprintSidebar extends Component {
         window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
     }
 
+    renderCloneInfo() {
+        const { sprint } = this.props
+        
+        return (
+            <PropertyStackComponent>
+              { sprint.sprint_template_id &&
+                <div className="property-text">
+                  Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
+                </div>
+              }
+                
+            </PropertyStackComponent>
+        )
+    }
+    
     render() {
 
         const { sprint_id, sprint, project, has_view_review_cycle_permission } = this.props
@@ -58,15 +73,8 @@ class SprintSidebar extends Component {
             <div className="sidebar sprint-sidebar">
               <PropertyStack>
 
-                <PropertyStackComponent>
-                  { sprint.sprint_template_id &&
-                    <div className="property-text">
-                      Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
-                    </div>
-                  }
-                  
-                </PropertyStackComponent>
-
+                { this.renderCloneInfo() }
+                
                 <PropertyStackComponent>
                   <div className="property--title">
                     <EditableSprintName sprint_id={sprint_id} />
@@ -136,7 +144,7 @@ class SprintSidebar extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
+export function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}

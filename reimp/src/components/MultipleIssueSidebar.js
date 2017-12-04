@@ -8,6 +8,7 @@ import {browserHistory} from 'react-router'
 // import PropertyStackComponent from './PropertyStackComponent'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
+import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import EditableIssueStatus from '../components/EditableIssueStatus'
 import EditableIssueType from '../components/EditableIssueType'
 // import IssueDescription from './IssueDescription'
@@ -55,10 +56,14 @@ class MultipleIssueSidebar extends Component {
                 </PropertyStackComponent>
 
                 
-                <PropertyStackComponent>
-                  <div>
-                    Sprint:
-                    <EditableIssueInSprint issue_ids={issue_ids} />
+                <PropertyStackComponent title="Sprint">
+                  <div className="property-row">
+                    <div>
+                      <EditableIssueInSprint issue_ids={issue_ids} />
+                    </div>
+                    <div className="property-col">
+                      <EditableCopyIssueToSprint issue_ids={issue_ids} />
+                    </div>
                   </div>
                 </PropertyStackComponent>
 

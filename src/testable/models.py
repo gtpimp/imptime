@@ -23,6 +23,13 @@ class Testable(models.Model):
         super(Testable, self).save(*args, **kwargs)
         self.quality_error = self.check_quality()
 
+    def copy(self):
+        return Testable.objects.create(include_in_regression_test=self.include_in_regression_test,
+                                       issue=self.issue,
+                                       steps=self.steps,
+                                       order=self.order,
+                                       quality_error=self.quality_error)
+        
     def check_quality(self):
         quality_error = Quality().check_sequence_of_short_steps(self.steps)
         if quality_error != self.quality_error:

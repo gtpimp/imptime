@@ -20,7 +20,7 @@ class SelectSprintForm extends Component {
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
     }
 
-    onChangeAndSubmit() {
+    onChangeAndSubmit(sprint) {
         const {handleSubmit} = this.props
         setTimeout(() => handleSubmit(), 0)
     }

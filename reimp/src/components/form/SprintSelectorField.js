@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { concat, partition, sortBy } from 'lodash'
+import { concat, partition, sortBy, keyBy } from 'lodash'
 import { Field } from 'redux-form'
 import { getSprints, fetchSprintsIfNeeded } from '../../actions/Sprints'
 import {
@@ -25,10 +25,11 @@ class SprintSelectorField extends Component {
         this.refresh()
     }
 
-    onFieldChange(e, fieldOnChange) {
-        const {onChange} = this.props
-        fieldOnChange(e)
-        onChange()
+    onFieldChange(sprint_id, fieldOnChange) {
+        const {onChange, sprints} = this.props
+        const sprint = keyBy(sprints, "id")[sprint_id]
+        fieldOnChange(sprint_id)
+        onChange(sprint)
     }
     
     componentWillReceiveProps(new_props) {
@@ -50,7 +51,7 @@ class SprintSelectorField extends Component {
         const {input, data, ...rest} = field
         return (
             <SingleValueSelector
-                onChange={(e) => this.onFieldChange(e, input.onChange)}
+                onChange={(sprint_id) => this.onFieldChange(sprint_id, input.onChange)}
                 value={input.value}
                 options={data}
                 auto_focus={auto_focus}
@@ -84,6 +85,8 @@ function mapStateToProps(state, props) {
         let label = sprint.name
         if ( ! sprint.is_open ) {
             label += " (closed) "
+        } else {
+            label += " [" + sprint.sprint_type +"]"
         }
 	return { value: sprint.id, label: label, is_open: sprint.is_open }
     })

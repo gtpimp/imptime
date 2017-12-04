@@ -99,17 +99,21 @@ class SprintsPage extends Component {
                list_key, sprint_header_list, selected_sprint } = this.props
         
         return (
-            <SprintList list_key={list_key}
-                        project_id={project_id}
-                        header_list={sprint_header_list}
-                        onSelectSprints={this.onSelectSprints}
-            />
+            <div className="list-layout__list">
+              <SprintList list_key={list_key}
+                          project_id={project_id}
+                          header_list={sprint_header_list}
+                          onSelectSprints={this.onSelectSprints}
+              />
+            </div>
         )
     }
 
     renderRightPane() {
         const { selected_sprint, project_id, is_multiple_selection,
                 selected_sprint_ids, is_creating_sprint, is_single_selection } = this.props
+
+        const is_cloneable = selected_sprint.sprint_type === 'template' || selected_sprint.sprint_type === 'regression'
         
         if ( is_creating_sprint ) {
             return (
@@ -122,10 +126,10 @@ class SprintsPage extends Component {
         if ( ! is_creating_sprint && is_single_selection && project_id && selected_sprint ) {
             return (
               <div className="list-layout__sidebar">
-                { selected_sprint.sprint_type === 'template' &&
+                { is_cloneable && 
                   <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
                 }
-                { selected_sprint.sprint_type !== 'template' &&
+                { !is_cloneable &&
                   <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
                 }
               </div>
@@ -164,7 +168,7 @@ class SprintsPage extends Component {
 
         if ( ! show_sidebar ) {
             return (
-                <div className="list-layout__list">
+                <div className="list-layout">
                   {this.renderLeftPane()}
                 </div>
             )

@@ -855,6 +855,8 @@ class Project(BaseModel):
                       ('checklist', 'Checklist'),
                       ('sprinkle', 'Sprinkle'),
                       ('backlog', 'Backlog'),
+                      ('regression', 'Regression'),
+                      ('audit', 'Audit'),
                       ('spec', 'Spec'),
                       ('inbox', 'Inbox') )
     
@@ -3816,6 +3818,32 @@ class Issue(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self, params)
 
+    def copy(self, logged_in_user, add_suffix=True):
+        issue_to_clone = self
+        new_issue = Issue.objects.create(
+            project_id=issue_to_clone.project_id,   # sic
+            description=issue_to_clone.description,
+            status2=issue_to_clone.status2,
+            number=Issue.get_next_issue_number(issue_to_clone.project.business),
+            subject=issue_to_clone.subject + (" (clone)" if add_suffix else ""),
+            created_by=logged_in_user)
+
+        for testable in self.testables.all().order_by("order"):
+            new_testable = testable.copy()
+            new_testable.issue = new_issue
+            new_testable.save()
+
+        for comment in self.comments.all().order_by("created"):
+            new_comment = comment.copy()
+            new_comment.issue = new_issue
+            new_comment.save()
+
+        for tag in self.tags.all():
+            new_issue.tags.add(tag)
+            new_issue.save()
+            
+        return new_issue
+            
     def delete(self, *args, **kwargs):
         RefreshNotifier().notify_model_delete(self)
         super(Issue, self).delete(*args, **kwargs)
@@ -4057,6 +4085,11 @@ class IssueComment(BaseModel):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
+    def copy(self):
+        return IssueComment.objects.create(issue=self.issue,
+                                           comment=self.comment,
+                                           author=self.author)
+    
 class ProjectIssueOrder(BaseModel):
     order = models.FloatField()
     issue = models.ForeignKey(Issue)

@@ -12,6 +12,7 @@ import EditableIssueTestable from './EditableIssueTestable'
 import TagListFlat from './TagListFlat'
 import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
+import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueType from './EditableIssueType'
 import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
@@ -181,8 +182,13 @@ class IssueSidebar extends Component {
                           <IssueEstimatesSummary issue_id={issue.id} />
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Sprint Name">
-                          <EditableIssueInSprint issue_ids={[issue.id]}/>
+                        <PropertyStackComponent title="Sprint">
+                          <div className="property-row">
+                            <EditableIssueInSprint issue_ids={[issue.id]}/>
+                            <div className="property-col">
+                              <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                            </div>
+                          </div>
                         </PropertyStackComponent>
 
                         { false &&

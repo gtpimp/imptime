@@ -64,11 +64,12 @@ class ProjectsPage extends Component {
                project_header_list, selected_project} = this.props
         
         return (
-            <ProjectList key="projects"
-                         list_key={LIST_KEY__PROJECT_LIST}
-                         header_list={project_header_list}
-                         onSelectProjects={this.onSelectProjects} />
-            
+            <div className="list-layout__list">
+              <ProjectList key="projects"
+                           list_key={LIST_KEY__PROJECT_LIST}
+                           header_list={project_header_list}
+                           onSelectProjects={this.onSelectProjects} />
+            </div>
         )
     }
 

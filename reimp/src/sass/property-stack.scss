@@ -103,4 +103,11 @@
 }
 
 .property-col {
+    margin-left: 40px;
+}
+
+.property-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
 }

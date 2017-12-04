@@ -212,12 +212,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             if not self.logged_in_permissions(issue_to_clone.project.business).has_edit_issues:
                 raise Exception("Can't add issues")
 
-            new_issue = Issue.objects.create(
-                project_id=issue_to_clone.project_id,   # sic
-                status2=issue_to_clone.status2,
-                number=Issue.get_next_issue_number(issue_to_clone.project.business),
-                subject=issue_to_clone.subject + " (clone)",
-                created_by=request.user)
+            new_issue = issue_to_clone.copy(logged_in_user=request.user)
 
             SprintIssueOrder.insert_after(new_issue, set_after_this_issue=issue_to_clone)
             IssueHistory.add_history(request.user, new_issue,
