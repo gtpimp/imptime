@@ -20,11 +20,11 @@ class EditableIssueInSprint extends Component {
     }
 
     render() {
-        const { sprint_id, project_id, can_edit } = this.props
+        const { sprint_id, project_id, can_edit, issue } = this.props
 
         return (
             <div>
-                <EditableProperty property_key={'issue_sprint_id'}
+                <EditableProperty property_key={'issue_sprint_id_'+issue.id}
                                   initial_value={sprint_id}
                                   edit_as_modal={true}
                                   onChange={this.onChange}
@@ -44,13 +44,14 @@ function mapStateToProps(state, props) {
     const { issue_ids } = props
 
     const issues = getIssues(state, issue_ids) || []
-    const issue = issues && issues.length > 0 && issues[0]
+    const issue = (issues && issues.length > 0 && issues[0]) || {}
     const project_id = issue.project_id
     const sprint_id = issue.sprint_id
     const can_edit = has_permission(state, issue.project_id, 'has_add_issue')
 
     return {
         issue_ids,
+        issue,
         issues: issues,
         project_id: project_id,
         sprint_id: sprint_id,
