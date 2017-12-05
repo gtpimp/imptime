@@ -5,6 +5,7 @@ import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
 import SprintSelectorField from './SprintSelectorField'
 import IssueTitleField from './IssueTitleField';
+import PropertyStackComponent from '../PropertyStackComponent'
 
 class NewIssueForm extends Component {
 
@@ -15,8 +16,12 @@ class NewIssueForm extends Component {
             <form onSubmit={handleSubmit}>
               <div>
                 <div className="issue_sidebar--textarea">
-                  <IssueTitleField onKeyDown={onKeyDown} />
-                  <SprintSelectorField project_id={project_id} auto_focus={false} />
+                  <PropertyStackComponent title="Title">
+                    <IssueTitleField onKeyDown={onKeyDown} />
+                  </PropertyStackComponent>
+                  <PropertyStackComponent title="Sprint">
+                    <SprintSelectorField project_id={project_id} auto_focus={false} />
+                  </PropertyStackComponent>
                 </div>
                 <button className="button issue_sidebar--textarea" type="submit">Submit</button>
               </div>
