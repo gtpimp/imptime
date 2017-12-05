@@ -19,7 +19,7 @@ class NewIssueForm extends Component {
                   <PropertyStackComponent title="Title">
                     <IssueTitleField onKeyDown={onKeyDown} />
                   </PropertyStackComponent>
-                  <PropertyStackComponent title="Sprint">
+                  <PropertyStackComponent title="Sprint (default is the current sprint)">
                     <SprintSelectorField project_id={project_id} auto_focus={false} />
                   </PropertyStackComponent>
                 </div>
