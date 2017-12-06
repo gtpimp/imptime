@@ -113,34 +113,34 @@ class SprintsPage extends Component {
         const { selected_sprint, project_id, is_multiple_selection,
                 selected_sprint_ids, is_creating_sprint, is_single_selection } = this.props
 
-        const is_cloneable = selected_sprint.sprint_type === 'template' || selected_sprint.sprint_type === 'regression'
+        const is_cloneable = selected_sprint && selected_sprint.id && (selected_sprint.sprint_type === 'template' || selected_sprint.sprint_type === 'regression')
         
         if ( is_creating_sprint ) {
             return (
-              <div className="list-layout__sidebar">
-                <NewSprintSidebar />
-              </div>
+                <div className="list-layout__sidebar">
+                  <NewSprintSidebar />
+                </div>
             )
         }
         
         if ( ! is_creating_sprint && is_single_selection && project_id && selected_sprint ) {
             return (
-              <div className="list-layout__sidebar">
-                { is_cloneable && 
-                  <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
-                }
-                { !is_cloneable &&
-                  <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
-                }
-              </div>
+                <div className="list-layout__sidebar">
+                  { is_cloneable && 
+                    <SprintTemplateSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                  }
+                  { !is_cloneable &&
+                    <SprintSidebar sprint_id={selected_sprint.id} project_id={project_id}/>
+                  }
+                </div>
             )
         }
         
         if ( ! is_creating_sprint && is_multiple_selection && project_id && selected_sprint_ids ) {
             return (
-              <div className="list-layout__sidebar">
-                <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>
-              </div>
+                <div className="list-layout__sidebar">
+                  <MultipleSprintSidebar sprint_ids={selected_sprint_ids} project_id={project_id}/>
+                </div>
             )
         }                              
     }
