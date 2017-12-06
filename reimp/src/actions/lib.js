@@ -83,6 +83,11 @@ export function impfetch(state, url, dispatch, args) {
     const res = fetch(absolute_url, args)
     res.then(function(response) {
 
+        if ( response.status == 503 ) {
+            window.location.reload()
+            return
+        }
+        
         if ( ( (""+response.status)[0] === "4" ) || ( (""+response.status)[0] === "5" ) ) {
             throttles[absolute_url].last_failure_at = moment()
             if ( (response.status === 301 || response.status === 401) && dispatch ) {
