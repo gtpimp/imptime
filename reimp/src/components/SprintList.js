@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
-import { each, map, union, includes, difference, keys } from 'lodash'
+import { keyBy, each, map, union, includes, difference, keys } from 'lodash'
 import {
     PAGE_KEY__SPRINTS_TOOLBAR,
     SPRINT_TYPE_ORDER,
@@ -119,17 +119,19 @@ class SprintList extends Component {
         dispatch(cancelCandidateSprint())
     }
 
-    reorderSprints(index_of_row_being_moved, original_index_of_destination) {
-        const {dispatch, list_key, visible_item_ids} = this.props
+    reorderSprints(sprint_type, index_of_row_being_moved, original_index_of_destination) {
+        const {dispatch, list_key, sprints_by_type} = this.props
 
+        const sprints = sprints_by_type[sprint_type]
+        const sprint_ids = keyBy(sprints, 'id')
         let index_of_destination = original_index_of_destination
 
         if ( index_of_row_being_moved > index_of_destination ) {
             index_of_destination -= 1;
         }
 
-        const moving_sprint_id = visible_item_ids[index_of_row_being_moved]
-        const move_after_sprint_id = (index_of_destination>=0 && visible_item_ids[index_of_destination]) || null
+        const moving_sprint_id = sprints[index_of_row_being_moved].id
+        const move_after_sprint_id = (index_of_destination>=0 && sprints[index_of_destination].id) || null
         
         dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id, list_key,
                                 original_index_of_destination))
@@ -223,7 +225,7 @@ class SprintList extends Component {
                     const sprint_rows = that.create_sprint_rows(sprints)
                     return (
                         <div key={sprint_type}>
-                          <DivTable onReorder={that.reorderSprints}
+                          <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
                                     renderHeader={() => that.renderHeader(sprint_type || "")}>
                             {sprint_rows}
                           </DivTable>
