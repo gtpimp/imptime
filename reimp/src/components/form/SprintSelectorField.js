@@ -29,7 +29,9 @@ class SprintSelectorField extends Component {
         const {onChange, sprints} = this.props
         const sprint = keyBy(sprints, "id")[sprint_id]
         fieldOnChange(sprint_id)
-        onChange(sprint)
+        if ( onChange ) {
+            onChange(sprint)
+        }
     }
     
     componentWillReceiveProps(new_props) {
@@ -47,7 +49,7 @@ class SprintSelectorField extends Component {
     }
 
     renderSingleValueSelector(field) {
-        const { onChange, auto_focus } = this.props
+        const { auto_focus } = this.props
         const {input, data, ...rest} = field
         return (
             <SingleValueSelector
