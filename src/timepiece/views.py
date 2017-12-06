@@ -5312,7 +5312,7 @@ def auto_issue_sort(request, project_id, template="timepiece/project/auto_issue_
         for state in ordered_states:
             issues_for_state = issues.filter(status2__name=state)
             for issue in issues_for_state:
-                timepiece.ProjectIssueOrder.insert_after(issue=issue, issue_to_set_after=running_issue)
+                timepiece.ProjectIssueOrder.insert_after(issue=issue, set_after_this_issue=running_issue)
                 running_issue = issue
 
         messages.info(request, "Auto ordered issues in %s" % project)
