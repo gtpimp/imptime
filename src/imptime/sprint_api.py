@@ -135,7 +135,8 @@ class SprintViewSet(BaseViewSet):
                     ProjectSprintOrder.insert_at_the_end(sprint)
                 else:
                     sprint_before = self.allowed_sprint(sprint_id_before)
-                    ProjectSprintOrder.insert_after(sprint, set_after_this_project=sprint_before) #sic
+                    if sprint_before.business_id == sprint.business_id:
+                        ProjectSprintOrder.insert_after(sprint, set_after_this_project=sprint_before) #sic
 
                 if default_sprint_args.get('sprint_type', None) == 'template':
                     sprint_template = SprintTemplate.objects.create(sprint=sprint)
