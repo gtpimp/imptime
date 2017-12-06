@@ -26,7 +26,7 @@
 }
  
 .div-table__row--selected {
-    background-color: $color-3;
+    background-color: $selected-row-color;
 }
 
 .div-table__row:hover.div-table__row--selected:hover {
