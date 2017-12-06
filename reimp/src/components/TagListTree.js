@@ -10,7 +10,8 @@ import {
     invalidateList,
     update_list_filter,
     getVisibleItemIds,
-    getVisibleItems
+    getVisibleItems,
+    getListFilter
 } from '../actions/ItemList'
 import { getItems } from '../actions/Item'
 import { getIssues,
@@ -43,8 +44,9 @@ class TagListTree extends Component {
         const props = these_props || this.props
         const { tag_ids, dispatch, list_key, project_id } = props
         dispatch(ensureTagsLoaded(tag_ids))
-        if ( this.props.project_id != props.project_id ) {
+        if ( props.filter.project_id != project_id ) {
             dispatch(update_list_filter(list_key, {'project_id':  project_id}))
+            dispatch(invalidateList(list_key))
         }
         dispatch(fetchTagsIfNeeded(list_key))
     }
@@ -63,7 +65,7 @@ class TagListTree extends Component {
         
         return (
             <div className="tag_list">
-              { project_tags_by_category.length == 0 &&
+              { !project_tags_by_category || !project_tags_by_category.length &&
                 <div className="tag-list__empty">
                   No tags
                 </div>
@@ -107,11 +109,14 @@ function mapStateToProps(state, props) {
     const project_tag_ids = getVisibleItemIds(state, list_key) || []
     const project_tags = getItems(state, ENTITY_KEY__TAG, project_tag_ids) || []
     const project_tags_by_category = groupBy(project_tags, 'category_name')
+    const filter = getListFilter(state, list_key)
     
     return {
         project_tags_by_category,
         list_key,
-        onSelectTag
+        onSelectTag,
+        project_id,
+        filter
     }
 }
 

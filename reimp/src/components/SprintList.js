@@ -238,21 +238,17 @@ class SprintList extends Component {
 
 function collect_sprints_by_type(sprints) {
     const sprints_by_type = {}
-    let running_sprint_type = null
     each(sprints, function (sprint, index) {
-
-        if ( running_sprint_type !== sprint.sprint_type ) {
-            running_sprint_type = sprint.sprint_type
-            sprints_by_type[running_sprint_type] = []
+        if ( sprints_by_type[sprint.sprint_type] === undefined ) {
+            sprints_by_type[sprint.sprint_type] = []
         }
-        sprints_by_type[running_sprint_type].push(sprint)
-        
+        sprints_by_type[sprint.sprint_type].push(sprint)
     })
     
     return sprints_by_type
 }
 
-            function mapStateToProps(state, props) {
+function mapStateToProps(state, props) {
     const {sprint, item_list} = state
     const {list_key, header_list} = props
     const items_by_id = (sprint && sprint.items_by_id) || {}

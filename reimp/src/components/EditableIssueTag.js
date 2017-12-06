@@ -83,7 +83,7 @@ class EditableIssueTag extends Component {
                                 onChange={this.onChange}
                                 can_edit={can_edit}
               >
-                <TagForm tag_id={tag_id} />
+                <TagForm tag_id={tag_id} project_id={project_id} />
                 <div className="text-component--readonly"></div>
                 <div className="text-component--empty">
                   { can_edit && 
