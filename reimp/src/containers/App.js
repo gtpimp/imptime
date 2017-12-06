@@ -28,6 +28,8 @@ class App extends Component {
             )
         }
 
+        return ("yoyoyo")
+        
         return (
             <div>
             { ! is_logged_in &&

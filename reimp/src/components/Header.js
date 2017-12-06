@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import Toolbar from './toolbar/Toolbar'
 import UserDashboard from '../components/UserDashboard'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
+import Maintenance from './Maintenance'
 
 class Header extends Component {
 
@@ -12,6 +13,7 @@ class Header extends Component {
         const { user_dashboard_expanded } = this.props
         return (
             <div className="header">
+              <Maintenance/>
               <Navbar/>
               { user_dashboard_expanded &&
                 <UserDashboard/>

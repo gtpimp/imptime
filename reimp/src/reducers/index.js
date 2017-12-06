@@ -9,6 +9,7 @@ import issue from './issue'
 import issue_general_details from './issue_general_details'
 import item_list from './item_list'
 import loading from './loading'
+import maintenance from './maintenance'
 import notification_bar from './notification_bar.js'
 import page from './page'
 import project from './project'
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
     issue_general_details,
     item_list,
     loading,
+    maintenance,
     notification_bar,
     page,
     project,

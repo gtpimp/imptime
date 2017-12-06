@@ -10,6 +10,7 @@ import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 import { ShortcutManager } from 'react-shortcuts'
+import Error from './Error'
 import keymap from '../actions/Keymap'
 const shortcut_manager = new ShortcutManager(keymap)
 var HTML5Backend = require('react-dnd-html5-backend');
@@ -55,11 +56,11 @@ class MainLayout extends Component {
     }
 
     render() {
-        const { has_error, error_message, is_logged_in, are_settings_loaded } = this.props
+        const { is_logged_in, are_settings_loaded } = this.props
 
         const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') != -1 ||
                                this.props.location.pathname.indexOf('password/reminded') != -1
-        
+
         if ( ! are_settings_loaded ) {
             return (
                 <div>Loading settings...</div>
@@ -81,10 +82,7 @@ class MainLayout extends Component {
               <div className="main">
                 {this.props.children}
               </div>
-              <ModalDialog isOpen={has_error} title="Imp Down">
-                <div>{error_message}</div>
-                <button className="button button--default button--large">Reload</button>
-              </ModalDialog>
+              <Error/>
             </div>
         )
     }
@@ -95,12 +93,8 @@ function mapStateToProps(state) {
     const user = logged_in_user()
     const logged_in_user_id = user['user_id'] || null
     const has_usable_password = user['has_usable_password'] || false
-    const notification_bar = state.notification_bar || {}
-    const error_message = notification_bar.error_message
     
     return {
-        has_error: error_message && error_message.length && error_message.length > 0,
-        error_message: error_message,
         is_logged_in: is_authenticated(),
         are_settings_loaded: configured,
         logged_in_user_id: logged_in_user_id,

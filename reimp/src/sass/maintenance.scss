@@ -1,0 +1,18 @@
+@import 'variables.scss';
+
+.maintenance--active {
+    height: 100px;
+    background-color: darkorange;
+    font: $bold-extra-large;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.maintenance__header {
+    font: $bold-extra-larger;
+}
+
+.maintenance__reload-button {
+    margin: auto;
+    margin-top: 5px;
+}

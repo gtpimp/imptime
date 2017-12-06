@@ -3,9 +3,11 @@ import cookie from 'react-cookie'
 import moment from 'moment'
 import map from 'lodash/map'
 import { logged_in_user, clearAuthentication } from '../actions/Auth'
+import { enableMaintenanceMode } from './Maintenance'
 
 export const DUPLICATE_LOADING_ERROR_MESSAGE = 'DUPLICATE_LOADING_ERROR_MESSAGE'
 export const DUPLICATE_SAVING_ERROR_MESSAGE = 'DUPLICATE_SAVING_ERROR_MESSAGE'
+export const MAINTENANCE_MODE = 'MAINTENANCE_MODE'
 
 const throttles = throttles || {}
 
@@ -25,6 +27,13 @@ export function populateDefaultRequestHeaders(headers) {
 }
 
 export function impfetch(state, url, dispatch, args) {
+
+    if ( state.maintenance.is_active ) {
+        setTimeout(function() {
+            Promise.reject(MAINTENANCE_MODE)
+        }, 1000)
+        return
+    }
 
     url = "" + url
 
@@ -83,9 +92,9 @@ export function impfetch(state, url, dispatch, args) {
     const res = fetch(absolute_url, args)
     res.then(function(response) {
 
-        if ( response.status == 503 ) {
-            window.location.reload()
-            return
+        if (response.status === 503) {
+            dispatch(enableMaintenanceMode())
+            return Promise.reject(MAINTENANCE_MODE)
         }
         
         if ( ( (""+response.status)[0] === "4" ) || ( (""+response.status)[0] === "5" ) ) {

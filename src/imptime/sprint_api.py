@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 class SprintViewSet(BaseViewSet):
 
     def list(self, request):
+
         try:
             context = {}
 
