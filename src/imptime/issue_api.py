@@ -28,6 +28,8 @@ logger = logging.getLogger(__name__)
 class IssueViewSet(BaseViewSet):
 
     def list(self, request):
+        raise Exception("Sdfsd")
+        
         try:
             context = {}
             params = request.GET.get('params', '{}')
@@ -257,6 +259,7 @@ class IssueViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
+        
         try:
             context = {}
             params = request.data['issue']

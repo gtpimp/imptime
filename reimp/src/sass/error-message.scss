@@ -1,0 +1,29 @@
+@import 'variables.scss';
+
+.error--container {
+    height: 140px;
+}
+
+.error--active {
+    height: 130px;
+    position: fixed;
+    width: 100%;
+    top: 0px;
+    background-color: darkorange;
+    font: $bold-large;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.error__header {
+    font: $bold-extra-larger;
+}
+
+.error__reload-button {
+    margin: auto;
+    margin-top: 5px;
+}
+
+.error__instructions {
+    margin-top: 5px;
+}

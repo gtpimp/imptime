@@ -21,13 +21,22 @@ class Error extends Component {
             return null
         }
         return (
-            <div className="error-message">
-              <ModalDialog isOpen={has_error} title="Imp Down">
-                <div>{error_message}</div>
-                <button className="error-message__reload-button button button--default button--large" onClick={this.onReload}>
-                  Reload
-                </button>
-              </ModalDialog>
+            <div className="error--container">
+              <div className="error--active">
+                <div className="error__header">
+                  Imp Down
+                </div>
+                <div className="error__instructions">
+                  {error_message}
+                </div>
+                <div className="error__instructions">
+                  The server admins will be informed and hopefully resolve the problem soon.
+                </div>
+                <div className="error__instructions">
+                  The site will remain responsive so that you can copy any unsaved information, please reload soon to clear this error.
+                </div>
+                <button className="maintenance__reload-button button button--large button--primary" onClick={this.onReload}>Reload</button>
+              </div>
             </div>
         )
     }

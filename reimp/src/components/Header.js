@@ -6,6 +6,7 @@ import Toolbar from './toolbar/Toolbar'
 import UserDashboard from '../components/UserDashboard'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
+import Error from './Error'
 
 class Header extends Component {
 
@@ -14,6 +15,7 @@ class Header extends Component {
         return (
             <div className="header">
               <Maintenance/>
+              <Error/>
               <Navbar/>
               { user_dashboard_expanded &&
                 <UserDashboard/>
