@@ -54,6 +54,7 @@ class SprintSelectorField extends Component {
         return (
             <SingleValueSelector
                 onChange={(sprint_id) => this.onFieldChange(sprint_id, input.onChange)}
+                placeholder={"Type to filter sprint"}
                 value={input.value}
                 options={data}
                 auto_focus={auto_focus}

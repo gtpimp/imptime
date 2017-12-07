@@ -100,11 +100,13 @@ export class SingleValueSelector extends Component {
 
     render() {
 
+        const { placeholder } = this.props
+        
         return (
             <div className="single-value-selector">
                 <div className="single-value-selector__input-wrapper">
                   <input onKeyDown={this.onKeyDownOnSelectionFilter}
-                         placeholder={this.props['placeholder'] || ""}
+                         placeholder={placeholder}
                          className="single-value-selector__input"
                          ref={(ref)=> this.selection_filter_el=ref}
                          onChange={this.onSelectionFilterChanged}/>
@@ -120,12 +122,13 @@ export class SingleValueSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { options, value, auto_focus } = props
+    const { options, value, auto_focus, placeholder } = props
 
     return {
         options: options,
         value,
-        auto_focus: auto_focus !== false
+        auto_focus: auto_focus !== false,
+        placeholder: placeholder || ""
     }
 }
 
