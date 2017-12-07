@@ -3,7 +3,6 @@ import { uniq, concat, each, indexOf, map, keys, union, difference, includes } f
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
-import EstimateEditor from '../components/EstimateEditor'
 import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js';
 import {
     initList,
@@ -45,8 +44,6 @@ class IssueList extends Component {
         this.toggleExpandFeatures = this.toggleExpandFeatures.bind(this)
         this.groupTogether = this.groupTogether.bind(this)
         this.ungroupTogether = this.ungroupTogether.bind(this)
-        this.openEstimateEditor = this.openEstimateEditor.bind(this)
-        this.closeEstimateEditor = this.closeEstimateEditor.bind(this)
         this.handleShortcuts = this.handleShortcuts.bind(this)
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
         this.renderHeader = this.renderHeader.bind(this)
@@ -280,20 +277,6 @@ class IssueList extends Component {
         dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
 
-    openEstimateEditor(event) {
-        const {selected_ids} = this.props
-        event.stopPropagation()
-        if (selected_ids.length === 0) {
-            alert("Please select at least one issue to estimate")
-            return
-        }
-        this.setState({'estimate_editor_open': true})
-    }
-
-    closeEstimateEditor() {
-        this.setState({'estimate_editor_open': false})
-    }
-
     reorderIssue(index_of_row_being_moved, original_index_of_destination) {
         const {dispatch, list_key, visible_item_ids} = this.props
 
@@ -394,8 +377,6 @@ class IssueList extends Component {
             header_list, cursor_item_id
         } = this.props
 
-        const estimate_editor_open = (this.state || {}).estimate_editor_open || false
-
         if (!is_visible) {
             return (<div></div>)
         }
@@ -482,11 +463,6 @@ class IssueList extends Component {
         return (
 
             <div>
-              <EstimateEditor isOpen={estimate_editor_open}
-                              selected_items={selected_items}
-                              selected_ids={selected_ids}
-                              closeEstimateEditor={this.closeEstimateEditor}/>
-
               <DivTable renderHeader={this.renderHeader}
                         onReorder={this.reorderIssue}>
                 {issue_rows}
