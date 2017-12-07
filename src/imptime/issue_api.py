@@ -28,7 +28,6 @@ logger = logging.getLogger(__name__)
 class IssueViewSet(BaseViewSet):
 
     def list(self, request):
-        raise Exception("Sdfsd")
         
         try:
             context = {}
