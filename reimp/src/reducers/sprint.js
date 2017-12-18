@@ -4,6 +4,7 @@ import union from 'lodash/union'
 import difference from 'lodash/difference'
 import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
+import { stringifyIds } from '../actions/lib.js'
 
 import {
     ANNOUNCE_SPRINTS_LOAD_FAILED,
@@ -31,7 +32,8 @@ import {
 const initialState = {
     items_by_id: [],
     loading_item_ids: [],
-    saving_item_ids: []
+    saving_item_ids: [],
+    invalidated_item_ids: []
 }
 
 export default function sprint(state = initialState, action) {
@@ -39,16 +41,25 @@ export default function sprint(state = initialState, action) {
     let state_copy
     let new_items_by_id = null
     let l
+    let ids = null
 
     switch (action.type) {
 	case INVALIDATE_ALL_SPRINTS:
-	    return Object.assign({}, state, {items_by_id: null})
+            ids = stringifyIds(keys(state.items_by_id || []))
+	    return Object.assign({}, state,
+				 {invalidated_item_ids:ids}
+            )
         case INVALIDATE_SPRINTS:
-            return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.sprint_ids_to_invalidate)})
+            ids = stringifyIds(action.sprint_ids_to_invalidate)
+	    return Object.assign(
+		{}, state,
+		{invalidated_item_ids: union(state.invalidated_item_ids, ids)}
+            )
 
         case ANNOUNCE_LOADING_SPRINTS:
 	    return Object.assign({}, state, {
-		loading_item_ids: union(state.loading_item_ids, action.sprint_ids_to_load)
+		loading_item_ids: union(state.loading_item_ids, action.sprint_ids_to_load),
+		invalidated_item_ids: difference(state.invalidated_item_ids || [], ids)
 	    })
         case ANNOUNCE_SPRINTS_LOADED:
             state_copy = Object.assign({}, state, {
@@ -84,7 +95,7 @@ export default function sprint(state = initialState, action) {
                                                                    { sprint_id_before: action.sprint_id_before,
 				                                     project_id: action.project_id,
                                                                      default_sprint_args: action.default_sprint_args || {}},
-                                                                   )
+                                 )
                                  })
 	case UPDATE_NEW_SPRINT_DETAILS:
 	    return Object.assign(

@@ -13,6 +13,7 @@ class Progress extends Component {
         const active = issue.currently_clocked_in_by_user_ids && issue.currently_clocked_in_by_user_ids.length > 0
         const current = format_hours(issue.actual_hours || 0)
         const max = format_hours(estimate_to_use)
+        
         return (
             <div className="progress">
                 <div className="progress__component progress__component--progress">

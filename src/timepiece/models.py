@@ -4028,7 +4028,7 @@ class Issue(BaseModel):
 
         if self.assigned_to:
             user_issue_points = self.get_user_issue_points(self.assigned_to)
-            if user_issue_points and user_issue_points.points:
+            if user_issue_points is not None and user_issue_points.points is not None:
                 return user_issue_points.points, self.assigned_to
 
         for user_id, bp in BusinessPermissions._by_user(self.project.business).items():

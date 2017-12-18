@@ -135,21 +135,6 @@ class Issue extends Component {
         dispatch(setItemFlag(list_key, [issue_id], 'expanded_issues', true))
     }
 
-    renderEstimates() {
-        const {issue} = this.props
-        return map(issue.all_estimates, function (estimate, index) {
-            if (estimate.estimate_hours && estimate.estimate_user) {
-                return (
-                    <div key={estimate.estimate_user.id}>
-                      {estimate.estimate_user.username}:{format_hours(estimate.estimate_hours)}
-                    </div>
-                )
-            } else {
-                return null
-            }
-        })
-    }
-
     render_collapsed() {
         const {issue, list_key} = this.props
         return (
