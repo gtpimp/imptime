@@ -15,6 +15,7 @@ import {
 import {
     selectItems,
     update_list_filter,
+    getListFilter,
     invalidateList
 } from '../actions/ItemList'
 import {
@@ -60,6 +61,7 @@ class IssuesPage extends Component {
 
             if ( new_props.sprint_id != this.props.sprint_id ) {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
+                dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             }
             this.refresh(new_props.sprint, new_props.project)
         }
@@ -101,13 +103,15 @@ class IssuesPage extends Component {
     }
 
     renderLeftPane() {
-        const { issue_header_list } = this.props
+        const { issue_header_list, sprint_id, filter_sprint_id } = this.props
         return (
             <div className="list-layout__list">
-              <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                         onSelectIssues={this.onSelectIssues}
-                         issue_header_list={issue_header_list}
-              />
+              { filter_sprint_id == sprint_id &&
+                <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                           onSelectIssues={this.onSelectIssues}
+                           issue_header_list={issue_header_list}
+                />
+              }
             </div>
         )
     }
@@ -182,6 +186,7 @@ function mapStateToProps(state, props) {
 					     'loaded': false }
     })
 
+    const filter_sprint_id = (getListFilter(state, LIST_KEY__ISSUE_LIST) || {}).sprint_id
     const sprint_id = props.params.sprintId
     const project_id = props.params.projectId
     const default_issue_id = props.params.issueId
@@ -195,6 +200,7 @@ function mapStateToProps(state, props) {
     const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")
 
     return {
+        filter_sprint_id,
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,

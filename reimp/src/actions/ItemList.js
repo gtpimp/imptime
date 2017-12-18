@@ -173,7 +173,7 @@ export function setItemFlag(list_key, selected_ids, flag_name, flag_value) {
 export function invalidateList(list_key) {
     return {
         type: INVALIDATE_LIST,
-	      list_key: list_key
+	list_key: list_key
     }
 }
 
@@ -454,6 +454,10 @@ export function isLoading(state, list_key) {
     return !(state.item_list && state.item_list[list_key] && !state.item_list[list_key].is_loading)
 }
 
+export function isInvalidated(state, list_key) {
+    return !(state.item_list && state.item_list[list_key] && !state.item_list[list_key].items_invalidated)
+}
+
 export function getLastUpdated(state, list_key) {
     return (state.item_list || {}).last_updated || null
 }
@@ -476,3 +480,8 @@ export function haveItemsBeenRetrieved(state, ids, entity_key) {
     return sample_item !== undefined
 }
 
+export function areItemsReadyToDisplay(state, list_key) {
+    return isLoading(state, list_key) !== true &&
+           isInvalidated(state, list_key) !== true &&
+           getLoadingItemIds(state, list_key).length == 0
+}

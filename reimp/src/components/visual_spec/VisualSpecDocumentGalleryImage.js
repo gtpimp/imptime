@@ -82,12 +82,11 @@ class VisualSpecDocumentGalleryImage extends Component {
               </div>
 
               { image_url && !visual_spec_document_image_loaded &&
-              <div className="visual_spec_document_gallery__image_loading"
-                   onClick={this.onVisualSpecDocumentImageLoaded} >
-                <h2>Loading Image...</h2>
+                <div className="visual_spec_document_gallery__image_loading"
+                     onClick={this.onVisualSpecDocumentImageLoaded} >
+                  <h2>Loading Image...</h2>
                 </div>
-                }
-
+              }
 
               </div>
         ))
