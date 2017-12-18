@@ -77,18 +77,19 @@ class VisualSpecDocumentGalleryImage extends Component {
                                                      tooltips_enabled={false}
                                                      visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
                       )
-                  })
+                })
                 }
               </div>
 
-              { !visual_spec_document_image_loaded &&
-                <div className="visual_spec_document_gallery__image_loading">
-                  <h2>Loading Image...</h2>
+              { image_url && !visual_spec_document_image_loaded &&
+              <div className="visual_spec_document_gallery__image_loading"
+                   onClick={this.onVisualSpecDocumentImageLoaded} >
+                <h2>Loading Image...</h2>
                 </div>
-              }
+                }
 
 
-            </div>
+              </div>
         ))
     }
 }
