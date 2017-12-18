@@ -223,6 +223,14 @@ export function startCandidateItem(entity_key, candidate_item) {
     }
 }
 
+export function updateCandidateDetails(entity_key, subject, new_data) {
+    return {
+	type: UPDATE_NEW_ITEM_DETAILS,
+        entity_key: entity_key, 
+	candidate_item: new_data
+    }
+}
+
 export function cancelCandidateItem(entity_key) {
     return {
 	type: CANCEL_CREATING_NEW_ITEM,
@@ -230,33 +238,36 @@ export function cancelCandidateItem(entity_key) {
     }
 }
 
-export function saveCandidateItem(entity_key) {
+export function saveCandidateItem(entity_key, on_done) {
 
     return (dispatch, getState) => {
-	      const state = getState()
-	      dispatch(announceCandidateItemSaving(entity_key, ))
-	      let data = {item: ((state.item || {})[entity_key] || {}).candidate_item}
+	const state = getState()
+	dispatch(announceCandidateItemSaving(entity_key, ))
+	let data = {item: ((state.item || {})[entity_key] || {}).candidate_item}
 
-	      return impfetch(state, "imp/"+entity_key+"/", dispatch,
-			                  {method: "POST",
-			                   credentials: 'same-origin',
-			                   data: data,
-			                   headers: {"Content-type": "application/json; charset=UTF-8"},
-			                   body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
+	return impfetch(state, "imp/"+entity_key+"/", dispatch,
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"},
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
              if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announceCandidateItemSaveFailed(entity_key, json.error))
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceCandidateItemSaveFailed(entity_key, json.error))
              } else {
-		             console.log('Request succeeded with JSON response', json);
-		             dispatch(announceCandidateItemSaved(entity_key, json.payload.item))
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceCandidateItemSaved(entity_key, json.payload.item))
+                 if ( on_done ) {
+                     on_done()
+                 }
              }
-	       })
-	       .catch(function (error) {
+	 })
+	 .catch(function (error) {
              console.log('Request failed', error);
-	           dispatch(announceCandidateItemSaveFailed(entity_key, error))
-	       })
+	     dispatch(announceCandidateItemSaveFailed(entity_key, error))
+	 })
     }
 }
 
@@ -285,6 +296,37 @@ export function deleteItem(entity_key, item_id) {
              console.log('Request failed', error);
 	           dispatch(announceItemDeleteFailed(entity_key, item_id, error))
 	       })
+    }
+}
+
+export function itemPost(entity_key, item_ids, url,
+                         field_name, field_value, method, data, on_done) {
+    return (dispatch, getState) => {
+	const state = getState()
+	dispatch(announceItemsSaving(entity_key, item_ids, field_name, field_value))
+	return impfetch( state, url, dispatch,
+			 {method: "PUT",
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
+             if ( json.status !== 'success' ) {
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceItemSaveFailed(entity_key, json.error))
+             } else {
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceItemsSaved(entity_key, item_ids, json.issues))
+                 if ( on_done ) {
+		     on_done()
+	         }
+             }
+	 })
+	 .catch(function (error) {
+             console.log('Request failed', error);
+	     dispatch(announceItemSaveFailed(entity_key, error))
+	 })
     }
 }
 
