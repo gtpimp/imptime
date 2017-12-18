@@ -25,28 +25,7 @@ import {
     itemPost
 } from '../actions/Item'
 
-export const ANNOUNCE_ISSUES_SAVING = 'ANNOUNCE_ISSUES_SAVING'
-export const ANNOUNCE_ISSUES_SAVED = 'ANNOUNCE_ISSUES_SAVED'
-export const ANNOUNCE_ISSUE_SAVE_FAILED = 'ANNOUNCE_ISSUE_SAVE_FAILED'
-
-export const ANNOUNCE_ISSUES_LOADED = 'ANNOUNCE_ISSUES_LOADED'
-export const ANNOUNCE_ISSUES_LOAD_FAILED = 'ANNOUNCE_ISSUES_LOAD_FAILED'
-export const ANNOUNCE_LOADING_ISSUES = 'ANNOUNCE_LOADING_ISSUES'
-export const INVALIDATE_ISSUES = 'INVALIDATE_ISSUES'
-export const INVALIDATE_ALL_ISSUES = 'INVALIDATE_ALL_ISSUES'
-
-export const ANNOUNCE_CAPTURING_NEW_ISSUE = 'ANNOUNCE_CAPTURING_NEW_ISSUE'
-export const UPDATE_NEW_ISSUE_DETAILS = 'UPDATE_NEW_ISSUE_DETAILS'
-export const CANCEL_CREATING_NEW_ISSUE = 'CANCEL_CREATING_NEW_ISSUE'
-export const ANNOUNCE_SAVING_NEW_ISSUE = 'ANNOUNCE_SAVING_NEW_ISSUE'
-export const ANNOUNCE_SAVED_NEW_ISSUE = 'ANNOUNCE_SAVED_NEW_ISSUE'
-export const ANNOUNCE_SAVING_NEW_ISSUE_FAILED = 'ANNOUNCE_SAVING_NEW_ISSUE_FAILED'
-
-export const ANNOUNCE_DELETING_ISSUE = 'ANNOUNCE_DELETING_ISSUE'
-export const ANNOUNCE_ISSUE_DELETED = 'ANNOUNCE_ISSUE_DELETED'
-export const ANNOUNCE_DELETE_ISSUE_FAILED = 'ANNOUNCE_DELETE_ISSUE_FAILED'
 export const SET_ISSUE_STORE_VALUE = 'SET_ISSUE_STORE_VALUE'
-
 export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'
 export const ANNOUNCE_BULK_CREATING_ISSUES_FAILED = 'ANNOUNCE_BULK_CREATING_ISSUES_FAILED'
 export const ANNOUNCE_BULK_CREATED_ISSUES = 'ANNOUNCE_BULK_CREATED_ISSUES'
@@ -290,25 +269,19 @@ export function reorderIssue(moving_issue_ids, issue_id_after, list_key, index_o
 
 export function startCandidateIssue(sprint_id, issue_id_before, selected_issue_ids) {
     return (dispatch, getState) => {
-	      const state = getState()
-	      dispatch({
-	          type: ANNOUNCE_CAPTURING_NEW_ISSUE,
-	          issue_id_before: issue_id_before,
-                  selected_issue_ids: selected_issue_ids || [issue_id_before],
-	          sprint_id: sprint_id
-	      })
+        dispatch(startCandidateItem(ENTITY_KEY__ISSUE,
+                                    { issue_id_before: issue_id_before,
+	                              sprint_id: sprint_id,
+                                      selected_issue_ids: selected_issue_ids || [issue_id_before] }))
     }
 }
 
 export function startCandidateFeature(sprint_id, issue_id_before) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch({
-	    type: ANNOUNCE_CAPTURING_NEW_ISSUE,
-	    issue_id_before: issue_id_before,
-	    sprint_id: sprint_id,
-            additional_props: { can_group_issues: true }
-	})
+        dispatch(startCandidateItem(ENTITY_KEY__ISSUE,
+                                    { issue_id_before: issue_id_before,
+	                              sprint_id: sprint_id,
+                                      can_group_issues: true }))
     }
 }
 
@@ -333,41 +306,21 @@ export function deleteIssue(issue_id) {
 }
 
 export function clock(issue_id, clock_action) {
-    return (dispatch, getState) => {
-	      const state = getState()
-	      dispatch(announceDeletingIssue(issue_id))
-	      let data = { issue_id: issue_id,
-                     clock_action: clock_action }
-	      return impfetch( state, "imp/issue/clock/", dispatch,
-			                   {method: "POST",
-			                    credentials: 'same-origin',
-			                    data: data,
-			                    headers: {"Content-type": "application/json; charset=UTF-8"},
-			                    body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
-             if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announceIssueDeleteFailed(issue_id, json.error))
-             } else {
-		             console.log('Request succeeded with JSON response', json);
-		             dispatch(announceIssueDeleted(issue_id))
-             }
-	       })
-	       .catch(function (error) {
-             console.log('Request failed', error);
-	           dispatch(announceIssueDeleteFailed(issue_id, error))
-	       })
-    }
+    const url = "imp/issue/clock/"
+    const field_name = "clock"
+    const field_value = clock_action
+    const method = "POST"
+    const data = { issue_id: issue_id,
+                   clock_action: clock_action }
+    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data, on_done)
 }
 
 export function getCandidateIssue(state) {
-    const issue_objs = state.issue || {}
-    return issue_objs.candidate_issue
+    return getCandidateItem(ENTITY_KEY__ISSUE, state)
 }
 
 export function is_issue_invalidated(state, issue_id) {
-    return (((state.issue || {}).invalidated_item_ids) || []).indexOf(issue_id) !== -1
+    return is_item_invalidated(state, ENTITY_KEY__ISSUE, issue_id)
 }
 
 
@@ -427,96 +380,32 @@ export function bulkCreateIssues(sprint_id, bulk_issue_text, on_done) {
 }
 
 export function promoteIssueTestableToIssue(issue_id, testable_id, on_done) {
-    return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceIssuesSaving([issue_id], "testable_promotion", testable_id))
-	let data = {}
-	return impfetch( state, "imp/issue/testable/" + testable_id + "/promoteToIssue/", dispatch,
-			 {method: "POST",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-                 dispatch(announceIssueSaveFailed(json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-                 dispatch(announceIssuesSaved([json.payload.new_issues_id]))
-                 if ( on_done ) {
-                     on_done(json.payload.new_issue_ids)
-                 }
-             }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-             dispatch(announceIssueSaveFailed(error))
-	 })
-    }
+    const url = "imp/issue/testable/" + testable_id + "/promoteToIssue/"
+    const field_name = "testable_promotion"
+    const field_value = testable_id
+    const method = "POST"
+    const data = {}
+    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data, on_done)
 }
 
-
-export function isBulkCreatingIssues(state, sprint_id) {
-    return (((state || {}).sprint || {}).bulk_creating_issues || {}).sprint_id === sprint_id
-}
 
 export function addOrEditIssueTag(tag_name, tag_category_name, issue_ids, tag_id) {
-    return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceIssuesSaving(issue_ids, "tags", tag_name))
-	let data = { issue_ids: issue_ids,
-                     tag_id: tag_id || null,
-                     tag_name: tag_name,
-                     tag_category_name: tag_category_name }
-	return impfetch( state, "imp/" + ENTITY_KEY__TAG + "/add_to_issue/", dispatch,
-			 {method: "PUT",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-                 dispatch(announceIssueSaveFailed(json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceIssuesSaved(null))
-             }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-             dispatch(announceIssueSaveFailed(error))
-	 })
-    }
+    const url = "imp/" + ENTITY_KEY__TAG + "/add_to_issue/"
+    const field_name = "tags"
+    const field_value = tag_name
+    const method = "PUT"
+    const data = { issue_ids: issue_ids,
+                   tag_id: tag_id || null,
+                   tag_name: tag_name,
+                   tag_category_name: tag_category_name }
+    return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data, on_done)
 }
 
 export function deleteTagFromIssues(tag_id, issue_ids) {
-    return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceIssuesSaving(issue_ids, "tags", tag_id))
-	let data = { issue_ids: issue_ids }
-	return impfetch( state, "imp/" + ENTITY_KEY__TAG + "/" + tag_id + "/remove_from_issues/", dispatch,
-			 {method: "DELETE",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-                 dispatch(announceIssueSaveFailed(json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-                 dispatch(announceIssuesSaved(null))
-             }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-             dispatch(announceIssueSaveFailed(error))
-	 })
-    }
+    const url = "imp/" + ENTITY_KEY__TAG + "/" + tag_id + "/remove_from_issues/"
+    const field_name = "tags"
+    const field_value = tag_id
+    const method = "DELETE"
+    const data = { issue_ids: issue_ids }
+    return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data, on_done)
 }

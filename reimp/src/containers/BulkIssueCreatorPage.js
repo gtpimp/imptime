@@ -13,7 +13,7 @@ import {
     selectItems,
 } from '../actions/ItemList'
 import BulkIssueCreatorForm from '../components/form/BulkIssueCreatorForm.js'
-import { bulkCreateIssues, isBulkCreatingIssues } from '../actions/Issues'
+import { bulkCreateIssues } from '../actions/Issues'
 import {
     set_toolbars,
     select_sprints,
@@ -89,13 +89,9 @@ class BulkIssueCreatorPage extends Component {
     }
 
     render() {
-        const { is_bulk_creating_issues } = this.props
         return (
             <div className="bulk-issue-creator-page">
-              { is_bulk_creating_issues && <div>Saving...</div> }
-              { ! is_bulk_creating_issues && 
-                <BulkIssueCreatorForm onCancel={this.onCancel} onSubmit={this.onSubmitBulkCreate}/>
-              }
+              <BulkIssueCreatorForm onCancel={this.onCancel} onSubmit={this.onSubmitBulkCreate}/>
             </div>
         )
     }
@@ -107,14 +103,12 @@ function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
-    const is_bulk_creating_issues = isBulkCreatingIssues(state, sprint_id)
  
     return {
         sprint_id,
         sprint,
         project_id,
-        project,
-        is_bulk_creating_issues
+        project
     }
 }
 
