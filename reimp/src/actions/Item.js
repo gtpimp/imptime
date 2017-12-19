@@ -305,7 +305,7 @@ export function itemPost(entity_key, item_ids, url,
 	const state = getState()
 	dispatch(announceItemsSaving(entity_key, item_ids, field_name, field_value))
 	return impfetch( state, url, dispatch,
-			 {method: "PUT",
+			 {method: method,
 			  credentials: 'same-origin',
 			  data: data,
 			  headers: {"Content-type": "application/json; charset=UTF-8"},

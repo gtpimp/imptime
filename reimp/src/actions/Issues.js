@@ -109,7 +109,7 @@ export function updateIssueEstimate(issue_ids, value) {
 }
 
 export function moveIssuesToSprint(issue_ids, new_sprint_id) {
-    return updateItem(ENTITY_KEY__ISSUE, issue_ids, "print_id", new_sprint_id)
+    return updateItem(ENTITY_KEY__ISSUE, issue_ids, "sprint_id", new_sprint_id)
 }
 
 export function copyIssuesToSprint(issue_ids, new_sprint_id) {
