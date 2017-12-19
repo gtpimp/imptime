@@ -24,7 +24,7 @@ class Error extends Component {
             <div className="error--container">
               <div className="error--active">
                 <div className="error__header">
-                  Imp Down
+                  ImpTime fell over
                 </div>
                 <div className="error__instructions">
                   {error_message}

@@ -290,11 +290,11 @@ export function startCandidateFeature(sprint_id, issue_id_before) {
 }
 
 export function updateCandidateSubject(subject) {
-    return updateCandidateDetails(ENTITY_KEY__ISSUE, "subject", subject)
+    return updateCandidateDetails(ENTITY_KEY__ISSUE, {subject:subject})
 }
 
 export function updateCandidateSprint(sprint_id) {
-    return updateCandidateDetails(ENTITY_KEY__ISSUE, "sprint_id", sprint_id)
+    return updateCandidateDetails(ENTITY_KEY__ISSUE, {sprint_id:sprint_id})
 }
 
 export function cancelCandidateIssue() {

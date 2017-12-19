@@ -223,7 +223,7 @@ export function startCandidateItem(entity_key, candidate_item) {
     }
 }
 
-export function updateCandidateDetails(entity_key, subject, new_data) {
+export function updateCandidateDetails(entity_key, new_data) {
     return {
 	type: UPDATE_NEW_ITEM_DETAILS,
         entity_key: entity_key, 
@@ -243,7 +243,7 @@ export function saveCandidateItem(entity_key, on_done) {
     return (dispatch, getState) => {
 	const state = getState()
 	dispatch(announceCandidateItemSaving(entity_key, ))
-	let data = {item: ((state.item || {})[entity_key] || {}).candidate_item}
+	let data = {item: getCandidateItem(entity_key, state)}
 
 	return impfetch(state, "imp/"+entity_key+"/", dispatch,
 			{method: "POST",
@@ -260,7 +260,7 @@ export function saveCandidateItem(entity_key, on_done) {
 		 console.log('Request succeeded with JSON response', json);
 		 dispatch(announceCandidateItemSaved(entity_key, json.payload.item))
                  if ( on_done ) {
-                     on_done()
+                     on_done(json.payload.item.id)
                  }
              }
 	 })
@@ -331,12 +331,12 @@ export function itemPost(entity_key, item_ids, url,
 }
 
 export function getCandidateItem(entity_key, state) {
-    const item_objs = (state || {})[entity_key] || {}
+    const item_objs = (state.item || {})[entity_key] || {}
     return item_objs.candidate_item
 }
 
 export function is_item_invalidated(state, entity_key, item_id) {
-    return ((((state || {})[entity_key] || {}).invalidated_item_ids) || []).indexOf(item_id) !== -1
+    return ((((state.item || {})[entity_key] || {}).invalidated_item_ids) || []).indexOf(item_id) !== -1
 }
 
 export function getItem(state, entity_key, item_id) {

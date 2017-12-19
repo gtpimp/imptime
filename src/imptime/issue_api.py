@@ -261,7 +261,7 @@ class IssueViewSet(BaseViewSet):
         
         try:
             context = {}
-            params = request.data['issue']
+            params = request.data['item']
             sprint_id = params['sprint_id']
             issue_id_before = params.get('issue_id_before', None)
 
@@ -295,7 +295,7 @@ class IssueViewSet(BaseViewSet):
 
             issue = create_issue()
             issue = self._enrich_issues_qs(Issue.objects.filter(pk=issue.id)).first()
-            context['issue'] = IssueSerializer(issue, logged_in_user=request.user).data
+            context['item'] = IssueSerializer(issue, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
