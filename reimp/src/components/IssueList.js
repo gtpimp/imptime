@@ -381,6 +381,38 @@ class IssueList extends Component {
         )
     }
 
+    renderIssue(issue, key, is_fake, issue_id) {
+        const {
+            is_visible, list_key,
+            saving_issue_ids,
+            is_creating_issue, candidate_issue, invalidated_issue_ids,
+            selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
+            header_list, cursor_item_id
+        } = this.props
+        key = key || issue.id
+        issue_id = issue_id || issue.id
+        const that = this
+
+        return <Issue
+                   key={key}
+                   list_key={list_key}
+                   is_collapsed={false}
+                   show_children={includes(expanded_issues, issue.id)}
+                   onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
+                   is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
+                   is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
+                   is_highlighted={highlighted_ids.indexOf(issue.parent_group_id) !== -1}
+                   is_cursor_item={""+issue.id==""+cursor_item_id}
+                   is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
+                   is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
+                   issue_id={issue_id}
+                   header_list={header_list}
+                   onDelete={that.onDeleteIssue}
+                   is_fake={is_fake || false}
+        />
+
+    }
+
     render_expanded() {
 
         const {
@@ -399,6 +431,8 @@ class IssueList extends Component {
 
         const issue_rows = []
         let running_parent_issue_id = null
+        const rendered_parent_group_ids = []
+        
         each(issues, function (issue, index) {
 
             if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
@@ -407,51 +441,19 @@ class IssueList extends Component {
 
             const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
 
-            if (issue.parent_group_id && issue.parent_group_id !== running_parent_issue_id) {
+            if (issue.parent_group_id && ! includes(rendered_parent_group_ids, issue.parent_group_id) ) {
                 // this happens if the issue is separated from its group parent by another issue,
                 // so insert a 'fake' feature issue
-                issue_rows.push(
-                    <Issue
-                        key={list_key + issue.id + "fakefeature" + running_parent_issue_id}
-                        is_fake={true}
-                        list_key={list_key}
-                        is_collapsed={false}
-                        show_children={includes(expanded_issues, issue.id)}
-                        onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
-                        is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
-                        is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
-                        is_highlighted={highlighted_ids.indexOf(issue.parent_group_id) !== -1}
-                        is_cursor_item={""+issue.id==""+cursor_item_id}
-                        is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
-                        is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
-                        issue_id={issue.parent_group_id}
-                        subject_prefix="...(continued) "
-                        header_list={header_list}
-                        onDelete={that.onDeleteIssue}
-                    />
-                )
+                issue_rows.push(that.renderIssue(issue,
+                                                 list_key + issue.id + "fakefeature" + running_parent_issue_id,
+                                                 true,
+                                                 issue.parent_group_id))
+                rendered_parent_group_ids.push(issue.parent_group_id)
                 running_parent_issue_id = issue.parent_group_id
             }
 
-            if (show_issue) {
-                issue_rows.push(
-                    <Issue
-                        key={list_key + issue.id}
-                        list_key={list_key}
-                        is_collapsed={false}
-                        show_children={includes(expanded_issues, issue.id)}
-                        onClickedIssue={(event) => that.onClickedIssue(event, issue.id)}
-                        is_loading={loading_item_ids.indexOf(issue.id) !== -1}
-                        is_selected={selected_ids.indexOf(issue.id) !== -1}
-                        is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
-                        is_cursor_item={""+issue.id==""+cursor_item_id}
-                        is_invalidated={invalidated_issue_ids.indexOf(issue.id) !== -1}
-                        is_saving={saving_issue_ids.indexOf(issue.id) !== -1}
-                        issue_id={issue.id}
-                        header_list={header_list}
-                        onDelete={that.onDeleteIssue}
-                    />
-                )
+            if (show_issue && (!issue.can_group_children || !includes(rendered_parent_group_ids, issue.id) ) ) {
+                issue_rows.push(that.renderIssue(issue))
             }
 
             if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
