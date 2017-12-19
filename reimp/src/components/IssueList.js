@@ -7,7 +7,7 @@ import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js';
 import {
     initList,
     invalidateList,
-    areItemsReadyToDisplay,
+    isListReadyToDisplay,
     collapse_list,
     expand_list,
     setItemFlag,
@@ -312,12 +312,12 @@ class IssueList extends Component {
         return (
             <div className="div-table__header_row">
               { map(header_list, (v, k) => (
-                    <div key={k}
-                         className="div-table__header_cell"
-                         style={getCellStyle(v)}>
-                      {v.label }
-                    </div>
-                ))}
+                  <div key={k}
+                       className="div-table__header_cell"
+                       style={getCellStyle(v)}>
+                    {v.label }
+                  </div>
+              ))}
             </div>
         )
     }
@@ -347,7 +347,7 @@ class IssueList extends Component {
                         is_cursor_item={""+issue.id==""+cursor_item_id}
                         issue_id={issue.id}
                         onDelete={this.onDeleteIssue} />
-                    )}
+                )}
                 </div>
               </div>
             </div>
@@ -501,7 +501,7 @@ function mapStateToProps(state, props) {
     const items_by_id = (issue && issue.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
-    const ready_to_display = areItemsReadyToDisplay(state, list_key)
+    const ready_to_display = isListReadyToDisplay(state, list_key)
     const sprint_id = filter.sprint_id || null
     const visible_item_ids = l.visible_item_ids || []
     const invalidated_item_ids = (issue && issue.invalidated_item_ids) || []

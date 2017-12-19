@@ -18,11 +18,15 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
+    updateCandidateDetails,
+    cancelCandidateItem,
+    getCandidateItem,
     deleteItem,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving,
-    itemPost
+    itemPost,
+    is_item_invalidated
 } from '../actions/Item'
 
 export const SET_ISSUE_STORE_VALUE = 'SET_ISSUE_STORE_VALUE'
@@ -109,7 +113,7 @@ export function moveIssuesToSprint(issue_ids, new_sprint_id) {
 }
 
 export function copyIssuesToSprint(issue_ids, new_sprint_id) {
-    return updateIssue(issue_ids, 'copy_sprint_id', new_sprint_id)
+    return updateItem(issue_ids, 'copy_sprint_id', new_sprint_id)
 }
 
 export function groupIssuesIntoFeature(children_issue_ids, feature_issue_id) {
@@ -175,7 +179,7 @@ export function createIssueTestable(issue_id, new_testable) {
 export function deleteIssueTestable(issue_id, testable_id) {
     const url = "imp/issue/testable/0/"
     const field_name = "testable"
-    const field_value = new_testable
+    const field_value = testable_id
     const method = "DELETE"
     const data = { issue_id: issue_id,
                    testable_id: testable_id }
@@ -237,7 +241,7 @@ export function ungroupIssuesIntoFeature(issue_ids) {
         if (!ok_to_ungroup) {
             return
         }
-        return updateItem(ENTITY_KEY__ISSUE, [issue_id], "parent_group_id", null)
+        return updateItem(ENTITY_KEY__ISSUE, issue_ids, "parent_group_id", null)
     }
 }
 
@@ -246,9 +250,9 @@ export function addEstimate(issue_ids, estimate_hours, on_done) {
     const field_name = "estimate_hours"
     const field_value = estimate_hours
     const method = "POST"
-    const data = { issue_id: issue_id,
+    const data = { issue_id: issue_ids,
                    estimate_hours: estimate_hours }
-    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data, on_done)
+    return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data, on_done)
 }
 
 export function setIssueStoreValue(issue_ids, field_name, new_value) {
@@ -263,7 +267,7 @@ export function setIssueStoreValue(issue_ids, field_name, new_value) {
 export function reorderIssue(moving_issue_ids, issue_id_after, list_key, index_of_destination, on_done) {
     return (dispatch, getState) => {
         dispatch(updateVisibleItemIdAbove(list_key, moving_issue_ids, issue_id_after, index_of_destination))
-        dispatch(updateIssue(moving_issue_ids, "issue_id_after", issue_id_after, on_done))
+        dispatch(updateItem(moving_issue_ids, "issue_id_after", issue_id_after, on_done))
     }
 }
 
@@ -290,7 +294,7 @@ export function updateCandidateSubject(subject) {
 }
 
 export function updateCandidateSprint(sprint_id) {
-    return updateCandidateDetails(ENTITY_KEY__ISSUE, "subject_id", subject_id)
+    return updateCandidateDetails(ENTITY_KEY__ISSUE, "sprint_id", sprint_id)
 }
 
 export function cancelCandidateIssue() {
@@ -312,7 +316,7 @@ export function clock(issue_id, clock_action) {
     const method = "POST"
     const data = { issue_id: issue_id,
                    clock_action: clock_action }
-    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data, on_done)
+    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
 }
 
 export function getCandidateIssue(state) {
@@ -398,7 +402,7 @@ export function addOrEditIssueTag(tag_name, tag_category_name, issue_ids, tag_id
                    tag_id: tag_id || null,
                    tag_name: tag_name,
                    tag_category_name: tag_category_name }
-    return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data, on_done)
+    return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data)
 }
 
 export function deleteTagFromIssues(tag_id, issue_ids) {
@@ -407,5 +411,5 @@ export function deleteTagFromIssues(tag_id, issue_ids) {
     const field_value = tag_id
     const method = "DELETE"
     const data = { issue_ids: issue_ids }
-    return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data, on_done)
+    return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data)
 }

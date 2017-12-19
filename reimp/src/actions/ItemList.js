@@ -480,8 +480,12 @@ export function haveItemsBeenRetrieved(state, ids, entity_key) {
     return sample_item !== undefined
 }
 
+export function isListReadyToDisplay(state, list_key) {
+    return isLoading(state, list_key) !== true
+}
+
 export function areItemsReadyToDisplay(state, list_key) {
-    return isLoading(state, list_key) !== true &&
+    return isListReadyToDisplay(state, list_key) === true &&
            isInvalidated(state, list_key) !== true &&
            getLoadingItemIds(state, list_key).length == 0
 }

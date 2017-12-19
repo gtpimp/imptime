@@ -57,15 +57,17 @@ export default function sprint(state = initialState, action) {
             )
 
         case ANNOUNCE_LOADING_SPRINTS:
+            ids = stringifyIds(action.sprint_ids_to_load)
 	    return Object.assign({}, state, {
-		loading_item_ids: union(state.loading_item_ids, action.sprint_ids_to_load),
+		loading_item_ids: union(state.loading_item_ids, ids),
 		invalidated_item_ids: difference(state.invalidated_item_ids || [], ids)
 	    })
         case ANNOUNCE_SPRINTS_LOADED:
+            ids = stringifyIds(keys(action.items_by_id))
             state_copy = Object.assign({}, state, {
 		loading_item_ids: Object.assign({},
 						difference(state.loading_item_ids || [],
-							   keys(action.items_by_id))),
+							   ids)),
 		items_by_id: Object.assign({},
 					   assign(state.items_by_id, action.items_by_id))
 	    })
