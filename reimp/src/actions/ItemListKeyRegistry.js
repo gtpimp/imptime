@@ -35,7 +35,7 @@ export const ENTITY_KEY__NUDGE = 'nudge'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
-export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE, ENTITY_KEY__VISUAL_SPEC_ISSUE ]
+export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE, ENTITY_KEY__VISUAL_SPEC_ISSUE, ENTITY_KEY__ISSUE ]
 
 export const PAGE_KEY__DASHBOARD_PATH = 'dashboard_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
