@@ -122,7 +122,8 @@ export default function item_list(state = initialState, action) {
             state_copy = Object.assign({}, state)
             l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
 	    state_copy[action.list_key] = Object.assign({}, l, {
-		filter: Object.assign({}, (state_copy[action.list_key] || {}).filter, action.filter)
+		filter: Object.assign({}, (state_copy[action.list_key] || {}).filter, action.filter),
+                visible_item_ids: null
 	    })
 	    return state_copy
         case UPDATE_LIST_ORDERING:

@@ -474,14 +474,10 @@ class IssueList extends Component {
 
     render() {
 
-        const {is_visible, is_collapsed, is_expanded, ready_to_display} = this.props
+        const {is_visible, is_collapsed, is_expanded} = this.props
 
         if (!is_visible) {
             return (<div></div>)
-        }
-
-        if ( ready_to_display !== true ) {
-            return (<div>Loading...</div>)
         }
 
         return (
@@ -501,7 +497,6 @@ function mapStateToProps(state, props) {
     const items_by_id = (issue && issue.items_by_id) || {}
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
-    const ready_to_display = isListReadyToDisplay(state, list_key)
     const sprint_id = filter.sprint_id || null
     const visible_item_ids = l.visible_item_ids || []
     const invalidated_item_ids = (issue && issue.invalidated_item_ids) || []
@@ -541,7 +536,6 @@ function mapStateToProps(state, props) {
         selected_ids: l.selected_ids || [],
         highlighted_ids: l.highlighted_ids || [],
         cursor_item_id,
-        ready_to_display,
         invalidated_issue_ids: invalidated_item_ids,
         saving_issue_ids: saving_item_ids,
         selected_items: selected_items || [],
