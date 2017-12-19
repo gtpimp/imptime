@@ -4,7 +4,6 @@ import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from '
 import { ENTITY_KEY__ISSUE, ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry'
 import map from 'lodash/map'
 import difference from 'lodash/difference'
-import keyBy from 'lodash/keyBy'
 import { getUser } from '../actions/Users'
 
 import {
@@ -15,6 +14,7 @@ import {
     ensureItemsLoaded,
     getItem,
     getItems,
+    getItemsById,
     updateItem,
     startCandidateItem,
     saveCandidateItem,
@@ -26,7 +26,10 @@ import {
     announceItemsSaved,
     announceItemsSaving,
     itemPost,
-    is_item_invalidated
+    is_item_invalidated,
+    getInvalidatedItemIds,
+    getSavingItemIds,
+    getLoadingItemIds
 } from '../actions/Item'
 
 export const SET_ISSUE_STORE_VALUE = 'SET_ISSUE_STORE_VALUE'
@@ -64,6 +67,10 @@ export function getIssue(state, issue_id) {
 
 export function getIssues(state, issue_ids) {
     return getItems(state, ENTITY_KEY__ISSUE, issue_ids)
+}
+
+export function getIssuesById(state, issue_ids) {
+    return getItemsById(state, ENTITY_KEY__ISSUE, issue_ids)
 }
 
 export function populateEstimates(state, issue) {
@@ -323,8 +330,20 @@ export function getCandidateIssue(state) {
     return getCandidateItem(ENTITY_KEY__ISSUE, state)
 }
 
+export function getInvalidatedIssueIds(state, issue_ids) {
+    return getInvalidatedItemIds(ENTITY_KEY__ISSUE, state, issue_ids)
+}
+
+export function getLoadingIssueIds(state, issue_ids) {
+    return getLoadingItemIds(ENTITY_KEY__ISSUE, state, issue_ids)
+}
+
+export function getSavingIssueIds(state, issue_ids) {
+    return getSavingItemIds(ENTITY_KEY__ISSUE, state, issue_ids)
+}
+
 export function is_issue_invalidated(state, issue_id) {
-    return is_item_invalidated(state, ENTITY_KEY__ISSUE, issue_id)
+    return is_item_invalidated(ENTITY_KEY__ISSUE, state, issue_id)
 }
 
 

@@ -12,7 +12,15 @@ import {
     expand_list,
     setItemFlag,
     setCursorItem,
-    getCursorItemId
+    getCursorItemId,
+    getVisibleItemIds,
+    getSelectedItemIds,
+    getHighlightedItemIds,
+    getItemFlag,
+    getLastUpdated,
+    isLoading,
+    getListFilter,
+    getDisplayMode
 } from '../actions/ItemList'
 import {
     invalidateAllIssues,
@@ -25,6 +33,11 @@ import {
     updateIssueToggleAsFeature,
     groupUnsortedIssuesIntoFeature,
     ungroupIssuesIntoFeature,
+    getInvalidatedIssueIds,
+    getLoadingIssueIds,
+    getSavingIssueIds,
+    getCandidateIssue,
+    getIssuesById
 } from '../actions/Issues'
 import Issue from '../components/Issue'
 import DivTable from './DivTable'
@@ -492,40 +505,43 @@ class IssueList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {issue, item_list} = state
+    const {item_list} = state
     const {list_key, issue_header_list} = props
-    const items_by_id = (issue && issue.items_by_id) || {}
-    const l = (item_list && item_list[list_key]) || {}
-    const filter = l.filter || {}
+    const filter = getListFilter(state, list_key)
     const sprint_id = filter.sprint_id || null
-    const visible_item_ids = l.visible_item_ids || []
-    const invalidated_item_ids = (issue && issue.invalidated_item_ids) || []
-    const saving_item_ids = (issue && issue.saving_item_ids) || []
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const loading_item_ids = getLoadingIssueIds(state, visible_item_ids)
+    const invalidated_item_ids = getInvalidatedIssueIds(state, visible_item_ids)
+    const saving_item_ids = getSavingIssueIds(state, visible_item_ids)
+    const selected_item_ids = getSelectedItemIds(state, list_key)
+    const highlighted_item_ids = getHighlightedItemIds(state, list_key)
+    const items_by_id = getIssuesById(state, visible_item_ids)
 
-    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
+    const selected_items = selected_item_ids.map(function (selected_id, index) {
         return items_by_id[selected_id] || {
             'id': selected_id,
             'loaded': false
         }
     })
 
-    const highlighted_items = items_by_id && l.highlighted_ids && l.highlighted_ids.map(function (highlighted_id, index) {
+    const highlighted_items = highlighted_item_ids.map(function (highlighted_id, index) {
         return items_by_id[highlighted_id] || {
             'id': highlighted_id,
             'loaded': false
         }
     })
 
-    const items = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
+    const items = visible_item_ids.map(function (visible_item_id, index) {
         return items_by_id[visible_item_id] || {
             'id': visible_item_id,
             'loaded': false
         }
-    })) || []
+    })
 
-    const candidate_issue = (issue && issue.candidate_issue) || null
+    const candidate_issue = getCandidateIssue(state)
     const is_creating_issue = candidate_issue || false
     const cursor_item_id = getCursorItemId(state, list_key)
+    const display_mode = getDisplayMode(state, list_key)
 
     return {
         list_key: list_key,
@@ -533,22 +549,22 @@ function mapStateToProps(state, props) {
         sprint_id: sprint_id,
         issues: items,
         issue_ids: map(items, 'id'),
-        selected_ids: l.selected_ids || [],
-        highlighted_ids: l.highlighted_ids || [],
+        selected_ids: selected_item_ids,
+        highlighted_ids: highlighted_item_ids,
         cursor_item_id,
         invalidated_issue_ids: invalidated_item_ids,
         saving_issue_ids: saving_item_ids,
         selected_items: selected_items || [],
-        loading_item_ids: l.loading_item_ids || [],
+        loading_item_ids: loading_item_ids,
         has_items: items && items.length > 0,
-        is_loading: l.is_loading,
-        is_collapsed: l.display_mode === "collapsed",
-        is_expanded: l.display_mode === "expanded" || !l.display_mode,
-        last_updated: l.last_updated,
+        is_loading: isLoading(state, list_key),
+        is_collapsed: display_mode === "collapsed",
+        is_expanded: display_mode === "expanded" || !display_mode,
+        last_updated: getLastUpdated(state, list_key),
         is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
         candidate_issue: candidate_issue,
         is_creating_issue: is_creating_issue,
-        expanded_issues: l.flag_expanded_issues,
+        expanded_issues: getItemFlag(state, list_key, "flag_expanded_issues"),
         header_list: issue_header_list
     }
 }

@@ -1,7 +1,7 @@
 import { impfetch } from './lib.js'
 
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
-import { map, difference, keyBy, compact, find } from 'lodash'
+import { map, difference, intersection, keyBy, compact, find, filter } from 'lodash'
 
 export const ANNOUNCE_ITEMS_SAVING = 'ANNOUNCE_ITEMS_SAVING'
 export const ANNOUNCE_ITEMS_SAVED = 'ANNOUNCE_ITEMS_SAVED'
@@ -335,8 +335,18 @@ export function getCandidateItem(entity_key, state) {
     return item_objs.candidate_item
 }
 
-export function is_item_invalidated(state, entity_key, item_id) {
+export function is_item_invalidated(entity_key, state, item_id) {
     return ((((state.item || {})[entity_key] || {}).invalidated_item_ids) || []).indexOf(item_id) !== -1
+}
+
+export function getInvalidatedItemIds(entity_key, state, item_ids) {
+    const all_invalidated_item_ids = ((((state.item || {})[entity_key] || {}).invalidated_item_ids) || [])
+    return intersection(item_ids, all_invalidated_item_ids)
+}
+
+export function getSavingItemIds(entity_key, state, item_ids) {
+    const all_saving_item_ids = (((state.item || {})[entity_key] || {}).saving_item_ids) || []
+    return intersection(item_ids, all_saving_item_ids)
 }
 
 export function getItem(state, entity_key, item_id) {
@@ -398,13 +408,16 @@ export function areAnyItemsInvalidated(state, entity_key, item_ids) {
     return difference(invalidated_ids, item_ids).length > 0
 }
 
-export function isLoadingItems(state, entity_key, item_ids) {
+export function getLoadingItemIds(entity_key, state, item_ids) {
     if ( ! item_ids ) {
         return false
     }
     const items = getItems(state, entity_key, item_ids)
-    const all_loaded = find(items, function(x) {
+    return filter(items, function(x) {
         return x.loaded == false
-    }) === undefined
-    return !all_loaded
+    })
+}
+
+export function isLoadingItems(state, entity_key, item_ids) {
+    return getLoadingItemIds(state, entity_key, item_ids).length > 0
 }

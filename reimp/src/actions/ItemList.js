@@ -160,6 +160,12 @@ export function highlightItems(list_key, highlighted_ids) {
     }
 }
 
+export function getHighlightedItemIds(state, list_key) {
+    const item_list = ((state || {}).item_list || {})[list_key] || {}
+    const highlighted_item_ids = item_list.highlighted_ids || []
+    return highlighted_item_ids    
+}
+
 export function setItemFlag(list_key, selected_ids, flag_name, flag_value) {
     return {
         type: SET_ITEMS_FLAG,
@@ -168,6 +174,10 @@ export function setItemFlag(list_key, selected_ids, flag_name, flag_value) {
         flag_name: flag_name,
         flag_value: flag_value
     }
+}
+
+export function getItemFlag(state, list_key, flag_name) {
+    return (((state || {}).item_list || {})[list_key] || {})[flag_name]
 }
 
 export function invalidateList(list_key) {
