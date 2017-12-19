@@ -267,7 +267,7 @@ export function setIssueStoreValue(issue_ids, field_name, new_value) {
 export function reorderIssue(moving_issue_ids, issue_id_after, list_key, index_of_destination, on_done) {
     return (dispatch, getState) => {
         dispatch(updateVisibleItemIdAbove(list_key, moving_issue_ids, issue_id_after, index_of_destination))
-        dispatch(updateItem(moving_issue_ids, "issue_id_after", issue_id_after, on_done))
+        dispatch(updateItem(ENTITY_KEY__ISSUE, moving_issue_ids, "issue_id_after", issue_id_after, on_done))
     }
 }
 
