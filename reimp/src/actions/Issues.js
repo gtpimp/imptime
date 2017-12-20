@@ -2,7 +2,7 @@ import { impfetch } from './lib.js'
 
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
 import { ENTITY_KEY__ISSUE, ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry'
-import map from 'lodash/map'
+import { map, compact } from 'lodash'
 import difference from 'lodash/difference'
 import { getUser } from '../actions/Users'
 
@@ -212,7 +212,7 @@ export function groupUnsortedIssuesIntoFeature(issue_ids) {
         }
         let feature_issue = null
         let ok_to_group = true
-        const issues = getIssues(state, issue_ids)
+        const issues = getIssues(state, compact(issue_ids))
         map(issues, function (issue) {
             if (issue.can_group_issues) {
                 if (feature_issue) {

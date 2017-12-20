@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { uniq, concat, each, indexOf, map, keys, union, difference, includes } from 'lodash'
+import { compact, uniq, concat, each, indexOf, map, keys, values, union, difference, includes } from 'lodash'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -37,7 +37,8 @@ import {
     getLoadingIssueIds,
     getSavingIssueIds,
     getCandidateIssue,
-    getIssuesById
+    getIssuesById,
+    ensureIssuesLoaded
 } from '../actions/Issues'
 import Issue from '../components/Issue'
 import DivTable from './DivTable'
@@ -64,21 +65,24 @@ class IssueList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, sprint_id} = this.props
+        const {dispatch, list_key, sprint_id, feature_issue_ids} = this.props
         if (sprint_id) {
             dispatch(initList(list_key))
             dispatch(fetchIssuesIfNeeded(list_key))
+            dispatch(ensureIssuesLoaded(feature_issue_ids))
             console.log(list_key)
         }
     }
 
     componentWillReceiveProps(new_props) {
         const {dispatch, list_key} = this.props
+        const { feature_issue_ids } = new_props
         const {onSelectIssues} = this.props
         if ( this.props.sprint_id != new_props.sprint_id ) {
             onSelectIssues([])
         }
         dispatch(fetchIssuesIfNeeded(list_key))
+        dispatch(ensureIssuesLoaded(feature_issue_ids))
     }
 
     handleShortcuts(action, event) {
@@ -187,10 +191,10 @@ class IssueList extends Component {
     }
 
     findHiddenIssuesRelatingToTargetIssueId(target_issue_id) {
-        const {visible_item_ids, issues, expanded_issues} = this.props
+        const {visible_item_ids, issues, expanded_issues, issues_by_id } = this.props
         let issue_ids_to_select = [target_issue_id]
         let running_issue_index = indexOf(visible_item_ids, target_issue_id)
-        let issue = issues[running_issue_index]
+        let issue = issues_by_id[target_issue_id]
         if (issue.can_group_issues !== true) {
             return issue_ids_to_select
         }
@@ -381,7 +385,7 @@ class IssueList extends Component {
         )
     }
 
-    renderIssue(issue, key, is_fake, issue_id) {
+    renderIssue(issue) {
         const {
             is_visible, list_key,
             saving_issue_ids,
@@ -389,8 +393,8 @@ class IssueList extends Component {
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
             header_list, cursor_item_id
         } = this.props
-        key = key || issue.id
-        issue_id = issue_id || issue.id
+        const key = issue.id
+        const issue_id = issue.id
         const that = this
 
         return <Issue
@@ -398,19 +402,18 @@ class IssueList extends Component {
                    list_key={list_key}
                    is_collapsed={false}
                    show_children={includes(expanded_issues, issue.id)}
-                   onClickedIssue={(event) => that.onClickedIssue(event, issue.parent_group_id)}
-                   is_loading={loading_item_ids.indexOf(issue.parent_group_id) !== -1}
-                   is_selected={selected_ids.indexOf(issue.parent_group_id) !== -1}
-                   is_highlighted={highlighted_ids.indexOf(issue.parent_group_id) !== -1}
+                   onClickedIssue={(event) => that.onClickedIssue(event, issue_id)}
+                   is_loading={loading_item_ids.indexOf(issue_id) !== -1}
+                   is_selected={selected_ids.indexOf(issue_id) !== -1}
+                   is_highlighted={highlighted_ids.indexOf(issue_id) !== -1}
                    is_cursor_item={""+issue.id==""+cursor_item_id}
-                   is_invalidated={invalidated_issue_ids.indexOf(issue.parent_group_id) !== -1}
-                   is_saving={saving_issue_ids.indexOf(issue.issue_parent_group_id) !== -1}
+                   is_invalidated={invalidated_issue_ids.indexOf(issue_id) !== -1}
+                   is_saving={saving_issue_ids.indexOf(issue_id) !== -1}
                    issue_id={issue_id}
                    header_list={header_list}
                    onDelete={that.onDeleteIssue}
-                   is_fake={is_fake || false}
+                   is_fake={false}
         />
-
     }
 
     render_expanded() {
@@ -420,7 +423,7 @@ class IssueList extends Component {
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
-            header_list, cursor_item_id
+            header_list, cursor_item_id, feature_issues
         } = this.props
 
         if (!is_visible) {
@@ -444,16 +447,15 @@ class IssueList extends Component {
             if (issue.parent_group_id && ! includes(rendered_parent_group_ids, issue.parent_group_id) ) {
                 // this happens if the issue is separated from its group parent by another issue,
                 // so insert a 'fake' feature issue
-                issue_rows.push(that.renderIssue(issue,
-                                                 list_key + issue.id + "fakefeature" + running_parent_issue_id,
-                                                 true,
-                                                 issue.parent_group_id))
+                const feature_issue = feature_issues[issue.parent_group_id] || { 'id': issue.parent_group_id }
+                issue_rows.push(that.renderIssue(feature_issue))
                 rendered_parent_group_ids.push(issue.parent_group_id)
                 running_parent_issue_id = issue.parent_group_id
             }
 
             if (show_issue && (!issue.can_group_children || !includes(rendered_parent_group_ids, issue.id) ) ) {
                 issue_rows.push(that.renderIssue(issue))
+                rendered_parent_group_ids.push(issue.id)
             }
 
             if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
@@ -512,12 +514,15 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const sprint_id = filter.sprint_id || null
     const visible_item_ids = getVisibleItemIds(state, list_key)
-    const loading_item_ids = getLoadingIssueIds(state, visible_item_ids)
-    const invalidated_item_ids = getInvalidatedIssueIds(state, visible_item_ids)
-    const saving_item_ids = getSavingIssueIds(state, visible_item_ids)
+    const items_by_id = getIssuesById(state, visible_item_ids)
+    const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
+    const all_item_ids = union(visible_item_ids, feature_issue_ids)
+    
+    const loading_item_ids = getLoadingIssueIds(state, all_item_ids)
+    const invalidated_item_ids = getInvalidatedIssueIds(state, all_item_ids)
+    const saving_item_ids = getSavingIssueIds(state, all_item_ids)
     const selected_item_ids = getSelectedItemIds(state, list_key)
     const highlighted_item_ids = getHighlightedItemIds(state, list_key)
-    const items_by_id = getIssuesById(state, visible_item_ids)
 
     const selected_items = selected_item_ids.map(function (selected_id, index) {
         return items_by_id[selected_id] || {
@@ -540,6 +545,8 @@ function mapStateToProps(state, props) {
         }
     })
 
+    const feature_issues = getIssuesById(state, feature_issue_ids)
+    
     const candidate_issue = getCandidateIssue(state)
     const is_creating_issue = candidate_issue || false
     const cursor_item_id = getCursorItemId(state, list_key)
@@ -550,7 +557,10 @@ function mapStateToProps(state, props) {
         visible_item_ids,
         sprint_id: sprint_id,
         issues: items,
+        issues_by_id: items_by_id,
         issue_ids: map(items, 'id'),
+        feature_issue_ids: feature_issue_ids,
+        feature_issues: feature_issues,
         selected_ids: selected_item_ids,
         highlighted_ids: highlighted_item_ids,
         cursor_item_id,
