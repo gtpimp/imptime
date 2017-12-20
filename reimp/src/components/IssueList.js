@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { compact, uniq, concat, each, indexOf, map, keys, values, union, difference, includes } from 'lodash'
+import { compact, uniq, concat, each, indexOf, map, keys, keyBy, values, union, difference, includes } from 'lodash'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -296,16 +296,16 @@ class IssueList extends Component {
     }
 
     reorderIssue(index_of_row_being_moved, original_index_of_destination) {
-        const {dispatch, list_key, visible_item_ids} = this.props
+        const {dispatch, list_key, issue_items, visible_item_ids} = this.props
 
         let index_of_destination = original_index_of_destination
         
-        if ( index_of_row_being_moved > index_of_destination ) {
-            index_of_destination -= 1;
-        }
+        /* if ( index_of_row_being_moved > index_of_destination ) {
+         *     index_of_destination -= 1;
+         * }*/
         
-        const moving_issue_id = visible_item_ids[index_of_row_being_moved]
-        const move_after_issue_id = (index_of_destination>=0 && visible_item_ids[index_of_destination]) || null
+        const moving_issue_id = issue_items[index_of_row_being_moved].id
+        const move_after_issue_id = (index_of_destination>0 && issue_items[index_of_destination].id) || null
         
         let selected_ids = this.props.selected_ids || []
         if ( ! includes(selected_ids, moving_issue_id) ) {
@@ -317,7 +317,7 @@ class IssueList extends Component {
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
         
         dispatch(reorderIssue(selected_ids, target_issue_id, list_key,
-                              original_index_of_destination,
+                              indexOf(visible_item_ids, move_after_issue_id),
                               function () {
                                   dispatch(invalidateList(list_key))
                                   dispatch(fetchIssuesIfNeeded(list_key))
@@ -419,7 +419,7 @@ class IssueList extends Component {
     render_expanded() {
 
         const {
-            issues, is_visible, list_key,
+            issues, is_visible, list_key, issue_items, 
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
@@ -430,53 +430,26 @@ class IssueList extends Component {
             return (<div></div>)
         }
         const that = this
-        // const at_least_one_issue_selected = selected_ids && selected_ids.length > 0
 
-        const issue_rows = []
-        let running_parent_issue_id = null
-        const rendered_parent_group_ids = []
         
-        each(issues, function (issue, index) {
-
-            if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
-                issue_rows.push(that.render_candidate_issue())
-            }
-
-            const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
-
-            if (issue.parent_group_id && ! includes(rendered_parent_group_ids, issue.parent_group_id) ) {
-                // this happens if the issue is separated from its group parent by another issue,
-                // so insert a 'fake' feature issue
-                const feature_issue = feature_issues[issue.parent_group_id] || { 'id': issue.parent_group_id }
-                issue_rows.push(that.renderIssue(feature_issue))
-                rendered_parent_group_ids.push(issue.parent_group_id)
-                running_parent_issue_id = issue.parent_group_id
-            }
-
-            if (show_issue && (!issue.can_group_children || !includes(rendered_parent_group_ids, issue.id) ) ) {
-                issue_rows.push(that.renderIssue(issue))
-                rendered_parent_group_ids.push(issue.id)
-            }
-
-            if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
-                issue_rows.push(that.render_candidate_issue())
-            }
-
-            if (issue.can_group_issues) {
-                running_parent_issue_id = issue.id
-            } else {
-                running_parent_issue_id = issue.parent_group_id
-            }
-            return
-        })
-
-        if ( issue_rows.legnth === 0 ) {
-            issue_rows.push(
+        if ( issue_items.length === 0 ) {
+            return (
                 <div className="div-table__row">
                   <div className="div-table__cell">No issues</div>
                 </div>
             )
         }
+
+        const issue_rows = []
+        each( issue_items, function(issue_item, index) {
+            if ( issue_item.type == "candidate" ) {
+                issue_rows.push(that.render_candidate_issue())
+            } else if ( issue_item.type == "feature" ) {
+                issue_rows.push(that.renderIssue(issue_item.issue))
+            } else if ( issue_item.type == "issue" ) {
+                issue_rows.push(that.renderIssue(issue_item.issue))
+            }
+        })
         
         return (
 
@@ -507,6 +480,49 @@ class IssueList extends Component {
         )
     }
 }
+
+function createIssueObjectsToRender(issues, feature_issues, candidate_issue,
+                                    expanded_issues, is_creating_issue) {
+    const issues_to_render = []
+    const rendered_parent_group_ids = []
+    let running_parent_issue_id = null
+    
+    each(issues, function (issue, index) {
+
+        if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
+            issues_to_render.push({ issue: null, type: "candidate", id: null })
+        }
+
+        const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
+
+        if (issue.parent_group_id && ! includes(rendered_parent_group_ids, issue.parent_group_id) ) {
+            // this happens if the issue is separated from its group parent by another issue,
+            // so insert a 'fake' feature issue
+            const feature_issue = feature_issues[issue.parent_group_id] || { 'id': issue.parent_group_id }
+            issues_to_render.push( {issue: feature_issue, type: "feature", id: feature_issue.id} )
+            rendered_parent_group_ids.push(issue.parent_group_id)
+            running_parent_issue_id = issue.parent_group_id
+        }
+
+        if (show_issue && (!issue.can_group_children || !includes(rendered_parent_group_ids, issue.id) ) ) {
+            issues_to_render.push( {issue:issue, type:"issue", id: issue.id} )
+            rendered_parent_group_ids.push(issue.id)
+        }
+
+        if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
+            issues_to_render.push( {issue:null, type:"candidate", id: null} )
+        }
+
+        if (issue.can_group_issues) {
+            running_parent_issue_id = issue.id
+        } else {
+            running_parent_issue_id = issue.parent_group_id
+        }
+        return
+    })
+    return issues_to_render
+}
+
 
 function mapStateToProps(state, props) {
     const {item_list} = state
@@ -551,12 +567,17 @@ function mapStateToProps(state, props) {
     const is_creating_issue = candidate_issue || false
     const cursor_item_id = getCursorItemId(state, list_key)
     const display_mode = getDisplayMode(state, list_key)
+    const expanded_issues = getItemFlag(state, list_key, "flag_expanded_issues")
 
+    const issue_items = createIssueObjectsToRender(items, feature_issues, candidate_issue,
+                                                   expanded_issues, is_creating_issue)
+        
     return {
         list_key: list_key,
         visible_item_ids,
         sprint_id: sprint_id,
         issues: items,
+        issue_items: issue_items,
         issues_by_id: items_by_id,
         issue_ids: map(items, 'id'),
         feature_issue_ids: feature_issue_ids,
@@ -576,7 +597,7 @@ function mapStateToProps(state, props) {
         is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
         candidate_issue: candidate_issue,
         is_creating_issue: is_creating_issue,
-        expanded_issues: getItemFlag(state, list_key, "flag_expanded_issues"),
+        expanded_issues: expanded_issues,
         header_list: issue_header_list
     }
 }
