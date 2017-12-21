@@ -295,29 +295,34 @@ class IssueList extends Component {
         dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
 
-    reorderIssue(index_of_row_being_moved, original_index_of_destination) {
+    reorderIssue(index_of_row_being_moved, index_of_destination) {
         const {dispatch, list_key, issue_items, visible_item_ids} = this.props
 
-        let index_of_destination = original_index_of_destination
-        
-        /* if ( index_of_row_being_moved > index_of_destination ) {
-         *     index_of_destination -= 1;
-         * }*/
-        
+        // get issue being moved
         const moving_issue_id = issue_items[index_of_row_being_moved].id
-        const move_after_issue_id = (index_of_destination>0 && issue_items[index_of_destination].id) || null
-        
+        if ( ! moving_issue_id ) {
+            return
+        }
         let selected_ids = this.props.selected_ids || []
         if ( ! includes(selected_ids, moving_issue_id) ) {
             selected_ids = [moving_issue_id]
         }
         selected_ids = uniq(concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id)))
 
+        // get place to move it
+        let move_after_issue_id
+        if ( index_of_row_being_moved > index_of_destination ) {
+            move_after_issue_id = (index_of_destination>0 && issue_items[index_of_destination-1].id) || null
+        } else {
+            move_after_issue_id = issue_items[index_of_destination].id || null
+        }
+
         const target_hidden_child_issue_ids = (move_after_issue_id && this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)) || [null]
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
+
         
         dispatch(reorderIssue(selected_ids, target_issue_id, list_key,
-                              indexOf(visible_item_ids, move_after_issue_id),
+                              index_of_destination,
                               function () {
                                   dispatch(invalidateList(list_key))
                                   dispatch(fetchIssuesIfNeeded(list_key))
@@ -385,7 +390,7 @@ class IssueList extends Component {
         )
     }
 
-    renderIssue(issue) {
+    renderIssue(issue, index) {
         const {
             is_visible, list_key,
             saving_issue_ids,
@@ -393,7 +398,7 @@ class IssueList extends Component {
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
             header_list, cursor_item_id
         } = this.props
-        const key = issue.id
+        const key = issue.id + "_" + index
         const issue_id = issue.id
         const that = this
 
@@ -445,9 +450,9 @@ class IssueList extends Component {
             if ( issue_item.type == "candidate" ) {
                 issue_rows.push(that.render_candidate_issue())
             } else if ( issue_item.type == "feature" ) {
-                issue_rows.push(that.renderIssue(issue_item.issue))
+                issue_rows.push(that.renderIssue(issue_item.issue, index))
             } else if ( issue_item.type == "issue" ) {
-                issue_rows.push(that.renderIssue(issue_item.issue))
+                issue_rows.push(that.renderIssue(issue_item.issue, index))
             }
         })
         
@@ -484,7 +489,7 @@ class IssueList extends Component {
 function createIssueObjectsToRender(issues, feature_issues, candidate_issue,
                                     expanded_issues, is_creating_issue) {
     const issues_to_render = []
-    const rendered_parent_group_ids = []
+    const rendered_issue_ids = []
     let running_parent_issue_id = null
     
     each(issues, function (issue, index) {
@@ -495,18 +500,23 @@ function createIssueObjectsToRender(issues, feature_issues, candidate_issue,
 
         const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
 
-        if (issue.parent_group_id && ! includes(rendered_parent_group_ids, issue.parent_group_id) ) {
-            // this happens if the issue is separated from its group parent by another issue,
-            // so insert a 'fake' feature issue
-            const feature_issue = feature_issues[issue.parent_group_id] || { 'id': issue.parent_group_id }
-            issues_to_render.push( {issue: feature_issue, type: "feature", id: feature_issue.id} )
-            rendered_parent_group_ids.push(issue.parent_group_id)
-            running_parent_issue_id = issue.parent_group_id
-        }
+        /* if (issue.parent_group_id && ! includes(rendered_issue_ids, issue.parent_group_id) ) {
+         *     // this happens if the issue is separated from its group parent by another issue,
+         *     // so insert a 'fake' feature issue
+         *     const feature_issue = feature_issues[issue.parent_group_id] || { 'id': issue.parent_group_id }
+         *     issues_to_render.push( {issue: feature_issue, type: "feature", id: feature_issue.id} )
+         *     rendered_issue_ids.push(issue.parent_group_id)
+         *     running_parent_issue_id = issue.parent_group_id
+         * }*/
 
-        if (show_issue && (!issue.can_group_children || !includes(rendered_parent_group_ids, issue.id) ) ) {
+        /* if (show_issue && (!issue.can_group_issues || !includes(rendered_issue_ids, issue.id) ) ) {
+         *     issues_to_render.push( {issue:issue, type:"issue", id: issue.id} )
+         *     rendered_issue_ids.push(issue.id)
+         * }*/
+
+        if (show_issue ) {
             issues_to_render.push( {issue:issue, type:"issue", id: issue.id} )
-            rendered_parent_group_ids.push(issue.id)
+            rendered_issue_ids.push(issue.id)
         }
 
         if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {

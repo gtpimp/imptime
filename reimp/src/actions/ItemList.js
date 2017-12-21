@@ -118,6 +118,7 @@ export function updateVisibleItemIdAbove(list_key, item_ids_to_move, item_id_to_
             list_key: list_key,
             visible_item_ids: reordered_item_ids
         })
+        console.log("updateVisibleItemIdAbove. Before=" + item_ids + ". After=" + reordered_item_ids)
     }
 }
 
