@@ -203,6 +203,12 @@ class IssueViewSet(BaseViewSet):
                             IssueHistory.add_history(
                                 request.user, issue, "changed parent group id",
                                 old_parent_group_id, new_value)
+                            if old_parent_group_id:
+                                old_parent_issue = self.allowed_issue(old_parent_group_id)
+                                old_parent_issue.save()
+                            if new_value:
+                                new_parent_issue = self.allowed_issue(new_value)
+                                new_parent_issue.save()
                 elif field_name == 'sprint_id':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
                         old_sprint = issue.project

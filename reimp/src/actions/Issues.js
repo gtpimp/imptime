@@ -248,7 +248,7 @@ export function ungroupIssuesIntoFeature(issue_ids) {
         if (!ok_to_ungroup) {
             return
         }
-        return updateItem(ENTITY_KEY__ISSUE, issue_ids, "parent_group_id", null)
+        dispatch(updateItem(ENTITY_KEY__ISSUE, issue_ids, "parent_group_id", null))
     }
 }
 
