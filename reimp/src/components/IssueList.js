@@ -70,7 +70,7 @@ class IssueList extends Component {
             dispatch(initList(list_key))
             dispatch(fetchIssuesIfNeeded(list_key))
             dispatch(ensureIssuesLoaded(feature_issue_ids))
-            console.log(list_key)
+            this.expandUnAutoExpandedFeatures()
         }
     }
 
@@ -81,8 +81,18 @@ class IssueList extends Component {
         if ( this.props.sprint_id != new_props.sprint_id ) {
             onSelectIssues([])
         }
+        this.expandUnAutoExpandedFeatures(new_props)
         dispatch(fetchIssuesIfNeeded(list_key))
         dispatch(ensureIssuesLoaded(feature_issue_ids))
+    }
+
+    expandUnAutoExpandedFeatures(these_props) {
+        const { dispatch, list_key, feature_issue_ids, autoexpanded_feature_ids } = these_props || this.props
+        const feature_ids_to_auto_expanded = difference(feature_issue_ids, autoexpanded_feature_ids)
+        if ( feature_ids_to_auto_expanded.length > 0 ) {
+            dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'expanded_issues', true))
+            dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'autoexpanded_feature_ids', true))
+        }
     }
 
     handleShortcuts(action, event) {
@@ -578,6 +588,7 @@ function mapStateToProps(state, props) {
     const cursor_item_id = getCursorItemId(state, list_key)
     const display_mode = getDisplayMode(state, list_key)
     const expanded_issues = getItemFlag(state, list_key, "flag_expanded_issues")
+    const autoexpanded_feature_ids = getItemFlag(state, list_key, "flag_autoexpanded_feature_ids")
 
     const issue_items = createIssueObjectsToRender(items, feature_issues, candidate_issue,
                                                    expanded_issues, is_creating_issue)
@@ -608,6 +619,7 @@ function mapStateToProps(state, props) {
         candidate_issue: candidate_issue,
         is_creating_issue: is_creating_issue,
         expanded_issues: expanded_issues,
+        autoexpanded_feature_ids,
         header_list: issue_header_list
     }
 }
