@@ -358,12 +358,12 @@ export function getItem(state, entity_key, item_id) {
 export function getItems(state, entity_key, item_ids) {
     const item_objs = (state.item || {})[entity_key]
     const items_by_id = (item_objs && item_objs.items_by_id) || {}
-    return items_by_id && item_ids && compact(item_ids.map(function (item_id, index) {
+    return items_by_id && item_ids && compact(map(item_ids, (function (item_id, index) {
         return items_by_id[item_id] || {
             'id': item_id,
             'loaded': false
         }
-    }))
+    })))
 }
 
 export function getItemsById(state, entity_key, item_ids) {

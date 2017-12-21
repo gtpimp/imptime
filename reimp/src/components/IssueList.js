@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { compact, uniq, concat, each, indexOf, map, keys, keyBy, values, union, difference, includes } from 'lodash'
+import { compact, uniq, concat, each, indexOf, map, keys, keyBy, merge, values, union, difference, includes } from 'lodash'
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
@@ -40,6 +40,7 @@ import {
     getIssuesById,
     ensureIssuesLoaded
 } from '../actions/Issues'
+import { ensureTagsLoaded, getTags } from '../actions/Tags'
 import Issue from '../components/Issue'
 import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
@@ -65,18 +66,19 @@ class IssueList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, sprint_id, feature_issue_ids} = this.props
+        const {dispatch, list_key, sprint_id, feature_issue_ids, tag_ids} = this.props
         if (sprint_id) {
             dispatch(initList(list_key))
             dispatch(fetchIssuesIfNeeded(list_key))
             dispatch(ensureIssuesLoaded(feature_issue_ids))
+            dispatch(ensureTagsLoaded(tag_ids))
             this.expandUnAutoExpandedFeatures()
         }
     }
 
     componentWillReceiveProps(new_props) {
         const {dispatch, list_key} = this.props
-        const { feature_issue_ids } = new_props
+        const { feature_issue_ids, tag_ids } = new_props
         const {onSelectIssues} = this.props
         if ( this.props.sprint_id != new_props.sprint_id ) {
             onSelectIssues([])
@@ -84,6 +86,7 @@ class IssueList extends Component {
         this.expandUnAutoExpandedFeatures(new_props)
         dispatch(fetchIssuesIfNeeded(list_key))
         dispatch(ensureIssuesLoaded(feature_issue_ids))
+        dispatch(ensureTagsLoaded(tag_ids))
     }
 
     expandUnAutoExpandedFeatures(these_props) {
@@ -340,16 +343,33 @@ class IssueList extends Component {
     }
 
     renderHeader() {
-        const { header_list } = this.props
+        const { header_list, tag_category_names } = this.props
         return (
             <div className="div-table__header_row">
-              { map(header_list, (v, k) => (
-                  <div key={k}
-                       className="div-table__header_cell"
-                       style={getCellStyle(v)}>
-                    {v.label }
-                  </div>
-              ))}
+              { map(header_list, function(v, k) {
+                    if ( k !== "tag_columns" ) {
+                        return (
+                            <div key={k}
+                                 className="div-table__header_cell"
+                                 style={getCellStyle(v)}>
+                              {v.label }
+                            </div>
+                        )
+                    }
+                    
+                    if ( k === "tag_columns" ) {
+                        return (
+                            map(tag_category_names, (tag_category_name) => (
+                                <div key={tag_category_name}
+                                     className="div-table__header_cell issue-list__header_call__tag_category"
+                                     style={getCellStyle(v)}>
+                                  {tag_category_name}
+                                </div>
+                            ))
+                        )
+                    }
+                })
+              }
             </div>
         )
     }
@@ -359,7 +379,7 @@ class IssueList extends Component {
         const {
             selected_items,
             selected_ids, highlighted_ids, loading_item_ids, list_key,
-            expanded_issues, cursor_item_id
+            expanded_issues, cursor_item_id, tag_category_names
         } = this.props
 
         return (
@@ -378,6 +398,7 @@ class IssueList extends Component {
                         is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
                         is_cursor_item={""+issue.id==""+cursor_item_id}
                         issue_id={issue.id}
+                        tag_category_names={tag_category_names}
                         onDelete={this.onDeleteIssue} />
                 )}
                 </div>
@@ -406,7 +427,7 @@ class IssueList extends Component {
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
-            header_list, cursor_item_id
+            header_list, cursor_item_id, tag_category_names
         } = this.props
         const key = issue.id + "_" + index
         const issue_id = issue.id
@@ -427,6 +448,7 @@ class IssueList extends Component {
                    issue_id={issue_id}
                    header_list={header_list}
                    onDelete={that.onDeleteIssue}
+                   tag_category_names={tag_category_names}
                    is_fake={false}
         />
     }
@@ -577,7 +599,7 @@ function mapStateToProps(state, props) {
     const items = visible_item_ids.map(function (visible_item_id, index) {
         return items_by_id[visible_item_id] || {
             'id': visible_item_id,
-            'loaded': false
+            'loaded': false,
         }
     })
 
@@ -592,6 +614,10 @@ function mapStateToProps(state, props) {
 
     const issue_items = createIssueObjectsToRender(items, feature_issues, candidate_issue,
                                                    expanded_issues, is_creating_issue)
+    let tag_ids = []
+    items.map(function(item) { tag_ids = concat(tag_ids, item.tag_ids || []) })
+    const tags = getTags(state, tag_ids)
+    const tag_category_names = uniq(keys(keyBy(tags, 'category_name')))
         
     return {
         list_key: list_key,
@@ -620,7 +646,9 @@ function mapStateToProps(state, props) {
         is_creating_issue: is_creating_issue,
         expanded_issues: expanded_issues,
         autoexpanded_feature_ids,
-        header_list: issue_header_list
+        header_list: issue_header_list,
+        tag_ids,
+        tag_category_names
     }
 }
 

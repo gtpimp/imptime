@@ -91,7 +91,8 @@ export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width}
                                      'assignee': {label:"Assignee", width:medium_col_width},
                                      'created_at': {label:"Created at", width:medium_col_width},
                                      'status': {label:"Status", width:medium_col_width},
-                                     'tags': {label:"Tags", width:medium_col_width},
+                                     // 'tags': {label:"Tags", width:medium_col_width},
+                                     'tag_columns': {label:"Tag Columns", width:medium_col_width},
                                      'estimated': {label:"Estimates", width:medium_col_width},
                                      'clock_in': {label:"Clock in", width:small_col_width},
                                      'small_delete': {label:"", width:tiny_col_width}

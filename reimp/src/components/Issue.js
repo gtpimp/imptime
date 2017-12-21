@@ -19,6 +19,7 @@ import {
     ensureUsersLoaded,
     getUser
 } from '../actions/Users'
+import { ensureTagsLoaded, getTags } from '../actions/Tags'
 import OtherUser from '../components/OtherUser'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueStatus from './EditableIssueStatus'
@@ -79,8 +80,9 @@ class Issue extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, assignable_user_ids} = props
+        const {dispatch, assignable_user_ids, issue} = props
         dispatch(ensureUsersLoaded(assignable_user_ids))
+        dispatch(ensureTagsLoaded(issue.tag_ids || []))
     }
 
     onChangeAssignedTo(issue_id, new_value) {
@@ -152,7 +154,7 @@ class Issue extends Component {
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
             issue_id, visible_header_keys, header_list,
-            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item
+            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names, tagsByCategoryName
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -291,6 +293,17 @@ class Issue extends Component {
                      </div>
                    </div>
                   }
+                  {includes(visible_header_keys, "tag_columns") &&
+                   map(tag_category_names, (tag_category_name) =>
+                       <div key={tag_category_name}
+                            className="div-table__cell issue__cell__secondary"
+                            style={getCellStyle(header_list.tag_columns)}>
+                         <div className="issue-cell__tag_column">
+                           {(tagsByCategoryName[tag_category_name] || {}).name}
+                         </div>
+                       </div>
+                   )
+                  }
                   {includes(visible_header_keys, "estimated") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.estimated)}>
@@ -364,7 +377,7 @@ function mapStateToProps(state, props) {
         issue_id, is_selected, is_highlighted, is_collapsed,
         is_loading, is_invalidated, is_saving, show_children, is_fake,
         subject_prefix, subject_suffix, header_list, list_key, is_cursor_item,
-        onDelete
+        onDelete, tag_category_names
     } = props
 
     const issue = getIssue(state, issue_id) || {'loaded': false}
@@ -388,6 +401,8 @@ function mapStateToProps(state, props) {
     const isChildOfSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
     const isSiblingOfSelectedIssue = includes(keys(keyBy(selectedIssues, 'parent_group_id')), issue.parent_group_id)
     const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
+    const tags = getTags(state, issue.tag_ids || [])
+    const tagsByCategoryName = keyBy(tags, 'category_name')
     
     return {
         issue: issue,
@@ -406,10 +421,12 @@ function mapStateToProps(state, props) {
         subject_prefix: subject_prefix || "",
         subject_suffix: subject_suffix || "",
         visible_header_keys: keys(header_list),
+        tag_category_names,
         header_list: header_list,
         isFeatureOfSelectedIssue,
         belongsToSelectedFeature,
-        onDelete: onDelete || null
+        onDelete: onDelete || null,
+        tagsByCategoryName
     }
 }
 
