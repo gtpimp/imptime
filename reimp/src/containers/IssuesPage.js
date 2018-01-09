@@ -41,17 +41,17 @@ class IssuesPage extends Component {
     }
 
     componentDidMount() {
-        const {sprint_id, project_id, sprint, project, dispatch} = this.props
+        const {sprint_id, project_id, sprint, project, dispatch, default_issue_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues', 'issue']))
         dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, false))
-        this.refresh(sprint, project)
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch} = this.props
+        const { dispatch, default_issue_id } = new_props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
 
@@ -63,28 +63,37 @@ class IssuesPage extends Component {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
                 dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             }
-            this.refresh(new_props.sprint, new_props.project)
+            this.refresh(new_props)
+        } else {
+            if ( this.state && this.state.noticed_default_issue_id != default_issue_id ) {
+                this.selectDefaultIssue(new_props)
+            }
         }
     }
 
-    refresh(sprint, project) {
-        const {dispatch, selected_issue_ids, default_issue_id} = this.props
+    refresh(these_props) {
+        const {dispatch, selected_issue_ids, sprint, project, default_issue_id} = these_props || this.props
         if ( sprint.id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
-
-            if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
-                dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
-                dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
-            }
-
+            this.selectDefaultIssue(this.props)
             dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
                                       {to: '/projects/'+project.id, label: project.name},
                                       {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'Issues'}]))
         }
+        this.setState({'noticed_default_issue_id': default_issue_id})
+    }
+
+    selectDefaultIssue(these_props) {
+        const {dispatch, selected_issue_ids, default_issue_id} = these_props || this.props
+        if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
+            dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
+            dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
+        }
+        this.setState({'noticed_default_issue_id': default_issue_id})
     }
 
     onSelectIssues(issue_ids) {
