@@ -11,6 +11,7 @@ import EditableIssueInSprint from '../components/EditableIssueInSprint'
 import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import EditableIssueStatus from '../components/EditableIssueStatus'
 import EditableIssueType from '../components/EditableIssueType'
+import EditableIssueParent from './EditableIssueParent'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
 import moment from 'moment'
@@ -66,6 +67,12 @@ class MultipleIssueSidebar extends Component {
                     </div>
                   </div>
                 </PropertyStackComponent>
+
+                <PropertyStackComponent title="Feature">
+                  <div className="property-row">
+                    <EditableIssueParent issue_ids={issue_ids}/>
+                  </div>
+                </PropertyStackComponent>                
 
                 <PropertyStackComponent>
                   <div>

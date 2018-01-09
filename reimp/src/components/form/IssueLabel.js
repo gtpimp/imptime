@@ -28,8 +28,9 @@ class IssueLabel extends Component {
         }
     }
 
-    onGotoIssue() {
+    onGotoIssue(event) {
         const { issue_id, sprint_id, project_id } = this.props
+        event.stopPropagation()
         browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
     }
     

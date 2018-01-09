@@ -43,7 +43,8 @@ class SelectIssueParentGroupField extends Component {
     refresh() {
         const { dispatch, project_id } = this.props
         dispatch(initList(SELECTOR__ISSUE_GROUPS))
-        dispatch(update_list_filter(SELECTOR__ISSUE_GROUPS, {project_id: project_id}))
+        dispatch(update_list_filter(SELECTOR__ISSUE_GROUPS, {project_id: project_id,
+                                                             can_group_issues: true}))
         dispatch(invalidateList(SELECTOR__ISSUE_GROUPS))
         dispatch(fetchIssuesIfNeeded(SELECTOR__ISSUE_GROUPS))
     }
@@ -84,7 +85,7 @@ function mapStateToProps(state, props) {
     const issues = getIssues(state, issue_ids)
     
     let issue_options = issues.map(function(issue) {
-        let label = issue.name
+        let label = "#" + issue.id + " " + issue.subject
         return { value: issue.id, label: label }
     })
     

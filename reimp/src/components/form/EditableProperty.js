@@ -77,7 +77,8 @@ class EditableProperty extends Component {n
 
     render() {
 
-        const {children, initial_value, is_readonly, is_editing, is_empty, edit_as_modal, class_name, action_label} = this.props
+        const {children, initial_value, is_readonly, is_editing, is_empty,
+               edit_as_modal, class_name, wideView, action_label} = this.props
 
         const that = this
         let editing_child = null
@@ -114,7 +115,8 @@ class EditableProperty extends Component {n
               <div>
                 { is_editing && edit_as_modal &&
                   <Modal isOpen={true}
-                         className="editable-property-modal"
+                         className={classNames("editable-property-modal",
+                                               {"editable-property-modal--wide": wideView}) }
                          overlayClassName="editable-property-modal__overlay"
                          onRequestClose={this.cancelEditing}
                          contentLabel={action_label || ""}>
@@ -138,7 +140,8 @@ class EditableProperty extends Component {n
 
 function mapStateToProps(state, props) {
 
-    const {property_key, initial_value, edit_as_modal, can_edit, class_name, action_label} = props
+    const {property_key, initial_value, edit_as_modal, can_edit,
+           class_name, wideView, action_label} = props
 
     return {
         property_key: property_key,
@@ -149,6 +152,7 @@ function mapStateToProps(state, props) {
         is_readonly: isReadonly(state, property_key),
         is_empty: !initial_value,
         class_name: class_name || "",
+        wideView: wideView || false,
         action_label,
         mode: getMode(state, property_key)
     }

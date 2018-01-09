@@ -19,6 +19,10 @@
     overflow: auto;
 }
 
+.editable-property-modal--wide {
+    width: 600px;
+}
+
 .editable-property-modal__overlay {
   position: fixed;
   top: 0;

@@ -8,7 +8,6 @@ import {
     update_list_filter,
     invalidateList
 } from '../../actions/ItemList'
-
 import IssueParentGroupSelectorField from './IssueParentGroupSelectorField'
 
 class SelectSprintForm extends Component {
