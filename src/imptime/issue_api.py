@@ -381,4 +381,9 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-
+    def apply_filter(self, qs, raw_filter_args):
+        project_id = raw_filter_args.pop('project_id', None)
+        if project_id is not None:
+            raw_filter_args['sprint__project_id'] = project_id
+        return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
+    

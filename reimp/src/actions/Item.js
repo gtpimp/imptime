@@ -408,7 +408,7 @@ export function areAnyItemsInvalidated(state, entity_key, item_ids) {
     return difference(invalidated_ids, item_ids).length > 0
 }
 
-export function getLoadingItemIds(entity_key, state, item_ids) {
+export function getLoadingItemIds(state, entity_key, item_ids) {
     if ( ! item_ids ) {
         return false
     }

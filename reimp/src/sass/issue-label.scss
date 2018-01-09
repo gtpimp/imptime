@@ -1,0 +1,13 @@
+@import 'variables.scss';
+
+.issue-label {
+    display: flex;
+}
+
+.issue-label__number {
+    padding-right: 10px;
+}
+
+.issue-label__number:hover {
+    text-decoration: underline;
+}

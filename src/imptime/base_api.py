@@ -118,9 +118,11 @@ class BaseViewSet(viewsets.ViewSet):
     def _apply_business_project_switch(self, d):
         d_fixed = {}
         for k, v in d.items():
-            if k.startswith('project_'):
+            if k.startswith('sprint__project_'):
+                k = k.replace('sprint__project_', 'project__business_')
+            elif k.startswith('project_'):
                 k = k.replace('project_', 'business_')
-            if k.startswith('sprint_'):
+            elif k.startswith('sprint_'):
                 k = k.replace('sprint_', 'project_')
             d_fixed[k] = v
         return d_fixed

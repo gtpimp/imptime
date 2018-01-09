@@ -56,6 +56,7 @@ export const PAGE_KEY__RELEASE_NOTES_PAGE = 'release_notes_page'
 export const PAGE_KEY__NUDGE_PAGE = 'nudge_page'
 
 export const SELECTOR__SPRINTS = 'selector_sprints'
+export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'
 export const FILTER_KEY__GLOBAL = 'global_filter'
 
 const medium_col_width = "150px"

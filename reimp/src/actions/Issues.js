@@ -335,7 +335,7 @@ export function getInvalidatedIssueIds(state, issue_ids) {
 }
 
 export function getLoadingIssueIds(state, issue_ids) {
-    return getLoadingItemIds(ENTITY_KEY__ISSUE, state, issue_ids)
+    return getLoadingItemIds(state, ENTITY_KEY__ISSUE, issue_ids)
 }
 
 export function getSavingIssueIds(state, issue_ids) {

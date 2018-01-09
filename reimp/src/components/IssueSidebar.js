@@ -12,6 +12,7 @@ import EditableIssueTestable from './EditableIssueTestable'
 import TagListFlat from './TagListFlat'
 import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
+import EditableIssueParent from './EditableIssueParent'
 import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueType from './EditableIssueType'
@@ -191,6 +192,13 @@ class IssueSidebar extends Component {
                           </div>
                         </PropertyStackComponent>
 
+                        <PropertyStackComponent title="Feature">
+                          <div className="property-row">
+                            <EditableIssueParent issue_ids={[issue.id]}/>
+                          </div>
+                        </PropertyStackComponent>
+
+                        
                         { false &&
                           <PropertyStackComponent title="Attachments">
                             { map(attachments, function (attachment, index) {
