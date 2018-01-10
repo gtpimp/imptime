@@ -40,12 +40,12 @@ class IssueSidebar extends Component {
 
     constructor(props) {
         super(props)
-        this.showEmacsIssue = this.showEmacsIssue.bind(this)
-        this.showEmacsSprint = this.showEmacsSprint.bind(this)
-        this.showGitCommitMessage = this.showGitCommitMessage.bind(this)
+        this.toggleShowEmacsHints = this.toggleShowEmacsHints.bind(this)
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
         this.closeIssueSidebar = this.closeIssueSidebar.bind(this)
         this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
+
+        this.state = {emacs_hint_enabled: false}
     }
 
     componentDidMount() {
@@ -61,24 +61,10 @@ class IssueSidebar extends Component {
         
     }
 
-    showEmacsIssue() {
-        const { issue } = this.props
-        const text = "*** issue" + issue.number + " " + issue.subject
-        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
+    toggleShowEmacsHints() {
+        this.setState({emacs_hint_enabled:!this.state.emacs_hint_enabled})
     }
 
-    showEmacsSprint() {
-        const { issue, sprint } = this.props
-        const text = "** sprint#" + sprint.id + " " + sprint.name
-        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
-    }
-
-    showGitCommitMessage() {
-        const { issue, sprint } = this.props
-        const text = "#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject
-        window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
-    }
-    
     showIssueVisualSpecGallery() {
         const { issue } = this.props
         browserHistory.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id+'/gallery/')
@@ -97,7 +83,8 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const {issue, comments, testables, attachments, visual_spec_documents} = this.props
+        const {issue, comments, testables, attachments, visual_spec_documents, sprint} = this.props
+        const { emacs_hint_enabled } = this.state
 
         if (issue && issue.id) {
 
@@ -134,33 +121,40 @@ class IssueSidebar extends Component {
                               <div className="property-cell"><OtherUser user_id={issue.created_by_id} /></div>
                             }
                           </div>
-                          <div onClick={this.showEmacsIssue}>
-                            Issue
-                            <div className="issue_sidebar__emacs_copy_img" />
-                          </div>
-                          <div onClick={this.showEmacsSprint}>
-                            Sprint
-                            <div className="issue_sidebar__emacs_copy_img" />
-                          </div>
-                          <div onClick={this.showGitCommitMessage}>
-                            Git commit message
-                            <div className="issue_sidebar__git_img" />
-                          </div>
-                        </PropertyStackComponent>
-                        
-                        <PropertyStackComponent title="Description">
-                          <EditableIssueDescription issue_id={issue.id}/>
+                        <div>
+                          <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
+
+                          { emacs_hint_enabled &&
+                            <div className="property-row">
+                              <div className="property-value">
+                                <pre>
+                                  *** issue {issue.number} {issue.subject}
+                                </pre>
+                              </div>
+                            </div>
+                          }
+                          { emacs_hint_enabled &&
+                            <div className="property-row">
+                              <div className="property-value">
+                                <pre>
+                                  ** sprint# {sprint.id} {sprint.name}
+                                </pre>
+                              </div>
+                            </div>
+                          }
+                          { emacs_hint_enabled &&
+                            <div className="property-row">
+                              <div className="property-value">
+                                <pre>
+                                  #{issue.number} (sprint {sprint.name}) {issue.subject}
+                                </pre>
+                              </div>
+                            </div>
+                          }
+                        </div>
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Testables">
-                          { map(testables, function (testable, index) {
-                                return <EditableIssueTestable key={issue.id, testable.id} issue_id={issue.id} testable_id={testable.id}/>
-                            })
-                          }
-                          <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
-                        </PropertyStackComponent>
-                        
-                        <PropertyStackComponent title="Props">
+                        <PropertyStackComponent>
 
                           <div className="property-row">
                             <div className="property-label">
@@ -214,6 +208,18 @@ class IssueSidebar extends Component {
                             </div>
                           </div>
                           
+                        </PropertyStackComponent>
+                        
+                        <PropertyStackComponent title="Description">
+                          <EditableIssueDescription issue_id={issue.id}/>
+                        </PropertyStackComponent>
+
+                        <PropertyStackComponent title="Testables">
+                          { map(testables, function (testable, index) {
+                                return <EditableIssueTestable key={issue.id, testable.id} issue_id={issue.id} testable_id={testable.id}/>
+                            })
+                          }
+                          <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
                         </PropertyStackComponent>
                         
                         <PropertyStackComponent title="Tags">
