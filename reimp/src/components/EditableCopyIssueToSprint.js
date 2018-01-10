@@ -6,6 +6,7 @@ import SprintLabel from './form/SprintLabel'
 import Blank from './form/Blank'
 import { copyIssuesToSprint, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
+import ReactTooltip from 'react-tooltip'
 
 class EditableCopyIssueToSprint extends Component {
 
@@ -35,6 +36,7 @@ class EditableCopyIssueToSprint extends Component {
                     <div data-tip="Copy this issue to a different sprint" className="issue_sidebar__issue_copy_img" />
                     <Blank/>
                 </EditableProperty>
+                <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

@@ -119,15 +119,19 @@ class IssueSidebar extends Component {
                           
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Description">
-                          <EditableIssueDescription issue_id={issue.id}/>
-                        </PropertyStackComponent>
-                        
                         <PropertyStackComponent>
-                          <div>
-                            Created <Timestamp value={issue.created_at} format="from_now" />
+                          <div className="property-row">
+                            <div className="property-cell">
+                              Created
+                            </div>
+                            <div className="property-cell">
+                              <Timestamp value={issue.created_at} format="from_now" />
+                            </div>
                             { issue.created_by_id &&
-                              <div>by <OtherUser user_id={issue.created_by_id} /></div>
+                              <div className="property-cell">by</div>
+                            }
+                            { issue.created_by_id &&
+                              <div className="property-cell"><OtherUser user_id={issue.created_by_id} /></div>
                             }
                           </div>
                           <div onClick={this.showEmacsIssue}>
@@ -143,7 +147,19 @@ class IssueSidebar extends Component {
                             <div className="issue_sidebar__git_img" />
                           </div>
                         </PropertyStackComponent>
+                        
+                        <PropertyStackComponent title="Description">
+                          <EditableIssueDescription issue_id={issue.id}/>
+                        </PropertyStackComponent>
 
+                        <PropertyStackComponent title="Testables">
+                          { map(testables, function (testable, index) {
+                                return <EditableIssueTestable key={issue.id, testable.id} issue_id={issue.id} testable_id={testable.id}/>
+                            })
+                          }
+                          <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
+                        </PropertyStackComponent>
+                        
                         <PropertyStackComponent title="Props">
 
                           <div className="property-row">
@@ -151,9 +167,13 @@ class IssueSidebar extends Component {
                               Sprint
                             </div>
                             <div className="property-value">
-                              <EditableIssueInSprint issue_ids={[issue.id]}/>
-                              <div className="property-col">
-                                <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                              <div className="property-row">
+                                <div className="property-value">
+                                  <EditableIssueInSprint issue_ids={[issue.id]}/>
+                                </div>
+                                <div className="property-col">
+                                  <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -200,14 +220,6 @@ class IssueSidebar extends Component {
                           <TagListFlat issue_ids={[issue.id]}/>
                         </PropertyStackComponent>
                         
-                        <PropertyStackComponent title="Testables">
-                          { map(testables, function (testable, index) {
-                                return <EditableIssueTestable key={issue.id, testable.id} issue_id={issue.id} testable_id={testable.id}/>
-                            })
-                          }
-                          <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
-                        </PropertyStackComponent>
-
                         <PropertyStackComponent title="Comments">
                           { map(comments, function (comment, index) {
                                 return <EditableIssueComment key={issue.id, comment.id} issue_id={issue.id} comment_id={comment.id}/>
