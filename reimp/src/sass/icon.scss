@@ -96,3 +96,8 @@
 .icon--adhoc {
     @include icon(15px, 15px, 'adhoc.png');
 }
+
+.issue_sidebar__issue_copy_img {
+    @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');
+    background-color: black;
+}

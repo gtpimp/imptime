@@ -32,7 +32,7 @@ class EditableCopyIssueToSprint extends Component {
                                   can_edit={can_edit}
                 >
                     <SelectSprintForm project_id={project_id} />
-                    <button className="button button--secondary issue_sidebar--button">Copy to sprint</button>
+                    <div data-tip="Copy this issue to a different sprint" className="issue_sidebar__issue_copy_img" />
                     <Blank/>
                 </EditableProperty>
             </div>
