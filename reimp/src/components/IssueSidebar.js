@@ -89,9 +89,6 @@ class IssueSidebar extends Component {
             return
         }
         dispatch(deleteIssue(issue.id))
-        /* if ( onDeleteIssue ) {
-         *     onDeleteIssue(issue.id)
-         * }*/
     }
 
     render() {
