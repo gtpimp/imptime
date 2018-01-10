@@ -144,6 +144,58 @@ class IssueSidebar extends Component {
                           </div>
                         </PropertyStackComponent>
 
+                        <PropertyStackComponent title="Props">
+
+                          <div className="property-row">
+                            <div className="property-label">
+                              Sprint
+                            </div>
+                            <div className="property-value">
+                              <EditableIssueInSprint issue_ids={[issue.id]}/>
+                              <div className="property-col">
+                                <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="property-row">
+                            <div className="property-label">
+                              Parent feature
+                            </div>
+                            <div className="property-value">
+                              <EditableIssueParent issue_ids={[issue.id]}/>
+                            </div>
+                          </div>
+                          
+                          <div className="property-row">
+                            <div className="property-label">
+                              Type
+                            </div>
+                            <div className="property-value">
+                              <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
+                            </div>
+                          </div>
+                          
+                          <div className="property-row">
+                            <div className="property-label">
+                              Status
+                            </div>
+                            <div className="property-value">
+                              <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+                            </div>
+                          </div>
+
+                          <div className="property-row">
+                            <div className="property-label">
+                              Assigned user
+                            </div>
+                            <div className="property-value">
+                              <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                            </div>
+                          </div>
+                          
+                        </PropertyStackComponent>
+                        
                         <PropertyStackComponent title="Tags">
                           <TagListFlat issue_ids={[issue.id]}/>
                         </PropertyStackComponent>
@@ -164,50 +216,12 @@ class IssueSidebar extends Component {
                           <EditableIssueComment issue_id={issue.id} comment_id={null}/>
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Assigned User">
-                          <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Issue Status">
-                          <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Issue Type">
-                          <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
-                        </PropertyStackComponent>
-                        
                         <PropertyStackComponent title="Estimates">
                           <div>
                             <EditableIssueEstimate issue_id={issue.id} />
                           </div>
                           <IssueEstimatesSummary issue_id={issue.id} />
                         </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Sprint">
-                          <div className="property-row">
-                            <EditableIssueInSprint issue_ids={[issue.id]}/>
-                            <div className="property-col">
-                              <EditableCopyIssueToSprint issue_ids={[issue.id]} />
-                            </div>
-                          </div>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Feature">
-                          <div className="property-row">
-                            <EditableIssueParent issue_ids={[issue.id]}/>
-                          </div>
-                        </PropertyStackComponent>
-
-                        
-                        { false &&
-                          <PropertyStackComponent title="Attachments">
-                            { map(attachments, function (attachment, index) {
-                                  return <EditableIssueAttachment key={attachment.id} issue_id={issue.id} attachment_id={attachment.id}/>
-                              })
-                            }
-                            <EditableIssueAttachment issue_id={issue.id} attachment_id={null}/>
-                          </PropertyStackComponent>
-                        }
 
                         <PropertyStackComponent title="Attachments">
                           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}

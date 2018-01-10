@@ -110,4 +110,16 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.property-label {
+    width: 50%;
+    font: $bold;
+}
+
+.property-value {
+    width: 50%;
+    font: $plain;
 }
