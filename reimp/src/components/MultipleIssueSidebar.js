@@ -37,50 +37,70 @@ class MultipleIssueSidebar extends Component {
         
         return (
 
-            <Sidebar>
+            <div className="sidebar issue-sidebar">
 
-              <div>
-                { issues.length } issues selected
+              <PropertyStack>
 
                 <PropertyStackComponent>
-                  <div>
-                    Status:
-                    <EditableIssueStatus issue_ids={issue_ids} project_id={project_id} />
-                  </div>
-                </PropertyStackComponent>
-                
-                <PropertyStackComponent>
-                  <div>
-                    Type:
-                    <EditableIssueType issue_ids={issue_ids} project_id={project_id} />
-                  </div>
+                  { issues.length } issues selected
                 </PropertyStackComponent>
 
-                
-                <PropertyStackComponent title="Sprint">
+                <PropertyStackComponent>
+
                   <div className="property-row">
-                    <div>
-                      <EditableIssueInSprint issue_ids={issue_ids} />
+                    <div className="property-label">
+                      Sprint
                     </div>
-                    <div className="property-col">
-                      <EditableCopyIssueToSprint issue_ids={issue_ids} />
+                    <div className="property-value">
+                      <div className="property-row">
+                        <div className="property-value">
+                          <EditableIssueInSprint issue_ids={issue_ids} />
+                        </div>
+                        <div className="property-col">
+                          <EditableCopyIssueToSprint issue_ids={issue_ids} />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </PropertyStackComponent>
 
-                <PropertyStackComponent title="Feature">
                   <div className="property-row">
-                    <EditableIssueParent issue_ids={issue_ids}/>
+                    <div className="property-label">
+                      Parent feature
+                    </div>
+                    <div className="property-value">
+                      <EditableIssueParent issue_ids={issue_ids}/>
+                    </div>
                   </div>
-                </PropertyStackComponent>                
+                  
+                  <div className="property-row">
+                    <div className="property-label">
+                      Type
+                    </div>
+                    <div className="property-value">
+                      <EditableIssueType issue_ids={issue_ids} project_id={project_id} />
+                    </div>
+                  </div>
 
-                <PropertyStackComponent>
-                  <div>
-                    Change assigned user:
-                    <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id} />
+                  <div className="property-row">
+                    <div className="property-label">
+                      Status
+                    </div>
+                    <div className="property-value">
+                      <EditableIssueStatus issue_ids={issue_ids} project_id={project_id} />
+                    </div>
                   </div>
+
+                  <div className="property-row">
+                    <div className="property-label">
+                      Assigned user
+                    </div>
+                    <div className="property-value">
+                      <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id} />
+                    </div>
+                  </div>
+                  
                 </PropertyStackComponent>
-
+                
                 <PropertyStackComponent>
                   <div>
                     Common tags:
@@ -88,9 +108,8 @@ class MultipleIssueSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
-              </div>
-
-            </Sidebar>
+              </PropertyStack>
+            </div>
         )
     }
 }
