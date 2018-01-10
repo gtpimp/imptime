@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 class IssueViewSet(BaseViewSet):
 
     def list(self, request):
-        
+
         try:
             context = {}
             params = request.GET.get('params', '{}')
@@ -44,7 +44,7 @@ class IssueViewSet(BaseViewSet):
                 issues = issues.order_by_project_id(project_id=filter_args['sprint_id']) #sic
             if 'copy_sprint_id' in filter_args:
                 issues = issues.order_by_project_id(project_id=filter_args['copy_sprint_id']) #sic
-            
+
             issues = self.apply_pagination(qs=issues, pagination=pagination)
 
             if format_args.get('ids_only', None):
@@ -103,7 +103,7 @@ class IssueViewSet(BaseViewSet):
                 attachment.react_preview_url = IssueAttachmentSerializer.get_preview_url(self.request, attachment)
         return issues
 
-    
+
     def update(self, request, pk):
         try:
             params = request.data
@@ -158,7 +158,7 @@ class IssueViewSet(BaseViewSet):
                         else:
                             raise Exception("Unknown issue type name: %s" % new_value)
                         IssueHistory.add_history(request.user, issue, "changed type", old_value, new_value)
-                        
+
                 elif field_name == "feature_name":
                     if self.logged_in_permissions(issue.project.business).has_edit_feature:
                         old_feature_name = issue.feature.name if issue.feature else "none"
@@ -264,7 +264,7 @@ class IssueViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
-        
+
         try:
             context = {}
             params = request.data['item']
@@ -293,7 +293,7 @@ class IssueViewSet(BaseViewSet):
                     else:
                         SprintIssueOrder.insert_after(issue, set_after_this_issue=issue_before)
                         self._set_parent_group_for_new_issue(issue, params.get('selected_issue_ids'))
-                
+
                 IssueHistory.add_history(request.user, issue,
                                              "created", "", issue.number)
                 IssueReview.reviewed(issue, request.user)
@@ -329,14 +329,14 @@ class IssueViewSet(BaseViewSet):
                                         .order_by_project_id(new_issue.project_id)\
                                         .filter(parent_group_id=first_selected_issue.id).first()
             SprintIssueOrder.insert_after(new_issue, last_issue_of_feature)
-        
+
         elif first_selected_issue.parent_group_id == last_selected_issue.parent_group_id:
             # all selected issues belong to the same feature, so add this issue to that same feature
             new_issue.parent_group_id = last_selected_issue.parent_group_id
             new_issue.save()
 
-            
-    
+
+
     @list_route(methods=['POST'])
     def bulk_create_issues(self, request):
         try:
@@ -356,13 +356,13 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-            
-    
-    def delete(self, request):
+
+
+    def delete(self, request, pk):
         try:
             context = {}
             params = request.data
-            issue_id = params['issue_id']
+            issue_id = pk
             issue = self.allowed_issue(issue_id)
 
             if self.logged_in_permissions(issue.project.business).has_delete_issue:
@@ -386,4 +386,3 @@ class IssueViewSet(BaseViewSet):
         if project_id is not None:
             raw_filter_args['sprint__project_id'] = project_id
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
-    
