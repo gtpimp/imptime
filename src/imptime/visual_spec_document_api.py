@@ -76,7 +76,6 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                 else:
                     f_image = File(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
                 width, height = PIL.Image.open(f_image).size
-                import pdb;pdb.set_trace()
                 vsd = VisualSpecDocument.objects.create(original_doc=f,
                                                         hires=f_image,
                                                         lores=f_image,
