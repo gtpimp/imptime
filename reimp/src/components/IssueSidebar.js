@@ -126,28 +126,31 @@ class IssueSidebar extends Component {
 
                           { emacs_hint_enabled &&
                             <div className="property-row">
+                              <div className="property-label">
+                                Emacs sprint
+                              </div>
                               <div className="property-value">
-                                <pre>
-                                  *** issue {issue.number} {issue.subject}
-                                </pre>
+                                <input value={"** sprint" + sprint.id + " " + sprint.name}/>
                               </div>
                             </div>
                           }
                           { emacs_hint_enabled &&
                             <div className="property-row">
+                              <div className="property-label">
+                                Emacs issue
+                              </div>
                               <div className="property-value">
-                                <pre>
-                                  ** sprint# {sprint.id} {sprint.name}
-                                </pre>
+                                <input value={"*** issue" + issue.number + " " + issue.subject}/>
                               </div>
                             </div>
                           }
                           { emacs_hint_enabled &&
                             <div className="property-row">
+                              <div className="property-label">
+                                Git commit
+                              </div>
                               <div className="property-value">
-                                <pre>
-                                  #{issue.number} (sprint {sprint.name}) {issue.subject}
-                                </pre>
+                                <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
                               </div>
                             </div>
                           }

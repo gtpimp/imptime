@@ -1131,7 +1131,7 @@ class Project(BaseModel):
     @classmethod
     def get_project_from_name(self, name, business):
         project_id = None
-        match_object = re.compile("[sS]print#(\d+).*").search(name)
+        match_object = re.compile("[sS]print#?(\d+).*").search(name)
         if match_object and match_object.groups() != 0:
             project_id = int(match_object.group(1))
             return Project.objects.get(business=business, pk=project_id)
