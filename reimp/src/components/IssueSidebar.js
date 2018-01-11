@@ -131,34 +131,38 @@ class IssueSidebar extends Component {
                               <div className="property-cell"><OtherUser user_id={issue.created_by_id} /></div>
                             }
                           </div>
-                          <div>
-                            <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
-                            { emacs_hint_enabled &&
-                              <div className="property-row">
-                                <div className="property-value">
-                                  <pre>
-                                    *** issue {issue.number} {issue.subject}
-                                  </pre>
-                                </div>
+                        <div>
+                          <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
+
+                          { emacs_hint_enabled &&
+                            <div className="property-row">
+                              <div className="property-label">
+                                Emacs sprint
                               </div>
-                            }
-                            { emacs_hint_enabled &&
-                              <div className="property-row">
-                                <div className="property-value">
-                                  <pre>
-                                    ** sprint# {sprint.id} {sprint.name}
-                                  </pre>
-                                </div>
+                              <div className="property-value">
+                                <input value={"** sprint" + sprint.id + " " + sprint.name}/>
                               </div>
-                            }
-                            { emacs_hint_enabled &&
-                              <div className="property-row">
-                                <div className="property-value">
-                                  <pre>
-                                    #{issue.number} (sprint {sprint.name}) {issue.subject}
-                                  </pre>
-                                </div>
+                            </div>
+                          }
+                          { emacs_hint_enabled &&
+                            <div className="property-row">
+                              <div className="property-label">
+                                Emacs issue
                               </div>
+                              <div className="property-value">
+                                <input value={"*** issue" + issue.number + " " + issue.subject}/>
+                              </div>
+                            </div>
+                          }
+                          { emacs_hint_enabled &&
+                            <div className="property-row">
+                              <div className="property-label">
+                                Git commit
+                              </div>
+                              <div className="property-value">
+                                <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
+                              </div>
+                            </div>
                             }
                           </div>
                         </PropertyStackComponent>
