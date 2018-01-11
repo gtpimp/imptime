@@ -1,9 +1,8 @@
 import logging
 from issue_serializer import IssueSerializer
 from django.conf import settings
-from django.core.files import File
+from django.core.files import File as DjangoFile
 import os
-import PIL
 from django_downloadview import HTTPDownloadView
 from django.contrib.auth.decorators import login_required
 from visual_spec_document_serializer import VisualSpecDocumentSerializer
@@ -70,31 +69,12 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             issue_pk = request.POST.get('issue_id', None)
             issue = self.allowed_issue(issue_pk) if issue_pk else None
             for name, f in request.FILES.items():
-                is_image = f.content_type.startswith('image')
-                if is_image:
-                    f_image = f
-                else:
-                    f_image = File(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
-                width, height = PIL.Image.open(f_image).size
-                vsd = VisualSpecDocument.objects.create(original_doc=f,
-                                                        hires=f_image,
-                                                        lores=f_image,
-                                                        hires_width=width,
-                                                        hires_height=height,
-                                                        thumbnail=f_image,
-                                                        name=f.name,
-                                                        content_type=f.content_type,
-                                                        is_image=is_image)
-                VisualSpecProject.objects.create(visual_spec_document = vsd,
-                                                 project_id=project.id,
-                                                 order=VisualSpecProject.get_next_order(project.id))
-                project.save()
-                if issue is not None:
-                    VisualSpecIssue.objects.create(visual_spec_document = vsd,
-                                                   issue=issue,
-                                                   order=VisualSpecIssue.get_next_order(issue.id))
-                    issue.save()
-                    IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
+                VisualSpecDocument.create_for_doc(user=request.user,
+                                                  project=project,
+                                                  doc=f,
+                                                  name=f.name,
+                                                  content_type=f.content_type,
+                                                  issue=issue)
             data = {'status': 'success'}
             
         except Exception, ex:
@@ -189,8 +169,9 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             vsi = VisualSpecProject.objects.filter(project_id=project_id, visual_spec_document_id=visual_spec_document_id).first()
             if vsi is not None:
                 vsi.delete()
-            vsd.deleted = True
-            vsd.save()
+            if VisualSpecProject.objects.filter(visual_spec_document_id=visual_spec_document_id).count() == 0:
+                vsd.deleted = True
+                vsd.save()
             project.save()
             data = {'status': 'success', 'payload': [visual_spec_document_id]}
 

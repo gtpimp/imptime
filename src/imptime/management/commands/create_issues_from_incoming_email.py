@@ -5,6 +5,7 @@ from timepiece.models import Business as Project
 from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import ProjectStatus as SprintStatus
+from imptime.models import VisualSpecDocument
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
 import html2text
 import signal
@@ -293,10 +294,13 @@ class Command(BaseCommand):
             with open(temp_physical_filename, "wb") as f:
                 f.write(attachment_content['content'])
             django_file = DjangoFile(open(temp_physical_filename))
-            IssueAttachment.objects.create(issue=issue,
-                                           name=attachment_content['filename'],
-                                           content_type=attachment_content['content_type'],
-                                           attachment=django_file)
+
+            VisualSpecDocument.create_for_doc(user=user,
+                                              project=project,
+                                              doc=django_file,
+                                              name=attachment_content['filename'],
+                                              content_type=attachment_content['content_type'],
+                                              issue=issue)
             
         logger.info("Created issue %s for %s by email" % (issue.id, user.username))
         return issue
