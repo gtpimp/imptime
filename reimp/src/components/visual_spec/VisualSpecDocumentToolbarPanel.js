@@ -34,11 +34,12 @@ class VisualSpecDocumentToolbarPanel extends Component {
     invalidateComponents() {
         const { dispatch } = this.props
         dispatch(invalidateAllVisualSpecDocuments())
-        dispatch(invalidateAllVisualSpecIssueAnnotations()) 
+        dispatch(invalidateAllVisualSpecIssueAnnotations())
     }
 
     onCloneIssueClick() {
         const { dispatch, selected_issue, active_visual_spec_document_id } = this.props
+        debugger;
         dispatch(cloneIssueForVisualSpec(active_visual_spec_document_id, selected_issue.id,
                                          function(new_visual_spec_document_id, new_issue_id) {
                                              browserHistory.push('/projects/' + selected_issue.project_id +
@@ -64,7 +65,7 @@ class VisualSpecDocumentToolbarPanel extends Component {
               <ReactTooltip place="bottom" type="info" />
             </div>
         )
-    } 
+    }
 }
 
 function mapStateToProps(state, props) {
@@ -75,7 +76,7 @@ function mapStateToProps(state, props) {
     const selected_issue = getIssue(state, selected_issue_id) || {}
     const active_visual_spec_document_id = getPageFlag(state, PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
                                                        "active_visual_spec_document_id")
-    
+
     return {
         selected_issue_id,
         selected_issue,

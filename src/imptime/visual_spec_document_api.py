@@ -51,7 +51,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                     vsd.hires_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
                     vsd.lores_url = VisualSpecDocumentSerializer.get_lores_url(self.request, vsd)
                     vsd.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd)
-                
+
                 s = VisualSpecDocumentSerializer(visual_spec_documents, many=True)
                 visual_spec_documents_data = s.data
                 context['visual_spec_documents'] = visual_spec_documents_data
@@ -60,9 +60,9 @@ class VisualSpecDocumentViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))
-    
+
     def create(self, request):
         try:
             project_pk = request.POST['project_id']
@@ -76,6 +76,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                 else:
                     f_image = File(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
                 width, height = PIL.Image.open(f_image).size
+                import pdb;pdb.set_trace()
                 vsd = VisualSpecDocument.objects.create(original_doc=f,
                                                         hires=f_image,
                                                         lores=f_image,
@@ -96,11 +97,11 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                     issue.save()
                     IssueHistory.add_history(request.user, issue, "added visual spec document", "", f.name)
             data = {'status': 'success'}
-            
+
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-            
+
         return HttpResponse(JSONRenderer().render(data))
 
     def update(self, request, pk):
@@ -114,7 +115,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             visual_spec_document_ids = params.pop('visual_spec_document_ids', [pk])
 
             for vsd_id in visual_spec_document_ids:
-                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id) 
+                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id)
 
                 if field_name == 'visual_spec_document_id_after':
                     after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
@@ -176,7 +177,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-    
+
     @detail_route(methods=['POST'])
     def unassociateWithProject(self, request, pk):
         try:
@@ -204,6 +205,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
     @detail_route(methods=['POST'])
     def cloneIssueForDoc(self, request, pk):
         try:
+            import pdb;pdb.set_trace()
             params = request.data
             visual_spec_document_id = pk
             visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
@@ -226,8 +228,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                      'payload': { 'new_issue_id': new_issue.id,
                                   'new_visual_spec_document_id': visual_spec_document.id } }
             return HttpResponse(JSONRenderer().render(data))
-            
+
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-    
