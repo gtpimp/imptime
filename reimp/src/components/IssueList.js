@@ -172,7 +172,7 @@ class IssueList extends Component {
         }
         onSelectIssues([visible_item_ids[next_index]])
     }
-    
+
     onCollapse() {
         const {dispatch, list_key} = this.props
         dispatch(collapse_list(list_key))
@@ -214,7 +214,7 @@ class IssueList extends Component {
         if ( includes(expanded_issues, issue.id) ) {
             return issue_ids_to_select
         }
-        
+
         let parent_group_id = issue.id
         running_issue_index += 1
         while( running_issue_index < visible_item_ids.length ) {
@@ -333,7 +333,7 @@ class IssueList extends Component {
         const target_hidden_child_issue_ids = (move_after_issue_id && this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)) || [null]
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
 
-        
+
         dispatch(reorderIssue(selected_ids, target_issue_id, list_key,
                               index_of_destination,
                               function () {
@@ -356,7 +356,7 @@ class IssueList extends Component {
                             </div>
                         )
                     }
-                    
+
                     if ( k === "tag_columns" ) {
                         return (
                             map(tag_category_names, (tag_category_name) => (
@@ -456,7 +456,7 @@ class IssueList extends Component {
     render_expanded() {
 
         const {
-            issues, is_visible, list_key, issue_items, 
+            issues, is_visible, list_key, issue_items,
             saving_issue_ids,
             is_creating_issue, candidate_issue, invalidated_issue_ids,
             selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
@@ -468,7 +468,7 @@ class IssueList extends Component {
         }
         const that = this
 
-        
+
         if ( issue_items.length === 0 ) {
             return (
                 <div className="div-table__row">
@@ -487,7 +487,7 @@ class IssueList extends Component {
                 issue_rows.push(that.renderIssue(issue_item.issue, index))
             }
         })
-        
+
         return (
 
             <div>
@@ -523,7 +523,7 @@ function createIssueObjectsToRender(issues, feature_issues, candidate_issue,
     const issues_to_render = []
     const rendered_issue_ids = []
     let running_parent_issue_id = null
-    
+
     each(issues, function (issue, index) {
 
         if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
@@ -575,7 +575,7 @@ function mapStateToProps(state, props) {
     const items_by_id = getIssuesById(state, visible_item_ids)
     const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
     const all_item_ids = union(visible_item_ids, feature_issue_ids)
-    
+
     const loading_item_ids = getLoadingIssueIds(state, all_item_ids)
     const invalidated_item_ids = getInvalidatedIssueIds(state, all_item_ids)
     const saving_item_ids = getSavingIssueIds(state, all_item_ids)
@@ -604,7 +604,7 @@ function mapStateToProps(state, props) {
     })
 
     const feature_issues = getIssuesById(state, feature_issue_ids)
-    
+
     const candidate_issue = getCandidateIssue(state)
     const is_creating_issue = candidate_issue || false
     const cursor_item_id = getCursorItemId(state, list_key)
@@ -618,7 +618,7 @@ function mapStateToProps(state, props) {
     items.map(function(item) { tag_ids = concat(tag_ids, item.tag_ids || []) })
     const tags = getTags(state, tag_ids)
     const tag_category_names = uniq(keys(keyBy(tags, 'category_name')))
-        
+
     return {
         list_key: list_key,
         visible_item_ids,

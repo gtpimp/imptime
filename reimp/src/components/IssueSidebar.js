@@ -29,7 +29,8 @@ import {
     ensureIssuesLoaded,
     getIssue,
     populateEstimates,
-    makeFeatureIssuesSuccessive
+    makeFeatureIssuesSuccessive,
+    deleteIssue
 } from '../actions/Issues'
 import { ensureUsersLoaded } from '../actions/Users'
 import {format_hours} from '../actions/lib'
@@ -44,7 +45,7 @@ class IssueSidebar extends Component {
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
         this.closeIssueSidebar = this.closeIssueSidebar.bind(this)
         this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
-
+        this.onDelete = this.onDelete.bind(this)
         this.state = {emacs_hint_enabled: false}
     }
 
@@ -58,7 +59,7 @@ class IssueSidebar extends Component {
 
     closeIssueSidebar() {
         const { dispatch } = this.props
-        
+
     }
 
     toggleShowEmacsHints() {
@@ -79,6 +80,15 @@ class IssueSidebar extends Component {
         const {dispatch, issue_id, assignable_user_ids} = props
         dispatch(ensureIssuesLoaded([issue_id]))
         dispatch(ensureUsersLoaded(assignable_user_ids))
+    }
+
+    onDelete(event) {
+        const { issue, dispatch, onDelete } = this.props
+        event.stopPropagation()
+        if ( ! confirm( "Delete this issue?") ) {
+            return
+        }
+        dispatch(deleteIssue(issue.id))
     }
 
     render() {
@@ -103,7 +113,7 @@ class IssueSidebar extends Component {
                           </div>
                           <div className="issue_sidebar__close" onClick={this.closeIssueSidebar}>
                           </div>
-                          
+
                         </PropertyStackComponent>
 
                         <PropertyStackComponent>
@@ -153,8 +163,8 @@ class IssueSidebar extends Component {
                                 <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
                               </div>
                             </div>
-                          }
-                        </div>
+                            }
+                          </div>
                         </PropertyStackComponent>
 
                         <PropertyStackComponent>
@@ -183,7 +193,7 @@ class IssueSidebar extends Component {
                               <EditableIssueParent issue_ids={[issue.id]}/>
                             </div>
                           </div>
-                          
+
                           <div className="property-row">
                             <div className="property-label">
                               Type
@@ -192,7 +202,7 @@ class IssueSidebar extends Component {
                               <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
                             </div>
                           </div>
-                          
+
                           <div className="property-row">
                             <div className="property-label">
                               Status
@@ -210,9 +220,9 @@ class IssueSidebar extends Component {
                               <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
                             </div>
                           </div>
-                          
+
                         </PropertyStackComponent>
-                        
+
                         <PropertyStackComponent title="Description">
                           <EditableIssueDescription issue_id={issue.id}/>
                         </PropertyStackComponent>
@@ -224,11 +234,11 @@ class IssueSidebar extends Component {
                           }
                           <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
                         </PropertyStackComponent>
-                        
+
                         <PropertyStackComponent title="Tags">
                           <TagListFlat issue_ids={[issue.id]}/>
                         </PropertyStackComponent>
-                        
+
                         <PropertyStackComponent title="Comments">
                           { map(comments, function (comment, index) {
                                 return <EditableIssueComment key={issue.id, comment.id} issue_id={issue.id} comment_id={comment.id}/>
@@ -259,10 +269,16 @@ class IssueSidebar extends Component {
                             </button>
                           </PropertyStackComponent>
                         }
-                        
+
                         <PropertyStackComponent title="Reviews">
                           <IssueReviewPanel issue_id={issue.id} />
                         </PropertyStackComponent>
+
+                        { issue.id && <PropertyStackComponent>
+                          <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
+                            delete issue
+                          </button>
+                        </PropertyStackComponent> }
 
                       </div>
                     }

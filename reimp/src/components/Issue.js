@@ -359,7 +359,7 @@ class Issue extends Component {
         if ( isDragging ) {
             return null
         }
-        
+
         if (is_collapsed) {
             return this.render_collapsed()
         }
@@ -403,7 +403,7 @@ function mapStateToProps(state, props) {
     const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
     const tags = getTags(state, issue.tag_ids || [])
     const tagsByCategoryName = keyBy(tags, 'category_name')
-    
+
     return {
         issue: issue,
         issue_id: issue_id,
