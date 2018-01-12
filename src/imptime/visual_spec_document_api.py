@@ -204,7 +204,6 @@ class VisualSpecDocumentViewSet(BaseViewSet):
     @detail_route(methods=['POST'])
     def cloneIssueForDoc(self, request, pk):
         try:
-            import pdb;pdb.set_trace()
             params = request.data
             visual_spec_document_id = pk
             visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
@@ -217,15 +216,48 @@ class VisualSpecDocumentViewSet(BaseViewSet):
 
             SprintIssueOrder.insert_after(new_issue, set_after_this_issue=issue_to_clone)
             IssueHistory.add_history(request.user, new_issue,
-                                         "created", "", new_issue.number)
+                                     "created", "", new_issue.number)
 
             VisualSpecIssue.objects.create(visual_spec_document=visual_spec_document,
                                            issue=new_issue,
                                            order=0)
 
-            data = { 'status': 'success',
-                     'payload': { 'new_issue_id': new_issue.id,
-                                  'new_visual_spec_document_id': visual_spec_document.id } }
+            data = {'status': 'success',
+                    'payload': {'new_issue_id': new_issue.id,
+                                'new_visual_spec_document_id': visual_spec_document.id}}
+            return HttpResponse(JSONRenderer().render(data))
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+    @detail_route(methods=['POST'])
+    def cloneIssue(self, request):
+        try:
+            import pdb;pdb.set_trace()
+            params = request.data
+            visual_spec_document_id = pk
+            if visual_spec_document_id:
+                visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
+            issue_id = params['issue_id']
+            issue_to_clone = self.allowed_issue(issue_id)
+            if not self.logged_in_permissions(issue_to_clone.project.business).has_edit_issues:
+                raise Exception("Can't add issues")
+
+            new_issue = issue_to_clone.copy(logged_in_user=request.user)
+
+            SprintIssueOrder.insert_after(new_issue, set_after_this_issue=issue_to_clone)
+            IssueHistory.add_history(request.user, new_issue,
+                                     "created", "", new_issue.number)
+
+            if visual_spec_document_id:
+                VisualSpecIssue.objects.create(visual_spec_document=visual_spec_document,
+                                               issue=new_issue,
+                                               order=0)
+
+            data = {'status': 'success',
+                    'payload': {'new_issue_id': new_issue.id,
+                                'new_visual_spec_document_id': visual_spec_document.id}}
             return HttpResponse(JSONRenderer().render(data))
 
         except Exception, ex:

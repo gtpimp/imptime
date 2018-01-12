@@ -8,7 +8,8 @@ import { invalidateAllVisualSpecDocuments } from '../../actions/VisualSpecDocume
 import { invalidateAllVisualSpecIssueAnnotations } from '../../actions/VisualSpecIssueAnnotations'
 import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
 import {
-    cloneIssueForVisualSpec
+    cloneIssueForVisualSpec,
+    cloneIssueWithoutVisualSpec
 } from '../../actions/VisualSpecDocuments'
 import {
     getPageFlag
@@ -39,16 +40,27 @@ class VisualSpecDocumentToolbarPanel extends Component {
 
     onCloneIssueClick() {
         const { dispatch, selected_issue, active_visual_spec_document_id } = this.props
-        debugger;
-        dispatch(cloneIssueForVisualSpec(active_visual_spec_document_id, selected_issue.id,
-                                         function(new_visual_spec_document_id, new_issue_id) {
-                                             browserHistory.push('/projects/' + selected_issue.project_id +
-                                                                 '/sprints/' + selected_issue.sprint_id +
-                                                                 '/issues/' + new_issue_id +
-                                                                 '/visualSpec/' + new_visual_spec_document_id)
-                                             dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [new_issue_id]))
-                                         })
-        )
+        if (active_visual_spec_document_id !== 'undefined') {
+            dispatch(cloneIssueForVisualSpec(active_visual_spec_document_id, selected_issue.id,
+                                             function(new_visual_spec_document_id, new_issue_id) {
+                                                 browserHistory.push('/projects/' + selected_issue.project_id +
+                                                                     '/sprints/' + selected_issue.sprint_id +
+                                                                     '/issues/' + new_issue_id +
+                                                                     '/visualSpec/' + new_visual_spec_document_id)
+                                                 dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [new_issue_id]))
+                                             })
+            )
+        } else {
+            dispatch(cloneIssueWithoutVisualSpec(selected_issue.id,
+                                                 function(new_visual_spec_document_id, new_issue_id) {
+                                                     browserHistory.push('/projects/' + selected_issue.project_id +
+                                                                         '/sprints/' + selected_issue.sprint_id +
+                                                                         '/issues/' + new_issue_id +
+                                                                         '/visualSpec/' + new_visual_spec_document_id)
+                                                     dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [new_issue_id]))
+                                                 })
+            )
+        }
     }
 
     render() {

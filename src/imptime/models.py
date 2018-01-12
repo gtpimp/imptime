@@ -38,9 +38,9 @@ class VisualSpecProject(BaseModel):
     project = ProtectedForeignKey(Project, related_name='visual_spec_projects')
     order = models.IntegerField(default=1)
 
-    INCREMENT=10
-    MAX_ORDER=999999
-    
+    INCREMENT = 10
+    MAX_ORDER = 999999
+
     class Meta:
         unique_together = ('project', 'visual_spec_document')
 
@@ -76,7 +76,7 @@ class VisualSpecProject(BaseModel):
             vsp.order = new_order
             vsp.save()
         self.renumber(project_id)
-        
+
     @classmethod
     def insert_at_the_end(self, project_id, visual_spec_document_id):
         new_order = self.get_next_order(project_id)
@@ -100,7 +100,7 @@ class VisualSpecIssue(BaseModel):
 
     INCREMENT=10
     MAX_ORDER=999999
-    
+
     class Meta:
         unique_together = ('issue', 'visual_spec_document')
 
@@ -136,7 +136,7 @@ class VisualSpecIssue(BaseModel):
             vsi.order = new_order
             vsi.save()
         self.renumber(issue_id)
-        
+
     @classmethod
     def insert_at_the_end(self, issue_id, visual_spec_document_id):
         new_order = self.get_next_order(issue_id)
@@ -154,7 +154,7 @@ class VisualSpecIssue(BaseModel):
 
 
 class VisualSpecIssueAnnotation(BaseModel):
-    
+
     SHAPES = [ ('circle', 'Circle'),
                ('square', 'Square'),
                ('arrow', 'Arrow') ]
@@ -162,7 +162,7 @@ class VisualSpecIssueAnnotation(BaseModel):
     TARGET_OFFSET_PERCENTAGES = { 'circle': { 'x': 50, 'y': 50 },
                                   'square': { 'x': 50, 'y': 50 },
                                   'arrow': { 'x': 100, 'y': 50 } }
-    
+
     visual_spec_issue = models.ForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
     x_pos = models.FloatField()
@@ -179,7 +179,7 @@ class VisualSpecIssueAnnotation(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-    
+
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)
     clones = models.ManyToManyField(Sprint, related_name='parent_sprint_templates')
@@ -187,7 +187,7 @@ class SprintTemplate(BaseModel):
 class ReleaseNote(BaseModel):
     header = models.TextField(null=False)
     content = models.TextField(null=False)
-    
+
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ReleaseNote, self).save(*args, **kwargs)
@@ -200,14 +200,14 @@ class ReleaseNote(BaseModel):
         super(ReleaseNote, self).delete()
         RefreshNotifier().notify_model_delete(self)
 
-        
+
 class ReleaseNoteSeen(BaseModel):
     release_note = ProtectedForeignKey(ReleaseNote, related_name='seen_by', null=False)
     seen_by = models.ForeignKey(User, related_name='release_notes_seen_by', null=False, blank=False)
     seen_at = models.DateTimeField(null=False, auto_now=True)
 
 class Nudge(BaseModel):
-    
+
     user = models.ForeignKey(User, related_name='nudges', null=False, blank=False)
     sprint = models.ForeignKey(Sprint, related_name='nudges', null=False)
     issue = models.ForeignKey(Issue, related_name='nudges', null=True)
@@ -227,4 +227,3 @@ class Nudge(BaseModel):
     def delete(self, *args, **kwargs):
         super(Nudge, self).delete(*args, **kwargs)
         RefreshNotifier().notify_model_delete(self)
-        

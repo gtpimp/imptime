@@ -198,3 +198,29 @@ export function cloneIssueForVisualSpec(visual_spec_document_id, issue_id, on_do
 	       })
     }
 }
+
+export function cloneIssueWithoutVisualSpec(issue_id, on_done) {
+    return (dispatch, getState) => {
+	      const state = getState()
+	      let data = { issue_id: issue_id}
+	      return impfetch( state, "imp/" + "cloneIssue/", dispatch,
+			                   {method: "POST",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
+             if ( json.status !== 'success' ) {
+		             console.log('Request failed with JSON response', json);
+             } else {
+		             console.log('Request succeeded with JSON response', json);
+                 on_done(json.payload.new_visual_spec_document_id, json.payload.new_issue_id)
+             }
+	       })
+	       .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
+	       })
+    }
+}
