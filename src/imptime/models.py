@@ -1,10 +1,14 @@
 from lib.models import BaseModel
 from lib.fields import UploadTo, ProtectedForeignKey
 from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
+import hashlib
 from django.contrib.auth.models import User
+import PIL
 from timepiece.models import Issue
+from django.core.files import File as DjangoFile
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
+from timepiece.models import IssueHistory
 from impasync.refresh_notifier import RefreshNotifier
 from django.db import models
 from django.db.models import Max
@@ -20,6 +24,7 @@ class VisualSpecDocument(BaseModel):
     thumbnail = ThumbnailImageField(upload_to=upload_to_visual_spec_documents)
     hires_width = models.IntegerField()
     hires_height = models.IntegerField()
+    md5sum = models.CharField(max_length=255)
 
     is_image = models.BooleanField(default=True)
     name = models.CharField(max_length=255)
@@ -33,6 +38,49 @@ class VisualSpecDocument(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
 
+    @classmethod
+    def get_md5sum(self, f):
+        hash_md5 = hashlib.md5()
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+        f.seek(0)
+        return hash_md5.hexdigest()
+            
+    @classmethod
+    def create_for_doc(self, user, project, doc, name, content_type, issue=None):
+        is_image = content_type.startswith('image')
+        if is_image:
+            f_image = doc
+        else:
+            f_image = DjangoFile(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
+        width, height = PIL.Image.open(f_image).size
+
+        md5sum = self.get_md5sum(f_image)
+
+        vsd = VisualSpecDocument.objects.filter(md5sum=md5sum).first()
+        if vsd is None:
+            vsd = VisualSpecDocument.objects.create(original_doc=doc,
+                                                    hires=f_image,
+                                                    lores=f_image,
+                                                    hires_width=width,
+                                                    hires_height=height,
+                                                    thumbnail=f_image,
+                                                    name=name,
+                                                    md5sum=md5sum,
+                                                    content_type=content_type,
+                                                    is_image=is_image)
+        VisualSpecProject.objects.get_or_create(visual_spec_document=vsd,
+                                                project_id=project.id,
+                                                defaults={'order':VisualSpecProject.get_next_order(project.id)})
+        project.save()
+        if issue is not None:
+            _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
+                                                               issue=issue,
+                                                               defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
+            if created:
+                issue.save()
+                IssueHistory.add_history(user, issue, "added visual spec document", "", name)
+            
 class VisualSpecProject(BaseModel):
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_projects')
     project = ProtectedForeignKey(Project, related_name='visual_spec_projects')

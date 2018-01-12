@@ -85,7 +85,7 @@ function mapStateToProps(state, props) {
     const issues = getIssues(state, issue_ids)
     
     let issue_options = issues.map(function(issue) {
-        let label = "#" + issue.id + " " + issue.subject
+        let label = "#" + issue.number + " " + issue.subject
         return { value: issue.id, label: label }
     })
     

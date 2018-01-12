@@ -110,8 +110,8 @@ class IssueViewSet(BaseViewSet):
             field_name = params['field_name']
             new_value = params.get('value', None)
 
-            if 'issue_ids' in params:
-                issue_pks = params['issue_ids']
+            if 'item_ids' in params:
+                issue_pks = params['item_ids']
                 project_id = Issue.objects.filter(pk=issue_pks[0]).values_list('project_id', flat=True)[0]
                 issue_pks = SprintIssueOrder.sort_these_issue_ids(project_id, set(issue_pks))
 

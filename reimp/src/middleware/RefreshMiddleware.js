@@ -33,7 +33,8 @@ import {
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
     LIST_KEY__RELEASE_NOTES_LIST,
     LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
-    LIST_KEY__FORM_TAG_LIST
+    LIST_KEY__FORM_TAG_LIST,
+    SELECTOR__SPRINTS
 } from '../actions/ItemListKeyRegistry'
 import { each, keys } from 'lodash'
 
@@ -96,6 +97,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
 
     } else if ( d.entity_name === 'sprint' ) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_LIST] = true
+        list_keys_to_invalidate[SELECTOR__SPRINTS] = true
 
     } else if ( d.entity_name === 'issue' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
@@ -122,6 +124,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
     } else if ( d.entity_name == 'businessprojectorder' ) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_LIST] = true
+        list_keys_to_invalidate[SELECTOR__SPRINTS] = true
     } else if ( d.entity_name === 'nudge' ) {
         list_keys_to_invalidate[LIST_KEY__NUDGE_LIST] = true
     } else if ( d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {
