@@ -4,6 +4,7 @@ import Sidebar from './Sidebar'
 import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import { has_permission } from '../actions/Users'
+import EditableSprintStatus from './EditableSprintStatus'
 
 class MultipleSprintSidebar extends Component {
 
@@ -28,6 +29,11 @@ class MultipleSprintSidebar extends Component {
               <div>
                 { sprints.length } sprints selected
               </div>
+
+              <div>
+                <EditableSprintStatus sprint_ids={sprint_ids}/>
+              </div>
+              
 
             </Sidebar>
         )
