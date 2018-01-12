@@ -9,6 +9,7 @@ import {
 import {
     initList,
     update_list_filter,
+    getListFilter,
     invalidateList
 } from '../../actions/ItemList'
 import SingleValueSelector from './SingleValueSelector'
@@ -41,10 +42,11 @@ class SprintSelectorField extends Component {
     }
     
     refresh() {
-        const { dispatch, project_id } = this.props
+        const { dispatch, project_id, filter } = this.props
         dispatch(initList(SELECTOR__SPRINTS))
-        dispatch(update_list_filter(SELECTOR__SPRINTS, {project_id: project_id}))
-        // dispatch(invalidateList(SELECTOR__SPRINTS))
+        if ( filter.project_id != project_id ) {
+            dispatch(update_list_filter(SELECTOR__SPRINTS, {project_id: project_id}))
+        }
         dispatch(fetchSprintsIfNeeded(SELECTOR__SPRINTS))
     }
 
@@ -95,6 +97,8 @@ function mapStateToProps(state, props) {
     })
     const partitioned = partition(sprint_options, 'is_open')
     sprint_options = concat(sortBy(partitioned[0], 'label'), sortBy(partitioned[1], 'label'))
+
+    const filter = getListFilter(state, SELECTOR__SPRINTS)
     
     return {
         onChange: onChange,
@@ -102,7 +106,8 @@ function mapStateToProps(state, props) {
         sprint_ids: sprint_ids,
         sprint_options: sprint_options,
         project_id,
-        auto_focus
+        auto_focus,
+        filter
     }
 }
 
