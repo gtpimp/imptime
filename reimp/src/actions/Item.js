@@ -26,7 +26,7 @@ export const ANNOUNCE_DELETE_ITEM_FAILED = 'ANNOUNCE_DELETE_ITEM_FAILED'
 export const SET_ITEM_STORE_VALUE = 'SET_ITEM_STORE_VALUE'
 
 export const UPDATE_ENTIRE_ITEM_FIELD_NAME = "__all__"
- 
+
 export function invalidateAllItems(entity_key) {
     return {
         type: INVALIDATE_ALL_ITEMS,
@@ -38,7 +38,7 @@ export function invalidateItems(entity_key, item_ids) {
     return {
         type: INVALIDATE_ITEMS,
         entity_key: entity_key,
-	item_ids_to_invalidate: item_ids
+	      item_ids_to_invalidate: item_ids
     }
 }
 
@@ -54,8 +54,8 @@ export function setIssueStoreValue(item_ids, field_name, new_value) {
 function announceLoadingItems(entity_key, item_ids) {
     return {
         type: ANNOUNCE_LOADING_ITEMS,
-        entity_key: entity_key, 
-	item_ids_to_load: item_ids
+        entity_key: entity_key,
+	      item_ids_to_load: item_ids
     }
 }
 
@@ -64,16 +64,16 @@ function announceItemsLoaded(entity_key, payload) {
     const item_payload = payload[entity_key + "s"]
     return {
         type: ANNOUNCE_ITEMS_LOADED,
-        entity_key: entity_key, 
+        entity_key: entity_key,
         items_by_id: keyBy(item_payload, 'id'),
-	received_at: Date.now()
+	      received_at: Date.now()
     }
 }
 
 function announceItemsLoadFailed(entity_key, error) {
     return {
         type: ANNOUNCE_ITEMS_LOAD_FAILED,
-        entity_key: entity_key, 
+        entity_key: entity_key,
         error: error,
         received_at: Date.now()
     }
@@ -81,31 +81,31 @@ function announceItemsLoadFailed(entity_key, error) {
 
 function fetchItemsPromise(dispatch, state, entity_key, item_ids) {
     return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingItems(entity_key, item_ids))
-	const params = { filter: { ids: item_ids },
-			 pagination: {'enabled': false} }
+	      dispatch(announceLoadingItems(entity_key, item_ids))
+	      const params = { filter: { ids: item_ids },
+			                   pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/'+entity_key+'/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
+	          .then(response => response.json())
+	          .then(json => {
                 if (json.status !== 'success') {
-		    dispatch(announceItemsLoadFailed(entity_key))
-		    reject(json.error)
+		                dispatch(announceItemsLoadFailed(entity_key))
+		                reject(json.error)
                 } else {
-		    dispatch(announceItemsLoaded(entity_key, json.payload))
-		    resolve(json.payload)
+		                dispatch(announceItemsLoaded(entity_key, json.payload))
+		                resolve(json.payload)
                 }
-	    }).catch(function (error) {
-		dispatch(announceItemsLoadFailed(entity_key, "Failed to load items: " + entity_key + " : " + error))
-		reject("Failed to load items: " + error)
-	    })
+	          }).catch(function (error) {
+		            dispatch(announceItemsLoadFailed(entity_key, "Failed to load items: " + entity_key + " : " + error))
+		            reject("Failed to load items: " + error)
+	          })
     })
 }
 
 export function announceItemSaveFailed(entity_key, error) {
     return {
         type: ANNOUNCE_ITEM_SAVE_FAILED,
-        entity_key: entity_key, 
+        entity_key: entity_key,
         error: error,
         received_at: Date.now()
     }
@@ -114,7 +114,7 @@ export function announceItemSaveFailed(entity_key, error) {
 export function announceItemsSaved(entity_key, item_ids, items) {
     return {
         type: ANNOUNCE_ITEMS_SAVED,
-        entity_key: entity_key, 
+        entity_key: entity_key,
         item_ids: item_ids,
         saved_at: Date.now(),
         items_by_id: keyBy(items || {}, 'id'),
@@ -124,10 +124,10 @@ export function announceItemsSaved(entity_key, item_ids, items) {
 export function announceItemsSaving(entity_key, item_ids, field_name, new_value) {
     return {
         type: ANNOUNCE_ITEMS_SAVING,
-        entity_key: entity_key, 
+        entity_key: entity_key,
         item_ids: item_ids,
-	field_name: field_name,
-	new_value: new_value
+	      field_name: field_name,
+	      new_value: new_value
     }
 }
 
@@ -141,99 +141,99 @@ function announceCandidateItemSaving(entity_key) {
 function announceCandidateItemSaved(entity_key, new_item) {
     return {
         type: ANNOUNCE_SAVED_NEW_ITEM,
-        entity_key: entity_key,         
-	item: new_item
+        entity_key: entity_key,
+	      item: new_item
     }
 }
 
 function announceCandidateItemSaveFailed(entity_key, error) {
     return {
-	type: ANNOUNCE_SAVING_NEW_ITEM_FAILED,
-        entity_key: entity_key, 
-	error: error
+	      type: ANNOUNCE_SAVING_NEW_ITEM_FAILED,
+        entity_key: entity_key,
+	      error: error
     }
 }
 
 function announceDeletingItem(entity_key, item_id) {
     return {
         type: ANNOUNCE_DELETING_ITEM,
-        entity_key: entity_key, 
-	deleting_item_id: item_id
+        entity_key: entity_key,
+	      deleting_item_id: item_id
     }
 }
 
 export function announceItemDeleted(entity_key, item_id) {
     return {
-	type: ANNOUNCE_ITEM_DELETED,
-        entity_key: entity_key, 
-	deleted_item_id: item_id
+	      type: ANNOUNCE_ITEM_DELETED,
+        entity_key: entity_key,
+	      deleted_item_id: item_id
     }
 }
 
 function announceItemDeleteFailed(entity_key, item_id, error) {
     return {
         type: ANNOUNCE_DELETE_ITEM_FAILED,
-        entity_key: entity_key, 
-	deleting_item_id: item_id,
-	error: error
+        entity_key: entity_key,
+	      deleting_item_id: item_id,
+	      error: error
     }
 }
 
 export function updateItem(entity_key, item_ids, field_name, new_value, on_done, extra_post_data) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceItemsSaving(entity_key, item_ids, field_name, new_value))
-	let data = Object.assign({},{item_ids: item_ids,
+	      dispatch(announceItemsSaving(entity_key, item_ids, field_name, new_value))
+	      let data = Object.assign({},{item_ids: item_ids,
                                      field_name: field_name,
-		                     value: new_value},
+		                                 value: new_value},
                                  extra_post_data || {})
-	return impfetch(state, "imp/"+entity_key +"/"+item_ids[0]+"/", dispatch,
-			{method: "PUT",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"},
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      return impfetch(state, "imp/"+entity_key +"/"+item_ids[0]+"/", dispatch,
+			                  {method: "PUT",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceItemSaveFailed(entity_key, json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
+		             console.log('Request succeeded with JSON response', json);
                  dispatch(announceItemsSaved(entity_key, item_ids, json.payload.items))
              }
-	     if ( on_done ) {
-		 on_done()
-	     }
-	 })
-	 .catch(function (error) {
+	           if ( on_done ) {
+		             on_done()
+	           }
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceItemSaveFailed(entity_key, error))
-	 })
+	           dispatch(announceItemSaveFailed(entity_key, error))
+	       })
     }
 }
 
 export function startCandidateItem(entity_key, candidate_item) {
     return (dispatch, getState) => {
-	dispatch({
-	    type: ANNOUNCE_CAPTURING_NEW_ITEM,
+	      dispatch({
+	          type: ANNOUNCE_CAPTURING_NEW_ITEM,
             entity_key: entity_key,
             candidate_item: candidate_item
-	})
+	      })
     }
 }
 
 export function updateCandidateDetails(entity_key, new_data) {
     return {
-	type: UPDATE_NEW_ITEM_DETAILS,
-        entity_key: entity_key, 
-	candidate_item: new_data
+	      type: UPDATE_NEW_ITEM_DETAILS,
+        entity_key: entity_key,
+	      candidate_item: new_data
     }
 }
 
 export function cancelCandidateItem(entity_key) {
     return {
-	type: CANCEL_CREATING_NEW_ITEM,
+	      type: CANCEL_CREATING_NEW_ITEM,
         entity_key: entity_key
     }
 }
@@ -241,33 +241,33 @@ export function cancelCandidateItem(entity_key) {
 export function saveCandidateItem(entity_key, on_done) {
 
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceCandidateItemSaving(entity_key, ))
-	let data = {item: getCandidateItem(entity_key, state)}
+	      const state = getState()
+	      dispatch(announceCandidateItemSaving(entity_key, ))
+	      let data = {item: getCandidateItem(entity_key, state)}
 
-	return impfetch(state, "imp/"+entity_key+"/", dispatch,
-			{method: "POST",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"},
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      return impfetch(state, "imp/"+entity_key+"/", dispatch,
+			                  {method: "POST",
+			                   credentials: 'same-origin',
+			                   data: data,
+			                   headers: {"Content-type": "application/json; charset=UTF-8"},
+			                   body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceCandidateItemSaveFailed(entity_key, json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceCandidateItemSaveFailed(entity_key, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceCandidateItemSaved(entity_key, json.payload.item))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceCandidateItemSaved(entity_key, json.payload.item))
                  if ( on_done ) {
                      on_done(json.payload.item.id)
                  }
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceCandidateItemSaveFailed(entity_key, error))
-	 })
+	           dispatch(announceCandidateItemSaveFailed(entity_key, error))
+	       })
     }
 }
 
@@ -302,31 +302,31 @@ export function deleteItem(entity_key, item_id) {
 export function itemPost(entity_key, item_ids, url,
                          field_name, field_value, method, data, on_done) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceItemsSaving(entity_key, item_ids, field_name, field_value))
-	return impfetch( state, url, dispatch,
-			 {method: method,
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      const state = getState()
+	      dispatch(announceItemsSaving(entity_key, item_ids, field_name, field_value))
+	      return impfetch( state, url, dispatch,
+			                   {method: method,
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceItemSaveFailed(entity_key, json.error))
+		             console.log('Request failed with JSON response', json);
+		             dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceItemsSaved(entity_key, item_ids, json.issues))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceItemsSaved(entity_key, item_ids, json.issues))
                  if ( on_done ) {
-		     on_done()
-	         }
+		                 on_done()
+	               }
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceItemSaveFailed(entity_key, error))
-	 })
+	           dispatch(announceItemSaveFailed(entity_key, error))
+	       })
     }
 }
 
