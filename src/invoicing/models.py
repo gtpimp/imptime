@@ -130,7 +130,7 @@ class Invoice(models.Model):
     @property
     def vat(self):
         if self.client.taxable:
-            return self.cost * settings.INVOICE_DETAILS['vat_rate']
+            return (self.cost or 0) * (settings.INVOICE_DETAILS['vat_rate'] or 0)
         else:
             return 0
 

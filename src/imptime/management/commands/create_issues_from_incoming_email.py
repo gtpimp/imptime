@@ -154,9 +154,8 @@ class Command(BaseCommand):
                           recipient_list=settings.EMACS_ADMIN_USER_EMAILS,
                           fail_silently=True)
             finally:
-                pass
-                # self.inbox.store(message_number, '+FLAGS', '\\Deleted')
-                # self.inbox.expunge()
+                self.inbox.store(message_number, '+FLAGS', '\\Deleted')
+                self.inbox.expunge()
 
     def notify_issues_created(self, user, project, issues_created):
 
