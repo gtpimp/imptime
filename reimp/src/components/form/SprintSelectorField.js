@@ -44,7 +44,7 @@ class SprintSelectorField extends Component {
         const { dispatch, project_id } = this.props
         dispatch(initList(SELECTOR__SPRINTS))
         dispatch(update_list_filter(SELECTOR__SPRINTS, {project_id: project_id}))
-        dispatch(invalidateList(SELECTOR__SPRINTS))
+        // dispatch(invalidateList(SELECTOR__SPRINTS))
         dispatch(fetchSprintsIfNeeded(SELECTOR__SPRINTS))
     }
 
