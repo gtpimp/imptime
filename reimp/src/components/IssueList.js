@@ -597,9 +597,7 @@ function mapStateToProps(state, props) {
         }
     })
 
-    /* figure out how to remove a deleted item id from the visible_item_ids list*/
     const items = visible_item_ids.map(function (visible_item_id, index) {
-        debugger;
         return items_by_id[visible_item_id] || {
             'id': visible_item_id,
             'loaded': false,

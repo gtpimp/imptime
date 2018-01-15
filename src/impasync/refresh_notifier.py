@@ -1,10 +1,11 @@
 from django.conf import settings
-import operator
+from impasync.middleware import add_notification
 from lib.date_helper import convert_datetime_to_iso_string
+import operator
+
 import logging
 logger = logging.getLogger(__name__)
 
-from impasync.middleware import add_notification
 
 class RefreshNotifier(object):
 
@@ -12,11 +13,11 @@ class RefreshNotifier(object):
         self._notify('create', obj, params)
 
     def notify_model_update(self, obj, params=None):
-        self._notify('update', obj, params)        
+        self._notify('update', obj, params)
 
     def notify_model_delete(self, obj, params=None):
-        self._notify('delete', obj, params)        
-        
+        self._notify('delete', obj, params)
+
     def _notify(self, action_type, obj, params):
 
         entity_name = obj.__class__.__name__.lower()
@@ -35,7 +36,7 @@ class RefreshNotifier(object):
                     params[k.replace("project", "sprint")] = params.pop(k)
                 if 'business' in k:
                     params[k.replace("business", "project")] = params.pop(k)
-            
+
         try:
             post_data = {'entity_name': entity_name,
                          'entity_ref': obj.id,
@@ -49,4 +50,3 @@ class RefreshNotifier(object):
         except Exception, ex:
             logger.exception(ex)
             logger.error("Failed to notify the refresh queue about")
-
