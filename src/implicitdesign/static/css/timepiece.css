@@ -10824,6 +10824,11 @@ ul.checklist_items {
     height: 400px;
     margin: 10px;
     border: solid grey;
+    border-radius: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1px;
 }
 
 .quote__issue-image{
