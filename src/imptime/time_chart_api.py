@@ -137,7 +137,7 @@ class TimeChartViewSet(BaseViewSet):
         return entries
 
     def get_active_users(self, users):
-        return users.filter(timepiece_entries__start_time__gte=timezone.now()-relativedelta(days=self.NUM_DAYS_FOR_ACTIVE_USER))
+        return users.filter(is_active=True, timepiece_entries__start_time__gte=timezone.now()-relativedelta(days=self.NUM_DAYS_FOR_ACTIVE_USER))
     
     def get_user_times(self, users):
         daily_hours = {}
