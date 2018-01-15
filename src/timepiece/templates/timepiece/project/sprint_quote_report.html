@@ -21,7 +21,7 @@
           <input type="hidden" name="authenticate_token" value="{{user.profile.authenticate_token}}"/>
           <input type="hidden" name="authenticate_username" value="{{user.username}}"/>
         </div>
-        <div style="position: fixed; right:100px; top: 100px;">
+        <div style="position: fixed; right:100px; top: 100px; z-index: 1;">
           <input class="btn btn-primary" type="submit" value="Print" onclick="window.location.reload();"/>
           <a  class="btn btn-info" href="{{url_capture_quote}}">Capture quote</a>
         </div>
@@ -320,14 +320,23 @@
         <h4 id="issue_description_{{issue.id}}">{{issue.number}} - {{issue.subject}}</h4>
         {{issue.description|asmarkdown|safe}}
 
-        <div class="quote__issue-images">
+        <div style="display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    justify-content: flex-start;" class="quote__issue-images">
           {% for visual_spec in issue.visual_spec_issues.all %}
-            <div class="quote__issue-image">
+            <div style="position: relative;
+                        left: 0;
+                        top: 0;
+                        width: 400px;
+                        height: 400px;
+                        margin: 10px;
+                        border: solid grey;" class="quote__issue-image--container">
               <img style="position: relative;
                           left: 0;
                           top: 0;
                           width: 100%;
-                          height: 100%;" src="{{ visual_spec.visual_spec_document.hires.url }}">
+                          height: 100%;" class="quote__issue-image" src="{{ visual_spec.visual_spec_document.hires.url }}">
               {% for annotation in visual_spec.visual_spec_issue_annotations.all %}
                 <div style="position: absolute;
                             left: {{ annotation.x_pos }}%;
