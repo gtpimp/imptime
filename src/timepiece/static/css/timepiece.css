@@ -17,3 +17,17 @@
 .payments--header-button {
     float: left;
 }
+
+.quote__issue-images{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.quote__issue-image{
+    position: relative;
+    left: 0;
+    top: 0;
+    width: 400px;
+    height: 400px;
+}

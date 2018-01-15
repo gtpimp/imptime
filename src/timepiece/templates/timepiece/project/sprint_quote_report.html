@@ -2,6 +2,7 @@
 {% load humanize %}
 {% load timepiece_tags %}
 {% load bootstrap_toolkit %}
+{% load static %}
 
 {{ form.errors }}
 
@@ -9,344 +10,365 @@
 
 {% block content %}
 
-<div class="sprint_report">
+  <div class="sprint_report">
 
-  {% ifequal "html" output_format %}
-    <form method="POST" action="{% url 'sprint_report' project.id %}" target="_blank">
-      <div style="display:none">
-        {{ form }}
-        <input type="hidden" name="report_type" value="Quote"/>
-        <input type="hidden" name="output_format" value="pdf"/>
-        <input type="hidden" name="authenticate_token" value="{{user.profile.authenticate_token}}"/>
-        <input type="hidden" name="authenticate_username" value="{{user.username}}"/>
-      </div>
-      <div style="position: fixed; right:100px; top: 100px;">
-        <input class="btn btn-primary" type="submit" value="Print" onclick="window.location.reload();"/>
-        <a  class="btn btn-info" href="{{url_capture_quote}}">Capture quote</a>
-      </div>
-    </form>
-  {% endifequal %}
+    {% ifequal "html" output_format %}
+      <form method="POST" action="{% url 'sprint_report' project.id %}" target="_blank">
+        <div style="display:none">
+          {{ form }}
+          <input type="hidden" name="report_type" value="Quote"/>
+          <input type="hidden" name="output_format" value="pdf"/>
+          <input type="hidden" name="authenticate_token" value="{{user.profile.authenticate_token}}"/>
+          <input type="hidden" name="authenticate_username" value="{{user.username}}"/>
+        </div>
+        <div style="position: fixed; right:100px; top: 100px;">
+          <input class="btn btn-primary" type="submit" value="Print" onclick="window.location.reload();"/>
+          <a  class="btn btn-info" href="{{url_capture_quote}}">Capture quote</a>
+        </div>
+      </form>
+    {% endifequal %}
 
-  <div style="text-align:center" >
-    Proposal for
-    <h3>{{project.business.description}} - {{project.name}}</h3>
-    {{project.short_description}}
-     <hr/>
-     <br/>
-   </div>
-
-{% if not settings.is_final %}
-<h2>This is a provisional proposal</h2>
-It is intended for discussion and refinement before generating the
-final proposal.
-
-{% ifequal settings.preamble_type "quote" %}
-<p>
-  A final quote will be delivered on commencement of the project.
-</p>
-{% endifequal %}
-
-{% endif %}
-
-<div class="page_break""></div>
-<h3>Project description</h3>
-{{project.description}}
-<br/><br/><br/><br/>
-
-<div class="page_break""></div>
-<h3>Development methodology</h3>
-
-<p>
-ImplicitDesign uses the agile software development methodology, which
-allows for a flexible specification and on-going client-liason.
-</p>
-
-{% ifequal settings.preamble_type "billable" %}
-
-<p>
-We assist the client in managing the project budget, by identifying
-where costs can be reduced or functionality can be
-streamlined.
-</p>
-
-<p>
-We bill by the hour, for a number of reasons:
-  <ul>
-    <li> it allows the final cost of the project to match exactly the effort
-  involved, ie no quote padding is required
-    </li>
-    <li>
-      scope changes to the project are easily managed as a normal part of
-      the development process
-    </li>
-  </ul>
-</p>
-
-<p>
-Therefore the project budget is not open-ended, but
-rather managed in an on-going manner.
-</p>
-
-{% endifequal %}
-
-{% ifequal settings.preamble_type "quote" %}
-<p>
-This proposal is a quote.
-</p>
-
-{% endifequal %}
-
-{% if settings.show_billable %}
-<div class="page_break""></div>
-<h3>Costing</h3>
-
-<p>
-The following costing is based on the list of issues given later in
-this document.
-</p>
-
-{% ifequal settings.preamble_type "billable" %}
-
-  <p>
-  The final cost will be invoiced as the actual billable time taken,
-  which may be less than the minimum estimate or more than the maximum
-  estimate. To manage the budget expectations and overruns, the client
-  can request to be notified at certain budget milestones, for example
-  half-way through the sprint budget.
-  </p>
-
-  {% ifequal settings.preamble_type "billable" %}
-    <p>
-      The total estimated cost includes the expected ratio of management,
-      testing and expected scope creep.
-    </p>
-  {% endifequal %}
-
-  <p>
-
-    {% include "timepiece/project/_sprint_quote_report_costings.html" %}
-
-{% endifequal %}
-
-{% ifequal settings.preamble_type "quote" %}
-    {% include "timepiece/project/_sprint_quote_report_costings.html" %}
-{% endifequal %}
-
-{% if settings.include_rates %}
-<h3 class="mini_heading" style="text-align:center">Rates</h3>
-<div style="clear:both"/>
-<table>
-
-  <thead>
-    <th>Developer</th>
-    <th>Rate</th>
-  </thead>
-  <tbody>
-    {% for user_info in estimate_stats.users.values %}
-    <tr>
-      <td>{{user_info.user.first_name}}</td>
-      <td>R{{user_info.rate}}</td>
-    {% endfor %}
-  </tbody>
-
-</table>
-
-{% endif %}
-
-{% if settings.include_features %}
-
-  <div class="graph" style="float:left">
-    <h3 style="text-align:center">Breakdown by feature</h3>
-
-    <table>
-      {% for feature_name, feature_min_cost in estimate_stats.features.items %}
-        <tr>
-          <th>{{feature_name}}</th>
-          {% if settings.show_billable %}
-            <td>R{{feature_min_cost|floatformat:"0"|intcomma}}</td>
-          {% endif %}
-        </tr>
-      {% endfor %}
-    </table>
-
-    <div class="graph_estimate_by_feature" style="height:250px;width:250px;"></div>
-  </div>
-
-
-  <script>
-  $.plot(".graph_estimate_by_feature",
-		   [ {%spaceless%}
-		       {% for feature_name, feature_min_cost in estimate_stats.features.items %}
-			 { label:"{{feature_name}}",
-			   data: {{feature_min_cost}}
-			 },
-		       {% endfor %}
-		     {%endspaceless%}
-		   ],
-		   { series: {
-		       pie: {
-		        show: true,
-			radius: 1,
-			label: {
-			  show: true,
-			  formatter: function(label, series){
-                              var l = label;
-                              if ( l.length > 10 ) {
-				  l = l.substring(0,10)+"...";
-			      }
-			      return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+l+'<br/>'+Math.round(series.percent)+'%</div>';
-			  },
-			  background: { opacity: 0.8 }
-		       }
-                     }
-		   },
-		   legend: { show: false} } );
-  </script>
-
-{% endif %}
-
-{% endif %}
-
-<div class="page_break""></div>
-
-  <h3>Issues</h3>
-
-{% ifequal settings.preamble_type "billable" %}
-<p>
-The following list of issues represents the work agreed to be done
-within the cost given above. This list is flexible to on-going change
-as determined through feedback with the client.
-</p>
-
-<p>
-Each issue is assigned an expected duration to complete, typically in
-the range of a few hours. By estimating at such a granular
-resolution we find that complexities inherent in the project are
-identified in the specification phase which greatly reduces risk.
-</p>
-
-<p>
-Our estimates are usually slightly high. Usually this is balanced out
-by smaller tweaks or adjustments that are identified during
-testing. In general these estimates are a realistic reflection of the
-cost to deliver the requirements, rather than optimistic or
-pessimistic.
-</p>
-
-{% endifequal %}
-
-{% ifequal settings.preamble_type "quote" %}
-<p>
-This list represents the work agreed to be done in the costing given
-above. If changes to the list of issues is requested, the budget may
-need to be revised, or alternatively existing issues can be removed or
-made smaller.
-</p>
-
-<p>
-Each issue is assigned an expected duration to complete, typically in
-the range of a few hours. By estimating at such a granular
-resolution we find that complexities inherent in the project are
-identified in the specification phase which greatly reduces risk.
-</p>
-
-{% endifequal %}
-
-
-
-  <table class="issues">
-    <thead>
-      <th>#</th>
-      <th style="min-width:50%">Subject</th>
-      {% if settings.issue_assignee %}
-      <th>Assigned</th>
-      {% endif %}
-      {% if settings.include_features %}
-      <th>Feature</th>
-      {% endif %}
-      {% if settings.issue_status %}
-      <th>Status</th>
-      {% endif %}
-      {% if settings.show_hours %}
-      <th>Adjusted dev hours</th>
-      {% endif %}
-      {% if settings.show_issue_billable %}
-      <th>Cost</th>
-      {% endif %}
-    </thead>
-
-    <tbody>
-      {% for estimate in estimate_stats.issues %}
-      <tr>
-	<td> <a href="#issue_description_{{estimate.issue.id}}">{{estimate.issue.number}}</a> </td>
-	<td> {{estimate.issue.subject}} </td>
-	{% if settings.issue_assignee %}
-	  <td> {{estimate.issue.assigned_to.get_full_name|default_if_none:""}} </td>
-	{% endif %}
-	{% if settings.include_features %}
-	<td>{{estimate.issue.feature|default_if_none:""}}</td>
-	{% endif %}
-	{% if settings.issue_status %}
-	  <td> {{ estimate.issue.status }}</td>
-	{% endif %}
-        {% if settings.show_hours %}
-	  <td>{{estimate.points|floatformat:2}} hour{% if estimate.points != 1 %}s{% endif %}</td>
-        {% endif %}
-        {% if settings.show_issue_billable %}
-
-          <!-- this is the cost with management, testing and scope creep -->
-          <td>R{{estimate.combined_cost_with_scope_creep|floatformat:"0"|intcomma}}</td>
-
-          {% comment %}
-          <!-- this is the cost just for the assigned developer -->
-	  <td>R{{estimate.min_cost|floatformat:"0"|intcomma}}</td>
-
-          <!-- this is the cost with management and testing, without scope creep -->
-	  <td>R{{estimate.combined_cost|floatformat:"0"|intcomma}}</td>
-          {% endcomment %}
-
-        {% endif %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-  <div class="page_break""></div>
-  <div class="issue_descriptions">
-    <h3>Issue descriptions</h3>
-
-    {% for issue in issues %}
-    <h4 id="issue_description_{{issue.id}}">{{issue.number}} - {{issue.subject}}</h4>
-    {{issue.description|asmarkdown|safe}}
-
-    {% if issue.testables_in_order %}
-    <div class="issue_testables">
-      <br/>
-      {% for testable in issue.testables_in_order %}
-      <div class="markdown_content">{{testable.steps|asmarkdown|safe}}</div>
+    <div style="text-align:center" >
+      Proposal for
+      <h3>{{project.business.description}} - {{project.name}}</h3>
+      {{project.short_description}}
       <hr/>
-      {% endfor %}
+      <br/>
     </div>
+
+    {% if not settings.is_final %}
+      <h2>This is a provisional proposal</h2>
+      It is intended for discussion and refinement before generating the
+      final proposal.
+
+      {% ifequal settings.preamble_type "quote" %}
+        <p>
+          A final quote will be delivered on commencement of the project.
+        </p>
+      {% endifequal %}
+
     {% endif %}
 
-    <div class="issue_comments">
-      <br/>
-      {% for comment in issue.comments_in_order %}
-      <div class="creation_details">
-	{{comment.created}}
-	{{comment.author}}
-      </div>
-      <div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
-      <hr/>
+    <div class="page_break""></div>
+    <h3>Project description</h3>
+    {{project.description}}
+    <br/><br/><br/><br/>
+
+    <div class="page_break""></div>
+    <h3>Development methodology</h3>
+
+    <p>
+      ImplicitDesign uses the agile software development methodology, which
+      allows for a flexible specification and on-going client-liason.
+    </p>
+
+    {% ifequal settings.preamble_type "billable" %}
+
+      <p>
+        We assist the client in managing the project budget, by identifying
+        where costs can be reduced or functionality can be
+        streamlined.
+      </p>
+
+      <p>
+        We bill by the hour, for a number of reasons:
+        <ul>
+          <li> it allows the final cost of the project to match exactly the effort
+            involved, ie no quote padding is required
+          </li>
+          <li>
+            scope changes to the project are easily managed as a normal part of
+            the development process
+          </li>
+        </ul>
+      </p>
+
+      <p>
+        Therefore the project budget is not open-ended, but
+        rather managed in an on-going manner.
+      </p>
+
+    {% endifequal %}
+
+    {% ifequal settings.preamble_type "quote" %}
+      <p>
+        This proposal is a quote.
+      </p>
+
+    {% endifequal %}
+
+    {% if settings.show_billable %}
+      <div class="page_break""></div>
+      <h3>Costing</h3>
+
+      <p>
+        The following costing is based on the list of issues given later in
+        this document.
+      </p>
+
+      {% ifequal settings.preamble_type "billable" %}
+
+        <p>
+          The final cost will be invoiced as the actual billable time taken,
+          which may be less than the minimum estimate or more than the maximum
+          estimate. To manage the budget expectations and overruns, the client
+          can request to be notified at certain budget milestones, for example
+          half-way through the sprint budget.
+        </p>
+
+        {% ifequal settings.preamble_type "billable" %}
+          <p>
+            The total estimated cost includes the expected ratio of management,
+            testing and expected scope creep.
+          </p>
+        {% endifequal %}
+
+        <p>
+
+          {% include "timepiece/project/_sprint_quote_report_costings.html" %}
+
+      {% endifequal %}
+
+      {% ifequal settings.preamble_type "quote" %}
+        {% include "timepiece/project/_sprint_quote_report_costings.html" %}
+      {% endifequal %}
+
+      {% if settings.include_rates %}
+        <h3 class="mini_heading" style="text-align:center">Rates</h3>
+        <div style="clear:both"/>
+        <table>
+
+          <thead>
+            <th>Developer</th>
+            <th>Rate</th>
+          </thead>
+          <tbody>
+            {% for user_info in estimate_stats.users.values %}
+              <tr>
+                <td>{{user_info.user.first_name}}</td>
+                <td>R{{user_info.rate}}</td>
+            {% endfor %}
+          </tbody>
+
+        </table>
+
+      {% endif %}
+
+      {% if settings.include_features %}
+
+        <div class="graph" style="float:left">
+          <h3 style="text-align:center">Breakdown by feature</h3>
+
+          <table>
+            {% for feature_name, feature_min_cost in estimate_stats.features.items %}
+              <tr>
+                <th>{{feature_name}}</th>
+                {% if settings.show_billable %}
+                  <td>R{{feature_min_cost|floatformat:"0"|intcomma}}</td>
+                {% endif %}
+              </tr>
+            {% endfor %}
+          </table>
+
+          <div class="graph_estimate_by_feature" style="height:250px;width:250px;"></div>
+        </div>
+
+
+        <script>
+         $.plot(".graph_estimate_by_feature",
+		            [ {%spaceless%}
+		              {% for feature_name, feature_min_cost in estimate_stats.features.items %}
+			              { label:"{{feature_name}}",
+			                data: {{feature_min_cost}}
+			              },
+		              {% endfor %}
+		            {%endspaceless%}
+		            ],
+		            { series: {
+		                pie: {
+		                    show: true,
+			                  radius: 1,
+			                  label: {
+			                      show: true,
+			                      formatter: function(label, series){
+                                var l = label;
+                                if ( l.length > 10 ) {
+				                            l = l.substring(0,10)+"...";
+			                          }
+			                          return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+l+'<br/>'+Math.round(series.percent)+'%</div>';
+			                      },
+			                      background: { opacity: 0.8 }
+		                    }
+                    }
+		            },
+		              legend: { show: false} } );
+        </script>
+
+      {% endif %}
+
+    {% endif %}
+
+    <div class="page_break""></div>
+
+    <h3>Issues</h3>
+
+    {% ifequal settings.preamble_type "billable" %}
+      <p>
+        The following list of issues represents the work agreed to be done
+        within the cost given above. This list is flexible to on-going change
+        as determined through feedback with the client.
+      </p>
+
+      <p>
+        Each issue is assigned an expected duration to complete, typically in
+        the range of a few hours. By estimating at such a granular
+        resolution we find that complexities inherent in the project are
+        identified in the specification phase which greatly reduces risk.
+      </p>
+
+      <p>
+        Our estimates are usually slightly high. Usually this is balanced out
+        by smaller tweaks or adjustments that are identified during
+        testing. In general these estimates are a realistic reflection of the
+        cost to deliver the requirements, rather than optimistic or
+        pessimistic.
+      </p>
+
+    {% endifequal %}
+
+    {% ifequal settings.preamble_type "quote" %}
+      <p>
+        This list represents the work agreed to be done in the costing given
+        above. If changes to the list of issues is requested, the budget may
+        need to be revised, or alternatively existing issues can be removed or
+        made smaller.
+      </p>
+
+      <p>
+        Each issue is assigned an expected duration to complete, typically in
+        the range of a few hours. By estimating at such a granular
+        resolution we find that complexities inherent in the project are
+        identified in the specification phase which greatly reduces risk.
+      </p>
+
+    {% endifequal %}
+
+
+
+    <table class="issues">
+      <thead>
+        <th>#</th>
+        <th style="min-width:50%">Subject</th>
+        {% if settings.issue_assignee %}
+          <th>Assigned</th>
+        {% endif %}
+        {% if settings.include_features %}
+          <th>Feature</th>
+        {% endif %}
+        {% if settings.issue_status %}
+          <th>Status</th>
+        {% endif %}
+        {% if settings.show_hours %}
+          <th>Adjusted dev hours</th>
+        {% endif %}
+        {% if settings.show_issue_billable %}
+          <th>Cost</th>
+        {% endif %}
+      </thead>
+
+      <tbody>
+        {% for estimate in estimate_stats.issues %}
+          <tr>
+	          <td> <a href="#issue_description_{{estimate.issue.id}}">{{estimate.issue.number}}</a> </td>
+	          <td> {{estimate.issue.subject}} </td>
+	          {% if settings.issue_assignee %}
+	            <td> {{estimate.issue.assigned_to.get_full_name|default_if_none:""}} </td>
+	          {% endif %}
+	          {% if settings.include_features %}
+	            <td>{{estimate.issue.feature|default_if_none:""}}</td>
+	          {% endif %}
+	          {% if settings.issue_status %}
+	            <td> {{ estimate.issue.status }}</td>
+	          {% endif %}
+            {% if settings.show_hours %}
+	            <td>{{estimate.points|floatformat:2}} hour{% if estimate.points != 1 %}s{% endif %}</td>
+            {% endif %}
+            {% if settings.show_issue_billable %}
+
+              <!-- this is the cost with management, testing and scope creep -->
+              <td>R{{estimate.combined_cost_with_scope_creep|floatformat:"0"|intcomma}}</td>
+
+              {% comment %}
+              <!-- this is the cost just for the assigned developer -->
+	            <td>R{{estimate.min_cost|floatformat:"0"|intcomma}}</td>
+
+              <!-- this is the cost with management and testing, without scope creep -->
+	            <td>R{{estimate.combined_cost|floatformat:"0"|intcomma}}</td>
+              {% endcomment %}
+
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="page_break"></div>
+    <div class="issue_descriptions">
+      <h3>Issue descriptions</h3>
+
+      {% for issue in issues %}
+        <h4 id="issue_description_{{issue.id}}">{{issue.number}} - {{issue.subject}}</h4>
+        {{issue.description|asmarkdown|safe}}
+
+        <div class="quote__issue-images">
+          {% for visual_spec in issue.visual_spec_issues.all %}
+            <div class="quote__issue-image">
+              <img style="position: relative;
+                          left: 0;
+                          top: 0;
+                          width: 100%;
+                          height: 100%;" src="{{ visual_spec.visual_spec_document.hires.url }}">
+              {% for annotation in visual_spec.visual_spec_issue_annotations.all %}
+                <div style="position: absolute;
+                            left: {{ annotation.x_pos }}%;
+                            top: {{ annotation.y_pos }}%;">
+                  <img style="background-size: 60px;
+                              width: 60px;
+                              height: 60px;" src="{% static annotation.shape_url %}"/>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if issue.testables_in_order %}
+          <div class="issue_testables">
+            <br/>
+            {% for testable in issue.testables_in_order %}
+              <div class="markdown_content">{{testable.steps|asmarkdown|safe}}</div>
+              <hr/>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="issue_comments">
+          <br/>
+          {% for comment in issue.comments_in_order %}
+            <div class="creation_details">
+	            {{comment.created}}
+	            {{comment.author}}
+            </div>
+            <div class="markdown_content">{{comment.comment|asmarkdown|safe}}</div>
+            <hr/>
+          {% endfor %}
+        </div>
+
       {% endfor %}
+
     </div>
 
-    {% endfor %}
+
 
   </div>
-
-
-
-</div>
 
 {% endblock %}
