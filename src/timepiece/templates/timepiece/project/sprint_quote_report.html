@@ -3,6 +3,7 @@
 {% load timepiece_tags %}
 {% load bootstrap_toolkit %}
 {% load static %}
+{% load quote_image_values %}
 
 {{ form.errors }}
 
@@ -325,32 +326,38 @@
                     flex-wrap: wrap;
                     justify-content: flex-start;" class="quote__issue-images">
           {% for visual_spec in issue.visual_spec_issues.all %}
-            <div style="position: relative;
-                        left: 0;
-                        top: 0;
-                        width: 400px;
-                        height: 400px;
-                        margin: 10px;
-                        border: solid grey;
+            <div style="border: solid grey;
                         border-radius: 1%;
+                        padding: 1px;
                         display: flex;
                         justify-content: center;
-                        align-items: center;
-                        padding: 1px;" class="quote__issue-image--container">
-              <img style="position: relative;
+                        align-items: center;">
+              <div style="position: relative;
                           left: 0;
                           top: 0;
-                          width: 100%;
-                          height: 100%;" class="quote__issue-image" src="{{ visual_spec.visual_spec_document.hires.url }}">
-              {% for annotation in visual_spec.visual_spec_issue_annotations.all %}
-                <div style="position: absolute;
-                            left: {{ annotation.x_pos }}%;
-                            top: {{ annotation.y_pos }}%;">
-                  <img style="background-size: 60px;
-                              width: 60px;
-                              height: 60px;" src="{% static annotation.shape_url %}"/>
-                </div>
-              {% endfor %}
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                          width: {{ visual_spec.visual_spec_document.width }}px;
+                          height: {{ visual_spec.visual_spec_document.height }}px;"
+                   class="quote__issue-image--container">
+                <img style="left: 0;
+                            top: 0;
+                            width: 100%;
+                            height: 100%;"
+                     class="quote__issue-image"
+                     src="{{ visual_spec.visual_spec_document.hires.url }}">
+                {% for annotation in visual_spec.visual_spec_issue_annotations.all %}
+                  <div style="position: absolute;
+                              left: {% left_value annotation 60 visual_spec.visual_spec_document.width %}%;
+                              top: {% top_value annotation 60 visual_spec.visual_spec_document.height %}%;">
+                    <img style="background-size: 60px;
+                                width: 60px;
+                                height: 60px;"
+                         src="{% static annotation.shape_url %}"/>
+                  </div>
+                {% endfor %}
+              </div>
             </div>
           {% endfor %}
         </div>

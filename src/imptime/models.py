@@ -81,6 +81,27 @@ class VisualSpecDocument(BaseModel):
                 issue.save()
                 IssueHistory.add_history(user, issue, "added visual spec document", "", name)
 
+    def height_and_width(self):
+        height = self.hires_height
+        width = self.hires_width
+        if height > 500 or width > 500:
+            if height > width:
+                height = 500
+                width = float(width) / 100 * (float(height) / self.hires_height * 100)
+            else:
+                width = 500
+                height = float(height) / 100 * (float(width) / self.hires_width * 100)
+
+        return height, width
+
+    def height(self):
+        height, width = self.height_and_width()
+        return height
+
+    def width(self):
+        height, width = self.height_and_width()
+        return width
+
 
 class VisualSpecProject(BaseModel):
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_projects')

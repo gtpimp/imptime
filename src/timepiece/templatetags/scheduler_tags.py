@@ -22,9 +22,9 @@ def scheduled_time(context, user, business):
             #     schedule['pretty_num_hours'] = "%dd" % num_days
             # else:
             schedule['pretty_num_hours'] = "%d" % original_num_hours
-                
+
             x[user_id].setdefault(business_id, schedule)
-            
+
         context['schedules_by_user_and_business'] = x
 
     try:
@@ -56,12 +56,12 @@ def actual_time(context, user, business):
             return ""
     except KeyError:
         return ""
-    
-@register.simple_tag(takes_context=True)    
+
+@register.simple_tag(takes_context=True)
 def scheduled_total_user_time(context, user):
     return "%d" % (context['schedules'].hours_for_user(user.id) or 0)
 
-@register.simple_tag(takes_context=True)    
+@register.simple_tag(takes_context=True)
 def actual_total_user_time(context, user):
     hours = "%d" % (context['actuals'].hours_for_user(user.id) or 0)
     if hours:
@@ -69,14 +69,14 @@ def actual_total_user_time(context, user):
     else:
         return ""
 
-@register.simple_tag(takes_context=True)    
+@register.simple_tag(takes_context=True)
 def scheduled_total_business_time(context, business):
     hours = context['schedules'].hours_for_business(business.id) or 0
     if not hours:
         return ""
     return str(hours)
 
-@register.simple_tag(takes_context=True)    
+@register.simple_tag(takes_context=True)
 def actual_total_business_time(context, business):
     hours = context['actuals'].hours_for_business(business.id) or 0
     if not hours:
@@ -152,7 +152,7 @@ def scheduled_status(context, user):
         return "<div class='over_schedule_msg'>Under scheduled</div>"
     else:
         return "<div class='perfect_schedule_msg'>Fully scheduled</div>"
-    
+
 def _format_money(x, trailing_slash=False):
     if not x:
         return ""
@@ -160,4 +160,3 @@ def _format_money(x, trailing_slash=False):
     if trailing_slash:
         msg += " / "
     return msg
-
