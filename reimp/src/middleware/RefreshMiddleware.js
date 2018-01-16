@@ -118,7 +118,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name == 'releasenote' ) {
         list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_LIST] = true
         list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_EDITOR_LIST] = true
-        
+
     } else if ( d.entity_name == 'projectissueorder' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
         list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
@@ -158,12 +158,12 @@ function refreshMiddleware(_ref) {
                     } else {
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
-                    
+
                     //dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
                 })
 
                 each(keys(list_keys_to_invalidate), (key) => dispatch(invalidateList(key)))
-                
+
                 return
             }
             return next(action)

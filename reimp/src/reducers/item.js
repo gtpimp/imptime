@@ -150,6 +150,9 @@ export default function item(state = initialState, action) {
             s = cloneItemState(state, action)
 	          new_items_by_id = Object.assign({}, s.items_by_id)
             new_items_by_id = omit(new_items_by_id, action.deleted_item_ids)
+
+            s.saving_item_ids = difference(s.saving_item_ids || [],
+					                                 action.deleted_item_ids)
 	          s.items_by_id = new_items_by_id
             return setItemState(state, action, s)
 
