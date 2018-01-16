@@ -17,9 +17,18 @@ import Timestamp from './Timestamp'
 import moment from 'moment'
 import Sidebar from './Sidebar'
 import TagListFlat from './TagListFlat'
-import {ensureIssuesLoaded, getIssues} from '../actions/Issues'
+import {
+    ensureIssuesLoaded,
+    getIssues,
+    deleteIssues
+} from '../actions/Issues'
 
 class MultipleIssueSidebar extends Component {
+
+    constructor(props) {
+        super(props)
+        this.onDelete = this.onDelete.bind(this)
+    }
 
     componentDidMount() {
         const {issue_ids, dispatch} = this.props
@@ -30,11 +39,20 @@ class MultipleIssueSidebar extends Component {
         const {dispatch} = this.props
         dispatch(ensureIssuesLoaded(new_props.issue_ids))
     }
-    
+
+    onDelete(event) {
+        const { issue_ids, dispatch, onDelete } = this.props
+        event.stopPropagation()
+        if ( ! confirm( "Delete these issues?") ) {
+            return
+        }
+        dispatch(deleteIssues(issue_ids))
+    }
+
     render() {
 
         const {issues, issue_ids, project_id} = this.props
-        
+
         return (
 
             <div className="sidebar issue-sidebar">
@@ -71,7 +89,7 @@ class MultipleIssueSidebar extends Component {
                       <EditableIssueParent issue_ids={issue_ids}/>
                     </div>
                   </div>
-                  
+
                   <div className="property-row">
                     <div className="property-label">
                       Type
@@ -98,14 +116,20 @@ class MultipleIssueSidebar extends Component {
                       <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id} />
                     </div>
                   </div>
-                  
+
                 </PropertyStackComponent>
-                
+
                 <PropertyStackComponent>
                   <div>
                     Common tags:
                     <TagListFlat issue_ids={issue_ids}/>
                   </div>
+                </PropertyStackComponent>
+
+                <PropertyStackComponent>
+                  <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
+                    delete issues
+                  </button>
                 </PropertyStackComponent>
 
               </PropertyStack>
@@ -126,6 +150,3 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(MultipleIssueSidebar)
-
-
-

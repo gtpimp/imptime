@@ -16,7 +16,7 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
-    deleteItem,
+    deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving

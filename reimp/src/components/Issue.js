@@ -12,7 +12,7 @@ import {
     getIssue,
     populateEstimates,
     clock,
-    deleteIssue
+    deleteIssues
 } from '../actions/Issues'
 import {getProject} from '../actions/Projects'
 import {
@@ -121,7 +121,7 @@ class Issue extends Component {
         if ( ! confirm( "Delete this issue?") ) {
             return
         }
-        dispatch(deleteIssue(issue.id))
+        dispatch(deleteIssues([issue.id]))
         if ( onDelete ) {
             onDelete(issue.id)
         }

@@ -15,7 +15,7 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
-    deleteItem,
+    deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving
@@ -67,7 +67,7 @@ export function createNudge(header, content) {
 
 export function deleteNudge(nudge_id) {
     return (dispatch, getState) => {
-        dispatch(deleteItem(ENTITY_KEY__NUDGE, nudge_id))
+        dispatch(deleteItems(ENTITY_KEY__NUDGE, [nudge_id]))
     }
 }
 

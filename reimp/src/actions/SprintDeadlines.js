@@ -16,7 +16,7 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
-    deleteItem,
+    deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving
@@ -71,6 +71,6 @@ export function createSprintDeadline(deadline) {
 
 export function deleteSprintDeadline(sprint_deadline_id) {
     return (dispatch, getState) => {
-        dispatch(deleteItem(ENTITY_KEY__SPRINT_DEADLINE, sprint_deadline_id))
+        dispatch(deleteItems(ENTITY_KEY__SPRINT_DEADLINE, [sprint_deadline_id]))
     }
 }
