@@ -4653,6 +4653,7 @@ def sprint_report(request, project_id, context=None):
             user = request.user
 
         context = context or {}
+        context['annotation_size'] = 60
         project = timepiece.Project.objects.get(pk=project_id)
 
         if 'output_format' in DATA and DATA['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
@@ -4763,7 +4764,8 @@ def sprint_report(request, project_id, context=None):
                                    'project': project.id,
                                    'internal_comment': 'Created by %s' % request.user,
                                    'amount': int(project.new_stats['total']['hours_billable_with_scope_creep'] or 0),
-                                   'quote_document': most_recent_quote_document.id if most_recent_quote_document else None }
+                                   'quote_document': most_recent_quote_document.id if most_recent_quote_document else None,
+                                   'currency_symbol': 'R'}
         context['url_capture_quote'] = reverse('invoicing:new_quote') + "?" + urllib.urlencode(new_quote_default_args)
         context['report_type'] = DATA['report_type']
 
