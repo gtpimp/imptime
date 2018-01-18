@@ -3676,6 +3676,8 @@ class Tag(BaseModel):
     modified = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+
         was_created = not self.id
         super(Tag, self).save(*args, **kwargs)
         affected_issues = [x.id for x in self.issues.all()]
