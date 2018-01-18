@@ -58,7 +58,7 @@ class IssueDeveloperDetails extends Component {
         if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return false;
         }
-	dispatch(deleteIssues([issue_id]))
+	dispatch(deleteIssues([issue.id]))
     }
 
     onSaveCandidateIssue(new_subject) {
