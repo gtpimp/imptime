@@ -91,9 +91,9 @@ export function expand_list(list_key) {
 
 export function setDisplayMode(list_key, display_mode) {
     return {
-	type: UPDATE_LIST_DISPLAY_MODE,
-	list_key: list_key,
-	display_mode: display_mode
+	      type: UPDATE_LIST_DISPLAY_MODE,
+	      list_key: list_key,
+	      display_mode: display_mode
     }
 }
 
@@ -106,7 +106,7 @@ export function updateVisibleItemIdAbove(list_key, item_ids_to_move, item_id_to_
     return (dispatch, getState) => {
         const state = getState()
         const item_ids = getVisibleItemIds(state, list_key)
-      
+
         let reordered_item_ids = item_ids
         map(item_ids_to_move, function(item_id_to_move) {
             const index_of_item_id_to_move = indexOf(item_ids, item_id_to_move)
@@ -155,16 +155,16 @@ export function getCursorItemId(state, list_key) {
 export function highlightItems(list_key, highlighted_ids) {
 
     return {
-	type: HIGHLIGHT_LIST_SELECTION,
-	list_key: list_key,
-	highlighted_ids: highlighted_ids
+	      type: HIGHLIGHT_LIST_SELECTION,
+	      list_key: list_key,
+	      highlighted_ids: highlighted_ids
     }
 }
 
 export function getHighlightedItemIds(state, list_key) {
     const item_list = ((state || {}).item_list || {})[list_key] || {}
     const highlighted_item_ids = item_list.highlighted_ids || []
-    return highlighted_item_ids    
+    return highlighted_item_ids
 }
 
 export function setItemFlag(list_key, selected_ids, flag_name, flag_value) {
@@ -184,7 +184,7 @@ export function getItemFlag(state, list_key, flag_name) {
 export function invalidateList(list_key) {
     return {
         type: INVALIDATE_LIST,
-	list_key: list_key
+	      list_key: list_key
     }
 }
 
@@ -208,8 +208,8 @@ function announceListLoaded(list_key, payload, nested_objects) {
         type: ANNOUNCE_LIST_LOADED,
         visible_item_ids: payload.ids,
         nested_objects: nested_objects,
-	pagination: payload.pagination,
-	list_key: list_key,
+	      pagination: payload.pagination,
+	      list_key: list_key,
         received_at: Date.now()
     }
 }
@@ -242,38 +242,38 @@ function announceMatchingItemsLoadFailed(list_key, error) {
 }
 
 function tryFetchMatchingItems(list_key,
-			       required_item_ids,
-			       matching_items_key,
+			                         required_item_ids,
+			                         matching_items_key,
                                matching_items_promise_func,
                                is_generic_item) {
     // The second half of tryFetchListAndItems, separated out for clarity
 
     return (dispatch, getState) => {
 
-	if ( ! required_item_ids ) {
-	    return
-	}
+	      if ( ! required_item_ids ) {
+	          return
+	      }
 
-	const state = getState()
+	      const state = getState()
         let item_state = state
         if ( is_generic_item ) {
             item_state = item_state.item
         }
-	const l = (state.item_list || {})[list_key] || {}
-	if ( l.loading_matching_items ) {
-	    return
-	}
+	      const l = (state.item_list || {})[list_key] || {}
+	      if ( l.loading_matching_items ) {
+	          return
+	      }
 
-	const unmatching_item_ids = getMissingItemIds(item_state, required_item_ids, matching_items_key)
-	if ( unmatching_item_ids.length > 0 ) {
-	    dispatch(announceMatchingItemsLoading(list_key))
-	    matching_items_promise_func(dispatch, state, unmatching_item_ids)
-		.then(() => {
-		    dispatch(announceMatchingItemsLoaded(list_key))
-		})
-		.catch(function (error) {
-		    dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load entity list: " + error))
-		})
+	      const unmatching_item_ids = getMissingItemIds(item_state, required_item_ids, matching_items_key)
+	      if ( unmatching_item_ids.length > 0 ) {
+	          dispatch(announceMatchingItemsLoading(list_key))
+	          matching_items_promise_func(dispatch, state, unmatching_item_ids)
+		            .then(() => {
+		                dispatch(announceMatchingItemsLoaded(list_key))
+		            })
+		            .catch(function (error) {
+		                dispatch(announceMatchingItemsLoadFailed(list_key, "Failed to load entity list: " + error))
+		            })
         }
     }
 }
@@ -326,51 +326,51 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
 
     let { fetch_item_ids_url, is_generic_item } = args || {}
     fetch_item_ids_url = fetch_item_ids_url || 'imp/' + matching_items_key + '/'
-    
+
     return (dispatch, getState) => {
-	const state = getState()
+	      const state = getState()
 
-	const item_list = state.item_list || {}
-	const l = item_list[list_key] || {}
+	      const item_list = state.item_list || {}
+	      const l = item_list[list_key] || {}
 
-	if ( ! shouldFetchList(state, list_key) ) {
-	    const visible_item_ids = l.visible_item_ids
-	    if ( visible_item_ids ) {
-		dispatch(tryFetchMatchingItems(list_key,
-					       visible_item_ids,
-					       matching_items_key,
+	      if ( ! shouldFetchList(state, list_key) ) {
+	          const visible_item_ids = l.visible_item_ids
+	          if ( visible_item_ids ) {
+		            dispatch(tryFetchMatchingItems(list_key,
+					                                     visible_item_ids,
+					                                     matching_items_key,
                                                matching_items_promise_func,
                                                is_generic_item))
-	    }
-	    return null
-	}
+	          }
+	          return null
+	      }
 
-	dispatch(announceListLoading(list_key))
+	      dispatch(announceListLoading(list_key))
 
         const format = l.format || {}
         format.ids_only = true
-        
-	const params = { filter: l.filter || {},
-			 format: format,
+
+	      const params = { filter: l.filter || {},
+			                   format: format,
                          ordering: l.ordering || {},
                          detail_level: l.detail_level || {},
-			 pagination: l.pagination || {} }
+			                   pagination: l.pagination || {} }
         return impfetch(state, fetch_item_ids_url, dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
-		if (json.status !== 'success') {
+		            if (json.status !== 'success') {
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
-		    dispatch(announceListLoaded(list_key, json.payload, json.nested_objects || {}))
-		    const required_item_ids = json.payload.ids || []
-		    dispatch(tryFetchMatchingItems(list_key,
-						   required_item_ids,
-						   matching_items_key,
-						   matching_items_promise_func,
+		                dispatch(announceListLoaded(list_key, json.payload, json.nested_objects || {}))
+		                const required_item_ids = json.payload.ids || []
+		                dispatch(tryFetchMatchingItems(list_key,
+						                                       required_item_ids,
+						                                       matching_items_key,
+						                                       matching_items_promise_func,
                                                    is_generic_item))
-		}
+		            }
             })
-	    .catch(function (error) {
+	          .catch(function (error) {
                 dispatch(announceListLoadFailed(list_key,"Failed to load list: " + list_key + " : " + error))
             })
     }
@@ -393,13 +393,13 @@ export function shouldFetchList(state, list_key) {
 }
 
 export function fetchListIfNeeded(list_key,
-				  matching_items_key,
+				                          matching_items_key,
                                   matching_items_promise_func,
                                   args) {
-    
+
     return tryFetchListAndItems(list_key,
-			        matching_items_key,
-			        matching_items_promise_func,
+			                          matching_items_key,
+			                          matching_items_promise_func,
                                 args)
 }
 
@@ -440,25 +440,26 @@ function getItemsById(state, entity_key) {
 export function getVisibleItems(state, list_key, entity_key) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const items_by_id = getItemsById(state, entity_key)
+
     return (items_by_id && visible_item_ids.map( function(visible_item_id, index) {
-	return items_by_id[visible_item_id] || { 'id': visible_item_id,
-						 'loaded': false }
-    })) || []    
+	      return items_by_id[visible_item_id] || { 'id': visible_item_id,
+						                                     'loaded': false }
+    })) || []
 }
 
 export function getSelectedItemIds(state, list_key) {
     const item_list = ((state || {}).item_list || {})[list_key] || {}
     const selected_item_ids = item_list.selected_ids || []
-    return selected_item_ids    
+    return selected_item_ids
 }
 
 export function getSelectedItems(state, list_key, entity_key) {
     const selected_item_ids = getSelectedItemIds(state, list_key)
     const items_by_id = getItemsById(state, entity_key)
     return (items_by_id && selected_item_ids.map( function(selected_item_id, index) {
-	return items_by_id[selected_item_id] || { 'id': selected_item_id,
-						  'loaded': false }
-    })) || []        
+	      return items_by_id[selected_item_id] || { 'id': selected_item_id,
+						                                      'loaded': false }
+    })) || []
 }
 
 export function isLoading(state, list_key) {

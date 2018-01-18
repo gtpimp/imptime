@@ -22,6 +22,7 @@ import {
     cancelCandidateItem,
     getCandidateItem,
     deleteItem,
+    deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving,
@@ -198,7 +199,7 @@ export function deleteIssueAttachment(issue_id, attachment_id) {
     const field_name = "attachment"
     const field_value = "deleting"
     const method = "DELETE"
-    const data = { issue_id: issue_id } 
+    const data = { issue_id: issue_id }
     return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
 }
 
@@ -312,8 +313,8 @@ export function saveCandidateIssue(on_done) {
     return saveCandidateItem(ENTITY_KEY__ISSUE, on_done)
 }
 
-export function deleteIssue(issue_id) {
-    return deleteItem(ENTITY_KEY__ISSUE, issue_id)
+export function deleteIssues(issue_ids) {
+    return deleteItems(ENTITY_KEY__ISSUE, issue_ids)
 }
 
 export function clock(issue_id, clock_action) {

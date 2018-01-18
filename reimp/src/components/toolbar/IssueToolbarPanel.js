@@ -13,7 +13,7 @@ import {
     groupUnsortedIssuesIntoFeature,
     updateIssueToggleAsFeature,
     ungroupIssuesIntoFeature,
-    deleteIssue
+    deleteIssues
 } from '../../actions/Issues'
 import {
     setItemFlag
@@ -98,7 +98,7 @@ class IssueToolbarPanel extends Component {
         if ( ! confirm("Delete selected issues?" ) ) {
             return
         }
-        map(issue_ids, (issue_id) => dispatch(deleteIssue(issue_id)))
+        map(issue_ids, (issue_id) => dispatch(deleteIssues([issue_id])))
     }
 
     onIssueSidebarToggleClick(show_sidebar) {
@@ -145,12 +145,12 @@ class IssueToolbarPanel extends Component {
                              onDisable={this.onUnmakeFeatureClick}>
                 <div className="icon--toggle_feature"></div>
               </ToolbarButton>
-              
+
               <ToolbarButton onClick={this.onGroupClick}
                              tooltip="Merge into the feature">
                 <div className="icon--merge_feature"/>
               </ToolbarButton>
-              
+
               <ToolbarButton onClick={this.onUngroupClick}
                              tooltip="Remove from feature"
               >
@@ -162,8 +162,8 @@ class IssueToolbarPanel extends Component {
               >
                 <div className="icon--delete" />
               </ToolbarButton>
-              
-              
+
+
               { false &&
                 <div>
                   <ToolbarButton tooltip="Expand" icon="expand_more" onClick={this.onExpandFeaturesClick}/>

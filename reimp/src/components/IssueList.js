@@ -572,6 +572,7 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const sprint_id = filter.sprint_id || null
     const visible_item_ids = getVisibleItemIds(state, list_key)
+
     const items_by_id = getIssuesById(state, visible_item_ids)
     const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
     const all_item_ids = union(visible_item_ids, feature_issue_ids)

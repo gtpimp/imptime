@@ -30,7 +30,7 @@ import {
     getIssue,
     populateEstimates,
     makeFeatureIssuesSuccessive,
-    deleteIssue
+    deleteIssues
 } from '../actions/Issues'
 import { ensureUsersLoaded } from '../actions/Users'
 import {format_hours} from '../actions/lib'
@@ -88,7 +88,7 @@ class IssueSidebar extends Component {
         if ( ! confirm( "Delete this issue?") ) {
             return
         }
-        dispatch(deleteIssue(issue.id))
+        dispatch(deleteIssues([issue.id]))
     }
 
     render() {

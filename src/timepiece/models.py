@@ -3845,7 +3845,8 @@ class Issue(BaseModel):
         return new_issue
 
     def delete(self, *args, **kwargs):
-        RefreshNotifier().notify_model_delete(self)
+        params = { 'project_id': self.project_id }
+        RefreshNotifier().notify_model_delete(self, params)
         super(Issue, self).delete(*args, **kwargs)
 
     def check_quality(self):
