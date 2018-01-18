@@ -64,7 +64,7 @@ export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visua
         const item_id_to_move = moving_visual_spec_document_id
         const item_id_to_move_after = visual_spec_document_id_after
         const item_ids = map(visual_spec_document_ids, function(id) { return "" + id })
-        
+
         const index_of_item_id_to_move = indexOf(item_ids, item_id_to_move)
         let index_of_item_id_to_after = indexOf(item_ids, item_id_to_move_after)
 
@@ -85,116 +85,116 @@ export function reorderVisualSpecDocument(visual_spec_document_ids, moving_visua
 
 export function associateVisualSpecDocumentWithIssue(visual_spec_document_id, issue_id) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
-	let data = { visual_spec_document_id: visual_spec_document_id,
+	      const state = getState()
+	      dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
+	      let data = { visual_spec_document_id: visual_spec_document_id,
                      issue_id: issue_id }
-	return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/associateWithIssue/", dispatch,
-			 {method: "POST",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/associateWithIssue/", dispatch,
+			                   {method: "POST",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
+		             console.log('Request failed with JSON response', json);
                  dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
              dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
-	 })
+	       })
     }
 }
 
 export function unassociateVisualSpecDocumentWithIssue(visual_spec_document_id, issue_id) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
-	let data = { visual_spec_document_id: visual_spec_document_id,
+	      const state = getState()
+	      dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
+	      let data = { visual_spec_document_id: visual_spec_document_id,
                      issue_id: issue_id }
-	return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/unassociateWithIssue/", dispatch,
-			 {method: "POST",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/unassociateWithIssue/", dispatch,
+			                   {method: "POST",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
+		             console.log('Request failed with JSON response', json);
                  dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
              dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
-	 })
+	       })
     }
 }
 
 export function unassociateVisualSpecDocumentWithProject(visual_spec_document_id, project_id) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
-	let data = { visual_spec_document_id: visual_spec_document_id,
+	      const state = getState()
+	      dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
+	      let data = { visual_spec_document_id: visual_spec_document_id,
                      project_id: project_id }
-	return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/unassociateWithProject/", dispatch,
-			 {method: "POST",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/unassociateWithProject/", dispatch,
+			                   {method: "POST",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
+		             console.log('Request failed with JSON response', json);
                  dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
              dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
-	 })
+	       })
     }
 }
 
 export function cloneIssueForVisualSpec(visual_spec_document_id, issue_id, on_done) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
-	let data = { issue_id: issue_id}
-	return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/cloneIssueForDoc/", dispatch,
-			 {method: "POST",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+	      const state = getState()
+	      dispatch(announceItemsSaving(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, visual_spec_document_id))
+	      let data = { issue_id: issue_id}
+	      return impfetch( state, "imp/" + ENTITY_KEY__VISUAL_SPEC_DOCUMENT + "/" + visual_spec_document_id + "/cloneIssueForDoc/", dispatch,
+			                   {method: "POST",
+			                    credentials: 'same-origin',
+			                    data: data,
+			                    headers: {"Content-type": "application/json; charset=UTF-8"},
+			                    body: JSON.stringify(data)}
+	      ).then(response => response.json())
+	       .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
+		             console.log('Request failed with JSON response', json);
                  dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
+		             console.log('Request succeeded with JSON response', json);
+		             dispatch(announceItemsSaved(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, [visual_spec_document_id]))
                  on_done(json.payload.new_visual_spec_document_id, json.payload.new_issue_id)
              }
-	 })
-	 .catch(function (error) {
+	       })
+	       .catch(function (error) {
              console.log('Request failed', error);
              dispatch(announceItemSaveFailed(ENTITY_KEY__VISUAL_SPEC_DOCUMENT, error))
-	 })
+	       })
     }
 }
