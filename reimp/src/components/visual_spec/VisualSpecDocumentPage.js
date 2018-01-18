@@ -55,7 +55,7 @@ class VisualSpecDocumentPage extends Component {
         this.onSelectDocument = this.onSelectDocument.bind(this)
         this.state = { selecting_from_gallery: false }
     }
-    
+
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(set_toolbars(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE, ['visual-spec-document']))
@@ -72,7 +72,7 @@ class VisualSpecDocumentPage extends Component {
             this.refresh(new_props)
         }
     }
-    
+
     addFromProjectGallery() {
         this.setState({selecting_from_gallery: true})
     }
@@ -127,11 +127,9 @@ class VisualSpecDocumentPage extends Component {
             dispatch(update_list_filter(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, {sprint_id: sprint_id || -1}))
             dispatch(selectItems(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue_id]))
         }
-        if ( active_visual_spec_document_id ) {
-            dispatch(setPageFlag(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
-                                 "active_visual_spec_document_id",
-                                 active_visual_spec_document_id))
-        }
+        dispatch(setPageFlag(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
+                             "active_visual_spec_document_id",
+                             active_visual_spec_document_id))
         dispatch(ensureVisualSpecDocumentsLoaded([active_visual_spec_document_id]))
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
         if ( project && project.id && sprint && sprint.id && issue && issue.id ) {
@@ -151,7 +149,7 @@ class VisualSpecDocumentPage extends Component {
             dispatch(select_issues(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
                                    [active_visual_spec_document.issue_id]))
             dispatch(setItemFlag(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue_id], 'expanded_issues', true))
-            
+
         } else if ( project && project.id ) {
             dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
                                      {to: '/projects/' + project.id, label: project.name},
@@ -214,15 +212,15 @@ class VisualSpecDocumentPage extends Component {
             )
         }
     }
-    
+
     render() {
 
         const { visual_spec_document_ids,
                 active_visual_spec_document_id,
                 visual_spec_documents_editor_urls,
-                issue, issue_id, project_id, 
+                issue, issue_id, project_id,
                 issue_header_list } = this.props
-        
+
         return (
             <div>
               <div className="visual_spec_document_page__gallery">
@@ -240,14 +238,14 @@ class VisualSpecDocumentPage extends Component {
                   <div>Loading...</div>
                 }
               </div>
-              { issue.id && 
+              { issue.id &&
                 <div className="visual_spec_document_page__content">
                   <div className="visual_spec_document_page__issue_list">
                     <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
                                issue_header_list={issue_header_list}
                                onSelectIssues={this.onSelectIssues}
                                onDelete={this.onDeleteIssue}
-                    /> 
+                    />
                   </div>
                   <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
                     <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id} project_id={issue.project_id}/>
@@ -265,7 +263,7 @@ class VisualSpecDocumentPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const active_visual_spec_document_id = props.params.visualSpecDocumentId
+    let active_visual_spec_document_id = props.params.visualSpecDocumentId
     const project_id = props.params.projectId
     const sprint_id = props.params.sprintId
     const issue_id = props.params.issueId
@@ -280,7 +278,10 @@ function mapStateToProps(state, props) {
     const visual_spec_documents_editor_urls = map(visual_spec_documents, (vsd) => { return vsd.lores_url })
     const issue_header_list = ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
     const issue_is_invalidated = is_issue_invalidated(state, issue_id)
-    
+
+    if (active_visual_spec_document_id === 'undefined') {
+        active_visual_spec_document_id = null
+    }
     return {
         active_visual_spec_document_id,
         visual_spec_document_ids,
