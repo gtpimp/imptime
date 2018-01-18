@@ -85,7 +85,7 @@ class IssueSidebar extends Component {
     onDelete(event) {
         const { issue, dispatch, onDelete } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Delete this issue?") ) {
+        if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return
         }
         dispatch(deleteIssues([issue.id]))

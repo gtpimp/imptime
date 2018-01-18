@@ -118,7 +118,7 @@ class Issue extends Component {
     onDeleteIssue(event) {
         const { issue, dispatch, onDelete } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Delete this issue?") ) {
+        if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return
         }
         dispatch(deleteIssues([issue.id]))
@@ -170,7 +170,7 @@ class Issue extends Component {
         if (issue.loaded === false) {
             return (
                 <div key={this.key + "." + issue.id}
-                    onClick={onClickedIssue}
+                     onClick={onClickedIssue}
                      className={classNames("div-table__row", 'issue',
                                            {'div-table__row--selected': is_selected,
                                             'div-table__row--drop-target': isOver})}
