@@ -214,6 +214,11 @@ class SprintViewSet(BaseViewSet):
                         new_issue.save()
                     if template_issue.tags:
                         new_issue.tags.set(template_issue.tags.all())
+                    
+                    for testable in template_issue.testables.all():
+                        new_testable = testable.copy()
+                        new_testable.issue = new_issue
+                        new_testable.save()
 
             template_sprint.save()
                         
