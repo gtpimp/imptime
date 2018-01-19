@@ -1,6 +1,7 @@
 import {
     INIT_FILTER,
     CLEAR_FILTER,
+    CLEAR_FILTER_RESULTS,
     ANNOUNCE_FILTER_LOADING,
     ANNOUNCE_FILTER_LOADED,
     ANNOUNCE_FILTER_LOAD_FAILED,
@@ -43,6 +44,14 @@ export default function filter(state=initial_state, action) {
                 error: null
 	    })
 	    return state_copy
+
+        case CLEAR_FILTER_RESULTS:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, filter_template, state_copy[action.filter_key] || {})
+            state_copy[action.filter_key] = Object.assign({}, l, {
+                results: null
+            })
+            return state_copy
 
         case CHANGE_FILTER_DISPLAY_STATE:
             state_copy = Object.assign({}, state)
