@@ -38,7 +38,7 @@ class NewProjectSidebar extends Component {
                 <PropertyStack>
                     <div>
                         <div>
-                            <ProjectNameForm onChange={this.onSaveCandidateProject}/>
+                            <ProjectNameForm onSubmit={this.onSaveCandidateProject}/>
                         </div>
                     </div>
                 </PropertyStack>
