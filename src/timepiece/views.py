@@ -1442,7 +1442,7 @@ def list_projects(request):
         last_active[user.username] = entries.filter(user=user).aggregate(end_time=Max('end_time'))['end_time']
 
     businesses = timepiece.Business.get_related_business_by_user(request.user).order_by("name")
-    
+
     context = {'active_businesses': businesses.filter_has_any_active_projects(),
                'pending_businesses': businesses.filter_has_only_pending_projects(),
                'closed_businesses': businesses.filter_has_only_closed_projects(),
@@ -2708,7 +2708,7 @@ def graphs(request, template="timepiece/graphs/graph.html", context=None):
         entries = timepiece.Entry.objects\
                                  .filter_by_logged_in_user(request.user)\
                                  .filter(status='approved')
-                                         
+
     else:
         entries = timepiece.Entry.objects.none()
 
@@ -4653,6 +4653,7 @@ def sprint_report(request, project_id, context=None):
             user = request.user
 
         context = context or {}
+        context['annotation_size'] = settings.QUOTE_ANNOTATION_SIZE
         project = timepiece.Project.objects.get(pk=project_id)
 
         if 'output_format' in DATA and DATA['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:
@@ -4763,7 +4764,8 @@ def sprint_report(request, project_id, context=None):
                                    'project': project.id,
                                    'internal_comment': 'Created by %s' % request.user,
                                    'amount': int(project.new_stats['total']['hours_billable_with_scope_creep'] or 0),
-                                   'quote_document': most_recent_quote_document.id if most_recent_quote_document else None }
+                                   'quote_document': most_recent_quote_document.id if most_recent_quote_document else None,
+                                   'currency_symbol': 'R'}
         context['url_capture_quote'] = reverse('invoicing:new_quote') + "?" + urllib.urlencode(new_quote_default_args)
         context['report_type'] = DATA['report_type']
 
@@ -5046,7 +5048,7 @@ def move_issue_to_project(request):
     issue.project = dest_project
     issue.save()
     timepiece.ProjectIssueOrder.insert_at_the_end(issue)
-    
+
     timepiece.IssueHistory.add_history(request.user, issue, "moved project", unicode(old_project), unicode(dest_project))
     get_interface_plugin(request, dest_project.business).move_issue(issue, old_project=old_project)
     return HttpResponse(json.dumps({ "status" : "ok" }))
