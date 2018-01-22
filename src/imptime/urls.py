@@ -13,6 +13,7 @@ import nudge_api
 import project_api
 import project_dashboard_api
 import project_statement_api
+import summary_api
 import project_user_permission_api
 import release_note_api
 import sprint_api
@@ -92,6 +93,8 @@ router.register(r'project_statement', project_statement_api.ProjectStatementView
                 base_name='project_statement')
 router.register(r'release_note', release_note_api.ReleaseNoteViewSet,
                 base_name='release_note')
+router.register(r'summary', summary_api.SummaryViewSet,
+                base_name='summary')
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),

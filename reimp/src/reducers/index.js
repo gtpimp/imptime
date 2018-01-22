@@ -15,6 +15,7 @@ import page from './page'
 import project from './project'
 import project_dashboard from './project_dashboard'
 import project_statement from './project_statement'
+import summary from './summary'
 import project_user_permission from './project_user_permission'
 import rie from './rie'
 import item from './item'
@@ -51,6 +52,7 @@ const rootReducer = combineReducers({
     project_dashboard,
     project_statement,
     project_user_permission,
+    summary,
     rie,
     routing,
     settings,

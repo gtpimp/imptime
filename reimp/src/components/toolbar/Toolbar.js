@@ -10,6 +10,7 @@ import ReleaseNotesToolbarPanel from './ReleaseNotesToolbarPanel'
 import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import NudgeToolbarPanel from './NudgeToolbarPanel'
+import SummaryToolbarPanel from './SummaryToolbarPanel'
 import IssueToolbarPanel from './IssueToolbarPanel'
 import IssuesToolbarPanel from './IssuesToolbarPanel'
 import ListToolbarPanel from './ListToolbarPanel'
@@ -55,6 +56,8 @@ class ToolBar extends Component {
                 return <ProjectRoadmapToolbarPanel key='project-roadmap' {...this.props} />
             case 'nudge':
                 return <NudgeToolbarPanel key='nudge' {...this.props} />
+            case 'summary':
+                return <SummaryToolbarPanel key='summary' {...this.props} />
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }
