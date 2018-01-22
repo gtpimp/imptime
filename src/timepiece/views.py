@@ -4653,7 +4653,7 @@ def sprint_report(request, project_id, context=None):
             user = request.user
 
         context = context or {}
-        context['annotation_size'] = 60
+        context['annotation_size'] = settings.QUOTE_ANNOTATION_SIZE
         project = timepiece.Project.objects.get(pk=project_id)
 
         if 'output_format' in DATA and DATA['output_format'] == "pdf" and 'HTTP_REFERER' in request.META:

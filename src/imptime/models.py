@@ -1,17 +1,19 @@
-from lib.models import BaseModel
-from lib.fields import UploadTo, ProtectedForeignKey
-from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
-import hashlib
+from django.conf import settings
 from django.contrib.auth.models import User
-import PIL
-from timepiece.models import Issue
 from django.core.files import File as DjangoFile
-from timepiece.models import Business as Project
-from timepiece.models import Project as Sprint
-from timepiece.models import IssueHistory
-from impasync.refresh_notifier import RefreshNotifier
 from django.db import models
 from django.db.models import Max
+from impasync.refresh_notifier import RefreshNotifier
+from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
+from lib.fields import UploadTo, ProtectedForeignKey
+from lib.models import BaseModel
+from timepiece.models import Business as Project
+from timepiece.models import Issue
+from timepiece.models import IssueHistory
+from timepiece.models import Project as Sprint
+import PIL
+import hashlib
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -82,14 +84,15 @@ class VisualSpecDocument(BaseModel):
                 IssueHistory.add_history(user, issue, "added visual spec document", "", name)
 
     def height_and_width(self):
+        max_size = settings.QUOTE_IMAGE_MAX_SIZE
         height = self.hires_height
         width = self.hires_width
-        if height > 500 or width > 500:
+        if height > max_size or width > max_size:
             if height > width:
-                height = 500
+                height = max_size
                 width = float(width) / 100 * (float(height) / self.hires_height * 100)
             else:
-                width = 500
+                width = max_size
                 height = float(height) / 100 * (float(width) / self.hires_width * 100)
 
         return height, width
