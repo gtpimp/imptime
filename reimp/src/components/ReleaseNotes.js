@@ -33,7 +33,7 @@ class ReleaseNotes extends Component {
         super(props)
         this.onDeleteReleaseNote = this.onDeleteReleaseNote.bind(this)
     }
-    
+
     componentDidMount() {
 	const { dispatch, list_key } = this.props
 	dispatch(initList(list_key))
@@ -48,9 +48,9 @@ class ReleaseNotes extends Component {
     onDeleteReleaseNote(event, release_note_id) {
         const { dispatch } = this.props
         event.stopPropagation()
-        dispatch(deleteReleaseNote(release_note_id))
+        dispatch(deleteReleaseNote([release_note_id]))
     }
-    
+
     render() {
 
         const { release_notes, is_loading, has_delete_permission, has_seen_by_permission } = this.props
@@ -61,7 +61,7 @@ class ReleaseNotes extends Component {
                 <div>Loading...</div>
             )
         }
-        
+
         return (
             <div className="release_notes">
 
@@ -84,8 +84,8 @@ class ReleaseNotes extends Component {
                                   </div>
                                 }
                               </div>
-                            } 
-                            
+                            }
+
                             <div className="release_note__header_title">
                               {release_note.header}
                             </div>

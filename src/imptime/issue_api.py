@@ -360,20 +360,27 @@ class IssueViewSet(BaseViewSet):
 
     def delete(self, request, pk):
         try:
-            context = {}
             params = request.data
-            issue_id = pk
-            issue = self.allowed_issue(issue_id)
+            data = None
 
-            if self.logged_in_permissions(issue.project.business).has_delete_issue:
-                IssueHistory.add_history(request.user, issue,
-                                         "deleted", issue.id, "")
-                VisualSpecIssue.objects.filter(issue=issue).delete()
-                issue.delete()
-                context['issue_id'] = issue_id
-                data = {'status': 'success', 'payload': context}
+            if 'item_ids' in params:
+                issue_pks = params['item_ids']
             else:
-                data = {'status': 'failed', 'error_message': 'Permission denied to delete issues'}
+                issue_pks = [pk]
+
+            for issue_pk in issue_pks:
+                issue = self.allowed_issue(issue_pk)
+
+                if self.logged_in_permissions(issue.project.business).has_delete_issue:
+                    IssueHistory.add_history(request.user, issue,
+                                             "deleted", issue.id, "")
+                    VisualSpecIssue.objects.filter(issue=issue).delete()
+                    issue.delete()
+                else:
+                    data = {'status': 'failed', 'error_message': 'Permission denied to delete issues'}
+
+            if not data:
+                data = {'status': 'success', 'payload': issue_pks}
 
         except Exception, ex:
             logger.exception(ex)

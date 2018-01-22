@@ -50,7 +50,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                     vsd.hires_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
                     vsd.lores_url = VisualSpecDocumentSerializer.get_lores_url(self.request, vsd)
                     vsd.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd)
-                
+
                 s = VisualSpecDocumentSerializer(visual_spec_documents, many=True)
                 visual_spec_documents_data = s.data
                 context['visual_spec_documents'] = visual_spec_documents_data
@@ -59,9 +59,9 @@ class VisualSpecDocumentViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))
-    
+
     def create(self, request):
         try:
             project_pk = request.POST['project_id']
@@ -76,11 +76,11 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                                                   content_type=f.content_type,
                                                   issue=issue)
             data = {'status': 'success'}
-            
+
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-            
+
         return HttpResponse(JSONRenderer().render(data))
 
     def update(self, request, pk):
@@ -94,7 +94,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             visual_spec_document_ids = params.pop('visual_spec_document_ids', [pk])
 
             for vsd_id in visual_spec_document_ids:
-                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id) 
+                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id)
 
                 if field_name == 'visual_spec_document_id_after':
                     after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
@@ -156,7 +156,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-    
+
     @detail_route(methods=['POST'])
     def unassociateWithProject(self, request, pk):
         try:
@@ -197,18 +197,17 @@ class VisualSpecDocumentViewSet(BaseViewSet):
 
             SprintIssueOrder.insert_after(new_issue, set_after_this_issue=issue_to_clone)
             IssueHistory.add_history(request.user, new_issue,
-                                         "created", "", new_issue.number)
+                                     "created", "", new_issue.number)
 
             VisualSpecIssue.objects.create(visual_spec_document=visual_spec_document,
                                            issue=new_issue,
                                            order=0)
 
-            data = { 'status': 'success',
-                     'payload': { 'new_issue_id': new_issue.id,
-                                  'new_visual_spec_document_id': visual_spec_document.id } }
+            data = {'status': 'success',
+                    'payload': {'new_issue_id': new_issue.id,
+                                'new_visual_spec_document_id': visual_spec_document.id}}
             return HttpResponse(JSONRenderer().render(data))
-            
+
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-    

@@ -108,8 +108,8 @@ class VisualSpecProject(BaseModel):
     project = ProtectedForeignKey(Project, related_name='visual_spec_projects')
     order = models.IntegerField(default=1)
 
-    INCREMENT=10
-    MAX_ORDER=999999
+    INCREMENT = 10
+    MAX_ORDER = 999999
 
     class Meta:
         unique_together = ('project', 'visual_spec_document')
@@ -252,6 +252,7 @@ class VisualSpecIssueAnnotation(BaseModel):
 
     def shape_url(self):
         return 'images/visual_spec_issue__%s.png' % self.shape
+
 
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)

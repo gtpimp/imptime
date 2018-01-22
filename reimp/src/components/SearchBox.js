@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import '../sass/search-box.css'
 import {browserHistory} from 'react-router'
-import {initFilter, runFilter, getFilter, hideResults, showResults} from '../actions/Filter'
+import {initFilter, runFilter, getFilter, hideResults, showResults, clearResults} from '../actions/Filter'
 import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
 import SearchInput from './SearchInput'
@@ -29,9 +29,11 @@ class SearchBox extends Component {
     }
 
     onFilterTermChanged() {
-        const {setTimeout} = this.props
+        const {dispatch, filter_key, setTimeout} = this.props
         const value = this.filter_term_el.value
         const that = this
+
+        dispatch(clearResults(filter_key))
 
         if (this.filter_timeout_id != null) {
             clearTimeout(this.filter_timeout_id)

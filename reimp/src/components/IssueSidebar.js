@@ -30,7 +30,7 @@ import {
     getIssue,
     populateEstimates,
     makeFeatureIssuesSuccessive,
-    deleteIssue
+    deleteIssues
 } from '../actions/Issues'
 import { ensureUsersLoaded } from '../actions/Users'
 import {format_hours} from '../actions/lib'
@@ -85,10 +85,10 @@ class IssueSidebar extends Component {
     onDelete(event) {
         const { issue, dispatch, onDelete } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Delete this issue?") ) {
+        if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return
         }
-        dispatch(deleteIssue(issue.id))
+        dispatch(deleteIssues([issue.id]))
     }
 
     render() {

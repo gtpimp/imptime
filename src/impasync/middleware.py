@@ -1,7 +1,6 @@
 from threading import local
 from channels import Group
 import json
-from collections import OrderedDict
 from impasync.refresh_consumer import REFRESH_GROUP_NAME
 import logging
 
@@ -11,7 +10,7 @@ _active = local()
 def add_notification(notification):
     try:
         return _active.notifications.append(notification)
-    except AttributeError: # not in a django request
+    except AttributeError:  # not in a django request
         middleware = MergeAsyncNotificationsMiddleware(None)
         middleware.post_notifications([notification])
 

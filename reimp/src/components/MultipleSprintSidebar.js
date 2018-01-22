@@ -24,18 +24,24 @@ class MultipleSprintSidebar extends Component {
 
         return (
 
-            <Sidebar>
-
-              <div>
-                { sprints.length } sprints selected
-              </div>
-
-              <div>
-                <EditableSprintStatus sprint_ids={sprint_ids}/>
-              </div>
-              
-
-            </Sidebar>
+            <div className="sidebar sprint-sidebar">
+              <PropertyStackComponent>
+                <div className="property-row">
+                  <div className="property-value">
+                    { sprints.length } sprints selected
+                  </div>
+                </div>
+                
+                <div className="property-row">
+                  <div className="property-label">
+                    Sprint
+                  </div>
+                  <div className="property-value">
+                    <EditableSprintStatus sprint_ids={sprint_ids}/>
+                  </div>
+                </div>
+              </PropertyStackComponent>
+            </div>
         )
     }
 }

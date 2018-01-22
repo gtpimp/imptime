@@ -5,7 +5,7 @@ import OtherUser from '../components/OtherUser'
 import {
     updateIssueDescription,
     updateIssueSubject,
-    deleteIssue,
+    deleteIssues,
     updateCandidateSubject,
     saveCandidateIssue,
     cancelCandidateIssue
@@ -30,17 +30,17 @@ class IssueDeveloperDetails extends Component {
     }
 
     componentDidMount() {
-	      const { dispatch, issue_id } = this.props
-	      if ( issue_id ) {
-	          dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
-	      }
+	const { dispatch, issue_id } = this.props
+	if ( issue_id ) {
+	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+	}
     }
 
     componentWillReceiveProps() {
-	      const { dispatch, issue_id } = this.props
-	      if ( issue_id ) {
-	          dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
-	      }
+	const { dispatch, issue_id } = this.props
+	if ( issue_id ) {
+	    dispatch(fetchIssueGeneralDetailsIfNeeded([issue_id]))
+	}
     }
 
     onChangeSubject(issue_id, value) {
@@ -54,11 +54,11 @@ class IssueDeveloperDetails extends Component {
     }
 
     onDelete() {
-        const { dispatch, issue_id } = this.props
-        if ( ! confirm( "Delete this issue?") ) {
+        const { dispatch, issue } = this.props
+        if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return false;
         }
-	dispatch(deleteIssue(issue_id))
+	dispatch(deleteIssues([issue.id]))
     }
 
     onSaveCandidateIssue(new_subject) {
@@ -75,12 +75,12 @@ class IssueDeveloperDetails extends Component {
     renderComment(comment) {
 	return (
 	    <div key={"comment_"+comment.id} className="issue_developer_details__commment">
-		<div>
-		    {comment.comment}
-		</div>
-		<div className="issue_developer_details__comment__author">By <OtherUser user_id={comment.author_id} /></div>
-		<div className="issue_developer_details__comment__created">At {comment.created}</div>
-		<div className="issue_developer_details__comment__separator">&nbsp;</div>
+	      <div>
+		{comment.comment}
+	      </div>
+	      <div className="issue_developer_details__comment__author">By <OtherUser user_id={comment.author_id} /></div>
+	      <div className="issue_developer_details__comment__created">At {comment.created}</div>
+	      <div className="issue_developer_details__comment__separator">&nbsp;</div>
 	    </div>
 	)
     }
@@ -89,33 +89,33 @@ class IssueDeveloperDetails extends Component {
 	return (
 
 	    <div className="issue_developer_details">
-		<div className="panel panel--full">
-		    <div className="panel-heading">
-			<div className="panel__title">
-			    New Issue
-			</div>
-			<div className="panel__buttons">
-			    <div className="panel__button panel__button--delete"
-				 onClick={this.onCancelCandidateIssue}>
-			    </div>
-			</div>
+	      <div className="panel panel--full">
+		<div className="panel-heading">
+		  <div className="panel__title">
+		    New Issue
+		  </div>
+		  <div className="panel__buttons">
+		    <div className="panel__button panel__button--delete"
+			 onClick={this.onCancelCandidateIssue}>
 		    </div>
-		    <div className="issue_developer_details__panel-body">
-
-			<h3>Subject: </h3>
-			<h3>
-			    <RIEModeToggler
-				rie_key="issue_subject"
-				initialValue=""
-				initialState="editing"
-				onChange={this.onSaveCandidateIssue}
-				onCancel={this.onCancelCandidateIssue}
-			    >
-				<RIEInput />
-			    </RIEModeToggler>
-			</h3>
-		    </div>
+		  </div>
 		</div>
+		<div className="issue_developer_details__panel-body">
+
+		  <h3>Subject: </h3>
+		  <h3>
+		    <RIEModeToggler
+			rie_key="issue_subject"
+			initialValue=""
+			initialState="editing"
+			onChange={this.onSaveCandidateIssue}
+			onCancel={this.onCancelCandidateIssue}
+		    >
+		      <RIEInput />
+		    </RIEModeToggler>
+		  </h3>
+		</div>
+	      </div>
 	    </div>
 	)
     }
@@ -134,44 +134,44 @@ class IssueDeveloperDetails extends Component {
 	}
 
         return (
-		<div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
-		    <div className="panel panel--full">
-			<div className="panel-heading">
-			    <div className="panel__title">
-				Issue Details
-			    </div>
-			    <div className="panel__buttons">
-				<div className="panel__button panel__button--delete"
-				     onClick={this.onDelete}>
-				</div>
-
-			    </div>
-			</div>
-			<div className="issue_developer_details__panel-body">
-			    <h3>issue#{number}:
-
-				<RIEModeToggler
-				    rie_key="issue_subject"
-				    initialValue={subject || "..."}
-				    onChange={(new_value) => this.onChangeSubject(issue.id, new_value)}
-				>
-				    <RIEInput />
-				</RIEModeToggler>
-			    </h3>
-			    <RIEModeToggler
-				rie_key={"issue_description"}
-				initialValue={description || ""}
-				onChange={this.onChangeDescription}
-			    >
-				<RIETextArea />
-			    </RIEModeToggler>
-			</div>
-
-			<div>
-			    { comments.map((comment) => this.renderComment(comment)) }
-			</div>
+	    <div className="issue_developer_details" style={{ opacity: is_loading ? 0.5 : 1 }}>
+	      <div className="panel panel--full">
+		<div className="panel-heading">
+		  <div className="panel__title">
+		    Issue Details
+		  </div>
+		  <div className="panel__buttons">
+		    <div className="panel__button panel__button--delete"
+			 onClick={this.onDelete}>
 		    </div>
+
+		  </div>
 		</div>
+		<div className="issue_developer_details__panel-body">
+		  <h3>issue#{number}:
+
+		    <RIEModeToggler
+			rie_key="issue_subject"
+			initialValue={subject || "..."}
+			onChange={(new_value) => this.onChangeSubject(issue.id, new_value)}
+		    >
+		      <RIEInput />
+		    </RIEModeToggler>
+		  </h3>
+		  <RIEModeToggler
+		      rie_key={"issue_description"}
+		      initialValue={description || ""}
+		      onChange={this.onChangeDescription}
+		  >
+		    <RIETextArea />
+		  </RIEModeToggler>
+		</div>
+
+		<div>
+		  { comments.map((comment) => this.renderComment(comment)) }
+		</div>
+	      </div>
+	    </div>
         )
     }
 }

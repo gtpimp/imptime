@@ -14,7 +14,7 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
-    deleteItem,
+    deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving,
@@ -76,7 +76,7 @@ export function createVisualSpecIssueAnnotation(visual_spec_document_id, issue_i
 
 export function deleteVisualSpecIssueAnnotation(visual_spec_issue_annotation_id) {
     return (dispatch, getState) => {
-        dispatch(deleteItem(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, visual_spec_issue_annotation_id))
+        dispatch(deleteItems(ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION, [visual_spec_issue_annotation_id]))
     }
 }
 

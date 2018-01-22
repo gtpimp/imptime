@@ -16,7 +16,7 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
-    deleteItem,
+    deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
     announceItemsSaving
@@ -68,7 +68,7 @@ export function createReleaseNote(header, content) {
 
 export function deleteReleaseNote(release_note_id) {
     return (dispatch, getState) => {
-        dispatch(deleteItem(ENTITY_KEY__RELEASE_NOTE, release_note_id))
+        dispatch(deleteItems(ENTITY_KEY__RELEASE_NOTE, [release_note_id]))
     }
 }
 

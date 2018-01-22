@@ -26,7 +26,7 @@ class ProjectNameForm extends Component {
                 maxLength="3000"
                 className="textarea textarea--text-component"
                 placeholder="Name"
-                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                onChange={input.onChange}
                 value={input.value}
             />
         )
@@ -48,12 +48,12 @@ class ProjectNameForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onChange } = props
+    const { onSubmit } = props
     
     return {
         initialValues: {name:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onChange
+        onSubmit
     }
 }
 

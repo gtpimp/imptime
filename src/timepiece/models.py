@@ -244,7 +244,7 @@ class Business(BaseModel):
             ProjectStatus.objects.get_or_create(name=name, business=self)
         for code, name in ProjectDeadlineType.DEFAULT_PROJECT_DEADLINE_TYPES:
             ProjectDeadlineType.objects.get_or_create(name=name, business=self)
-    
+
     def get_traffic_owners(self):
         return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_traffic_checklist=True)]
 
@@ -398,7 +398,7 @@ class GlobalPermissions():
 
     def has_update_release_notes_permission(self, user):
         return user and user.is_superuser
-    
+
 class BusinessPermissions(BaseModel):
 
     class Meta:
@@ -530,7 +530,7 @@ class BusinessPermissions(BaseModel):
     def active_businesses_for_user(self, user):
         bps = self.objects.filter(user=user, is_active_member_of_business=True)
         return Business.objects.filter(business_permissions__in=bps)
-    
+
     @classmethod
     def active_users_for_business(self, business_id):
         return User.objects.filter(business_permissions__business_id=business_id,
@@ -566,7 +566,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_view_review_cycle(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_view_review_cycle or self.user.has_perm('timepiece.belongs_to_all_projects'))
-    
+
     @property
     def has_edit_permissions(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_permissions or self.user.has_perm('timepiece.belongs_to_all_projects'))
@@ -692,11 +692,11 @@ class BusinessPermissions(BaseModel):
     @property
     def has_edit_sprint_status(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_sprint_status or self.user.has_perm('timepiece.belongs_to_all_projects'))
-    
+
     @property
     def has_edit_sprint_type(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_sprint_type or self.user.has_perm('timepiece.belongs_to_all_projects'))
-    
+
     @property
     def has_edit_sprint(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_sprint or self.user.has_perm('timepiece.belongs_to_all_projects'))
@@ -764,7 +764,7 @@ class ProjectStatus(BaseModel):
     @classmethod
     def for_business(self, name, business):
         return ProjectStatus.objects.get_or_create(name=name, business=business)[0]
-    
+
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectStatus, self).save(*args, **kwargs)
@@ -801,11 +801,11 @@ class ProjectQuerySet(QuerySet):
             return self.order_by(preserved)
         else:
             return self
-    
+
     def filter_assigned_tasks_are_active(self):
         return self.filter(status3__name__in=['in dev', 'pending'],
                            project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
-    
+
     def filter_active(self):
         return self.filter(status3__name__in=Project.active_states())
 
@@ -859,7 +859,7 @@ class Project(BaseModel):
                       ('audit', 'Audit'),
                       ('spec', 'Spec'),
                       ('inbox', 'Inbox') )
-    
+
     code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)
     budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -896,7 +896,7 @@ class Project(BaseModel):
         related_name='projects_with_type',
         null=True
     )
-    
+
     status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=False)
 
     description = models.TextField(blank=True, null=True, db_index=True)
@@ -971,7 +971,7 @@ class Project(BaseModel):
     @property
     def issues_can_be_reviewed(self):
         return self.project_type != "inbox"
-    
+
     def get_points(self):
         user_ids = [user.id for user in self.business.users]
         users = User.objects.filter(id__in = user_ids)
@@ -1320,7 +1320,7 @@ class Project(BaseModel):
     @classmethod
     def open_states(self):
         return self.hopeful_states() + self.pending_states() + self.active_states()
-    
+
     @classmethod
     def can_add_dev_time_states(self):
         return ( 'open', 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent' )
@@ -2097,7 +2097,7 @@ class BusinessProjectOrder(BaseModel):
 
     class Meta:
         unique_together = ('business', 'project')
-    
+
     INCREMENT=10
     MAX_ORDER=999999
 
@@ -2108,7 +2108,7 @@ class BusinessProjectOrder(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-    
+
     @classmethod
     def renumber(self, business_id):
         project_ids = Project.objects.filter(business_id=business_id).order_by_business_id(business_id).values_list('pk', flat=True)
@@ -2136,7 +2136,7 @@ class BusinessProjectOrder(BaseModel):
             pio.order = new_order
             pio.save()
         self.renumber(project.business_id)
-            
+
     @classmethod
     def insert_after(self, project, set_after_this_project):
         if project.business_id != set_after_this_project.business_id:
@@ -2189,7 +2189,7 @@ class BusinessProjectOrder(BaseModel):
                                         .filter(project_id__in=unordered_project_ids)\
                                         .order_by("order")\
                                         .values_list("project_id", flat=True)
-            
+
     @classmethod
     def get_next_order(self, business_id, project_qs=None):
         self.renumber(business_id)
@@ -2199,7 +2199,7 @@ class BusinessProjectOrder(BaseModel):
                                 .aggregate(max_order=Max('order'))['max_order'] or 0
         return max_order + self.INCREMENT
 
-    
+
 class BusinessInvite(BaseModel):
     business = models.ForeignKey(Business, related_name='invites', null=False)
     user = models.ForeignKey(User, related_name='invites_received', null=False)
@@ -2517,7 +2517,7 @@ class EntryQuerySet(EntriesQuerySet):
                    .values('started_on')\
                    .order_by('started_on')\
                    .annotate(daily_hours=Sum('hours'))
-    
+
     # def timespan(self, from_date, to_date=None, span=None):
     #     """
     #     Takes a beginning date a filters entries. An optional to_date can be
@@ -3676,6 +3676,8 @@ class Tag(BaseModel):
     modified = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+        self.name = self.name.lower()
+
         was_created = not self.id
         super(Tag, self).save(*args, **kwargs)
         affected_issues = [x.id for x in self.issues.all()]
@@ -3737,7 +3739,7 @@ class IssueQuerySet(QuerySet):
                            Q(project__rate__user=user,
                              project__rate__time_tracking_mode='manager',
                              status2__name__in=Issue.STATUSES_INDICATING_INCOMPLETE['manager']))
-    
+
     def order_by_project_id(self, project_id, descending=False):
         if project_id:
             direction = ("-" if descending else "") + "order"
@@ -3747,12 +3749,12 @@ class IssueQuerySet(QuerySet):
             if issue_ids_in_order.count() == 0:
                 return self
             preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(issue_ids_in_order)])
-            
+
             return self.order_by(preserved)
         else:
             return self
-        
-    
+
+
 class Issue(BaseModel):
 
     ISSUE_STATUS_CHOICES = (
@@ -3841,20 +3843,21 @@ class Issue(BaseModel):
         for tag in self.tags.all():
             new_issue.tags.add(tag)
             new_issue.save()
-            
+
         return new_issue
-            
+
     def delete(self, *args, **kwargs):
-        RefreshNotifier().notify_model_delete(self)
+        params = { 'project_id': self.project_id }
+        RefreshNotifier().notify_model_delete(self, params)
         super(Issue, self).delete(*args, **kwargs)
-            
+
     def check_quality(self):
         quality_error = Quality().check_short_sentence(self.subject)
         if quality_error != self.subject_quality_error:
             self.subject_quality_error = quality_error
             super(Issue, self).save()
-        
-            
+
+
     @classmethod
     def get_last_issue_number(self, business):
         largest_number =  Issue.objects.filter(project__business=business).filter(number__isnull=False).aggregate(largest_number=Max("number"))['largest_number']
@@ -3909,7 +3912,7 @@ class Issue(BaseModel):
     def get_next_child_order(self):
         return ProjectIssueOrder.get_next_order(project_id=self.project_id,
                                                 issue_qs=Issue.objects.filter(parent_group=self))
-    
+
     @classmethod
     def get_next_order(self, project):
         return ProjectIssueOrder.get_next_order(project_id=project.id)
@@ -4089,7 +4092,7 @@ class IssueComment(BaseModel):
         return IssueComment.objects.create(issue=self.issue,
                                            comment=self.comment,
                                            author=self.author)
-    
+
 class ProjectIssueOrder(BaseModel):
     order = models.FloatField()
     issue = models.ForeignKey(Issue)
@@ -4097,7 +4100,7 @@ class ProjectIssueOrder(BaseModel):
 
     class Meta:
         unique_together = ('project', 'issue')
-    
+
     INCREMENT=10
     MAX_ORDER=999999
 
@@ -4108,7 +4111,7 @@ class ProjectIssueOrder(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-    
+
     @classmethod
     def renumber(self, project_id):
         issue_ids = Issue.objects.filter(project_id=project_id).order_by_project_id(project_id).values_list('pk', flat=True)
@@ -4136,7 +4139,7 @@ class ProjectIssueOrder(BaseModel):
             pio.order = new_order
             pio.save()
         self.renumber(issue.project_id)
-            
+
     @classmethod
     def insert_after(self, issue, set_after_this_issue):
         if issue.project_id != set_after_this_issue.project_id:
@@ -4189,7 +4192,7 @@ class ProjectIssueOrder(BaseModel):
                                         .filter(issue_id__in=unordered_issue_ids)\
                                         .order_by("order")\
                                         .values_list("issue_id", flat=True)
-            
+
     @classmethod
     def get_next_order(self, project_id, issue_qs=None):
         self.renumber(project_id)
@@ -4198,8 +4201,8 @@ class ProjectIssueOrder(BaseModel):
         max_order = self.objects.filter(project_id=project_id, issue__in=issue_qs)\
                                 .aggregate(max_order=Max('order'))['max_order'] or 0
         return max_order + self.INCREMENT
-        
-    
+
+
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
     attachment = models.FileField(max_length=255, upload_to=upload_to_attachments, null=False, blank=False)
@@ -4679,12 +4682,12 @@ class Schedule(BaseModel):
         return { 'num_hours': num_days * settings.NUM_BUSINESS_HOURS_PER_DAY,
                  'leave_hours': leave_days * settings.NUM_BUSINESS_HOURS_PER_DAY }
 
-    
+
 class ProjectDeadlineType(BaseModel):
     DEFAULT_PROJECT_DEADLINE_TYPES = ( ('start_dev', 'Start development'),
                                        ('start_internal_qa', 'Start internal QA'),
                                        ('end_external_qa', 'End external QA') )
-    
+
     business = ProtectedForeignKey(Business, related_name='deadline_types')
     name = models.CharField(max_length=100, null=False)
 
@@ -4721,7 +4724,7 @@ class ProjectReview(BaseModel):
 
     class Meta:
         unique_together = (('project', 'review_by'),)
-    
+
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectReview, self).save(*args, **kwargs)
@@ -4730,12 +4733,12 @@ class ProjectReview(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-            
+
 class IssueReview(BaseModel):
     issue = models.ForeignKey(Issue, null=False, related_name='reviews')
     last_reviewed_at = models.DateTimeField(null=True, db_index=True)
     reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)
-    
+
     class Meta:
         ordering = ('last_reviewed_at',)
 
@@ -4760,7 +4763,7 @@ class IssueReview(BaseModel):
                                                       review_by=user).first()
         if project_review is None:
             return None
-        
+
         if not project_review.must_always_review:
             issue_review = IssueReview.objects.filter(issue=issue).order_by("-last_reviewed_at").first()
         else:
@@ -4777,7 +4780,7 @@ class IssueReview(BaseModel):
     def refresh_for_project(self, project):
         # Hook that indicates the project's review settings have changed.
         pass
-        
+
     @classmethod
     def reviewed(self, issue, logged_in_user):
         review = IssueReview.objects.get_or_create(issue=issue, reviewed_by=logged_in_user)[0]

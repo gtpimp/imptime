@@ -3,6 +3,7 @@ export const UPDATE_GLOBAL_FILTER = 'UPDATE_GLOBAL_FILTER'
 import { impfetch } from '../actions/lib'
 export const INIT_FILTER = 'INIT_FILTER'
 export const CLEAR_FILTER = 'CLEAR_FILTER'
+export const CLEAR_FILTER_RESULTS = 'CLEAR_FILTER_RESULTS'
 export const ANNOUNCE_FILTER_LOADING = 'ANNOUNCE_FILTER_LOADING'
 export const ANNOUNCE_FILTER_LOADED = 'ANNOUNCE_FILTER_LOADED'
 export const ANNOUNCE_FILTER_LOAD_FAILED = 'ANNOUNCE_FILTER_LOAD_FAILED'
@@ -41,6 +42,13 @@ export function hideResults(filter_key) {
         type: CHANGE_FILTER_DISPLAY_STATE,
         filter_key: filter_key,
         is_visible: false
+    }
+}
+
+export function clearResults(filter_key) {
+    return {
+        type: CLEAR_FILTER_RESULTS,
+        filter_key: filter_key
     }
 }
 
