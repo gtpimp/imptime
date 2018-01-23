@@ -299,7 +299,7 @@ def new_quote(request, template="invoicing/new_quote.html", context=None):
     bp = _get_best_bp(request)
     if not bp.has_edit_quotes:
         raise PermissionDenied
-
+    request.POST = request.GET
     form = QuoteForm(request.POST or None, initial=request.GET.dict())
     if form.is_valid():
         quote = form.save()

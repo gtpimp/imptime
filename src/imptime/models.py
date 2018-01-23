@@ -1,17 +1,19 @@
-from lib.models import BaseModel
-from lib.fields import UploadTo, ProtectedForeignKey
-from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
-import hashlib
+from django.conf import settings
 from django.contrib.auth.models import User
-import PIL
-from timepiece.models import Issue
 from django.core.files import File as DjangoFile
-from timepiece.models import Business as Project
-from timepiece.models import Project as Sprint
-from timepiece.models import IssueHistory
-from impasync.refresh_notifier import RefreshNotifier
 from django.db import models
 from django.db.models import Max
+from impasync.refresh_notifier import RefreshNotifier
+from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
+from lib.fields import UploadTo, ProtectedForeignKey
+from lib.models import BaseModel
+from timepiece.models import Business as Project
+from timepiece.models import Issue
+from timepiece.models import IssueHistory
+from timepiece.models import Project as Sprint
+import PIL
+import hashlib
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -45,7 +47,7 @@ class VisualSpecDocument(BaseModel):
             hash_md5.update(chunk)
         f.seek(0)
         return hash_md5.hexdigest()
-            
+
     @classmethod
     def create_for_doc(self, user, project, doc, name, content_type, issue=None):
         is_image = content_type.startswith('image')
@@ -80,7 +82,30 @@ class VisualSpecDocument(BaseModel):
             if created:
                 issue.save()
                 IssueHistory.add_history(user, issue, "added visual spec document", "", name)
-            
+
+    def height_and_width(self):
+        max_size = settings.QUOTE_IMAGE_MAX_SIZE
+        height = self.hires_height
+        width = self.hires_width
+        if height > max_size or width > max_size:
+            if height > width:
+                height = max_size
+                width = float(width) / 100 * (float(height) / self.hires_height * 100)
+            else:
+                width = max_size
+                height = float(height) / 100 * (float(width) / self.hires_width * 100)
+
+        return height, width
+
+    def height(self):
+        height, width = self.height_and_width()
+        return height
+
+    def width(self):
+        height, width = self.height_and_width()
+        return width
+
+
 class VisualSpecProject(BaseModel):
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_projects')
     project = ProtectedForeignKey(Project, related_name='visual_spec_projects')
@@ -227,6 +252,10 @@ class VisualSpecIssueAnnotation(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
+
+    def shape_url(self):
+        return 'images/visual_spec_issue__%s.png' % self.shape
+
 
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)

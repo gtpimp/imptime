@@ -35,13 +35,13 @@ class VisualSpecIssueAnnotation extends Component {
     state = {
         isTooltipActive: false
     }
-    
+
     constructor(props) {
         super(props)
         this.showTooltip = this.showTooltip.bind(this)
         this.hideTooltip = this.hideTooltip.bind(this)
     }
-    
+
     componentDidMount() {
         this.refresh()
     }
@@ -62,7 +62,7 @@ class VisualSpecIssueAnnotation extends Component {
             this.setState({isTooltipActive: true})
         }
     }
-    
+
     hideTooltip() {
         const { dispatch, tooltips_enabled } = this.props
         if ( tooltips_enabled ) {
@@ -104,7 +104,7 @@ class VisualSpecIssueAnnotation extends Component {
 
         const tooltip_target_id = (tooltips_enabled && "visual_spec_issue_annotation_"+visual_spec_issue_annotation.id) || "dummy_vsia_"+visual_spec_issue_annotation.id
 
-        return ( 
+        return (
             <div>
 
               {connectDragSource(
@@ -150,7 +150,7 @@ class VisualSpecIssueAnnotation extends Component {
                }
 
             { false && isDragging && <VisualSpecIssueAnnotationDragLayer {...this.props} /> }
-            
+
             </div>
         )
     }
@@ -164,7 +164,7 @@ function mapStateToProps(state, props) {
     const is_invalidated = is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
     const container_img_element = (container_img_element_unique_id && document.getElementById(container_img_element_unique_id)) || null
     const container_img_size = (container_img_element && container_img_element.getBoundingClientRect()) || { width:0, height:0 }
-    
+
     return {
         visual_spec_issue_annotation_id,
         visual_spec_issue_annotation,

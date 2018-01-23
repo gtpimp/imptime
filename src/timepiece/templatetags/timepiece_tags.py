@@ -94,7 +94,7 @@ class HasPermissionNode(template.Node):
         self.perm_name = perm_name
         self.opposite = opposite
         self.business = template.Variable(business)
-        
+
     def render(self,context):
 
         business = self.business.resolve(context)
@@ -138,7 +138,7 @@ class CanEstimateOwnPointsNode(template.Node):
     def __init__(self, nodelist, user):
         self.nodelist = nodelist
         self.user = user
-        
+
     def render(self,context):
         if 'business_permissions_by_user' not in context:
             raise Exception("Invalid context, requires property business_permissions_by_user")
@@ -149,10 +149,10 @@ class CanEstimateOwnPointsNode(template.Node):
             return output
 
         if context['business_permissions_by_user'][resolved_user.id].can_estimate_own_points:
-            return output        
+            return output
         return ""
 register.tag('user_can_estimate_own_points', user_can_estimate_own_points)
-    
+
 def is_same_user(parser, token):
     nodelist = parser.parse(('end_is_same_user',))
     parser.delete_first_token()
@@ -166,13 +166,13 @@ class IsSameUser(template.Node):
         self.nodelist = nodelist
         self.user1 = user1
         self.user2 = user2
-        
+
     def render(self,context):
         output = self.nodelist.render(context)
         resolved_user1 = self.user1.resolve(context,True)
         resolved_user2 = self.user2.resolve(context,True)
         if resolved_user1.id == resolved_user2.id:
-            return output        
+            return output
         return ""
 register.tag('is_same_user', is_same_user)
 
@@ -183,7 +183,7 @@ def asmarkdown(content):
 @register.filter
 def with_issue_links(content):
     return re.sub("issue(\d+)", r"<a href='#' onclick='imp.search_on_issue_number(\1)'>issue\1</a>", content)
-    
+
 @register.simple_tag(takes_context=True)
 def get_points_current_user(context, issue_id):
     user = context['current_user']
@@ -269,7 +269,7 @@ def traffic_bar(percentage, text, tooltips=None, colour=None ):
             colour = "traffic_red"
         else:
             colour = "traffic_green"
-    
+
     return { 'width_percent': percentage,
              'message': text,
              'colour': colour,
@@ -284,7 +284,7 @@ def calculate_role_data(context, user, project):
     for role_name, data in role_data.items():
         data['budget'] = project.estimated_budget_for_role(role_name)
         data['budget_without_scope_creep'] = project.estimated_budget_for_role(role_name, include_scope_creep=False)
-    
+
     context['role_data'] = { 'per_role' : role_data,
                              'commission' : {
                                  'budget': project.estimated_budget_for_role("commission")
@@ -292,12 +292,12 @@ def calculate_role_data(context, user, project):
                              }
     return ""
 
-@register.filter    
+@register.filter
 def cost_for_mode(role_data, mode):
     """ role_data comes from calculate_role_data, so it must have already been called with the correct project """
     cost = role_data['per_role'][mode]['hours_billable_core_rate']
     return cost
-    
+
 # The first argument *must* be called "context" here.
 @register.inclusion_tag('timepiece/traffic_bar.html', takes_context=True)
 def running_progress_for_user_in_sprint(context, user, project):
@@ -337,9 +337,9 @@ def running_progress_for_user_in_sprint(context, user, project):
                              ["--"],
                              ["Estimated velocity", "%.2f" % (project.new_stats['per_user'][user]['rate'].velocity or 0)],
                              ["Actual velocity", "%.2f" % (project.new_stats['per_user'][user]['calculated_velocity'] or 0)] ]
-                             
+
     return data
-    
+
 def _create_traffic_data(actual, total):
 
     if total is None or actual is None:
@@ -579,7 +579,7 @@ def timesheet_url(type, pk, date):
     return '?'.join((url, urllib.urlencode(params),))
 
 @register.filter
-def keyvalue(dict, key):    
+def keyvalue(dict, key):
     return dict[key]
 
 @register.simple_tag(takes_context=False)
@@ -600,7 +600,7 @@ def points_and_stuff(per_user):
     points = per_user['issue_points']
     points = points if points else '&nbsp;'
     points = '<span class="estimated_hours">%s</span>' % points
-    
+
     if per_user['has_estimate'] and per_user['has_hours']:
         if per_user['has_hours']:
             return mark_safe(u'%s / %s' % (per_user['hours'], points))
