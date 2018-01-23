@@ -6,6 +6,7 @@ import Sidebar from './Sidebar'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import EditableProjectName from '../components/EditableProjectName'
+import EditableProjectDescription from '../components/EditableProjectDescription'
 
 class ProjectSidebar extends Component {
 
@@ -34,6 +35,9 @@ class ProjectSidebar extends Component {
                         <div className="property--title">
                             <EditableProjectName project_id={project_id} />
                         </div>                        
+                    </PropertyStackComponent>
+                    <PropertyStackComponent title="Description">
+                        <EditableProjectDescription project_id={project_id}/>
                     </PropertyStackComponent>
                 </PropertyStack>
             </Sidebar>

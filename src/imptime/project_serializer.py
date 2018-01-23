@@ -24,6 +24,7 @@ class ProjectSerializer(BaseSerializer):
 
     id = serializers.CharField()
     name = serializers.CharField()
+    description = serializers.CharField()
     allowed_user_ids = serializers.ListField(child=serializers.CharField())
     invited_user_ids = serializers.ListField(child=serializers.CharField())
     allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
