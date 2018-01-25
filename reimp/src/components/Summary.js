@@ -4,7 +4,7 @@ import { DragSource, DropTarget } from 'react-dnd'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
-import '../sass/project-summary.css'
+import '../sass/project-summary.scss'
 import {
     getSummary,
     ensureSummariesLoaded
