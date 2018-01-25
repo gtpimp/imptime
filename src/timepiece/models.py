@@ -3828,6 +3828,16 @@ class Issue(BaseModel):
             status2=issue_to_clone.status2,
             number=Issue.get_next_issue_number(issue_to_clone.project.business),
             subject=issue_to_clone.subject + (" (clone)" if add_suffix else ""),
+            feature=issue_to_clone.feature,
+            assigned_to=issue_to_clone.assigned_to,
+            created = timezone.now(),
+            modified = timezone.now(),
+            auto_created_during_import = False,
+            adhoc = template_issue.adhoc,
+            fixed_amount = template_issue.fixed_amount,
+            fixed_ctc_amount = template_issue.fixed_ctc_amount,
+            can_group_issues = template_issue.can_group_issues,
+            parent_group_id = template_issue.parent_group_id,
             created_by=logged_in_user)
 
         for testable in self.testables.all().order_by("order"):

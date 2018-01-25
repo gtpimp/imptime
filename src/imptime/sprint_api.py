@@ -189,36 +189,14 @@ class SprintViewSet(BaseViewSet):
 
             mapped_issues = {}
             for template_issue in template_sprint.issues.all().order_by_project_id(template_sprint.id):
-                new_issue = Issue.objects.create(
-                    status2 = template_issue.status2,
-                    number = template_issue.number,
-                    project = sprint_clone, #sic
-                    subject = template_issue.subject,
-                    description = template_issue.description,
-                    story_points = template_issue.story_points,
-                    feature = template_issue.feature,
-                    assigned_to = template_issue.assigned_to,
-                    created = timezone.now(),
-                    modified = timezone.now(),
-                    auto_created_during_import = False,
-                    adhoc = template_issue.adhoc,
-                    fixed_amount = template_issue.fixed_amount,
-                    fixed_ctc_amount = template_issue.fixed_ctc_amount,
-                    can_group_issues = template_issue.can_group_issues)
+                new_issue = template_issue.copy(self.request.user, add_suffix=False)
                 SprintIssueOrder.insert_at_the_end(new_issue)
                 mapped_issues[template_issue] = new_issue
                 
-                for template_issue in mapped_issues.keys():
-                    if template_issue.parent_group:
-                        new_issue.parent_group = mapped_issues[template_issue.parent_group]
-                        new_issue.save()
-                    if template_issue.tags:
-                        new_issue.tags.set(template_issue.tags.all())
-                    
-                    for testable in template_issue.testables.all():
-                        new_testable = testable.copy()
-                        new_testable.issue = new_issue
-                        new_testable.save()
+            for template_issue in mapped_issues.keys():
+                if template_issue.parent_group:
+                    new_issue.parent_group = mapped_issues[template_issue.parent_group]
+                    new_issue.save()
 
             template_sprint.save()
                         
