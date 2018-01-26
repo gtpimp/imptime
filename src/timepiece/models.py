@@ -3833,11 +3833,11 @@ class Issue(BaseModel):
             created = timezone.now(),
             modified = timezone.now(),
             auto_created_during_import = False,
-            adhoc = template_issue.adhoc,
-            fixed_amount = template_issue.fixed_amount,
-            fixed_ctc_amount = template_issue.fixed_ctc_amount,
-            can_group_issues = template_issue.can_group_issues,
-            parent_group_id = template_issue.parent_group_id,
+            adhoc = issue_to_clone.adhoc,
+            fixed_amount = issue_to_clone.fixed_amount,
+            fixed_ctc_amount = issue_to_clone.fixed_ctc_amount,
+            can_group_issues = issue_to_clone.can_group_issues,
+            parent_group_id = issue_to_clone.parent_group_id,
             created_by=logged_in_user)
 
         for testable in self.testables.all().order_by("order"):
