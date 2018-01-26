@@ -121,7 +121,7 @@ export function moveIssuesToSprint(issue_ids, new_sprint_id) {
 }
 
 export function copyIssuesToSprint(issue_ids, new_sprint_id) {
-    return updateItem(issue_ids, 'copy_sprint_id', new_sprint_id)
+    return updateItem(ENTITY_KEY__ISSUE, issue_ids, 'copy_sprint_id', new_sprint_id)
 }
 
 export function groupIssuesIntoFeature(children_issue_ids, feature_issue_id) {
