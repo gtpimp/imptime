@@ -27,9 +27,9 @@ class EditableProjectDescription extends Component {
     }
 
     onChange(new_value) {
-        const { dispatch, project } = this.props
+        const { dispatch, project_id } = this.props
 
-        dispatch(updateProjectDescription(project.id, new_value.description))
+        dispatch(updateProjectDescription(project_id, new_value.description))
     }
 
     render() {
@@ -58,7 +58,7 @@ class EditableProjectDescription extends Component {
 
 function mapStateToProps(state, props) {
     const { project_id } = props
-    const project = getProject(state, project_id)
+    const project = getProject(state, project_id) || {}
     const can_edit = has_permission(state, project.id, 'has_edit_subject')
     return {
         project: project,
