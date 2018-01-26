@@ -222,9 +222,9 @@ class IssueViewSet(BaseViewSet):
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
                         old_sprint = issue.project
                         new_sprint = self.allowed_sprint(new_value)
-                        suffix = False
+                        add_suffix = False
                         if old_sprint.pk == new_sprint.pk:
-                            suffix = True
+                            add_suffix = True
                         new_issue = issue.copy(logged_in_user=request.user, add_suffix=suffix)
                         new_issue.project = new_sprint
                         new_issue.save()
