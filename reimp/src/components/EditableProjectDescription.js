@@ -59,7 +59,7 @@ class EditableProjectDescription extends Component {
 function mapStateToProps(state, props) {
     const { project_id } = props
     const project = getProject(state, project_id) || {}
-    const can_edit = has_permission(state, project.id, 'has_edit_subject')
+    const can_edit = has_permission(state, project.id, 'has_edit_description')
     return {
         project: project,
         can_edit: can_edit
