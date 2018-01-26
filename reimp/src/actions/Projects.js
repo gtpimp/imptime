@@ -139,6 +139,10 @@ export function updateProjectName(project_id, value) {
     return updateProject([project_id], "name", value)
 }
 
+export function updateProjectDescription(project_id, value) {
+    return updateProject([project_id], "description", value)
+}
+
 export function saveCandidateProject() {
 
     return (dispatch, getState) => {
