@@ -225,7 +225,7 @@ class IssueViewSet(BaseViewSet):
                         add_suffix = False
                         if old_sprint.pk == new_sprint.pk:
                             add_suffix = True
-                        new_issue = issue.copy(logged_in_user=request.user, add_suffix=suffix)
+                        new_issue = issue.copy(logged_in_user=request.user, add_suffix=add_suffix)
                         new_issue.project = new_sprint
                         new_issue.save()
                         SprintIssueOrder.insert_at_the_end(new_issue)
