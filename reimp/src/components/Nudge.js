@@ -9,7 +9,6 @@ import {
 } from '../actions/Nudges'
 
 import { isLoadingItems } from '../actions/Item'
-import Nudge from './Nudge'
 import IssueName from './IssueName'
 import SprintName from './SprintName'
 import ProjectName from './ProjectName'
@@ -36,7 +35,7 @@ var stringToColour = function(str) {
 }
 
 
-class NudgeList extends Component {
+class Nudge extends Component {
 
     constructor(props) {
         super(props)
@@ -126,4 +125,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(NudgeList)
+export default connect(mapStateToProps)(Nudge)

@@ -8,12 +8,7 @@ import json
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
-from timepiece.models import ProjectStatus as SprintStatus
-from timepiece.models import ProjectIssueOrder as SprintIssueOrder
-from timepiece.models import Issue
-from timepiece.models import BusinessProjectOrder as ProjectSprintOrder
 from imptime.models import ProjectWiki, WikiPage
 from rest_framework.decorators import detail_route
 
@@ -34,7 +29,7 @@ class WikiViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             wiki_pages = self.allowed_wiki_pages()
-            wiki_pages = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
+            wiki_pages = self.apply_filter(qs=wiki_pages, raw_filter_args=filter_args)
 
             wiki_pages = self.apply_pagination(qs=wiki_pages,
                                                pagination=pagination)
@@ -42,9 +37,6 @@ class WikiViewSet(BaseViewSet):
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in wiki_pages.values_list('id', flat=True)]
             else:
-                wiki_pages = wiki_pages.select_related("status3")
-                wiki_pages = wiki_pages.annotate(num_issues=Count('issues'))
-                
                 s = WikiPageSerializer(wiki_pages, many=True)
                 wiki_pages_data = s.data
                 context['wiki_pages'] = wiki_pages_data
@@ -116,3 +108,12 @@ class WikiViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    def apply_filter(self, qs, raw_filter_args):
+        raw_filter_args['__business_project_switch_filter_required'] = False
+
+        project_id = raw_filter_args.pop('project_id', None)
+        if project_id is not None:
+            raw_filter_args['project_wikis__project_id'] = project_id
+        return super(WikiViewSet, self).apply_filter(qs,  raw_filter_args)
+    

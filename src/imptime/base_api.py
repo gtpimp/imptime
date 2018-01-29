@@ -13,7 +13,7 @@ from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
-from imptime.models import VisualSpecIssueAnnotation
+from imptime.models import VisualSpecIssueAnnotation, ProjectWiki, WikiPage
 
 class PermissionHelper():
     @classmethod
@@ -116,6 +116,8 @@ class BaseViewSet(viewsets.ViewSet):
             return page.object_list
 
     def _apply_business_project_switch(self, d):
+        if not d.pop('__business_project_switch_filter_required', True):
+            return d
         d_fixed = {}
         for k, v in d.items():
             if k.startswith('sprint__project_'):
@@ -135,11 +137,11 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_projects_for_money(self, project_qs):
         """ only returns projects the user can see billable information about """
-        project_ids = [p.id for p in project_qs if BusinessPermissions.for_user(self.request.user,
-                                                                                business=p, #sic
-                                                                                auto_create=False)\
+        project_ids = [p.id for p in project_qs if ProjectPermissions.for_user(self.request.user,
+                                                                               business=p, #sic
+                                                                               auto_create=False)\
                        .has_view_ctc_billable_rates]
-        return self.allowed_projects.filter(pk__in=project_ids)
+        return project_qs.filter(pk__in=project_ids)
     
     def allowed_sprints(self):
         return PermissionHelper.allowed_sprints(self.request.user)
@@ -202,14 +204,16 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_wiki_pages(self):
         non_sensitive_wiki_pages = WikiPage.objects.filter(money_sensitive=False,
-                                                           project_wikis__in=self.allowed_projects()\
-                                                           .filter(business_permissions.user=self.request.user,
-                                                                   business_permissions.can_view_business_comments=True))
-        sensitive_wikis = WikiPage.objects.filter(project_wikis__in=self.allowed_projects_for_money()\
-                                                  .filter(business_permissions.user=self.request.user,
-                                                          business_permissions.can_view_business_comments=True),
-                                                  money_sensitive=True)
-        return non_sensitive_wiki_pages + sensitive_wikis
+                                                           project_wikis__project__in=self.allowed_projects()\
+                                                           .filter(business_permissions__user=self.request.user,
+                                                                   business_permissions__can_view_business_comments=True))
+        sensitive_wikis = WikiPage.objects.filter(money_sensitive=True,
+                                                  project_wikis__project__in=self.allowed_projects_for_money(self.allowed_projects())\
+                                                  .filter(business_permissions__user=self.request.user,
+                                                          business_permissions__can_view_business_comments=True))
+                                                  
+        return WikiPage.objects.filter(Q(pk__in=non_sensitive_wiki_pages.values_list('id', flat=True))|
+                                       Q(pk__in=sensitive_wikis.values_list('id', flat=True)))
     
     def logged_in_permissions(self, project):
         if project.id in self._logged_in_permissions_by_project:

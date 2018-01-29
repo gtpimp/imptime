@@ -1,0 +1,71 @@
+import { impfetch } from './lib.js'
+import { compact, map, keys, keyBy, includes, difference, indexOf, identity } from 'lodash'
+import move from 'lodash-move'
+import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
+import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
+
+import {
+    invalidateAllItems,
+    invalidateItems,
+    fetchItemsPromise,
+    fetchItemsIfNeeded,
+    ensureItemsLoaded,
+    getItem,
+    getItems,
+    updateItem,
+    startCandidateItem,
+    saveCandidateItem,
+    deleteItems,
+    announceItemSaveFailed,
+    announceItemsSaved,
+    announceItemsSaving
+} from '../actions/Item'
+
+export function invalidateAllWikis() {
+    return (dispatch, getState) => {
+        dispatch(invalidateAllItems(ENTITY_KEY__WIKI))
+    }
+}
+
+export function invalidateWikis(wiki_ids_to_invalidate) {
+    return (dispatch, getState) => {
+        dispatch(invalidateItems(ENTITY_KEY__WIKI,
+                                 wiki_ids_to_invalidate
+        ))
+    }
+}
+
+export function updateWiki(wiki_ids, field_name, new_value, on_done) {
+    return updateItem(ENTITY_KEY__WIKI, wiki_ids, field_name, new_value, on_done)
+}
+
+export function fetchWikisIfNeeded(list_key) {
+    return (dispatch, getState) => {
+        dispatch(fetchItemsIfNeeded(ENTITY_KEY__WIKI, list_key))
+    }
+}
+
+export function ensureWikisLoaded(wiki_ids) {
+    return ensureItemsLoaded(ENTITY_KEY__WIKI, wiki_ids)
+}
+
+export function getWiki(state, wiki_id) {
+    return getItem(state, ENTITY_KEY__WIKI, wiki_id)
+}
+
+export function getWikis(state, wiki_ids) {
+    return getItems(state, ENTITY_KEY__WIKI, wiki_ids)
+}
+
+export function createWiki(name, project_id) {
+    return (dispatch, getState) => {
+        dispatch(startCandidateItem(ENTITY_KEY__WIKI, { name: name, project_id: project_id }))
+        dispatch(saveCandidateItem(ENTITY_KEY__WIKI))
+    }
+}
+
+export function deleteWiki(wiki_id) {
+    return (dispatch, getState) => {
+        dispatch(deleteItems(ENTITY_KEY__WIKI, [wiki_id]))
+    }
+}

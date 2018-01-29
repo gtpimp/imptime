@@ -28,6 +28,7 @@ import views
 import visual_spec_document_api
 import visual_spec_issue_api
 import visual_spec_issue_annotation_api
+import wiki_api
 from rest_framework.routers import DefaultRouter
 from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
@@ -92,6 +93,8 @@ router.register(r'project_statement', project_statement_api.ProjectStatementView
                 base_name='project_statement')
 router.register(r'release_note', release_note_api.ReleaseNoteViewSet,
                 base_name='release_note')
+router.register(r'wiki', wiki_api.WikiViewSet,
+                base_name='wiki')
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),

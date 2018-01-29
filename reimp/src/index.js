@@ -19,6 +19,7 @@ import SprintDashboardPage from './containers/SprintDashboardPage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
 import NudgePage from './containers/NudgePage'
 import ProjectRoadmapPage from './containers/ProjectRoadmapPage'
+import ProjectWikiPage from './containers/ProjectWikiPage'
 import ReleaseNotesPage from './containers/ReleaseNotesPage'
 import SprintsPage from './containers/SprintsPage'
 import VisualSpecDocumentPage from './components/visual_spec/VisualSpecDocumentPage'
@@ -64,6 +65,8 @@ ReactDOM.render(
           <Route path="projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
           <Route path="projects/:projectId/gallery/" component={VisualSpecDocumentPage}/>
           <Route path="projects/:projectId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+          <Route path="projects/:projectId/wiki/" component={ProjectWikiPage}/>
+          <Route path="projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
           <Route path="projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
