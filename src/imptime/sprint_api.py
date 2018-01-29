@@ -190,6 +190,8 @@ class SprintViewSet(BaseViewSet):
             mapped_issues = {}
             for template_issue in template_sprint.issues.all().order_by_project_id(template_sprint.id):
                 new_issue = template_issue.copy(self.request.user, add_suffix=False)
+                new_issue.project = sprint_clone #sic
+                new_issue.save()
                 SprintIssueOrder.insert_at_the_end(new_issue)
                 mapped_issues[template_issue] = new_issue
                 
