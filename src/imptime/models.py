@@ -261,6 +261,18 @@ class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)
     clones = models.ManyToManyField(Sprint, related_name='parent_sprint_templates')
 
+    
+class ProjectWiki(BaseModel):
+    project = ProtectedForeignKey(Project, related_name='wikis', null=False)
+    wiki_page = ProtectedForeignKey(WikiPage, related_name='project_wikis', null=False)
+
+
+class WikiPage(BaseModel):
+    money_sensitive = models.BooleanField(default=True) #true if refers to project commercials
+    name = models.CharField(max_length=100, null=False, blank=False)
+    content = models.TextField(null=True)
+
+
 class ReleaseNote(BaseModel):
     header = models.TextField(null=False)
     content = models.TextField(null=False)
@@ -304,3 +316,4 @@ class Nudge(BaseModel):
     def delete(self, *args, **kwargs):
         super(Nudge, self).delete(*args, **kwargs)
         RefreshNotifier().notify_model_delete(self)
+.
