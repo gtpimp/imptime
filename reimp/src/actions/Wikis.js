@@ -14,6 +14,7 @@ import {
     getItems,
     updateItem,
     startCandidateItem,
+    updateCandidateDetails,
     saveCandidateItem,
     deleteItems,
     announceItemSaveFailed,
@@ -55,6 +56,20 @@ export function getWiki(state, wiki_id) {
 
 export function getWikis(state, wiki_ids) {
     return getItems(state, ENTITY_KEY__WIKI, wiki_ids)
+}
+
+export function startCandidateWiki(project_id) {
+    return (dispatch, getState) => {
+        dispatch(startCandidateItem(ENTITY_KEY__WIKI, { project_id: project_id }))
+    }
+}
+
+export function updateCandidateName(name) {
+    return updateCandidateDetails(ENTITY_KEY__WIKI, {name:name})
+}
+
+export function saveCandidateWiki(on_done) {
+    return saveCandidateItem(ENTITY_KEY__WIKI, on_done)
 }
 
 export function createWiki(name, project_id) {

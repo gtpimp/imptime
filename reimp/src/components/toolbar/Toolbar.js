@@ -16,6 +16,7 @@ import ListToolbarPanel from './ListToolbarPanel'
 import CostSummaryToolbarPanel from './CostSummaryToolbarPanel'
 import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
 import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
+import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 
@@ -55,6 +56,8 @@ class ToolBar extends Component {
                 return <ProjectRoadmapToolbarPanel key='project-roadmap' {...this.props} />
             case 'nudge':
                 return <NudgeToolbarPanel key='nudge' {...this.props} />
+            case 'project-wiki':
+                return <ProjectWikiToolbarPanel key='project-wiki' {...this.props} />
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

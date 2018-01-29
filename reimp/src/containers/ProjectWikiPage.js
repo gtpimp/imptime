@@ -28,7 +28,7 @@ class ProjectWikiPage extends Component {
 
     componentDidMount() {
         const {dispatch, project_id, wiki_id} = this.props
-        // dispatch(set_toolbars(PAGE_KEY__PROJECT_WIKI_PAGE, ['project-wiki']))
+        dispatch(set_toolbars(PAGE_KEY__PROJECT_WIKI_PAGE, ['project-wiki']))
         this.refresh(project_id, wiki_id, null, null)
     }
 
