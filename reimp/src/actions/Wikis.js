@@ -13,6 +13,8 @@ import {
     getItem,
     getItems,
     updateItem,
+    cancelCandidateItem,
+    getCandidateItem,
     startCandidateItem,
     updateCandidateDetails,
     saveCandidateItem,
@@ -66,6 +68,14 @@ export function startCandidateWiki(project_id) {
 
 export function updateCandidateName(name) {
     return updateCandidateDetails(ENTITY_KEY__WIKI, {name:name})
+}
+
+export function cancelCandidateWiki() {
+    return cancelCandidateItem(ENTITY_KEY__WIKI)
+}
+
+export function getCandidateWiki(state) {
+    return getCandidateItem(ENTITY_KEY__WIKI, state)
 }
 
 export function saveCandidateWiki(on_done) {

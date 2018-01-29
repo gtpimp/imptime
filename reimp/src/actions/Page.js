@@ -78,6 +78,14 @@ export function select_users(page_key, user_ids) {
     }
 }
 
+export function select_wikis(page_key, wiki_ids) {
+    return {
+        type: UPDATE_PAGE_SELECTION,
+	page_key: page_key,
+        wiki_ids: wiki_ids
+    }
+}
+
 export function get_wide_column_mode(state, page_key) {
     return (state.page[page_key] || {}).wide_column_mode
 }
@@ -122,6 +130,10 @@ export function get_selected_issue_ids(state, page_key) {
 
 export function get_selected_user_ids(state, page_key) {
     return (((state ||{}).page || {})[page_key] || {}).user_ids || []
+}
+
+export function get_selected_wiki_ids(state, page_key) {
+    return (((state ||{}).page || {})[page_key] || {}).wiki_ids || []
 }
 
 export function setPageFlag(page_key, flag_name, value) {
