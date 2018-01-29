@@ -263,9 +263,13 @@ class SprintTemplate(BaseModel):
 
     
 class WikiPage(BaseModel):
-    money_sensitive = models.BooleanField(default=True) #true if refers to project commercials
+    money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
     name = models.CharField(max_length=100, null=False, blank=False)
     content = models.TextField(null=True)
+
+    @property
+    def default_project_id(self):
+        return self.project_wikis.all()[0]
 
 
 class ProjectWiki(BaseModel):

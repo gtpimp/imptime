@@ -39,7 +39,7 @@ class WikiViewSet(BaseViewSet):
             else:
                 s = WikiPageSerializer(wiki_pages, many=True)
                 wiki_pages_data = s.data
-                context['wiki_pages'] = wiki_pages_data
+                context['wikis'] = wiki_pages_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
@@ -85,7 +85,7 @@ class WikiViewSet(BaseViewSet):
     def create(self, request):
         try:
             context = {}
-            params = request.data['wiki_page']
+            params = request.data['item']
             project_id = params['project_id']
             default_wiki_page_args = params.get('default_wiki_page_args', {})
             fixed_default_wiki_page_args = self._apply_business_project_switch(default_wiki_page_args)
@@ -93,12 +93,11 @@ class WikiViewSet(BaseViewSet):
 
             if self.logged_in_permissions(project).has_edit_business_comments:
                 wiki_page = WikiPage.objects.create(
-                    project=project,
                     name=params['name'],
                     **fixed_default_wiki_page_args)
                 ProjectWiki.objects.create(project=project, wiki_page=wiki_page)
 
-                context['wiki_page'] = {'id': str(wiki_page.id)}
+                context['item'] = WikiPageSerializer(wiki_page).data
                 data = {'status': 'success', 'payload': context}
             else:
                 data = {'status': 'failed', 'error_message': 'Permission denied to create wiki page'}

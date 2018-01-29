@@ -88,6 +88,13 @@ class ProjectWikiPage extends Component {
         this.setState({'noticed_default_wiki_id': default_wiki_id})
     }
 
+    onSelectWiki(wiki_id) {
+        const { dispatch, project_id } = this.props
+        dispatch(selectItems(LIST_KEY__WIKI_LIST, wiki_id))
+        dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, wiki_id))
+        browserHistory.push('/projects/'+project_id+'/wikis/'+wiki_id);
+    }
+
     navigateToWikisPage() {
         const { project_id } = this.props
         browserHistory.push('/projects/'+project_id+'/wikis/');
@@ -179,7 +186,7 @@ function mapStateToProps(state, props) {
         wiki_name: (selected_wiki || {}).name,
         is_creating_wiki: is_creating_wiki,
         splitter_size,
-        show_sidebar: (selected_wiki && show_sidebar) || is_creating_wiki
+        show_sidebar: show_sidebar || is_creating_wiki
     }
 }
 

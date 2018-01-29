@@ -27,11 +27,11 @@ class NewWikiSidebar extends Component {
     }
 
     onSaveCandidateWiki(new_value) {
-        const {onCreatedWikis, dispatch} = this.props
+        const {onCreatedWiki, dispatch} = this.props
         dispatch(updateCandidateName(new_value.name))
         
         const onDone = function(wiki_id) {
-            onCreatedWikis([wiki_id])
+            onCreatedWiki(wiki_id)
         }
         dispatch(saveCandidateWiki(onDone))
     }
@@ -56,7 +56,7 @@ class NewWikiSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSelectWikis, project_id, sprint_id } = props
+    const { onCreatedWiki, project_id, sprint_id } = props
 
     const candidate_wiki = getCandidateWiki(state) || null
     return {
