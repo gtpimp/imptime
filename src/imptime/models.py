@@ -108,7 +108,7 @@ class VisualSpecDocument(BaseModel):
 
 class VisualSpecProject(BaseModel):
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_projects')
-    project = ProtectedForeignKey(Project, related_name='visual_spec_projects')
+    project = ProtectedForeignKey(Project, related_name='visual_spec_projects', on_delete=models.CASCADE)
     order = models.IntegerField(default=1)
 
     INCREMENT = 10

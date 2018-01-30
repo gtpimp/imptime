@@ -63,8 +63,8 @@ const medium_col_width = "150px"
 const small_col_width = "90px"
 const tiny_col_width = "20px"
 
-export function getCellStyle(s) {
-    // For use with the header lists below
+export function getCellStyle(s) { 
+   // For use with the header lists below
     return {
         "minWidth":s.width,
         "maxWidth":s.width,

@@ -2,7 +2,7 @@ import { impfetch } from './lib.js'
 import keyBy from 'lodash/keyBy'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT, getCellStyle } from '../actions/ItemListKeyRegistry'
-import deleteItems from '../actions/Item'
+import { deleteItems } from '../actions/Item'
 
 export const ANNOUNCE_PROJECTS_SAVING = 'ANNOUNCE_PROJECTS_SAVING'
 export const ANNOUNCE_PROJECTS_SAVED = 'ANNOUNCE_PROJECTS_SAVED'

@@ -25,12 +25,12 @@ class Project extends Component {
     }
 
     render_collapsed() {
-	const { project } = this.props
-	return (
-	    <div key={this.key+".collapsed_project."+project.id}>
-	        Project: {project.name}
-	    </div>
-	)
+	      const { project } = this.props
+	      return (
+	          <div key={this.key+".collapsed_project."+project.id}>
+	              Project: {project.name}
+	          </div>
+	      )
     }
 
     onDeleteProject(event) {

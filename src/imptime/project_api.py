@@ -175,32 +175,30 @@ class ProjectViewSet(BaseViewSet):
                     html_content=content.replace("\n","<br/>"),
                     to_addresses=[invite_user.email])
 
-    # def delete(self, request, pk):
-    #     try:
-    #         params = request.data
-    #         data = None
+    def delete(self, request, pk):
+        try:
+            params = request.data
+            data = None
+            if 'item_ids' in params:
+                project_pks = params['item_ids']
+            else:
+                project_pks = [pk]
+                print(self, "SELF")
+            for project_pk in project_pks:
+                project = self.allowed_project(project_pk)
 
-    #         if 'item_ids' in params:
-    #             project_pks = params['item_ids']
-    #         else:
-    #             project_pks = [pk]
+                if self.logged_in_permissions(project).has_edit_project_detail:
+                    # ProjectHistory.add_history(request.user, issue,
+                    #                          "deleted", project.id, "")
+                    Project.objects.filter(pk=project_pk).delete()
+                else:
+                    data = {'status': 'failed', 'error_message': 'Permission denied to delete projects'}
 
-    #         for project_pk in project_pks:
-    #             project = self.allowed_issue(project_pk)
+            if not data:
+                data = {'status': 'success', 'payload': project_pks}
 
-    #             if self.logged_in_permissions(project.business).has_delete_project:
-    #                 # ProjectHistory.add_history(request.user, issue,
-    #                 #                          "deleted", issue.id, "")
-    #                 VisualSpecProject.objects.filter(project=project).delete()
-    #                 project.delete()
-    #             else:
-    #                 data = {'status': 'failed', 'error_message': 'Permission denied to delete projects'}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
 
-    #         if not data:
-    #             data = {'status': 'success', 'payload': project_pks}
-
-    #     except Exception, ex:
-    #         logger.exception(ex)
-    #         return self.error_response(ex)
-
-    #     return HttpResponse(JSONRenderer().render(data))
+        return HttpResponse(JSONRenderer().render(data))

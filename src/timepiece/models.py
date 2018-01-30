@@ -1306,6 +1306,9 @@ class Project(BaseModel):
         self.status3 = ProjectStatus.objects.get_or_create(name='pending', business=self.business)[0]
         self.save()
 
+    def delete():
+        super(Project, self).delete(*args, **kwargs)
+        
     @classmethod
     def active_states(self):
         return ( 'open', 'in dev', 'waiting to invoice', 'invoiced', 'in client qa' )

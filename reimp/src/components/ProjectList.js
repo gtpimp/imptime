@@ -67,12 +67,14 @@ class ProjectList extends Component {
     onDeleteProject(project_id) {
         const {dispatch, visible_item_ids} = this.props
         const {onSelectProjects} = this.props
+        console.log(this.props, "props")
         const project_index = indexOf(visible_item_ids, project_id)
         let next_index = project_index - 1
         if ( next_index < 0 ) {
             next_index = visible_item_ids.length-1
         }
-        onSelectProjects([visible_item_ids[next_index]])
+        console.log(next_index, "abc")
+        // SelectProjects([visible_item_ids[next_index]])
     }
     
     onCollapse() {
