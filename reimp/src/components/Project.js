@@ -5,14 +5,17 @@ import {browserHistory} from 'react-router'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
-import { getCellStyle } from '../actions/ItemListKeyRegistry'
+import { ENTITY_KEY__PROJECT, getCellStyle } from '../actions/ItemListKeyRegistry'
 import '../sass/project.css'
+import { deleteProjects } from '../actions/Projects'
+import DeleteProject from '../components/DeleteProject'
 
 class Project extends Component {
 
     constructor(props) {
         super(props)
         this.onSprintsClick = this.onSprintsClick.bind(this)
+        this.onDeleteProject = this.onDeleteProject.bind(this)
     }
     
     onSprintsClick(event) {
@@ -25,10 +28,22 @@ class Project extends Component {
 	const { project } = this.props
 	return (
 	    <div key={this.key+".collapsed_project."+project.id}>
-		Project: {project.name}
+	        Project: {project.name}
 	    </div>
 	)
     }
+
+    onDeleteProject(event) {
+        const { project, dispatch, onDelete } = this.props
+        event.stopPropagation()
+        if ( ! confirm( "Delete project " + project.name + " ?") ) {
+            return
+        }
+        dispatch(deleteProjects([project.id]))
+        if ( onDelete ) {
+            onDelete(project.id)
+        }
+    }    
     
     render_expanded() {
         const { project, is_loading, is_selected, isOver,
@@ -58,14 +73,14 @@ class Project extends Component {
 	    )
 	} else {
             return (
-		<div key={this.key+"."+project.id}
-		     onClick={onClickedProject}
+		            <div key={this.key+"."+project.id}
+		                 onClick={onClickedProject}
                      className={classNames('project',
                                            'div-table__row',
                                            {'div-table__row--selected': is_selected})}
-		>
+		            >
                   {includes(visible_header_keys, "name") &&
-		   <div className="div-table__cell"
+		               <div className="div-table__cell"
                         style={getCellStyle(header_list.name)}>
                      <div className="project__cell--name">
                        {project.name}
@@ -85,7 +100,25 @@ class Project extends Component {
                      </div>
                    </div>
                   }
-		</div>
+                  {includes(visible_header_keys, "delete") &&
+                   <div className="div-table__cell project__cell__secondary"
+                        style={getCellStyle(header_list.delete)}>
+                     <div className="project__cell--project-delete">
+                       <DeleteProject
+                           onDelete ={this.onDeleteIssue}
+                       />
+                     </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "small_delete") &&
+                   <div className="div-table__cell project__cell__secondary"
+                        style={getCellStyle(header_list.small_delete)}>
+                     <div className={"reveal-on-hover--block"}>
+                       <div className="project__small-delete-image" onClick={this.onDeleteProject} />
+                     </div>
+                   </div>
+                  }                 
+		            </div>
             )
 	}
     }
@@ -106,20 +139,20 @@ class Project extends Component {
 
 function mapStateToProps(state, props) {
     const { project } = state
-    const { project_id, is_selected, is_collapsed, is_loading, header_list } = props
+    const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete } = props
     const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
     
     return {
-	project: this_project,
-	project_id: project_id,
-	is_selected: is_selected,
-	is_loading: is_loading,
-	is_collapsed: is_collapsed,
-	is_expanded: !is_collapsed,
+        project: this_project,
+        project_id: project_id,
+        is_selected: is_selected,
+        is_loading: is_loading,
+        is_collapsed: is_collapsed,
+        is_expanded: !is_collapsed,
         header_list,
         visible_header_keys: keys(header_list),
+        onDelete: onDelete || null,
     }
 }
 
 export default connect(mapStateToProps)(Project)
-    

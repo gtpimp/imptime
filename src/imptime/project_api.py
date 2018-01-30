@@ -12,6 +12,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
+from imptime.models import VisualSpecProject
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import BusinessInvite as ProjectInvite
 from timepiece.models import UserAutoLoginToken
@@ -173,3 +174,33 @@ class ProjectViewSet(BaseViewSet):
                     text_content=content,
                     html_content=content.replace("\n","<br/>"),
                     to_addresses=[invite_user.email])
+
+    # def delete(self, request, pk):
+    #     try:
+    #         params = request.data
+    #         data = None
+
+    #         if 'item_ids' in params:
+    #             project_pks = params['item_ids']
+    #         else:
+    #             project_pks = [pk]
+
+    #         for project_pk in project_pks:
+    #             project = self.allowed_issue(project_pk)
+
+    #             if self.logged_in_permissions(project.business).has_delete_project:
+    #                 # ProjectHistory.add_history(request.user, issue,
+    #                 #                          "deleted", issue.id, "")
+    #                 VisualSpecProject.objects.filter(project=project).delete()
+    #                 project.delete()
+    #             else:
+    #                 data = {'status': 'failed', 'error_message': 'Permission denied to delete projects'}
+
+    #         if not data:
+    #             data = {'status': 'success', 'payload': project_pks}
+
+    #     except Exception, ex:
+    #         logger.exception(ex)
+    #         return self.error_response(ex)
+
+    #     return HttpResponse(JSONRenderer().render(data))

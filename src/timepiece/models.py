@@ -371,6 +371,11 @@ class Business(BaseModel):
     def get_related_business_by_user(cls, user):
         return cls.objects.all().filter_by_logged_in_user(user).distinct()
 
+    # def delete(self, *args, **kwargs):
+    #     params = self.get_object()
+    #     RefreshNotifier().notify_model_delete(self, params)
+    #     super(Business, self).delete(*args, **kwargs)
+    
 
 class BusinessComment(BaseModel):
     business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')

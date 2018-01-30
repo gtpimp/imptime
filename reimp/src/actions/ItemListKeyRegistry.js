@@ -74,6 +74,7 @@ export function getCellStyle(s) {
 
 export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'num_sprints': {label:"Sprints", width: medium_col_width},
+                                  'small_delete': {label:"", width:tiny_col_width}
 }
 
 export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},

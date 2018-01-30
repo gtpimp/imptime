@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import indexOf from 'lodash'
 import map from 'lodash/map'
 import union from 'lodash/union'
 import includes from 'lodash/includes'
@@ -34,10 +35,11 @@ class ProjectList extends Component {
     constructor(props) {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
-	this.onChangePage = this.onChangePage.bind(this)
-	this.onCollapse = this.onCollapse.bind(this)
-	this.onExpand = this.onExpand.bind(this)
+        this.onChangePage = this.onChangePage.bind(this)
+        this.onCollapse = this.onCollapse.bind(this)
+        this.onExpand = this.onExpand.bind(this)
         this.renderHeader = this.renderHeader.bind(this)
+        this.onDeleteProject = this.onDeleteProject.bind(this)
     }
 
     switchToSampleContext() {
@@ -51,10 +53,10 @@ class ProjectList extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, list_key } = this.props
+        const { dispatch, list_key } = this.props
         this.switchToSampleContext()
-	dispatch(initList(list_key))
-	dispatch(fetchProjectsIfNeeded(list_key))
+        dispatch(initList(list_key))
+        dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     componentWillReceiveProps() {
@@ -62,6 +64,17 @@ class ProjectList extends Component {
         dispatch(fetchProjectsIfNeeded(list_key))
     }
 
+    onDeleteProject(project_id) {
+        const {dispatch, visible_item_ids} = this.props
+        const {onSelectProjects} = this.props
+        const project_index = indexOf(visible_item_ids, project_id)
+        let next_index = project_index - 1
+        if ( next_index < 0 ) {
+            next_index = visible_item_ids.length-1
+        }
+        onSelectProjects([visible_item_ids[next_index]])
+    }
+    
     onCollapse() {
 	const { dispatch, list_key } = this.props
 	dispatch(collapse_list(list_key))
@@ -160,6 +173,7 @@ class ProjectList extends Component {
             <Project key={list_key + "_" + project.id + "_" + project.name + "_" + index}
                      is_collapsed={false}
                      reorderProjects={that.reorderProjects}
+                     onDelete = {that.onDeleteProject}
                      onClickedProject={(event) => that.onClickedProject(event, project.id)}
                      is_loading={is_loading}
                      header_list={header_list}
@@ -207,14 +221,14 @@ function mapStateToProps(state, props) {
     return {
         list_key: list_key,
         projects: visible_items,
-	project_ids: visible_item_ids,
+        project_ids: visible_item_ids,
         loading_item_ids,
-	selected_ids: selected_item_ids,
-	selected_items,
+        selected_ids: selected_item_ids,
+        selected_items,
         has_items: visible_items && visible_items.length > 0,
         is_loading,
-	is_collapsed: display_mode === "collapsed",
-	is_expanded: display_mode === "expanded" || display_mode,
+        is_collapsed: display_mode === "collapsed",
+        is_expanded: display_mode === "expanded" || display_mode,
         last_updated,
         header_list
     }
