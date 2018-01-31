@@ -423,6 +423,7 @@ class BusinessPermissions(BaseModel):
     can_edit_project_states = models.BooleanField(default=True, verbose_name="Can Edit Sprint States")
     can_add_issue = models.BooleanField(default=True, verbose_name="Can Add Issue")
     can_delete_issue = models.BooleanField(default=True, verbose_name="Can Delete Issue")
+    can_delete_project = models.BooleanField(default=True, verbose_name="Can Delete Project")
     can_edit_description = models.BooleanField(default=True, verbose_name="Can Edit Description")
     can_add_issue_comment = models.BooleanField(default=True, verbose_name="Can Add Issue Comment")
     can_edit_subject = models.BooleanField(default=True, verbose_name="Can Edit Subject")
@@ -666,6 +667,10 @@ class BusinessPermissions(BaseModel):
     def has_delete_issue(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_delete_issue or self.user.has_perm('timepiece.belongs_to_all_projects'))
 
+    @property
+    def has_delete_project(self):
+        return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_delete_project or self.user.has_perm('timepiece.belongs_to_all_projects'))        
+    
     @property
     def has_edit_description(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_edit_description or self.user.has_perm('timepiece.belongs_to_all_projects'))

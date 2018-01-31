@@ -74,7 +74,7 @@ class ProjectList extends Component {
             next_index = visible_item_ids.length-1
         }
         console.log(next_index, "abc")
-        // SelectProjects([visible_item_ids[next_index]])
+        onSelectProjects([visible_item_ids[next_index]])
     }
     
     onCollapse() {

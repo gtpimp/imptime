@@ -36,7 +36,7 @@ class Project extends Component {
     onDeleteProject(event) {
         const { project, dispatch, onDelete } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Delete project " + project.name + " ?") ) {
+        if ( ! confirm( "Delete project " + project.name + "?") ) {
             return
         }
         dispatch(deleteProjects([project.id]))
@@ -100,24 +100,14 @@ class Project extends Component {
                      </div>
                    </div>
                   }
-                  {includes(visible_header_keys, "delete") &&
-                   <div className="div-table__cell project__cell__secondary"
-                        style={getCellStyle(header_list.delete)}>
-                     <div className="project__cell--project-delete">
-                       <DeleteProject
-                           onDelete ={this.onDeleteIssue}
-                       />
-                     </div>
-                   </div>
-                  }
                   {includes(visible_header_keys, "small_delete") &&
-                   <div className="div-table__cell project__cell__secondary"
-                        style={getCellStyle(header_list.small_delete)}>
-                     <div className={"reveal-on-hover--block"}>
-                       <div className="project__small-delete-image" onClick={this.onDeleteProject} />
-                     </div>
-                   </div>
-                  }                 
+                  <div className="div-table__cell project__cell__secondary"
+                       style={getCellStyle(header_list.small_delete)}>
+                    <div className={"reveal-on-hover--block"}>
+                      <div className="project__small-delete-image" onClick={this.onDeleteProject} />
+                    </div>
+                  </div>
+                  }
 		            </div>
             )
 	}

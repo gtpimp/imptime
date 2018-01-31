@@ -12,10 +12,12 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
+from timepiece.models import BusinessHistory
 from imptime.models import VisualSpecProject
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import BusinessInvite as ProjectInvite
 from timepiece.models import UserAutoLoginToken
+from timepiece.models import ProjectDeadlineType
 
 
 logger = logging.getLogger(__name__)
@@ -188,9 +190,10 @@ class ProjectViewSet(BaseViewSet):
                 project = self.allowed_project(project_pk)
 
                 if self.logged_in_permissions(project).has_edit_project_detail:
-                    # ProjectHistory.add_history(request.user, issue,
-                    #                          "deleted", project.id, "")
-                    Project.objects.filter(pk=project_pk).delete()
+                    BusinessHistory.add_history(request.user, project,
+                                             "deleted", project.id, "")
+                    project.deadline_types.all().delete()
+                    project.delete()
                 else:
                     data = {'status': 'failed', 'error_message': 'Permission denied to delete projects'}
 
