@@ -47,7 +47,6 @@ class Wiki extends Component {
         const that = this
 
         if ( ! wiki.id ) {
-            return  "whoops"
             return null
         }
         

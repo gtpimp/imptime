@@ -181,7 +181,7 @@ function mapStateToProps(state, props) {
     const splitter_size = getPageFlag(state, PAGE_KEY__PROJECT_WIKI_PAGE, 'splitter_size', "20%")
     const selected_wiki_ids = get_selected_wiki_ids(state, PAGE_KEY__PROJECT_WIKI_PAGE)
     const selected_wiki_id = ( selected_wiki_ids && selected_wiki_ids.length > 0 && selected_wiki_ids[0] ) || default_wiki_id || null
-    const selected_wiki = getWiki(state, selected_wiki_id) || {}
+    const selected_wiki = getWiki(state, selected_wiki_id)
     const filter = getListFilter(state, LIST_KEY__WIKI_LIST)
         
     return {
