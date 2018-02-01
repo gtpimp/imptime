@@ -20,8 +20,9 @@ import {
     getPageFlag,
     get_selected_wiki_ids,
 } from '../actions/Page'
-import { update_list_filter, selectItems } from '../actions/ItemList'
+import { update_list_filter, selectItems, getListFilter } from '../actions/ItemList'
 import { getCandidateWiki } from '../actions/Wikis'
+import Wiki from '../components/Wiki'
 
 class ProjectWikiPage extends Component {
 
@@ -55,13 +56,14 @@ class ProjectWikiPage extends Component {
     }
     
     refresh(these_props) {
-        const { project_id, project, wiki_id, wiki, default_wiki_id, dispatch } = these_props || this.props
+        const { project_id, project, wiki_id, wiki, default_wiki_id, dispatch, filter } = these_props || this.props
         const breadcrumbs = []
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECT_WIKI_PAGE, [project_id]))
-            dispatch(update_list_filter(LIST_KEY__WIKI_LIST, {project_id:project.id,
-                                                              wiki_id:wiki_id}))
+            if ( filter.project_id != project.id ) {
+                dispatch(update_list_filter(LIST_KEY__WIKI_LIST, {project_id:project.id}))
+            }
             
             breadcrumbs.push({to: '/projects', label: 'Projects'})
             if ( project_id === project.id ) {
@@ -92,7 +94,7 @@ class ProjectWikiPage extends Component {
     onSelectWiki(wiki_id) {
         const { dispatch, project_id } = this.props
         dispatch(selectItems(LIST_KEY__WIKI_LIST, wiki_id))
-        dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, wiki_id))
+        dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [wiki_id]))
         browserHistory.push('/projects/'+project_id+'/wiki/'+wiki_id);
     }
 
@@ -125,11 +127,12 @@ class ProjectWikiPage extends Component {
     }
 
     renderDetailsPane() {
+        const { wiki_id } = this.props
         return (
             <div>
               <div>
                 <div className="project-wiki__project_wiki_details">
-                  Empty
+                  { wiki_id && <Wiki wiki_id={wiki_id}/> }
                 </div>
               </div>
             </div>
@@ -177,8 +180,9 @@ function mapStateToProps(state, props) {
     const show_sidebar = getPageFlag(state, PAGE_KEY__PROJECT_WIKI_PAGE, "show_sidebar", true)
     const splitter_size = getPageFlag(state, PAGE_KEY__PROJECT_WIKI_PAGE, 'splitter_size', "20%")
     const selected_wiki_ids = get_selected_wiki_ids(state, PAGE_KEY__PROJECT_WIKI_PAGE)
-    const selected_wiki_id = ( selected_wiki_ids && selected_wiki_ids.length > 0 && selected_wiki_ids[0] ) || null
-    const selected_wiki = getWiki(state, selected_wiki_id)
+    const selected_wiki_id = ( selected_wiki_ids && selected_wiki_ids.length > 0 && selected_wiki_ids[0] ) || default_wiki_id || null
+    const selected_wiki = getWiki(state, selected_wiki_id) || {}
+    const filter = getListFilter(state, LIST_KEY__WIKI_LIST)
         
     return {
         project_id: project_id,
@@ -188,7 +192,9 @@ function mapStateToProps(state, props) {
         wiki_name: (selected_wiki || {}).name,
         is_creating_wiki: is_creating_wiki,
         splitter_size,
-        show_sidebar: show_sidebar || is_creating_wiki
+        show_sidebar: show_sidebar || is_creating_wiki,
+        filter,
+        default_wiki_id
     }
 }
 

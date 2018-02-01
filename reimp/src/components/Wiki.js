@@ -47,6 +47,7 @@ class Wiki extends Component {
         const that = this
 
         if ( ! wiki.id ) {
+            return  "whoops"
             return null
         }
         
@@ -56,7 +57,7 @@ class Wiki extends Component {
                 {wiki.name}
               </div>
               <div className="wiki__content">
-                <ReactMarkdown source={wiki.content} renderers={renderers} />
+                <ReactMarkdown source={wiki.content || "No content"} renderers={renderers} />
               </div>
             </div>
         )
