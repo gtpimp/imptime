@@ -28,6 +28,7 @@ class ProjectWikiPage extends Component {
     constructor(props) {
         super(props)
         this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
+        this.onSelectWiki = this.onSelectWiki.bind(this)
     }
 
     componentDidMount() {
@@ -66,11 +67,11 @@ class ProjectWikiPage extends Component {
             if ( project_id === project.id ) {
                 breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
             }
+            breadcrumbs.push({to: '/projects/'+project_id+'/wiki', label: 'Wiki'})
             if ( wiki_id ) {
                 dispatch(ensureWikisLoaded([wiki_id]))
-                breadcrumbs.push({to: '/projects/'+project_id+'/wikis', label: 'Wikis'})
                 if ( wiki_id === wiki.id ) {
-                    breadcrumbs.push({to: '/projects/'+project_id+'/wikis/'+wiki_id, label: wiki.name})
+                    breadcrumbs.push({to: '/projects/'+project_id+'/wiki/'+wiki_id, label: wiki.name})
                 }
                 dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [wiki_id]))
             }
@@ -92,12 +93,12 @@ class ProjectWikiPage extends Component {
         const { dispatch, project_id } = this.props
         dispatch(selectItems(LIST_KEY__WIKI_LIST, wiki_id))
         dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, wiki_id))
-        browserHistory.push('/projects/'+project_id+'/wikis/'+wiki_id);
+        browserHistory.push('/projects/'+project_id+'/wiki/'+wiki_id);
     }
 
     navigateToWikisPage() {
         const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/wikis/');
+        browserHistory.push('/projects/'+project_id+'/wiki');
     }
 
     renderContentsPane() {
@@ -114,7 +115,8 @@ class ProjectWikiPage extends Component {
                 <div>
                   <div>
                     <div className="project-wiki__project_wikis">
-                      <ProjectWikiList list_key={LIST_KEY__WIKI_LIST} />
+                      <ProjectWikiList list_key={LIST_KEY__WIKI_LIST}
+                                       onSelectWiki={this.onSelectWiki}/>
                     </div>
                   </div>
                 </div>

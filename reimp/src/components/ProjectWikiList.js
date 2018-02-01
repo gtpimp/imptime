@@ -34,6 +34,7 @@ class WikiList extends Component {
 
     constructor(props) {
         super(props)
+        this.onSelectWiki = this.onSelectWiki.bind(this)
     }
     
     componentDidMount() {
@@ -48,6 +49,12 @@ class WikiList extends Component {
         const { dispatch, list_key, nested_objects } = new_props
         dispatch(fetchWikisIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
+    }
+
+    onSelectWiki(event, wiki_id) {
+        const { onSelectWiki } = this.props
+        onSelectWiki(wiki_id)
+        event.stopPropagation()
     }
 
     render_row(wiki) {
