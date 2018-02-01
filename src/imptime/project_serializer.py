@@ -36,7 +36,24 @@ class ProjectSerializer(BaseSerializer):
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
     num_open_sprints = serializers.IntegerField()
     visual_spec_document_ids = serializers.ListField()
+    can_delete_project = serializers.SerializerMethodField('is_project_deletable')
 
+    def is_project_deletable(self, project):
+        if len(project.sprints) == 0:
+            return True
+        else:
+            issue_count = 0
+            for sprint in project.sprints:
+                if issue_count == 0:
+                    issues = sprint.issues.all()
+                    issue_count += len(issues)
+                else:
+                    break
+            if issue_count == 0:
+                return True
+        return False
+            
+    
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user')
         super(ProjectSerializer, self).__init__(*args, **kwargs)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import indexOf from 'lodash'
+import { indexOf } from 'lodash'
 import map from 'lodash/map'
 import union from 'lodash/union'
 import includes from 'lodash/includes'
@@ -65,15 +65,15 @@ class ProjectList extends Component {
     }
 
     onDeleteProject(project_id) {
+        console.log(project_id)
         const {dispatch, visible_item_ids} = this.props
         const {onSelectProjects} = this.props
-        console.log(this.props, "props")
         const project_index = indexOf(visible_item_ids, project_id)
         let next_index = project_index - 1
         if ( next_index < 0 ) {
             next_index = visible_item_ids.length-1
+            console.log(next_index)
         }
-        console.log(next_index, "abc")
         onSelectProjects([visible_item_ids[next_index]])
     }
     
@@ -222,6 +222,7 @@ function mapStateToProps(state, props) {
 
     return {
         list_key: list_key,
+        visible_item_ids,
         projects: visible_items,
         project_ids: visible_item_ids,
         loading_item_ids,

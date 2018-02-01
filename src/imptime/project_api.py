@@ -13,7 +13,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import BusinessHistory
+from timepiece.models import Issue
 from imptime.models import VisualSpecProject
+from imptime.models import VisualSpecIssue
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import BusinessInvite as ProjectInvite
 from timepiece.models import UserAutoLoginToken
@@ -185,15 +187,19 @@ class ProjectViewSet(BaseViewSet):
                 project_pks = params['item_ids']
             else:
                 project_pks = [pk]
-                print(self, "SELF")
             for project_pk in project_pks:
-                project = self.allowed_project(project_pk)
-
-                if self.logged_in_permissions(project).has_edit_project_detail:
+                project = self.allowed_project(project_pk)                
+                issues = Issue.objects.filter(project__business=project)
+                
+                if self.logged_in_permissions(project).can_delete_project:
                     BusinessHistory.add_history(request.user, project,
                                              "deleted", project.id, "")
+                    if len(issues) > 0:
+                        for issue in issues:
+                             issue.visual_spec_issues.all().delete()
+                    project.visual_spec_projects.all().delete()
                     project.deadline_types.all().delete()
-                    project.delete()
+                    project.delete()                    
                 else:
                     data = {'status': 'failed', 'error_message': 'Permission denied to delete projects'}
 

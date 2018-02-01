@@ -7,7 +7,8 @@ import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
 import { ENTITY_KEY__PROJECT, getCellStyle } from '../actions/ItemListKeyRegistry'
 import '../sass/project.css'
-import { deleteProjects } from '../actions/Projects'
+import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
+import { getSelectedItems, setItemflag } from '../actions/ItemList'
 import DeleteProject from '../components/DeleteProject'
 
 class Project extends Component {
@@ -47,31 +48,30 @@ class Project extends Component {
     
     render_expanded() {
         const { project, is_loading, is_selected, isOver,
-		onClickedProject, connectDragSource, connectDropTarget,
-                visible_header_keys, header_list } = this.props
-
-	if ( ! project ) {
-	    return (
+		            onClickedProject, connectDragSource, connectDropTarget,
+                visible_header_keys, header_list, can_show_project_delete } = this.props
+	      if ( ! project ) {
+	          return (
                 <div className="div-table__row">
                   <div className="div-table__cell">
                     Loading...
                   </div>
                 </div>
             )
-	}
-	
-	if ( ! is_loading === false ) {
-	    return (
-		<div key={this.key+"."+project.id}
-		     onClick={onClickedProject}
+	      }
+	      
+	      if ( ! is_loading === false ) {
+	          return (
+		            <div key={this.key+"."+project.id}
+		                 onClick={onClickedProject}
                      className={classNames("div-table__row",
                                            {'div-table__row--selected':is_selected})}
-		>
-		    <div className="div-table__cell">{project && project.id}</div>
-		    <div className="div-table__cell">Loading...</div>
-		</div>
-	    )
-	} else {
+		            >
+		              <div className="div-table__cell">{project && project.id}</div>
+		              <div className="div-table__cell">Loading...</div>
+		            </div>
+	          )
+	      } else {
             return (
 		            <div key={this.key+"."+project.id}
 		                 onClick={onClickedProject}
@@ -87,50 +87,65 @@ class Project extends Component {
                      </div>
                    </div>
                   }
+
+                  
                   {includes(visible_header_keys, "num_sprints") &&
                    <div className="div-table__cell sprint__cell__secondary"
                         onClick={this.onSprintsClick}
                         style={getCellStyle(header_list.num_sprints)}>
                      <div className="project__cell--num-sprints">
-                       { project.num_open_sprints > 0 &&
+                       { project && project.num_open_sprints > 0 &&
                          <div>
                            {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
                          </div>
                        }
                      </div>
                    </div>
+                  }     
+                  {includes(visible_header_keys, "delete") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.delete)}>
+                     <div className="reveal-on-hover--block issue__cell--issue-delete">
+                       <DeleteProject
+                           onDelete= {this.onDeleteProject}
+                       />
+                     </div>
+                   </div>
                   }
-                  {includes(visible_header_keys, "small_delete") &&
-                  <div className="div-table__cell project__cell__secondary"
-                       style={getCellStyle(header_list.small_delete)}>
-                    <div className={"reveal-on-hover--block"}>
-                      <div className="project__small-delete-image" onClick={this.onDeleteProject} />
+                  
+                  { includes(visible_header_keys, "small_delete") && can_show_project_delete &&
+                    <div className="div-table__cell project__cell__secondary"
+                         style={getCellStyle(header_list.small_delete)}>
+                      <div className={"reveal-on-hover--block"}>
+                        <div className="project__small-delete-image"
+                             onClick={this.onDeleteProject} />
+                      </div>
                     </div>
-                  </div>
                   }
 		            </div>
             )
-	}
+	      }
     }
 
     render() {
         const { is_collapsed, is_expanded } = this.props
 
-	if ( is_collapsed ) {
-	    return this.render_collapsed()
-	}
-	else if ( is_expanded ) {
-	    return this.render_expanded()
-	} else {
-	    return ( <div>Dev error</div> )
-	}
+	      if ( is_collapsed ) {
+	          return this.render_collapsed()
+	      }
+	      else if ( is_expanded ) {
+	          return this.render_expanded()
+	      } else {
+	          return ( <div>Dev error</div> )
+	      }
     }
 }
 
 function mapStateToProps(state, props) {
     const { project } = state
-    const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete } = props
+    const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete, list_key } = props
     const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
+    const selectedProjects = getSelectedItems(state, list_key, ENTITY_KEY__PROJECT) || []
     
     return {
         project: this_project,
@@ -142,6 +157,7 @@ function mapStateToProps(state, props) {
         header_list,
         visible_header_keys: keys(header_list),
         onDelete: onDelete || null,
+        can_show_project_delete: canShowProjectDelete(this_project)
     }
 }
 
