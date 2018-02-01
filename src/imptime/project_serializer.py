@@ -1,7 +1,7 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer, BaseModelSerializer
-from timepiece.models import Feature, IssueStatus
+from timepiece.models import Feature, IssueStatus, Issue
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
@@ -39,18 +39,12 @@ class ProjectSerializer(BaseSerializer):
     can_delete_project = serializers.SerializerMethodField('is_project_deletable')
 
     def is_project_deletable(self, project):
+
         if len(project.sprints) == 0:
             return True
         else:
-            issue_count = 0
-            for sprint in project.sprints:
-                if issue_count == 0:
-                    issues = sprint.issues.all()
-                    issue_count += len(issues)
-                else:
-                    break
-            if issue_count == 0:
-                return True
+            issue_count = Issue.objects.filter(project__business=project.id).count() == 0
+            return issue_count
         return False
             
     

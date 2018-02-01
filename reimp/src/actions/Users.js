@@ -118,6 +118,7 @@ export function logged_in_users_permissions(state, project_id) {
     if ( ! project ) {
         return {}
     }
+    console.log(project)
     return project.logged_in_users_permissions || {}
 }
 

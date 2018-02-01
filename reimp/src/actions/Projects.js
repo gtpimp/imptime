@@ -1,6 +1,5 @@
 import { impfetch } from './lib.js'
 import keyBy from 'lodash/keyBy'
-import { has } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 import { deleteItems } from '../actions/Item'
@@ -325,8 +324,5 @@ export function saveInviteUser(project_id, user_email) {
 }
 
 export function canShowProjectDelete(project) {
-    if (has(project, "can_delete_project")) {
-        return project.can_delete_project
-    }
-    return false
+    return project.can_delete_project || false
 }

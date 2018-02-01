@@ -10,15 +10,16 @@ import '../sass/project.css'
 import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
 import { getSelectedItems, setItemflag } from '../actions/ItemList'
 import DeleteProject from '../components/DeleteProject'
+import { has_permission } from '../actions/Users'
 
 class Project extends Component {
 
     constructor(props) {
         super(props)
         this.onSprintsClick = this.onSprintsClick.bind(this)
-        this.onDeleteProject = this.onDeleteProject.bind(this)        
+        this.onDeleteProject = this.onDeleteProject.bind(this)
     }
-    
+
     onSprintsClick(event) {
         const { project_id } = this.props
         event.stopPropagation()
@@ -112,7 +113,7 @@ class Project extends Component {
                      </div>
                    </div>
                   }
-                  
+
                   { includes(visible_header_keys, "small_delete") && can_show_project_delete &&
                     <div className="div-table__cell project__cell__secondary"
                          style={getCellStyle(header_list.small_delete)}>
@@ -146,6 +147,8 @@ function mapStateToProps(state, props) {
     const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete, list_key } = props
     const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
     const selectedProjects = getSelectedItems(state, list_key, ENTITY_KEY__PROJECT) || []
+    const canDelete = canShowProjectDelete(this_project) && has_permission(state, project_id, 'has_delete_project')
+    console.log(project.name, project_id,canShowProjectDelete(this_project), has_permission(state, project_id, 'has_delete_project'))
     
     return {
         project: this_project,
@@ -157,7 +160,7 @@ function mapStateToProps(state, props) {
         header_list,
         visible_header_keys: keys(header_list),
         onDelete: onDelete || null,
-        can_show_project_delete: canShowProjectDelete(this_project)
+        can_show_project_delete: canDelete
     }
 }
 
