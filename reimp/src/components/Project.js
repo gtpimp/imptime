@@ -147,8 +147,8 @@ function mapStateToProps(state, props) {
     const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete, list_key } = props
     const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
     const selectedProjects = getSelectedItems(state, list_key, ENTITY_KEY__PROJECT) || []
-    const canDelete = canShowProjectDelete(this_project) && has_permission(state, project_id, 'has_delete_project')
-    console.log(project.name, project_id,canShowProjectDelete(this_project), has_permission(state, project_id, 'has_delete_project'))
+    const can_show_project_delete = canShowProjectDelete(this_project) &&
+                                    has_permission(state, project_id, 'has_delete_project')
     
     return {
         project: this_project,
@@ -160,7 +160,7 @@ function mapStateToProps(state, props) {
         header_list,
         visible_header_keys: keys(header_list),
         onDelete: onDelete || null,
-        can_show_project_delete: canDelete
+        can_show_project_delete: can_show_project_delete
     }
 }
 
