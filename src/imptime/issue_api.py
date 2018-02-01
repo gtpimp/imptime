@@ -373,7 +373,6 @@ class IssueViewSet(BaseViewSet):
 
             for issue_pk in issue_pks:
                 issue = self.allowed_issue(issue_pk)
-                print(issue, "ISSUE")
                 if self.logged_in_permissions(issue.project.business).has_delete_issue:
                     IssueHistory.add_history(request.user, issue,
                                              "deleted", issue.id, "")

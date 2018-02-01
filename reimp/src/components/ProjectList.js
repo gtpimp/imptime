@@ -65,7 +65,6 @@ class ProjectList extends Component {
     }
 
     onDeleteProject(project_id) {
-        console.log(project_id)
         const {dispatch, visible_item_ids} = this.props
         const {onSelectProjects} = this.props
         const project_index = indexOf(visible_item_ids, project_id)

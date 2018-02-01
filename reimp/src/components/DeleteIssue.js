@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 
-class  DeleteIssue extends Component {
+class DeleteIssue extends Component {
 
     render() {
 

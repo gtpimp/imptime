@@ -16,7 +16,7 @@ class Project extends Component {
     constructor(props) {
         super(props)
         this.onSprintsClick = this.onSprintsClick.bind(this)
-        this.onDeleteProject = this.onDeleteProject.bind(this)
+        this.onDeleteProject = this.onDeleteProject.bind(this)        
     }
     
     onSprintsClick(event) {

@@ -26,7 +26,6 @@ export const ANNOUNCE_SAVING_INVITE = 'ANNOUNCE_SAVING_INVITE'
 export const ANNOUNCE_SAVED_INVITE = 'ANNOUNCE_SAVED_INVITE'
 export const ANNOUNCE_SAVE_INVITE_FAILED = 'ANNOUNCE_SAVE_INVITE_FAILED'
 
-
 export function invalidateAllProjects() {
     return {
         type: INVALIDATE_ALL_PROJECTS
