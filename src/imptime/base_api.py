@@ -13,7 +13,7 @@ from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
-from imptime.models import VisualSpecIssueAnnotation, ProjectWiki, WikiPage
+from imptime.models import VisualSpecIssueAnnotation, WikiPage
 
 class PermissionHelper():
     @classmethod
@@ -204,11 +204,11 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_wiki_pages(self):
         non_sensitive_wiki_pages = WikiPage.objects.filter(money_sensitive=False,
-                                                           project_wikis__project__in=self.allowed_projects()\
+                                                           project__in=self.allowed_projects()\
                                                            .filter(business_permissions__user=self.request.user,
                                                                    business_permissions__can_view_business_comments=True))
         sensitive_wikis = WikiPage.objects.filter(money_sensitive=True,
-                                                  project_wikis__project__in=self.allowed_projects_for_money(self.allowed_projects())\
+                                                  project__in=self.allowed_projects_for_money(self.allowed_projects())\
                                                   .filter(business_permissions__user=self.request.user,
                                                           business_permissions__can_view_business_comments=True))
                                                   

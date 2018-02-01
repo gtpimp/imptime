@@ -9,7 +9,7 @@ from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
-from imptime.models import ProjectWiki, WikiPage
+from imptime.models import WikiPage
 from rest_framework.decorators import detail_route
 
 logger = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class WikiViewSet(BaseViewSet):
                 wiki_page_pks = [pk]
 
             for wiki_page_pk in wiki_page_pks:
-                wiki_page = self.allowed_wiki_page.get(pk=wiki_page_pk)
+                wiki_page = self.allowed_wiki_pages().get(pk=wiki_page_pk)
                 if not self.logged_in_permissions(wiki_page.project).has_edit_business_comments:
                     raise Exception("No permission to edit this wiki page")
                 
@@ -70,12 +70,12 @@ class WikiViewSet(BaseViewSet):
                     if self.logged_in_permissions(wiki_page.project).has_view_ctc_billable_rates:
                         wiki_page.money_sensitive = new_value
                 elif field_name == "content":
-                    wiki_page.content = content
+                    wiki_page.content = new_value
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 wiki_page.save()
 
-            data = {'status': 'success'}
+            data = {'status': 'success', 'payload': wiki_pks}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
@@ -94,8 +94,8 @@ class WikiViewSet(BaseViewSet):
             if self.logged_in_permissions(project).has_edit_business_comments:
                 wiki_page = WikiPage.objects.create(
                     name=params['name'],
+                    project_id=project_id,
                     **fixed_default_wiki_page_args)
-                ProjectWiki.objects.create(project=project, wiki_page=wiki_page)
 
                 context['item'] = WikiPageSerializer(wiki_page).data
                 data = {'status': 'success', 'payload': context}
@@ -110,9 +110,5 @@ class WikiViewSet(BaseViewSet):
 
     def apply_filter(self, qs, raw_filter_args):
         raw_filter_args['__business_project_switch_filter_required'] = False
-
-        project_id = raw_filter_args.pop('project_id', None)
-        if project_id is not None:
-            raw_filter_args['project_wikis__project_id'] = project_id
         return super(WikiViewSet, self).apply_filter(qs,  raw_filter_args)
     

@@ -34,6 +34,7 @@ import {
     LIST_KEY__RELEASE_NOTES_LIST,
     LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
     LIST_KEY__FORM_TAG_LIST,
+    LIST_KEY__WIKI_LIST,
     SELECTOR__SPRINTS
 } from '../actions/ItemListKeyRegistry'
 import { each, keys } from 'lodash'
@@ -129,6 +130,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__NUDGE_LIST] = true
     } else if ( d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {
         list_keys_to_invalidate[LIST_KEY__FORM_TAG_LIST] = true
+    } else if ( d.entity_name === "wikipage" ) {
+        list_keys_to_invalidate[LIST_KEY__WIKI_LIST] = true
     }
 }
 

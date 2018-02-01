@@ -265,17 +265,21 @@ class SprintTemplate(BaseModel):
 class WikiPage(BaseModel):
     money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
     name = models.CharField(max_length=100, null=False, blank=False)
+    project = ProtectedForeignKey(Project, related_name='wikis', null=False)
     content = models.TextField(null=True)
 
-    @property
-    def default_project_id(self):
-        return self.project_wikis.all()[0]
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(WikiPage, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
 
-
-class ProjectWiki(BaseModel):
-    project = ProtectedForeignKey(Project, related_name='wikis', null=False)
-    wiki_page = ProtectedForeignKey(WikiPage, related_name='project_wikis', null=False)
-
+    def delete(self):
+        super(WikiPage, self).delete()
+        RefreshNotifier().notify_model_delete(self)
+    
 
 class ReleaseNote(BaseModel):
     header = models.TextField(null=False)

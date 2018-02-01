@@ -6,8 +6,6 @@ logger = logging.getLogger(__name__)
 
 class WikiPageSerializer(BaseModelSerializer):
 
-    project_id = serializers.CharField(source="default_project_id")
-    
     class Meta:
         model = WikiPage
         fields = [ 'id',

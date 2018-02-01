@@ -38,8 +38,20 @@ export function invalidateWikis(wiki_ids_to_invalidate) {
     }
 }
 
-export function updateWiki(wiki_ids, field_name, new_value, on_done) {
+export function updateWikis(wiki_ids, field_name, new_value, on_done) {
     return updateItem(ENTITY_KEY__WIKI, wiki_ids, field_name, new_value, on_done)
+}
+
+export function updateWikiContent(wiki_id, new_content, on_done) {
+    return updateItem(ENTITY_KEY__WIKI, [wiki_id], "content", new_content, on_done)
+}
+
+export function updateWikiName(wiki_id, new_name, on_done) {
+    return updateItem(ENTITY_KEY__WIKI, [wiki_id], "name", new_name, on_done)
+}
+
+export function updateWikiMoneySensitive(wiki_id, new_bool, on_done) {
+    return updateItem(ENTITY_KEY__WIKI, [wiki_id], "money_sensitive", new_bool, on_done)
 }
 
 export function fetchWikisIfNeeded(list_key) {

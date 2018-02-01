@@ -12,18 +12,7 @@ import { isLoadingItems } from '../actions/Item'
 import ProjectName from './ProjectName'
 import Timestamp from './Timestamp'
 import ReactMarkdown from 'react-markdown'
-
-const renderers = {
-    link: (props) => {
-        return (
-          <a href={props.href}
-             target="_blank"
-             onClick={(event) => event.stopPropagation()}>
-             {(props.children && props.children[0]) || props.href}
-          </a> 
-        )
-    }
-}
+import EditableWikiContent from './EditableWikiContent'
 
 class Wiki extends Component {
 
@@ -56,7 +45,7 @@ class Wiki extends Component {
                 {wiki.name}
               </div>
               <div className="wiki__content">
-                <ReactMarkdown source={wiki.content || "No content"} renderers={renderers} />
+                <EditableWikiContent wiki_id={wiki.id} />
               </div>
             </div>
         )
