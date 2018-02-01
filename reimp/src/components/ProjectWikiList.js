@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map, values } from 'lodash'
+import { map, values, includes } from 'lodash'
+import classNames from 'classnames'
 import {
     initList,
     invalidateList,
@@ -58,9 +59,12 @@ class WikiList extends Component {
     }
 
     render_row(wiki) {
+        const { selected_wiki_ids } = this.props
+        const is_selected = includes(selected_wiki_ids, ""+wiki.id)
         return (
             <div className="wiki-list__row" key={wiki.id}>
-              <div className="wiki-list__wiki_name"
+              <div className={classNames("wiki-list__wiki_name",
+                                         {"div-table__row--selected":is_selected})}
                    onClick={(event) => this.onSelectWiki(event, wiki.id)}>
                 {wiki.name}
               </div>
@@ -98,7 +102,7 @@ class WikiList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key } = props
+    const { list_key, selected_wiki_ids } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__WIKI, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -114,7 +118,8 @@ function mapStateToProps(state, props) {
         is_invalidated,
         should_fetch_list,
         last_updated,
-        nested_objects
+        nested_objects,
+        selected_wiki_ids
     }
 }
 

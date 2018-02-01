@@ -75,7 +75,7 @@ class ProjectWikiPage extends Component {
                 if ( wiki_id === wiki.id ) {
                     breadcrumbs.push({to: '/projects/'+project_id+'/wiki/'+wiki_id, label: wiki.name})
                 }
-                dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [wiki_id]))
+                dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+wiki_id]))
             }
         }
         this.setState({'noticed_default_wiki_id': default_wiki_id})
@@ -86,7 +86,7 @@ class ProjectWikiPage extends Component {
         const {dispatch, selected_wiki_ids, default_wiki_id} = these_props || this.props
         if ( default_wiki_id != undefined && !includes(selected_wiki_ids, default_wiki_id) ) {
             dispatch(selectItems(LIST_KEY__WIKI_LIST, [default_wiki_id]))
-            dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [default_wiki_id]))
+            dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+default_wiki_id]))
         }
         this.setState({'noticed_default_wiki_id': default_wiki_id})
     }
@@ -94,7 +94,7 @@ class ProjectWikiPage extends Component {
     onSelectWiki(wiki_id) {
         const { dispatch, project_id } = this.props
         dispatch(selectItems(LIST_KEY__WIKI_LIST, wiki_id))
-        dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [wiki_id]))
+        dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+wiki_id]))
         browserHistory.push('/projects/'+project_id+'/wiki/'+wiki_id);
     }
 
@@ -104,7 +104,7 @@ class ProjectWikiPage extends Component {
     }
 
     renderContentsPane() {
-        const { is_creating_wiki, project_id } = this.props
+        const { is_creating_wiki, project_id, selected_wiki_ids } = this.props
 
         if ( is_creating_wiki ) {
             return (
@@ -118,6 +118,7 @@ class ProjectWikiPage extends Component {
                   <div>
                     <div className="project-wiki__project_wikis">
                       <ProjectWikiList list_key={LIST_KEY__WIKI_LIST}
+                                       selected_wiki_ids={selected_wiki_ids}
                                        onSelectWiki={this.onSelectWiki}/>
                     </div>
                   </div>
@@ -193,6 +194,7 @@ function mapStateToProps(state, props) {
         is_creating_wiki: is_creating_wiki,
         splitter_size,
         show_sidebar: show_sidebar || is_creating_wiki,
+        selected_wiki_ids,
         filter,
         default_wiki_id
     }
