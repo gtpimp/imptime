@@ -61,7 +61,7 @@ function mapStateToProps(state, props) {
     const candidate_wiki = getCandidateWiki(state) || null
     return {
         candidate_wiki: candidate_wiki,
-        onSelectWikis,
+        onCreatedWiki,
         project_id,
         sprint_id
     }

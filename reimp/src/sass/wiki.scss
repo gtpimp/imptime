@@ -1,0 +1,20 @@
+@import 'variables.scss';
+
+.wiki-list {
+}
+
+.wiki-list__row {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.wiki-list__wiki_name {
+    cursor: pointer;
+}
+
+.wiki-list__wiki_name:hover {
+    background-color: $row-hover-color;
+}
+
+
+

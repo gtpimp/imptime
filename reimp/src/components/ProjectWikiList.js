@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map } from 'lodash'
+import { map, values } from 'lodash'
 import {
     initList,
     invalidateList,
@@ -24,8 +24,9 @@ import {
 } from '../actions/ItemList'
 import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
 import {
-    fetchWikisIfNeeded
+    fetchWikisIfNeeded, getWikis
 } from '../actions/Wikis'
+import DivTable from './DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Wiki from './Wiki'
 
@@ -49,12 +50,23 @@ class WikiList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
+    render_row(wiki) {
+        return (
+            <div className="wiki-list__row" key={wiki.id}>
+              <div className="wiki-list__wiki_name"
+                   onClick={(event) => this.onSelectWiki(event, wiki.id)}>
+                {wiki.name}
+              </div>
+            </div>
+        )
+    }
+
     render() {
 
-        const { wiki_ids, is_loading } = this.props
+        const { wikis_by_id, is_loading } = this.props
         const that = this
 
-        if ( is_loading && !wiki_ids && wiki_ids.length == 0 ) {
+        if ( is_loading && !wikis_by_id && wikis_by_id.length == 0 ) {
             return (
                 <div>Loading...</div>
             )
@@ -62,8 +74,10 @@ class WikiList extends Component {
 
         return (
             <div className="wiki-list">
-              { map(wiki_ids, (wiki_id) =>  <Wiki key={wiki_id} wiki_id={wiki_id} />) }
-              { !wiki_ids || wiki_ids.length == 0 &&
+              <DivTable>
+                { map(values(wikis_by_id), (wiki) => this.render_row(wiki) ) }
+              </DivTable>
+              { !wikis_by_id || wikis_by_id.length == 0 &&
                 (
                     <div className="wiki-list__empty">
                       { ! is_loading && "No pages." }
@@ -84,9 +98,11 @@ function mapStateToProps(state, props) {
     const nested_objects = getNestedObjects(state, list_key)
     const should_fetch_list = shouldFetchList(state, list_key)
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__WIKI, visible_item_ids)
+    const items_by_id = getWikis(state, visible_item_ids)
 
     return {
         wiki_ids: visible_item_ids,
+        wikis_by_id: items_by_id,
         is_loading,
         is_invalidated,
         should_fetch_list,

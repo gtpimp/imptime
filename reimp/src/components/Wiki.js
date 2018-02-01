@@ -43,7 +43,7 @@ class Wiki extends Component {
 
     render() {
 
-        const { wiki, is_loading } = this.props
+        const { wiki, is_loading, onClickedWiki } = this.props
         const that = this
 
         if ( ! wiki.id ) {
@@ -52,10 +52,8 @@ class Wiki extends Component {
         
         return (
             <div className="wiki">
-              <div className="wiki__name">
-                <div className={classNames("wiki__name")}>
-                  {wiki.name}
-                </div>
+              <div className={classNames("wiki__link")} onClick={onClickedWiki}>
+                {wiki.name}
               </div>
               <div className="wiki__content">
                 <ReactMarkdown source={wiki.content} renderers={renderers} />
@@ -66,12 +64,13 @@ class Wiki extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { wiki_id } = props
+    const { wiki_id, onClickedWiki } = props
     const wiki = getWiki(state, wiki_id) || {}
 
     return {
         wiki,
-        is_loading: !wiki.id
+        is_loading: !wiki.id,
+        onClickedWiki
     }
 }
 
