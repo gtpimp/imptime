@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
-import WikiForm from './form/WikiForm'
-import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
+import WikiNameForm from './form/WikiNameForm'
+import { updateWikiName, getWiki, ensureWikisLoaded } from '../actions/Wikis'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
 import { has_permission } from '../actions/Users'
 import Blank from './form/Blank'
@@ -20,7 +20,7 @@ const renderers = {
     }
 }
 
-class EditableWikiContent extends Component {
+class EditableWikiName extends Component {
 
     constructor(props) {
         super(props)
@@ -44,27 +44,26 @@ class EditableWikiContent extends Component {
 
     onChange(new_value) {
         const { dispatch, wiki_id } = this.props
-        dispatch(updateWikiContent(wiki_id, new_value.content))
+        dispatch(updateWikiName(wiki_id, new_value.name))
     }
 
     render() {
         const { wiki, can_edit } = this.props
 
-        const content = (wiki.content || "").trim()
+        const name = (wiki.name || "").trim()
         
         return (
-            <EditableProperty property_key={'wiki_content_'+wiki.id}
-                              initial_value={content}
+            <EditableProperty property_key={'wiki_name_'+wiki.id}
+                              initial_value={name}
                               onChange={this.onChange}
                               can_edit={can_edit}
             >
-              <WikiForm />
-              <div className="text-component--readonly text-component--description">
-                <ReactMarkdown source={content} renderers={renderers} />
+              <WikiNameForm />
+              <div className="text-component--readonly">
+                <ReactMarkdown source={name} renderers={renderers} />
               </div>
-              <div className="text-component--empty text-component--description">
-                No content
-                { can_edit && <div><a>Edit</a></div> }
+              <div className="text-component--empty">
+                No name
               </div>
             </EditableProperty>
         )
@@ -86,4 +85,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(EditableWikiContent)
+export default connect(mapStateToProps)(EditableWikiName)

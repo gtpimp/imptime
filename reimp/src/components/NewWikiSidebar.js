@@ -46,7 +46,7 @@ class NewWikiSidebar extends Component {
                 <div onKeyDown={this.keyDown}>
                   <div>
                     <NewWikiForm onSubmitted={this.onSaveCandidateWiki}
-                                  project_id={project_id} />
+                                 project_id={project_id} />
                   </div>
                 </div>
               </PropertyStack>

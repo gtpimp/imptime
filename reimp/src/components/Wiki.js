@@ -13,6 +13,7 @@ import ProjectName from './ProjectName'
 import Timestamp from './Timestamp'
 import ReactMarkdown from 'react-markdown'
 import EditableWikiContent from './EditableWikiContent'
+import EditableWikiName from './EditableWikiName'
 
 class Wiki extends Component {
 
@@ -32,7 +33,7 @@ class Wiki extends Component {
 
     render() {
 
-        const { wiki, is_loading, onClickedWiki } = this.props
+        const { wiki, is_loading } = this.props
         const that = this
 
         if ( ! wiki.id ) {
@@ -41,8 +42,8 @@ class Wiki extends Component {
         
         return (
             <div className="wiki">
-              <div className={classNames("wiki__link")} onClick={onClickedWiki}>
-                {wiki.name}
+              <div className={classNames("wiki__header")}>
+                <EditableWikiName wiki_id={wiki.id} />
               </div>
               <div className="wiki__content">
                 <EditableWikiContent wiki_id={wiki.id} />
@@ -53,13 +54,12 @@ class Wiki extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { wiki_id, onClickedWiki } = props
+    const { wiki_id } = props
     const wiki = getWiki(state, wiki_id) || {}
 
     return {
         wiki,
-        is_loading: !wiki.id,
-        onClickedWiki
+        is_loading: !wiki.id
     }
 }
 

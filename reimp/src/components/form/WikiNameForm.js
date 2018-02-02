@@ -2,22 +2,18 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form'
 import Textarea from 'react-expanding-textarea'
+import WikiNameField from './WikiNameField'
 
-class WikiForm extends Component {
+class WikiNameForm extends Component {
 
     constructor(props) {
         super(props)
-        this.renderTextarea = this.renderTextarea.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
         this.keyDown = this.keyDown.bind(this)
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
         fieldOnChange(e)
-    }
-
-    componentDidMount() {
-        this.content_el.refs.textarea && this.content_el.refs.textarea.focus()
     }
 
     keyDown(event) {
@@ -27,26 +23,6 @@ class WikiForm extends Component {
         }
     }
 
-    renderTextarea(field) {
-        const {input} = field
-        return (
-            <Textarea
-                rows="50"
-                maxLength="3000"
-                className="textarea textarea--text-component textarea--content"
-                placeholder="Content"
-                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
-                ref={(ref)=> this.content_el=ref}
-                value={input.value}
-                onKeyDown={this.keyDown}
-            />
-        )
-    }
-
-    renderWikiName(field) {
-        
-    }
-
     render() {
 
         const { handleSubmit, onKeyDown } = this.props
@@ -54,10 +30,9 @@ class WikiForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
               <div>
-                
+
                 <div className="project_sidebar--textarea">
-                  <Field name="content"
-                         component={this.renderTextarea} />
+                  <WikiNameField onKeyDown={onKeyDown} />
                 </div>
               </div>
               <button className="button project_sidebar--textarea" type="submit">Submit</button>
@@ -71,11 +46,11 @@ function mapStateToProps(state, props) {
     const { onSubmitted, onKeyDown } = props
 
     return {
-        initialValues: {content:props.initial_value},
+        initialValues: {name:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onKeyDown
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'wiki_form'})(WikiForm))
+export default connect(mapStateToProps)(reduxForm({form:'wiki_name_form'})(WikiNameForm))

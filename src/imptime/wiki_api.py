@@ -75,7 +75,7 @@ class WikiViewSet(BaseViewSet):
                     raise Exception("Unsupported field name: %s" % field_name)
                 wiki_page.save()
 
-            data = {'status': 'success', 'payload': wiki_pks}
+            data = {'status': 'success', 'payload': wiki_page_pks}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
