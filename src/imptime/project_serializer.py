@@ -1,7 +1,7 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer, BaseModelSerializer
-from timepiece.models import Feature, IssueStatus
+from timepiece.models import Feature, IssueStatus, Issue
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
@@ -36,7 +36,18 @@ class ProjectSerializer(BaseSerializer):
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
     num_open_sprints = serializers.IntegerField()
     visual_spec_document_ids = serializers.ListField()
+    can_delete_project = serializers.SerializerMethodField('is_project_deletable')
 
+    def is_project_deletable(self, project):
+
+        if len(project.sprints) == 0:
+            return True
+        else:
+            issue_count = Issue.objects.filter(project__business=project.id).count() == 0
+            return issue_count
+        return False
+            
+    
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user')
         super(ProjectSerializer, self).__init__(*args, **kwargs)

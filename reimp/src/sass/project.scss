@@ -15,3 +15,26 @@
 .project__cell--num-sprints:hover {
     @extend .div-table__cell--link-hover;
 }
+
+.project__cell__secondary {
+    @extend .div-table__cell--secondary;
+}
+
+.project__small-delete-image {
+    background-image: url('../../public/images2/delete.png');
+    width:15px;
+    height:15px;
+}
+
+.project {
+    .reveal-on-hover--block {
+        opacity: 0.1;
+    }
+
+    &:hover {
+        .reveal-on-hover--block {
+            /*display: block;*/
+            opacity: 1.0;
+        }
+    }
+}
