@@ -63,8 +63,6 @@ class EditableWikiContent extends Component {
                 <ReactMarkdown source={content} renderers={renderers} />
               </div>
               <div className="text-component--empty text-component--description">
-                No content
-                { can_edit && <div><a>Edit</a></div> }
               </div>
             </EditableProperty>
         )

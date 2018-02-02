@@ -6,17 +6,36 @@
 .wiki-list__row {
     padding-top: 5px;
     padding-bottom: 5px;
+    display:flex;
 }
 
 .wiki-list__wiki_name {
     cursor: pointer;
+    padding-right: 10px;
 }
 
 .wiki-list__wiki_name:hover {
     background-color: $row-hover-color;
 }
 
-.wiki-header__name {
-    font: $bold-extra-large;
+.wiki {
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
+.wiki-header {
+    display:flex;
+}
+
+.wiki-header__name {
+    font: $bold-extra-large;
+    flex-grow: 1
+}
+
+.wiki__content {
+    min-height:200px;
+}
+
+.wiki__content--editor {
+    min-height: 200px;
+}

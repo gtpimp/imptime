@@ -33,7 +33,7 @@ class WikiForm extends Component {
             <Textarea
                 rows="50"
                 maxLength="3000"
-                className="textarea textarea--text-component textarea--content"
+                className="textarea textarea--text-component textarea--content wiki__content--editor"
                 placeholder="Content"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 ref={(ref)=> this.content_el=ref}
@@ -54,10 +54,8 @@ class WikiForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
               <div>
-                
                 <div className="project_sidebar--textarea">
-                  <Field name="content"
-                         component={this.renderTextarea} />
+                  <Field name="content" component={this.renderTextarea} />
                 </div>
               </div>
               <button className="button project_sidebar--textarea" type="submit">Submit</button>
