@@ -163,6 +163,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_do_finance_checklist'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_edit_sprint_status'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_edit_sprint_type'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_delete_project'].widget.attrs['class'] = 'medium-safe'
         
         self.fields['can_view_permissions'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_review_cycle'].widget.attrs['class'] = 'unsafe'

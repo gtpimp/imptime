@@ -347,7 +347,7 @@ class Issue extends Component {
                        <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
                      </div>
                    </div>
-                  }
+                  }                 
                 </div>
             )
         }

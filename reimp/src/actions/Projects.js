@@ -2,6 +2,7 @@ import { impfetch } from './lib.js'
 import keyBy from 'lodash/keyBy'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
+import { deleteItems } from '../actions/Item'
 
 export const ANNOUNCE_PROJECTS_SAVING = 'ANNOUNCE_PROJECTS_SAVING'
 export const ANNOUNCE_PROJECTS_SAVED = 'ANNOUNCE_PROJECTS_SAVED'
@@ -23,7 +24,6 @@ export const ANNOUNCE_SAVING_NEW_PROJECT_FAILED = 'ANNOUNCE_SAVING_NEW_PROJECT_F
 export const ANNOUNCE_SAVING_INVITE = 'ANNOUNCE_SAVING_INVITE'
 export const ANNOUNCE_SAVED_INVITE = 'ANNOUNCE_SAVED_INVITE'
 export const ANNOUNCE_SAVE_INVITE_FAILED = 'ANNOUNCE_SAVE_INVITE_FAILED'
-
 
 export function invalidateAllProjects() {
     return {
@@ -111,6 +111,10 @@ export function fetchProjectsIfNeeded(list_key) {
     const matching_items_key = ENTITY_KEY__PROJECT
     const matching_items_promise_func = fetchProjectsPromise
     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
+}
+
+export function deleteProjects(project_ids) {
+    return deleteItems(ENTITY_KEY__PROJECT, project_ids)
 }
 
 export function startCandidateProject() {
@@ -317,4 +321,8 @@ export function saveInviteUser(project_id, user_email) {
 	       })
     }
 
+}
+
+export function canShowProjectDelete(project) {
+    return project.can_delete_project || false
 }

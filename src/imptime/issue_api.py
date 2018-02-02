@@ -373,7 +373,6 @@ class IssueViewSet(BaseViewSet):
 
             for issue_pk in issue_pks:
                 issue = self.allowed_issue(issue_pk)
-
                 if self.logged_in_permissions(issue.project.business).has_delete_issue:
                     IssueHistory.add_history(request.user, issue,
                                              "deleted", issue.id, "")
@@ -383,7 +382,7 @@ class IssueViewSet(BaseViewSet):
                     data = {'status': 'failed', 'error_message': 'Permission denied to delete issues'}
 
             if not data:
-                data = {'status': 'success', 'payload': issue_pks}
+                data = {'status': 'success2', 'payload': issue_pks}
 
         except Exception, ex:
             logger.exception(ex)

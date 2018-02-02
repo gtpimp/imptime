@@ -291,7 +291,7 @@ export function deleteItems(entity_key, item_ids) {
 		             console.log('Request failed with JSON response', json);
 		             dispatch(announceItemsDeleteFailed(entity_key, item_ids, json.error))
              } else {
-		             console.log('Request succeeded with JSON response', json);
+		             console.log('Request succeeded with JSON response`', json);
 		             dispatch(announceItemsDeleted(entity_key, item_ids))
              }
 	       })

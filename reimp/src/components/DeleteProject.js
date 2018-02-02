@@ -1,18 +1,18 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 
-class DeleteIssue extends Component {
-
+class DeleteProject extends Component {
+    
     render() {
 
         const { onDelete } = this.props
         return (
             <div className="timer-switch">
               <button className="button button--default button--timer button--start-timer" onClick={onDelete}>
-               <div className="button__text">
-                 Delete Issue
-               </div>
-             </button>
+                <div className="button__text">
+                  Delete Project
+o                </div>
+              </button>
             </div>
         )
     }
@@ -20,6 +20,7 @@ class DeleteIssue extends Component {
 
 function mapStateToProps(state, props) {
 
-    return{}
+    return {}
+
 }
-export default connect(mapStateToProps)(DeleteIssue)
+export default connect(mapStateToProps)(DeleteProject)
