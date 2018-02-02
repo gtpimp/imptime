@@ -20,7 +20,7 @@ import {
     getPageFlag,
     get_selected_wiki_ids,
 } from '../actions/Page'
-import { update_list_filter, selectItems, getListFilter } from '../actions/ItemList'
+import { selectItems } from '../actions/ItemList'
 import { getCandidateWiki } from '../actions/Wikis'
 import Wiki from '../components/Wiki'
 
@@ -56,14 +56,11 @@ class ProjectWikiPage extends Component {
     }
     
     refresh(these_props) {
-        const { project_id, project, wiki_id, wiki, default_wiki_id, dispatch, filter } = these_props || this.props
+        const { project_id, project, wiki_id, wiki, default_wiki_id, dispatch } = these_props || this.props
         const breadcrumbs = []
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECT_WIKI_PAGE, [project_id]))
-            if ( filter.project_id != project.id ) {
-                dispatch(update_list_filter(LIST_KEY__WIKI_LIST, {project_id:project.id}))
-            }
             
             breadcrumbs.push({to: '/projects', label: 'Projects'})
             if ( project_id === project.id ) {
@@ -119,6 +116,7 @@ class ProjectWikiPage extends Component {
                     <div className="project-wiki__project_wikis">
                       <ProjectWikiList list_key={LIST_KEY__WIKI_LIST}
                                        selected_wiki_ids={selected_wiki_ids}
+                                       project_id={project_id}
                                        onSelectWiki={this.onSelectWiki}/>
                     </div>
                   </div>
@@ -183,7 +181,6 @@ function mapStateToProps(state, props) {
     const selected_wiki_ids = get_selected_wiki_ids(state, PAGE_KEY__PROJECT_WIKI_PAGE)
     const selected_wiki_id = ( selected_wiki_ids && selected_wiki_ids.length > 0 && selected_wiki_ids[0] ) || default_wiki_id || null
     const selected_wiki = getWiki(state, selected_wiki_id)
-    const filter = getListFilter(state, LIST_KEY__WIKI_LIST)
         
     return {
         project_id: project_id,
@@ -195,7 +192,6 @@ function mapStateToProps(state, props) {
         splitter_size,
         show_sidebar: show_sidebar || is_creating_wiki,
         selected_wiki_ids,
-        filter,
         default_wiki_id
     }
 }

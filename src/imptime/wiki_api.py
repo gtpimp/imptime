@@ -94,7 +94,7 @@ class WikiViewSet(BaseViewSet):
             if self.logged_in_permissions(project).has_edit_business_comments:
                 wiki_page = WikiPage.objects.create(
                     name=params['name'],
-                    project_id=project_id,
+                    project_id=project.id,
                     **fixed_default_wiki_page_args)
 
                 context['item'] = WikiPageSerializer(wiki_page).data

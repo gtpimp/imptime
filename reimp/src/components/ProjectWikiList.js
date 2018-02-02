@@ -21,7 +21,9 @@ import {
     getDisplayMode,
     update_list_pagination,
     update_list_ordering,
-    update_list_format
+    update_list_format,
+    update_list_filter,
+    getListFilter
 } from '../actions/ItemList'
 import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
 import {
@@ -39,15 +41,22 @@ class WikiList extends Component {
     }
     
     componentDidMount() {
-	const { dispatch, list_key, nested_objects } = this.props
+	const { dispatch, list_key, filter, nested_objects } = this.props
 	dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'name': 'asc' }))
-        dispatch(fetchWikisIfNeeded(list_key))
-        dispatch(ensureNestedObjectsLoaded(nested_objects))
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, list_key, nested_objects } = new_props
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, list_key, project_id, filter, nested_objects } = props
+        if ( filter.project_id != project_id ) {
+            dispatch(update_list_filter(list_key, {project_id:project_id}))
+        }
         dispatch(fetchWikisIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
@@ -102,7 +111,7 @@ class WikiList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key, selected_wiki_ids } = props
+    const { list_key, selected_wiki_ids, project_id } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__WIKI, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -110,6 +119,7 @@ function mapStateToProps(state, props) {
     const should_fetch_list = shouldFetchList(state, list_key)
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__WIKI, visible_item_ids)
     const items_by_id = getWikis(state, visible_item_ids)
+    const filter = getListFilter(state, list_key)
 
     return {
         wiki_ids: visible_item_ids,
@@ -119,7 +129,9 @@ function mapStateToProps(state, props) {
         should_fetch_list,
         last_updated,
         nested_objects,
-        selected_wiki_ids
+        selected_wiki_ids,
+        project_id,
+        filter
     }
 }
 
