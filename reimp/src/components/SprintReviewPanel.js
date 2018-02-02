@@ -43,6 +43,7 @@ class SprintReviewPanel extends Component {
 
         return (
             <div className="sprint-review-panel">
+              <p>#Sprint Review Panel#</p>
               <div className="sprint-review-panel__review_due_per_user">
                 { map(sprint_review_ids, function(sprint_review_id) {
                       return (
@@ -54,6 +55,7 @@ class SprintReviewPanel extends Component {
                 }
                 { can_edit && <EditableSprintReviewCycle sprint_review_id={null} sprint_id={sprint_id}/> }
               </div>
+              <p>#Sprint Review Panel End#</p>
             </div>
         )
     }    
