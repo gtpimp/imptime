@@ -77,6 +77,9 @@ class WikiList extends Component {
                    onClick={(event) => this.onSelectWiki(event, wiki.id)}>
                 {wiki.name}
               </div>
+              { wiki.money_sensitive &&
+                <div className="icon--commercially-sensitive"/>
+              }
             </div>
         )
     }
