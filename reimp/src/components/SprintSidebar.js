@@ -24,24 +24,24 @@ class SprintSidebar extends Component {
     }
     
     componentDidMount() {
-	const { dispatch, project_id, sprint_id } = this.props
-	if ( project_id ) {
-	    dispatch(ensureProjectsLoaded([project_id]))
-	}
-	if ( sprint_id ) {
-	    dispatch(ensureSprintsLoaded([sprint_id]))
-	}
+	      const { dispatch, project_id, sprint_id } = this.props
+	      if ( project_id ) {
+	          dispatch(ensureProjectsLoaded([project_id]))
+	      }
+	      if ( sprint_id ) {
+	          dispatch(ensureSprintsLoaded([sprint_id]))
+	      }
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = this.props
         const { project_id, sprint_id } = new_props
-	if ( project_id ) {
-	    dispatch(ensureProjectsLoaded([project_id]))
-	}
-	if ( sprint_id ) {
-	    dispatch(ensureSprintsLoaded([sprint_id]))
-	}
+	      if ( project_id ) {
+	          dispatch(ensureProjectsLoaded([project_id]))
+	      }
+	      if ( sprint_id ) {
+	          dispatch(ensureSprintsLoaded([sprint_id]))
+	      }
     }
 
     showEmacsSprint() {
@@ -60,7 +60,6 @@ class SprintSidebar extends Component {
                   Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
                 </div>
               }
-                
             </PropertyStackComponent>
         )
     }
@@ -136,9 +135,7 @@ class SprintSidebar extends Component {
                   }
                   <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
                 </PropertyStackComponent>
-                
               </PropertyStack>
-              
             </div>
         )
     }

@@ -71,7 +71,6 @@ class ProjectList extends Component {
         let next_index = project_index - 1
         if ( next_index < 0 ) {
             next_index = visible_item_ids.length-1
-            console.log(next_index)
         }
         onSelectProjects([visible_item_ids[next_index]])
     }
