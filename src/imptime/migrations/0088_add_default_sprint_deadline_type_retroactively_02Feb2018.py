@@ -4,17 +4,15 @@ from __future__ import unicode_literals
 from django.db import migrations
 
 def forwards(apps, schema_editor):
-    Project = apps.get_model('timepiece', 'Business')
-    ProjectDeadlineTypes = apps.get_model('timepiece', 'ProjectDeadlineType')
-    ProjectDeadlineDefaults = ( ('start_dev', 'Start development'),
-                                  ('start_internal_qa', 'Start internal QA'),
-                                  ('end_external_qa', 'End external QA') )
-    
-    for project in Project.objects.all():
-        if not ProjectDeadlineTypes.objects.filter(business=Project):
-            ProjectDeadlineTypes.DEFAULT_PROJECT_DEADLINE_TYPES = ProjectDeadlineDefaults
-        
-        
+    Business = apps.get_model('timepiece', 'Business')
+    DEFAULT_PROJECT_DEADLINE_TYPES = ( ('start_dev', 'Start development'),
+                                       ('start_internal_qa', 'Start internal QA'),
+                                       ('end_external_qa', 'End external QA') )
+
+    for business in Business.objects.all():
+        for deadline_type in DEFAULT_PROJECT_DEADLINE_TYPES:
+            business.deadline_types.get_or_create(name=deadline_type)
+
         
 class Migration(migrations.Migration):
 
