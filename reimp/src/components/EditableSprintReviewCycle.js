@@ -65,7 +65,7 @@ class EditableSprintReviewCycle extends Component {
 
         return (
             <div>
-              { sprint_review_id && 
+              { sprint_review_id &&
                 <EditableProperty property_key={'sprint_review_'+sprint_id+'_'+sprint_review_id}
                                   initial_value={sprint_review}
                                   onChange={this.onChange}
@@ -77,12 +77,12 @@ class EditableSprintReviewCycle extends Component {
                                     sprint_id={sprint_id}
                                     sprint_review={sprint_review}/>
                   <div className="sprint-review__card">
-                    <SprintReview  sprint_review_id={sprint_review.id} />
+                    <SprintReview sprint_review_id={sprint_review.id} />
                     <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
                   </div>
                 </EditableProperty>
               }
-              { ! sprint_review_id && can_edit &&  
+              { ! sprint_review_id && can_edit &&
                 <EditableProperty property_key={'sprint_review_'+sprint_id}
                                   initial_value=''
                                   onChange={this.onChange}

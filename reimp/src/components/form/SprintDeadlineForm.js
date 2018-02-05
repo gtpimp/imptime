@@ -121,7 +121,6 @@ class SprintDeadlineForm extends Component {
 function mapStateToProps(state, props) {
     const { onSubmitted, sprint_id, deadline } = props
     const sprint = getSprint(state, sprint_id)
-    
     const project = (sprint.project_id && getProject(state, sprint.project_id)) || {}
     const allowed_deadline_types = project.allowed_deadline_types || []
 
@@ -132,7 +131,7 @@ function mapStateToProps(state, props) {
     if ( initial_values.deadline_type_id ) {
         initial_values.deadline_type = initial_values.deadline_type_id
     }
-    
+
     return {
         project_id: project.id,
         deadline: deadline,
