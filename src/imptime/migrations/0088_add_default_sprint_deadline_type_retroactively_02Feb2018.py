@@ -5,13 +5,15 @@ from django.db import migrations
 
 def forwards(apps, schema_editor):
     Business = apps.get_model('timepiece', 'Business')
+    ProjectDeadlineType = apps.get_model('timepiece', 'ProjectDeadlineType')
     DEFAULT_PROJECT_DEADLINE_TYPES = ( ('start_dev', 'Start development'),
                                        ('start_internal_qa', 'Start internal QA'),
                                        ('end_external_qa', 'End external QA') )
 
     for business in Business.objects.all():
-        for deadline_type in DEFAULT_PROJECT_DEADLINE_TYPES:
-            business.deadline_types.get_or_create(name=deadline_type)
+        if not ProjectDeadlineType.objects.filter(business=business).exists():
+            for deadline_type in DEFAULT_PROJECT_DEADLINE_TYPES:
+                ProjectDeadlineType.objects.get_or_create(business=business, name=deadline_type[1])
 
         
 class Migration(migrations.Migration):
