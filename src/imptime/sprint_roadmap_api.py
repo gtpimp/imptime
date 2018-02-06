@@ -27,13 +27,12 @@ class SprintRoadmapViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            sprints = self.allowed_sprints().order_by("order")
+            sprints = self.allowed_sprints().order_by("created")
             sprints = self.apply_filter(qs=sprints,
                                         raw_filter_args=filter_args)
             sprints = self.apply_pagination(qs=sprints,
                                             pagination=pagination)
 
-            
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in sprints.values_list(
                     'id', flat=True)]

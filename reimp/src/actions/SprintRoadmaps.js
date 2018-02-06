@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import { setDisplayMode, getDisplayMode } from  './ItemList'
+import { setDisplayMode, getDisplayMode } from './ItemList'
 import { ENTITY_KEY__SPRINT_ROADMAP } from '../actions/ItemListKeyRegistry'
 
 import {
@@ -20,7 +20,6 @@ export function getSprintRoadmapIdsFromSprintIds(sprint_ids) {
 export function setSprintWidthMode(list_key, mode) {
     return setDisplayMode(list_key, mode)
 }
-
 
 export function getSprintWidthMode(state, list_key) {
     return getDisplayMode(state, list_key) || "clock"

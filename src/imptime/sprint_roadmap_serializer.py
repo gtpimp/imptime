@@ -42,10 +42,12 @@ class SprintRoadmapSerializer(BaseSerializer):
         sprint = sprint_roadmap
         comparative_estimates = estimate_helper.get_comparative_estimates(sprint, self.logged_in_user)
         if len(comparative_estimates) > 0 and comparative_estimates['aggregates']['fastest_user_id'] is not None:
-            sprint_roadmap.fastest_estimated_hours = comparative_estimates[comparative_estimates['aggregates']['fastest_user_id']]['total_hours']
-            sprint_roadmap.slowest_estimated_hours = comparative_estimates[comparative_estimates['aggregates']['slowest_user_id']]['total_hours']
+            fastest_user_id = comparative_estimates['aggregates']['fastest_user_id']
+            slowest_user_id = comparative_estimates['aggregates']['slowest_user_id']
+            sprint_roadmap.fastest_estimated_hours = comparative_estimates['by_user'][fastest_user_id]['total_hours']
+            sprint_roadmap.slowest_estimated_hours = comparative_estimates['by_user'][slowest_user_id]['total_hours']
         else:
             sprint_roadmap.fastest_estimated_hours = 0
             sprint_roadmap.slowest_estimated_hours = 0
-        
+
         return super(SprintRoadmapSerializer, self).to_representation(sprint_roadmap, *args, **kwargs)
