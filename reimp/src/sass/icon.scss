@@ -105,3 +105,8 @@
     @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');
     background-color: black;
 }
+
+.issue_sidebar__issue_move_img {
+    @include icon(15px, 15px, 'folder-move-white.png');
+    background-color: black;
+}
