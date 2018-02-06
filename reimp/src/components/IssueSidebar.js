@@ -179,10 +179,10 @@ class IssueSidebar extends Component {
                                 <div className="property-value">
                                   <EditableIssueInSprint issue_ids={[issue.id]}/>
                                 </div>
-                                <div className="property-col">
+                                <div className="property-col-small">
                                   <EditableCopyIssueToSprint issue_ids={[issue.id]} />
                                 </div>
-                                <div className="property-col">
+                                <div className="property-col-small">
                                   <EditableMoveIssueToSprint issue_ids={[issue.id]} />
                                 </div>
                               </div>
