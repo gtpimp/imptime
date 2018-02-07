@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import classNames from 'classnames'
 import {browserHistory} from 'react-router'
 import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import { getVisualSpecDocuments,
@@ -10,14 +9,13 @@ import { getVisualSpecDocuments,
 import EditableIssueVisualSpecDocument from './EditableIssueVisualSpecDocument'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import VisualSpecDocumentForm from './VisualSpecDocumentForm'
-import FileUploader from '../form/FileUploader'
 import '../../sass/visual-spec-document-gallery.scss'
 
 class VisualSpecDocumentGallery extends Component {
     constructor(props) {
         super(props)
         this.selectDocument = this.selectDocument.bind(this)
-        this.reorderDocuments  = this.reorderDocuments.bind(this)
+        this.reorderDocuments = this.reorderDocuments.bind(this)
     }
 
     componentDidMount() {
@@ -36,12 +34,12 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
-        const {dispatch, reorderDocuments} = this.props
+        const {reorderDocuments} = this.props
         reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id)
     }
 
     selectDocument(event, visual_spec_document) {
-        const { dispatch, onSelect, issue } = this.props
+        const { onSelect, issue } = this.props
         const vsd = visual_spec_document
         if ( onSelect ){
             onSelect(vsd.id)
@@ -55,7 +53,7 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     render() {
-        const { image_set, active_visual_spec_document_id, connectDragSource, connectDropTarget,
+        const { image_set, active_visual_spec_document_id,
                 issue_id, project_id, allow_edit, onDeleteDocument } = this.props
         const that = this
         return (
@@ -77,7 +75,7 @@ class VisualSpecDocumentGallery extends Component {
                        </div>
                    )
                })}
-              { allow_edit && 
+              { allow_edit &&
                 <VisualSpecDocumentForm issue_id={issue_id}
                                         project_id={project_id}
                                         onChange={()=>{}}
@@ -103,7 +101,7 @@ function mapStateToProps(state, props) {
             visual_spec_document: vsd
         }
     })
-    
+
     return {
         image_set,
         issue,

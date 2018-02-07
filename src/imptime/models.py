@@ -11,6 +11,7 @@ from timepiece.models import Business as Project
 from timepiece.models import Issue
 from timepiece.models import IssueHistory
 from timepiece.models import Project as Sprint
+import os
 import PIL
 import hashlib
 
@@ -50,27 +51,30 @@ class VisualSpecDocument(BaseModel):
 
     @classmethod
     def create_for_doc(self, user, project, doc, name, content_type, issue=None):
+        f_file = doc
         is_image = content_type.startswith('image')
         if is_image:
-            f_image = doc
-        else:
-            f_image = DjangoFile(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
-        width, height = PIL.Image.open(f_image).size
+            width, height = PIL.Image.open(f_file).size
+        # else:
+        #     f_file = doc
+            # f_image = DjangoFile(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
+            # width, height = PIL.Image.open(f_image).size
 
-        md5sum = self.get_md5sum(f_image)
-
+        md5sum = self.get_md5sum(f_file)
         vsd = VisualSpecDocument.objects.filter(md5sum=md5sum).first()
+
         if vsd is None:
             vsd = VisualSpecDocument.objects.create(original_doc=doc,
-                                                    hires=f_image,
-                                                    lores=f_image,
+                                                    hires=f_file,
+                                                    lores=f_file,
                                                     hires_width=width,
                                                     hires_height=height,
-                                                    thumbnail=f_image,
+                                                    thumbnail=f_file,
                                                     name=name,
                                                     md5sum=md5sum,
                                                     content_type=content_type,
                                                     is_image=is_image)
+
         VisualSpecProject.objects.get_or_create(visual_spec_document=vsd,
                                                 project_id=project.id,
                                                 defaults={'order':VisualSpecProject.get_next_order(project.id)})
