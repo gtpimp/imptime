@@ -48,9 +48,9 @@ def get_comparative_estimates(sprint, logged_in_user):
 
         total_hours = (developer_velocity_adjusted_hours + tester_adjusted_hours + manager_adjusted_hours) * (1+sprint.ratio_scope_creep)
 
-        if slowest_user_id is None or total_hours > estimates[slowest_user_id]['total_hours']:
+        if slowest_user_id is None or total_hours > estimates['by_user'][slowest_user_id]['total_hours']:
             slowest_user_id = user_estimate_info['user_id']
-        if fastest_user_id is None or total_hours < estimates[fastest_user_id]['total_hours']:
+        if fastest_user_id is None or total_hours < estimates['by_user'][fastest_user_id]['total_hours']:
             fastest_user_id = user_estimate_info['user_id']
         
         estimates['by_user'][user_estimate_info['user_id']] = { 'user_id': user_estimate_info['user_id'],
@@ -78,4 +78,3 @@ def get_comparative_estimates(sprint, logged_in_user):
     estimates['aggregates']['fastest_user_id'] = fastest_user_id
         
     return estimates
-

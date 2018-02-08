@@ -23,14 +23,14 @@ import {
 } from '../actions/SprintRoadmaps'
 import {
     fetchSprintDeadlinesIfNeeded,
-    getSprintDeadlinesById,
+    getSprintDeadlinesById
 } from '../actions/SprintDeadlines'
 import {
     ENTITY_KEY__SPRINT
 } from '../actions/ItemListKeyRegistry'
 import {
     invalidateAllSprints,
-    fetchSprintsIfNeeded,
+    fetchSprintsIfNeeded
 } from '../actions/Sprints'
 import SprintName from './SprintName'
 import Timestamp from './Timestamp'
