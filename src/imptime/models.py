@@ -15,6 +15,8 @@ import PIL
 import hashlib
 import os
 import logging
+import cv2
+
 logger = logging.getLogger(__name__)
 
 upload_to_visual_spec_documents = UploadTo("visual_spec_documents")
@@ -56,12 +58,16 @@ class VisualSpecDocument(BaseModel):
             width, height = PIL.Image.open(f_image).size
             md5sum = self.get_md5sum(f_image)            
         else:
+            # import pdb; pdb.set_trace()
+            # vidcap = cv2.VideoCapture(doc)
+            # image = vidcap.read()
+
             f_image = VisualSpecDocument.objects.get(id=1677)
             f_image = f_image.original_doc
             width, height = 10, 10
             md5sum = self.get_md5sum(doc)
 
-        vsd = VisualSpecDocument.objects.filter(md5sum=md5sum).first()
+        vsd = None #VisualSpecDocument.objects.filter(md5sum=md5sum).first()
         if vsd is None:
             vsd = VisualSpecDocument.objects.create(original_doc=doc,
                                                     hires=f_image,
@@ -85,8 +91,6 @@ class VisualSpecDocument(BaseModel):
             if created:
                 issue.save()
                 IssueHistory.add_history(user, issue, "added visual spec document", "", name)
-
-        import pdb; pdb.set_trace()
                 
     def height_and_width(self):
         max_size = settings.QUOTE_IMAGE_MAX_SIZE
