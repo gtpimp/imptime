@@ -1,0 +1,21 @@
+@import 'variables.scss';
+
+.auto-clock {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-height: 50px;
+    font-size: $font-size-small;
+    background-color: #ffffff;
+}
+ 
+.auto-clock__header {
+    font-size: $font-size-tiny;
+}
+
+.auto-clock__status {
+}
+
+.auto-clock__actions {
+}
+
