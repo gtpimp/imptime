@@ -14,6 +14,7 @@ export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
 export const LIST_KEY__NUDGE_LIST = 'nudge_list'
 export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
+export const LIST_KEY__AUTO_CLOCK = 'auto_clock'
 
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
@@ -34,6 +35,7 @@ export const ENTITY_KEY__SPRINT_ROADMAP = 'sprint_roadmap'
 export const ENTITY_KEY__TAG = 'tag'
 export const ENTITY_KEY__NUDGE = 'nudge'
 export const ENTITY_KEY__WIKI = 'wiki'
+export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
@@ -60,6 +62,8 @@ export const PAGE_KEY__BULK_CREATE_ISSUES_PAGE = 'bulk_create_issues_page'
 export const PAGE_KEY__RELEASE_NOTES_PAGE = 'release_notes_page'
 export const PAGE_KEY__NUDGE_PAGE = 'nudge_page'
 export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
+
+export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 
 export const SELECTOR__SPRINTS = 'selector_sprints'
 export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'

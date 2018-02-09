@@ -2,7 +2,7 @@ import {ISSUE_HEADER_LIST_WIDE,
         ISSUE_HEADER_LIST_NARROW,
         PAGE_KEY__ISSUES_PAGE
 } from './ItemListKeyRegistry'
-
+import { setAutoClockProjectAvailable } from './AutoClock'
 
 export const INIT_PAGE = 'INIT_PAGE'
 export const SET_PAGE_TOOLBARS = 'SET_PAGE_TOOLBARS'
@@ -63,10 +63,15 @@ export function select_sprints(page_key, sprint_ids) {
 }
 
 export function select_projects(page_key, project_ids) {
-    return {
-        type: UPDATE_PAGE_SELECTION,
-	page_key: page_key,
-        project_ids: project_ids
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_PAGE_SELECTION,
+	    page_key: page_key,
+            project_ids: project_ids
+        })
+        if ( project_ids && project_ids.length == 1 ) {
+            dispatch(setAutoClockProjectAvailable(project_ids[0]))
+        }
     }
 }
 
