@@ -88,9 +88,6 @@ class VisualSpecDocument(BaseModel):
                 issue.save()
                 IssueHistory.add_history(user, issue, "added visual spec document", "", name)
 
-        import pdb; pdb.set_trace()
-
-                
     def height_and_width(self):
         max_size = settings.QUOTE_IMAGE_MAX_SIZE
         height = self.hires_height
