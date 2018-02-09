@@ -216,7 +216,7 @@ export function groupUnsortedIssuesIntoFeature(issue_ids) {
         const issues = getIssues(state, compact(issue_ids))
         map(issues, function (issue) {
             if (issue.can_group_issues) {
-                if (feature_issue) {
+                if (feature_issue && issue.id != feature_issue.id) {
                     alert("Please select only one feature issue to group with")
                     ok_to_group = false
                 } else {
