@@ -106,9 +106,11 @@ class AutoClockEntryForm extends Component {
                     </div>
                   }
 
+                  { false &&
                   <div className="auto-clock__form__description">
                     <Field name="description" component={this.renderDescriptionField} />
                   </div>
+                  }
               </div>
 
               <div className="auto-clock__form__start">
