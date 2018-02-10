@@ -1,7 +1,7 @@
 import logging
 from django.utils import timezone
 from impasync.refresh_notifier import RefreshNotifier
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -20,6 +20,41 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated,))
 class ClockViewSet(BaseViewSet):
 
+    @list_route(methods=['GET'])
+    def auto_clock(self, request):
+        return self.list(request)
+    
+    def list(self, request):
+        try:
+            context = {}
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
+
+            entries = self.allowed_timesheet_entries()
+            entries = entries.order_by("-start_time")
+            entries = self.apply_filter(qs=entries,
+                                         raw_filter_args=filter_args)
+            entries = self.apply_pagination(qs=entries,
+                                             pagination=pagination)
+
+            if format_args.get('ids_only'):
+                context['ids'] = [str(x) for x in entries.values_list('id', flat=True)]
+            else:
+                s = ClockEntrySerializer(entries, many=True)
+                entries_data = s.data
+                context['entries'] = entries_data
+            context['pagination'] = pagination
+            data = {'status': 'success', 'payload': context}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
+    
     @detail_route(methods=['POST'])
     def clockIn(self, request, pk):
         try:

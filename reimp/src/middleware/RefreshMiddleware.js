@@ -19,6 +19,7 @@ import { invalidateProjectDashboards } from '../actions/ProjectDashboards'
 import { invalidateNudges } from '../actions/Nudges'
 import { addAsyncMessage } from '../actions/Async'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
+import { invalidateAutoClocks } from '../actions/AutoClock'
 
 import {
     invalidateList
@@ -35,6 +36,7 @@ import {
     LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
     LIST_KEY__FORM_TAG_LIST,
     LIST_KEY__WIKI_LIST,
+    LIST_KEY__AUTO_CLOCK,
     SELECTOR__SPRINTS
 } from '../actions/ItemListKeyRegistry'
 import { each, keys } from 'lodash'
@@ -84,6 +86,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateSprintReviews([d.entity_ref]))
     } else if ( d.entity_name === 'nudge' ) {
         dispatch(invalidateNudges([d.entity_ref]))
+    } else if ( d.entity_name === 'entry' ) {
+        dispatch(invalidateAutoClocks([d.entity_ref]))
     }
 }
 
@@ -132,6 +136,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__FORM_TAG_LIST] = true
     } else if ( d.entity_name === "wikipage" ) {
         list_keys_to_invalidate[LIST_KEY__WIKI_LIST] = true
+    } else if ( d.entity_name === "entry" ) {
+        list_keys_to_invalidate[LIST_KEY__AUTO_CLOCK] = true
     }
 }
 

@@ -63,6 +63,7 @@ router.register(r'issue_review', issue_review_api.IssueReviewViewSet,
                 base_name='issue_review')
 router.register(r'clock', clock_api.ClockViewSet,
                 base_name='clock')
+router.register(r'auto_clock', clock_api.ClockViewSet, base_name='auto_clock') #duplicate of /clock, maybe to be resolved, unclear right not if they'll diverge
 router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,

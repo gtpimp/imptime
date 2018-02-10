@@ -8,8 +8,6 @@ import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import AutoClockEntryForm from './AutoClockEntryForm'
-import AutoClockList from './AutoClockList'
-import { ENTITY_KEY__AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
 
 class AutoClockPopup extends Component {
     constructor(props) {
@@ -48,7 +46,6 @@ class AutoClockPopup extends Component {
               <div className="auto-clock__header">Auto clock</div>
               <div className="auto-clock__status">Not clocked in</div>
 
-              <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
               <AutoClockEntryForm project_id={available_project_id}
                                   sprint_id={available_sprint_id}
                                   issue_id={available_issue_id}
