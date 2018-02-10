@@ -59,29 +59,29 @@ export function getAutoClocksById(state, auto_clock_ids) {
 }
 
 export function setAutoClockProjectAvailable(project_id) {
-    return setAutoClockEntityAvailable(project_id, null, null)
-}
-
-export function setAutoClockSprintAvailable(project_id, sprint_id) {
-    return setAutoClockEntityAvailable(project_id, sprint_id, null)
-}
-
-export function setAutoClockIssueAvailable(project_id, sprint_id, issue_id) {
-    return setAutoClockEntityAvailable(project_id, sprint_id, issue_id)
-}
-
-function setAutoClockEntityAvailable(project_id, sprint_id, issue_id) {
     return (dispatch, getState) => {
         const state = getState()
         const selected_project_ids = get_selected_project_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
-        const selected_sprint_ids = get_selected_sprint_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
-        const selected_issue_ids = get_selected_issue_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
         if ( project_id && selected_project_ids.length == 0 || selected_project_ids[0] != project_id  ) {
             dispatch(select_projects(CONTEXT_KEY__AUTO_CLOCK, [project_id]))
         }
+    }
+}
+
+export function setAutoClockSprintAvailable(sprint_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const selected_sprint_ids = get_selected_sprint_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
         if ( sprint_id && selected_sprint_ids.length == 0 || selected_sprint_ids[0] != sprint_id  ) {
             dispatch(select_sprints(CONTEXT_KEY__AUTO_CLOCK, [sprint_id]))
         }
+    }
+}
+
+export function setAutoClockIssueAvailable(issue_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const selected_issue_ids = get_selected_issue_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
         if ( issue_id && selected_issue_ids.length == 0 || selected_issue_ids[0] != issue_id  ) {
             dispatch(select_issues(CONTEXT_KEY__AUTO_CLOCK, [issue_id]))
         }

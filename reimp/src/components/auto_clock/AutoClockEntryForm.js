@@ -9,6 +9,7 @@ import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
+import AutoClockEntity from './AutoClockEntity'
 
 class AutoClockEntryForm extends Component {
 
@@ -60,8 +61,8 @@ class AutoClockEntryForm extends Component {
         return (
             <input
                 maxLength="100"
-                className="textarea textarea--text-component textarea--title"
-                placeholder="Description"
+                className="textarea textarea--text-component"
+                placeholder="Optional description"
                 onChange={input.onChange}
                 value={input.value}
             />
@@ -74,23 +75,9 @@ class AutoClockEntryForm extends Component {
         return (
             <form onSubmit={handleSubmit} className="auto-clock-form">
 
-              <div className="auto-clock__available_entity">
-                { project_id && 
-                  <div className="auto-clock__project">
-                    <ProjectName project_id={project_id} />
-                  </div>
-                }
-                  { sprint_id && 
-                    <div className="auto-clock__sprint">
-                      <SprintName sprint_id={sprint_id} />
-                    </div>
-                  }
-                    { issue_id && 
-                      <div className="auto-clock__issue">
-                        <IssueName issue_id={issue_id} />
-                      </div>
-                    }
-              </div>
+              <AutoClockEntity project_id={project_id}
+                               sprint_id={sprint_id}
+                               issue_id={issue_id} />
 
               { role_options && role_options.length > 0 && 
                 <div className="auto-clock__role">
@@ -98,13 +85,13 @@ class AutoClockEntryForm extends Component {
                 </div>
               }
 
-                <div className="auto-clock__description">
-                  <Field name="description" component={this.renderDescriptionField} />
-                </div>
-                
-                <div className="auto-clock__actions">
-                  <button className="button" type="submit">Clock In</button>
-                </div>
+              <div className="auto-clock__description">
+                <Field name="description" component={this.renderDescriptionField} />
+              </div>
+
+              <div className="auto-clock__actions">
+                <button className="button" type="submit">Clock In</button>
+              </div>
 
                 
             </form>

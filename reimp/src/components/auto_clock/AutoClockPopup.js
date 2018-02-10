@@ -115,14 +115,18 @@ class AutoClockPopup extends Component {
 
               { most_recent_entry &&
                 <div className="auto-clock__most_recent">
-                  { most_recent_entry.is_active && <div>Most recent: </div> }
-                  { !most_recent_entry.is_active && <div>Current: </div> }
+                  { most_recent_entry.is_active &&
+                    <div>Current:
+                      <button type="button" onClick={() => this.onClockOut(most_recent_entry.id)}>Stop</button>
+                    </div>
+                  }
+                  { !most_recent_entry.is_active && <div>Most recent: </div> }
                   <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
-                  <button type="button" onClick={() => this.onClockOut(most_recent_entry.id)}>Stop</button>
                 </div>
               }
 
               <div className="auto-clock__next">
+                Next:
                 <AutoClockEntryForm project_id={available_project_id}
                                     sprint_id={available_sprint_id}
                                     issue_id={available_issue_id}

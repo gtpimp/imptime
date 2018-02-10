@@ -10,6 +10,7 @@ import Hours from '../Hours'
 import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
+import AutoClockEntity from './AutoClockEntity'
 
 class AutoClockEntry extends Component {
     constructor(props) {
@@ -71,26 +72,9 @@ class AutoClockEntry extends Component {
               <div className="auto-clock-entry__description">
                 {entry.comments}
               </div>
-              <div className="auto-clock-entry__entities">
-                <div className="auto-clock-entry__label">
-                  Project:
-                </div>
-                <div className="auto-clock-entry__field auto-clock-entry__project_name">
-                  <ProjectName project_id={entry.project_id} />
-                </div>
-                <div className="auto-clock-entry__label">
-                  Sprint:
-                </div>
-                <div className="auto-clock-entry__field auto-clock-entry__sprint_name">
-                  <SprintName sprint_id={entry.sprint_id} />
-                </div>
-                <div className="auto-clock-entry__label">
-                  Issue:
-                </div>
-                <div className="auto-clock-entry__field auto-clock-entry__issue_name">
-                  <IssueName issue_id={entry.issue_id} />
-                </div>
-              </div>
+              <AutoClockEntity project_id={entry.project_id}
+                               sprint_id={entry.sprint_id}
+                               issue_id={entry.issue_id} />
             </div>
         )
     }

@@ -2,7 +2,7 @@ import {ISSUE_HEADER_LIST_WIDE,
         ISSUE_HEADER_LIST_NARROW,
         PAGE_KEY__ISSUES_PAGE
 } from './ItemListKeyRegistry'
-import { setAutoClockProjectAvailable } from './AutoClock'
+import { setAutoClockProjectAvailable, setAutoClockSprintAvailable, setAutoClockIssueAvailable } from './AutoClock'
 
 export const INIT_PAGE = 'INIT_PAGE'
 export const SET_PAGE_TOOLBARS = 'SET_PAGE_TOOLBARS'
@@ -40,25 +40,35 @@ export function hide_sidebar(page_key, sidebar_name) {
 export function set_toolbars(page_key, toolbar_names) {
 
     return {
-	      type: SET_PAGE_TOOLBARS,
-	      page_key: page_key,
+	type: SET_PAGE_TOOLBARS,
+	page_key: page_key,
         toolbar_names: toolbar_names
     }
 }
 
 export function select_issues(page_key, issue_ids) {
-    return {
-        type: UPDATE_PAGE_SELECTION,
-	page_key: page_key,
-        issue_ids: issue_ids,
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_PAGE_SELECTION,
+	    page_key: page_key,
+            issue_ids: issue_ids,
+        })
+        if ( issue_ids && issue_ids.length == 1 ) {
+            dispatch(setAutoClockIssueAvailable(issue_ids[0]))
+        }
     }
 }
 
 export function select_sprints(page_key, sprint_ids) {
-    return {
-        type: UPDATE_PAGE_SELECTION,
-	page_key: page_key,
-        sprint_ids: sprint_ids
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_PAGE_SELECTION,
+	    page_key: page_key,
+            sprint_ids: sprint_ids
+        })
+        if ( sprint_ids && sprint_ids.length == 1 ) {
+            dispatch(setAutoClockSprintAvailable(sprint_ids[0]))
+        }
     }
 }
 
