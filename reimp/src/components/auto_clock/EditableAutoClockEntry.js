@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from '../form/EditableProperty'
-import { updateAutoClock, getAutoClock, ensureAutoClocksLoaded } from '../../actions/AutoClock'
+import { updateAutoClock, getAutoClock, ensureAutoClocksLoaded, deleteAutoClocks } from '../../actions/AutoClock'
 import Blank from '../form/Blank'
 import ReactMarkdown from 'react-markdown'
 import AutoClockEntry from './AutoClockEntry'
@@ -12,6 +12,7 @@ class EditableAutoClockEntry extends Component {
     constructor(props) {
         super(props)
         this.onChange = this.onChange.bind(this)
+        this.onDeleteEntry = this.onDeleteEntry.bind(this)
     }
 
     componentDidMount() {
@@ -33,6 +34,14 @@ class EditableAutoClockEntry extends Component {
         dispatch(updateAutoClock(entry_id, new_values))
     }
 
+    onDeleteEntry() {
+        const { dispatch, entry_id } = this.props
+        if ( ! confirm( "Are you sure you want to delete this clock entry?" ) ) {
+            return false
+        }
+        dispatch(deleteAutoClocks([entry_id]))
+    }
+
     render() {
         const { entry, can_edit } = this.props
 
@@ -41,9 +50,13 @@ class EditableAutoClockEntry extends Component {
                               initial_value={entry}
                               onChange={this.onChange}
                               can_edit={can_edit}
-                              edit_as_modal={true}
+                              edit_as_modal={false}
             >
-              <AutoClockEntryForm />
+              <div>
+                <AutoClockEntry entry_id={entry.id} />
+                { false && <AutoClockEntryForm /> }
+                <div className="icon--delete" onClick={this.onDeleteEntry}/>
+              </div>
               <div>
                 <AutoClockEntry entry_id={entry.id} />
               </div>

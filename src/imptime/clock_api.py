@@ -67,6 +67,9 @@ class ClockViewSet(BaseViewSet):
             
             project = self.allowed_project(project_id)
             project_role = self.allowed_project_roles(project=project).get(name=role_name)
+
+            if not project.can_add_dev_time():
+                raise Exception("Can't create entries for locked projects: %s" % project)
             
             if sprint_id is None:
                 sprint_id = project.get_most_recent_open_project_id() #sic
@@ -120,4 +123,33 @@ class ClockViewSet(BaseViewSet):
             return self.error_response(ex)
             
         return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['DELETE'])
+    def delete(self, request, pk):
+        try:
+            params = request.data
+            data = None
+
+            if 'item_ids' in params:
+                entry_pks = params['item_ids']
+            else:
+                entry_pks = [pk]
+
+            for entry_pk in entry_pks:
+                entry = self.allowed_timesheet_entry(entry_pk)
+
+                if not entry.issue.project.can_add_dev_time():
+                    raise Exception("Can't delete entries for locked projects: %s" % entry.issue.project)
+                
+                entry.delete()
+
+            if not data:
+                data = {'status': 'success', 'payload': entry_pks}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
     

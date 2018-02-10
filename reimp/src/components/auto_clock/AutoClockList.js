@@ -32,7 +32,7 @@ import {
 import DivTable from '../DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
-import AutoClockEntry from './AutoClockEntry'
+import EditableAutoClockEntry from './EditableAutoClockEntry'
 
 class AutoClockList extends Component {
 
@@ -66,7 +66,7 @@ class AutoClockList extends Component {
         return (
             <div className="auto_clock-list__row" key={auto_clock.id}>
               <div className={classNames("auto_clock-list__auto_clock_name")} >
-                <AutoClockEntry entry_id={auto_clock.id} /> 
+                <EditableAutoClockEntry entry_id={auto_clock.id} /> 
               </div>
             </div>
         )

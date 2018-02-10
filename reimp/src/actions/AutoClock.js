@@ -11,7 +11,9 @@ import {
     getItem,
     getItems,
     getItemsById,
-    itemPost
+    itemPost,
+    deleteItem,
+    deleteItems
 } from '../actions/Item'
 import {
     select_issues,
@@ -120,3 +122,15 @@ export function clockOut(entry_id) {
     const data = { entry_id: entry_id }
     return itemPost(ENTITY_KEY__AUTO_CLOCK, [entry_id], url, field_name, field_value, method, data)
 }
+
+export function deleteAutoClocks(clock_ids) {
+    // Hack: not sure why base function Delete isn't working, something with the api perhaps?
+    
+    const url = "imp/clock/0/delete/"
+    const field_name = "delete"
+    const field_value = null
+    const method = "DELETE"
+    const data = { item_ids: clock_ids }
+    return itemPost(ENTITY_KEY__AUTO_CLOCK, [clock_ids[0]], url, field_name, field_value, method, data)
+}
+

@@ -2928,6 +2928,10 @@ class Entry(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
 
+    def delete(self, *args, **kwargs):
+        RefreshNotifier().notify_model_delete(self)
+        super(Entry, self).delete(*args, **kwargs)
+            
     def get_seconds(self):
         """
         Determines the difference between the starting and ending time.  The
