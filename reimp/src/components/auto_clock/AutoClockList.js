@@ -33,18 +33,20 @@ import DivTable from '../DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
+import Pagination from '../Pagination'
 
 class AutoClockList extends Component {
 
     constructor(props) {
         super(props)
+        this.onRefresh = this.onRefresh.bind(this)
     }
     
     componentDidMount() {
 	const { dispatch, list_key, filter, nested_objects } = this.props
 	dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
-        dispatch(update_list_pagination(list_key, { page_size: 10 }))
+        dispatch(update_list_pagination(list_key, { page_size: 8 }))
         this.refresh()
     }
 
@@ -62,6 +64,15 @@ class AutoClockList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
+    onRefresh(event) {
+        const { dispatch, list_key } = this.props
+	if ( event ) {
+	    event.stopPropagation()
+	}
+	dispatch(invalidateList(list_key))
+	dispatch(fetchAutoClocksIfNeeded(list_key))
+    }
+
     render_row(auto_clock) {
         return (
             <div className="auto_clock-list__row" key={auto_clock.id}>
@@ -74,7 +85,7 @@ class AutoClockList extends Component {
 
     render() {
 
-        const { auto_clocks_by_id, is_loading } = this.props
+        const { auto_clocks_by_id, is_loading, list_key } = this.props
         const that = this
 
         if ( is_loading && !auto_clocks_by_id && auto_clocks_by_id.length == 0 ) {
@@ -85,6 +96,8 @@ class AutoClockList extends Component {
 
         return (
             <div className="auto_clock-list">
+              <div className="auto_clock-list__header">Historical Entries</div>
+              <Pagination list_key={list_key} on_changed={this.onRefresh} />
               <DivTable>
                 { map(values(auto_clocks_by_id), (auto_clock) => this.render_row(auto_clock) ) }
               </DivTable>

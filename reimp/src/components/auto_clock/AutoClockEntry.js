@@ -44,10 +44,10 @@ class AutoClockEntry extends Component {
         }
         
         return (
-            <div className="auto-clock-entry">
+            <div className={classNames("auto-clock-entry", "entry__"+entry.id)}>
+
               <div className="auto-clock-entry__times">
 
-                {entry.id}
                 <div className={icon_class}/>
                   
                 <div className="auto-clock-entry__field auto-clock-entry__start-time">
