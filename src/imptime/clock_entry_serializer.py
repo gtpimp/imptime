@@ -16,3 +16,7 @@ class ClockEntrySerializer(BaseSerializer):
     sprint_id = serializers.CharField(source="issue.project_id") #sic
     project_id = serializers.CharField(source="issue.project.business_id") #sic
     
+class ClockEntryUpdateSerializer(BaseSerializer):
+    start_time = serializers.DateTimeField()
+    end_time = serializers.DateTimeField()
+    

@@ -13,6 +13,7 @@ import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
 import AutoClockEntity from './AutoClockEntity'
+import AutoClockEntry from './AutoClockEntry'
 
 class AutoClockEntryForm extends Component {
 
@@ -91,15 +92,17 @@ class AutoClockEntryForm extends Component {
     }
 
     render() {
-        const { handleSubmit, project, project_id, role_options } = this.props
+        const { handleSubmit, entry_id, onDelete, project, project_id, role_options } = this.props
 
         return (
             <form className="auto-clock-form" onSubmit={handleSubmit}>
 
+              <AutoClockEntry entry_id={entry_id} />
+              
               <div className="auto-clock__form__row1">
                   { role_options && role_options.length > 0 &&
                     <div className="auto-clock__role">
-                      <Field name="role" component={this.renderRoleField} />
+                      <Field name="role_name" component={this.renderRoleField} />
                     </div>
                   }
 
@@ -118,6 +121,7 @@ class AutoClockEntryForm extends Component {
               </div>
               
               <button type="submit" className="button">Save</button>
+              <div className="icon--delete" onClick={onDelete}/>
                 
             </form>
         )
@@ -126,7 +130,7 @@ class AutoClockEntryForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted, entry_id } = props
+    const { onSubmitted, onDelete, entry_id } = props
 
     const entry = getAutoClock(state, entry_id) || {}
     const project_id = entry.project_id
@@ -137,9 +141,10 @@ function mapStateToProps(state, props) {
         initialValues: {start_time: moment(entry.start_time),
                         end_time: moment(entry.end_time),
                         description: entry.comments,
-                        role: entry.role_name},
+                        role_name: entry.role_name},
         enableReinitialize: true,
         onSubmit: onSubmitted,
+        onDelete: onDelete,
         project: project,
         project_id: project_id,
         entry: entry,

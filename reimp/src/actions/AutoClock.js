@@ -134,3 +134,17 @@ export function deleteAutoClocks(clock_ids) {
     return itemPost(ENTITY_KEY__AUTO_CLOCK, [clock_ids[0]], url, field_name, field_value, method, data)
 }
 
+export function updateAutoClocks(clock_ids, role_name, description, start_time, end_time) {
+
+    const url = "imp/clock/0/adjust/"
+    const field_name = "clockUpdate"
+    const field_value = null
+    const method = "PUT"
+    const data = { clock_ids: clock_ids,
+                   role_name: role_name,
+                   description: description,
+                   start_time: start_time,
+                   end_time: end_time }
+    return itemPost(ENTITY_KEY__AUTO_CLOCK, clock_ids, url, field_name, field_value, method, data)
+}
+

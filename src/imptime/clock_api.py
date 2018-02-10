@@ -12,7 +12,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole
-from clock_entry_serializer import ClockEntrySerializer
+from clock_entry_serializer import ClockEntrySerializer, ClockEntryUpdateSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -146,6 +146,41 @@ class ClockViewSet(BaseViewSet):
 
             if not data:
                 data = {'status': 'success', 'payload': entry_pks}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['PUT'])
+    def adjust(self, request, pk):
+        try:
+            params = request.data
+            
+            if 'clock_ids' in params:
+                entry_pks = params['clock_ids']
+            else:
+                entry_pks = [pk]
+
+            s = ClockEntryUpdateSerializer(data=params)
+            s.is_valid(raise_exception=True)
+            validated_data = s.validated_data
+                
+            for entry_pk in entry_pks:
+                entry = self.allowed_timesheet_entry(entry_pk)
+
+                if not entry.issue.project.can_add_dev_time(): #sic
+                    raise Exception("Can't delete entries for locked sprints: %s" % entry.issue.project) #sic
+                
+                entry.role = ProjectRole.objects.get_or_create(business=entry.issue.project.business,
+                                                               name=params['role_name'])[0]
+                entry.start_time = validated_data['start_time']
+                entry.end_time = validated_data['end_time']
+                entry.comments = params['description']
+                entry.save()
+                
+            data = {'status': 'success', 'payload': entry_pks}
 
         except Exception, ex:
             logger.exception(ex)

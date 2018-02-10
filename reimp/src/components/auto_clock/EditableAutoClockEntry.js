@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from '../form/EditableProperty'
-import { updateAutoClock, getAutoClock, ensureAutoClocksLoaded, deleteAutoClocks } from '../../actions/AutoClock'
+import { updateAutoClocks, getAutoClock, ensureAutoClocksLoaded, deleteAutoClocks } from '../../actions/AutoClock'
 import Blank from '../form/Blank'
 import ReactMarkdown from 'react-markdown'
 import AutoClockEntry from './AutoClockEntry'
@@ -31,7 +31,8 @@ class EditableAutoClockEntry extends Component {
 
     onChange(new_values) {
         const { dispatch, entry_id } = this.props
-        dispatch(updateAutoClock(entry_id, new_values))
+        dispatch(updateAutoClocks([entry_id], new_values.role_name, new_values.description,
+                                  new_values.start_time, new_values.end_time))
     }
 
     onDeleteEntry() {
@@ -52,11 +53,7 @@ class EditableAutoClockEntry extends Component {
                               can_edit={can_edit}
                               edit_as_modal={false}
             >
-              <div>
-                <AutoClockEntry entry_id={entry.id} />
-                <AutoClockEntryForm entry_id={entry.id} />
-                <div className="icon--delete" onClick={this.onDeleteEntry}/>
-              </div>
+              <AutoClockEntryForm entry_id={entry.id} onDelete={this.onDeleteEntry} />
               <div>
                 <AutoClockEntry entry_id={entry.id} />
               </div>

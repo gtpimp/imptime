@@ -46,7 +46,8 @@ class AutoClockEntry extends Component {
         return (
             <div className="auto-clock-entry">
               <div className="auto-clock-entry__times">
-                
+
+                {entry.id}
                 <div className={icon_class}/>
                   
                 <div className="auto-clock-entry__field auto-clock-entry__start-time">
@@ -67,7 +68,7 @@ class AutoClockEntry extends Component {
                   
               </div>
               <div className="auto-clock-entry__role">
-                {entry.role_name}
+                Role {entry.role_name}
               </div>
               <div className="auto-clock-entry__description">
                 {entry.comments}
