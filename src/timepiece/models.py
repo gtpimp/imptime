@@ -2923,13 +2923,16 @@ class Entry(BaseModel):
         was_created = not self.id
         self.hours = Decimal('%.2f' % round(self.total_hours, 2))
         super(Entry, self).save(*args, **kwargs)
-        if was_created:
-            RefreshNotifier().notify_model_create(self)
-        else:
-            RefreshNotifier().notify_model_update(self)
+
+        if self.source != 'emacs':
+            if was_created:
+                RefreshNotifier().notify_model_create(self)
+            else:
+                RefreshNotifier().notify_model_update(self)
 
     def delete(self, *args, **kwargs):
-        RefreshNotifier().notify_model_delete(self)
+        if self.source != 'emacs':
+            RefreshNotifier().notify_model_delete(self)
         super(Entry, self).delete(*args, **kwargs)
             
     def get_seconds(self):
