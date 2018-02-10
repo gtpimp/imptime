@@ -64,12 +64,15 @@ function announceLoadingItems(entity_key, item_ids) {
 
 function announceItemsLoaded(entity_key, payload) {
 
-    const item_payload = payload[entity_key + "s"]
+    let item_payload = payload[entity_key + "s"]
+    if ( ! item_payload ) {
+        item_payload = payload.items
+    }
     return {
         type: ANNOUNCE_ITEMS_LOADED,
         entity_key: entity_key,
         items_by_id: keyBy(item_payload, 'id'),
-	      received_at: Date.now()
+	received_at: Date.now()
     }
 }
 

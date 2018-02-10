@@ -45,7 +45,7 @@ class ClockViewSet(BaseViewSet):
             else:
                 s = ClockEntrySerializer(entries, many=True)
                 entries_data = s.data
-                context['entries'] = entries_data
+                context['items'] = entries_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
             

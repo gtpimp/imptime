@@ -99,7 +99,6 @@ class AutoClockPopup extends Component {
         return (
             <div className="auto-clock">
               <div className="auto-clock__header">Auto clock</div>
-              <div className="auto-clock__status">Not clocked in</div>
 
               { show_list &&
                 <div className="icon--collapse" onClick={this.hideList}/>
@@ -111,7 +110,6 @@ class AutoClockPopup extends Component {
                   <div className="icon--expand" onClick={this.showList}/>
               }
 
-                  { false && (<div>
               { most_recent_entry && most_recent_entry.is_active &&
                 <div className="auto-clock__active-entry">
                   <AutoClockEntry entry_id={most_recent_entry.id}/>
@@ -120,16 +118,15 @@ class AutoClockPopup extends Component {
 
               { most_recent_entry && !most_recent_entry.is_active &&
                 <div className="auto-clock__inactive-entry">
+                  <div className="auto-clock__status">Not clocked in</div>
                   <AutoClockEntry entry_id={most_recent_entry.id}/>
                 </div>
-                }
-                  </div>) }
-                
+              }
+
               <AutoClockEntryForm project_id={available_project_id}
                                   sprint_id={available_sprint_id}
                                   issue_id={available_issue_id}
-                                  onSubmitted={this.onClockIn}
-              />
+                                  onSubmitted={this.onClockIn} />
               
             </div>
         )
@@ -168,7 +165,8 @@ function mapStateToProps(state, props) {
         nested_objects,
         filter,
         logged_in_user_id,
-        most_recent_entry
+        most_recent_entry,
+        list_key
     }
 
 }
