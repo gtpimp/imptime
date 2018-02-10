@@ -1,9 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import EditableProperty from './form/EditableProperty'
-import WikiForm from './form/WikiForm'
-import { updateAutoClock, getAutoClock, ensureAutoClocksLoaded } from '../actions/AutoClock'
-import Blank from './form/Blank'
+import EditableProperty from '../form/EditableProperty'
+import { updateAutoClock, getAutoClock, ensureAutoClocksLoaded } from '../../actions/AutoClock'
+import Blank from '../form/Blank'
 import ReactMarkdown from 'react-markdown'
 import AutoClockEntry from './AutoClockEntry'
 import AutoClockEntryForm from './AutoClockEntryForm'
@@ -39,10 +38,10 @@ class EditableAutoClockEntry extends Component {
 
         return (
             <EditableProperty property_key={'entry_id_'+entry.id}
-                              initial_value={content}
+                              initial_value={entry}
                               onChange={this.onChange}
                               can_edit={can_edit}
-                              edit_as_model={true}
+                              edit_as_modal={true}
             >
               <AutoClockEntryForm />
               <div>

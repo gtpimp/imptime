@@ -9,7 +9,7 @@ import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import AutoClockEntryForm from './AutoClockEntryForm'
 import AutoClockList from './AutoClockList'
-import AutoClockEntry from './AutoClockEntry'
+import EditableAutoClockEntry from './EditableAutoClockEntry'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
@@ -112,15 +112,18 @@ class AutoClockPopup extends Component {
 
               { most_recent_entry && most_recent_entry.is_active &&
                 <div className="auto-clock__active-entry">
-                  <AutoClockEntry entry_id={most_recent_entry.id}/>
+                  <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
                 </div>
               }
 
               { most_recent_entry && !most_recent_entry.is_active &&
                 <div className="auto-clock__inactive-entry">
-                  <div className="auto-clock__status">Not clocked in</div>
-                  <AutoClockEntry entry_id={most_recent_entry.id}/>
+                  <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
                 </div>
+              }
+
+              { ! most_recent_entry || !most_recent_entry.is_active &&
+                <div className="auto-clock__status">Not clocked in</div>
               }
 
               <AutoClockEntryForm project_id={available_project_id}
