@@ -100,7 +100,22 @@ class AutoClockPopup extends Component {
 
         return (
             <div className="auto-clock">
-              <div className="auto-clock__header">Auto clock</div>
+              { most_recent_entry &&
+                <div className="auto-clock__most_recent">
+                  { most_recent_entry.is_active &&
+                      <div className="icon--timer-stop" onClick={() => this.onClockOut(most_recent_entry.id)} />
+                  }
+                  <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
+                </div>
+              }
+
+              <div className="auto-clock__next">
+                <AutoClockEntryForm project_id={available_project_id}
+                                    sprint_id={available_sprint_id}
+                                    issue_id={available_issue_id}
+                                    onSubmitted={this.onClockIn} />
+              </div>
+
 
               { show_list &&
                 <div className="icon--collapse" onClick={this.hideList}/>
@@ -109,30 +124,10 @@ class AutoClockPopup extends Component {
                 <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
               }
               { ! show_list &&
-                  <div className="icon--expand" onClick={this.showList}/>
+                <div className="icon--expand" onClick={this.showList}/>
               }
 
-              { most_recent_entry &&
-                <div className="auto-clock__most_recent">
-                  { most_recent_entry.is_active &&
-                      <div className="icon--timer-stop" onClick={() => this.onClockOut(most_recent_entry.id)} />
-                  }
-                  { !most_recent_entry.is_active &&
-                    <div className="auto-clock__header">Most recent: </div>
-                  }
-                  <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
-                </div>
-              }
 
-                <div className="auto-clock__next">
-                  <div className="auto-clock__header">
-                       Next:
-                  </div>
-                  <AutoClockEntryForm project_id={available_project_id}
-                                      sprint_id={available_sprint_id}
-                                      issue_id={available_issue_id}
-                                      onSubmitted={this.onClockIn} />
-              </div>
               
             </div>
         )

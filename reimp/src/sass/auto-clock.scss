@@ -2,14 +2,16 @@
 
 .auto-clock {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 8px;
+    left: 400px;
     min-height: 50px;
     font-size: $font-size-small;
     background-color: #ffffff;
     box-shadow: inset -1px 0 0 0 #e0e0e0;
     padding: 5px;
     z-index:999;
+    display: flex;
+    flex-direction: row;
 }
  
 .auto-clock__header {
@@ -40,15 +42,23 @@
 }
 
 .auto-clock__most_recent {
-    margin-top: 5px;
     margin-bottom: 5px;
-    border-top: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: row;
+}
+
+.auto-clock__form__row1 {
+    display: flex;
+    flex-direction: row;
+}
+
+.auto-clock__form__description {
+    margin-top: 4px;
 }
 
 .auto-clock__next {
-    margin-top: 5px;
     margin-bottom: 5px;
-    border-top: 1px solid #e0e0e0;
+    margin-left: 15px;
 }
 
 .auto-clock__role {
@@ -74,7 +84,8 @@
 }
 
 .auto-clock-entry__clockables {
-    
+    display: flex;
+    flex-direction: row;
 }
 
 .auto-clock-entry__clockable {

@@ -107,17 +107,17 @@ class AutoClockEntryForm extends Component {
         return (
             <form className="auto-clock-form">
 
-              { role_options && role_options.length > 0 &&
-                <div className="auto-clock__role">
-                  <Field name="role" component={this.renderRoleField} />
-                </div>
-              }
+              <div className="auto-clock__form__row1">
+                  { role_options && role_options.length > 0 &&
+                    <div className="auto-clock__role">
+                      <Field name="role" component={this.renderRoleField} />
+                    </div>
+                  }
 
-              <div className="auto-clock__description">
-                <Field name="description" component={this.renderDescriptionField} />
+                  <div className="auto-clock__form__description">
+                    <Field name="description" component={this.renderDescriptionField} />
+                  </div>
               </div>
-
-
 
               <div className="auto-clock-entry__clockables">
                 { project_id &&
