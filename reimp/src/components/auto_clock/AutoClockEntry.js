@@ -67,7 +67,7 @@ class AutoClockEntry extends Component {
                   
               </div>
               <div className="auto-clock-entry__role">
-                {entry.role}
+                {entry.role_name}
               </div>
               <div className="auto-clock-entry__description">
                 {entry.comments}

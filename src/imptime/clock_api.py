@@ -11,7 +11,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory, Feature, Entry
+from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole
 from clock_entry_serializer import ClockEntrySerializer
 
 logger = logging.getLogger(__name__)
@@ -68,13 +68,13 @@ class ClockViewSet(BaseViewSet):
             project = self.allowed_project(project_id)
             project_role = self.allowed_project_roles(project=project).get(name=role_name)
 
-            if not project.can_add_dev_time():
-                raise Exception("Can't create entries for locked projects: %s" % project)
-            
             if sprint_id is None:
                 sprint_id = project.get_most_recent_open_project_id() #sic
             sprint = self.allowed_sprint(sprint_id)
 
+            if not sprint.can_add_dev_time():
+                raise Exception("Can't create entries for locked sprints: %s" % sprint)
+            
             if issue_id is None:
                 issue = sprint.get_default_issue_for_role(project_role)
             else:
@@ -92,6 +92,7 @@ class ClockViewSet(BaseViewSet):
                                          comments=description,
                                          end_time=None,
                                          hours=0,
+                                         role=ProjectRole.objects.get_or_create(business=project, name=role_name)[0],
                                          issue=issue)
 
             context = {}
@@ -138,8 +139,8 @@ class ClockViewSet(BaseViewSet):
             for entry_pk in entry_pks:
                 entry = self.allowed_timesheet_entry(entry_pk)
 
-                if not entry.issue.project.can_add_dev_time():
-                    raise Exception("Can't delete entries for locked projects: %s" % entry.issue.project)
+                if not entry.issue.project.can_add_dev_time(): #sic
+                    raise Exception("Can't delete entries for locked sprints: %s" % entry.issue.project) #sic
                 
                 entry.delete()
 

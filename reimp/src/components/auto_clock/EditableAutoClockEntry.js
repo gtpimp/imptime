@@ -54,7 +54,7 @@ class EditableAutoClockEntry extends Component {
             >
               <div>
                 <AutoClockEntry entry_id={entry.id} />
-                { false && <AutoClockEntryForm /> }
+                <AutoClockEntryForm entry_id={entry.id} />
                 <div className="icon--delete" onClick={this.onDeleteEntry}/>
               </div>
               <div>

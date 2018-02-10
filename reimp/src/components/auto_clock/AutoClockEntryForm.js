@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import moment from 'moment'
 import classNames from 'classnames'
 import { map } from 'lodash'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Field, reduxForm } from 'redux-form'
-import FileUploader from '../form/FileUploader'
-import FileLabel from '../form/FileLabel'
 import { UPLOAD_RELATIVE_URL } from '../../actions/VisualSpecDocuments'
+import { getAutoClock, ensureAutoClocksLoaded } from '../../actions/AutoClock'
 import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
@@ -18,9 +20,7 @@ class AutoClockEntryForm extends Component {
         super(props)
         this.renderRoleField = this.renderRoleField.bind(this)
         this.renderDescriptionField = this.renderDescriptionField.bind(this)
-        this.clockProject = this.clockProject.bind(this)
-        this.clockSprint = this.clockSprint.bind(this)
-        this.clockIssue = this.clockIssue.bind(this)
+        this.renderDateTimePicker = this.renderDateTimePicker.bind(this)
     }
 
     componentDidMount() {
@@ -31,34 +31,11 @@ class AutoClockEntryForm extends Component {
         this.refresh(props)
     }
 
-    clockProject(new_values) {
-        const { onSubmit, dispatch, project_id } = this.props
-        onSubmit({...new_values,
-                  project_id:project_id,
-                  sprint_id:null,
-                  issue_id:null})
-    }
-
-    clockSprint(new_values) {
-        const { onSubmit, dispatch, project_id, sprint_id } = this.props
-        onSubmit({...new_values,
-                  project_id:project_id,
-                  sprint_id:sprint_id,
-                  issue_id:null})
-    }
-
-    clockIssue(new_values) {
-        const { onSubmit, dispatch, project_id, sprint_id, issue_id } = this.props
-        onSubmit({...new_values,
-                  project_id:project_id,
-                  sprint_id:sprint_id,
-                  issue_id:issue_id})
-    }
-
     refresh(these_props) {
         const props = these_props || this.props
-        const { available_project_id, dispatch } = props
-        dispatch(ensureProjectsLoaded([available_project_id]))
+        const { entry_id, project_id, dispatch } = props
+        dispatch(ensureAutoClocksLoaded([entry_id]))
+        dispatch(ensureProjectsLoaded([project_id]))
     }
 
     renderRoleField(field) {
@@ -101,11 +78,23 @@ class AutoClockEntryForm extends Component {
         )
     }
 
+    renderDateTimePicker(field) {
+        const {input, data, onChange, ...rest} = field
+        return (
+            <DatePicker selected={input.value}
+                        dateFormat="LLL"
+                        showTimeSelect={true}
+                        timeFormat="HH:mm"
+                        timeIntervals={5}
+                        onChange={input.onChange} />
+        )
+    }
+
     render() {
-        const { handleSubmit, project, project_id, sprint_id, issue_id, role_options } = this.props
+        const { handleSubmit, project, project_id, role_options } = this.props
 
         return (
-            <form className="auto-clock-form">
+            <form className="auto-clock-form" onSubmit={handleSubmit}>
 
               <div className="auto-clock__form__row1">
                   { role_options && role_options.length > 0 &&
@@ -119,43 +108,16 @@ class AutoClockEntryForm extends Component {
                   </div>
               </div>
 
-              <div className="auto-clock-entry__clockables">
-                { project_id &&
-                  <div className="auto-clock-entry__clockable">
-                    <div className="auto-clock-entry__label">
-                      Project:
-                    </div>
-                    <div className="auto-clock-entry__field auto-clock-entry__project_name">
-                      <ProjectName project_id={project_id} />
-                    </div>
-                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockProject)} />
-                  </div>
-                }
-
-                { sprint_id &&
-                  <div className="auto-clock-entry__clockable">
-                    <div className="auto-clock-entry__label">
-                      Sprint:
-                    </div>
-                    <div className="auto-clock-entry__field auto-clock-entry__sprint_name">
-                      <SprintName sprint_id={sprint_id} />
-                    </div>
-                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockSprint)} />
-                  </div>
-                }
-
-                { issue_id &&
-                  <div className="auto-clock-entry__clockable">
-                    <div className="auto-clock-entry__label">
-                      Issue:
-                    </div>
-                    <div className="auto-clock-entry__field auto-clock-entry__issue_name">
-                      <IssueName issue_id={issue_id} />
-                    </div>
-                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockIssue)} />
-                  </div>
-                }
+              <div className="auto-clock__form__start">
+                Start: 
+                <Field name="start_time" component={this.renderDateTimePicker} />
               </div>
+              <div className="auto-clock__form__end">
+                End:
+                <Field name="end_time" component={this.renderDateTimePicker} />
+              </div>
+              
+              <button type="submit" className="button">Save</button>
                 
             </form>
         )
@@ -164,23 +126,24 @@ class AutoClockEntryForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted, project_id, sprint_id, issue_id } = props
+    const { onSubmitted, entry_id } = props
 
+    const entry = getAutoClock(state, entry_id) || {}
+    const project_id = entry.project_id
     const project = getProject(state, project_id) || {}
-
     const role_options = map(project.logged_in_users_roles || [], function(role) { return ( {value: role, label: role} ) })
 
     return {
-        initialValues: {project_id: project_id,
-                        sprint_id: sprint_id,
-                        issue_id: issue_id,
-                        role: project.logged_in_users_default_role},
+        initialValues: {start_time: moment(entry.start_time),
+                        end_time: moment(entry.end_time),
+                        description: entry.comments,
+                        role: entry.role_name},
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        project_id,
-        sprint_id,
-        issue_id,
-        project,
+        project: project,
+        project_id: project_id,
+        entry: entry,
+        entry_id: entry_id,
         role_options
     }
 }

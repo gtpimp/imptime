@@ -23,7 +23,7 @@
     "react-beautiful-dnd": "^2.6.4",
     "react-classnames": "^0.1.2",
     "react-cookie": "^0.4.6",
-    "react-datepicker": "^0.53.0",
+    "react-datepicker": "^1.1.0",
     "react-dnd": "^2.1.4",
     "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^15.6.1",

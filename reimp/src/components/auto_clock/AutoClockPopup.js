@@ -4,7 +4,7 @@ import map from 'lodash/map'
 import classNames from 'classnames'
 import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity, clockIn, clockOut } from '../../actions/AutoClock'
-import AutoClockEntryForm from './AutoClockEntryForm'
+import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import AutoClockList from './AutoClockList'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
@@ -109,11 +109,18 @@ class AutoClockPopup extends Component {
                 </div>
               }
 
+                
               <div className="auto-clock__next">
-                <AutoClockEntryForm project_id={available_project_id}
-                                    sprint_id={available_sprint_id}
-                                    issue_id={available_issue_id}
-                                    onSubmitted={this.onClockIn} />
+                { ! available_project_id &&
+                  <div>Select a project to start clocking</div>
+                }
+
+                { available_project_id &&
+                  <AutoClockNewEntryForm project_id={available_project_id}
+                                         sprint_id={available_sprint_id}
+                                         issue_id={available_issue_id}
+                                         onSubmitted={this.onClockIn} />
+                }
               </div>
 
 
