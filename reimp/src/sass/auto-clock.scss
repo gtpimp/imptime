@@ -72,3 +72,19 @@
 .auto-clock__radio--unchecked {
     border: 1px solid $form-field-border;
 }
+
+.auto-clock-entry__clockables {
+    
+}
+
+.auto-clock-entry__clockable {
+    display: flex;
+}
+
+.auto-clock__start {
+    cursor: pointer;
+}
+
+.auto-clock__header {
+    font-weight: bold;
+}

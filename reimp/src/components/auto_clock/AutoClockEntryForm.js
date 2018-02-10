@@ -18,14 +18,41 @@ class AutoClockEntryForm extends Component {
         super(props)
         this.renderRoleField = this.renderRoleField.bind(this)
         this.renderDescriptionField = this.renderDescriptionField.bind(this)
+        this.clockProject = this.clockProject.bind(this)
+        this.clockSprint = this.clockSprint.bind(this)
+        this.clockIssue = this.clockIssue.bind(this)
     }
-    
+
     componentDidMount() {
         this.refresh()
     }
 
     componentWillReceiveProps(props) {
         this.refresh(props)
+    }
+
+    clockProject(new_values) {
+        const { onSubmit, dispatch, project_id } = this.props
+        onSubmit({...new_values,
+                  project_id:project_id,
+                  sprint_id:null,
+                  issue_id:null})
+    }
+
+    clockSprint(new_values) {
+        const { onSubmit, dispatch, project_id, sprint_id } = this.props
+        onSubmit({...new_values,
+                  project_id:project_id,
+                  sprint_id:sprint_id,
+                  issue_id:null})
+    }
+
+    clockIssue(new_values) {
+        const { onSubmit, dispatch, project_id, sprint_id, issue_id } = this.props
+        onSubmit({...new_values,
+                  project_id:project_id,
+                  sprint_id:sprint_id,
+                  issue_id:issue_id})
     }
 
     refresh(these_props) {
@@ -39,24 +66,24 @@ class AutoClockEntryForm extends Component {
         const {input, data, onChange, ...rest} = field
         return (
             <div>
-            {
-                map(role_options, function(option) {
-                    const checked = input.value && input.value == option.value
-                    return (
-                        <label key={option.value}
-                               className={classNames("auto-clock__radio",
-                                                     {"auto-clock__radio--checked":checked,
-                                                      "auto-clock__radio--unchecked":!checked})}>
-                          <input type="radio"
-                                 name="role"
-                                 value={option.value}
-                                 onChange={input.onChange}
-                                 checked={checked} />
-                          {option.label}
-                        </label>
-                    )
-                })
-            }
+              {
+                  map(role_options, function(option) {
+                      const checked = input.value && input.value == option.value
+                      return (
+                          <label key={option.value}
+                                 className={classNames("auto-clock__radio",
+                                                       {"auto-clock__radio--checked":checked,
+                                                        "auto-clock__radio--unchecked":!checked})}>
+                            <input type="radio"
+                                   name="role"
+                                   value={option.value}
+                                   onChange={input.onChange}
+                                   checked={checked} />
+                            {option.label}
+                          </label>
+                      )
+                  })
+              }
             </div>
         )
     }
@@ -71,20 +98,16 @@ class AutoClockEntryForm extends Component {
                 onChange={input.onChange}
                 value={input.value}
             />
-        )    
+        )
     }
-    
+
     render() {
         const { handleSubmit, project, project_id, sprint_id, issue_id, role_options } = this.props
 
         return (
-            <form onSubmit={handleSubmit} className="auto-clock-form">
+            <form className="auto-clock-form">
 
-              <AutoClockEntity project_id={project_id}
-                               sprint_id={sprint_id}
-                               issue_id={issue_id} />
-
-              { role_options && role_options.length > 0 && 
+              { role_options && role_options.length > 0 &&
                 <div className="auto-clock__role">
                   <Field name="role" component={this.renderRoleField} />
                 </div>
@@ -94,8 +117,44 @@ class AutoClockEntryForm extends Component {
                 <Field name="description" component={this.renderDescriptionField} />
               </div>
 
-              <div className="auto-clock__actions">
-                <button className="button" type="submit">Clock In</button>
+
+
+              <div className="auto-clock-entry__clockables">
+                { project_id &&
+                  <div className="auto-clock-entry__clockable">
+                    <div className="auto-clock-entry__label">
+                      Project:
+                    </div>
+                    <div className="auto-clock-entry__field auto-clock-entry__project_name">
+                      <ProjectName project_id={project_id} />
+                    </div>
+                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockProject)} />
+                  </div>
+                }
+
+                { sprint_id &&
+                  <div className="auto-clock-entry__clockable">
+                    <div className="auto-clock-entry__label">
+                      Sprint:
+                    </div>
+                    <div className="auto-clock-entry__field auto-clock-entry__sprint_name">
+                      <SprintName sprint_id={sprint_id} />
+                    </div>
+                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockSprint)} />
+                  </div>
+                }
+
+                { issue_id &&
+                  <div className="auto-clock-entry__clockable">
+                    <div className="auto-clock-entry__label">
+                      Issue:
+                    </div>
+                    <div className="auto-clock-entry__field auto-clock-entry__issue_name">
+                      <IssueName issue_id={issue_id} />
+                    </div>
+                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockIssue)} />
+                  </div>
+                }
               </div>
                 
             </form>
@@ -108,9 +167,9 @@ function mapStateToProps(state, props) {
     const { onSubmitted, project_id, sprint_id, issue_id } = props
 
     const project = getProject(state, project_id) || {}
-    
+
     const role_options = map(project.logged_in_users_roles || [], function(role) { return ( {value: role, label: role} ) })
-    
+
     return {
         initialValues: {project_id: project_id,
                         sprint_id: sprint_id,
