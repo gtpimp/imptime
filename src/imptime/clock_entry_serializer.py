@@ -10,3 +10,4 @@ class ClockEntrySerializer(BaseSerializer):
     hours = serializers.FloatField()
     user_id = serializers.CharField()
     comments = serializers.CharField()
+    is_active = serializers.BooleanField()

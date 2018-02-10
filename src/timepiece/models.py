@@ -2706,6 +2706,10 @@ class Entry(BaseModel):
         return self.issue.project
 
     @property
+    def is_active(self):
+        return self.end_time is None
+    
+    @property
     def hours_and_minutes(self):
         full_hours = int(self.hours)
         minutes_fraction = self.hours - full_hours
@@ -2734,7 +2738,7 @@ class Entry(BaseModel):
         if rate:
             return rate.full_rate
         return 0
-
+    
     @property
     def rate(self):
         rate = self._rate_object()

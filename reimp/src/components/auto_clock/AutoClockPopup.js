@@ -9,15 +9,52 @@ import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import AutoClockEntryForm from './AutoClockEntryForm'
 import AutoClockList from './AutoClockList'
-import { ENTITY_KEY__AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
+import AutoClockEntry from './AutoClockEntry'
+import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
+import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
+import { logged_in_user } from '../../actions/Auth'
+import {
+    fetchAutoClocksIfNeeded, getAutoClocks
+} from '../../actions/AutoClock'
+import {
+    initList,
+    invalidateList,
+    selectItems,
+    collapse_list,
+    expand_list,
+    shouldFetchList,
+    getVisibleItemIds,
+    getVisibleItems,
+    getNestedObjects,
+    ensureNestedObjectsLoaded,
+    isLoading,
+    getLastUpdated,
+    getLoadingItemIds,
+    getSelectedItemIds,
+    getSelectedItems,
+    getDisplayMode,
+    update_list_pagination,
+    update_list_ordering,
+    update_list_format,
+    update_list_filter,
+    getListFilter
+} from '../../actions/ItemList'
+
 
 class AutoClockPopup extends Component {
     constructor(props) {
         super(props)
         this.onClockIn = this.onClockIn.bind(this)
+        this.hideList = this.hideList.bind(this)
+        this.showList = this.showList.bind(this)
+        this.state = { show_list: false }
     }
 
     componentDidMount() {
+	const { dispatch, list_key, filter } = this.props
+	dispatch(initList(list_key))
+        dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
+        dispatch(update_list_pagination(list_key, { page_size: 1 }))
         this.refresh()
     }
 
@@ -27,6 +64,12 @@ class AutoClockPopup extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
+        const { dispatch, filter, logged_in_user_id, list_key, nested_objects } = props
+        if ( filter.user_id != logged_in_user_id ) {
+            dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
+        }
+        dispatch(fetchAutoClocksIfNeeded(list_key))
+        dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
     onClockIn(new_values) {
@@ -39,16 +82,49 @@ class AutoClockPopup extends Component {
                          new_values.description))
     }
 
+    hideList() {
+        this.setState({show_list: false})
+    }
+
+    showList() {
+        this.setState({show_list: true})
+    }
+
     render() {
         const { available_project, available_project_id,
-                available_sprint_id, available_issue_id } = this.props
+                available_sprint_id, available_issue_id,
+                most_recent_entry} = this.props
+        const { show_list } = this.state
 
         return (
             <div className="auto-clock">
               <div className="auto-clock__header">Auto clock</div>
               <div className="auto-clock__status">Not clocked in</div>
 
-              <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+              { show_list &&
+                <div className="icon--collapse" onClick={this.hideList}/>
+              }
+              { show_list &&
+                <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+              }
+              { ! show_list &&
+                  <div className="icon--expand" onClick={this.showList}/>
+              }
+
+                  { false && (<div>
+              { most_recent_entry && most_recent_entry.is_active &&
+                <div className="auto-clock__active-entry">
+                  <AutoClockEntry entry_id={most_recent_entry.id}/>
+                </div>
+              }
+
+              { most_recent_entry && !most_recent_entry.is_active &&
+                <div className="auto-clock__inactive-entry">
+                  <AutoClockEntry entry_id={most_recent_entry.id}/>
+                </div>
+                }
+                  </div>) }
+                
               <AutoClockEntryForm project_id={available_project_id}
                                   sprint_id={available_sprint_id}
                                   issue_id={available_issue_id}
@@ -62,15 +138,37 @@ class AutoClockPopup extends Component {
 
 function mapStateToProps(state, props) {
     const {  } = props
+    const list_key = LIST_KEY__RECENT_AUTO_CLOCK
 
     const { available_project_id,
             available_sprint_id,
             available_issue_id } = getAvailableAutoClockEntity(state)
 
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids)
+    const last_updated = getLastUpdated(state, list_key)
+    const nested_objects = getNestedObjects(state, list_key)
+    const should_fetch_list = shouldFetchList(state, list_key)
+    const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids)
+    const items_by_id = getAutoClocks(state, visible_item_ids)
+    const filter = getListFilter(state, list_key)
+    const logged_in_user_id = logged_in_user().user_id || -1
+    const most_recent_entry = (items_by_id && items_by_id.length > 0 && items_by_id[0]) || null
+    
     return {
         available_project_id,
         available_sprint_id,
-        available_issue_id
+        available_issue_id,
+        auto_clock_ids: visible_item_ids,
+        auto_clocks_by_id: items_by_id,
+        is_loading,
+        is_invalidated,
+        should_fetch_list,
+        last_updated,
+        nested_objects,
+        filter,
+        logged_in_user_id,
+        most_recent_entry
     }
 
 }

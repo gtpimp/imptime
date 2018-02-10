@@ -15,6 +15,7 @@ export const LIST_KEY__NUDGE_LIST = 'nudge_list'
 export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
 export const LIST_KEY__AUTO_CLOCK = 'auto_clock'
+export const LIST_KEY__RECENT_AUTO_CLOCK = 'recent_auto_clock'
 
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
