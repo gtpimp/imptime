@@ -92,7 +92,6 @@ class AutoClockEntryForm extends Component {
               <div className="auto-clock__actions">
                 <button className="button" type="submit">Clock In</button>
               </div>
-
                 
             </form>
         )
@@ -110,7 +109,8 @@ function mapStateToProps(state, props) {
     return {
         initialValues: {project_id: project_id,
                         sprint_id: sprint_id,
-                        issue_id: issue_id},
+                        issue_id: issue_id,
+                        role: project.logged_in_users_default_role},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         project_id,
