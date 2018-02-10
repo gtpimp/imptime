@@ -69,10 +69,10 @@ class AutoClockEntryForm extends Component {
     }
     
     render() {
-        const { project, project_id, sprint_id, issue_id, role_options } = this.props
+        const { handleSubmit, project, project_id, sprint_id, issue_id, role_options } = this.props
 
         return (
-            <div className="auto-clock-form">
+            <form onSubmit={handleSubmit} className="auto-clock-form">
 
               <div className="auto-clock__available_entity">
                 { project_id && 
@@ -80,16 +80,16 @@ class AutoClockEntryForm extends Component {
                     <ProjectName project_id={project_id} />
                   </div>
                 }
-                { sprint_id && 
-                  <div className="auto-clock__sprint">
-                    <SprintName sprint_id={sprint_id} />
-                  </div>
-                }
-                { issue_id && 
-                  <div className="auto-clock__issue">
-                    <IssueName issue_id={issue_id} />
-                  </div>
-                }
+                  { sprint_id && 
+                    <div className="auto-clock__sprint">
+                      <SprintName sprint_id={sprint_id} />
+                    </div>
+                  }
+                    { issue_id && 
+                      <div className="auto-clock__issue">
+                        <IssueName issue_id={issue_id} />
+                      </div>
+                    }
               </div>
 
               { role_options && role_options.length > 0 && 
@@ -98,24 +98,34 @@ class AutoClockEntryForm extends Component {
                 </div>
               }
 
-              <div className="auto-clock__description">
-                <Field name="description" component={this.renderDescriptionField} />
-              </div>
-              
-            </div>
+                <div className="auto-clock__description">
+                  <Field name="description" component={this.renderDescriptionField} />
+                </div>
+                
+                <div className="auto-clock__actions">
+                  <button className="button" type="submit">Clock In</button>
+                </div>
+
+                
+            </form>
         )
     }
 }
 
 function mapStateToProps(state, props) {
 
-    const { project_id, sprint_id, issue_id } = props
+    const { onSubmitted, project_id, sprint_id, issue_id } = props
 
     const project = getProject(state, project_id) || {}
     
     const role_options = map(project.logged_in_users_roles || [], function(role) { return ( {value: role, label: role} ) })
     
     return {
+        initialValues: {project_id: project_id,
+                        sprint_id: sprint_id,
+                        issue_id: issue_id},
+        enableReinitialize: true,
+        onSubmit: onSubmitted,
         project_id,
         sprint_id,
         issue_id,

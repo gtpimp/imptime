@@ -244,6 +244,8 @@ class Business(BaseModel):
             ProjectStatus.objects.get_or_create(name=name, business=self)
         for code, name in ProjectDeadlineType.DEFAULT_PROJECT_DEADLINE_TYPES:
             ProjectDeadlineType.objects.get_or_create(name=name, business=self)
+        for code, name in ProjectRole.DEFAULT_PROJECT_ROLES:
+            ProjectRole.objects.get_or_create(name=name, business=self)
 
     def get_traffic_owners(self):
         return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_traffic_checklist=True)]
@@ -254,6 +256,15 @@ class Business(BaseModel):
     def get_finance_owners(self):
         return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_finance_checklist=True)]
 
+    def get_most_recent_open_project_id(self):
+        projects = Project.objects.filter(business=self).filter_open()
+        if len(projects) == 0:
+            return self.ensure_single_sprint().id
+        entries = Entry.objects.filter(issue__project__in=projects).order_by('-end_time').values('issue__project_id')
+        if len(entries) > 0:
+            return entries[0]['issue__project_id']
+        return projects.order_by("-id").values("id")[0]['id']
+    
     def get_all_business_permissions(self,user=None):
         permissions_qs = BusinessPermissions.objects.filter(business=self)
         if user is not None:
@@ -846,6 +857,19 @@ class ProjectQuerySet(QuerySet):
     def filter_can_add_dev_time_states(self):
         return self.filter(status3__name__in=Project.can_add_dev_time_states())
 
+class ProjectRole(BaseModel):
+
+    DEFAULT_PROJECT_ROLES = ( ('developer', 'developer'),
+                              ('manager', 'manager'),
+                              ('tester', 'tester') )
+    
+    business = models.ForeignKey(Business, related_name='roles')
+    name = models.CharField(max_length=20, null=False)
+
+    class Meta:
+        unique_together = ('name', 'business')
+    
+    
 class Project(BaseModel):
 
     PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
@@ -1066,6 +1090,14 @@ class Project(BaseModel):
             return None
         return rate.time_tracking_mode
 
+    def get_default_issue_for_role(self, project_role):
+        return Issue.objects.get_or_create(subject=project_role.name,
+                                           project=self,
+                                           defaults={'adhoc':False,
+                                                     'status2':IssueStatus.objects.get_or_create(name='auto', business=self.business)[0],
+                                                     'number':Issue.get_next_issue_number(self.business),
+                                                     'description':"Default issue for %s" % project_role.name})[0]
+    
     @property
     def scheduled_events(self):
         return self.calendar_events.all().filter(Q(event_type='planned')|Q(event_type='meeting'))
@@ -2632,6 +2664,7 @@ class Entry(BaseModel):
     comments = models.TextField(blank=True)
     extended_comments = models.TextField(blank=True)
     date_updated = models.DateTimeField(auto_now=True)
+    role = ProtectedForeignKey(ProjectRole, related_name='entries', null=True, blank=True)
 
     hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
@@ -2883,8 +2916,13 @@ class Entry(BaseModel):
         return True
 
     def save(self, *args, **kwargs):
+        was_created = not self.id
         self.hours = Decimal('%.2f' % round(self.total_hours, 2))
         super(Entry, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
 
     def get_seconds(self):
         """

@@ -1,7 +1,7 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer, BaseModelSerializer
-from timepiece.models import Feature, IssueStatus, Issue
+from timepiece.models import Feature, IssueStatus, Issue, ProjectRole
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
@@ -60,7 +60,7 @@ class ProjectSerializer(BaseSerializer):
         # put us off propagating the confusion out of this function.
 
         project_user_ids = project.allowed_user_ids #sic
-        project.logged_in_users_roles = [ "dev", "manager", "tester" ]
+        project.logged_in_users_roles = ProjectRole.objects.filter(business=project).order_by("name").values_list("name", flat=True) #sic
         project.invited_user_ids = project_user_ids.filter(invites_received__accepted=False)
         project.feature_names = Feature.objects.filter(business=project).order_by("name")  # sic
         project.allowed_sprint_type_names = [ k for k,v in Sprint.PROJECT_TYPES ] #sic

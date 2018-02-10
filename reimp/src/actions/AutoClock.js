@@ -10,7 +10,8 @@ import {
     ensureItemsLoaded,
     getItem,
     getItems,
-    getItemsById
+    getItemsById,
+    itemPost
 } from '../actions/Item'
 import {
     select_issues,
@@ -94,4 +95,17 @@ export function getAvailableAutoClockEntity(state) {
     return { available_project_id: selected_project_ids[0],
              available_sprint_id: selected_sprint_ids[0],
              available_issue_id: selected_issue_ids[0] }
+}
+
+export function clockIn(project_id, sprint_id, issue_id, role, description) {
+
+    const url = "imp/clock/0/clockIn/"
+    const field_name = "clockIn"
+    const field_value = null
+    const method = "POST"
+    const data = { project_id: project_id,
+                   sprint_id: sprint_id,
+                   issue_id: issue_id,
+                   role: role }
+    return itemPost(ENTITY_KEY__AUTO_CLOCK, [issue_id], url, field_name, field_value, method, data)
 }
