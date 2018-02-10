@@ -116,7 +116,7 @@ class AutoClockPopup extends Component {
               { most_recent_entry &&
                 <div className="auto-clock__most_recent">
                   { most_recent_entry.is_active &&
-                    <div>Current:
+                    <div>
                       <button className="button" onClick={() => this.onClockOut(most_recent_entry.id)}>Stop</button>
                     </div>
                   }

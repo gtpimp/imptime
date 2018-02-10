@@ -51,3 +51,24 @@
     border-top: 1px solid #e0e0e0;
 }
 
+.auto-clock__role {
+    margin-bottom: 6px;
+}
+
+.auto-clock__radio {
+    cursor: pointer;
+    padding-right: 20px;
+}
+
+.auto-clock__radio input {
+    visibility: hidden;
+}
+
+.auto-clock__radio--checked {
+    border: 1px solid $form-focus-border;
+    background-color: $selected-row-color;
+}
+
+.auto-clock__radio--unchecked {
+    border: 1px solid $form-field-border;
+}

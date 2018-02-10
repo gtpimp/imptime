@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import classNames from 'classnames'
 import { map } from 'lodash'
 import { Field, reduxForm } from 'redux-form'
 import FileUploader from '../form/FileUploader'
@@ -40,13 +41,17 @@ class AutoClockEntryForm extends Component {
             <div>
             {
                 map(role_options, function(option) {
+                    const checked = input.value && input.value == option.value
                     return (
-                        <label key={option.value}>
+                        <label key={option.value}
+                               className={classNames("auto-clock__radio",
+                                                     {"auto-clock__radio--checked":checked,
+                                                      "auto-clock__radio--unchecked":!checked})}>
                           <input type="radio"
                                  name="role"
                                  value={option.value}
                                  onChange={input.onChange}
-                                 checked={input.value && input.value == option.value} />
+                                 checked={checked} />
                           {option.label}
                         </label>
                     )
