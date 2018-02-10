@@ -118,13 +118,13 @@ class AutoClockPopup extends Component {
 
 
               { show_list &&
-                <div className="icon--collapse" onClick={this.hideList}/>
+                <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
               }
               { show_list &&
                 <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
               }
               { ! show_list &&
-                <div className="icon--expand" onClick={this.showList}/>
+                <div className="icon--expand auto-clock__expand_history" onClick={this.showList}/>
               }
 
 

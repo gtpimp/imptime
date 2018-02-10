@@ -99,3 +99,25 @@
 .auto-clock__header {
     font-weight: bold;
 }
+
+.auto_clock-list {
+    padding: 20px;
+}
+
+.auto_clock-list__row {
+    margin-top: 7px;
+    border-top: 1px solid $color-12;
+}
+
+.auto_clock-list__auto_clock_name {
+    padding-top: 4px;
+}
+
+
+.auto-clock__collapse_history {
+    cursor: pointer;
+}
+
+.auto-clock__expand_history {
+    cursor: pointer;
+}
