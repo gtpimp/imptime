@@ -106,7 +106,8 @@ export function clockIn(project_id, sprint_id, issue_id, role, description) {
     const data = { project_id: project_id,
                    sprint_id: sprint_id,
                    issue_id: issue_id,
-                   role: role }
+                   role: role,
+                   description: description }
     return itemPost(ENTITY_KEY__AUTO_CLOCK, [issue_id], url, field_name, field_value, method, data)
 }
 
