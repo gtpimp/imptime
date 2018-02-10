@@ -22,3 +22,31 @@
 .auto-clock__actions {
 }
 
+.auto-clock-entry__times {
+    display: flex;
+}
+
+.auto-clock-entry__field {
+    padding-right: 3px;
+}
+
+.auto-clock-entry__label {
+    padding-left: 3px;
+}
+
+.auto-clock-entry__entities {
+    display: flex;
+}
+
+.auto-clock__most_recent {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.auto-clock__next {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-top: 1px solid #e0e0e0;
+}
+

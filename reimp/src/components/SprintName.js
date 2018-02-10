@@ -28,8 +28,9 @@ class SprintName extends Component {
 	}
     }
 
-    on_clicked() {
+    on_clicked(event) {
         const { sprint, onClick, open_on_click } = this.props
+        event.stopPropagation()
         if ( onClick ) {
             onClick(sprint.id)
         } else if ( open_on_click ) {

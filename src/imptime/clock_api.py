@@ -100,3 +100,24 @@ class ClockViewSet(BaseViewSet):
             return self.error_response(ex)
             
         return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['POST'])
+    def clockOut(self, request, pk):
+        try:
+            params = request.data
+            entry_id = params['entry_id']
+
+            entry = self.allowed_timesheet_entry(entry_id)
+            entry.end_time = timezone.now()
+            entry.save()
+            
+            context = {}
+            context['clock_entry'] = ClockEntrySerializer(entry).data
+            data = {'status': 'success', 'payload': { 'item': context }}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+            
+        return HttpResponse(JSONRenderer().render(data))
+    

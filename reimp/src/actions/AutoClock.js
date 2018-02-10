@@ -109,3 +109,13 @@ export function clockIn(project_id, sprint_id, issue_id, role, description) {
                    role: role }
     return itemPost(ENTITY_KEY__AUTO_CLOCK, [issue_id], url, field_name, field_value, method, data)
 }
+
+export function clockOut(entry_id) {
+
+    const url = "imp/clock/0/clockOut/"
+    const field_name = "clockOut"
+    const field_value = null
+    const method = "POST"
+    const data = { entry_id: entry_id }
+    return itemPost(ENTITY_KEY__AUTO_CLOCK, [entry_id], url, field_name, field_value, method, data)
+}

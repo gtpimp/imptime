@@ -3,10 +3,7 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import classNames from 'classnames'
 import '../../sass/auto-clock.scss'
-import { getAvailableAutoClockEntity, clockIn } from '../../actions/AutoClock'
-import ProjectName from '../ProjectName'
-import SprintName from '../SprintName'
-import IssueName from '../IssueName'
+import { getAvailableAutoClockEntity, clockIn, clockOut } from '../../actions/AutoClock'
 import AutoClockEntryForm from './AutoClockEntryForm'
 import AutoClockList from './AutoClockList'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
@@ -45,6 +42,7 @@ class AutoClockPopup extends Component {
     constructor(props) {
         super(props)
         this.onClockIn = this.onClockIn.bind(this)
+        this.onClockOut = this.onClockOut.bind(this)
         this.hideList = this.hideList.bind(this)
         this.showList = this.showList.bind(this)
         this.state = { show_list: false }
@@ -82,6 +80,11 @@ class AutoClockPopup extends Component {
                          new_values.description))
     }
 
+    onClockOut(entry_id) {
+        const { dispatch } = this.props
+        dispatch(clockOut(entry_id))
+    }
+
     hideList() {
         this.setState({show_list: false})
     }
@@ -110,26 +113,21 @@ class AutoClockPopup extends Component {
                   <div className="icon--expand" onClick={this.showList}/>
               }
 
-              { most_recent_entry && most_recent_entry.is_active &&
-                <div className="auto-clock__active-entry">
+              { most_recent_entry &&
+                <div className="auto-clock__most_recent">
+                  { most_recent_entry.is_active && <div>Most recent: </div> }
+                  { !most_recent_entry.is_active && <div>Current: </div> }
                   <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
+                  <button type="button" onClick={() => this.onClockOut(most_recent_entry.id)}>Stop</button>
                 </div>
               }
 
-              { most_recent_entry && !most_recent_entry.is_active &&
-                <div className="auto-clock__inactive-entry">
-                  <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
-                </div>
-              }
-
-              { ! most_recent_entry || !most_recent_entry.is_active &&
-                <div className="auto-clock__status">Not clocked in</div>
-              }
-
-              <AutoClockEntryForm project_id={available_project_id}
-                                  sprint_id={available_sprint_id}
-                                  issue_id={available_issue_id}
-                                  onSubmitted={this.onClockIn} />
+              <div className="auto-clock__next">
+                <AutoClockEntryForm project_id={available_project_id}
+                                    sprint_id={available_sprint_id}
+                                    issue_id={available_issue_id}
+                                    onSubmitted={this.onClockIn} />
+              </div>
               
             </div>
         )
