@@ -1,5 +1,6 @@
 import { impfetch } from './lib.js'
 import { setDisplayMode, getDisplayMode } from './ItemList'
+import cookie from 'react-cookie';
 import { ENTITY_KEY__AUTO_CLOCK, CONTEXT_KEY__AUTO_CLOCK } from '../actions/ItemListKeyRegistry'
 
 import {
@@ -23,6 +24,18 @@ import {
     get_selected_sprint_ids,
     get_selected_issue_ids
 } from '../actions/Page'
+
+export function shouldShowAutoClockPopup() {
+    return cookie.load('show_auto_clock_popup') == "1" || false
+}
+
+export function hideAutoClockPopup() {
+    cookie.save('show_auto_clock_popup', "0", { path: '/' })
+}
+
+export function showAutoClockPopup() {
+    cookie.save('show_auto_clock_popup', "1", { path: '/' })
+}
 
 export function invalidateAllAutoClocks() {
     return (dispatch, getState) => {

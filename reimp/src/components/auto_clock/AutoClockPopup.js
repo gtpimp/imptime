@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import classNames from 'classnames'
 import '../../sass/auto-clock.scss'
-import { getAvailableAutoClockEntity, clockIn, clockOut } from '../../actions/AutoClock'
+import { getAvailableAutoClockEntity, clockIn, clockOut, shouldShowAutoClockPopup, hideAutoClockPopup, showAutoClockPopup } from '../../actions/AutoClock'
 import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import AutoClockList from './AutoClockList'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
@@ -45,7 +45,10 @@ class AutoClockPopup extends Component {
         this.onClockOut = this.onClockOut.bind(this)
         this.hideList = this.hideList.bind(this)
         this.showList = this.showList.bind(this)
-        this.state = { show_list: false }
+        this.onShowPopup = this.onShowPopup.bind(this)
+        this.onHidePopup = this.onHidePopup.bind(this)
+        this.state = { show_list: false,
+                       show_popup: shouldShowAutoClockPopup() }
     }
 
     componentDidMount() {
@@ -68,6 +71,16 @@ class AutoClockPopup extends Component {
         }
         dispatch(fetchAutoClocksIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
+    }
+
+    onHidePopup() {
+        this.setState({show_popup:false})
+        hideAutoClockPopup()
+    }
+
+    onShowPopup() {
+        this.setState({show_popup:true})
+        showAutoClockPopup()
     }
 
     onClockIn(new_values) {
@@ -96,48 +109,68 @@ class AutoClockPopup extends Component {
         const { available_project, available_project_id,
                 available_sprint_id, available_issue_id,
                 most_recent_entry} = this.props
-        const { show_list } = this.state
+        const { show_list, show_popup } = this.state
 
-        return (
-            <div className="auto-clock">
-              { most_recent_entry &&
-                <div className="auto-clock__most_recent">
-                  { most_recent_entry.is_active &&
-                      <div className="icon--timer-stop" onClick={() => this.onClockOut(most_recent_entry.id)} />
-                  }
-                  <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
+        if ( ! show_popup ) {
+            return (
+                <div className="auto-clock auto-clock--invisible auto-clock__show"
+                     onClick={this.onShowPopup}>
+                  <div className="icon--timer-start"/>
                 </div>
-              }
+            )
+        }
+        
+        if ( show_popup ) {
 
+          return (
+
+              <div className="auto-clock">
+
+                <div className="auto-clock__hide" onClick={this.onHidePopup}>
+                  <div className="icon--small-cross"/>
+                </div>
+
+                <div className="auto-clock--visible">
                 
-              <div className="auto-clock__next">
-                { ! available_project_id &&
-                  <div>Select a project to start clocking</div>
-                }
+                    { most_recent_entry &&
+                      <div className="auto-clock__most_recent">
+                        { most_recent_entry.is_active &&
+                            <div className="icon--timer-stop" onClick={() => this.onClockOut(most_recent_entry.id)} />
+                        }
+                        <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
+                      </div>
+                    }
 
-                { available_project_id &&
-                  <AutoClockNewEntryForm project_id={available_project_id}
-                                         sprint_id={available_sprint_id}
-                                         issue_id={available_issue_id}
-                                         onSubmitted={this.onClockIn} />
-                }
+
+                    <div className="auto-clock__next">
+                      { ! available_project_id &&
+                        <div>Select a project to start clocking</div>
+                      }
+
+                      { available_project_id &&
+                        <AutoClockNewEntryForm project_id={available_project_id}
+                                               sprint_id={available_sprint_id}
+                                               issue_id={available_issue_id}
+                                               onSubmitted={this.onClockIn} />
+                      }
+                    </div>
+
+
+                    { show_list &&
+                      <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
+                    }
+                    { show_list &&
+                      <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+                    }
+                    { ! show_list &&
+                      <div className="icon--expand auto-clock__expand_history" onClick={this.showList}/>
+                    }
+
+                </div>
+
               </div>
-
-
-              { show_list &&
-                <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
-              }
-              { show_list &&
-                <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
-              }
-              { ! show_list &&
-                <div className="icon--expand auto-clock__expand_history" onClick={this.showList}/>
-              }
-
-
-              
-            </div>
-        )
+          )
+        }
     }
 }
 
