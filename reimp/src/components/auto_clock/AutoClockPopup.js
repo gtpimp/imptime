@@ -118,8 +118,14 @@ class AutoClockPopup extends Component {
               <div className="auto-clock__show"
                    onClick={this.onShowPopup}
                    onMouseOver={this.onShowPopup} >
-                { most_recent_entry && most_recent_entry.is_active && <div className="icon--timer-active"/> }
-                { (! most_recent_entry || ! most_recent_entry.is_active) && <div className="icon--timer-inactive"/> }
+                { most_recent_entry && most_recent_entry.is_active &&
+                  <div className="icon--timer-active auto-clock__stop"
+                       onClick={() => this.onClockOut(most_recent_entry.id)}
+                  />
+                }
+                { (! most_recent_entry || ! most_recent_entry.is_active) &&
+                  <div className="icon--timer-inactive"/>
+                }
               </div>
 
               { show_popup &&
