@@ -69,7 +69,7 @@ class ClockViewSet(BaseViewSet):
             project_role = self.allowed_project_roles(project=project).get(name=role_name)
 
             if sprint_id is None:
-                sprint_id = project.get_most_recent_open_project_id() #sic
+                sprint_id = project.get_most_recent_open_project_id(user_id=request.user.id) #sic
             sprint = self.allowed_sprint(sprint_id)
 
             if not sprint.can_add_dev_time():

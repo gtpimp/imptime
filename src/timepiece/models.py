@@ -256,11 +256,13 @@ class Business(BaseModel):
     def get_finance_owners(self):
         return [x.user for x in BusinessPermissions.objects.filter(business=self, can_do_finance_checklist=True)]
 
-    def get_most_recent_open_project_id(self):
-        projects = Project.objects.filter(business=self).filter_open()
+    def get_most_recent_open_project_id(self, user_id):
+        projects = Project.objects.filter(business=self)\
+                                  .filter_open()\
+                                  .filter(project_type__in=["sprint", "checklist", "audit"])
         if len(projects) == 0:
             return self.ensure_single_sprint().id
-        entries = Entry.objects.filter(issue__project__in=projects).order_by('-end_time').values('issue__project_id')
+        entries = Entry.objects.filter(user_id=user_id, issue__project__in=projects).order_by('-end_time').values('issue__project_id')
         if len(entries) > 0:
             return entries[0]['issue__project_id']
         return projects.order_by("-id").values("id")[0]['id']
