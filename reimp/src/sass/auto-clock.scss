@@ -44,8 +44,9 @@
 .auto-clock__actions {
 }
 
-.auto_clock__active_section {
+.auto-clock__active_section {
     display: flex;
+    cursor: pointer;
 }
 
 .auto-clock-entry__times {
@@ -137,15 +138,15 @@
     font: $bold-extra-large;
 }
 
-.auto_clock-list {
+.auto-clock-list {
 }
 
-.auto_clock-list__row {
+.auto-clock-list__row {
     margin-top: 20px;
     border-top: 1px solid $color-12;
 }
 
-.auto_clock-list__auto_clock_name {
+.auto-clock-list__auto_clock_name {
     padding-top: 4px;
 }
 
@@ -179,10 +180,44 @@
     width: 100%;
 }
 
-.auto_clock-list__header {
+.auto-clock-list__header {
     font-weight: bold;
 }
 
-.auto_clock__header {
-    font-weight: bold;
+.auto-clock-modal {
+    font-size: $font-size-default;
+    line-height: 20px;
+    height: 500px;
+    background-color: $color-2;
+    border-radius: 2px;
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    width: 350px;
+    position: absolute;
+    top: 20%;
+    bottom: 25%;
+    left: 40%;
+    outline: none;
+    overflow: auto;
+}
+
+.auto-clock-modal__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.auto-clock-modal__content {
+    margin-top: 13px;
+}
+
+.auto-clock-modal__title {
+    color: $color-1;
+    font: $font-4;
+}
+
+.auto-clock-modal__close {
+    cursor: pointer;
 }

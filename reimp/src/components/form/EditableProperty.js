@@ -38,7 +38,10 @@ class EditableProperty extends Component {n
     }
 
     startEditing(event) {
-        const {dispatch, property_key, can_edit} = this.props
+        const {dispatch, property_key, can_edit, is_editing} = this.props
+        if ( is_editing ) {
+            return
+        }
         if ( event ) {
             event.stopPropagation()
         }
@@ -48,7 +51,10 @@ class EditableProperty extends Component {n
     }
 
     cancelEditing(event) {
-        const {dispatch, property_key} = this.props
+        const {dispatch, property_key, is_editing} = this.props
+        if ( ! is_editing ) {
+            return
+        }
         if ( event ) {
             event.stopPropagation()
         }

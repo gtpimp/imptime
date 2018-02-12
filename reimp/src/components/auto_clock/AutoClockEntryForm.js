@@ -99,18 +99,16 @@ class AutoClockEntryForm extends Component {
 
               <AutoClockEntry entry_id={entry_id} />
               
-              <div className="auto-clock__form__row1">
+              <div className="auto-clock__form">
                   { role_options && role_options.length > 0 &&
                     <div className="auto-clock__role">
                       <Field name="role_name" component={this.renderRoleField} />
                     </div>
                   }
 
-                  { false &&
                   <div className="auto-clock__form__description">
                     <Field name="description" component={this.renderDescriptionField} />
                   </div>
-                  }
               </div>
 
               <div className="auto-clock__form__start">
@@ -123,7 +121,7 @@ class AutoClockEntryForm extends Component {
               </div>
               
               <button type="submit" className="button">Save</button>
-              <div className="icon--delete" onClick={onDelete}/>
+              <button className="button" onClick={onDelete}>Delete</button>
                 
             </form>
         )

@@ -33,6 +33,7 @@ import DivTable from '../DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
+import AutoClockEntryForm from './AutoClockEntryForm'
 import Pagination from '../Pagination'
 
 class AutoClockList extends Component {
@@ -75,9 +76,9 @@ class AutoClockList extends Component {
 
     render_row(auto_clock) {
         return (
-            <div className="auto_clock-list__row" key={auto_clock.id}>
+            <div className="auto-clock-list__row" key={auto_clock.id}>
               <div className={classNames("auto_clock-list__auto_clock_name")} >
-                <EditableAutoClockEntry entry_id={auto_clock.id} time_format="datetime" /> 
+                <EditableAutoClockEntry entry_id={auto_clock.id} time_format="datetime" />
               </div>
             </div>
         )
@@ -95,14 +96,14 @@ class AutoClockList extends Component {
         }
 
         return (
-            <div className="auto_clock-list">
+            <div className="auto-clock-list">
               <Pagination list_key={list_key} on_changed={this.onRefresh} />
               <DivTable>
                 { map(values(auto_clocks_by_id), (auto_clock) => this.render_row(auto_clock) ) }
               </DivTable>
               { !auto_clocks_by_id || auto_clocks_by_id.length == 0 &&
                 (
-                    <div className="auto_clock-list__empty">
+                    <div className="auto-clock-list__empty">
                       { ! is_loading && "No pages." }
                       { is_loading && "Loading..." }
                     </div>

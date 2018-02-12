@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
+import Modal from 'react-modal';
 import classNames from 'classnames'
 import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity, clockIn, clockOut, shouldShowAutoClockPopup, hideAutoClockPopup, showAutoClockPopup } from '../../actions/AutoClock'
@@ -75,8 +76,6 @@ class AutoClockPopup extends Component {
     }
 
     onHidePopup() {
-        console.log("DEBUG!!!!!!!!!!")
-        return
         this.setState({show_popup:false})
         hideAutoClockPopup()
     }
@@ -137,12 +136,12 @@ class AutoClockPopup extends Component {
 
               { most_recent_entry &&
                 <div className="auto-clock__most_recent">
-                  <div className="auto_clock__header">
+                  <div className="auto-clock__header">
                     Currently active clock
                   </div>
 
                   { most_recent_entry.is_active &&
-                    <div className="auto_clock__active_section" onClick={() => this.onClockOut(most_recent_entry.id)}>
+                    <div className="auto-clock__active_section" onClick={() => this.onClockOut(most_recent_entry.id)}>
                       <div className="icon--timer-stop"/>
                       Stop
                     </div>
@@ -163,7 +162,7 @@ class AutoClockPopup extends Component {
         return (
             <div className="auto-clock__next">
 
-              <div className="auto_clock__header">
+              <div className="auto-clock__header">
                 New clock
               </div>
               
@@ -186,25 +185,43 @@ class AutoClockPopup extends Component {
 
         return (
             <div className="auto-clock__history">
-              <div className="auto_clock-list__header">
+              <div className="auto-clock-list__header">
                 Previous clocks
-              </div>
-              
-              { ! show_list &&
-                <div className="icon--expand auto-clock__expand_history auto-clock__history" onClick={this.showList}/>
-              }
-              { show_list &&
-                <div>
-                  <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
-                  <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+                <div className="button"  onClick={this.showList}>
+                  show
                 </div>
-              }
+              </div>
             </div>
         )
     }
 
+    renderClockHistoryModal() {
+        const { show_list } = this.state
+
+        if ( ! show_list ) { return null }
+        return (
+            <Modal isOpen={true}
+                   className={"auto-clock-modal"}
+                   overlayClassName="auto-clock-modal__overlay"
+                   onRequestClose={this.hideList}
+                   contentLabel="Clock history">
+              <div>
+                <div className="editable-property-modal__close">
+                  <i className="material-icons" onClick={this.hideList}>close</i>
+                </div>
+                <div className="auto-clock-list__header">
+                  Clock history
+                </div>
+              </div>
+              <div className="editable-property-modal__content">
+                <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+              </div>
+            </Modal>
+        )
+    }
+
     render() {
-        const { show_popup } = this.state
+        const { show_popup, show_list } = this.state
 
           return (
 
@@ -219,7 +236,7 @@ class AutoClockPopup extends Component {
                   { this.renderClockHistory() }
                 </div>
               }
-
+              { this.renderClockHistoryModal() }
             </div>
         )
     }

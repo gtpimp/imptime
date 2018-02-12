@@ -37,7 +37,7 @@ class IssueName extends Component {
             <div className="issue-name">
               { is_loading && "..." }
               { ! is_loading &&
-              <div onClick={this.on_clicked}>
+              <div className="issue-name__link" onClick={this.on_clicked}>
                 {issue.number } {issue.subject}
               </div>
               }
