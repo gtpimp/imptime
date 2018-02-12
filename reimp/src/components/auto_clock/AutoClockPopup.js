@@ -136,14 +136,23 @@ class AutoClockPopup extends Component {
 
               { most_recent_entry &&
                 <div className="auto-clock__most_recent">
-                  <div className="auto-clock__header">
-                    Currently active clock
-                  </div>
 
+                  { ! most_recent_entry.is_active &&
+                    <div className="auto-clock__header">
+                      No active clock, showing previous clock
+                    </div>
+                  }
+                  
                   { most_recent_entry.is_active &&
-                    <div className="auto-clock__active_section" onClick={() => this.onClockOut(most_recent_entry.id)}>
-                      <div className="icon--timer-stop"/>
-                      Stop
+                    <div>
+                      <div className="auto-clock__header">
+                        Currently active clock
+                      </div>
+
+                      <div className="auto-clock__active_section" onClick={() => this.onClockOut(most_recent_entry.id)}>
+                        <div className="icon--timer-stop"/>
+                        Stop
+                      </div>
                     </div>
                   }
                     
