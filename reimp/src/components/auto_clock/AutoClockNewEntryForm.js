@@ -108,7 +108,7 @@ class AutoClockNewEntryForm extends Component {
         return (
             <form className="auto-clock-form">
 
-              <div className="auto-clock__form__row1">
+              <div>
                   { role_options && role_options.length > 0 &&
                     <div className="auto-clock__role">
                       <Field name="role" component={this.renderRoleField} />

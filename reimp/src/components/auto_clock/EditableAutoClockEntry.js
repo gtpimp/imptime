@@ -45,7 +45,7 @@ class EditableAutoClockEntry extends Component {
     }
 
     render() {
-        const { entry, can_edit } = this.props
+        const { entry, can_edit, time_format } = this.props
 
         return (
             <EditableProperty property_key={'entry_id_'+entry.id}
@@ -56,7 +56,7 @@ class EditableAutoClockEntry extends Component {
             >
               <AutoClockEntryForm entry_id={entry.id} onDelete={this.onDeleteEntry} />
               <div>
-                <AutoClockEntry entry_id={entry.id} />
+                <AutoClockEntry entry_id={entry.id} time_format={time_format} />
               </div>
               <div>
               </div>
@@ -66,12 +66,13 @@ class EditableAutoClockEntry extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { entry_id } = props
+    const { entry_id, time_format } = props
     const entry = getAutoClock(state, entry_id) || {}
     const can_edit = true
     return {
         entry: entry,
-        can_edit: can_edit
+        can_edit: can_edit,
+        time_format,
     }
 }
 

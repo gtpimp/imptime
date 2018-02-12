@@ -77,7 +77,7 @@ class AutoClockList extends Component {
         return (
             <div className="auto_clock-list__row" key={auto_clock.id}>
               <div className={classNames("auto_clock-list__auto_clock_name")} >
-                <EditableAutoClockEntry entry_id={auto_clock.id} /> 
+                <EditableAutoClockEntry entry_id={auto_clock.id} time_format="datetime" /> 
               </div>
             </div>
         )
@@ -96,7 +96,6 @@ class AutoClockList extends Component {
 
         return (
             <div className="auto_clock-list">
-              <div className="auto_clock-list__header">Historical Entries</div>
               <Pagination list_key={list_key} on_changed={this.onRefresh} />
               <DivTable>
                 { map(values(auto_clocks_by_id), (auto_clock) => this.render_row(auto_clock) ) }

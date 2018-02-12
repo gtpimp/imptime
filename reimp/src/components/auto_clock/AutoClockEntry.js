@@ -32,15 +32,13 @@ class AutoClockEntry extends Component {
     }
 
     render() {
-        const { entry } = this.props
+        const { entry, time_format } = this.props
 
         let hours = entry.hours
         let end_time = entry.end_time
-        let icon_class = "icon--timer-inactive"
         if ( entry.is_active ) {
             end_time = moment()
             hours = end_time.diff(moment(entry.start_time), 'hours', true)
-            icon_class = "icon--timer-active"
         }
         
         return (
@@ -48,10 +46,12 @@ class AutoClockEntry extends Component {
 
               <div className="auto-clock-entry__times">
 
-                <div className={icon_class}/>
-                  
+                <div className="auto-clock-entry__label">
+                  Time: 
+                </div>
+                
                 <div className="auto-clock-entry__field auto-clock-entry__start-time">
-                  <Timestamp format="short-time" value={entry.start_time} />
+                  <Timestamp format={time_format} value={entry.start_time} />
                 </div>
 
                 <div className="auto-clock-entry__field auto-clock-entry__time-separator">
@@ -59,20 +59,37 @@ class AutoClockEntry extends Component {
                 </div>
                 
                 <div className="auto-clock-entry__field auto-clock-entry__end-time">
-                  <Timestamp format="short-time" value={end_time} />
+                  <Timestamp format={time_format} value={end_time} />
                 </div>
+              </div>
 
+              <div className="auto-clock-entry__hours">
+                <div className="auto-clock-entry__label">
+                  Duration:
+                </div>
                 <div className="auto-clock-entry__field auto-clock-entry__hours">
                   <Hours hours={hours} />
                 </div>
-                  
+                <div className="auto-clock-entry__label">
+                   hours
+                </div>
               </div>
               <div className="auto-clock-entry__role">
-                Role {entry.role_name}
+                <div className="auto-clock-entry__label">
+                  Role:
+                </div>
+                <div className="auto-clock-entry__field">
+                  {entry.role_name}
+                </div>
               </div>
-              <div className="auto-clock-entry__description">
-                {entry.comments}
-              </div>
+              { entry.comments && 
+                <div className="auto-clock-entry__description">
+                  <div className="auto-clock-entry__label">
+                    Comment:
+                  </div>
+                  {entry.comments}
+                </div>
+              }
               <AutoClockEntity project_id={entry.project_id}
                                sprint_id={entry.sprint_id}
                                issue_id={entry.issue_id} />
@@ -82,11 +99,12 @@ class AutoClockEntry extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { entry_id  } = props
+    const { entry_id, time_format } = props
     const entry = getAutoClock(state, entry_id) || {}
     return {
         entry_id,
-        entry
+        entry,
+        time_format: time_format || "short-time"
     }
 
 }

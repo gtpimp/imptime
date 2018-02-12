@@ -6,6 +6,7 @@ import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity, clockIn, clockOut, shouldShowAutoClockPopup, hideAutoClockPopup, showAutoClockPopup } from '../../actions/AutoClock'
 import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import AutoClockList from './AutoClockList'
+import AutoClockEntry from './AutoClockEntry'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
@@ -136,10 +137,18 @@ class AutoClockPopup extends Component {
 
               { most_recent_entry &&
                 <div className="auto-clock__most_recent">
+                  <div className="auto_clock__header">
+                    Currently active clock
+                  </div>
+
                   { most_recent_entry.is_active &&
-                    <div className="icon--timer-stop" onClick={() => this.onClockOut(most_recent_entry.id)} />
+                    <div className="auto_clock__active_section" onClick={() => this.onClockOut(most_recent_entry.id)}>
+                      <div className="icon--timer-stop"/>
+                      Stop
+                    </div>
                   }
-                    <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
+                    
+                  <AutoClockEntry entry_id={most_recent_entry.id}/>
                 </div>
               }
 
@@ -153,6 +162,11 @@ class AutoClockPopup extends Component {
         
         return (
             <div className="auto-clock__next">
+
+              <div className="auto_clock__header">
+                New clock
+              </div>
+              
               { ! available_project_id &&
                 <div>Select a project to start clocking</div>
               }
@@ -170,16 +184,21 @@ class AutoClockPopup extends Component {
     renderClockHistory() {
         const { show_list } = this.state
 
-        if ( ! show_list ) {
-            return (
-                <div className="icon--expand auto-clock__expand_history" onClick={this.showList}/>
-            )
-        }
-        
         return (
             <div className="auto-clock__history">
-              <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
-              <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+              <div className="auto_clock-list__header">
+                Previous clocks
+              </div>
+              
+              { ! show_list &&
+                <div className="icon--expand auto-clock__expand_history auto-clock__history" onClick={this.showList}/>
+              }
+              { show_list &&
+                <div>
+                  <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
+                  <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+                </div>
+              }
             </div>
         )
     }

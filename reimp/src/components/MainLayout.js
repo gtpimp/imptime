@@ -10,6 +10,7 @@ import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 import { ShortcutManager } from 'react-shortcuts'
+import AutoClockPopup from './auto_clock/AutoClockPopup'
 import keymap from '../actions/Keymap'
 const shortcut_manager = new ShortcutManager(keymap)
 var HTML5Backend = require('react-dnd-html5-backend');
@@ -78,6 +79,7 @@ class MainLayout extends Component {
             <div className="app">
               <Websocket/>
               <Header/>
+              <AutoClockPopup/>
               <div className="main">
                 {this.props.children}
               </div>

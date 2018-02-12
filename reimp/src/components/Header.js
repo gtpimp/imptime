@@ -6,7 +6,6 @@ import Toolbar from './toolbar/Toolbar'
 import UserDashboard from '../components/UserDashboard'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
-import AutoClockPopup from './auto_clock/AutoClockPopup'
 import Error from './Error'
 
 class Header extends Component {
@@ -21,7 +20,6 @@ class Header extends Component {
               { user_dashboard_expanded &&
                 <UserDashboard/>
               }
-              <AutoClockPopup/>
               <Toolbar />
               <ReleaseNotesPopup />
             </div>

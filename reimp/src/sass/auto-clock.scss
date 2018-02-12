@@ -4,17 +4,20 @@
     position: fixed;
     top: 8px;
     left: 400px;
+    z-index:999;
 }
 
 .auto-clock--visible {
     min-height: 50px;
-    font-size: $font-size-small;
+    font-size: $font-size-default;
     background-color: #ffffff;
     box-shadow: inset -1px 0 0 0 #e0e0e0;
     padding: 5px;
-    z-index:999;
     display: flex;
     flex-direction: column;
+    line-height: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .auto-clock__stop {
@@ -41,7 +44,23 @@
 .auto-clock__actions {
 }
 
+.auto_clock__active_section {
+    display: flex;
+}
+
 .auto-clock-entry__times {
+    display: flex;
+}
+
+.auto-clock-entry__description {
+    display: flex;
+}
+
+.auto-clock-entry__role {
+    display: flex;
+}
+
+.auto-clock-entry__hours {
     display: flex;
 }
 
@@ -61,7 +80,7 @@
 .auto-clock__most_recent {
     margin-bottom: 5px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .auto-clock__form__row1 {
@@ -74,8 +93,9 @@
 }
 
 .auto-clock__next {
-    margin-bottom: 5px;
-    margin-left: 15px;
+    border-top: 1px solid $color-12;
+    margin-top: 10px;
+    padding-top: 10px;
 }
 
 .auto-clock__role {
@@ -102,7 +122,7 @@
 
 .auto-clock-entry__clockables {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 }
 
 .auto-clock-entry__clockable {
@@ -114,11 +134,10 @@
 }
 
 .auto-clock__header {
-    font-weight: bold;
+    font: $bold-extra-large;
 }
 
 .auto_clock-list {
-    padding: 20px;
 }
 
 .auto_clock-list__row {
@@ -130,6 +149,11 @@
     padding-top: 4px;
 }
 
+.auto-clock__history {
+    border-top: 1px solid $color-12;
+    margin-top: 10px;
+    padding-top: 10px;
+}
 
 .auto-clock__collapse_history {
     cursor: pointer;
@@ -159,3 +183,6 @@
     font-weight: bold;
 }
 
+.auto_clock__header {
+    font-weight: bold;
+}
