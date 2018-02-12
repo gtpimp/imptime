@@ -37,6 +37,14 @@ export function showAutoClockPopup() {
     cookie.save('show_auto_clock_popup', "1", { path: '/' })
 }
 
+export function getPreferredRole() {
+    return cookie.load('auto_clock_referred_role') || null
+}
+
+export function setPreferredRole(role_name) {
+    return cookie.save('auto_clock_referred_role', role_name, { path: '/' })
+}
+
 export function invalidateAllAutoClocks() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__AUTO_CLOCK))

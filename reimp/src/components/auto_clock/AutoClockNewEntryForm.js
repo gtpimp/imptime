@@ -11,6 +11,7 @@ import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
 import AutoClockEntity from './AutoClockEntity'
+import { getPreferredRole } from '../../actions/AutoClock'
 
 class AutoClockNewEntryForm extends Component {
 
@@ -169,12 +170,13 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
 
     const role_options = map(project.logged_in_users_roles || [], function(role) { return ( {value: role, label: role} ) })
+    const preferred_role = getPreferredRole()
 
     return {
         initialValues: {project_id: project_id,
                         sprint_id: sprint_id,
                         issue_id: issue_id,
-                        role: project.logged_in_users_default_role},
+                        role: preferred_role || project.logged_in_users_default_role},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         project_id,

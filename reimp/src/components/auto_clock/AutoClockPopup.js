@@ -11,7 +11,7 @@ import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actio
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
 import {
-    fetchAutoClocksIfNeeded, getAutoClocks
+    fetchAutoClocksIfNeeded, getAutoClocks, setPreferredRole
 } from '../../actions/AutoClock'
 import {
     initList,
@@ -74,6 +74,8 @@ class AutoClockPopup extends Component {
     }
 
     onHidePopup() {
+        console.log("DEBUG!!!!!!!!!!")
+        return
         this.setState({show_popup:false})
         hideAutoClockPopup()
     }
@@ -90,6 +92,7 @@ class AutoClockPopup extends Component {
                          new_values.issue_id,
                          new_values.role,
                          new_values.description))
+        setPreferredRole(new_values.role)
     }
 
     onClockOut(entry_id) {
@@ -105,66 +108,96 @@ class AutoClockPopup extends Component {
         this.setState({show_list: true})
     }
 
-    render() {
+    renderClockToggle() {
+        const { most_recent_entry} = this.props
+        return (
+            <div className="auto-clock__show"
+                 onClick={this.onShowPopup}
+                 onMouseOver={this.onShowPopup} >
+              { most_recent_entry && most_recent_entry.is_active &&
+                <div className="icon--timer-active auto-clock__stop"
+                     onClick={() => this.onClockOut(most_recent_entry.id)}
+                />
+              }
+                { (! most_recent_entry || ! most_recent_entry.is_active) &&
+                  <div className="icon--timer-inactive"/>
+                }
+            </div>
+        )
+        
+    }
+
+    renderCurrentClock() {
+
+        const { most_recent_entry} = this.props
+
+        return (
+            <div className="auto-clock__current" >
+
+              { most_recent_entry &&
+                <div className="auto-clock__most_recent">
+                  { most_recent_entry.is_active &&
+                    <div className="icon--timer-stop" onClick={() => this.onClockOut(most_recent_entry.id)} />
+                  }
+                    <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
+                </div>
+              }
+
+            </div>
+        )
+    }
+
+    renderAvailableClock() {
         const { available_project, available_project_id,
-                available_sprint_id, available_issue_id,
-                most_recent_entry} = this.props
-        const { show_list, show_popup } = this.state
+                available_sprint_id, available_issue_id } = this.props
+        
+        return (
+            <div className="auto-clock__next">
+              { ! available_project_id &&
+                <div>Select a project to start clocking</div>
+              }
+
+                { available_project_id &&
+                  <AutoClockNewEntryForm project_id={available_project_id}
+                                         sprint_id={available_sprint_id}
+                                         issue_id={available_issue_id}
+                                         onSubmitted={this.onClockIn} />
+                }
+            </div>
+        )
+    }
+
+    renderClockHistory() {
+        const { show_list } = this.state
+
+        if ( ! show_list ) {
+            return (
+                <div className="icon--expand auto-clock__expand_history" onClick={this.showList}/>
+            )
+        }
+        
+        return (
+            <div className="auto-clock__history">
+              <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
+              <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
+            </div>
+        )
+    }
+
+    render() {
+        const { show_popup } = this.state
 
           return (
 
             <div className="auto-clock" onMouseLeave={this.onHidePopup}>
 
-              <div className="auto-clock__show"
-                   onClick={this.onShowPopup}
-                   onMouseOver={this.onShowPopup} >
-                { most_recent_entry && most_recent_entry.is_active &&
-                  <div className="icon--timer-active auto-clock__stop"
-                       onClick={() => this.onClockOut(most_recent_entry.id)}
-                  />
-                }
-                { (! most_recent_entry || ! most_recent_entry.is_active) &&
-                  <div className="icon--timer-inactive"/>
-                }
-              </div>
-
+              { this.renderClockToggle() }
+              
               { show_popup &&
                 <div className="auto-clock--visible" >
-
-                    { most_recent_entry &&
-                      <div className="auto-clock__most_recent">
-                        { most_recent_entry.is_active &&
-                            <div className="icon--timer-stop" onClick={() => this.onClockOut(most_recent_entry.id)} />
-                        }
-                        <EditableAutoClockEntry entry_id={most_recent_entry.id}/>
-                      </div>
-                    }
-
-
-                    <div className="auto-clock__next">
-                      { ! available_project_id &&
-                        <div>Select a project to start clocking</div>
-                      }
-
-                      { available_project_id &&
-                        <AutoClockNewEntryForm project_id={available_project_id}
-                                               sprint_id={available_sprint_id}
-                                               issue_id={available_issue_id}
-                                               onSubmitted={this.onClockIn} />
-                      }
-                    </div>
-
-
-                    { show_list &&
-                      <div className="icon--collapse auto-clock__collapse_history" onClick={this.hideList}/>
-                    }
-                    { show_list &&
-                      <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
-                    }
-                    { ! show_list &&
-                      <div className="icon--expand auto-clock__expand_history" onClick={this.showList}/>
-                    }
-
+                  { this.renderCurrentClock() }
+                  { this.renderAvailableClock() }
+                  { this.renderClockHistory() }
                 </div>
               }
 
