@@ -111,27 +111,20 @@ class AutoClockPopup extends Component {
                 most_recent_entry} = this.props
         const { show_list, show_popup } = this.state
 
-        if ( ! show_popup ) {
-            return (
-                <div className="auto-clock auto-clock--invisible auto-clock__show"
-                     onClick={this.onShowPopup}>
-                  <div className="icon--timer-start"/>
-                </div>
-            )
-        }
-        
-        if ( show_popup ) {
-
           return (
 
-              <div className="auto-clock">
+            <div className="auto-clock" onMouseLeave={this.onHidePopup}>
 
-                <div className="auto-clock__hide" onClick={this.onHidePopup}>
-                  <div className="icon--small-cross"/>
-                </div>
+              <div className="auto-clock__show"
+                   onClick={this.onShowPopup}
+                   onMouseOver={this.onShowPopup} >
+                { most_recent_entry && most_recent_entry.is_active && <div className="icon--timer-active"/> }
+                { (! most_recent_entry || ! most_recent_entry.is_active) && <div className="icon--timer-inactive"/> }
+              </div>
 
-                <div className="auto-clock--visible">
-                
+              { show_popup &&
+                <div className="auto-clock--visible" >
+
                     { most_recent_entry &&
                       <div className="auto-clock__most_recent">
                         { most_recent_entry.is_active &&
@@ -167,10 +160,10 @@ class AutoClockPopup extends Component {
                     }
 
                 </div>
+              }
 
-              </div>
-          )
-        }
+            </div>
+        )
     }
 }
 
