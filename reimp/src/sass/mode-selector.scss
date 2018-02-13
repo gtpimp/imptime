@@ -1,0 +1,27 @@
+@import 'variables.scss';
+
+.mode-selector {
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 3px;
+  display: flex;
+  padding-left: 11px;
+  padding-right: 16px;
+  height: 44px;
+  width: 10%;
+  top: 8px;
+  left: 40%;
+  position: absolute;
+  outline: 1px #333 solid;
+}
+
+.mode-selector__options {
+  color: #666;
+  border: 0;
+  font: normal normal 400 14px "Roboto", sans-serif;
+  height: 40px;
+  margin-left: 10px;
+  width: 100%;
+  outline: none;
+  background-color: #ffffff;
+}

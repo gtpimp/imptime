@@ -6,6 +6,7 @@ import { collapseUserDashboard, expandUserDashboard } from '../actions/Header'
 import classNames from 'classnames'
 import '../sass/navbar.css'
 import NavTab from './NavTab'
+import ModeSelector from './ModeSelector'
 
 class Navbar extends Component {
 
@@ -37,6 +38,7 @@ class Navbar extends Component {
                         </div>
                     </NavTab>
                     <div className="navbar__component navbar__search"><SearchBox/></div>
+                    <ModeSelector></ModeSelector>
                 </div>
                 <div className="navbar__right">
                   <div className="navbar__tab"><NavTab to="/nudge" label="Nudge" /></div>
