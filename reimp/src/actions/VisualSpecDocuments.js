@@ -1,7 +1,6 @@
 import { impfetch } from './lib.js'
-import { compact, map, keys, keyBy, includes, difference, indexOf, identity } from 'lodash'
+import { map, indexOf } from 'lodash'
 import move from 'lodash-move'
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { setIssueStoreValue } from './Issues'
 import { ENTITY_KEY__VISUAL_SPEC_DOCUMENT } from '../actions/ItemListKeyRegistry'
 
@@ -11,7 +10,6 @@ import {
     announceItemsSaving,
     announceItemsSaved,
     announceItemSaveFailed,
-    fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
     getItem,

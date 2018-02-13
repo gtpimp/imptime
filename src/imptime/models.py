@@ -12,6 +12,7 @@ from timepiece.models import Issue
 from timepiece.models import IssueHistory
 from timepiece.models import Project as Sprint
 import PIL
+import os
 import hashlib
 
 import logging
@@ -22,8 +23,8 @@ upload_to_visual_spec_documents = UploadTo("visual_spec_documents")
 class VisualSpecDocument(BaseModel):
     original_doc = models.FileField(max_length=255, upload_to=upload_to_visual_spec_documents)
     hires = HiResImageField(upload_to=upload_to_visual_spec_documents)
-    lores = LoResImageField(upload_to=upload_to_visual_spec_documents)
-    thumbnail = ThumbnailImageField(upload_to=upload_to_visual_spec_documents)
+    lores = LoResImageField(upload_to=upload_to_visual_spec_documents, null=True)
+    thumbnail = ThumbnailImageField(upload_to=upload_to_visual_spec_documents, null=True)
     hires_width = models.IntegerField()
     hires_height = models.IntegerField()
     md5sum = models.CharField(max_length=255)
@@ -50,18 +51,20 @@ class VisualSpecDocument(BaseModel):
 
     @classmethod
     def create_for_doc(self, user, project, doc, name, content_type, issue=None):
+        d_file = doc
         is_image = content_type.startswith('image')
         if is_image:
             f_image = doc
+            width, height = PIL.Image.open(f_image).size
         else:
-            f_image = DjangoFile(open(os.path.join(os.path.dirname(os.path.realpath(__file__)), "unknown_visual_spec_doc_image.png")))
-        width, height = PIL.Image.open(f_image).size
+            f_image = None
+            width, height = 0, 0
 
-        md5sum = self.get_md5sum(f_image)
-
+        md5sum = self.get_md5sum(d_file)
         vsd = VisualSpecDocument.objects.filter(md5sum=md5sum).first()
+
         if vsd is None:
-            vsd = VisualSpecDocument.objects.create(original_doc=doc,
+            vsd = VisualSpecDocument.objects.create(original_doc=d_file,
                                                     hires=f_image,
                                                     lores=f_image,
                                                     hires_width=width,
@@ -71,10 +74,12 @@ class VisualSpecDocument(BaseModel):
                                                     md5sum=md5sum,
                                                     content_type=content_type,
                                                     is_image=is_image)
+
         VisualSpecProject.objects.get_or_create(visual_spec_document=vsd,
                                                 project_id=project.id,
                                                 defaults={'order':VisualSpecProject.get_next_order(project.id)})
         project.save()
+
         if issue is not None:
             _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
                                                                issue=issue,
