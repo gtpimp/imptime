@@ -28,6 +28,7 @@ import {
     getPageFlag,
     setPageFlag
 } from '../actions/Page'
+import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {getCandidateSprint} from '../actions/Sprints'
 
 class SprintsPage extends Component {
@@ -66,6 +67,8 @@ class SprintsPage extends Component {
                                                                 default_filter,
                                                                 {project_id: project.id})))
             dispatch(select_projects(page_key, [project.id]))
+            dispatch(setActivelyAvailableAutoClockEntity(project.id,
+                                                         selected_sprint_ids && selected_sprint_ids.length > 0 && selected_sprint_ids[0]))
             dispatch(invalidateList(list_key))
             dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
                                      {to: '/projects/' + project.id, label: project.name},
@@ -74,6 +77,7 @@ class SprintsPage extends Component {
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
             dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
             dispatch(select_sprints(page_key, [default_sprint_id]))
+            dispatch(setActivelyAvailableAutoClockEntity(project.id, default_sprint_id))
         }
     }
 
@@ -86,6 +90,7 @@ class SprintsPage extends Component {
         const {dispatch, project_id, list_key, page_key} = this.props
         dispatch(selectItems(list_key, sprint_ids))
         dispatch(select_sprints(page_key, sprint_ids))
+        dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_ids && sprint_ids.length > 0 && sprint_ids[0]))
         
         if ( sprint_ids && sprint_ids.length === 1 ) {
             browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);

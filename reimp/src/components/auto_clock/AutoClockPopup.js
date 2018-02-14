@@ -4,7 +4,16 @@ import map from 'lodash/map'
 import Modal from 'react-modal';
 import classNames from 'classnames'
 import '../../sass/auto-clock.scss'
-import { getAvailableAutoClockEntity, clockIn, clockOut, shouldShowAutoClockPopup, hideAutoClockPopup, showAutoClockPopup } from '../../actions/AutoClock'
+import { getAvailableAutoClockEntity,
+         clockIn,
+         clockOut,
+         shouldShowAutoClockPopup,
+         hideAutoClockPopup,
+         showAutoClockPopup,
+         isAutoClockingEnabled,
+         enableAutoClocking,
+         disableAutoClocking
+} from '../../actions/AutoClock'
 import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import AutoClockList from './AutoClockList'
 import AutoClockEntry from './AutoClockEntry'
@@ -12,6 +21,7 @@ import EditableAutoClockEntry from './EditableAutoClockEntry'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
+import ToggleButton from '../toolbar/ToggleButton'
 import {
     fetchAutoClocksIfNeeded, getAutoClocks, setPreferredRole
 } from '../../actions/AutoClock'
@@ -49,6 +59,7 @@ class AutoClockPopup extends Component {
         this.showList = this.showList.bind(this)
         this.onShowPopup = this.onShowPopup.bind(this)
         this.onHidePopup = this.onHidePopup.bind(this)
+        this.onAutoClockingEnabledToggleClick = this.onAutoClockingEnabledToggleClick.bind(this)
         this.state = { show_list: false,
                        show_popup: shouldShowAutoClockPopup() }
     }
@@ -76,6 +87,7 @@ class AutoClockPopup extends Component {
     }
 
     onHidePopup() {
+        return
         this.setState({show_popup:false})
         hideAutoClockPopup()
     }
@@ -98,6 +110,15 @@ class AutoClockPopup extends Component {
     onClockOut(entry_id) {
         const { dispatch } = this.props
         dispatch(clockOut(entry_id))
+    }
+
+    onAutoClockingEnabledToggleClick(new_value) {
+        const { dispatch } = this.props
+        if ( new_value ) {
+            dispatch(enableAutoClocking())
+        } else {
+            dispatch(disableAutoClocking())
+        }
     }
 
     hideList() {
@@ -166,7 +187,8 @@ class AutoClockPopup extends Component {
 
     renderAvailableClock() {
         const { available_project, available_project_id,
-                available_sprint_id, available_issue_id } = this.props
+                available_sprint_id, available_issue_id,
+                auto_clocking_enabled } = this.props
         
         return (
             <div className="auto-clock__next">
@@ -179,12 +201,20 @@ class AutoClockPopup extends Component {
                 <div>Select a project to start clocking</div>
               }
 
-                { available_project_id &&
-                  <AutoClockNewEntryForm project_id={available_project_id}
-                                         sprint_id={available_sprint_id}
-                                         issue_id={available_issue_id}
-                                         onSubmitted={this.onClockIn} />
-                }
+              <div className="auto-clock__toggle_autoclocking">
+                <ToggleButton value={auto_clocking_enabled}
+                              onChange={this.onAutoClockingEnabledToggleClick}
+                              on_label={"Auto clocking enabled"}
+                              off_label={"Auto clocking disabled"}
+                />
+              </div>
+                
+              { available_project_id &&
+                <AutoClockNewEntryForm project_id={available_project_id}
+                                       sprint_id={available_sprint_id}
+                                       issue_id={available_issue_id}
+                                       onSubmitted={this.onClockIn} />
+              }
             </div>
         )
     }
@@ -269,6 +299,7 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const logged_in_user_id = logged_in_user().user_id || -1
     const most_recent_entry = (items_by_id && items_by_id.length > 0 && items_by_id[0]) || null
+    const auto_clocking_enabled = isAutoClockingEnabled()
     
     return {
         available_project_id,
@@ -284,7 +315,8 @@ function mapStateToProps(state, props) {
         filter,
         logged_in_user_id,
         most_recent_entry,
-        list_key
+        list_key,
+        auto_clocking_enabled
     }
 
 }

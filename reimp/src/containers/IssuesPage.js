@@ -8,6 +8,7 @@ import IssueList from '../components/IssueList'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
 import SplitPane from 'react-split-pane'
+import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {
     LIST_KEY__ISSUE_LIST,
     PAGE_KEY__ISSUES_PAGE
@@ -50,11 +51,13 @@ class IssuesPage extends Component {
         dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, false))
         dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
+        dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id, default_issue_id))
+                                                    
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, default_issue_id } = new_props
+        const { dispatch, default_issue_id, selected_issue_ids } = new_props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
 
@@ -66,6 +69,8 @@ class IssuesPage extends Component {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
                 dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [new_props.sprint_id]))
                 dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [new_props.project_id]))
+                dispatch(setActivelyAvailableAutoClockEntity(new_props.project_id, new_props.sprint_id,
+                                                            selected_issue_ids && selected_issue_ids.length > 0 && selected_issue_ids[0]))
                 dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             }
             this.refresh(new_props)
@@ -93,10 +98,12 @@ class IssuesPage extends Component {
     }
 
     selectDefaultIssue(these_props) {
-        const {dispatch, selected_issue_ids, default_issue_id} = these_props || this.props
+        const {dispatch, project_id, sprint_id, selected_issue_ids,
+               default_issue_id} = these_props || this.props
         if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
             dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
             dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
+            dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id, default_issue_id))
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }
@@ -104,9 +111,11 @@ class IssuesPage extends Component {
     onSelectIssues(issue_ids) {
         const { dispatch, project_id, sprint_id } = this.props
         dispatch(selectItems(LIST_KEY__ISSUE_LIST, issue_ids))
-        dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
-        dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
+        dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
+        dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
+        dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id,
+                                                    issue_ids && issue_ids.length > 0 && issue_ids[0]))
 
         if ( issue_ids && issue_ids.length === 1 ) {
             browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);

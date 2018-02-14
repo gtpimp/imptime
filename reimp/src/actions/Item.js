@@ -26,7 +26,7 @@ export const ANNOUNCE_DELETE_ITEM_FAILED = 'ANNOUNCE_DELETE_ITEM_FAILED'
 export const ANNOUNCE_DELETING_ITEMS = 'ANNOUNCE_DELETING_ITEMS'
 export const ANNOUNCE_ITEMS_DELETED = 'ANNOUNCE_ITEMS_DELETED'
 export const ANNOUNCE_DELETE_ITEMS_FAILED = 'ANNOUNCE_DELETE_ITEMS_FAILED'
-export const SET_ITEM_STORE_VALUE = 'SET_ITEM_STORE_VALUE'
+export const SET_GLOBAL_ENTITY_FLAG = 'SET_GLOBAL_ENTITY_FLAG'
 
 export const UPDATE_ENTIRE_ITEM_FIELD_NAME = "__all__"
 
@@ -41,17 +41,21 @@ export function invalidateItems(entity_key, item_ids) {
     return {
         type: INVALIDATE_ITEMS,
         entity_key: entity_key,
-	      item_ids_to_invalidate: item_ids
+	item_ids_to_invalidate: item_ids
     }
 }
 
-export function setIssueStoreValue(item_ids, field_name, new_value) {
+export function setGlobalEntityFlag(entity_key, field_name, new_value) {
     return {
-        type: SET_ITEM_STORE_VALUE,
-        item_ids: item_ids,
+        type: SET_GLOBAL_ENTITY_FLAG,
+        entity_key: entity_key,
         field_name: field_name,
         new_value: new_value
     }
+}
+
+export function getGlobalEntityFlag(entity_key, state, field_name) {
+    return ((state || {})[entity_key] || {})[field_name]
 }
 
 function announceLoadingItems(entity_key, item_ids) {

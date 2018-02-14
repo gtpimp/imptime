@@ -2,6 +2,7 @@ import logging
 from django.utils import timezone
 from impasync.refresh_notifier import RefreshNotifier
 from rest_framework.decorators import detail_route, list_route
+from datetime import datetime, timedelta, time
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -80,7 +81,7 @@ class ClockViewSet(BaseViewSet):
             else:
                 issue = self.allowed_issue(issue_id)
             
-            open_entries = Entry.objects.all().filter(user=request.user, end_time__isnull=True).select_related('issue')
+            open_entries = self.allowed_timesheet_entries().filter(end_time__isnull=True).select_related('issue')
             for entry in open_entries:
                 entry.end_time = timezone.now()
                 entry.save()
@@ -114,9 +115,13 @@ class ClockViewSet(BaseViewSet):
             entry = self.allowed_timesheet_entry(entry_id)
             entry.end_time = timezone.now()
             entry.save()
-            
+
             context = {}
             context['clock_entry'] = ClockEntrySerializer(entry).data
+
+            if entry.hours == 0:
+                entry.delete()
+            
             data = {'status': 'success', 'payload': { 'item': context }}
             
         except Exception, ex:
@@ -187,5 +192,3 @@ class ClockViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-
-    
