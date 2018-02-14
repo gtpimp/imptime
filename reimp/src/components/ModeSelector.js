@@ -21,12 +21,25 @@ class ModeSelector extends Component {
         const { mode_type } = this.props
 
         return (
-            <div className="mode-selector">
-              <Select className="mode-selector__options"
-                      name='mode_type'
-                      options={mode_type}
-                      onChange={this.onChangeModeType}
-              />
+            <div>
+              <div className="button button--large button--primary">
+                Dev
+              </div>
+              <div className="button button--large button--primary">
+                Manager
+              </div>
+              <div className="button toolbar-button--small button--large button--primary">
+                Finance
+              </div>
+              <div className="button button--large button--primary">
+                Client
+              </div>
+              <div className="button toolbar-button--small button--large button--primary">
+                Tester
+              </div>
+              <div className="button button--large button--primary">
+                Spec
+              </div>
             </div>
         )
     }
