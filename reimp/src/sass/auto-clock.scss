@@ -1,0 +1,223 @@
+@import 'variables.scss';
+
+.auto-clock {
+    position: fixed;
+    top: 8px;
+    left: 400px;
+    z-index:999;
+}
+
+.auto-clock--visible {
+    min-height: 50px;
+    font-size: $font-size-default;
+    background-color: #ffffff;
+    box-shadow: inset -1px 0 0 0 #e0e0e0;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    line-height: 20px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.auto-clock__stop {
+    cursor: pointer;
+}
+
+.auto-clock__show {
+    cursor: pointer;
+}
+
+.auto-clock__hide {
+    cursor: pointer;
+    background-color: black;
+    float: right;
+}
+ 
+.auto-clock__header {
+    font-size: $font-size-tiny;
+}
+
+.auto-clock__status {
+}
+
+.auto-clock__actions {
+}
+
+.auto-clock__active_section {
+    display: flex;
+    cursor: pointer;
+}
+
+.auto-clock-entry__times {
+    display: flex;
+}
+
+.auto-clock-entry__description {
+    display: flex;
+}
+
+.auto-clock-entry__role {
+    display: flex;
+}
+
+.auto-clock-entry__hours {
+    display: flex;
+}
+
+.auto-clock-entry__field {
+    padding-right: 3px;
+}
+
+.auto-clock-entry__label {
+    padding-left: 3px;
+    color: $label-color;
+}
+
+.auto-clock-entry__entities {
+    display: flex;
+}
+
+.auto-clock__most_recent {
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.auto-clock__form__row1 {
+    display: flex;
+    flex-direction: row;
+}
+
+.auto-clock__form__description {
+    margin-top: 4px;
+}
+
+.auto-clock__next {
+    border-top: 1px solid $color-12;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.auto-clock__role {
+    margin-bottom: 6px;
+}
+
+.auto-clock__radio {
+    cursor: pointer;
+    padding-right: 20px;
+}
+
+.auto-clock__radio input {
+    visibility: hidden;
+}
+
+.auto-clock__radio--checked {
+    border: 1px solid $form-focus-border;
+    background-color: $selected-row-color;
+}
+
+.auto-clock__radio--unchecked {
+    border: 1px solid $form-field-border;
+}
+
+.auto-clock-entry__clockables {
+    display: flex;
+    flex-direction: column;
+}
+
+.auto-clock-entry__clockable {
+    display: flex;
+}
+
+.auto-clock__start {
+    cursor: pointer;
+}
+
+.auto-clock__header {
+    font: $bold-extra-large;
+}
+
+.auto-clock-list {
+}
+
+.auto-clock-list__row {
+    margin-top: 20px;
+    border-top: 1px solid $color-12;
+}
+
+.auto-clock-list__auto_clock_name {
+    padding-top: 4px;
+}
+
+.auto-clock__history {
+    border-top: 1px solid $color-12;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.auto-clock__collapse_history {
+    cursor: pointer;
+}
+
+.auto-clock__expand_history {
+    cursor: pointer;
+}
+
+.auto-clock-form .react-datepicker__time-list {
+    padding-left: 0px;
+}
+
+.auto-clock-form .react-datepicker-wrapper {
+    width: 100%;
+}
+
+.auto-clock-form .react-datepicker__input-container {
+    width: 100%;
+}
+
+.auto-clock-form .react-datepicker__input-container input {
+    width: 100%;
+}
+
+.auto-clock-list__header {
+    font-weight: bold;
+}
+
+.auto-clock-modal {
+    font-size: $font-size-default;
+    line-height: 20px;
+    height: 500px;
+    background-color: $color-2;
+    border-radius: 2px;
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    width: 350px;
+    position: absolute;
+    top: 20%;
+    bottom: 25%;
+    left: 40%;
+    outline: none;
+    overflow: auto;
+}
+
+.auto-clock-modal__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.auto-clock-modal__content {
+    margin-top: 13px;
+}
+
+.auto-clock-modal__title {
+    color: $color-1;
+    font: $font-4;
+}
+
+.auto-clock-modal__close {
+    cursor: pointer;
+}

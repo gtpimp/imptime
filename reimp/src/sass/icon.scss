@@ -37,6 +37,14 @@
     @include icon(20px, 20px, 'icon_time_orange@2x.png')
 }
 
+.icon--timer-stop {
+    @include icon(20px, 20px, 'ic_timer_off_black_24dp_2x.png')
+}
+
+.icon--timer-start {
+    @include icon(20px, 20px, 'ic_timer_black_24dp_2x.png')
+}
+
 .icon--download_as_csv {
     @include icon(20px, 20px, 'material-icons-black-download.png')
 }

@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import Issue, IssueReview, Tag
+from timepiece.models import Issue, IssueReview, Tag, ProjectRole
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
@@ -202,6 +202,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_tags(self):
         return Tag.objects.filter(issues__in=self.allowed_issues())
 
+    def allowed_project_roles(self, project):
+        return ProjectRole.objects.filter(business=project) #sic
+    
     def allowed_wiki_pages(self):
         non_sensitive_wiki_pages = WikiPage.objects.filter(money_sensitive=False,
                                                            project__in=self.allowed_projects()\

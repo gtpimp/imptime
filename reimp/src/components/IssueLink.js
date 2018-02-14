@@ -9,8 +9,9 @@ class IssueLink extends Component {
         this.on_clicked = this.on_clicked.bind(this)
     }
     
-    on_clicked() {
+    on_clicked(event) {
         const { issue_id, sprint_id, project_id, onClick, open_on_click } = this.props
+        event.stopPropagation()
         if ( onClick ) {
             onClick(sprint_id, project_id, issue_id)
         } else if ( open_on_click ) {

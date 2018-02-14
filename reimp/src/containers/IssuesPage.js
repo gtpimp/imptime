@@ -23,6 +23,7 @@ import {
     select_issues,
     get_selected_issue_ids,
     select_sprints,
+    select_projects,
     get_header_list,
     set_wide_column_mode,
     getPageFlag,
@@ -47,6 +48,8 @@ class IssuesPage extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, false))
+        dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
+        dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
         this.refresh()
     }
 
@@ -61,6 +64,8 @@ class IssuesPage extends Component {
 
             if ( new_props.sprint_id != this.props.sprint_id ) {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
+                dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [new_props.sprint_id]))
+                dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [new_props.project_id]))
                 dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             }
             this.refresh(new_props)
@@ -100,6 +105,8 @@ class IssuesPage extends Component {
         const { dispatch, project_id, sprint_id } = this.props
         dispatch(selectItems(LIST_KEY__ISSUE_LIST, issue_ids))
         dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
+        dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
+        dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
 
         if ( issue_ids && issue_ids.length === 1 ) {
             browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);

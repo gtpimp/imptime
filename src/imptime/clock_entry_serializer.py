@@ -10,3 +10,13 @@ class ClockEntrySerializer(BaseSerializer):
     hours = serializers.FloatField()
     user_id = serializers.CharField()
     comments = serializers.CharField()
+    is_active = serializers.BooleanField()
+    role_name = serializers.CharField(source="role.name")
+    issue_id = serializers.CharField()
+    sprint_id = serializers.CharField(source="issue.project_id") #sic
+    project_id = serializers.CharField(source="issue.project.business_id") #sic
+    
+class ClockEntryUpdateSerializer(BaseSerializer):
+    start_time = serializers.DateTimeField()
+    end_time = serializers.DateTimeField()
+    

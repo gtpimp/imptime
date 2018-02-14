@@ -479,7 +479,9 @@ class IssueList extends Component {
 
         const issue_rows = []
         each( issue_items, function(issue_item, index) {
-            if ( issue_item.type == "candidate" ) {
+            if ( ! issue_item ) {
+                console.error("Unexpected: issue_item should not be null")
+            } else if ( issue_item.type == "candidate" ) {
                 issue_rows.push(that.render_candidate_issue())
             } else if ( issue_item.type == "feature" ) {
                 issue_rows.push(that.renderIssue(issue_item.issue, index))

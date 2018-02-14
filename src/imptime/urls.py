@@ -5,7 +5,7 @@ import estimate_summary_api
 import filter_api
 import issue_api
 import issue_attachment_api
-import issue_clock_api
+import clock_api
 import issue_comment_api
 import issue_estimate_api
 import issue_review_api
@@ -61,8 +61,9 @@ router.register(r'issue/estimate', issue_estimate_api.IssueEstimateViewSet,
                 base_name='issue_estimate')
 router.register(r'issue_review', issue_review_api.IssueReviewViewSet,
                 base_name='issue_review')
-router.register(r'issue/clock', issue_clock_api.IssueClockViewSet,
-                base_name='issue_clock')
+router.register(r'clock', clock_api.ClockViewSet,
+                base_name='clock')
+router.register(r'auto_clock', clock_api.ClockViewSet, base_name='auto_clock') #duplicate of /clock, maybe to be resolved, unclear right not if they'll diverge
 router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
