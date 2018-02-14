@@ -12,8 +12,6 @@ LOG_FOLDER=os.path.join(PROJECT_HOME, "..", "..", 'logs')
 ADMINS = (
     ('Gareth Priede', 'gtp@implicitdesign.co.za'),
 )
-MAIL_ADMINS = [ "gtp@implicitdesign.co.za" ]
-
 MANAGERS = ADMINS
 
 REDMINE_DB_MAPPING = [ { 'username' : 'test',
@@ -411,10 +409,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
         'sentry': {
             'level': 'ERROR',
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
@@ -435,7 +429,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers':['mail_admins', 'sentry'],
+            'handlers':['sentry'],
             'propagate': True,
             'level':'INFO',
         },
