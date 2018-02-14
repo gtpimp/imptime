@@ -17,6 +17,7 @@ import { getAvailableAutoClockEntity,
 import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import AutoClockList from './AutoClockList'
 import AutoClockEntry from './AutoClockEntry'
+import AutoClockEntity from './AutoClockEntity'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
@@ -87,7 +88,6 @@ class AutoClockPopup extends Component {
     }
 
     onHidePopup() {
-        return
         this.setState({show_popup:false})
         hideAutoClockPopup()
     }
@@ -110,6 +110,7 @@ class AutoClockPopup extends Component {
     onClockOut(entry_id) {
         const { dispatch } = this.props
         dispatch(clockOut(entry_id))
+        dispatch(disableAutoClocking())
     }
 
     onAutoClockingEnabledToggleClick(new_value) {
@@ -261,6 +262,7 @@ class AutoClockPopup extends Component {
 
     render() {
         const { show_popup, show_list } = this.state
+        const { most_recent_entry, auto_clocking_enabled } = this.props
 
           return (
 
@@ -273,6 +275,14 @@ class AutoClockPopup extends Component {
                   { this.renderCurrentClock() }
                   { this.renderAvailableClock() }
                   { this.renderClockHistory() }
+                </div>
+              }
+              { ! show_popup && auto_clocking_enabled && most_recent_entry &&
+                <div className="auto-clock__mini-auto-clock-status">
+                  <AutoClockEntity project_id={most_recent_entry.project_id}
+                                   sprint_id={most_recent_entry.sprint_id}
+                                   issue_id={most_recent_entry.issue_id}
+                                   className="auto-clock-entry__entities_row" />
                 </div>
               }
               { this.renderClockHistoryModal() }
@@ -299,7 +309,7 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const logged_in_user_id = logged_in_user().user_id || -1
     const most_recent_entry = (items_by_id && items_by_id.length > 0 && items_by_id[0]) || null
-    const auto_clocking_enabled = isAutoClockingEnabled()
+    const auto_clocking_enabled = isAutoClockingEnabled(state)
     
     return {
         available_project_id,

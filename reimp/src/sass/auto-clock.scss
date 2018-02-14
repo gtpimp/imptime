@@ -78,6 +78,14 @@
     display: flex;
 }
 
+.auto-clock-entry__entities_row {
+    flex-direction: row;
+}
+
+.auto-clock__mini-auto-clock-status {
+    font-size: $font-size-small;
+}
+
 .auto-clock__most_recent {
     margin-bottom: 5px;
     display: flex;

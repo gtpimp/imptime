@@ -110,9 +110,9 @@ export function getAutoClocksById(state, auto_clock_ids) {
 export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue_id) {
     return (dispatch, getState) => {
         const state = getState()
-        const selected_project_ids = get_selected_project_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
-        const selected_sprint_ids = get_selected_sprint_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
-        const selected_issue_ids = get_selected_issue_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
+        let selected_project_ids = get_selected_project_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
+        let selected_sprint_ids = get_selected_sprint_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
+        let selected_issue_ids = get_selected_issue_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
         if ( project_id ) {
             if ( !selected_project_ids || selected_project_ids.length == 0 || selected_project_ids[0] != project_id ) {
                 dispatch(select_projects(CONTEXT_KEY__AUTO_CLOCK, compact([project_id])))
@@ -142,6 +142,11 @@ export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue
                 dispatch(select_issues(CONTEXT_KEY__AUTO_CLOCK, []))
             }
         }
+
+        if ( isAutoClockingEnabled(state) && project_id ) {
+            dispatch(clockIn(project_id, sprint_id, issue_id))
+        }
+        
     }
 }
 
