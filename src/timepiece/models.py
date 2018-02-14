@@ -146,6 +146,13 @@ class Business(BaseModel):
 
     DEFAULT_STATUS_COLOURS = COLOURS
 
+    BUSINESS_MODE_TYPES = ( ('dev_mode', 'Developer'),
+                            ('manager_mode', 'Manager'),
+                            ('finance_mode', 'Finance'),
+                            ('client_mode', 'Client'),
+                            ('tester_mode', 'Tester'),
+                            ('spec_mode', 'Spec') )
+
     class Meta:
         ordering = ('name',)
 

@@ -2,25 +2,18 @@
 
 .mode-selector {
   align-items: center;
-  background-color: #ffffff;
-  border-radius: 3px;
   display: flex;
-  padding-left: 11px;
-  padding-right: 16px;
-  height: 44px;
   width: 10%;
-  top: 8px;
+  top: 15px;
   left: 40%;
   position: absolute;
-  outline: 1px #333 solid;
+  color: #000;
 }
 
 .mode-selector__options {
-  color: #666;
-  border: 0;
+  color: #000;
+  border: 2px;
   font: normal normal 400 14px "Roboto", sans-serif;
-  height: 40px;
-  margin-left: 10px;
   width: 100%;
   outline: none;
   background-color: #ffffff;

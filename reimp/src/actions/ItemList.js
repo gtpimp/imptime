@@ -28,8 +28,8 @@ import { ensureIssuesLoaded } from './Issues'
 
 export function initList(list_key) {
     return {
-	      type: INIT_LIST,
-	      list_key: list_key
+        type: INIT_LIST,
+        list_key: list_key
     }
 }
 

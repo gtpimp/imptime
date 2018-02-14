@@ -143,3 +143,10 @@ export var SPRINT_TYPE_ORDER = [ 'inbox',
                                  'regression',
                                  'audit',
                                  'backlog' ]
+
+export var DEV_MODE_HEADER_LIST = ''
+export var MANAGER_MODE_HEADER_LIST = ''
+export var FINANCE_MODE_HEADER_LIST = ''
+export var CLIENT_MODE_HEADER_LIST = ''
+export var TESTER_MODE_HEADER_LIST = ''
+export var SPEC_MODE_HEADER_LIST = ''
