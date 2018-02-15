@@ -329,7 +329,6 @@ export function canShowProjectDelete(project) {
 }
 
 export function setProjectModeType(mode_type) {
-    console.log(mode_type)
     return {
         type: SET_MODE_TYPE,
         active_mode_type: mode_type

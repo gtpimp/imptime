@@ -75,7 +75,7 @@ const small_col_width = "90px"
 const tiny_col_width = "20px"
 
 export function getCellStyle(s) { 
-   // For use with the header lists below
+    // For use with the header lists below
     return {
         "minWidth":s.width,
         "maxWidth":s.width,
@@ -152,10 +152,19 @@ export var TESTER_MODE = 'tester_mode'
 export var SPEC_MODE = 'spec_mode'
 
 export var DEV_MODE_HEADER_LIST = {
-    'key': DEV_MODE
-}
-export var MANAGER_MODE_HEADER_LIST = 'Manager'
-export var FINANCE_MODE_HEADER_LIST = 'Finance'
-export var CLIENT_MODE_HEADER_LIST = 'Client'
-export var TESTER_MODE_HEADER_LIST = 'Tester'
-export var SPEC_MODE_HEADER_LIST = 'Spec'
+    'key': DEV_MODE}
+
+export var MANAGER_MODE_HEADER_LIST = {
+    'key': MANAGER_MODE}
+
+export var FINANCE_MODE_HEADER_LIST = {
+    'key': FINANCE_MODE}
+
+export var CLIENT_MODE_HEADER_LIST = {
+    'key': CLIENT_MODE}
+
+export var TESTER_MODE_HEADER_LIST = {
+    'key': TESTER_MODE}
+
+export var SPEC_MODE_HEADER_LIST = {
+    'key': SPEC_MODE}
