@@ -144,9 +144,18 @@ export var SPRINT_TYPE_ORDER = [ 'inbox',
                                  'audit',
                                  'backlog' ]
 
-export var DEV_MODE_HEADER_LIST = ''
-export var MANAGER_MODE_HEADER_LIST = ''
-export var FINANCE_MODE_HEADER_LIST = ''
-export var CLIENT_MODE_HEADER_LIST = ''
-export var TESTER_MODE_HEADER_LIST = ''
-export var SPEC_MODE_HEADER_LIST = ''
+export var DEV_MODE = 'dev_mode'
+export var MANAGER_MODE = 'manager_mode'
+export var FINANCE_MODE = 'finance_mode'
+export var CLIENT_MODE = 'client_mode'
+export var TESTER_MODE = 'tester_mode'
+export var SPEC_MODE = 'spec_mode'
+
+export var DEV_MODE_HEADER_LIST = {
+    'key': DEV_MODE
+}
+export var MANAGER_MODE_HEADER_LIST = 'Manager'
+export var FINANCE_MODE_HEADER_LIST = 'Finance'
+export var CLIENT_MODE_HEADER_LIST = 'Client'
+export var TESTER_MODE_HEADER_LIST = 'Tester'
+export var SPEC_MODE_HEADER_LIST = 'Spec'

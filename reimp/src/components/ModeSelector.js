@@ -3,41 +3,66 @@ import {connect} from 'react-redux'
 import Select from 'react-select'
 import '../sass/mode-selector.css'
 import {
-    DEV_MODE_HEADER_LIST,
-    MANAGER_MODE_HEADER_LIST,
-    FINANCE_MODE_HEADER_LIST,
-    CLIENT_MODE_HEADER_LIST,
-    TESTER_MODE_HEADER_LIST,
-    SPEC_MODE_HEADER_LIST
+    DEV_MODE,
+    MANAGER_MODE,
+    FINANCE_MODE,
+    CLIENT_MODE,
+    TESTER_MODE,
+    SPEC_MODE
 } from '../actions/ItemListKeyRegistry'
+import { ensureProjectsLoaded,
+         getProject,
+         setProjectModeType,
+         getProjectModeType
+} from '../actions/Projects'
+import {
+    getListFilter,
+    update_list_filter,
+    clear_list_filter_option,
+    invalidateList
+} from '../actions/ItemList'
+import classNames from 'classnames'
 
 class ModeSelector extends Component {
 
-    onChangeFilterSprintType(new_value) {
+    constructor(props) {
+        super(props)
+        this.onChangeModeType = this.onChangeModeType.bind(this)
     }
 
+    onChangeModeType(mode_type) {
+        const { dispatch } = this.props
+        dispatch(setProjectModeType(mode_type))
+    }
+    
     render() {
-
-        const { mode_type } = this.props
+        const button_class = "button button--large mode-button"
+        const { current_mode } = this.props
 
         return (
-            <div>
-              <div className="button button--large button--primary">
+            <div className="mode-select-panel">
+              <div onClick={() => this.onChangeModeType(DEV_MODE) }
+                   className={ current_mode === DEV_MODE ? classNames(button_class, 'button--active') : button_class }>
                 Dev
               </div>
-              <div className="button button--large button--primary">
+              <div onClick={() => this.onChangeModeType(MANAGER_MODE) }
+                   className={ current_mode === MANAGER_MODE ? classNames(button_class, 'button--active') : button_class }>
                 Manager
               </div>
-              <div className="button toolbar-button--small button--large button--primary">
+              <div onClick={() => this.onChangeModeType(FINANCE_MODE) }
+                   className={ current_mode === FINANCE_MODE ? classNames(button_class, 'button--active') : button_class }>
                 Finance
               </div>
-              <div className="button button--large button--primary">
+              <div onClick={() => this.onChangeModeType(CLIENT_MODE) }
+                   className={ current_mode === CLIENT_MODE ? classNames(button_class, 'button--active') : button_class }>
                 Client
               </div>
-              <div className="button toolbar-button--small button--large button--primary">
+              <div onClick={() => this.onChangeModeType(TESTER_MODE) }
+                   className={ current_mode === TESTER_MODE ? classNames(button_class, 'button--active') : button_class }>
                 Tester
               </div>
-              <div className="button button--large button--primary">
+              <div onClick={() => this.onChangeModeType(SPEC_MODE) }
+                   className={ current_mode === SPEC_MODE ? classNames(button_class, 'button--active') : button_class }>
                 Spec
               </div>
             </div>
@@ -47,11 +72,13 @@ class ModeSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const mode_type = [{value: "dev", label: "dev"}, {value: "tester", label: "tester"}]
-
+    const current_mode = getProjectModeType(state)
+    console.log(current_mode)
+    
     return {
-        mode_type
+        current_mode: current_mode
     }
 }
 
 export default connect(mapStateToProps)(ModeSelector)
+

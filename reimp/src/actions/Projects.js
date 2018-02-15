@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import keyBy from 'lodash/keyBy'
+import { keyBy, get } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 import { deleteItems } from '../actions/Item'
@@ -24,6 +24,7 @@ export const ANNOUNCE_SAVING_NEW_PROJECT_FAILED = 'ANNOUNCE_SAVING_NEW_PROJECT_F
 export const ANNOUNCE_SAVING_INVITE = 'ANNOUNCE_SAVING_INVITE'
 export const ANNOUNCE_SAVED_INVITE = 'ANNOUNCE_SAVED_INVITE'
 export const ANNOUNCE_SAVE_INVITE_FAILED = 'ANNOUNCE_SAVE_INVITE_FAILED'
+export const SET_MODE_TYPE = 'SET_MODE_TYPE'
 
 export function invalidateAllProjects() {
     return {
@@ -325,4 +326,16 @@ export function saveInviteUser(project_id, user_email) {
 
 export function canShowProjectDelete(project) {
     return project.can_delete_project || false
+}
+
+export function setProjectModeType(mode_type) {
+    console.log(mode_type)
+    return {
+        type: SET_MODE_TYPE,
+        active_mode_type: mode_type
+    }
+}
+
+export function getProjectModeType(state) {
+    return get(state.project, "active_mode_type", null)
 }

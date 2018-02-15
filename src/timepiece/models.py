@@ -4875,16 +4875,7 @@ class ProjectModeType(BaseModel):
                             ('spec_mode', 'Spec') )
 
     business = ProtectedForeignKey(Business, related_name='mode_types')
-    name = models.CharField(max_length=100, null=False)
-
-
+    mode_type = models.CharField(choices=BUSINESS_MODE_TYPES, max_length=255, null=False, default="dev_mode")
+    
     class Meta:
-        unique_together = ('name', 'business')
-
-        
-class ProjectMode(BaseModel):
-    project = ProtectedForeignKey(Project, null=False, related_name='mode')
-    mode_type = ProtectedForeignKey(ProjectModeType, null=False)
-
-#    class Meta:
-#        ordering = ('mode',)
+        unique_together = ('mode_type', 'business')

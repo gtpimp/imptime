@@ -1,20 +1,25 @@
 @import 'variables.scss';
 
-.mode-selector {
+.mode-select-panel {
   align-items: center;
   display: flex;
-  width: 10%;
-  top: 15px;
-  left: 40%;
-  position: absolute;
-  color: #000;
+  height: 56px;
+  width: 70%;
+  padding-left: 15%;
 }
 
-.mode-selector__options {
-  color: #000;
-  border: 2px;
-  font: normal normal 400 14px "Roboto", sans-serif;
-  width: 100%;
-  outline: none;
-  background-color: #ffffff;
+.mode-button {
+    background-color: #ccc;
+    color: #777;
+    border: 1px #999 solid;
+    margin-left: 3px;
+    &:hover {
+        background-color: rgba(50,100,170,0.4);
+        color: #fff;
+    }
+}
+
+.button--active {
+    background-color: #4A90E2;
+    color: #fff;
 }

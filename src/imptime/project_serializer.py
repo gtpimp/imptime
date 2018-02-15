@@ -5,6 +5,7 @@ from timepiece.models import Feature, IssueStatus, Issue, ProjectRole, Rate
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
+from timepiece.models import ProjectModeType
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from imptime.models import VisualSpecDocument
 from project_user_permission_serializer import ProjectUserPermissionSerializer
@@ -32,6 +33,7 @@ class ProjectSerializer(BaseSerializer):
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_type_names = serializers.ListField(child=serializers.CharField())
     allowed_deadline_types = serializers.ListField(child=ProjectDeadlineTypeSerializer())
+    allowed_mode_types = serializers.ListField(child=serializers.CharField())
     feature_names = serializers.ListField(child=serializers.CharField())
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
     logged_in_users_roles = serializers.ListField(child=serializers.CharField())
@@ -85,6 +87,7 @@ class ProjectSerializer(BaseSerializer):
         project.allowed_deadline_types = SprintDeadlineType.objects.all()\
                                                                    .filter(business=project)\
                                                                    .order_by("name")
+        project.allowed_mode_types = [ k for k,v in ProjectModeType.BUSINESS_MODE_TYPES ]
         
         project.user_permissions = ProjectPermissions.for_user(user=self.logged_in_user,
                                                                business=project) #sic

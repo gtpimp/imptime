@@ -20,8 +20,8 @@ import {
     CANCEL_CREATING_NEW_PROJECT,
     ANNOUNCE_SAVING_NEW_PROJECT,
     ANNOUNCE_SAVED_NEW_PROJECT,
-    ANNOUNCE_SAVING_NEW_PROJECT_FAILED
-
+    ANNOUNCE_SAVING_NEW_PROJECT_FAILED,
+    SET_MODE_TYPE
 
 } from '../actions/Projects.js'
 
@@ -115,7 +115,11 @@ export default function project(state = initialState, action) {
 						                                      state.candidate_project || {},
 						                                      {is_saving: false})})
 
-
+        case SET_MODE_TYPE:
+            state_copy = Object.assign(
+                {}, state, {active_mode_type: action.active_mode_type}
+            )
+            return state_copy
 
         default:
             return state
