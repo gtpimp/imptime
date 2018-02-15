@@ -170,11 +170,6 @@ class Business(BaseModel):
     impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
     archived = models.BooleanField(default=False, db_index=True)
-    # mode_type = models.CharField(max_length=20,
-    #                              choices=BUSINESS_MODE_TYPES,
-    #                              default='dev_mode',
-    #                              null=True,
-    #                              blank=True)
 
     def model_to_dict(self):
         d = model_to_dict_with_date_support(self)
@@ -4865,17 +4860,3 @@ class IssueReview(BaseModel):
         review = IssueReview.objects.get_or_create(issue=issue, reviewed_by=logged_in_user)[0]
         review.last_reviewed_at = timezone.now()
         review.save()
-
-class ProjectModeType(BaseModel):
-    BUSINESS_MODE_TYPES = ( ('dev_mode', 'Developer'),
-                            ('manager_mode', 'Manager'),
-                            ('finance_mode', 'Finance'),
-                            ('client_mode', 'Client'),
-                            ('tester_mode', 'Tester'),
-                            ('spec_mode', 'Spec') )
-
-    business = ProtectedForeignKey(Business, related_name='mode_types')
-    mode_type = models.CharField(choices=BUSINESS_MODE_TYPES, max_length=255, null=False, default="dev_mode")
-    
-    class Meta:
-        unique_together = ('mode_type', 'business')
