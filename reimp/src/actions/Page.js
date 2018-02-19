@@ -185,8 +185,7 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
 export function setProjectMode(page_key, project_mode) {
 
     var header_list = PROJECT_MODE_LIST[project_mode]
-    console.log(project_mode)
-    
+
     return {
         type: PROJECT_MODE,
         page_key: page_key,

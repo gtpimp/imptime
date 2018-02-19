@@ -121,26 +121,26 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width
                                        'small_delete': {label:"", width:tiny_col_width}
 }
 
-export var PROJECT_MODE_LIST = { 'dev_mode' : {'number': {label:"#", width:tiny_col_width}},
-                                 'manager_mode' : {'number': {label:"#", width:tiny_col_width},
-                                                   'adhoc': {label:'', width:tiny_col_width}},
-                                 'finance_mode' : {'number': {label:"#", width:tiny_col_width},
-                                                   'adhoc': {label:'', width:tiny_col_width},
-                                                   'expand_feature': {label:'', width:tiny_col_width}},                                             
-                                 'client_mode' : {'number': {label:"#", width:tiny_col_width},
-                                                  'adhoc': {label:'', width:tiny_col_width},
-                                                  'expand_feature': {label:'', width:tiny_col_width},
+export var PROJECT_MODE_LIST = { 'dev_mode': {'number': {label:"#", width:tiny_col_width}},
+                                 'manager_mode': {'number': {label:"#", width:tiny_col_width},
                                                   'name': {label:"Name", width:"auto", flex:1}},
-                                 'tester_mode' : {'number': {label:"#", width:tiny_col_width},
-                                                  'adhoc': {label:'', width:tiny_col_width},
-                                                  'expand_feature': {label:'', width:tiny_col_width},
-                                                  'name': {label:"Name", width:"auto", flex:1},
-                                                  'assignee': {label:"Assignee", width:medium_col_width}},
-                                 'spec_mode' : {'number': {label:"#", width:tiny_col_width},
-                                                'adhoc': {label:'', width:tiny_col_width},
-                                                'expand_feature': {label:'', width:tiny_col_width},
-                                                'name': {label:"Name", width:"auto", flex:1},
-                                                'assignee': {label:"Assignee", width:medium_col_width}}
+                                 'finance_mode': {'number': {label:"#", width:tiny_col_width},
+                                                  'estimated': {label:"Estimates", width:medium_col_width}},
+                                 'client_mode': {'number': {label:"#", width:tiny_col_width},
+                                                 'adhoc': {label:'', width:tiny_col_width},
+                                                 'expand_feature': {label:'', width:tiny_col_width},
+                                                 'name': {label:"Name", width:"auto", flex:1}},
+                                 'tester_mode': {'number': {label:"#", width:tiny_col_width},
+                                                 'adhoc': {label:'', width:tiny_col_width},
+                                                 'expand_feature': {label:'', width:tiny_col_width},
+                                                 'name': {label:"Name", width:"auto", flex:1},
+                                                 'assignee': {label:"Assignee", width:medium_col_width}},
+                                 'spec_mode': {'number': {label:"#", width:tiny_col_width},
+                                               'adhoc': {label:'', width:tiny_col_width},
+                                               'expand_feature': {label:'', width:tiny_col_width},
+                                               'name': {label:"Name", width:"auto", flex:1},
+                                               'status': {label:"Status", width:medium_col_width},
+                                               'assignee': {label:"Assignee", width:medium_col_width}}
 }
 
     export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
