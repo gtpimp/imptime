@@ -12,7 +12,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { setMienButton,
          getMienButton
-} from '../actions/Projects'
+} from '../actions/Settings'
 import { setMien } from '../actions/Page'
 import classNames from 'classnames'
 

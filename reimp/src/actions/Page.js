@@ -188,10 +188,7 @@ export function setMien(page_key, mien) {
     return {
         type: MIEN,
         page_key: page_key,
-        project_mien: mien,
+        mien: mien,
         header_list: header_list
     }
-}
-export function getMien(state, page_key) {
-    return (state.page[page_key] || {}).mien
 }

@@ -24,7 +24,6 @@ export const ANNOUNCE_SAVING_NEW_PROJECT_FAILED = 'ANNOUNCE_SAVING_NEW_PROJECT_F
 export const ANNOUNCE_SAVING_INVITE = 'ANNOUNCE_SAVING_INVITE'
 export const ANNOUNCE_SAVED_INVITE = 'ANNOUNCE_SAVED_INVITE'
 export const ANNOUNCE_SAVE_INVITE_FAILED = 'ANNOUNCE_SAVE_INVITE_FAILED'
-export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 
 export function invalidateAllProjects() {
     return {
@@ -326,15 +325,4 @@ export function saveInviteUser(project_id, user_email) {
 
 export function canShowProjectDelete(project) {
     return project.can_delete_project || false
-}
-
-export function setMienButton(active_mien) {
-    return {
-        type: SET_MIEN_BUTTON,
-        active_mien: active_mien
-    }
-}
-
-export function getMienButton(state) {
-    return get(state.project, "active_mien", null)
 }

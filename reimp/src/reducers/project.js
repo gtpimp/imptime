@@ -14,15 +14,12 @@ import {
     ANNOUNCE_SAVING_PROJECTS,
     INVALIDATE_PROJECTS,
     INVALIDATE_ALL_PROJECTS,
-
     ANNOUNCE_CAPTURING_NEW_PROJECT,
     UPDATE_NEW_PROJECT_DETAILS,
     CANCEL_CREATING_NEW_PROJECT,
     ANNOUNCE_SAVING_NEW_PROJECT,
     ANNOUNCE_SAVED_NEW_PROJECT,
-    ANNOUNCE_SAVING_NEW_PROJECT_FAILED,
-    SET_MIEN_BUTTON
-
+    ANNOUNCE_SAVING_NEW_PROJECT_FAILED
 } from '../actions/Projects.js'
 
 const initialState = {
@@ -114,12 +111,6 @@ export default function project(state = initialState, action) {
 		            {candidate_project: Object.assign({},
 						                                      state.candidate_project || {},
 						                                      {is_saving: false})})
-
-        case SET_MIEN_BUTTON:
-            state_copy = Object.assign(
-                {}, state, {active_mien: action.active_mien}
-            )
-            return state_copy
 
         default:
             return state

@@ -88,10 +88,11 @@ export default function page(state = initialState, action) {
         case MIEN:
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
-	          state_copy[action.page_key] = Object.assign({}, l,
+            state_copy[action.page_key] = Object.assign({}, l,
                                                         {"mien": action.mien},
-                                                        {"header_list": action.header_list} )
-	          return state_copy
+                                                        {"header_list": action.header_list})
+            return state_copy
+
             
         default:
             return state
