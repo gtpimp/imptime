@@ -2674,7 +2674,7 @@ class Entry(BaseModel):
     objects_original = models.Manager()
     objects_for_reporting = EntryQuerySetForReporting.as_manager()
 
-    issue = models.ProtectedForeignKey('Issue', blank=True, null=True, related_name='entries')
+    issue = ProtectedForeignKey('Issue', blank=True, null=True, related_name='entries')
 
     created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='entries_created_by', null=True, blank=True)
