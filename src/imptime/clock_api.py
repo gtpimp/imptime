@@ -197,7 +197,7 @@ class ClockViewSet(BaseViewSet):
                                                                name=params['role_name'])[0]
                 entry.start_time = validated_data['start_time']
                 entry.end_time = validated_data['end_time']
-                entry.comments = params['description']
+                entry.comments = params['description'] or  ""
                 entry.save()
                 
             data = {'status': 'success', 'payload': entry_pks}
