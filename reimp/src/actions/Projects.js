@@ -24,7 +24,7 @@ export const ANNOUNCE_SAVING_NEW_PROJECT_FAILED = 'ANNOUNCE_SAVING_NEW_PROJECT_F
 export const ANNOUNCE_SAVING_INVITE = 'ANNOUNCE_SAVING_INVITE'
 export const ANNOUNCE_SAVED_INVITE = 'ANNOUNCE_SAVED_INVITE'
 export const ANNOUNCE_SAVE_INVITE_FAILED = 'ANNOUNCE_SAVE_INVITE_FAILED'
-export const SET_MODE_TYPE = 'SET_MODE_TYPE'
+export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 
 export function invalidateAllProjects() {
     return {
@@ -328,13 +328,13 @@ export function canShowProjectDelete(project) {
     return project.can_delete_project || false
 }
 
-export function setProjectModeType(mode_type) {
+export function setMienButton(active_mien) {
     return {
-        type: SET_MODE_TYPE,
-        active_mode_type: mode_type
+        type: SET_MIEN_BUTTON,
+        active_mien: active_mien
     }
 }
 
-export function getProjectModeType(state) {
-    return get(state.project, "active_mode_type", null)
+export function getMienButton(state) {
+    return get(state.project, "active_mien", null)
 }

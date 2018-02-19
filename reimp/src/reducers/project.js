@@ -21,7 +21,7 @@ import {
     ANNOUNCE_SAVING_NEW_PROJECT,
     ANNOUNCE_SAVED_NEW_PROJECT,
     ANNOUNCE_SAVING_NEW_PROJECT_FAILED,
-    SET_MODE_TYPE
+    SET_MIEN_BUTTON
 
 } from '../actions/Projects.js'
 
@@ -115,9 +115,9 @@ export default function project(state = initialState, action) {
 						                                      state.candidate_project || {},
 						                                      {is_saving: false})})
 
-        case SET_MODE_TYPE:
+        case SET_MIEN_BUTTON:
             state_copy = Object.assign(
-                {}, state, {active_mode_type: action.active_mode_type}
+                {}, state, {active_mien: action.active_mien}
             )
             return state_copy
 

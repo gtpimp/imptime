@@ -121,26 +121,26 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width
                                        'small_delete': {label:"", width:tiny_col_width}
 }
 
-export var PROJECT_MODE_LIST = { 'dev_mode': {'number': {label:"#", width:tiny_col_width}},
-                                 'manager_mode': {'number': {label:"#", width:tiny_col_width},
-                                                  'name': {label:"Name", width:"auto", flex:1}},
-                                 'finance_mode': {'number': {label:"#", width:tiny_col_width},
-                                                  'estimated': {label:"Estimates", width:medium_col_width}},
-                                 'client_mode': {'number': {label:"#", width:tiny_col_width},
-                                                 'adhoc': {label:'', width:tiny_col_width},
-                                                 'expand_feature': {label:'', width:tiny_col_width},
-                                                 'name': {label:"Name", width:"auto", flex:1}},
-                                 'tester_mode': {'number': {label:"#", width:tiny_col_width},
-                                                 'adhoc': {label:'', width:tiny_col_width},
-                                                 'expand_feature': {label:'', width:tiny_col_width},
-                                                 'name': {label:"Name", width:"auto", flex:1},
-                                                 'assignee': {label:"Assignee", width:medium_col_width}},
-                                 'spec_mode': {'number': {label:"#", width:tiny_col_width},
-                                               'adhoc': {label:'', width:tiny_col_width},
-                                               'expand_feature': {label:'', width:tiny_col_width},
-                                               'name': {label:"Name", width:"auto", flex:1},
-                                               'status': {label:"Status", width:medium_col_width},
-                                               'assignee': {label:"Assignee", width:medium_col_width}}
+export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width}},
+                         'manager_mien': {'number': {label:"#", width:tiny_col_width},
+                                          'name': {label:"Name", width:"auto", flex:1}},
+                         'finance_mien': {'number': {label:"#", width:tiny_col_width},
+                                          'estimated': {label:"Estimates", width:medium_col_width}},
+                         'client_mien': {'number': {label:"#", width:tiny_col_width},
+                                         'adhoc': {label:'', width:tiny_col_width},
+                                         'expand_feature': {label:'', width:tiny_col_width},
+                                         'name': {label:"Name", width:"auto", flex:1}},
+                         'tester_mien': {'number': {label:"#", width:tiny_col_width},
+                                         'adhoc': {label:'', width:tiny_col_width},
+                                         'expand_feature': {label:'', width:tiny_col_width},
+                                         'name': {label:"Name", width:"auto", flex:1},
+                                         'assignee': {label:"Assignee", width:medium_col_width}},
+                         'spec_mien': {'number': {label:"#", width:tiny_col_width},
+                                       'adhoc': {label:'', width:tiny_col_width},
+                                       'expand_feature': {label:'', width:tiny_col_width},
+                                       'name': {label:"Name", width:"auto", flex:1},
+                                       'status': {label:"Status", width:medium_col_width},
+                                       'assignee': {label:"Assignee", width:medium_col_width}}
 }
 
     export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
@@ -161,27 +161,27 @@ export var SPRINT_TYPE_ORDER = [ 'inbox',
                                  'audit',
                                  'backlog' ]
 
-export var DEV_MODE = 'dev_mode'
-export var MANAGER_MODE = 'manager_mode'
-export var FINANCE_MODE = 'finance_mode'
-export var CLIENT_MODE = 'client_mode'
-export var TESTER_MODE = 'tester_mode'
-export var SPEC_MODE = 'spec_mode'
+export var DEV_MIEN = 'dev_mien'
+export var MANAGER_MIEN = 'manager_mien'
+export var FINANCE_MIEN = 'finance_mien'
+export var CLIENT_MIEN = 'client_mien'
+export var TESTER_MIEN = 'tester_mien'
+export var SPEC_MIEN = 'spec_mien'
 
-export var DEV_MODE_HEADER_LIST = {
-    'key': DEV_MODE}
+export var DEV_MIEN_HEADER_LIST = {
+    'key': DEV_MIEN}
 
-export var MANAGER_MODE_HEADER_LIST = {
-    'key': MANAGER_MODE}
+export var MANAGER_MIEN_HEADER_LIST = {
+    'key': MANAGER_MIEN}
 
-export var FINANCE_MODE_HEADER_LIST = {
-    'key': FINANCE_MODE}
+export var FINANCE_MIEN_HEADER_LIST = {
+    'key': FINANCE_MIEN}
 
-export var CLIENT_MODE_HEADER_LIST = {
-    'key': CLIENT_MODE}
+export var CLIENT_MIEN_HEADER_LIST = {
+    'key': CLIENT_MIEN}
 
-export var TESTER_MODE_HEADER_LIST = {
-    'key': TESTER_MODE}
+export var TESTER_MIEN_HEADER_LIST = {
+    'key': TESTER_MIEN}
 
-export var SPEC_MODE_HEADER_LIST = {
-    'key': SPEC_MODE}
+export var SPEC_MIEN_HEADER_LIST = {
+    'key': SPEC_MIEN}
