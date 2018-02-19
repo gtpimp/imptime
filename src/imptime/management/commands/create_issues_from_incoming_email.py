@@ -169,7 +169,7 @@ class Command(BaseCommand):
             body += "#%s %s\n===============\n%s\n\n" % (issue.number, issue.subject, issue.description)
             
         to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user.email]
-        send_mail(subject=subject,
+        send_mail(subject=subject.replace("\n", "").replace("\r", ""),
                   message=body,
                   from_email=settings.FROM_EMAIL,
                   recipient_list=to_addresses,
