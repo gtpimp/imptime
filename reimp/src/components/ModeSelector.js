@@ -12,6 +12,12 @@ import {
 import { setProjectModeType,
          getProjectModeType
 } from '../actions/Projects'
+import { setProjectMode,
+         getProjectMode
+} from '../actions/Page'
+import {
+    PAGE_KEY__ISSUES_PAGE
+} from '../actions/ItemListKeyRegistry'
 import classNames from 'classnames'
 
 class ModeSelector extends Component {
@@ -22,8 +28,10 @@ class ModeSelector extends Component {
     }
 
     onChangeModeType(mode_type) {
+        console.log("MT", mode_type)
         const { dispatch } = this.props
         dispatch(setProjectModeType(mode_type))
+        dispatch(setProjectMode(PAGE_KEY__ISSUES_PAGE, mode_type))
     }
 
     render() {
@@ -64,9 +72,11 @@ class ModeSelector extends Component {
 function mapStateToProps(state, props) {
 
     const current_mode = getProjectModeType(state)
-
+    const current_project_mode = getProjectMode(state)
+    
     return {
-        current_mode: current_mode
+        current_mode: current_mode,
+        current_project_mode: current_project_mode
     }
 }
 

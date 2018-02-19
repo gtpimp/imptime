@@ -1,6 +1,7 @@
 import {ISSUE_HEADER_LIST_WIDE,
         ISSUE_HEADER_LIST_NARROW,
-        PAGE_KEY__ISSUES_PAGE
+        PAGE_KEY__ISSUES_PAGE,
+        PROJECT_MODE_LIST
 } from './ItemListKeyRegistry'
 import { setAutoClockProjectAvailable, setAutoClockSprintAvailable, setAutoClockIssueAvailable } from './AutoClock'
 
@@ -11,6 +12,7 @@ export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
 export const SET_PAGE_FLAG = 'SET_PAGE_FLAG'
 export const WIDE_COLUMN_MODE = 'WIDE_COLUMN_MODE'
+export const PROJECT_MODE = 'PROJECT_MODE'
 
 export function initList(page_key) {
     return {
@@ -178,4 +180,22 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
         v = default_value
     }
     return v
+}
+
+export function setProjectMode(page_key, project_mode) {
+
+    var header_list = PROJECT_MODE_LIST[project_mode]
+    console.log(project_mode)
+    
+    return {
+        type: PROJECT_MODE,
+        page_key: page_key,
+        project_mode: project_mode,
+        header_list: header_list
+    }
+}
+
+
+export function getProjectMode(state, page_key) {
+    return (state.page[page_key] || {}).project_mode
 }

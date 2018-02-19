@@ -7,7 +7,8 @@ import {
     UPDATE_PAGE_SETTINGS,
     UPDATE_PAGE_SELECTION,
     SET_PAGE_FLAG,
-    WIDE_COLUMN_MODE
+    WIDE_COLUMN_MODE,
+    PROJECT_MODE
 } from '../actions/Page.js'
 import { setErrorMessage } from '../actions/Error'
 
@@ -84,6 +85,14 @@ export default function page(state = initialState, action) {
                                                         {"header_list": action.header_list} )
 	          return state_copy
 
+        case PROJECT_MODE:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, page_template, state_copy[action.page_key] || {})
+	          state_copy[action.page_key] = Object.assign({}, l,
+                                                        {"project_mode": action.project_mode},
+                                                        {"header_list": action.header_list} )
+	          return state_copy
+            
         default:
             return state
     }
