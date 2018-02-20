@@ -4010,11 +4010,7 @@ class Issue(BaseModel):
             return IssuePoints.objects.filter(user=user,issue=self).order_by("id")[0]
 
     def set_points(self, user, points):
-        try:
-            issue_points = IssuePoints.objects.get(user=user, issue=self)
-        except IssuePoints.DoesNotExist:
-            issue_points = IssuePoints.objects.create(user=user, issue=self)
-
+        issue_points = IssuePoints.objects.get_or_create(user=user, issue=self)[0]
         if issue_points != points:
             issue_points.points = points
             issue_points.save()
