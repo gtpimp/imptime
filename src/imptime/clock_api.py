@@ -106,7 +106,7 @@ class ClockViewSet(BaseViewSet):
                                              status='approved',
                                              source='auto_clock',
                                              start_time=timezone.now(),
-                                             comments=description,
+                                             comments=description or "",
                                              end_time=None,
                                              hours=0,
                                              role=ProjectRole.objects.get_or_create(business=project, name=role_name)[0],
