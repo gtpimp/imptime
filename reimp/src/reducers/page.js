@@ -8,7 +8,7 @@ import {
     UPDATE_PAGE_SELECTION,
     SET_PAGE_FLAG,
     WIDE_COLUMN_MODE,
-    MIEN
+    UPDATE_HEADER_LIST
 } from '../actions/Page.js'
 import { setErrorMessage } from '../actions/Error'
 
@@ -85,15 +85,13 @@ export default function page(state = initialState, action) {
                                                         {"header_list": action.header_list} )
 	          return state_copy
 
-        case MIEN:
+        case UPDATE_HEADER_LIST:
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
             state_copy[action.page_key] = Object.assign({}, l,
-                                                        {"mien": action.mien},
                                                         {"header_list": action.header_list})
             return state_copy
 
-            
         default:
             return state
     }

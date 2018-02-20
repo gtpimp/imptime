@@ -1,6 +1,5 @@
 import {ISSUE_HEADER_LIST_WIDE,
         ISSUE_HEADER_LIST_NARROW,
-        MIEN_LIST
 } from './ItemListKeyRegistry'
 import { setAutoClockProjectAvailable, setAutoClockSprintAvailable, setAutoClockIssueAvailable } from './AutoClock'
 
@@ -11,7 +10,7 @@ export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
 export const SET_PAGE_FLAG = 'SET_PAGE_FLAG'
 export const WIDE_COLUMN_MODE = 'WIDE_COLUMN_MODE'
-export const MIEN = 'MIEN'
+export const UPDATE_HEADER_LIST = 'UPDATE_HEADER_LIST'
 
 export function initList(page_key) {
     return {
@@ -181,14 +180,12 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
     return v
 }
 
-export function setMien(page_key, mien) {
+export function updateHeaderList(new_header_list, page_key) {
 
-    var header_list = MIEN_LIST[mien]
-
+    var header_list = new_header_list
     return {
-        type: MIEN,
+        type: UPDATE_HEADER_LIST,
         page_key: page_key,
-        mien: mien,
         header_list: header_list
     }
 }

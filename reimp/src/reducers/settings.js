@@ -1,7 +1,6 @@
 import {
     UPDATE_SETTINGS,
-    SET_MIEN_BUTTON,
-    MIEN
+    SET_MIEN_BUTTON
 } from '../actions/Settings'
 
 const page_template = {

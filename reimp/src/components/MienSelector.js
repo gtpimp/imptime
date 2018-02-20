@@ -11,9 +11,9 @@ import {
     SPEC_MIEN
 } from '../actions/ItemListKeyRegistry'
 import { setMienButton,
-         getMienButton
+         getMienButton,
+         updateMien
 } from '../actions/Settings'
-import { setMien } from '../actions/Page'
 import classNames from 'classnames'
 
 class MienSelector extends Component {
@@ -26,7 +26,7 @@ class MienSelector extends Component {
     onChangeMien(mien) {
         const { dispatch } = this.props
         dispatch(setMienButton(mien))
-        dispatch(setMien(PAGE_KEY__ISSUES_PAGE, mien))
+        dispatch(updateMien(mien, PAGE_KEY__ISSUES_PAGE))
     }
 
     render() {
