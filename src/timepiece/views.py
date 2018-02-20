@@ -453,7 +453,7 @@ def summary(request, username=None):
     if form.is_valid():
         from_date, to_date = form.save()
 
-    entries = timepiece.Entry.objects_original.filter_by_logged_in_user(request.user).values(
+    entries = timepiece.Entry.objects.filter_by_logged_in_user(request.user).values(
         'issue__project__id',
         'issue__project__business__id',
         'issue__project__business__name',
