@@ -50,7 +50,6 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                     vsd.hires_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
                     vsd.lores_url = VisualSpecDocumentSerializer.get_lores_url(self.request, vsd)
                     vsd.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd)
-
                 s = VisualSpecDocumentSerializer(visual_spec_documents, many=True)
                 visual_spec_documents_data = s.data
                 context['visual_spec_documents'] = visual_spec_documents_data

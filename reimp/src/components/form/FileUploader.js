@@ -10,13 +10,13 @@ class FileUploader extends Component {
     constructor(props) {
         super(props)
     }
-    
+
     render() {
 
         const { upload_url, onSuccess, onFailure, upload_params, request_headers } = this.props
 
         const componentConfig = {
-            iconFiletypes: ['.jpg', '.png', '.gif'],
+            iconFiletypes: ['.jpg', '.png', '.gif', '.mp4'],
             showFiletypeIcon: true,
             postUrl: upload_url
         }
@@ -32,7 +32,7 @@ class FileUploader extends Component {
             success: onSuccess,
             complete: (f) => this.dropzone.removeFile(f)
         }
-        
+
         return (
             <DropzoneComponent config={componentConfig}
                                eventHandlers={eventHandlers}
@@ -49,7 +49,7 @@ function mapStateToProps(state, props) {
 
     const API_BASE_URL = state.settings.configured && state.settings.API_BASE_URL
     const upload_url = API_BASE_URL + upload_relative_url
-    
+
     return {
         upload_url,
         upload_params,
@@ -58,6 +58,5 @@ function mapStateToProps(state, props) {
         onFailure
     }
 }
-
 
 export default connect(mapStateToProps)(FileUploader)

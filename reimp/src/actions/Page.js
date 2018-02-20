@@ -53,9 +53,6 @@ export function select_issues(page_key, issue_ids) {
 	    page_key: page_key,
             issue_ids: issue_ids,
         })
-        if ( issue_ids && issue_ids.length == 1 ) {
-            dispatch(setAutoClockIssueAvailable(issue_ids[0]))
-        }
     }
 }
 
@@ -66,9 +63,6 @@ export function select_sprints(page_key, sprint_ids) {
 	    page_key: page_key,
             sprint_ids: sprint_ids
         })
-        if ( sprint_ids && sprint_ids.length == 1 ) {
-            dispatch(setAutoClockSprintAvailable(sprint_ids[0]))
-        }
     }
 }
 
@@ -79,9 +73,6 @@ export function select_projects(page_key, project_ids) {
 	    page_key: page_key,
             project_ids: project_ids
         })
-        if ( project_ids && project_ids.length == 1 ) {
-            dispatch(setAutoClockProjectAvailable(project_ids[0]))
-        }
     }
 }
 

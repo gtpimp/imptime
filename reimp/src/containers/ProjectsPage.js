@@ -26,6 +26,7 @@ import {
     invalidateList
 } from '../actions/ItemList'
 import {getCandidateProject} from '../actions/Projects'
+import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 
 class ProjectsPage extends Component {
 
@@ -42,6 +43,7 @@ class ProjectsPage extends Component {
         if ( default_project_id !== undefined ) {
             dispatch(selectItems(LIST_KEY__PROJECT_LIST, [default_project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, [default_project_id]))
+            dispatch(setActivelyAvailableAutoClockEntity(default_project_id))
         }
     }
 
@@ -49,6 +51,7 @@ class ProjectsPage extends Component {
         const { dispatch } = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
         dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
+        dispatch(setActivelyAvailableAutoClockEntity(project_ids && project_ids.length > 0 && project_ids[0]))
         if ( project_ids && project_ids.length === 1 ) {
             browserHistory.push('/projects/' + project_ids[0]);
         }

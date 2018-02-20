@@ -2,6 +2,7 @@ import logging
 from django.utils import timezone
 from impasync.refresh_notifier import RefreshNotifier
 from rest_framework.decorators import detail_route, list_route
+from datetime import datetime, timedelta, time
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -58,13 +59,20 @@ class ClockViewSet(BaseViewSet):
     @detail_route(methods=['POST'])
     def clockIn(self, request, pk):
         try:
+            context = {}
             params = request.data
             project_id = params['project_id']
-            sprint_id = params.get('sprint_id', None)
-            issue_id = params.get('issue_id', None)
-            description = params.get('description', "")
-            role_name = params.get('role', None)
-            
+            sprint_id = params.get('sprint_id', None) or None
+            issue_id = params.get('issue_id', None) or None
+            description = params.get('description', None) or None
+            role_name = params.get('role', None) or None
+
+            open_entries = self.allowed_timesheet_entries().filter(end_time__isnull=True).select_related('issue')
+            most_recent_entry = open_entries.order_by("-end_time").first()
+            if most_recent_entry:
+                description = description or most_recent_entry.comments
+                role_name = role_name or (most_recent_entry.role and most_recent_entry.role.name) or "manager"
+                
             project = self.allowed_project(project_id)
             project_role = self.allowed_project_roles(project=project).get(name=role_name)
 
@@ -74,28 +82,36 @@ class ClockViewSet(BaseViewSet):
 
             if not sprint.can_add_dev_time():
                 raise Exception("Can't create entries for locked sprints: %s" % sprint)
-            
+
             if issue_id is None:
                 issue = sprint.get_default_issue_for_role(project_role)
             else:
                 issue = self.allowed_issue(issue_id)
-            
-            open_entries = Entry.objects.all().filter(user=request.user, end_time__isnull=True).select_related('issue')
-            for entry in open_entries:
-                entry.end_time = timezone.now()
-                entry.save()
-            
-            entry = Entry.objects.create(user=request.user,
-                                         status='approved',
-                                         source='auto_clock',
-                                         start_time=timezone.now(),
-                                         comments=description,
-                                         end_time=None,
-                                         hours=0,
-                                         role=ProjectRole.objects.get_or_create(business=project, name=role_name)[0],
-                                         issue=issue)
 
-            context = {}
+            
+            if most_recent_entry and \
+               most_recent_entry.issue.project.business_id == project_id and \
+               most_recent_entry.issue.project_id == sprint_id and \
+               most_recent_entry.issue_id == issue_id and \
+               most_recent_entry.role_name == role_name and \
+               most_recent_entry.comments == description:
+                entry = most_recent_entry
+
+            else:
+                for entry in open_entries:
+                    entry.end_time = timezone.now()
+                    entry.save()
+
+                entry = Entry.objects.create(user=request.user,
+                                             status='approved',
+                                             source='auto_clock',
+                                             start_time=timezone.now(),
+                                             comments=description or "",
+                                             end_time=None,
+                                             hours=0,
+                                             role=ProjectRole.objects.get_or_create(business=project, name=role_name)[0],
+                                             issue=issue)
+
             context['clock_entry'] = ClockEntrySerializer(entry).data
             data = {'status': 'success', 'payload': { 'item': context }}
             
@@ -114,9 +130,13 @@ class ClockViewSet(BaseViewSet):
             entry = self.allowed_timesheet_entry(entry_id)
             entry.end_time = timezone.now()
             entry.save()
-            
+
             context = {}
             context['clock_entry'] = ClockEntrySerializer(entry).data
+
+            if entry.hours == 0:
+                entry.delete()
+            
             data = {'status': 'success', 'payload': { 'item': context }}
             
         except Exception, ex:
@@ -177,7 +197,7 @@ class ClockViewSet(BaseViewSet):
                                                                name=params['role_name'])[0]
                 entry.start_time = validated_data['start_time']
                 entry.end_time = validated_data['end_time']
-                entry.comments = params['description']
+                entry.comments = params['description'] or  ""
                 entry.save()
                 
             data = {'status': 'success', 'payload': entry_pks}
@@ -187,5 +207,3 @@ class ClockViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-
-    

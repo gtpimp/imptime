@@ -21,7 +21,7 @@ class FileLabel extends Component {
         event.stopPropagation()
         window.open(preview_url, '_blank')
     }
-    
+
     render() {
         const { filename, exists, extra_buttons } = this.props
         return (

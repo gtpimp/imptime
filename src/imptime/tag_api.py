@@ -49,8 +49,8 @@ class TagViewSet(BaseViewSet):
         try:
             params = request.data
             tag_id = params['tag_id']
-            name = params['name']
-            category_name = params['category_name']
+            name = params['name'].lower()
+            category_name = params['category_name'].lower()
 
             tag = self.allowed_tags().get(pk=tag_id)
             issue = tag.issues.all()[0]
@@ -82,7 +82,7 @@ class TagViewSet(BaseViewSet):
             tag_id = request.data.get('tag_id', None)
             name = params.get('tag_name', None)
             category_name = params.get('tag_category_name', None)
-
+            
             if tag_id is None and (name is None or category_name is None):
                 raise Exception("One or other of tag_id or name must not be empty")
             
@@ -94,17 +94,19 @@ class TagViewSet(BaseViewSet):
             if tag_id is not None:
                 tag = self.allowed_tags().filter(pk=tag_id).order_by("-id").first()
                 if name is not None:
+                    name = name.lower()
                     tag.name = name
                     tag.save()
                 if category_name is not None:
+                    category_name = category_name.lower()
                     tag_category = tag.category
                     tag_category.name = category_name
                     tag_category.save()
             else:
                 tag_category = TagCategory.objects.get_or_create(business=issues[0].project.business,
-                                                                 name=category_name)[0]
+                                                                 name=category_name.lower())[0]
                 tag = Tag.objects.get_or_create(category=tag_category,
-                                                name=name)[0]
+                                                name=name.lower())[0]
 
             for issue in issues:
                 if issue.tags.filter(pk=tag.id).count() == 0:

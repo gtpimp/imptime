@@ -36,7 +36,7 @@ class AutoClockEntry extends Component {
 
         let hours = entry.hours
         let end_time = entry.end_time
-        if ( entry.is_active ) {
+        if ( entry && entry.is_active ) {
             end_time = moment()
             hours = end_time.diff(moment(entry.start_time), 'hours', true)
         }

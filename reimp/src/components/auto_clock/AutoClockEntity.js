@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import classNames from 'classnames'
 import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
@@ -7,10 +8,10 @@ import IssueName from '../IssueName'
 class AutoClockEntity extends Component {
 
     render() {
-        const { project_id, sprint_id, issue_id } = this.props
+        const { project_id, sprint_id, issue_id, className } = this.props
         
         return (
-            <div className="auto-clock-entry__entities">
+            <div className={classNames("auto-clock-entry__entities", {className:className})}>
               { project_id && 
                 <div className="auto-clock-entry__label">
                   Project:

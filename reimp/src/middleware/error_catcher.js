@@ -23,7 +23,7 @@ function error_catcher_middleware(_ref) {
                     
                 } else if ( action.error && action.error.indexOf && action.error.indexOf(DUPLICATE_SAVING_ERROR_MESSAGE) !== -1 ) {
                     console.log("Duplicate during saving: " + action.error)
-		    dispatch(setErrorMessage("Save conflict error: " + action.error))
+		    // dispatch(setErrorMessage("Save conflict error: " + action.error))
                     
                 } else {
 		    console.log(action.error)

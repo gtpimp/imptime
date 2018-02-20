@@ -2,6 +2,7 @@ import { impfetch } from './lib.js'
 import { setDisplayMode, getDisplayMode } from './ItemList'
 import cookie from 'react-cookie';
 import { ENTITY_KEY__AUTO_CLOCK, CONTEXT_KEY__AUTO_CLOCK } from '../actions/ItemListKeyRegistry'
+import { compact } from 'lodash'
 
 import {
     invalidateAllItems,
@@ -14,7 +15,9 @@ import {
     getItemsById,
     itemPost,
     deleteItem,
-    deleteItems
+    deleteItems,
+    setGlobalEntityFlag,
+    getGlobalEntityFlag
 } from '../actions/Item'
 import {
     select_issues,
@@ -35,6 +38,29 @@ export function hideAutoClockPopup() {
 
 export function showAutoClockPopup() {
     cookie.save('show_auto_clock_popup', "1", { path: '/' })
+}
+
+export function enableAutoClocking() {
+    cookie.save('auto_clocking', "1", { path: '/' })
+    return setGlobalEntityFlag(ENTITY_KEY__AUTO_CLOCK, 'auto_clocking', true)
+}
+
+export function disableAutoClocking() {
+    cookie.save('auto_clocking', "0", { path: '/' })
+    return setGlobalEntityFlag(ENTITY_KEY__AUTO_CLOCK, 'auto_clocking', false)
+}
+
+export function isAutoClockingEnabled(state) {
+    let enabled = getGlobalEntityFlag(state, "auto_clocking")
+    if ( enabled === undefined ) {
+        enabled = cookie.load('auto_clocking') == "1"
+        if ( enabled ) {
+            enableAutoClocking()
+        } else {
+            disableAutoClocking()
+        }
+    }
+    return enabled
 }
 
 export function getPreferredRole() {
@@ -81,33 +107,46 @@ export function getAutoClocksById(state, auto_clock_ids) {
     return getItemsById(state, ENTITY_KEY__AUTO_CLOCK, auto_clock_ids)
 }
 
-export function setAutoClockProjectAvailable(project_id) {
+export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue_id) {
     return (dispatch, getState) => {
         const state = getState()
-        const selected_project_ids = get_selected_project_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
-        if ( project_id && selected_project_ids.length == 0 || selected_project_ids[0] != project_id  ) {
-            dispatch(select_projects(CONTEXT_KEY__AUTO_CLOCK, [project_id]))
+        let selected_project_ids = get_selected_project_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
+        let selected_sprint_ids = get_selected_sprint_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
+        let selected_issue_ids = get_selected_issue_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
+        if ( project_id ) {
+            if ( !selected_project_ids || selected_project_ids.length == 0 || selected_project_ids[0] != project_id ) {
+                dispatch(select_projects(CONTEXT_KEY__AUTO_CLOCK, compact([project_id])))
+            }
+        } else {
+            if ( selected_project_ids && selected_project_ids.length > 0 ) {
+                dispatch(select_projects(CONTEXT_KEY__AUTO_CLOCK, []))
+            }
         }
-    }
-}
 
-export function setAutoClockSprintAvailable(sprint_id) {
-    return (dispatch, getState) => {
-        const state = getState()
-        const selected_sprint_ids = get_selected_sprint_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
-        if ( sprint_id && selected_sprint_ids.length == 0 || selected_sprint_ids[0] != sprint_id  ) {
-            dispatch(select_sprints(CONTEXT_KEY__AUTO_CLOCK, [sprint_id]))
+        if ( sprint_id ) {
+            if ( !selected_sprint_ids || selected_sprint_ids.length == 0 || selected_sprint_ids[0] != sprint_id ) {
+                dispatch(select_sprints(CONTEXT_KEY__AUTO_CLOCK, compact([sprint_id])))
+            }
+        } else {
+            if ( selected_sprint_ids && selected_sprint_ids.length > 0 ) {
+                dispatch(select_sprints(CONTEXT_KEY__AUTO_CLOCK, []))
+            }
         }
-    }
-}
 
-export function setAutoClockIssueAvailable(issue_id) {
-    return (dispatch, getState) => {
-        const state = getState()
-        const selected_issue_ids = get_selected_issue_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
-        if ( issue_id && selected_issue_ids.length == 0 || selected_issue_ids[0] != issue_id  ) {
-            dispatch(select_issues(CONTEXT_KEY__AUTO_CLOCK, [issue_id]))
+        if ( issue_id ) {
+            if ( !selected_issue_ids || selected_issue_ids.length == 0 || selected_issue_ids[0] != issue_id ) {
+                dispatch(select_issues(CONTEXT_KEY__AUTO_CLOCK, compact([issue_id])))
+            }
+        } else {
+            if ( selected_issue_ids && selected_issue_ids.length > 0 ) {
+                dispatch(select_issues(CONTEXT_KEY__AUTO_CLOCK, []))
+            }
         }
+
+        if ( isAutoClockingEnabled(state) && project_id ) {
+            dispatch(clockIn(project_id, sprint_id, issue_id))
+        }
+        
     }
 }
 
