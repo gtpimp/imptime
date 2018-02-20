@@ -1,6 +1,6 @@
 import {
     UPDATE_SETTINGS,
-    SET_MIEN_BUTTON
+    SET_MIEN
 } from '../actions/Settings'
 
 const page_template = {
@@ -30,9 +30,9 @@ export default function settings(state = initialState, action) {
                                  action.new_settings,
                                  {configured: true})
 
-        case SET_MIEN_BUTTON:
+        case SET_MIEN:
             state_copy = Object.assign(
-                {}, state, {active_mien: action.active_mien}
+                {}, state, {mien: action.mien}
             )
             return state_copy
 

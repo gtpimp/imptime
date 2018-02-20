@@ -10,8 +10,8 @@ import {
     TESTER_MIEN,
     SPEC_MIEN
 } from '../actions/ItemListKeyRegistry'
-import { setMienButton,
-         getMienButton,
+import { setMien,
+         getMien,
          updateMien
 } from '../actions/Settings'
 import classNames from 'classnames'
@@ -25,7 +25,7 @@ class MienSelector extends Component {
 
     onChangeMien(mien) {
         const { dispatch } = this.props
-        dispatch(setMienButton(mien))
+        dispatch(setMien(mien))
         dispatch(updateMien(mien, PAGE_KEY__ISSUES_PAGE))
     }
 
@@ -66,7 +66,7 @@ class MienSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const current_mien = getMienButton(state)
+    const current_mien = getMien(state)
 
     return {
         current_mien: current_mien

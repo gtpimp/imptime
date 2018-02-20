@@ -21,15 +21,8 @@ export function getSetting(state, name) {
     return (state.settings || {})[name]
 }
 
-export function setMienButton(active_mien) {
-    return {
-        type: SET_MIEN_BUTTON,
-        active_mien: active_mien
-    }
-}
-
-export function getMienButton(state) {
-    return get(state.settings, "active_mien", null)
+export function getMien(state) {
+    return get(state.settings, "mien", null)
 }
 
 export function setMien(mien) {
@@ -44,6 +37,5 @@ export function updateMien(mien, page_key) {
 
     const new_header_list = MIEN_LIST[mien]
 
-    setMien(mien)
     return updateHeaderList(new_header_list, page_key)
 }
