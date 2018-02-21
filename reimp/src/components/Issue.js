@@ -154,7 +154,8 @@ class Issue extends Component {
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
             issue_id, visible_header_keys, header_list,
-            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names, tagsByCategoryName
+            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
+            tagsByCategoryName, all_estimates
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -263,6 +264,12 @@ class Issue extends Component {
                      <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
                    </div>
                   }
+                  {includes(visible_header_keys, "all_estimates") &&
+                   <div className="div-table__cell"
+                        style={getCellStyle(header_list.all_estimates)}>
+                     <div>{all_estimates}</div>
+                   </div>
+                  }                  
                   {includes(visible_header_keys, "created_at") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.created_at)}>
@@ -403,6 +410,8 @@ function mapStateToProps(state, props) {
     const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
     const tags = getTags(state, issue.tag_ids || [])
     const tagsByCategoryName = keyBy(tags, 'category_name')
+    const all_estimates = issue.all_estimates[0].user.username
+    console.log(all_estimates)
 
     return {
         issue: issue,
@@ -426,7 +435,8 @@ function mapStateToProps(state, props) {
         isFeatureOfSelectedIssue,
         belongsToSelectedFeature,
         onDelete: onDelete || null,
-        tagsByCategoryName
+        tagsByCategoryName,
+        all_estimates: all_estimates
     }
 }
 

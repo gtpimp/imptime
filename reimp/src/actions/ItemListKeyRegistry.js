@@ -140,6 +140,8 @@ export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width
                                        'expand_feature': {label:'', width:tiny_col_width},
                                        'name': {label:"Name", width:"auto", flex:1},
                                        'status': {label:"Status", width:medium_col_width},
+                                       'all_estimates': {label:"All Estimates", width:medium_col_width},
+                                       'tag_columns': {label:"Tag Columns", width:medium_col_width},
                                        'assignee': {label:"Assignee", width:medium_col_width}}
 }
 
