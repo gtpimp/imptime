@@ -23,6 +23,7 @@ import {
     invalidateAllProjects,
     fetchProjectsIfNeeded
 } from '../actions/Projects'
+import Pagination from './Pagination'
 import Project from './Project'
 import DivTable from './DivTable'
 import '../sass/project-list.scss'
@@ -54,7 +55,9 @@ class ProjectList extends Component {
     componentDidMount() {
         const { dispatch, list_key } = this.props
         this.switchToSampleContext()
-        dispatch(fetchProjectsIfNeeded(list_key))
+
+        // only fetch on WillReceiveProps so that the pagination has time to take effect from the parent.
+        //dispatch(fetchProjectsIfNeeded(list_key)) 
     }
 
     componentWillReceiveProps() {
@@ -194,9 +197,12 @@ class ProjectList extends Component {
     }
 
     render() {
+        const { list_key } = this.props
 	return (
 	    <div>
-                { this.render_expanded() }
+              { this.render_expanded() }
+              <Pagination list_key={list_key}
+                          on_changed={this.onChangePage} />
 	    </div>
 	)
     }

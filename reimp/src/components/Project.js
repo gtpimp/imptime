@@ -97,9 +97,6 @@ class Project extends Component {
                                                  {"icon__status--active":project.recent_activity.is_active,
                                                   "icon__status--inactive":project.recent_activity.is_inactive,
                                                   "icon__status--expired":project.recent_activity.is_expired})}
-                           data-tip={(project.recent_activity.is_active && "Active") ||
-                                     (project.recent_activity.is_inactive && "Inactive")||
-                                     (project.recent_activity.is_expired && "Expired")}
                       >
                         
                       </div>
