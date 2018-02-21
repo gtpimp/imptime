@@ -289,7 +289,7 @@ class Issue extends Component {
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.tags)}>
                      <div className="issue-cell__tag">
-                       <TagListFlat issue_ids={[issue.id]}  can_edit={false} />
+                       <TagListFlat issue_ids={[issue.id]} can_edit={false} />
                      </div>
                    </div>
                   }

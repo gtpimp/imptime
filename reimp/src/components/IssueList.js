@@ -602,7 +602,7 @@ function mapStateToProps(state, props) {
     const items = visible_item_ids.map(function (visible_item_id, index) {
         return items_by_id[visible_item_id] || {
             'id': visible_item_id,
-            'loaded': false,
+            'loaded': false
         }
     })
 

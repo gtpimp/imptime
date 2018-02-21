@@ -1027,7 +1027,7 @@ class Project(BaseModel):
             total = user.user_points.filter(issue__project=self).aggregate(Sum("points"))
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
-
+    
     def model_to_dict(self, include_business=False):
         d = model_to_dict_with_date_support(self)
         if include_business:
