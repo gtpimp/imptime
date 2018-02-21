@@ -144,7 +144,9 @@ export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue
         }
 
         if ( isAutoClockingEnabled(state) && project_id ) {
-            dispatch(clockIn(project_id, sprint_id, issue_id))
+            dispatch(clockIn({project_id:project_id,
+                              sprint_id: sprint_id,
+                              issue_id: issue_id}))
         }
         
     }
@@ -159,18 +161,15 @@ export function getAvailableAutoClockEntity(state) {
              available_issue_id: selected_issue_ids[0] }
 }
 
-export function clockIn(project_id, sprint_id, issue_id, role, description) {
-
+export function clockIn(data) {
+    // data contains one or more of: 
+    // project_id, sprint_id, issue_id, project_name, role, description
+    
     const url = "imp/clock/0/clockIn/"
     const field_name = "clockIn"
     const field_value = null
     const method = "POST"
-    const data = { project_id: project_id,
-                   sprint_id: sprint_id,
-                   issue_id: issue_id,
-                   role: role,
-                   description: description }
-    return itemPost(ENTITY_KEY__AUTO_CLOCK, [issue_id], url, field_name, field_value, method, data)
+    return itemPost(ENTITY_KEY__AUTO_CLOCK, [data.issue_id], url, field_name, field_value, method, data)
 }
 
 export function clockOut(entry_id) {

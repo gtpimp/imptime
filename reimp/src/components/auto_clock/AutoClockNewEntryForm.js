@@ -22,6 +22,7 @@ class AutoClockNewEntryForm extends Component {
         this.clockProject = this.clockProject.bind(this)
         this.clockSprint = this.clockSprint.bind(this)
         this.clockIssue = this.clockIssue.bind(this)
+        this.clockAdmin = this.clockAdmin.bind(this)
     }
 
     componentDidMount() {
@@ -54,6 +55,11 @@ class AutoClockNewEntryForm extends Component {
                   project_id:project_id,
                   sprint_id:sprint_id,
                   issue_id:issue_id})
+    }
+
+    clockAdmin() {
+        const { onSubmit, dispatch, project_id, sprint_id, issue_id } = this.props
+        onSubmit({project_name: 'admin'})
     }
 
     refresh(these_props) {
@@ -103,7 +109,8 @@ class AutoClockNewEntryForm extends Component {
     }
 
     render() {
-        const { handleSubmit, project, project_id, sprint_id, issue_id, role_options } = this.props
+        const { handleSubmit, project, project_id, sprint_id, issue_id,
+                can_clock_admin, role_options } = this.props
 
         return (
             <form className="auto-clock-form">
@@ -156,6 +163,17 @@ class AutoClockNewEntryForm extends Component {
                     <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockIssue)} />
                   </div>
                 }
+
+                { can_clock_admin &&
+                  <div className="auto-clock-entry__clockable">
+                    <div className="auto-clock-entry__label">
+                      General admin
+                    </div>
+                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockAdmin)} />
+                  </div>
+                }
+
+                  
               </div>
                 
             </form>
@@ -183,6 +201,7 @@ function mapStateToProps(state, props) {
         sprint_id,
         issue_id,
         project,
+        can_clock_admin: true,
         role_options
     }
 }
