@@ -6,7 +6,6 @@ import includes from 'lodash/includes'
 import difference from 'lodash/difference'
 import { connect } from 'react-redux'
 import {
-    initList,
     invalidateList,
     selectItems,
     collapse_list,
@@ -55,7 +54,6 @@ class ProjectList extends Component {
     componentDidMount() {
         const { dispatch, list_key } = this.props
         this.switchToSampleContext()
-        dispatch(initList(list_key))
         dispatch(fetchProjectsIfNeeded(list_key))
     }
 

@@ -11,6 +11,7 @@ import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
 import { getSelectedItems, setItemflag } from '../actions/ItemList'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
+import Timestamp from './Timestamp'
 
 class Project extends Component {
 
@@ -89,7 +90,22 @@ class Project extends Component {
                    </div>
                   }
 
-                  
+                   {includes(visible_header_keys, "active") &&
+                    <div className="div-table__cell project__cell__secondary"
+                         style={getCellStyle(header_list.active)}>
+                      <div className={classNames("project-cell__active_status",
+                                                 {"icon__status--active":project.recent_activity.is_active,
+                                                  "icon__status--inactive":project.recent_activity.is_inactive,
+                                                  "icon__status--expired":project.recent_activity.is_expired})}
+                           data-tip={(project.recent_activity.is_active && "Active") ||
+                                     (project.recent_activity.is_inactive && "Inactive")||
+                                     (project.recent_activity.is_expired && "Expired")}
+                      >
+                        
+                      </div>
+                    </div>
+                   }
+                   
                   {includes(visible_header_keys, "num_sprints") &&
                    <div className="div-table__cell sprint__cell__secondary"
                         onClick={this.onSprintsClick}
@@ -102,7 +118,41 @@ class Project extends Component {
                        }
                      </div>
                    </div>
-                  }     
+                  }
+
+                   {includes(visible_header_keys, "created_at") &&
+                    <div className="div-table__cell project__cell__secondary"
+                         style={getCellStyle(header_list.created_at)}>
+                      <div className="project-cell__created-at">
+                        <Timestamp value={project.recent_activity.project_created_at} format="from_now"/>
+                      </div>
+                    </div>
+                   }
+
+                   
+                 {includes(visible_header_keys, "sort_reason") &&
+                  <div className="div-table__cell project__cell__secondary"
+                       style={getCellStyle(header_list.sort_reason)}>
+                    <div className="project-cell__sort-reason">
+                      {project.recent_activity.sort_reason}
+                    </div>
+                  </div>
+                 }
+
+
+                {includes(visible_header_keys, "sort_date") &&
+                 <div className="div-table__cell project__cell__secondary"
+                      style={getCellStyle(header_list.sort_date)}>
+                   <div className="project-cell__sort-date">
+                     <Timestamp value={project.recent_activity.sort_date} format="from_now"/>
+                   </div>
+                 </div>
+                }
+
+                 
+                 
+                 
+                   
                   {includes(visible_header_keys, "delete") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.delete)}>

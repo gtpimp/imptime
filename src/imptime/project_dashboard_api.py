@@ -20,13 +20,12 @@ from lib import chart_helper
 
 logger = logging.getLogger(__name__)
 
+NUM_DAYS_FOR_ACTIVE = 30
+NUM_DAYS_FOR_EXPIRED = 90
 
 @permission_classes((IsAuthenticated,))
 class ProjectDashboardViewSet(BaseViewSet):
 
-    NUM_DAYS_FOR_ACTIVE = 30
-    NUM_DAYS_FOR_EXPIRED = 90
-    
     def list(self, request):
         try:
             context = {}
@@ -44,7 +43,7 @@ class ProjectDashboardViewSet(BaseViewSet):
                 project_dashboards.append({'project': project,
                                            'project_id': project.id,
                                            'project_created_at': project.created,
-                                           'recent_activity':self.get_recent_activity(project)})
+                                           'recent_activity':get_recent_activity(project)})
 
             project_dashboards = self.sort(project_dashboards)
             project_dashboards = self.apply_pagination(qs=project_dashboards, pagination=pagination)
@@ -145,67 +144,73 @@ class ProjectDashboardViewSet(BaseViewSet):
             sprint_info['recent_activity_for_all_users'] = { 'hours': chart_helper.fill_empty_days(date_from, date_to, entries_for_sprint_by_day),
                                                              'has_any_hours': entries_for_sprint.count()>0 }
 
-    def get_recent_activity(self, project):
-        entries = Entry.objects.all().filter(issue__project__business=project)
-        issue = Issue.objects.filter(project__business=project)\
-                             .order_by("-created")\
-                             .values("id", "project_id", "project__business_id", "created", "number", "subject")\
-                             .first()
-
-        if issue is None:
-            issue = {'id': None}
-        else:
-            issue['sprint_id'] = issue.pop('project_id')
-            issue['project_id'] = issue.pop('project__business_id')
-            if len(issue['subject'])>50:
-                issue['subject'] = issue['subject'][0:47] + "..."
-
-        entry = entries.order_by("-start_time")\
-                       .values("id", "start_time", "user_id", "issue_id", "issue__number", "issue__subject", "issue__project_id", "issue__project__business_id")\
-                       .first()
-        if entry is None:
-            entry = {'id': None}
-        else:
-            entry['sprint_id'] = entry.pop('issue__project_id')
-            entry['project_id'] = entry.pop('issue__project__business_id')
-            entry['issue_number'] = entry.pop("issue__number")
-            entry['issue_subject'] = entry.pop("issue__subject")
-            if len(entry['issue_subject'])>50:
-                entry['issue_subject'] = entry['issue_subject'][0:47] + "..."
-
-        most_recent_sprint_modified_dates = Sprint.objects.filter(business=project)\
-                                                          .order_by("-modified")\
-                                                          .values('modified', 'name')
-        sprint_last_modified_at = most_recent_sprint_modified_dates[0]['modified'] if len(most_recent_sprint_modified_dates)>0 else None
-        sprint_last_created_at = Sprint.objects.filter(business=project).order_by("-created").first()
-
-        default_date = timezone.now()-relativedelta(years=10)
-        sort_fields = { 'n/a': default_date,
-                        'timesheet entry': entry.get('start_time', default_date),
-                        'issue creation': issue.get('created', default_date),
-                        'project creation': project.created or default_date,
-                        'sprint creation': (sprint_last_created_at.created or default_date) if sprint_last_created_at else default_date }
-
-        sort_reason = max(sort_fields, key=sort_fields.get)
-        sort_date = sort_fields[sort_reason]
-
-        is_active = sort_date + relativedelta(days=self.NUM_DAYS_FOR_ACTIVE) >= timezone.now()
-        is_inactive = not is_active and sort_date + relativedelta(days=self.NUM_DAYS_FOR_EXPIRED) >= timezone.now()
-        is_expired = not is_active and not is_inactive
-        
-        d = {
-            'most_recent_clock_entry': entry,
-            'most_recent_issue': issue,
-            'project_created_at': project.created,
-            'sprint_last_modified_at': sprint_last_modified_at,
-            'is_inactive': is_inactive,
-            'is_expired': is_expired,
-            'is_active': is_active,
-            'sort_date': sort_date,
-            'sort_reason': sort_reason
-        }
-        return d
 
     def sort(self, project_dashboards):
         return sorted(project_dashboards, key=lambda x: x['recent_activity']['sort_date'],
                       reverse=True)
+
+
+def get_recent_activity(project):
+    """helper method to get a list of recent activity markers for a
+       project, useful for sorting, exposed for use by other apis."""
+    
+    entries = Entry.objects.all().filter(issue__project__business=project)
+    issue = Issue.objects.filter(project__business=project)\
+                         .order_by("-created")\
+                         .values("id", "project_id", "project__business_id", "created", "number", "subject")\
+                         .first()
+
+    if issue is None:
+        issue = {'id': None}
+    else:
+        issue['sprint_id'] = issue.pop('project_id')
+        issue['project_id'] = issue.pop('project__business_id')
+        if len(issue['subject'])>50:
+            issue['subject'] = issue['subject'][0:47] + "..."
+
+    entry = entries.order_by("-start_time")\
+                   .values("id", "start_time", "user_id", "issue_id", "issue__number", "issue__subject", "issue__project_id", "issue__project__business_id")\
+                   .first()
+    if entry is None:
+        entry = {'id': None}
+    else:
+        entry['sprint_id'] = entry.pop('issue__project_id')
+        entry['project_id'] = entry.pop('issue__project__business_id')
+        entry['issue_number'] = entry.pop("issue__number")
+        entry['issue_subject'] = entry.pop("issue__subject")
+        if len(entry['issue_subject'])>50:
+            entry['issue_subject'] = entry['issue_subject'][0:47] + "..."
+
+    most_recent_sprint_modified_dates = Sprint.objects.filter(business=project)\
+                                                      .order_by("-modified")\
+                                                      .values('modified', 'name')
+    sprint_last_modified_at = most_recent_sprint_modified_dates[0]['modified'] if len(most_recent_sprint_modified_dates)>0 else None
+    sprint_last_created_at = Sprint.objects.filter(business=project).order_by("-created").first()
+
+    default_date = timezone.now()-relativedelta(years=10)
+    sort_fields = { 'n/a': default_date,
+                    'timesheet entry': entry.get('start_time', default_date),
+                    'issue creation': issue.get('created', default_date),
+                    'project creation': project.created or default_date,
+                    'sprint creation': (sprint_last_created_at.created or default_date) if sprint_last_created_at else default_date }
+
+    sort_reason = max(sort_fields, key=sort_fields.get)
+    sort_date = sort_fields[sort_reason]
+
+    is_active = sort_date + relativedelta(days=NUM_DAYS_FOR_ACTIVE) >= timezone.now()
+    is_inactive = not is_active and sort_date + relativedelta(days=NUM_DAYS_FOR_EXPIRED) >= timezone.now()
+    is_expired = not is_active and not is_inactive
+
+    d = {
+        'most_recent_clock_entry': entry,
+        'most_recent_issue': issue,
+        'project_created_at': project.created,
+        'sprint_last_modified_at': sprint_last_modified_at,
+        'is_inactive': is_inactive,
+        'is_expired': is_expired,
+        'is_active': is_active,
+        'sort_date': sort_date,
+        'sort_reason': sort_reason
+    }
+    return d
+    

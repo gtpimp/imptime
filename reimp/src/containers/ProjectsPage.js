@@ -21,8 +21,10 @@ import {
     setPageFlag
 } from '../actions/Page'
 import {
+    initList,
     selectItems,
     update_list_filter,
+    update_list_pagination,
     invalidateList
 } from '../actions/ItemList'
 import {getCandidateProject} from '../actions/Projects'
@@ -40,6 +42,8 @@ class ProjectsPage extends Component {
         const {dispatch, selected_project_ids, default_project_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
         dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'} ]))
+        dispatch(initList(PAGE_KEY__PROJECTS_PAGE))        
+        dispatch(update_list_pagination(PAGE_KEY__PROJECTS_PAGE, {page_size:20}))
         if ( default_project_id !== undefined ) {
             dispatch(selectItems(LIST_KEY__PROJECT_LIST, [default_project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, [default_project_id]))
