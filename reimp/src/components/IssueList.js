@@ -3,7 +3,9 @@ import { compact, uniq, concat, each, indexOf, map, keys, keyBy, merge, values, 
 import RIEInput from '../widgets/RIEInput'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import {connect} from 'react-redux'
-import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js';
+import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js'
+import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
+import OtherUser from './OtherUser'
 import {
     initList,
     invalidateList,
@@ -71,6 +73,7 @@ class IssueList extends Component {
             dispatch(initList(list_key))
             dispatch(fetchIssuesIfNeeded(list_key))
             dispatch(ensureIssuesLoaded(feature_issue_ids))
+            dispatch(ensureSprintsLoaded([sprint_id]))
             dispatch(ensureTagsLoaded(tag_ids))
             this.expandUnAutoExpandedFeatures()
         }
@@ -78,7 +81,7 @@ class IssueList extends Component {
 
     componentWillReceiveProps(new_props) {
         const {dispatch, list_key} = this.props
-        const { feature_issue_ids, tag_ids } = new_props
+        const { feature_issue_ids, tag_ids, sprint_id } = new_props
         const {onSelectIssues} = this.props
         if ( this.props.sprint_id != new_props.sprint_id ) {
             onSelectIssues([])
@@ -86,6 +89,7 @@ class IssueList extends Component {
         this.expandUnAutoExpandedFeatures(new_props)
         dispatch(fetchIssuesIfNeeded(list_key))
         dispatch(ensureIssuesLoaded(feature_issue_ids))
+        dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureTagsLoaded(tag_ids))
     }
 
@@ -343,20 +347,10 @@ class IssueList extends Component {
     }
 
     renderHeader() {
-        const { header_list, tag_category_names } = this.props
+        const { header_list, tag_category_names, sprint } = this.props
         return (
             <div className="div-table__header_row">
               { map(header_list, function(v, k) {
-                    if ( k !== "tag_columns" ) {
-                        return (
-                            <div key={k}
-                                 className="div-table__header_cell"
-                                 style={getCellStyle(v)}>
-                              {v.label }
-                            </div>
-                        )
-                    }
-
                     if ( k === "tag_columns" ) {
                         return (
                             map(tag_category_names, (tag_category_name) => (
@@ -366,6 +360,24 @@ class IssueList extends Component {
                                   {tag_category_name}
                                 </div>
                             ))
+                        )
+                    } else if ( k === "estimate_columns" ) {
+                        return (
+                            map(sprint.user_ids_who_can_estimate, (user_id) => (
+                                <div key={user_id}
+                                     className="div-table__header_cell issue-list__header_call__user_estimate"
+                                     style={getCellStyle(v)}>
+                                  <OtherUser user_id={user_id} />
+                                </div>
+                            ))
+                        )
+                    } else {
+                        return (
+                            <div key={k}
+                                 className="div-table__header_cell"
+                                 style={getCellStyle(v)}>
+                              {v.label }
+                            </div>
                         )
                     }
                 })
@@ -573,6 +585,7 @@ function mapStateToProps(state, props) {
     const {list_key, issue_header_list} = props
     const filter = getListFilter(state, list_key)
     const sprint_id = filter.sprint_id || null
+    const sprint = getSprint(state, sprint_id) || {}
     const visible_item_ids = getVisibleItemIds(state, list_key)
 
     const items_by_id = getIssuesById(state, visible_item_ids)
@@ -626,6 +639,7 @@ function mapStateToProps(state, props) {
         list_key: list_key,
         visible_item_ids,
         sprint_id: sprint_id,
+        sprint,
         issues: items,
         issue_items: issue_items,
         issues_by_id: items_by_id,

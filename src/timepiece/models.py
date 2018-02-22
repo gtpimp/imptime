@@ -556,10 +556,15 @@ class BusinessPermissions(BaseModel):
                                    business_permissions__is_active_member_of_business=True).distinct()
 
     @classmethod
-    def get_users_who_can_capture_time(self):
-        """ any user who is allowed to estimate on at least one project """
-        users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
-                                    business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+    def get_users_who_can_capture_time(self, business_id=None):
+        if business_id is None:
+            users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
+                                        business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+        else:
+            users = User.objects.filter(is_active=True,
+                                        business_permissions__business_id=business_id,
+                                        business_permissions__is_active_member_of_business=True)\
+                                .distinct()
         return users
 
     @property

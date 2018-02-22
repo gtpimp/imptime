@@ -139,10 +139,11 @@ export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width
                                        'adhoc': {label:'', width:tiny_col_width},
                                        'expand_feature': {label:'', width:tiny_col_width},
                                        'name': {label:"Name", width:"auto", flex:1},
+                                       'assignee': {label:"Assignee", width:medium_col_width},
                                        'status': {label:"Status", width:medium_col_width},
-                                       'all_estimates': {label:"All Estimates", width:medium_col_width},
-                                       'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                       'assignee': {label:"Assignee", width:medium_col_width}}
+                                       'estimate_columns': {label:"Estimates", width:small_col_width},
+                                       // 'estimated': {label:"Estimates", width:medium_col_width},
+                                       'small_delete': {label:"", width:tiny_col_width}}
 }
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {

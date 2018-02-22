@@ -65,7 +65,6 @@ class ProjectSerializer(BaseSerializer):
 
         best_rate = Rate.for_business(user_id=self.logged_in_user.id, business_id=project.id)
         project.logged_in_users_default_role = best_rate.time_tracking_mode if best_rate else "developer"
-            
         project.invited_user_ids = project_user_ids.filter(invites_received__accepted=False)
         project.feature_names = Feature.objects.filter(business=project).order_by("name")  # sic
         project.allowed_sprint_type_names = [ k for k,v in Sprint.PROJECT_TYPES ] #sic
