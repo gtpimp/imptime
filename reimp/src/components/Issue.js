@@ -307,18 +307,18 @@ class Issue extends Component {
                        </div>
                    )
                   }
-                  {includes(visible_header_keys, "estimate_columns") &&
-                   map(sprint.user_ids_who_can_estimate, (user_id) =>
-                       <div key={user_id}
-                       className="div-table__cell issue__cell__secondary"
-                       style={getCellStyle(header_list.estimate_columns)}>
+                {includes(visible_header_keys, "estimate_columns") &&
+                 map(sprint.user_ids_who_can_estimate, (user_id) =>
+                     <div key={user_id}
+                          className="div-table__cell issue__cell__secondary"
+                          style={getCellStyle(header_list.estimate_columns)}>
                        <div className="issue-cell__estimate_column">
                          {format_hours(all_estimates_by_user_id[user_id] &&
-                          all_estimates_by_user_id[user_id].estimate_hours)}
+                                       all_estimates_by_user_id[user_id].estimate_hours)}
                        </div>
-            </div>
-                   )
-                  }
+                     </div>
+                 )
+                }
                   {includes(visible_header_keys, "estimated") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.estimated)}>
