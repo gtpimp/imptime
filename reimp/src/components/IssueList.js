@@ -367,7 +367,9 @@ class IssueList extends Component {
                                 <div key={user_id}
                                      className="div-table__header_cell issue-list__header_call__user_estimate"
                                      style={getCellStyle(v)}>
-                                  <OtherUser user_id={user_id} />
+                                  <OtherUser user_id={user_id}
+                                             render_mode="inline--small"
+                                             display_mode="username" />
                                 </div>
                             ))
                         )
