@@ -8,6 +8,7 @@ from timepiece.models import ProjectDeadlineType as SprintDeadlineType
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from imptime.models import VisualSpecDocument
 from project_user_permission_serializer import ProjectUserPermissionSerializer
+from imptime.project_dashboard_api import get_recent_activity
 logger = logging.getLogger(__name__)
 
 class ProjectDeadlineTypeSerializer(BaseModelSerializer):
@@ -18,7 +19,17 @@ class ProjectDeadlineTypeSerializer(BaseModelSerializer):
     class Meta:
         model = SprintDeadlineType
         fields = ( 'id', 'name', "value", "label" )
-    
+
+class ProjectRecentActivity(BaseSerializer):
+    most_recent_clock_entry = serializers.DictField()
+    most_recent_issue = serializers.DictField()
+    project_created_at = serializers.DateTimeField()
+    sprint_last_modified_at = serializers.DateTimeField()
+    is_inactive = serializers.BooleanField()
+    is_expired = serializers.BooleanField()
+    is_active = serializers.BooleanField()
+    sort_date = serializers.DateTimeField()
+    sort_reason = serializers.CharField()
 
 class ProjectSerializer(BaseSerializer):
 
@@ -39,6 +50,7 @@ class ProjectSerializer(BaseSerializer):
     num_open_sprints = serializers.IntegerField()
     visual_spec_document_ids = serializers.ListField()
     can_delete_project = serializers.SerializerMethodField('is_project_deletable')
+    recent_activity = ProjectRecentActivity()
 
     def is_project_deletable(self, project):
 
@@ -91,6 +103,7 @@ class ProjectSerializer(BaseSerializer):
         project.visual_spec_document_ids = VisualSpecDocument.objects.filter(visual_spec_projects__project=project)\
                                                                      .order_by("visual_spec_projects__order")\
                                                                      .values_list('id', flat=True)
+        project.recent_activity = get_recent_activity(project)
 
         return super(ProjectSerializer, self).to_representation(
             project, *args, **kwargs)

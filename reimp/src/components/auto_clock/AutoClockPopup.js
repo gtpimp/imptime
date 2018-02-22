@@ -99,11 +99,8 @@ class AutoClockPopup extends Component {
 
     onClockIn(new_values) {
         const { dispatch } = this.props
-        dispatch(clockIn(new_values.project_id,
-                         new_values.sprint_id,
-                         new_values.issue_id,
-                         new_values.role,
-                         new_values.description))
+        dispatch(disableAutoClocking())
+        dispatch(clockIn(new_values))
         setPreferredRole(new_values.role)
     }
 
@@ -277,7 +274,7 @@ class AutoClockPopup extends Component {
                   { this.renderClockHistory() }
                 </div>
               }
-              { ! show_popup && auto_clocking_enabled && most_recent_entry &&
+              { ! show_popup && most_recent_entry &&
                 <div className="auto-clock__mini-auto-clock-status">
                   <AutoClockEntity project_id={most_recent_entry.project_id}
                                    sprint_id={most_recent_entry.sprint_id}

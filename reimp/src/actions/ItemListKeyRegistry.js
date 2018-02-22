@@ -84,7 +84,11 @@ export function getCellStyle(s) {
 }
 
 export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
+                                  'active': {label:"Active", width: small_col_width},
                                   'num_sprints': {label:"Sprints", width: medium_col_width},
+                                  'created_at': {label:"Created", width: medium_col_width},
+                                  'sort_reason': {label:"Recent activity type", width: medium_col_width},
+                                  'sort_date': {label:"Recent activity on", width: medium_col_width},
                                   'small_delete': {label:"", width:tiny_col_width}
 }
 
