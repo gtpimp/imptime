@@ -34,6 +34,7 @@ import TagListFlat from '../components/TagListFlat'
 import {format_hours} from '../actions/lib'
 import IssueStatusLabel from '../components/form/IssueStatusLabel'
 import Timestamp from './Timestamp'
+import { logged_in_user } from '../actions/Auth'
 
 const ISSUE_STATUS_CHOICES = [
     {value: 'new', label: 'new'},
@@ -157,7 +158,8 @@ class Issue extends Component {
             subject_prefix, subject_suffix,
             issue_id, visible_header_keys, header_list,
             isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
-            tagsByCategoryName, all_estimates, all_estimates_by_user_id, sprint
+            tagsByCategoryName, all_estimates, all_estimates_by_user_id, sprint,
+            current_user_id
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -313,7 +315,12 @@ class Issue extends Component {
                           className="div-table__cell issue__cell__secondary"
                           style={getCellStyle(header_list.estimate_columns)}>
                        <div className="issue-cell__estimate_column">
-                         {format_hours(all_estimates_by_user_id[user_id] &&
+                         {current_user_id === user_id &&
+                          <EditableIssueEstimate issue_id={issue.id}
+                                                 class_name="issue-cell__my-estimate"/> }
+
+                         {current_user_id !== user_id &&
+                          format_hours(all_estimates_by_user_id[user_id] &&
                                        all_estimates_by_user_id[user_id].estimate_hours)}
                        </div>
                      </div>
@@ -422,6 +429,8 @@ function mapStateToProps(state, props) {
     const tagsByCategoryName = keyBy(tags, 'category_name')
     const all_estimates = issue.all_estimates
     const all_estimates_by_user_id = keyBy(all_estimates, 'user_id')
+    const current_user = logged_in_user()
+    const current_user_id = current_user.user_id
 
     return {
         issue: issue,
@@ -448,7 +457,8 @@ function mapStateToProps(state, props) {
         onDelete: onDelete || null,
         tagsByCategoryName,
         all_estimates_by_user_id,
-        all_estimates
+        all_estimates,
+        current_user_id
     }
 }
 
