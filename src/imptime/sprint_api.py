@@ -56,7 +56,7 @@ class SprintViewSet(BaseViewSet):
                 sprints = sprints.select_related("status3")
                 sprints = sprints.annotate(num_issues=Count('issues'))
                 sprints = self._enrich_sprint_qs(sprints)
-                
+
                 s = SprintSerializer(sprints, many=True, logged_in_user=self.request.user)
                 sprints_data = s.data
                 context['sprints'] = sprints_data
