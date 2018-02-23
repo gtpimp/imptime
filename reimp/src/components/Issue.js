@@ -423,8 +423,6 @@ function mapStateToProps(state, props) {
     const all_estimates = issue.all_estimates
     const all_estimates_by_user_id = keyBy(all_estimates, 'user_id')
 
-    console.log(all_estimates)
-
     return {
         issue: issue,
         issue_id: issue_id,
