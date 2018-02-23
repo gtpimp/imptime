@@ -36,6 +36,7 @@ class SprintSerializer(BaseSerializer):
     
     def to_representation(self, sprint, *args, **kwargs):
         bp = ProjectPermissions.for_user(user=self.logged_in_user, business=sprint.business, auto_create=False)  #sic
+#        import pdb ; pdb.set_trace()
         sprint.status_name = sprint.status3 and sprint.status3.name
         sprint.first_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('start_time').first()
         sprint.last_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('-end_time').first()
@@ -49,8 +50,8 @@ class SprintSerializer(BaseSerializer):
         sprint.sprint_clone_ids = SprintTemplate.objects.filter(sprint=sprint).values_list('clones__id', flat=True)
         sprint.ordered_deadline_ids = sprint.deadlines.order_by("deadline").values_list('id', flat=True)
         sprint.review_ids = [x.id for x in sprint.reviews.all()]
-
-        users_who_can_estimate = bp.get_users_who_can_capture_time(business_id=sprint.business_id) #sic
+        
+        users_who_can_estimate = bp.get_users_who_can_estimate_time(business_id=sprint.business_id) #sic
         if not bp.has_see_other_user_points:
             users_who_can_estimate = users_who_can_estimate.filter(pk=self.logged_in_user.id)
         sprint.user_ids_who_can_estimate = users_who_can_estimate.values_list('id', flat=True)

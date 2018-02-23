@@ -567,6 +567,20 @@ class BusinessPermissions(BaseModel):
                                 .distinct()
         return users
 
+    @classmethod
+    def get_users_who_can_estimate_time(self, business_id=None):
+        if business_id is None:
+            users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
+                                        business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+        else:
+            users = User.objects.filter(is_active=True,
+                                        business_permissions__business_id=business_id,
+                                        business_permissions__is_active_member_of_business=True,
+                                        business_permissions__can_estimate_own_points=True)\
+                                .distinct()
+        return users
+
+    
     @property
     def has_view_project_card(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_view_project_card or self.user.has_perm('timepiece.belongs_to_all_projects'))
