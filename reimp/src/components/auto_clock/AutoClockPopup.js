@@ -66,8 +66,8 @@ class AutoClockPopup extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, list_key, filter } = this.props
-	dispatch(initList(list_key))
+        const { dispatch, list_key, filter } = this.props
+        dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
         dispatch(update_list_pagination(list_key, { page_size: 1 }))
         this.refresh()
@@ -138,9 +138,9 @@ class AutoClockPopup extends Component {
                      onClick={() => this.onClockOut(most_recent_entry.id)}
                 />
               }
-                { (! most_recent_entry || ! most_recent_entry.is_active) &&
-                  <div className="icon--timer-inactive"/>
-                }
+              { (! most_recent_entry || ! most_recent_entry.is_active) &&
+                <div className="icon--timer-inactive"/>
+              }
             </div>
         )
         
@@ -174,7 +174,7 @@ class AutoClockPopup extends Component {
                       </div>
                     </div>
                   }
-                    
+                  
                   <AutoClockEntry entry_id={most_recent_entry.id}/>
                 </div>
               }
@@ -206,7 +206,7 @@ class AutoClockPopup extends Component {
                               off_label={"Auto clocking disabled"}
                 />
               </div>
-                
+              
               { available_project_id &&
                 <AutoClockNewEntryForm project_id={available_project_id}
                                        sprint_id={available_sprint_id}
@@ -261,7 +261,7 @@ class AutoClockPopup extends Component {
         const { show_popup, show_list } = this.state
         const { most_recent_entry, auto_clocking_enabled } = this.props
 
-          return (
+        return (
 
             <div className="auto-clock" onMouseLeave={this.onHidePopup}>
 
@@ -274,14 +274,14 @@ class AutoClockPopup extends Component {
                   { this.renderClockHistory() }
                 </div>
               }
-              { ! show_popup && most_recent_entry &&
-                <div className="auto-clock__mini-auto-clock-status">
+              {/* { ! show_popup && most_recent_entry &&
+                  <div className="auto-clock__mini-auto-clock-status">
                   <AutoClockEntity project_id={most_recent_entry.project_id}
-                                   sprint_id={most_recent_entry.sprint_id}
-                                   issue_id={most_recent_entry.issue_id}
-                                   className="auto-clock-entry__entities_row" />
-                </div>
-              }
+                  sprint_id={most_recent_entry.sprint_id}
+                  issue_id={most_recent_entry.issue_id}
+                  className="auto-clock-entry__entities_row" />
+                  </div>
+                  } */}
               { this.renderClockHistoryModal() }
             </div>
         )
@@ -307,7 +307,7 @@ function mapStateToProps(state, props) {
     const logged_in_user_id = logged_in_user().user_id || -1
     const most_recent_entry = (items_by_id && items_by_id.length > 0 && items_by_id[0]) || null
     const auto_clocking_enabled = isAutoClockingEnabled(state)
-    
+
     return {
         available_project_id,
         available_sprint_id,

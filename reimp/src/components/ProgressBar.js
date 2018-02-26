@@ -19,15 +19,15 @@ class ProgressBar extends Component {
         const sections = []
 
         function timeToNumber (time) {
-            if (time === 0) {
+            if (time === "00:00") {
                 return 0
             }
             time = time.replace(/^0+/, '')
             var timeNumRep = time.split(/[.:]/)
             var hours = Number(timeNumRep[0])
             var mins = Math.round((Number(timeNumRep[1]) / 60) * 100) / 100
-            time = hours + mins
-            return time
+            var timeValue = hours + mins
+            return timeValue
         }
 
         var currentTime = timeToNumber(current)
