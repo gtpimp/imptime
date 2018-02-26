@@ -8,7 +8,6 @@ import {
     WIDE_COLUMN_MODE,
     UPDATE_HEADER_LIST
 } from '../actions/Page.js'
-import { setErrorMessage } from '../actions/Error'
 
 const initialState = {}
 

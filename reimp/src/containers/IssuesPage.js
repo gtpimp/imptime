@@ -214,8 +214,7 @@ function mapStateToProps(state, props) {
     })
 
     const updated_mien = updateMien(cookie.load("current_mien"), PAGE_KEY__ISSUES_PAGE)
-    const updated_header_list = updated_mien.header_list
-    
+
     const filter_sprint_id = (getListFilter(state, LIST_KEY__ISSUE_LIST) || {}).sprint_id
     const sprint_id = props.params.sprintId
     const project_id = props.params.projectId

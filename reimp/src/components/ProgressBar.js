@@ -16,32 +16,39 @@ class ProgressBar extends Component {
 
     render() {
         const {current, max} = this.props
-        const fullWidth = Math.max(current, max)
         const sections = []
 
-        if ( !max && current>0 ) {
+        function timeToNumber (time) {
+            if (time === 0) {
+                return 0
+            }
+            time = time.replace(/^0+/, '')
+            var timeNumRep = time.split(/[.:]/)
+            var hours = Number(timeNumRep[0])
+            var mins = Math.round((Number(timeNumRep[1]) / 60) * 100) / 100
+            time = hours + mins
+            return time
+        }
+
+        var currentTime = timeToNumber(current)
+        var maxTime = timeToNumber(max)
+
+        if ( !maxTime && currentTime>0 ) {
             sections.push({
                 percentage: 1.0,
                 style: 'invalid'
             })
         } else {
-            if (current <= max) {
+            if (currentTime <= maxTime) {
                 sections.push({
-                    percentage: current / fullWidth,
+                    percentage: currentTime / maxTime,
                     style: 'progress'
                 })
                 sections.push({
-                    percentage: (max - current) / fullWidth,
+                    percentage: (maxTime - currentTime) / maxTime,
                     style: 'remaining'
                 })
-            }
-            /* if (current > max) {
-             *     sections.push({
-             *         percentage: max / fullWidth,
-             *         style: 'progress'
-             *     })
-             * }*/
-            if (current > max) {
+            } else if (currentTime > maxTime) {
                 sections.push({
                     percentage: 1.0,
                     style: 'over'
@@ -62,6 +69,5 @@ function mapStateToProps(state, props) {
         max: props.max
     }
 }
-
 
 export default connect(mapStateToProps)(ProgressBar)

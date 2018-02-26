@@ -36,7 +36,6 @@ class SprintSerializer(BaseSerializer):
     
     def to_representation(self, sprint, *args, **kwargs):
         bp = ProjectPermissions.for_user(user=self.logged_in_user, business=sprint.business, auto_create=False)  #sic
-#        import pdb ; pdb.set_trace()
         sprint.status_name = sprint.status3 and sprint.status3.name
         sprint.first_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('start_time').first()
         sprint.last_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('-end_time').first()
