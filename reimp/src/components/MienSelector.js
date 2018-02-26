@@ -66,7 +66,7 @@ class MienSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const current_mien = getMien(state)
+    const current_mien = getMien(state) || DEV_MIEN
 
     return {
         current_mien: current_mien
