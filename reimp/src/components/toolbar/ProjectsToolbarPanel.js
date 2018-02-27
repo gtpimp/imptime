@@ -38,7 +38,7 @@ class ProjectsToolbarPanel extends Component {
         const {dispatch, project_ids} = this.props
         dispatch(ensureProjectsLoaded(project_ids))
     }
-    
+
     onNewProjectClick() {
         const { dispatch } = this.props
         dispatch(startCandidateProject())

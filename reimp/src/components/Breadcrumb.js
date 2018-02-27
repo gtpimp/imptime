@@ -8,7 +8,7 @@ class Breadcrumb extends Component {
         const {label, to, is_last } = this.props
         return (
             <div className="breadcrumb">
-                <Link to={to}>{label}</Link>
+              <Link to={to}>{label}</Link>
                 { !is_last &&
                 <div className="breadcrumb__separator"><i className="material-icons">chevron_right</i></div>
                 }
@@ -24,6 +24,5 @@ function mapStateToProps(state, props) {
         to: breadcrumb.to
     }
 }
-
 
 export default connect(mapStateToProps)(withRouter(Breadcrumb))
