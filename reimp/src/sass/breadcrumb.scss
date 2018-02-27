@@ -38,13 +38,23 @@
 
 .breadcrumb-menu {
     position: absolute;
-    top: 124px;
+    top: 110px;
     width: 145px;
     z-index: 9;
     background-color: #fff;
+    border: 1px solid #999;
+    border-radius: 3px;
 }
 .breadcrumb-menu__item {
+    color: #999;
     display: flex;
-    height: 35px;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 10px;
+    border-bottom: 1px solid #eee;
+
+    &:hover {
+        color: #333;
+        background-color: #eee;
+    }
 }
-.breadcrumb-menu__item--hover {}

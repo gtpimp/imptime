@@ -35,7 +35,9 @@ class Breadcrumb extends Component {
               </Link>
               { show_breadcrumbMenu &&
                 <div className="breadcrumb-menu">
-                  <BreadcrumbMenu />
+                  <BreadcrumbMenu
+                  label={label}
+                  to={to} />
                 </div>
               }
               { !is_last &&

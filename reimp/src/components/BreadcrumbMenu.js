@@ -16,6 +16,12 @@ class BreadcrumbMenu extends Component {
 
 function mapStateToProps(state, props) {
 
+    const { label, to } = props
+    const project_re = /(\/projects\/\d+)$/
+    const sprint_re = /(\/sprints\/\d+)$/
+
+    console.log("lt", label, to)
+
     return {
     }
 }
