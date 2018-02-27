@@ -14,6 +14,7 @@ import AutoClockPopup from './auto_clock/AutoClockPopup'
 import keymap from '../actions/Keymap'
 const shortcut_manager = new ShortcutManager(keymap)
 var HTML5Backend = require('react-dnd-html5-backend');
+import ReactTooltip from 'react-tooltip'
 
 class MainLayout extends Component {
 
@@ -80,6 +81,7 @@ class MainLayout extends Component {
               <Websocket/>
               <Header/>
               <AutoClockPopup/>
+              <ReactTooltip place="bottom" type="info" />
               <div className="main">
                 {this.props.children}
               </div>

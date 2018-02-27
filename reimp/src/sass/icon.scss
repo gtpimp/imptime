@@ -109,6 +109,27 @@
     @include icon(15px, 15px, 'commercially_sensitive.png');
 }
 
+.icon__status--active {
+    height: 15px;
+    width: 15px;
+    background-color:green;
+    border-radius: 7px;
+}
+
+.icon__status--inactive {
+    height: 15px;
+    width: 15px;
+    background-color:orange;
+    border-radius: 7px;
+}
+
+.icon__status--expired {
+    height: 15px;
+    width: 15px;
+    background-color:gray;
+    border-radius: 7px;
+}
+
 .issue_sidebar__issue_copy_img {
     @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');
     background-color: black;
@@ -118,3 +139,4 @@
     @include icon(15px, 15px, 'folder-move-white.png');
     background-color: black;
 }
+

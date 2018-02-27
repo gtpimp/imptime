@@ -1,5 +1,6 @@
 import logging
 from project_serializer import ProjectSerializer
+from django.db.models import Case, When
 from rest_framework.decorators import detail_route
 from django.utils import timezone
 from django.conf import settings
@@ -20,6 +21,7 @@ from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import BusinessInvite as ProjectInvite
 from timepiece.models import UserAutoLoginToken
 from timepiece.models import ProjectDeadlineType
+from imptime.project_dashboard_api import get_recent_activity
 
 
 logger = logging.getLogger(__name__)
@@ -40,6 +42,9 @@ class ProjectViewSet(BaseViewSet):
             projects = self.allowed_projects()
             projects = self.apply_filter(qs=projects,
                                          raw_filter_args=filter_args)
+
+            if format_args.get('ids_only'):
+                projects = self.sort_projects(projects)
             projects = self.apply_pagination(qs=projects,
                                              pagination=pagination)
 
@@ -60,6 +65,15 @@ class ProjectViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
+    def sort_projects(self, projects):
+        sort_keys = []
+        for project in projects:
+            sort_keys.append( (project.id, get_recent_activity(project)) )
+            
+        project_ids_in_order = sorted(sort_keys, key=lambda x: x[1]['sort_date'], reverse=True)
+        preserved = Case(*[When(pk=pk[0], then=pos) for pos, pk in enumerate(project_ids_in_order)])
+        return projects.order_by(preserved)
+                                                    
     def update(self, request, pk):
         try:
             params = request.data

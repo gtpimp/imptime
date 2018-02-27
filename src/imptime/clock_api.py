@@ -61,7 +61,8 @@ class ClockViewSet(BaseViewSet):
         try:
             context = {}
             params = request.data
-            project_id = params['project_id']
+            project_id = params.get('project_id', None) or None
+            project_name = params.get('project_name', None) or None
             sprint_id = params.get('sprint_id', None) or None
             issue_id = params.get('issue_id', None) or None
             description = params.get('description', None) or None
@@ -72,6 +73,11 @@ class ClockViewSet(BaseViewSet):
             if most_recent_entry:
                 description = description or most_recent_entry.comments
                 role_name = role_name or (most_recent_entry.role and most_recent_entry.role.name) or "manager"
+
+            if project_id is None:
+                if project_name is None:
+                    raise Exception("Must clock into a project")
+                project_id = self.allowed_projects().get(name=project_name).id
                 
             project = self.allowed_project(project_id)
             project_role = self.allowed_project_roles(project=project).get(name=role_name)
