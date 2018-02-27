@@ -1,22 +1,23 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
 import '../sass/breadcrumb.css'
+import {connect} from 'react-redux'
 
 class BreadcrumbMenu extends Component {
 
     render() {
         return (
             <div>
-              <ul>
-                <li>list item one</li>
-                <li>list item two</li>
-              </ul>
+              <span className="breadcrumb-menu__item">list item one</span>
+              <span className="breadcrumb-menu__item">list item two</span>
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
+
+    return {
+    }
 }
 
 export default connect(mapStateToProps)(BreadcrumbMenu)

@@ -36,6 +36,15 @@
   }
 }
 
-.breadcrumb-menu {}
-.breadcrumb-menu__item {}
+.breadcrumb-menu {
+    position: absolute;
+    top: 124px;
+    width: 145px;
+    z-index: 9;
+    background-color: #fff;
+}
+.breadcrumb-menu__item {
+    display: flex;
+    height: 35px;
+}
 .breadcrumb-menu__item--hover {}

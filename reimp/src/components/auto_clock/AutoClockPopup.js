@@ -66,8 +66,8 @@ class AutoClockPopup extends Component {
     }
 
     componentDidMount() {
-	const { dispatch, list_key, filter } = this.props
-	dispatch(initList(list_key))
+        const { dispatch, list_key, filter } = this.props
+        dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
         dispatch(update_list_pagination(list_key, { page_size: 1 }))
         this.refresh()
@@ -138,9 +138,9 @@ class AutoClockPopup extends Component {
                      onClick={() => this.onClockOut(most_recent_entry.id)}
                 />
               }
-                { (! most_recent_entry || ! most_recent_entry.is_active) &&
-                  <div className="icon--timer-inactive"/>
-                }
+              { (! most_recent_entry || ! most_recent_entry.is_active) &&
+                <div className="icon--timer-inactive"/>
+              }
             </div>
         )
         
@@ -174,7 +174,7 @@ class AutoClockPopup extends Component {
                       </div>
                     </div>
                   }
-                    
+                  
                   <AutoClockEntry entry_id={most_recent_entry.id}/>
                 </div>
               }
@@ -206,7 +206,7 @@ class AutoClockPopup extends Component {
                               off_label={"Auto clocking disabled"}
                 />
               </div>
-                
+              
               { available_project_id &&
                 <AutoClockNewEntryForm project_id={available_project_id}
                                        sprint_id={available_sprint_id}
@@ -261,7 +261,7 @@ class AutoClockPopup extends Component {
         const { show_popup, show_list } = this.state
         const { most_recent_entry, auto_clocking_enabled } = this.props
 
-          return (
+        return (
 
             <div className="auto-clock" onMouseLeave={this.onHidePopup}>
 
