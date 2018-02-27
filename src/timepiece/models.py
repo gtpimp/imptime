@@ -556,12 +556,31 @@ class BusinessPermissions(BaseModel):
                                    business_permissions__is_active_member_of_business=True).distinct()
 
     @classmethod
-    def get_users_who_can_capture_time(self):
-        """ any user who is allowed to estimate on at least one project """
-        users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
-                                    business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+    def get_users_who_can_capture_time(self, business_id=None):
+        if business_id is None:
+            users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
+                                        business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+        else:
+            users = User.objects.filter(is_active=True,
+                                        business_permissions__business_id=business_id,
+                                        business_permissions__is_active_member_of_business=True)\
+                                .distinct()
         return users
 
+    @classmethod
+    def get_users_who_can_estimate_time(self, business_id=None):
+        if business_id is None:
+            users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
+                                        business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+        else:
+            users = User.objects.filter(is_active=True,
+                                        business_permissions__business_id=business_id,
+                                        business_permissions__is_active_member_of_business=True,
+                                        business_permissions__can_estimate_own_points=True)\
+                                .distinct()
+        return users
+
+    
     @property
     def has_view_project_card(self):
         return (self.is_active_member_of_business or self.user.is_superuser) and (self.can_view_project_card or self.user.has_perm('timepiece.belongs_to_all_projects'))
@@ -1027,7 +1046,7 @@ class Project(BaseModel):
             total = user.user_points.filter(issue__project=self).aggregate(Sum("points"))
             ret[user] = total['points__sum'] if total['points__sum'] else 0
         return ret
-
+    
     def model_to_dict(self, include_business=False):
         d = model_to_dict_with_date_support(self)
         if include_business:

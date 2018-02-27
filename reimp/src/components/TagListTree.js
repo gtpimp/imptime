@@ -90,9 +90,9 @@ class TagListTree extends Component {
                                )
                            })
                           }
-                          
+
                         </TreeView>
-                        
+
                     )
                 })
               }
@@ -110,7 +110,7 @@ function mapStateToProps(state, props) {
     const project_tags = getItems(state, ENTITY_KEY__TAG, project_tag_ids) || []
     const project_tags_by_category = groupBy(project_tags, 'category_name')
     const filter = getListFilter(state, list_key)
-    
+
     return {
         project_tags_by_category,
         list_key,

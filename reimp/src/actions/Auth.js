@@ -1,3 +1,4 @@
+
 import { impfetch } from './lib.js'
 import cookie from 'react-cookie';
 import { SubmissionError } from 'redux-form'
@@ -33,10 +34,10 @@ export function auto_login(auto_login_token) {
         const data = { 'token': auto_login_token }
 
         const params = {method: "POST",
-	                credentials: 'same-origin',
-	                data: data,
-	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	                body: JSON.stringify(data)}
+                  credentials: 'same-origin',
+                  data: data,
+                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                  body: JSON.stringify(data)}
         
         return impfetch(state, 'imp/autologin/', dispatch, params)
             .then(response => response.json())
@@ -63,10 +64,10 @@ export function login(username, password) {
                        'password': password }
 
         const params = {method: "POST",
-	                credentials: 'same-origin',
-	                data: data,
-	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	                body: JSON.stringify(data)}
+                  credentials: 'same-origin',
+                  data: data,
+                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                  body: JSON.stringify(data)}
         
         return impfetch(state, 'imp/login/', dispatch, params)
             .then(response => response.json())
@@ -89,10 +90,10 @@ export function forgot_password(username) {
         const state = getState()
         const data = { 'username': username }
         const params = {method: "POST",
-	                credentials: 'same-origin',
-	                data: data,
-	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	                body: JSON.stringify(data)}
+                  credentials: 'same-origin',
+                  data: data,
+                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                  body: JSON.stringify(data)}
         return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params).then(
             () => { browserHistory.push('/password/reminded') })
     }
@@ -104,10 +105,10 @@ export function change_password(dispatch, settings, password) {
         const state = getState()
         const data = { 'password': password }
         const params = {method: "POST",
-	                credentials: 'same-origin',
-	                data: data,
-	                headers: {"Content-type": "application/json; charset=UTF-8"}, 
-	                body: JSON.stringify(data)}
+                  credentials: 'same-origin',
+                  data: data,
+                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                  body: JSON.stringify(data)}
         
         return impfetch(state, 'imp/auth/change_password/', dispatch, params).then(
             () => { browserHistory.goBack() })

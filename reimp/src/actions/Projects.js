@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import keyBy from 'lodash/keyBy'
+import { keyBy, get } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 import { deleteItems } from '../actions/Item'

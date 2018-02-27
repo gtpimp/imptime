@@ -1,6 +1,6 @@
 import { impfetch } from './lib.js'
 
-import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
+import { updateVisibleItemIdAbove } from './ItemList'
 import { ENTITY_KEY__ISSUE, ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry'
 import { map, compact } from 'lodash'
 import difference from 'lodash/difference'
@@ -9,7 +9,6 @@ import { getUser } from '../actions/Users'
 import {
     invalidateAllItems,
     invalidateItems,
-    fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
     getItem,
@@ -21,11 +20,7 @@ import {
     updateCandidateDetails,
     cancelCandidateItem,
     getCandidateItem,
-    deleteItem,
     deleteItems,
-    announceItemSaveFailed,
-    announceItemsSaved,
-    announceItemsSaving,
     itemPost,
     is_item_invalidated,
     getInvalidatedItemIds,
@@ -43,7 +38,6 @@ export function invalidateAllIssues() {
         dispatch(invalidateAllItems(ENTITY_KEY__ISSUE))
     }
 }
-
 
 export function invalidateIssues(issue_ids) {
     return (dispatch, getState) => {
@@ -237,7 +231,6 @@ export function groupUnsortedIssuesIntoFeature(issue_ids) {
     }
 }
 
-
 export function ungroupIssuesIntoFeature(issue_ids) {
 
     return (dispatch, getState) => {
@@ -283,7 +276,7 @@ export function startCandidateIssue(sprint_id, issue_id_before, selected_issue_i
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__ISSUE,
                                     { issue_id_before: issue_id_before,
-	                              sprint_id: sprint_id,
+	                                    sprint_id: sprint_id,
                                       selected_issue_ids: selected_issue_ids || [issue_id_before] }))
     }
 }
@@ -292,7 +285,7 @@ export function startCandidateFeature(sprint_id, issue_id_before) {
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__ISSUE,
                                     { issue_id_before: issue_id_before,
-	                              sprint_id: sprint_id,
+	                                    sprint_id: sprint_id,
                                       can_group_issues: true }))
     }
 }
@@ -373,33 +366,33 @@ function announceBulkCreatingIssuesFailed(sprint_id, error) {
 
 export function bulkCreateIssues(sprint_id, bulk_issue_text, on_done) {
     return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceBulkCreatingIssues(sprint_id))
-	let data = { sprint_id: sprint_id,
+        const state = getState()
+        dispatch(announceBulkCreatingIssues(sprint_id))
+        let data = { sprint_id: sprint_id,
                      bulk_issue_text: bulk_issue_text }
-	return impfetch( state, "imp/issue/bulk_create_issues/", dispatch,
-			 {method: "POST",
-			  credentials: 'same-origin',
-			  data: data,
-			  headers: {"Content-type": "application/json; charset=UTF-8"},
-			  body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
+        return impfetch( state, "imp/issue/bulk_create_issues/", dispatch,
+                         {method: "POST",
+                          credentials: 'same-origin',
+                          data: data,
+                          headers: {"Content-type": "application/json; charset=UTF-8"},
+                          body: JSON.stringify(data)}
+        ).then(response => response.json())
+         .then(json => {
              if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
+                 console.log('Request failed with JSON response', json);
                  dispatch(announceBulkCreatingIssuesFailed(sprint_id, json.error))
              } else {
-		 console.log('Request succeeded with JSON response', json);
+                 console.log('Request succeeded with JSON response', json);
                  dispatch(announceBulkCreatedIssues(sprint_id, json.payload.new_issues_ids))
                  if ( on_done ) {
                      on_done(json.payload.new_issue_ids)
                  }
              }
-	 })
-	 .catch(function (error) {
+         })
+         .catch(function (error) {
              console.log('Request failed', error);
              dispatch(announceBulkCreatingIssuesFailed(sprint_id, error))
-	 })
+         })
     }
 }
 
@@ -411,7 +404,6 @@ export function promoteIssueTestableToIssue(issue_id, testable_id, on_done) {
     const data = {}
     return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data, on_done)
 }
-
 
 export function addOrEditIssueTag(tag_name, tag_category_name, issue_ids, tag_id) {
     const url = "imp/" + ENTITY_KEY__TAG + "/add_to_issue/"

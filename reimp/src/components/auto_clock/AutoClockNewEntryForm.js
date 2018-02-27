@@ -10,7 +10,6 @@ import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
-import AutoClockEntity from './AutoClockEntity'
 import { getPreferredRole } from '../../actions/AutoClock'
 
 class AutoClockNewEntryForm extends Component {

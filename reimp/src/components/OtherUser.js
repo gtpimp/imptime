@@ -15,25 +15,25 @@ class OtherUser extends Component {
     }
 
     refresh() {
-	      const { dispatch, user_id, user } = this.props
-	      if ( user_id && user && user.loaded === false ) {
-	          dispatch(ensureUsersLoaded([user_id]))
-	      }
+        const { dispatch, user_id, user } = this.props
+        if ( user_id && user && user.loaded === false ) {
+            dispatch(ensureUsersLoaded([user_id]))
+        }
     }
 
     render_inline_small() {
-	const { user, loading_value, onClick, display_mode } = this.props
+        const { user, loading_value, onClick, display_mode } = this.props
 
-	return (
-	    <div className="other_user"
+        return (
+            <div className="other_user"
                  key={this.key+".collapsed_user."+user.id}
-		 onClick={onClick}
-	    >
-	      { ! user.username && loading_value }
-	      { display_mode=="username" && user.username && user.username }
+                 onClick={onClick}
+            >
+              { ! user.username && loading_value }
+              { display_mode=="username" && user.username && user.username }
               { display_mode=="visible_name" && user.username && user.visible_name }
-	    </div>
-	)
+            </div>
+        )
     }
 
     render() {
@@ -43,15 +43,15 @@ class OtherUser extends Component {
             return ( <div onClick={onClick}></div> )
         }
 
-	      if ( user.loaded === false ) {
-	          return ( <div onClick={onClick}>{loading_value}</div> )
-	      }
+        if ( user.loaded === false ) {
+            return ( <div onClick={onClick}>{loading_value}</div> )
+        }
 
-	      if ( render_mode === 'inline--small' ) {
-	          return this.render_inline_small()
-	      } else {
-	          return ( <div>Dev error, unsupported render mode: {render_mode}</div> )
-	      }
+        if ( render_mode === 'inline--small' ) {
+            return this.render_inline_small()
+        } else {
+            return ( <div>Dev error, unsupported render mode: {render_mode}</div> )
+        }
     }
 }
 
@@ -62,13 +62,12 @@ function mapStateToProps(state, props) {
     const user = ((user_id && (getUser(state, user_id))) || { 'loaded': false, 'id': user_id }) || { 'username': 'no-one' }
 
     return {
-	user,
+        user,
         user_id,
-	render_mode: render_mode || "inline--small",
-	loading_value: loading_value || "...",
+        render_mode: render_mode || "inline--small",
+        loading_value: loading_value || "...",
         display_mode: display_mode || "visible_name"
     }
 }
-
 
 export default connect(mapStateToProps)(OtherUser)
