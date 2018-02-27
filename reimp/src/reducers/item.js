@@ -49,7 +49,7 @@ export default function item(state = initialState, action) {
 
     switch (action.type) {
 
-	case INVALIDATE_ALL_ITEMS:
+        case INVALIDATE_ALL_ITEMS:
             s = cloneItemState(state, action)
             ids = stringifyIds(keys(s.items_by_id || []))
             s.invalidated_item_ids = ids
@@ -78,67 +78,67 @@ export default function item(state = initialState, action) {
         case ANNOUNCE_ITEMS_LOAD_FAILED:
             return state;
 
-	case ANNOUNCE_ITEMS_SAVING:
-	    const item_ids = action.item_ids
+        case ANNOUNCE_ITEMS_SAVING:
+            const item_ids = action.item_ids
             s = cloneItemState(state, action)
             s.items_by_id = Object.assign({}, s.items_by_id)
             s.saving_item_ids = union(s.saving_item_ids, item_ids)
 
-	    let new_item_props = {}
+            let new_item_props = {}
             if ( action.field_name == UPDATE_ENTIRE_ITEM_FIELD_NAME ) {
                 new_item_props = Object.assign({}, action.new_value)
             } else {
-	        new_item_props[action.field_name] = action.new_value
+                new_item_props[action.field_name] = action.new_value
             }
             map(item_ids, function(item_id, index) {
                 s.items_by_id[item_id] = Object.assign({}, s.items_by_id[item_id],
-		                                       new_item_props)
+                                                       new_item_props)
             })
             return setItemState(state, action, s)
 
-	case ANNOUNCE_ITEMS_SAVED:
+        case ANNOUNCE_ITEMS_SAVED:
             s = cloneItemState(state, action)
             s.saving_item_ids = difference(s.saving_item_ids || [], action.item_ids)
             s.items_by_id = Object.assign(s.items_by_id, action.items_by_id)
             return setItemState(state, action, s)
 
-	case ANNOUNCE_CAPTURING_NEW_ITEM:
+        case ANNOUNCE_CAPTURING_NEW_ITEM:
             s = cloneItemState(state, action)
             s.candidate_item = Object.assign({}, action.candidate_item)
             return setItemState(state, action, s)
 
-	case UPDATE_NEW_ITEM_DETAILS:
+        case UPDATE_NEW_ITEM_DETAILS:
             s = cloneItemState(state, action)
             s.candidate_item = Object.assign({}, s.candidate_item, action.candidate_item)
             return setItemState(state, action, s)
 
-	case CANCEL_CREATING_NEW_ITEM:
+        case CANCEL_CREATING_NEW_ITEM:
             s = cloneItemState(state, action)
             s.candidate_item = null
             return setItemState(state, action, s)
 
-	case ANNOUNCE_SAVING_NEW_ITEM:
+        case ANNOUNCE_SAVING_NEW_ITEM:
             s = cloneItemState(state, action)
             s.candidate_item = Object.assign({},
-					     s.candidate_item || {},
-					     {saving: true})
+                                             s.candidate_item || {},
+                                             {saving: true})
             return setItemState(state, action, s)
 
-	case ANNOUNCE_SAVED_NEW_ITEM:
+        case ANNOUNCE_SAVED_NEW_ITEM:
 
             s = cloneItemState(state, action)
-	    new_items_by_id = Object.assign({}, s.items_by_id)
+            new_items_by_id = Object.assign({}, s.items_by_id)
             new_items_by_id[action.item.id] = action.item
             s.candidate_item = null
             s.items_by_id = new_items_by_id
             return setItemState(state, action, s)
 
-	case ANNOUNCE_SAVING_NEW_ITEM_FAILED:
+        case ANNOUNCE_SAVING_NEW_ITEM_FAILED:
 
             s = cloneItemState(state, action)
             s.candidate_item = Object.assign({},
-					     s.candidate_item || {},
-					     {is_saving: false})
+                                             s.candidate_item || {},
+                                             {is_saving: false})
             return setItemState(state, action, s)
 
         case ANNOUNCE_DELETING_ITEMS:
@@ -146,17 +146,17 @@ export default function item(state = initialState, action) {
             s.saving_item_ids = union(s.saving_item_ids, action.deleting_item_ids)
             return setItemState(state, action, s)
 
-	case ANNOUNCE_ITEMS_DELETED:
+        case ANNOUNCE_ITEMS_DELETED:
             s = cloneItemState(state, action)
-	    new_items_by_id = Object.assign({}, s.items_by_id)
+            new_items_by_id = Object.assign({}, s.items_by_id)
             new_items_by_id = omit(new_items_by_id, action.deleted_item_ids)
 
             s.saving_item_ids = difference(s.saving_item_ids || [],
-					   action.deleted_item_ids)
-	    s.items_by_id = new_items_by_id
+                                           action.deleted_item_ids)
+            s.items_by_id = new_items_by_id
             return setItemState(state, action, s)
 
-	case ANNOUNCE_DELETE_ITEMS_FAILED:
+        case ANNOUNCE_DELETE_ITEMS_FAILED:
             s = cloneItemState(state, action)
             s.saving_item_ids = difference(s.saving_item_ids, action.deleting_item_ids)
             return setItemState(state, action, s)

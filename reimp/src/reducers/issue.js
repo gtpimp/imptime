@@ -22,13 +22,13 @@ export default function issue(state = initialState, action) {
 
     switch (action.type) {
         case SET_ISSUE_STORE_VALUE:
-	    issue_ids = action.issue_ids
+            issue_ids = action.issue_ids
             state_clone = Object.assign({}, state)
-	    new_issue_props = {}
-	    new_issue_props[action.field_name] = action.new_value
+            new_issue_props = {}
+            new_issue_props[action.field_name] = action.new_value
             map(issue_ids, function(issue_id, index) {
                 state_clone.items_by_id[issue_id] = Object.assign({}, state.items_by_id[issue_id],
-		                                                  new_issue_props)
+                                                                  new_issue_props)
             })
             return state_clone
 

@@ -29,19 +29,19 @@ export default function user(state = initialState, action) {
     switch (action.type) {
         case INVALIDATE_USERS:
 
-	    // let new_user_ids = Object.assign({}, without(state.items_by_id, id_to_invalidate)
-	    // action.user_ids_to_invalidate.map(function(id_to_invalidate) {
-        // if ( new_user_ids[id_to_invalidate] ) {
-		 //    delete new_user_ids[id_to_invalidate]
-		// }
-        // })
-        // return Object.assign({}, state, {items_by_id: new_user_ids})
+            // let new_user_ids = Object.assign({}, without(state.items_by_id, id_to_invalidate)
+            // action.user_ids_to_invalidate.map(function(id_to_invalidate) {
+            // if ( new_user_ids[id_to_invalidate] ) {
+            //    delete new_user_ids[id_to_invalidate]
+            // }
+            // })
+            // return Object.assign({}, state, {items_by_id: new_user_ids})
             return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.user_ids_to_invalidate)})
 
         case ANNOUNCE_LOADING_USERS:
-	    return Object.assign({}, state, {
-		loading_item_ids: union(state.loading_item_ids, action.user_ids_to_load)
-	    })
+            return Object.assign({}, state, {
+                loading_item_ids: union(state.loading_item_ids, action.user_ids_to_load)
+            })
         case ANNOUNCE_USERS_LOADED:
 
             // const empty_user_ids = difference(state.loading_item_ids, keys(action.items_by_id))
@@ -52,26 +52,26 @@ export default function user(state = initialState, action) {
             
             return Object.assign({}, state, {
 
-		loading_item_ids: Object.assign({},
-						difference(state.loading_item_ids || [],
-							   keys(action.items_by_id))),
-		items_by_id: Object.assign({},
-					   assign(state.items_by_id, action.items_by_id))
-	    })
-	    
+                loading_item_ids: Object.assign({},
+                                                difference(state.loading_item_ids || [],
+                                                           keys(action.items_by_id))),
+                items_by_id: Object.assign({},
+                                           assign(state.items_by_id, action.items_by_id))
+            })
+            
         case ANNOUNCE_USERS_LOAD_FAILED:
             setErrorMessage("Failed to load users: " + action.error_message)
             return state;
         case ANNOUNCE_SAVING_INVITE:
-	    return Object.assign({}, state, {
-		inviting_user_email: action.user_email,
+            return Object.assign({}, state, {
+                inviting_user_email: action.user_email,
                 inviting_project_id: action.project_id
-	    })
+            })
         case ANNOUNCE_SAVED_INVITE:
             return Object.assign({}, state, {
-		inviting_user_email: action.user_email,
+                inviting_user_email: action.user_email,
                 inviting_project_id: action.project_id
-	    })
+            })
         case ANNOUNCE_SAVE_INVITE_FAILED:
             setErrorMessage("Failed to load users: " + action.error_message)
             return state;

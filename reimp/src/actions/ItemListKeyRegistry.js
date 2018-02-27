@@ -75,7 +75,7 @@ const small_col_width = "90px"
 const tiny_col_width = "20px"
 
 export function getCellStyle(s) { 
-   // For use with the header lists below
+    // For use with the header lists below
     return {
         "minWidth":s.width,
         "maxWidth":s.width,
@@ -125,10 +125,69 @@ export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width
                                        'small_delete': {label:"", width:tiny_col_width}
 }
 
-/* export var ISSUE_HEADER_LIST_FEATURE = {'number': {label:"#", width:tiny_col_width},
- *                                         'expand_feature': {label:'', width:tiny_col_width},
- *                                         'name': {label:"Name", width:"50%"}
- * }*/
+export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width},
+                                      'adhoc': {label:'', width:tiny_col_width},
+                                      'expand_feature': {label:'', width:tiny_col_width},
+                                      'name': {label:"Name", width:"auto", flex:1},
+                                      'assignee': {label:"Assignee", width:medium_col_width},
+                                      'created_at': {label:"Created at", width:medium_col_width},
+                                      'status': {label:"Status", width:medium_col_width},
+                                      'tag_columns': {label:"Tag Columns", width:medium_col_width},
+                                      'estimated': {label:"Estimates", width:medium_col_width},
+                                      'clock_in': {label:"Clock in", width:small_col_width},
+                                      'small_delete': {label:"", width:tiny_col_width}},
+                         'manager_mien': {'number': {label:"#", width:tiny_col_width},
+                                          'adhoc': {label:'', width:tiny_col_width},
+                                          'expand_feature': {label:'', width:tiny_col_width},
+                                          'name': {label:"Name", width:"auto", flex:1},
+                                          'assignee': {label:"Assignee", width:medium_col_width},
+                                          'created_at': {label:"Created at", width:medium_col_width},
+                                          'status': {label:"Status", width:medium_col_width},
+                                          'tag_columns': {label:"Tag Columns", width:medium_col_width},
+                                          'estimated': {label:"Estimates", width:medium_col_width},
+                                          'clock_in': {label:"Clock in", width:small_col_width},
+                                          'small_delete': {label:"", width:tiny_col_width}},
+                         'finance_mien': {'number': {label:"#", width:tiny_col_width},
+                                          'adhoc': {label:'', width:tiny_col_width},
+                                          'expand_feature': {label:'', width:tiny_col_width},
+                                          'name': {label:"Name", width:"auto", flex:1},
+                                          'assignee': {label:"Assignee", width:medium_col_width},
+                                          'created_at': {label:"Created at", width:medium_col_width},
+                                          'status': {label:"Status", width:medium_col_width},
+                                          'tag_columns': {label:"Tag Columns", width:medium_col_width},
+                                          'estimated': {label:"Estimates", width:medium_col_width},
+                                          'clock_in': {label:"Clock in", width:small_col_width},
+                                          'small_delete': {label:"", width:tiny_col_width}},
+                         'client_mien': {'number': {label:"#", width:tiny_col_width},
+                                         'adhoc': {label:'', width:tiny_col_width},
+                                         'expand_feature': {label:'', width:tiny_col_width},
+                                         'name': {label:"Name", width:"auto", flex:1},
+                                         'assignee': {label:"Assignee", width:medium_col_width},
+                                         'created_at': {label:"Created at", width:medium_col_width},
+                                         'status': {label:"Status", width:medium_col_width},
+                                         'tag_columns': {label:"Tag Columns", width:medium_col_width},
+                                         'estimated': {label:"Estimates", width:medium_col_width},
+                                         'clock_in': {label:"Clock in", width:small_col_width},
+                                         'small_delete': {label:"", width:tiny_col_width}},
+                         'tester_mien': {'number': {label:"#", width:tiny_col_width},
+                                         'adhoc': {label:'', width:tiny_col_width},
+                                         'expand_feature': {label:'', width:tiny_col_width},
+                                         'name': {label:"Name", width:"auto", flex:1},
+                                         'assignee': {label:"Assignee", width:medium_col_width},
+                                         'created_at': {label:"Created at", width:medium_col_width},
+                                         'status': {label:"Status", width:medium_col_width},
+                                         'tag_columns': {label:"Tag Columns", width:medium_col_width},
+                                         'estimated': {label:"Estimates", width:medium_col_width},
+                                         'clock_in': {label:"Clock in", width:small_col_width},
+                                         'small_delete': {label:"", width:tiny_col_width}},
+                         'spec_mien': {'number': {label:"#", width:tiny_col_width},
+                                       'adhoc': {label:'', width:tiny_col_width},
+                                       'expand_feature': {label:'', width:tiny_col_width},
+                                       'name': {label:"Name", width:"auto", flex:1},
+                                       'assignee': {label:"Assignee", width:medium_col_width},
+                                       'status': {label:"Status", width:small_col_width},
+                                       'estimate_columns': {label:"Estimates", width:small_col_width}}
+}
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':{label:'#', width:tiny_col_width},
@@ -147,3 +206,28 @@ export var SPRINT_TYPE_ORDER = [ 'inbox',
                                  'regression',
                                  'audit',
                                  'backlog' ]
+
+export var DEV_MIEN = 'dev_mien'
+export var MANAGER_MIEN = 'manager_mien'
+export var FINANCE_MIEN = 'finance_mien'
+export var CLIENT_MIEN = 'client_mien'
+export var TESTER_MIEN = 'tester_mien'
+export var SPEC_MIEN = 'spec_mien'
+
+export var DEV_MIEN_HEADER_LIST = {
+    'key': DEV_MIEN}
+
+export var MANAGER_MIEN_HEADER_LIST = {
+    'key': MANAGER_MIEN}
+
+export var FINANCE_MIEN_HEADER_LIST = {
+    'key': FINANCE_MIEN}
+
+export var CLIENT_MIEN_HEADER_LIST = {
+    'key': CLIENT_MIEN}
+
+export var TESTER_MIEN_HEADER_LIST = {
+    'key': TESTER_MIEN}
+
+export var SPEC_MIEN_HEADER_LIST = {
+    'key': SPEC_MIEN}

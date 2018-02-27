@@ -84,7 +84,7 @@ class IssueSerializer(BaseSerializer):
 
         if not bp.has_see_other_user_points:
             issue.all_estimates = None
-        
+
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):

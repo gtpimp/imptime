@@ -137,7 +137,6 @@ class IssueToolbarPanel extends Component {
                             off_label={"No sidebar"}
               />
 
-
               <ToolbarButton tooltip="Toggle as feature"
                              flavour='toggle'
                              isEnabled={issue.can_group_issues}

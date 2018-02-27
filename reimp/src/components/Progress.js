@@ -40,12 +40,11 @@ class Progress extends Component {
 
 function mapStateToProps(state, props) {
     const { issue, estimate } = props
-    
+
     return {
         issue,
         estimate: estimate || null
     }
 }
-
 
 export default connect(mapStateToProps)(Progress)
