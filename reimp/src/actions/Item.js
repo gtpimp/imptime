@@ -312,31 +312,31 @@ export function deleteItems(entity_key, item_ids) {
 export function itemPost(entity_key, item_ids, url,
                          field_name, field_value, method, data, on_done) {
     return (dispatch, getState) => {
-	      const state = getState()
-	      dispatch(announceItemsSaving(entity_key, item_ids, field_name, field_value))
-	      return impfetch( state, url, dispatch,
-			                   {method: method,
-			                    credentials: 'same-origin',
-			                    data: data,
-			                    headers: {"Content-type": "application/json; charset=UTF-8"},
-			                    body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
+	const state = getState()
+	dispatch(announceItemsSaving(entity_key, item_ids, field_name, field_value))
+	return impfetch( state, url, dispatch,
+			 {method: method,
+			  credentials: 'same-origin',
+			  data: data,
+			  headers: {"Content-type": "application/json; charset=UTF-8"},
+			  body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
              if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announceItemSaveFailed(entity_key, json.error))
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {
-		             console.log('Request succeeded with JSON response', json);
-		             dispatch(announceItemsSaved(entity_key, item_ids, json.issues))
+		 console.log('Request succeeded with JSON response', json);
+		 dispatch(announceItemsSaved(entity_key, item_ids, json.issues))
                  if ( on_done ) {
-		                 on_done()
-	               }
+		     on_done()
+	         }
              }
-	       })
-	       .catch(function (error) {
+	 })
+	 .catch(function (error) {
              console.log('Request failed', error);
-	           dispatch(announceItemSaveFailed(entity_key, error))
-	       })
+	     dispatch(announceItemSaveFailed(entity_key, error))
+	 })
     }
 }
 

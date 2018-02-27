@@ -32,7 +32,6 @@ class WikiForm extends Component {
         return (
             <Textarea
                 rows="50"
-                maxLength="3000"
                 className="textarea textarea--text-component textarea--content wiki__content--editor"
                 placeholder="Content"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
