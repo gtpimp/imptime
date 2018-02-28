@@ -21,18 +21,18 @@ class Tag extends Component {
     }
 
     render() {
-        const {tag,  onDelete} = this.props
+        const {tag, onDelete} = this.props
 
         if ( ! tag.id ) {
             return null
         }
-        
+
         return (
             <div className="tag">
               <div className="tag__component tag__component__category">{tag.category_name}</div>
               <div className="tag__component tag__component__separator"></div>
               <div className="tag__component tag__component__name">{tag.name}</div>
-              {  onDelete &&
+              { onDelete &&
                  <div className="tag__component tag__component__delete icon--small-cross" onClick={onDelete}></div>
               }
             </div>
@@ -44,14 +44,13 @@ function mapStateToProps(state, props) {
 
     const { tag_id, onDelete } = props
     const tag = getTag(state, tag_id) || {}
-    
+
     return {
         tag_id,
         tag,
         onDelete
     }
-    
-}
 
+}
 
 export default connect(mapStateToProps)(Tag)

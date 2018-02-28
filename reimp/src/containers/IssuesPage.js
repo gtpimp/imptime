@@ -33,6 +33,8 @@ import {
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getCandidateIssue} from '../actions/Issues'
+import cookie from 'react-cookie'
+import { updateMien } from '../actions/Settings'
 
 class IssuesPage extends Component {
 
@@ -211,6 +213,8 @@ function mapStateToProps(state, props) {
 					     'loaded': false }
     })
 
+    const updated_mien = updateMien(cookie.load("current_mien"), PAGE_KEY__ISSUES_PAGE)
+
     const filter_sprint_id = (getListFilter(state, LIST_KEY__ISSUE_LIST) || {}).sprint_id
     const sprint_id = props.params.sprintId
     const project_id = props.params.projectId
@@ -219,7 +223,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
-    const issue_header_list = get_header_list(state, PAGE_KEY__ISSUES_PAGE)
+    const issue_header_list = updated_mien.header_list || get_header_list(state, PAGE_KEY__ISSUES_PAGE)
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")

@@ -14,6 +14,7 @@ import {
     clock,
     deleteIssues
 } from '../actions/Issues'
+import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getProject} from '../actions/Projects'
 import {
     ensureUsersLoaded,
@@ -33,6 +34,7 @@ import TagListFlat from '../components/TagListFlat'
 import {format_hours} from '../actions/lib'
 import IssueStatusLabel from '../components/form/IssueStatusLabel'
 import Timestamp from './Timestamp'
+import { logged_in_user } from '../actions/Auth'
 
 const ISSUE_STATUS_CHOICES = [
     {value: 'new', label: 'new'},
@@ -83,6 +85,7 @@ class Issue extends Component {
         const {dispatch, assignable_user_ids, issue} = props
         dispatch(ensureUsersLoaded(assignable_user_ids))
         dispatch(ensureTagsLoaded(issue.tag_ids || []))
+        dispatch(ensureSprintsLoaded([issue.sprint_id]))
     }
 
     onChangeAssignedTo(issue_id, new_value) {
@@ -154,7 +157,9 @@ class Issue extends Component {
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
             issue_id, visible_header_keys, header_list,
-            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names, tagsByCategoryName
+            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
+            tagsByCategoryName, all_estimates, all_estimates_by_user_id, sprint,
+            current_user_id
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -289,7 +294,7 @@ class Issue extends Component {
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.tags)}>
                      <div className="issue-cell__tag">
-                       <TagListFlat issue_ids={[issue.id]}  can_edit={false} />
+                       <TagListFlat issue_ids={[issue.id]} can_edit={false} />
                      </div>
                    </div>
                   }
@@ -304,6 +309,23 @@ class Issue extends Component {
                        </div>
                    )
                   }
+                {includes(visible_header_keys, "estimate_columns") &&
+                 map(sprint.user_ids_who_can_estimate, (user_id) =>
+                     <div key={user_id}
+                          className="div-table__cell issue__cell__secondary"
+                          style={getCellStyle(header_list.estimate_columns)}>
+                       <div className="issue-cell__estimate_column">
+                         {current_user_id === user_id &&
+                          <EditableIssueEstimate issue_id={issue.id}
+                                                 class_name="issue-cell__my-estimate"/> }
+
+                         {current_user_id !== user_id &&
+                          format_hours(all_estimates_by_user_id[user_id] &&
+                                       all_estimates_by_user_id[user_id].estimate_hours)}
+                       </div>
+                     </div>
+                 )
+                }
                   {includes(visible_header_keys, "estimated") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.estimated)}>
@@ -347,7 +369,7 @@ class Issue extends Component {
                        <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
                      </div>
                    </div>
-                  }                 
+                  }
                 </div>
             )
         }
@@ -383,6 +405,8 @@ function mapStateToProps(state, props) {
     const issue = getIssue(state, issue_id) || {'loaded': false}
     const project_id = issue.project_id
     const project = getProject(state, project_id) || {}
+    const sprint_id = issue.sprint_id
+    const sprint = getSprint(state, sprint_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
     const selectedIssues = getSelectedItems(state, list_key, ENTITY_KEY__ISSUE) || []
     populateEstimates(state, issue)
@@ -403,10 +427,15 @@ function mapStateToProps(state, props) {
     const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
     const tags = getTags(state, issue.tag_ids || [])
     const tagsByCategoryName = keyBy(tags, 'category_name')
+    const all_estimates = issue.all_estimates
+    const all_estimates_by_user_id = keyBy(all_estimates, 'user_id')
+    const current_user = logged_in_user()
+    const current_user_id = current_user.user_id
 
     return {
         issue: issue,
         issue_id: issue_id,
+        sprint,
         is_selected: is_selected,
         is_highlighted: is_highlighted,
         is_loading: is_loading,
@@ -426,7 +455,10 @@ function mapStateToProps(state, props) {
         isFeatureOfSelectedIssue,
         belongsToSelectedFeature,
         onDelete: onDelete || null,
-        tagsByCategoryName
+        tagsByCategoryName,
+        all_estimates_by_user_id,
+        all_estimates,
+        current_user_id
     }
 }
 

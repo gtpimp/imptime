@@ -34,14 +34,14 @@ export function invalidateAllSprints() {
 export function invalidateSprints(sprint_ids) {
     return {
         type: INVALIDATE_SPRINTS,
-	sprint_ids_to_invalidate: sprint_ids
+	      sprint_ids_to_invalidate: sprint_ids
     }
 }
 
 function announceLoadingSprints(sprint_ids) {
     return {
         type: ANNOUNCE_LOADING_SPRINTS,
-	sprint_ids_to_load: sprint_ids
+	      sprint_ids_to_load: sprint_ids
     }
 }
 
@@ -49,7 +49,7 @@ function announceSprintsLoaded(payload) {
     return {
         type: ANNOUNCE_SPRINTS_LOADED,
         items_by_id: keyBy(payload.sprints, 'id'),
-	received_at: Date.now()
+	      received_at: Date.now()
     }
 }
 

@@ -274,14 +274,14 @@ class AutoClockPopup extends Component {
                   { this.renderClockHistory() }
                 </div>
               }
-              { ! show_popup && most_recent_entry &&
-                <div className="auto-clock__mini-auto-clock-status">
+              {/* { ! show_popup && most_recent_entry &&
+                  <div className="auto-clock__mini-auto-clock-status">
                   <AutoClockEntity project_id={most_recent_entry.project_id}
-                                   sprint_id={most_recent_entry.sprint_id}
-                                   issue_id={most_recent_entry.issue_id}
-                                   className="auto-clock-entry__entities_row" />
-                </div>
-              }
+                  sprint_id={most_recent_entry.sprint_id}
+                  issue_id={most_recent_entry.issue_id}
+                  className="auto-clock-entry__entities_row" />
+                  </div>
+                  } */}
               { this.renderClockHistoryModal() }
             </div>
         )
@@ -307,7 +307,7 @@ function mapStateToProps(state, props) {
     const logged_in_user_id = logged_in_user().user_id || -1
     const most_recent_entry = (items_by_id && items_by_id.length > 0 && items_by_id[0]) || null
     const auto_clocking_enabled = isAutoClockingEnabled(state)
-    
+
     return {
         available_project_id,
         available_sprint_id,

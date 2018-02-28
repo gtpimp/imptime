@@ -1,6 +1,5 @@
 import {ISSUE_HEADER_LIST_WIDE,
         ISSUE_HEADER_LIST_NARROW,
-        PAGE_KEY__ISSUES_PAGE
 } from './ItemListKeyRegistry'
 import { setAutoClockProjectAvailable, setAutoClockSprintAvailable, setAutoClockIssueAvailable } from './AutoClock'
 
@@ -11,18 +10,19 @@ export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
 export const SET_PAGE_FLAG = 'SET_PAGE_FLAG'
 export const WIDE_COLUMN_MODE = 'WIDE_COLUMN_MODE'
+export const UPDATE_HEADER_LIST = 'UPDATE_HEADER_LIST'
 
 export function initList(page_key) {
     return {
-	      type: INIT_PAGE,
-	      page_key: page_key
+        type: INIT_PAGE,
+        page_key: page_key
     }
 }
 
 export function show_sidebar(page_key, sidebar_name) {
     return {
-	      type: UPDATE_PAGE_SIDEBAR,
-	      page_key: page_key,
+        type: UPDATE_PAGE_SIDEBAR,
+        page_key: page_key,
         sidebar_name: sidebar_name,
         show_sidebar: true
     }
@@ -30,8 +30,8 @@ export function show_sidebar(page_key, sidebar_name) {
 
 export function hide_sidebar(page_key, sidebar_name) {
     return {
-	      type: UPDATE_PAGE_SIDEBAR,
-	      page_key: page_key,
+        type: UPDATE_PAGE_SIDEBAR,
+        page_key: page_key,
         sidebar_name: sidebar_name,
         show_sidebar: false
     }
@@ -40,8 +40,8 @@ export function hide_sidebar(page_key, sidebar_name) {
 export function set_toolbars(page_key, toolbar_names) {
 
     return {
-	type: SET_PAGE_TOOLBARS,
-	page_key: page_key,
+        type: SET_PAGE_TOOLBARS,
+        page_key: page_key,
         toolbar_names: toolbar_names
     }
 }
@@ -50,7 +50,7 @@ export function select_issues(page_key, issue_ids) {
     return (dispatch, getState) => {
         dispatch({
             type: UPDATE_PAGE_SELECTION,
-	    page_key: page_key,
+            page_key: page_key,
             issue_ids: issue_ids,
         })
     }
@@ -60,7 +60,7 @@ export function select_sprints(page_key, sprint_ids) {
     return (dispatch, getState) => {
         dispatch({
             type: UPDATE_PAGE_SELECTION,
-	    page_key: page_key,
+            page_key: page_key,
             sprint_ids: sprint_ids
         })
     }
@@ -70,7 +70,7 @@ export function select_projects(page_key, project_ids) {
     return (dispatch, getState) => {
         dispatch({
             type: UPDATE_PAGE_SELECTION,
-	    page_key: page_key,
+            page_key: page_key,
             project_ids: project_ids
         })
     }
@@ -79,7 +79,7 @@ export function select_projects(page_key, project_ids) {
 export function select_users(page_key, user_ids) {
     return {
         type: UPDATE_PAGE_SELECTION,
-	      page_key: page_key,
+        page_key: page_key,
         user_ids: user_ids
     }
 }
@@ -87,7 +87,7 @@ export function select_users(page_key, user_ids) {
 export function select_wikis(page_key, wiki_ids) {
     return {
         type: UPDATE_PAGE_SELECTION,
-	page_key: page_key,
+        page_key: page_key,
         wiki_ids: wiki_ids
     }
 }
@@ -169,4 +169,14 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
         v = default_value
     }
     return v
+}
+
+export function updateHeaderList(new_header_list, page_key) {
+
+    var header_list = new_header_list
+    return {
+        type: UPDATE_HEADER_LIST,
+        page_key: page_key,
+        header_list: header_list
+    }
 }

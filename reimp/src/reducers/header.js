@@ -1,8 +1,7 @@
-
 import { COLLAPSE_USER_DASHBOARD, EXPAND_USER_DASHBOARD } from '../actions/Header'
 
 const initialState = {
-    user_dashboard_expanded: false,
+    user_dashboard_expanded: false
 }
 
 export default function header(state = initialState, action) {
