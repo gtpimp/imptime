@@ -13,9 +13,7 @@ import {
 } from '../../actions/ItemListKeyRegistry'
 import {
     get_selected_issue_ids,
-    get_selected_sprint_ids,
-    set_wide_column_mode,
-    get_wide_column_mode
+    get_selected_sprint_ids
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import ToggleButton from './ToggleButton'
@@ -26,7 +24,6 @@ class IssuesToolbarPanel extends Component {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.onNewFeatureClick = this.onNewFeatureClick.bind(this)
-        this.onIssueWideViewToggleButtonClick = this.onIssueWideViewToggleButtonClick.bind(this)
         this.onBulkCreateIssuesClick = this.onBulkCreateIssuesClick.bind(this)
     }
 
@@ -59,13 +56,7 @@ class IssuesToolbarPanel extends Component {
         browserHistory.push("/projects/" + project_id + "/sprints/" + sprint_id + "/bulkCreate")
     }
 
-    onIssueWideViewToggleButtonClick(wide_view) {
-        const { dispatch } = this.props
-        dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, wide_view))
-    }
-
     render() {
-        const { wide_column_mode } = this.props
         return (
             <div className="toolbar-panel">
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
@@ -75,11 +66,6 @@ class IssuesToolbarPanel extends Component {
                   + Bulk Issues
                 </div>
               </div>
-              <ToggleButton value={wide_column_mode}
-                            onChange={this.onIssueWideViewToggleButtonClick}
-                            on_label={"Wide"}
-                            off_label={"Narrow"}
-              />
             </div>
         )
     }
@@ -90,15 +76,13 @@ function mapStateToProps(state, props) {
     const issue = (selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[selected_issue_ids.length-1])) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__ISSUES_PAGE)
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[selected_sprint_ids.length-1])) || {}
-    const wide_column_mode = get_wide_column_mode(state, PAGE_KEY__ISSUES_PAGE)
 
     return {
         issue_ids: selected_issue_ids,
         selected_issue_ids,
         last_selected_issue_id: issue.id,
         sprint_id: sprint.id || null,
-        project_id: sprint.project_id,
-        wide_column_mode: wide_column_mode
+        project_id: sprint.project_id
     }
 }
 

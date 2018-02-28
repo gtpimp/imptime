@@ -5,7 +5,6 @@ import {
     UPDATE_PAGE_SETTINGS,
     UPDATE_PAGE_SELECTION,
     SET_PAGE_FLAG,
-    WIDE_COLUMN_MODE,
     UPDATE_HEADER_LIST
 } from '../actions/Page.js'
 
@@ -17,8 +16,7 @@ const page_template = {
     settings: null,
     selection: null,
     sidebars: null,
-    header_list: null,
-    wide_column_mode: true
+    header_list: null
 }
 
 export default function page(state = initialState, action) {
@@ -72,14 +70,6 @@ export default function page(state = initialState, action) {
             const flag_d = {}
             flag_d[action.flag_name] = action.flag_value
             state_copy[action.page_key] = Object.assign({}, l, flag_d)
-            return state_copy
-
-        case WIDE_COLUMN_MODE:
-            state_copy = Object.assign({}, state)
-            l = Object.assign({}, page_template, state_copy[action.page_key] || {})
-            state_copy[action.page_key] = Object.assign({}, l,
-                                                        {"wide_column_mode": action.wide_column_mode},
-                                                        {"header_list": action.header_list} )
             return state_copy
 
         case UPDATE_HEADER_LIST:

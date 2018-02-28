@@ -30,7 +30,7 @@ class MienSelector extends Component {
     }
 
     render() {
-        const button_class = "button button--default mien-button"
+        const button_class = "button mien-button"
         const { current_mien } = this.props
 
         return (
