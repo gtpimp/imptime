@@ -13,7 +13,7 @@ import {
     startCandidateProject
 } from '../actions/Projects.js'
 
-class BreadcrumbMenu extends Component {
+class Breadcrumbmenuprojects extends Component {
 
     constructor(props) {
         super(props)
@@ -55,42 +55,40 @@ class BreadcrumbMenu extends Component {
         browserHistory.push('/projects/' + project_id + '/sprints');
     }
 
-
     render() {
         const { project_id } = this.props
         
         return (
-            <div>
-              <div className="breadcrumb-menu__item" onClick={this.onNewProjectClick}>
-                + New Project
+              <div>
+                <div className="breadcrumb-menu__item" onClick={this.onNewProjectClick}>
+                  + New Project
+                </div>
+                { project_id && 
+                  <div className="breadcrumb-menu__item" onClick={this.onSprintsClick}>
+                    Sprints
+                  </div>
+                }
+                { project_id && 
+                  <div className="breadcrumb-menu__item" onClick={this.onDashboardClick}>
+                    Dashboard
+                  </div>
+                }
+                { project_id && 
+                  <div className="breadcrumb-menu__item" onClick={this.onRoadmapClick}>
+                    Roadmap
+                  </div>
+                }
+                { project_id &&
+                  <div className="breadcrumb-menu__item" onClick={this.onGalleryClick}>
+                    Gallery
+                  </div>
+                }
+                { project_id &&
+                  <div className="breadcrumb-menu__item" onClick={this.onWikiClick}>
+                    Wiki
+                  </div>
+                }
               </div>
-              { project_id && 
-                <div className="breadcrumb-menu__item" onClick={this.onSprintsClick}>
-                  Sprints
-                </div>
-              }
-              { project_id && 
-                <div className="breadcrumb-menu__item" onClick={this.onDashboardClick}>
-                  Dashboard
-                </div>
-              }
-              { project_id && 
-                <div className="breadcrumb-menu__item" onClick={this.onRoadmapClick}>
-                  Roadmap
-                </div>
-              }
-              { project_id &&
-                <div className="breadcrumb-menu__item" onClick={this.onGalleryClick}>
-                  Gallery
-                </div>
-              }
-              { project_id &&
-                <div className="breadcrumb-menu__item" onClick={this.onWikiClick}>
-                  Wiki
-                </div>
-              }
-              
-            </div>
         )
     }
 
@@ -98,18 +96,14 @@ class BreadcrumbMenu extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { label, to } = props
-    const project_re = /(\/projects\/\d+)$/
-    const sprint_re = /(\/sprints\/\d+)$/
+    const project_id = state.page.projects_page.project_ids && state.page.projects_page.project_ids[0]
 
-    const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__PROJECTS_PAGE)
-    const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
-    
+    console.log(project_id)
+
     return {
-        selected_project_ids: selected_project_ids,
-        project_id: project.id
+        project_id
     }
 
 }
 
-export default connect(mapStateToProps)(BreadcrumbMenu)
+export default connect(mapStateToProps)(Breadcrumbmenuprojects)

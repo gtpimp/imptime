@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link, withRouter} from 'react-router'
-import BreadcrumbMenu from './BreadcrumbMenu'
+import BreadcrumbMenuProjects from './BreadcrumbMenuProjects'
+import BreadcrumbMenuSprints from './BreadcrumbMenuSprints'
 import '../sass/breadcrumb.css'
 
 class Breadcrumb extends Component {
@@ -33,16 +34,19 @@ class Breadcrumb extends Component {
                     onMouseOver={this.showBreadCrumbMenu}>
                 {label}
               </Link>
-              { show_breadcrumbMenu &&
+              { show_breadcrumbMenu && label == "Projects" &&
                 <div className="breadcrumb-menu">
-                  <BreadcrumbMenu
-                  label={label}
-                  to={to} />
+                  <BreadcrumbMenuProjects />
                 </div>
               }
-              { !is_last &&
-                <div className="breadcrumb__separator"><i className="material-icons">chevron_right</i></div>
-              }
+            { show_breadcrumbMenu && label == "Sprints" &&
+              <div className="breadcrumb-menu">
+                <BreadcrumbMenuSprints />
+              </div>
+            }
+            { !is_last &&
+              <div className="breadcrumb__separator"><i className="material-icons">chevron_right</i></div>
+            }
             </div>
         )
     }
