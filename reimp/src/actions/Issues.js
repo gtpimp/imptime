@@ -425,3 +425,4 @@ export function deleteTagFromIssues(tag_id, issue_ids) {
     const data = { issue_ids: issue_ids }
     return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data)
 }
+

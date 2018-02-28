@@ -33,7 +33,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getCandidateIssue} from '../actions/Issues'
 import cookie from 'react-cookie'
-import { updateMien } from '../actions/Settings'
+import { updateMien } from '../actions/Mien'
 
 class IssuesPage extends Component {
 

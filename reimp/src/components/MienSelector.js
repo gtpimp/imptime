@@ -13,7 +13,7 @@ import {
 import { setMien,
          getMien,
          updateMien
-} from '../actions/Settings'
+} from '../actions/Mien'
 import classNames from 'classnames'
 
 class MienSelector extends Component {

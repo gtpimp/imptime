@@ -14,6 +14,7 @@ import EditableIssueType from '../components/EditableIssueType'
 import EditableIssueParent from './EditableIssueParent'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
+import MultipleIssueSummary from './MultipleIssueSummary'
 import moment from 'moment'
 import Sidebar from './Sidebar'
 import TagListFlat from './TagListFlat'
@@ -22,6 +23,7 @@ import {
     getIssues,
     deleteIssues
 } from '../actions/Issues'
+import { doesMienHaveFeature } from '../actions/Mien'
 
 class MultipleIssueSidebar extends Component {
 
@@ -51,7 +53,7 @@ class MultipleIssueSidebar extends Component {
 
     render() {
 
-        const {issues, issue_ids, project_id} = this.props
+        const {issues, issue_ids, project_id, show_summary} = this.props
 
         return (
 
@@ -132,6 +134,12 @@ class MultipleIssueSidebar extends Component {
                   </button>
                 </PropertyStackComponent>
 
+                { show_summary &&
+                  <PropertyStackComponent>
+                    <MultipleIssueSummary issue_ids={issue_ids} />
+                  </PropertyStackComponent>
+                }
+                
               </PropertyStack>
             </div>
         )
@@ -141,11 +149,13 @@ class MultipleIssueSidebar extends Component {
 function mapStateToProps(state, props) {
     const {issue_ids, sprint_id, project_id} = props
     const issues = getIssues(state, issue_ids) || {}
+    const show_summary = doesMienHaveFeature(state, 'multiple_issue_summary')
     return {
         issues: issues || [],
         issue_ids: issue_ids,
         sprint_id: sprint_id,
-        project_id: project_id
+        project_id: project_id,
+        show_summary
     }
 }
 
