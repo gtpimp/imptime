@@ -30,33 +30,33 @@ class MienSelector extends Component {
     }
 
     render() {
-        const button_class = "button button--large mien-button"
+        const button_class = "button button--default mien-button"
         const { current_mien } = this.props
 
         return (
             <div className="mien-select-panel">
               <div onClick={() => this.onChangeMien(DEV_MIEN) }
-                   className={ current_mien === DEV_MIEN ? classNames(button_class, 'button--active') : button_class }>
+                   className={classNames(button_class, {'button--active': current_mien === DEV_MIEN})}>
                 Dev
               </div>
               <div onClick={() => this.onChangeMien(MANAGER_MIEN) }
-                   className={ current_mien === MANAGER_MIEN ? classNames(button_class, 'button--active') : button_class }>
+                   className={classNames(button_class, {'button--active': current_mien === MANAGER_MIEN})}>
                 Manager
               </div>
               <div onClick={() => this.onChangeMien(FINANCE_MIEN) }
-                   className={ current_mien === FINANCE_MIEN ? classNames(button_class, 'button--active') : button_class }>
+                   className={classNames(button_class, {'button--active': current_mien === FINANCE_MIEN})}>
                 Finance
               </div>
               <div onClick={() => this.onChangeMien(CLIENT_MIEN) }
-                   className={ current_mien === CLIENT_MIEN ? classNames(button_class, 'button--active') : button_class }>
+                   className={classNames(button_class, {'button--active': current_mien === CLIENT_MIEN})}>
                 Client
               </div>
               <div onClick={() => this.onChangeMien(TESTER_MIEN) }
-                   className={ current_mien === TESTER_MIEN ? classNames(button_class, 'button--active') : button_class }>
+                   className={classNames(button_class, {'button--active': current_mien === TESTER_MIEN})}>
                 Tester
               </div>
               <div onClick={() => this.onChangeMien(SPEC_MIEN) }
-                   className={ current_mien === SPEC_MIEN ? classNames(button_class, 'button--active') : button_class }>
+                   className={classNames(button_class, {'button--active': current_mien === SPEC_MIEN})}>
                 Spec
               </div>
             </div>
