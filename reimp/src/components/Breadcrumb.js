@@ -25,7 +25,7 @@ class Breadcrumb extends Component {
     }
     
     render() {
-        const {label, to, is_last } = this.props
+        const {label, to, is_last, breadcrumb } = this.props
         const { show_breadcrumbMenu } = this.state
         return (
             <div className="breadcrumb"
@@ -41,7 +41,8 @@ class Breadcrumb extends Component {
               }
             { show_breadcrumbMenu && label == "Sprints" &&
               <div className="breadcrumb-menu">
-                <BreadcrumbMenuSprints />
+                <BreadcrumbMenuSprints
+                    breadcrumb={ breadcrumb } />
               </div>
             }
             { !is_last &&
@@ -54,9 +55,11 @@ class Breadcrumb extends Component {
 
 function mapStateToProps(state, props) {
     const { breadcrumb } = props
+    
     return {
         label: breadcrumb.label,
-        to: breadcrumb.to
+        to: breadcrumb.to,
+        breadcrumb: breadcrumb
     }
 }
 

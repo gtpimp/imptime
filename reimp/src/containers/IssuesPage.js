@@ -94,7 +94,10 @@ class IssuesPage extends Component {
                                       {to: '/projects/'+project.id, label: project.name},
                                       {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'Issues'}]))
+                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues',
+                                       label: 'Issues',
+                                       selected_entities: {project_id: project.id,
+                                                           sprint_id: sprint.id}}]))
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }

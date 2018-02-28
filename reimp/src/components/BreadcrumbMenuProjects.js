@@ -98,8 +98,6 @@ function mapStateToProps(state, props) {
 
     const project_id = state.page.projects_page.project_ids && state.page.projects_page.project_ids[0]
 
-    console.log(project_id)
-
     return {
         project_id
     }

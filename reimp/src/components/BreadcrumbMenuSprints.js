@@ -52,14 +52,14 @@ class BreadcrumbMenuSprints extends Component {
     
     render() {
 
-        const { sprint_id } = this.props
+        const { sprint_id, sprint } = this.props
 
         return (
             <div>
               <div className="breadcrumb-menu__item" onClick={this.onNewSprintClick}>
                 + New Sprint
               </div>
-              { sprint_id &&
+              { sprint && sprint_id &&
                 <div>
                   <div className="breadcrumb-menu__item" onClick={this.onIssuesClick}>
                     Issues
@@ -69,7 +69,7 @@ class BreadcrumbMenuSprints extends Component {
               <div className="breadcrumb-menu__item" onClick={this.onBulkCreateIssuesClick}>
                 + Bulk Issues
               </div>
-              { sprint_id &&
+              { sprint && sprint_id &&
                 <div>
                   <div className="breadcrumb-menu__item" onClick={this.onDashboardClick}>
                     Dashboard
@@ -83,12 +83,14 @@ class BreadcrumbMenuSprints extends Component {
 
 function mapStateToProps(state, props) {
 
-    const project_id = state.page.projects_page.project_ids && state.page.projects_page.project_ids[0]
-    const sprint_id = state.page.sprints_page.sprint_ids && state.page.sprints_page.sprint_ids[0]
-    
+    const { breadcrumb } = props
+
+    const sprint_id = breadcrumb.selected_entities.selected_sprint.id
+    const sprint = getSprint(state, sprint_id)
+
     return {
-        project_id: project_id,
-        sprint_id
+        sprint_id,
+        sprint
     }
 
 }

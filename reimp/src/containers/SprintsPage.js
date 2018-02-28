@@ -61,7 +61,7 @@ class SprintsPage extends Component {
     }
 
     refresh(project) {
-        const {dispatch, list_key, page_key, default_filter, default_sprint_id, selected_sprint_ids} = this.props
+        const {dispatch, list_key, page_key, default_filter, default_sprint_id, selected_sprint_ids, selected_sprint} = this.props
         if (project.id) {
             dispatch(update_list_filter(list_key, Object.assign({},
                                                                 default_filter,
@@ -72,7 +72,10 @@ class SprintsPage extends Component {
             dispatch(invalidateList(list_key))
             dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
                                      {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/' + project.id + '/sprints', label: 'Sprints'}]))
+                                     {to: '/projects/' + project.id + '/sprints',
+                                      label: 'Sprints',
+                                      selected_entities: {project_id: project.id,
+                                                          selected_sprint: selected_sprint}}]))
         }
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
             dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
