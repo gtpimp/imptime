@@ -32,7 +32,8 @@ export function invalidateMultipleIssueSummary(issue_ids) {
 
 export function ensureMultipleIssueSummaryLoaded(issue_ids) {
     const summary_key = getSummaryKey(issue_ids)
-    return ensureItemsLoaded(ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key])
+    const additional_get_args = { issue_ids: issue_ids }
+    return ensureItemsLoaded(ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key], additional_get_args)
 }
 
 export function getMultipleIssueSummary(state, issue_ids) {

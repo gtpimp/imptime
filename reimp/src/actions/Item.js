@@ -89,11 +89,12 @@ function announceItemsLoadFailed(entity_key, error) {
     }
 }
 
-function fetchItemsPromise(dispatch, state, entity_key, item_ids) {
+function fetchItemsPromise(dispatch, state, entity_key, item_ids, additional_get_args) {
     return new Promise(function(resolve, reject) {
         dispatch(announceLoadingItems(entity_key, item_ids))
         const params = { filter: { ids: item_ids },
-                         pagination: {'enabled': false} }
+                         pagination: {'enabled': false},
+                         additional_params: additional_get_args || null }
 
         return impfetch(state, 'imp/'+entity_key+'/', dispatch, {params:params})
             .then(response => response.json())
@@ -400,12 +401,12 @@ export function fetchItemsIfNeeded(entity_key, list_key) {
                              { is_generic_item: true })
 }
 
-export function ensureItemsLoaded(entity_key, item_ids) {
+export function ensureItemsLoaded(entity_key, item_ids, additional_get_args) {
     return (dispatch, getState) => {
         const state = getState()
         const item_ids_to_load = getMissingItemIds((state || {}).item || {}, item_ids, entity_key)
         if ( item_ids_to_load.length > 0 ) {
-            fetchItemsPromise(dispatch, state, entity_key, item_ids_to_load)
+            fetchItemsPromise(dispatch, state, entity_key, item_ids_to_load, additional_get_args)
         }
     }
 }
