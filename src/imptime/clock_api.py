@@ -80,7 +80,7 @@ class ClockViewSet(BaseViewSet):
                 project_id = self.allowed_projects().get(name=project_name).id
                 
             project = self.allowed_project(project_id)
-            project_role = self.allowed_project_roles(project=project).get(name=role_name)
+            project_role = ProjectRole.objects.get_or_create(business=project, name=role_name)[0] #sic
 
             if sprint_id is None:
                 sprint_id = project.get_most_recent_open_project_id(user_id=request.user.id) #sic
