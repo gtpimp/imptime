@@ -98,7 +98,7 @@ function mapStateToProps(state, props) {
 
     const { breadcrumb } = props
 
-    const project_id = breadcrumb.selected_entities && breadcrumb.selected_entities.project_id[0] || null
+    const project_id = breadcrumb.selected_entities && breadcrumb.selected_entities.project_id || null
 
     return {
         project_id

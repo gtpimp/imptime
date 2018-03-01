@@ -67,12 +67,16 @@ class ProjectsPage extends Component {
         if ( selected_project ) {
             dispatch(setBreadcrumbs([ {to: '/projects',
                                        label: 'Projects',
+                                       type: 'projects',
                                        selected_entities: {project_id: selected_project.id}},
-                                      {to: '/projects/' + selected_projects[0].id, label: selected_projects[0].name}]))
+                                      {to: '/projects/' + selected_projects[0].id,
+                                       label: selected_projects[0].name,
+                                       type: 'project',
+                                       selected_entities: {project_id: selected_project.id}}]))
         } else {
             dispatch(setBreadcrumbs([ {to: '/projects',
                                        label: 'Projects',
-                                       selected_entities: {project_id: selected_project.id}}]))
+                                       type: 'projects'}]))
         }
     }
 
