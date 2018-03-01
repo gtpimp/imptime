@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import { includes } from 'lodash'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureWikisLoaded, getWiki} from '../actions/Wikis'
 import ProjectWikiList from '../components/ProjectWikiList'
@@ -57,26 +57,18 @@ class ProjectWikiPage extends Component {
     
     refresh(these_props) {
         const { project_id, project, wiki_id, wiki, default_wiki_id, dispatch } = these_props || this.props
-        const breadcrumbs = []
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECT_WIKI_PAGE, [project_id]))
-            
-            breadcrumbs.push({to: '/projects', label: 'Projects'})
-            if ( project_id === project.id ) {
-                breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
+            if ( project.id ) {
+                dispatch(setProjectBreadcrumbsHelper(project))
             }
-            breadcrumbs.push({to: '/projects/'+project_id+'/wiki', label: 'Wiki'})
             if ( wiki_id ) {
                 dispatch(ensureWikisLoaded([wiki_id]))
-                if ( wiki_id === wiki.id ) {
-                    breadcrumbs.push({to: '/projects/'+project_id+'/wiki/'+wiki_id, label: wiki.name})
-                }
                 dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+wiki_id]))
             }
         }
         this.setState({'noticed_default_wiki_id': default_wiki_id})
-        dispatch(setBreadcrumbs(breadcrumbs))
     }
 
     selectDefaultWiki(these_props) {
@@ -145,6 +137,7 @@ class ProjectWikiPage extends Component {
         if ( show_sidebar ) {
             return (
                 <div className="list-layout">
+                  <h2>Wiki for {project.name}</h2>
                   <SplitPane split="vertical" minSize={50} defaultSize={"20%"}
                              defaultSize={splitter_size}
                              onChange={this.onChangeSplitterSize}

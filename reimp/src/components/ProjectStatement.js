@@ -25,7 +25,6 @@ import {
 } from '../actions/ProjectStatement'
 import SprintTimeChartByUser from '../components/SprintTimeChartByUser'
 import { ensureUsersLoaded } from '../actions/Users'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
 } from '../actions/ItemListKeyRegistry'
@@ -114,9 +113,6 @@ class ProjectStatement extends Component {
     refresh(project, project_statement) {
         const { dispatch } = this.props
         dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project.id]))
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
-                                  {to: '/projects/'+project.id, label: project.name},
-                                  {to: '/projects/'+project.id+'/projectStatement', label: 'Project Statement'}]))
         dispatch(ensureUsersLoaded(project.allowed_user_ids))
     }
 

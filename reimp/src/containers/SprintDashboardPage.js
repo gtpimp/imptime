@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName.js'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
@@ -49,10 +49,7 @@ class ProjectDashboardPage extends Component {
 
     refresh(sprint, project) {
         const { dispatch } = this.props
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
-                                  {to: '/projects/'+project.id, label: project.name},
-                                  {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
-                                  {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name} ]))
+        dispatch(setSprintBreadcrumbsHelper(project, sprint))
         dispatch(select_sprints(PAGE_KEY__SPRINT_DASHBOARD_PAGE, [sprint.id]))
     }
 
@@ -72,9 +69,9 @@ class ProjectDashboardPage extends Component {
         
         return (
             <div>
-              <PropertyStackComponent className="property-stack-component__small">
-              <EditableSprintName sprint_id={sprint_id}/>
-              </PropertyStackComponent>
+              <h2 className="header">
+                Sprint dashboard for {sprint.name}
+              </h2>
               <SprintTimeSummary sprint_id={sprint_id} project_id={project_id} />
             </div>
         )

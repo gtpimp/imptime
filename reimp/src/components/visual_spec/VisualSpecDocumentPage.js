@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
 import Modal from 'react-modal';
 import { map, includes, compact } from 'lodash'
-import { setBreadcrumbsActive } from '../../actions/Breadcrumbs'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
 import IssueList from '../../components/IssueList'
@@ -38,7 +37,7 @@ import {
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import { ensureIssuesLoaded, getIssue, is_issue_invalidated } from '../../actions/Issues'
-import {setBreadcrumbs} from '../../actions/Breadcrumbs'
+import {setBreadcrumbsActive, setIssueBreadcrumbsHelper, setProjectBreadcrumbsHelper} from '../../actions/Breadcrumbs'
 import '../../sass/visual-spec-document-page.scss'
 
 class VisualSpecDocumentPage extends Component {
@@ -133,15 +132,8 @@ class VisualSpecDocumentPage extends Component {
         dispatch(ensureVisualSpecDocumentsLoaded([active_visual_spec_document_id]))
         dispatch(ensureVisualSpecDocumentsLoaded(visual_spec_document_ids))
         if ( project && project.id && sprint && sprint.id && issue && issue.id ) {
-            dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
-                                     {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
-                                     {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                     {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'Issues'},
-                                     {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues/'+issue.id, label: '#'+issue.number},
-                                     {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues'+issue.id+'/visualSpec/'+active_visual_spec_document_id,
-                                      label: active_visual_spec_document.name}]))
 
+            dispatch(setIssueBreadcrumbsHelper(project, sprint,issue))
             dispatch(select_projects(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
                                      [active_visual_spec_document.project_id]))
             dispatch(select_sprints(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
@@ -151,11 +143,7 @@ class VisualSpecDocumentPage extends Component {
             dispatch(setItemFlag(LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST, [issue_id], 'expanded_issues', true))
 
         } else if ( project && project.id ) {
-            dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
-                                     {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/'+project.id+'/gallery/', label: "Gallery"},
-                                     {to: '/projects/'+project.id+'/gallery/'+active_visual_spec_document_id, label: active_visual_spec_document.name}]))
-
+            dispatch(setProjectBreadcrumbsHelper(project))
             dispatch(select_projects(PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
                                      [active_visual_spec_document.project_id]))
         }

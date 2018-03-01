@@ -8,7 +8,7 @@ import SprintTemplateSidebar from '../components/SprintTemplateSidebar'
 import NewSprintSidebar from '../components/NewSprintSidebar'
 import MultipleSprintSidebar from '../components/MultipleSprintSidebar'
 import SplitPane from 'react-split-pane'
-import {setBreadcrumbs} from '../actions/Breadcrumbs'
+import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__SPRINT_LIST,
     PAGE_KEY__SPRINTS_PAGE,
@@ -85,26 +85,7 @@ class SprintsPage extends Component {
                                                          selected_sprint_ids && selected_sprint_ids.length > 0 && selected_sprint_ids[0]))
             dispatch(invalidateList(list_key))
 
-            const breadcrumbs = [{to: '/projects',
-                                  type: 'projects',
-                                  label: 'Projects'},
-                                 {to: '/projects/' + project.id,
-                                  type: 'project',
-                                  label: project.name,
-                                  selected_entities: {project: project}},
-                                 {to: '/projects/' + project.id + '/sprints',
-                                  label: 'Sprints',
-                                  type: 'sprints',
-                                  selected_entities: {project: project,
-                                                      sprint: selected_sprint}}]
-            if ( selected_sprint.id ) {
-                breadcrumbs.push({to: '/projects/' + project.id + '/sprints',
-                                  label: selected_sprint.name,
-                                  type: 'sprint',
-                                  selected_entities: {project: project,
-                                                      sprint: selected_sprint}})
-            }
-            dispatch(setBreadcrumbs(breadcrumbs))
+            dispatch(setSprintBreadcrumbsHelper(project, selected_sprint))
 
         }
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {

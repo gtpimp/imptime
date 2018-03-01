@@ -28,10 +28,10 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/roadmap'
         },
         { label: (objs) => 'Gallery',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/gallery'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
         },
         { label: (objs) => 'Wiki',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/wiki'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/'
         },
         { label: (objs) => 'Users',
           nav_url: (objs) => '/projects/' + objs.project.id + '/users'
@@ -51,6 +51,9 @@ const menu_buttons = {
         },
         { label: (objs) => 'Dashboard',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/dashboard'
+        },
+        { label: (objs) => 'Cost Summary',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary'
         },
     ],
     'issues': [

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {
@@ -65,11 +65,7 @@ class SprintCostSummaryPage extends Component {
         const { dispatch } = this.props
         dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, [sprint.id]))
         if ( sprint.id ) {
-            dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
-                                      {to: '/projects/'+project.id, label: project.name},
-                                      {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/costSummary', label: 'Cost Summary'}]))
+            dispatch(setSprintBreadcrumbsHelper(project, sprint))
             dispatch(update_project_statement_filter(null, null, [sprint.id]))
             if ( project.id ) {
                 dispatch(ensureProjectStatementLoaded([project.id]))
@@ -85,7 +81,7 @@ class SprintCostSummaryPage extends Component {
     
     render() {
 
-        const { is_loading, sprint_id, project_id, project_statement, filter } = this.props
+        const { is_loading, sprint, sprint_id, project_id, project_statement, filter } = this.props
 
         return (
             <div className="cost-summary__page">
@@ -98,6 +94,9 @@ class SprintCostSummaryPage extends Component {
 
               { ! is_loading &&
                 <div>
+                  <h2 className="header">
+                    Cost Summary for {sprint.name}
+                  </h2>
                   <div className="cost-summary">
                     <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>
                   </div>

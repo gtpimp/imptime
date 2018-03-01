@@ -5,7 +5,7 @@ import {browserHistory} from 'react-router'
 import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import {setIssueBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
 import SplitPane from 'react-split-pane'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
@@ -95,38 +95,7 @@ class IssuesPage extends Component {
         
         if ( sprint.id ) {
             this.selectDefaultIssue(this.props)
-            const breadcrumbs = [ {to: '/projects',
-                                   label: 'Projects',
-                                   type: 'projects'},
-                                  {to: '/projects/'+project.id,
-                                   label: project.name,
-                                   type: 'project',
-                                   selected_entities: {project: project}
-                                  },
-                                  {to: '/projects/'+project.id+'/sprints',
-                                   label: 'Sprints',
-                                   type: 'sprints',
-                                   selected_entities: {project: project}},
-                                  {to: '/projects/'+project.id+'/sprints/'+sprint.id,
-                                   label: sprint.name,
-                                   type: 'sprint',
-                                   selected_entities: {project: project,
-                                                       sprint: sprint}},
-                                  {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues',
-                                   label: 'Issues',
-                                   type: 'issues',
-                                   selected_entities: {project: project,
-                                                       sprint: sprint,
-                                                       issue: selected_issue}}]
-            if ( selected_issue ) {
-                breadcrumbs.push({to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues/' + selected_issue.id,
-                                  label: selected_issue.number,
-                                  type: 'issue',
-                                  selected_entities: {project: project,
-                                                      sprint: sprint,
-                                                      issue: selected_issue}})
-            }
-            dispatch(setBreadcrumbs(breadcrumbs))
+            dispatch(setIssueBreadcrumbsHelper(project, sprint, selected_issue))
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }

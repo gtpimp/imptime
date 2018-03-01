@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {
@@ -70,21 +70,7 @@ class BulkIssueCreatorPage extends Component {
         const {dispatch} = this.props
         if ( sprint.id ) {
             dispatch(select_sprints(PAGE_KEY__BULK_CREATE_ISSUES_PAGE, [sprint.id]))
-
-            if ( sprint.sprint_type === 'sprint' ) {
-                dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
-                                          {to: '/projects/'+project.id, label: project.name},
-                                          {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
-                                          {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                          {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/bulkCreateIssues', label: 'Bulk Create'}]))
-            } else if ( sprint.sprint_type === 'template' ) {
-                dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
-                                          {to: '/projects/'+project.id, label: project.name},
-                                          {to: '/projects/'+project.id+'/sprintTemplates', label: 'Templates'},
-                                          {to: '/projects/'+project.id+'/sprintTemplates/'+sprint.id, label: sprint.name},
-                                          {to: '/projects/'+project.id+'/sprintTemplates/'+sprint.id+'/issues', label: 'Bulk Create'}]))
-            }
-
+            dispatch(setSprintBreadcrumbsHelper(project, sprint))
         }
     }
 

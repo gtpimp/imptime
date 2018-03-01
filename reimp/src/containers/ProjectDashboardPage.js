@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import { setProjectBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import ProjectUsers from '../components/ProjectUsers'
 import {
@@ -38,8 +38,7 @@ class ProjectDashboardPage extends Component {
         const props = these_props || this.props
         const { dispatch, project_id, project } = props
         if ( project.id ) {
-            dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
-                                      {to: '/projects/'+project_id, label: project.name} ]))
+            dispatch(setProjectBreadcrumbsHelper(project))
         }
         dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project_id]))
         dispatch(ensureProjectsLoaded([project_id]))
