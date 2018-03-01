@@ -17,7 +17,8 @@ import {
 import {
     selectItems,
     update_list_filter,
-    invalidateList
+    invalidateList,
+    getListFilter
 } from '../actions/ItemList'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
@@ -50,10 +51,22 @@ class SprintsPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.project !== this.props.project &&
-             new_props.project.id !== this.props.project.id ||
+
+        const { dispatch, list_key, filter, default_filter } = this.props
+        if ( new_props.project_id != filter.project_id ) {
+            dispatch(update_list_filter(list_key, Object.assign({},
+                                                                default_filter,
+                                                                {project_id: new_props.project_id})))
+        }
+        
+        if ( new_props.project !== this.props.project ||
+             new_props.project_id != this.props.project_id ||
              new_props.project.name !== this.props.project.name ||
-             new_props.selected_sprint.id != this.props.selected_sprint_id ) {
+             new_props.selected_sprint_id != this.props.selected_sprint_id ||
+             new_props.selected_sprint.id != this.props.selected_sprint.id ||
+             new_props.selected_sprint.loaded != this.props.selected_sprint.loaded) {
+
+            
             this.refresh(new_props)
         }
     }
@@ -63,11 +76,10 @@ class SprintsPage extends Component {
         const {dispatch, project_id, list_key, page_key,
                default_filter, default_sprint_id, project, 
                selected_sprint_ids, selected_sprint} = props
-        if (project.id) {
+        if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
-            dispatch(update_list_filter(list_key, Object.assign({},
-                                                                default_filter,
-                                                                {project_id: project.id})))
+        }
+        if (project && project.id) {
             dispatch(select_projects(page_key, [project.id]))
             dispatch(setActivelyAvailableAutoClockEntity(project.id,
                                                          selected_sprint_ids && selected_sprint_ids.length > 0 && selected_sprint_ids[0]))
@@ -83,7 +95,7 @@ class SprintsPage extends Component {
                                  {to: '/projects/' + project.id + '/sprints',
                                   label: 'Sprints',
                                   selected_entities: {project: project}}]
-            if ( selected_sprint ) {
+            if ( selected_sprint.id ) {
                 breadcrumbs.push({to: '/projects/' + project.id + '/sprints',
                                   label: selected_sprint.name,
                                   selected_entities: {project: project,
@@ -223,16 +235,18 @@ function mapStateToProps(state, props) {
     const selected_sprint = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const splitter_size = getPageFlag(state, PAGE_KEY__SPRINTS_PAGE, 'splitter_size', "80%")
     const show_sidebar = (is_creating_sprint || (selected_sprint && selected_sprint.id)) || false
+    const filter = getListFilter(state, list_key)
 
     return {
         list_key,
         page_key,
         default_filter,
+        filter,
         default_sprint_id,
         project_id: project_id,
-        project: project,
+        project: project || {},
         selected_sprints: selected_items,
-        selected_sprint,
+        selected_sprint: selected_sprint || {},
         selected_sprint_ids: selected_sprint_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
