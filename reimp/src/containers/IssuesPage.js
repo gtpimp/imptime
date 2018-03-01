@@ -88,11 +88,19 @@ class IssuesPage extends Component {
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             this.selectDefaultIssue(this.props)
-            dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'},
+            dispatch(setBreadcrumbs([ {to: '/projects',
+                                       label: 'Projects',
+                                       selected_entities: {project_id: project.id}},
                                       {to: '/projects/'+project.id, label: project.name},
-                                      {to: '/projects/'+project.id+'/sprints', label: 'Sprints'},
+                                      {to: '/projects/'+project.id+'/sprints',
+                                       label: 'Sprints',
+                                       selected_entities: {project_id: project.id,
+                                                           sprint_id: sprint.id}},
                                       {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues', label: 'Issues'}]))
+                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues',
+                                       label: 'Issues',
+                                       selected_entities: {project_id: project.id,
+                                                           sprint_id: sprint.id}}]))
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }

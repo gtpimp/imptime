@@ -53,6 +53,9 @@ class ProjectsPage extends Component {
 
     onSelectProjects(project_ids) {
         const { dispatch } = this.props
+        dispatch(setBreadcrumbs([ {to: '/projects',
+                                   label: 'Projects',
+                                   selected_entities: {project_id: project_ids}} ]))
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
         dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
         dispatch(setActivelyAvailableAutoClockEntity(project_ids && project_ids.length > 0 && project_ids[0]))
