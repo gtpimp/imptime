@@ -382,7 +382,7 @@ class IssueViewSet(BaseViewSet):
                     data = {'status': 'failed', 'error_message': 'Permission denied to delete issues'}
 
             if not data:
-                data = {'status': 'success', 'payload': issue_pks}
+                data = {'status': 'success2', 'payload': issue_pks}
 
         except Exception, ex:
             logger.exception(ex)

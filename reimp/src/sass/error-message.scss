@@ -16,6 +16,12 @@
     z-index:9999;
 }
 
+.error--close {
+    float: right;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
 .error__header {
     font: $bold-extra-larger;
 }

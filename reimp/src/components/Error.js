@@ -3,16 +3,24 @@ import {connect} from 'react-redux'
 import '../sass/maintenance.css'
 import ModalDialog from '../components/ModalDialog'
 import { isMaintenanceModeActive } from '../actions/Maintenance'
+import { getErrorMessage, clearErrorMessage } from '../actions/Error'
 
 class Error extends Component {
 
     constructor(props) {
         super(props)
-        this.onReload=this.onReload.bind(this)
+        this.onReload = this.onReload.bind(this)
+        this.onClose = this.onClose.bind(this)
     }
 
     onReload() {
         window.location.reload()
+    }
+    
+    onClose() {
+        const { dispatch } = this.props
+        dispatch(clearErrorMessage())
+        
     }
     
     render() {
@@ -25,6 +33,9 @@ class Error extends Component {
               <div className="error--active">
                 <div className="error__header">
                   ImpTime fell over
+                  <div className="error--close" onClick={this.onClose} >
+                    <div className="icon--small-cross"/>
+                  </div>
                 </div>
                 <div className="error__instructions">
                   {error_message}
@@ -45,8 +56,7 @@ class Error extends Component {
 function mapStateToProps(state) {
     const { } = state;
 
-    const notification_bar = state.notification_bar || {}
-    const error_message = notification_bar.error_message
+    const error_message = getErrorMessage(state)
     const has_error = error_message && error_message.length && error_message.length > 0
     const maintenance_mode_active = isMaintenanceModeActive(state)
     

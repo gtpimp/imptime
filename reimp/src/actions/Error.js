@@ -8,6 +8,10 @@ export function setErrorMessage(error) {
     }
 }
 
+export function getErrorMessage(state) {
+    return (state.notification_bar || {}).error_message
+}
+
 export function clearErrorMessage() {
     return setErrorMessage(null)
 }
