@@ -60,7 +60,7 @@ class ReleaseNotesPopup extends Component {
                    onRequestClose={this.closeModal} >
               <h2>Some things have changed</h2>
               <div className="release-notes__buttons">
-                <button className="release-notes__close button button--primary button--large" onClick={this.markAsRead}>Yeah, whatever</button>
+                <button className="release-notes__close button button--primary button--large" onClick={this.markAsRead}>Oh Wow! Thanks for this</button>
                 <button className="release-notes__later button button--secondary button--large" onClick={this.willReadLater}>Will read later</button>
               </div>
               <ReleaseNotes list_key={list_key} />

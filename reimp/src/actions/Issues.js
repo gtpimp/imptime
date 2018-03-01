@@ -99,6 +99,7 @@ export function updateIssueAssignedTo(issue_ids, value) {
 }
 
 export function updateIssueToggleAsFeature(issue_ids, value) {
+    // value can be true to make a feature, false to un-make as feature, of 'toggle' to toggle
     return updateItem(ENTITY_KEY__ISSUE, issue_ids, "can_group_issues", value)
 }
 

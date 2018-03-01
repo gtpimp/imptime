@@ -6,7 +6,12 @@ import {browserHistory} from 'react-router'
 import { map } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
-import { startCandidateIssue, startCandidateFeature, deleteIssues } from '../actions/Issues'
+import {
+    startCandidateIssue,
+    startCandidateFeature,
+    deleteIssues,
+    updateIssueToggleAsFeature
+} from '../actions/Issues'
 
 const menu_buttons = {
 
@@ -68,6 +73,9 @@ const menu_buttons = {
         }
     ],
     'issue': [
+        { label: (objs) => 'Toggle as feature',
+          dispatch_action: (objs) => updateIssueToggleAsFeature([objs.issue.id], 'toggle')
+        },
         { label: (objs) => 'Delete',
           dispatch_action: (objs) => (confirm("Delete issue " + objs.issue.number +"?") && deleteIssues([objs.issue.id])) || null
         },

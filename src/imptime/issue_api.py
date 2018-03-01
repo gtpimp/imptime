@@ -188,6 +188,9 @@ class IssueViewSet(BaseViewSet):
                             old_assigned_to, new_assigned_to)
                 elif field_name == 'can_group_issues':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        if new_value == 'toggle':
+                            new_value = not issue.can_group_issues
+                        
                         old_can_group_issues = issue.can_group_issues
                         issue.can_group_issues = new_value
                         IssueHistory.add_history(
@@ -382,7 +385,7 @@ class IssueViewSet(BaseViewSet):
                     data = {'status': 'failed', 'error_message': 'Permission denied to delete issues'}
 
             if not data:
-                data = {'status': 'success2', 'payload': issue_pks}
+                data = {'status': 'success', 'payload': issue_pks}
 
         except Exception, ex:
             logger.exception(ex)
