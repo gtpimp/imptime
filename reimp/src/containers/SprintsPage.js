@@ -46,23 +46,25 @@ class SprintsPage extends Component {
                                                             default_filter,
                                                             {project_id: project.id,
                                                              sprint_status: 'open'})))
-        dispatch(ensureProjectsLoaded([project_id]))
-        this.refresh(project)
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch} = this.props
-
-        dispatch(ensureProjectsLoaded([new_props.project_id]))
-        if ( new_props.project.id !== this.props.project.id ||
-             new_props.project.name !== this.props.project.name ) {
-            this.refresh(new_props.project)
+        if ( new_props.project !== this.props.project &&
+             new_props.project.id !== this.props.project.id ||
+             new_props.project.name !== this.props.project.name ||
+             new_props.selected_sprint.id != this.props.selected_sprint_id ) {
+            this.refresh(new_props)
         }
     }
 
-    refresh(project) {
-        const {dispatch, list_key, page_key, default_filter, default_sprint_id, selected_sprint_ids, selected_sprint} = this.props
+    refresh(these_props) {
+        const props = these_props || this.props
+        const {dispatch, project_id, list_key, page_key,
+               default_filter, default_sprint_id, project, 
+               selected_sprint_ids, selected_sprint} = props
         if (project.id) {
+            dispatch(ensureProjectsLoaded([project_id]))
             dispatch(update_list_filter(list_key, Object.assign({},
                                                                 default_filter,
                                                                 {project_id: project.id})))
@@ -70,13 +72,25 @@ class SprintsPage extends Component {
             dispatch(setActivelyAvailableAutoClockEntity(project.id,
                                                          selected_sprint_ids && selected_sprint_ids.length > 0 && selected_sprint_ids[0]))
             dispatch(invalidateList(list_key))
-            dispatch(setBreadcrumbs([{to: '/projects',
-                                      label: 'Projects',
-                                      selected_entities: {project_id: project.id}},
-                                     {to: '/projects/' + project.id, label: project.name},
-                                     {to: '/projects/' + project.id + '/sprints',
-                                      label: 'Sprints',
-                                      selected_entities: {project_id: project.id}}]))
+
+            const breadcrumbs = [{to: '/projects',
+                                  type: 'projects',
+                                  label: 'Projects'},
+                                 {to: '/projects/' + project.id,
+                                  type: 'project',
+                                  label: project.name,
+                                  selected_entities: {project: project}},
+                                 {to: '/projects/' + project.id + '/sprints',
+                                  label: 'Sprints',
+                                  selected_entities: {project: project}}]
+            if ( selected_sprint ) {
+                breadcrumbs.push({to: '/projects/' + project.id + '/sprints',
+                                  label: selected_sprint.name,
+                                  selected_entities: {project: project,
+                                                      sprint: selected_sprint}})
+            }
+            dispatch(setBreadcrumbs(breadcrumbs))
+
         }
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
             dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
@@ -91,17 +105,10 @@ class SprintsPage extends Component {
     }
 
     onSelectSprints(sprint_ids) {
-        const {dispatch, project_id, project_name, list_key, page_key} = this.props
+        const {dispatch, project_id, project_name, project, list_key, page_key} = this.props
         dispatch(selectItems(list_key, sprint_ids))
         dispatch(select_sprints(page_key, sprint_ids))
-        dispatch(setBreadcrumbs([{to: '/projects',
-                                  label: 'Projects',
-                                  selected_entities: {project_id: project_id}},
-                                 {to: '/projects/' + project_id, label: project_name},
-                                 {to: '/projects/' + project_id + '/sprints',
-                                  label: 'Sprints',
-                                  selected_entities: {project_id: project_id,
-                                                      sprint_id: sprint_ids}}]))
+        
     dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_ids && sprint_ids.length > 0 && sprint_ids[0]))
         
         if ( sprint_ids && sprint_ids.length === 1 ) {
@@ -233,6 +240,7 @@ function mapStateToProps(state, props) {
         sprint_header_list,
         show_sidebar,
         splitter_size,
+        project,
         project_name
     }
 }

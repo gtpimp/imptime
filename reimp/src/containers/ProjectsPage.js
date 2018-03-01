@@ -52,7 +52,9 @@ class ProjectsPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.selected_project_ids != this.props.selected_project_ids ) {
+        if ( new_props.selected_project_ids.length != this.props.selected_project_ids.length ||
+             (new_props.selected_project_ids.length > 0 &&
+              new_props.selected_project_ids[0] != this.props.selected_project_ids[0] )) {
             this.refresh(new_props)
         }
     }
@@ -64,20 +66,16 @@ class ProjectsPage extends Component {
         if ( selected_projects && selected_projects.length == 1 ) {
             selected_project = selected_projects[0]
         }
+        const breadcrumbs = [ {to: '/projects',
+                               label: 'Projects',
+                               type: 'projects'}]
         if ( selected_project ) {
-            dispatch(setBreadcrumbs([ {to: '/projects',
-                                       label: 'Projects',
-                                       type: 'projects',
-                                       selected_entities: {project_id: selected_project.id}},
-                                      {to: '/projects/' + selected_projects[0].id,
-                                       label: selected_projects[0].name,
-                                       type: 'project',
-                                       selected_entities: {project_id: selected_project.id}}]))
-        } else {
-            dispatch(setBreadcrumbs([ {to: '/projects',
-                                       label: 'Projects',
-                                       type: 'projects'}]))
+            breadcrumbs.push({to: '/projects/' + selected_projects[0].id,
+                              label: selected_projects[0].name,
+                              type: 'project',
+                              selected_entities: {project: selected_project}})
         }
+        dispatch(setBreadcrumbs(breadcrumbs))
     }
 
     onSelectProjects(project_ids) {
