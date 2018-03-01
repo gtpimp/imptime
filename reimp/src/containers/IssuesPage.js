@@ -116,7 +116,8 @@ class IssuesPage extends Component {
                                    label: 'Issues',
                                    type: 'issues',
                                    selected_entities: {project: project,
-                                                       sprint: sprint}}]
+                                                       sprint: sprint,
+                                                       issue: selected_issue}}]
             if ( selected_issue ) {
                 breadcrumbs.push({to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues/' + selected_issue.id,
                                   label: selected_issue.number,

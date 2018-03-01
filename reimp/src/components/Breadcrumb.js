@@ -4,15 +4,15 @@ import {Link, withRouter} from 'react-router'
 import '../sass/breadcrumb.css'
 import {browserHistory} from 'react-router'
 import { map } from 'lodash'
-import {
-    startCandidateProject
-} from '../actions/Projects.js'
+import { startCandidateProject } from '../actions/Projects'
+import { startCandidateSprint } from '../actions/Sprints'
+import { startCandidateIssue, startCandidateFeature, deleteIssues } from '../actions/Issues'
 
 const menu_buttons = {
 
     'projects': [
         { label: (objs) => '+ New Project',
-          dispatch_action: startCandidateProject }
+          dispatch_action: (objs) => startCandidateProject() }
     ],
     'project': [
         { label: (objs) => 'Sprints',
@@ -35,6 +35,38 @@ const menu_buttons = {
         },
         { label: (objs) => 'Users',
           nav_url: (objs) => '/projects/' + objs.project.id + '/users'
+        },
+    ],
+    'sprints': [
+        { label: (objs) => '+ New Sprint',
+          dispatch_action: (objs) => startCandidateSprint(objs.project.id, objs.sprint.id)
+        }
+    ],
+    'sprint': [
+        { label: (objs) => 'Issues',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/issues'
+        },
+        { label: (objs) => 'Bulk Create Issues',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate'
+        },
+        { label: (objs) => 'Dashboard',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/dashboard'
+        },
+    ],
+    'issues': [
+        { label: (objs) => '+ New Issue',
+          dispatch_action: (objs) => startCandidateIssue(objs.sprint.id, objs.issue.id)
+        },
+        { label: (objs) => '+ New Feature',
+          dispatch_action: (objs) => startCandidateFeature(objs.sprint.id, objs.issue.id)
+        },
+        { label: (objs) => 'Bulk Create Issues',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate'
+        }
+    ],
+    'issue': [
+        { label: (objs) => 'Delete',
+          dispatch_action: (objs) => (confirm("Delete issue " + objs.issue.number +"?") && deleteIssues([objs.issue.id])) || null
         },
     ]
     
@@ -63,7 +95,10 @@ class Breadcrumb extends Component {
     onClickBreadcrumbActionButton(breadcrumb_button) {
         const { dispatch, breadcrumb } = this.props
         if ( breadcrumb_button['dispatch_action'] ) {
-            dispatch(breadcrumb_button['dispatch_action']())
+            const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities)
+            if ( action ) {
+                dispatch(action)
+            }
         } else {
             browserHistory.push(breadcrumb_button['nav_url'](breadcrumb.selected_entities))
         }

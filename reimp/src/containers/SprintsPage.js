@@ -94,10 +94,13 @@ class SprintsPage extends Component {
                                   selected_entities: {project: project}},
                                  {to: '/projects/' + project.id + '/sprints',
                                   label: 'Sprints',
-                                  selected_entities: {project: project}}]
+                                  type: 'sprints',
+                                  selected_entities: {project: project,
+                                                      sprint: selected_sprint}}]
             if ( selected_sprint.id ) {
                 breadcrumbs.push({to: '/projects/' + project.id + '/sprints',
                                   label: selected_sprint.name,
+                                  type: 'sprint',
                                   selected_entities: {project: project,
                                                       sprint: selected_sprint}})
             }
