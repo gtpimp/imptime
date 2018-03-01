@@ -18,37 +18,22 @@ class ProgressBar extends Component {
         const {current, max} = this.props
         const sections = []
 
-        function timeToNumber (time) {
-            if (time === "00:00") {
-                return 0
-            }
-            time = time.replace(/^0+/, '')
-            var timeNumRep = time.split(/[.:]/)
-            var hours = Number(timeNumRep[0])
-            var mins = Math.round((Number(timeNumRep[1]) / 60) * 100) / 100
-            var timeValue = hours + mins
-            return timeValue
-        }
-
-        var currentTime = timeToNumber(current)
-        var maxTime = timeToNumber(max)
-
-        if ( !maxTime && currentTime>0 ) {
+        if ( !max && current>0 ) {
             sections.push({
                 percentage: 1.0,
                 style: 'invalid'
             })
         } else {
-            if (currentTime <= maxTime) {
+            if (current <= max) {
                 sections.push({
-                    percentage: currentTime / maxTime,
+                    percentage: current / max,
                     style: 'progress'
                 })
                 sections.push({
-                    percentage: (maxTime - currentTime) / maxTime,
+                    percentage: (max - current) / max,
                     style: 'remaining'
                 })
-            } else if (currentTime > maxTime) {
+            } else if (current > max) {
                 sections.push({
                     percentage: 1.0,
                     style: 'over'

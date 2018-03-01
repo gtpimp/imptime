@@ -46,7 +46,7 @@ class ProjectDashboardList extends Component {
     componentDidMount() {
 	const { dispatch, list_key, all_user_ids, all_sprint_ids, all_project_ids } = this.props
 	dispatch(initList(list_key))
-        dispatch(update_list_pagination(list_key, { page_size: 1 }))
+        dispatch(update_list_pagination(list_key, { page_size: 10 }))
         dispatch(ensureUsersLoaded(all_user_ids))
         dispatch(ensureSprintsLoaded(all_sprint_ids))
         dispatch(ensureProjectsLoaded(all_project_ids))

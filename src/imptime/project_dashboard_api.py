@@ -136,7 +136,7 @@ class ProjectDashboardViewSet(BaseViewSet):
 
     def set_recent_activity_chart(self, sprint_infos, entries):
         date_to = timezone.now()
-        date_from = date_to - relativedelta(days=self.NUM_DAYS_FOR_ACTIVE)
+        date_from = date_to - relativedelta(days=NUM_DAYS_FOR_ACTIVE)
         
         for sprint_id, sprint_info in sprint_infos.items():
             entries_for_sprint = entries.filter(issue__project_id=sprint_id).filter(start_time__gte=date_from, start_time__lte=date_to)

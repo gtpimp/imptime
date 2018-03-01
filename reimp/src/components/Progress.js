@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import Duration from '../components/Duration'
-import ProgressBar from '../components/ProgressBar'
+import TimeProgressBar from './TimeProgressBar'
 import { format_hours } from '../actions/lib'
 
 class Progress extends Component {
@@ -27,7 +27,7 @@ class Progress extends Component {
                         </div>
                     </div>
                     <div className="progress__progress_bar">
-                        <ProgressBar current={current} max={max}/>
+                        <TimeProgressBar current={current} max={max}/>
                     </div>
                 </div>
                 <div className="progress__component progress__component--timer">
