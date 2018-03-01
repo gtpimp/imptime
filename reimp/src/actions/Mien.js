@@ -14,7 +14,7 @@ export function getMien(state) {
     if ( cookie.load("current_mien") ) {
         return cookie.load("current_mien")
     } else {
-        return get(state.settings, "mien", null)
+        return get(state.settings, "mien", "dev")
     }
 }
 
