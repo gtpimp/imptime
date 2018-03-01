@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link, withRouter} from 'react-router'
-import BreadcrumbMenuProjects from './BreadcrumbMenuProjects'
-import BreadcrumbMenuSprints from './BreadcrumbMenuSprints'
 import '../sass/breadcrumb.css'
 import {browserHistory} from 'react-router'
 import { map } from 'lodash'

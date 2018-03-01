@@ -31,7 +31,7 @@ import {
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import {getCandidateIssue} from '../actions/Issues'
+import {getCandidateIssue, getIssues} from '../actions/Issues'
 import cookie from 'react-cookie'
 import { updateMien } from '../actions/Mien'
 
@@ -63,7 +63,9 @@ class IssuesPage extends Component {
 
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
-             new_props.project.name !== this.props.project.name) {
+             new_props.project.name !== this.props.project.name ||
+             new_props.selected_issue.id !== this.props.selected_issue.id ||
+             new_props.selected_issue.loaded !== this.props.selected_issue.loaded) {
 
             if ( new_props.sprint_id != this.props.sprint_id ) {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
@@ -82,25 +84,48 @@ class IssuesPage extends Component {
     }
 
     refresh(these_props) {
-        const {dispatch, selected_issue_ids, sprint, project, default_issue_id} = these_props || this.props
-        if ( sprint.id ) {
+        const {dispatch, selected_issue_ids, sprint, filter_sprint_id,
+               project, default_issue_id, selected_issue} = these_props || this.props
+
+        if ( sprint.id != filter_sprint_id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
+        }
+        
+        if ( sprint.id ) {
             this.selectDefaultIssue(this.props)
-            dispatch(setBreadcrumbs([ {to: '/projects',
-                                       label: 'Projects',
-                                       selected_entities: {project_id: project.id}},
-                                      {to: '/projects/'+project.id, label: project.name},
-                                      {to: '/projects/'+project.id+'/sprints',
-                                       label: 'Sprints',
-                                       selected_entities: {project_id: project.id,
-                                                           sprint_id: sprint.id}},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id, label: sprint.name},
-                                      {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues',
-                                       label: 'Issues',
-                                       selected_entities: {project_id: project.id,
-                                                           sprint_id: sprint.id}}]))
+            const breadcrumbs = [ {to: '/projects',
+                                   label: 'Projects',
+                                   type: 'projects'},
+                                  {to: '/projects/'+project.id,
+                                   label: project.name,
+                                   type: 'project',
+                                   selected_entities: {project: project}
+                                  },
+                                  {to: '/projects/'+project.id+'/sprints',
+                                   label: 'Sprints',
+                                   type: 'sprints',
+                                   selected_entities: {project: project}},
+                                  {to: '/projects/'+project.id+'/sprints/'+sprint.id,
+                                   label: sprint.name,
+                                   type: 'sprint',
+                                   selected_entities: {project: project,
+                                                       sprint: sprint}},
+                                  {to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues',
+                                   label: 'Issues',
+                                   type: 'issues',
+                                   selected_entities: {project: project,
+                                                       sprint: sprint}}]
+            if ( selected_issue ) {
+                breadcrumbs.push({to: '/projects/'+project.id+'/sprints/'+sprint.id+'/issues/' + selected_issue.id,
+                                  label: selected_issue.number,
+                                  type: 'issue',
+                                  selected_entities: {project: project,
+                                                      sprint: sprint,
+                                                      issue: selected_issue}})
+            }
+            dispatch(setBreadcrumbs(breadcrumbs))
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }
@@ -212,12 +237,8 @@ class IssuesPage extends Component {
 function mapStateToProps(state, props) {
 
     const {issue} = state
-    const items_by_id = (issue && issue.items_by_id) || {}
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
-    const selected_items = items_by_id && selected_issue_ids && selected_issue_ids.map( function(selected_id, index) {
-	return items_by_id[selected_id] || { 'id': selected_id,
-					     'loaded': false }
-    })
+    const selected_items = getIssues(state, selected_issue_ids)
 
     const updated_mien = updateMien(cookie.load("current_mien"), PAGE_KEY__ISSUES_PAGE)
 
@@ -241,9 +262,9 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         default_issue_id,
-        selected_issue,
         splitter_size,
         selected_issues: selected_items,
+        selected_issue: selected_issue || {},
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
