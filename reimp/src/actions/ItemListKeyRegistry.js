@@ -37,6 +37,7 @@ export const ENTITY_KEY__TAG = 'tag'
 export const ENTITY_KEY__NUDGE = 'nudge'
 export const ENTITY_KEY__WIKI = 'wiki'
 export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
+export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
@@ -101,30 +102,6 @@ export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                  'type': {label:"Type", width:small_col_width}
 }
 
-export var ISSUE_HEADER_LIST_WIDE = {'number': {label:"#", width:tiny_col_width},
-                                     'adhoc': {label:'', width:tiny_col_width},
-                                     'expand_feature': {label:'', width:tiny_col_width},
-                                     'name': {label:"Name", width:"auto", flex:1},
-                                     'assignee': {label:"Assignee", width:medium_col_width},
-                                     'created_at': {label:"Created at", width:medium_col_width},
-                                     'status': {label:"Status", width:medium_col_width},
-                                     // 'tags': {label:"Tags", width:medium_col_width},
-                                     'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                     'estimated': {label:"Estimates", width:medium_col_width},
-                                     'clock_in': {label:"Clock in", width:small_col_width},
-                                     'small_delete': {label:"", width:tiny_col_width}
-}
-
-export var ISSUE_HEADER_LIST_NARROW = {'number':{label:"#", width:tiny_col_width},
-                                       'type': {label:'', width:tiny_col_width},
-                                       'expand_feature': {label:'', width:tiny_col_width},
-                                       'name': {label:"Name", width:"auto", flex:1},
-                                       'assignee': {label:"Assignee", width:medium_col_width},
-                                       'status': {label:"Status", width:medium_col_width},
-                                       'estimated': {label:"Estimates", width:medium_col_width},
-                                       'small_delete': {label:"", width:tiny_col_width}
-}
-
 export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width},
                                       'adhoc': {label:'', width:tiny_col_width},
                                       'expand_feature': {label:'', width:tiny_col_width},
@@ -133,8 +110,7 @@ export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width
                                       'created_at': {label:"Created at", width:medium_col_width},
                                       'status': {label:"Status", width:medium_col_width},
                                       'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                      'estimated': {label:"Estimates", width:medium_col_width},
-                                      'clock_in': {label:"Clock in", width:small_col_width},
+                                      // 'estimated': {label:"Estimates", width:medium_col_width},
                                       'small_delete': {label:"", width:tiny_col_width}},
                          'manager_mien': {'number': {label:"#", width:tiny_col_width},
                                           'adhoc': {label:'', width:tiny_col_width},
@@ -144,8 +120,7 @@ export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width
                                           'created_at': {label:"Created at", width:medium_col_width},
                                           'status': {label:"Status", width:medium_col_width},
                                           'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                          'estimated': {label:"Estimates", width:medium_col_width},
-                                          'clock_in': {label:"Clock in", width:small_col_width},
+                                          // 'estimated': {label:"Estimates", width:medium_col_width},
                                           'small_delete': {label:"", width:tiny_col_width}},
                          'finance_mien': {'number': {label:"#", width:tiny_col_width},
                                           'adhoc': {label:'', width:tiny_col_width},
@@ -155,8 +130,7 @@ export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width
                                           'created_at': {label:"Created at", width:medium_col_width},
                                           'status': {label:"Status", width:medium_col_width},
                                           'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                          'estimated': {label:"Estimates", width:medium_col_width},
-                                          'clock_in': {label:"Clock in", width:small_col_width},
+                                          // 'estimated': {label:"Estimates", width:medium_col_width},
                                           'small_delete': {label:"", width:tiny_col_width}},
                          'client_mien': {'number': {label:"#", width:tiny_col_width},
                                          'adhoc': {label:'', width:tiny_col_width},
@@ -166,8 +140,7 @@ export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width
                                          'created_at': {label:"Created at", width:medium_col_width},
                                          'status': {label:"Status", width:medium_col_width},
                                          'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                         'estimated': {label:"Estimates", width:medium_col_width},
-                                         'clock_in': {label:"Clock in", width:small_col_width},
+                                         // 'estimated': {label:"Estimates", width:medium_col_width},
                                          'small_delete': {label:"", width:tiny_col_width}},
                          'tester_mien': {'number': {label:"#", width:tiny_col_width},
                                          'adhoc': {label:'', width:tiny_col_width},
@@ -177,8 +150,7 @@ export var MIEN_LIST = { 'dev_mien': {'number': {label:"#", width:tiny_col_width
                                          'created_at': {label:"Created at", width:medium_col_width},
                                          'status': {label:"Status", width:medium_col_width},
                                          'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                         'estimated': {label:"Estimates", width:medium_col_width},
-                                         'clock_in': {label:"Clock in", width:small_col_width},
+                                         // 'estimated': {label:"Estimates", width:medium_col_width},
                                          'small_delete': {label:"", width:tiny_col_width}},
                          'spec_mien': {'number': {label:"#", width:tiny_col_width},
                                        'adhoc': {label:'', width:tiny_col_width},

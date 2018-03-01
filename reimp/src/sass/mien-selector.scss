@@ -1,11 +1,11 @@
 @import 'variables.scss';
 
 .mien-select-panel {
-  align-items: center;
-  display: flex;
-  height: 56px;
-  width: 70%;
-  padding-left: 15%;
+    align-items: center;
+    display: flex;
+    font: $font-3;
+    width: 70%;
+    padding-left: 15%;
 }
 
 .mien-button {
@@ -14,9 +14,10 @@
     border: 1px #999 solid;
     margin-left: 3px;
     &:hover {
-        background-color: rgba(50,100,170,0.4);
-        color: #fff;
+        background-color: $background-color-1;
+        color: $color-35;
     }
+    padding: 2px;
 }
 
 .button--active {

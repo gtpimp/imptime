@@ -1,6 +1,3 @@
-import {ISSUE_HEADER_LIST_WIDE,
-        ISSUE_HEADER_LIST_NARROW,
-} from './ItemListKeyRegistry'
 import { setAutoClockProjectAvailable, setAutoClockSprintAvailable, setAutoClockIssueAvailable } from './AutoClock'
 
 export const INIT_PAGE = 'INIT_PAGE'
@@ -9,7 +6,6 @@ export const UPDATE_PAGE_SIDEBAR = 'UPDATE_PAGE_SIDEBAR'
 export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
 export const SET_PAGE_FLAG = 'SET_PAGE_FLAG'
-export const WIDE_COLUMN_MODE = 'WIDE_COLUMN_MODE'
 export const UPDATE_HEADER_LIST = 'UPDATE_HEADER_LIST'
 
 export function initList(page_key) {
@@ -92,34 +88,8 @@ export function select_wikis(page_key, wiki_ids) {
     }
 }
 
-export function get_wide_column_mode(state, page_key) {
-    return (state.page[page_key] || {}).wide_column_mode
-}
-
 export function get_header_list(state, page_key) {
     return (state.page[page_key] || {}).header_list || [];
-}
-
-export function set_wide_column_mode(page_key, wide_column_mode) {
-
-    // temp hack, will be genericised later.
-    var HEADER_LIST_WIDE = ISSUE_HEADER_LIST_WIDE
-    var HEADER_LIST_NARROW = ISSUE_HEADER_LIST_NARROW
-    
-    var header_list;
-    if ( wide_column_mode ) {
-        header_list = HEADER_LIST_WIDE
-        
-    } else {
-        header_list = HEADER_LIST_NARROW
-    }
-    
-    return {
-        type: WIDE_COLUMN_MODE,
-        page_key: page_key,
-        wide_column_mode: wide_column_mode,
-        header_list: header_list
-    }
 }
 
 export function get_selected_project_ids(state, page_key) {

@@ -9,8 +9,7 @@ const page_template = {
     settings: null,
     selection: null,
     sidebars: null,
-    header_list: null,
-    wide_column_mode: true
+    header_list: null
 }
 
 const initialState = {

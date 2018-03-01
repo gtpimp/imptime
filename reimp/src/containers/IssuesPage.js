@@ -26,7 +26,6 @@ import {
     select_sprints,
     select_projects,
     get_header_list,
-    set_wide_column_mode,
     getPageFlag,
     setPageFlag
 } from '../actions/Page'
@@ -34,7 +33,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getCandidateIssue} from '../actions/Issues'
 import cookie from 'react-cookie'
-import { updateMien } from '../actions/Settings'
+import { updateMien } from '../actions/Mien'
 
 class IssuesPage extends Component {
 
@@ -50,7 +49,6 @@ class IssuesPage extends Component {
         dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
-        dispatch(set_wide_column_mode(PAGE_KEY__ISSUES_PAGE, false))
         dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
         dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id, default_issue_id))

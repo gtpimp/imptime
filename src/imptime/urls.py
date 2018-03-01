@@ -9,6 +9,7 @@ import clock_api
 import issue_comment_api
 import issue_estimate_api
 import issue_review_api
+import multiple_issue_summary_api
 import nudge_api
 import project_api
 import project_dashboard_api
@@ -80,6 +81,8 @@ router.register(r'user', user_api.UserViewSet,
                 base_name='user')
 router.register(r'nudge', nudge_api.NudgeViewSet,
                 base_name='nudge')
+router.register(r'multiple_issue_summary', multiple_issue_summary_api.MultipleIssueSummaryViewSet,
+                base_name='multiple_issue_summary_api')
 router.register(r'filter', filter_api.FilterViewSet,
                 base_name='filter')
 router.register(r'cost_summary', cost_summary_api.CostSummaryViewSet,
