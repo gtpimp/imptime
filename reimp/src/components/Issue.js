@@ -159,7 +159,7 @@ class Issue extends Component {
             issue_id, visible_header_keys, header_list,
             isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
             tagsByCategoryName, all_estimates, all_estimates_by_user_id, sprint,
-            current_user_id
+            logged_in_user_id, logged_in_user_can_estimate_user_id
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
@@ -315,17 +315,30 @@ class Issue extends Component {
                           className="div-table__cell issue__cell__secondary"
                           style={getCellStyle(header_list.estimate_columns)}>
                        <div className="issue-cell__estimate_column">
-                         {current_user_id === user_id &&
+                         {logged_in_user_id === user_id &&
                           <EditableIssueEstimate issue_id={issue.id}
                                                  class_name="issue-cell__my-estimate"/> }
 
-                         {current_user_id !== user_id &&
+                         {logged_in_user_id !== user_id &&
                           format_hours(all_estimates_by_user_id[user_id] &&
                                        all_estimates_by_user_id[user_id].estimate_hours)}
                        </div>
                      </div>
                  )
                 }
+
+                 {includes(visible_header_keys, "my_estimate") && logged_in_user_can_estimate_user_id &&
+                  <div className="div-table__cell issue__cell__secondary"
+                       style={getCellStyle(header_list.my_estimate)}>
+                    <div className="issue-cell__estimate_column">
+                      {logged_in_user_can_estimate_user_id &&
+                       <EditableIssueEstimate issue_id={issue.id}
+                                              class_name="issue-cell__my-estimate"/>
+                      }
+                    </div>
+                  </div>
+                 }
+                     
                   {includes(visible_header_keys, "estimated") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.estimated)}>
@@ -429,8 +442,8 @@ function mapStateToProps(state, props) {
     const tagsByCategoryName = keyBy(tags, 'category_name')
     const all_estimates = issue.all_estimates
     const all_estimates_by_user_id = keyBy(all_estimates, 'user_id')
-    const current_user = logged_in_user()
-    const current_user_id = current_user.user_id
+    const logged_in_user_id = logged_in_user().user_id
+    const logged_in_user_can_estimate_user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
 
     return {
         issue: issue,
@@ -458,7 +471,8 @@ function mapStateToProps(state, props) {
         tagsByCategoryName,
         all_estimates_by_user_id,
         all_estimates,
-        current_user_id
+        logged_in_user_id,
+        logged_in_user_can_estimate_user_id
     }
 }
 

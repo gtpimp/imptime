@@ -6,6 +6,7 @@ import {connect} from 'react-redux'
 import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import OtherUser from './OtherUser'
+import { logged_in_user } from '../actions/Auth'
 import {
     initList,
     invalidateList,
@@ -347,7 +348,7 @@ class IssueList extends Component {
     }
 
     renderHeader() {
-        const { header_list, tag_category_names, sprint } = this.props
+        const { header_list, tag_category_names, sprint, logged_in_user_id } = this.props
         return (
             <div className="div-table__header_row">
               { map(header_list, function(v, k) {
@@ -373,6 +374,21 @@ class IssueList extends Component {
                                 </div>
                             ))
                         )
+                    } else if ( k === "my_estimate" ) {
+                        const user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
+                        if ( user_id ) {
+                            return (
+                                <div key={user_id}
+                                     className="div-table__header_cell issue-list__header_call__user_estimate"
+                                     style={getCellStyle(v)}>
+                                  <OtherUser user_id={user_id}
+                                             render_mode="inline--small"
+                                             display_mode="username" />
+                                </div>
+                            )
+                        } else {
+                            return null
+                        }
                     } else {
                         return (
                             <div key={k}
@@ -636,6 +652,7 @@ function mapStateToProps(state, props) {
     items.map(function(item) { tag_ids = concat(tag_ids, item.tag_ids || []) })
     const tags = getTags(state, tag_ids)
     const tag_category_names = uniq(keys(keyBy(tags, 'category_name')))
+    const logged_in_user_id = logged_in_user().user_id
 
     return {
         list_key: list_key,
@@ -667,7 +684,8 @@ function mapStateToProps(state, props) {
         autoexpanded_feature_ids,
         header_list: issue_header_list,
         tag_ids,
-        tag_category_names
+        tag_category_names,
+        logged_in_user_id
     }
 }
 
