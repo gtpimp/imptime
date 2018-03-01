@@ -36,7 +36,8 @@ class Breadcrumb extends Component {
               </Link>
               { show_breadcrumbMenu && label == "Projects" &&
                 <div className="breadcrumb-menu">
-                  <BreadcrumbMenuProjects />
+                  <BreadcrumbMenuProjects
+                  breadcrumb={ breadcrumb } />
                 </div>
               }
             { show_breadcrumbMenu && label == "Sprints" &&
@@ -55,7 +56,7 @@ class Breadcrumb extends Component {
 
 function mapStateToProps(state, props) {
     const { breadcrumb } = props
-    
+
     return {
         label: breadcrumb.label,
         to: breadcrumb.to,

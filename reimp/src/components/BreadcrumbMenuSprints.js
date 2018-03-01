@@ -85,7 +85,7 @@ function mapStateToProps(state, props) {
 
     const { breadcrumb } = props
 
-    const sprint_id = breadcrumb.selected_entities.selected_sprint.id
+    const sprint_id = breadcrumb.selected_entities.sprint_id && breadcrumb.selected_entities.sprint_id[0] || null
     const sprint = getSprint(state, sprint_id)
 
     return {

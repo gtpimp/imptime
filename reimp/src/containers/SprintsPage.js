@@ -70,12 +70,13 @@ class SprintsPage extends Component {
             dispatch(setActivelyAvailableAutoClockEntity(project.id,
                                                          selected_sprint_ids && selected_sprint_ids.length > 0 && selected_sprint_ids[0]))
             dispatch(invalidateList(list_key))
-            dispatch(setBreadcrumbs([{to: '/projects', label: 'Projects'},
+            dispatch(setBreadcrumbs([{to: '/projects',
+                                      label: 'Projects',
+                                      selected_entities: {project_id: project.id}},
                                      {to: '/projects/' + project.id, label: project.name},
                                      {to: '/projects/' + project.id + '/sprints',
                                       label: 'Sprints',
-                                      selected_entities: {project_id: project.id,
-                                                          selected_sprint: selected_sprint}}]))
+                                      selected_entities: {project_id: project.id}}]))
         }
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
             dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
@@ -90,10 +91,18 @@ class SprintsPage extends Component {
     }
 
     onSelectSprints(sprint_ids) {
-        const {dispatch, project_id, list_key, page_key} = this.props
+        const {dispatch, project_id, project_name, list_key, page_key} = this.props
         dispatch(selectItems(list_key, sprint_ids))
         dispatch(select_sprints(page_key, sprint_ids))
-        dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_ids && sprint_ids.length > 0 && sprint_ids[0]))
+        dispatch(setBreadcrumbs([{to: '/projects',
+                                  label: 'Projects',
+                                  selected_entities: {project_id: project_id}},
+                                 {to: '/projects/' + project_id, label: project_name},
+                                 {to: '/projects/' + project_id + '/sprints',
+                                  label: 'Sprints',
+                                  selected_entities: {project_id: project_id,
+                                                      sprint_id: sprint_ids}}]))
+    dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_ids && sprint_ids.length > 0 && sprint_ids[0]))
         
         if ( sprint_ids && sprint_ids.length === 1 ) {
             browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);
@@ -200,6 +209,7 @@ function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const default_sprint_id = props.params.sprintId
     const project = getProject(state, project_id) || {}
+    const project_name = project.name
     const candidate_sprint = getCandidateSprint(state) || null
     const is_creating_sprint = candidate_sprint || false
     const sprint_header_list = SPRINT_HEADER_LIST
@@ -222,7 +232,8 @@ function mapStateToProps(state, props) {
         is_creating_sprint: is_creating_sprint,
         sprint_header_list,
         show_sidebar,
-        splitter_size
+        splitter_size,
+        project_name
     }
 }
 

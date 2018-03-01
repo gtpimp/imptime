@@ -57,23 +57,23 @@ class Breadcrumbmenuprojects extends Component {
 
     render() {
         const { project_id } = this.props
-        
+
         return (
               <div>
                 <div className="breadcrumb-menu__item" onClick={this.onNewProjectClick}>
                   + New Project
                 </div>
-                { project_id && 
+                { project_id &&
                   <div className="breadcrumb-menu__item" onClick={this.onSprintsClick}>
                     Sprints
                   </div>
                 }
-                { project_id && 
+                { project_id &&
                   <div className="breadcrumb-menu__item" onClick={this.onDashboardClick}>
                     Dashboard
                   </div>
                 }
-                { project_id && 
+                { project_id &&
                   <div className="breadcrumb-menu__item" onClick={this.onRoadmapClick}>
                     Roadmap
                   </div>
@@ -96,7 +96,9 @@ class Breadcrumbmenuprojects extends Component {
 
 function mapStateToProps(state, props) {
 
-    const project_id = state.page.projects_page.project_ids && state.page.projects_page.project_ids[0]
+    const { breadcrumb } = props
+
+    const project_id = breadcrumb.selected_entities && breadcrumb.selected_entities.project_id[0] || null
 
     return {
         project_id
