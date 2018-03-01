@@ -41,7 +41,6 @@ class ProjectsPage extends Component {
     componentDidMount() {
         const {dispatch, selected_project_ids, default_project_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
-        dispatch(setBreadcrumbs([ {to: '/projects', label: 'Projects'} ]))
         dispatch(initList(LIST_KEY__PROJECT_LIST))        
         dispatch(update_list_pagination(LIST_KEY__PROJECT_LIST, {page_size:20}))
         if ( default_project_id !== undefined ) {
@@ -49,13 +48,36 @@ class ProjectsPage extends Component {
             dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, [default_project_id]))
             dispatch(setActivelyAvailableAutoClockEntity(default_project_id))
         }
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        if ( new_props.selected_project_ids != this.props.selected_project_ids ) {
+            this.refresh(new_props)
+        }
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, selected_projects } = props
+        let selected_project = null
+        if ( selected_projects && selected_projects.length == 1 ) {
+            selected_project = selected_projects[0]
+        }
+        if ( selected_project ) {
+            dispatch(setBreadcrumbs([ {to: '/projects',
+                                       label: 'Projects',
+                                       selected_entities: {project_id: selected_project.id}},
+                                      {to: '/projects/' + selected_projects[0].id, label: selected_projects[0].name}]))
+        } else {
+            dispatch(setBreadcrumbs([ {to: '/projects',
+                                       label: 'Projects',
+                                       selected_entities: {project_id: selected_project.id}}]))
+        }
     }
 
     onSelectProjects(project_ids) {
         const { dispatch } = this.props
-        dispatch(setBreadcrumbs([ {to: '/projects',
-                                   label: 'Projects',
-                                   selected_entities: {project_id: project_ids}} ]))
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
         dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
         dispatch(setActivelyAvailableAutoClockEntity(project_ids && project_ids.length > 0 && project_ids[0]))
