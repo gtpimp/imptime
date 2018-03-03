@@ -103,9 +103,6 @@ export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
 }
 
 
-export var MIENS = ['dev', 'reviewer', 'finance', 'client', 'tester', 'spec']
-
-
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':{label:'#', width:tiny_col_width},
     'name': {label:'Name', width:"auto", flex:1},

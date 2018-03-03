@@ -4,11 +4,10 @@ import { map } from 'lodash'
 import '../sass/mien-selector.css'
 import {
     PAGE_KEY__ISSUES_PAGE,
-    MIENS
 } from '../actions/ItemListKeyRegistry'
 import { setMien,
          getMien,
-         updateMien
+         MIENS
 } from '../actions/Mien'
 import classNames from 'classnames'
 
@@ -22,7 +21,6 @@ class MienSelector extends Component {
     onChangeMien(mien) {
         const { dispatch } = this.props
         dispatch(setMien(mien))
-        dispatch(updateMien(mien, PAGE_KEY__ISSUES_PAGE))
     }
 
     render() {
@@ -31,12 +29,11 @@ class MienSelector extends Component {
 
         return (
             <div className="mien-select-panel">
-              { map(available_miens, function(mien) {
-                    <div onClick={() => this.onChangeMien({mien}) }
+              { map(available_miens, (mien) =>
+                    <div key={mien} onClick={() => this.onChangeMien(mien) }
                          className={classNames(button_class, {'button--active': current_mien === mien})}>
                       {mien}
                     </div>
-                }
               )}
             </div>
         )

@@ -7,7 +7,7 @@ export const SET_MIEN = 'SET_MIEN'
 
 import { medium_col_width, small_col_width, tiny_col_width } from './ItemListKeyRegistry'
 
-
+export const MIENS = ['dev', 'reviewer', 'finance', 'client', 'tester', 'spec']
 const MIEN_FEATURES = { 'spec_mien': { 'multiple_issue_summary': true } }
 
 export var ISSUE_HEADERS_BY_MIEN = { 'dev': {'number': {label:"#", width:tiny_col_width},
@@ -59,12 +59,15 @@ export var ISSUE_HEADERS_BY_MIEN = { 'dev': {'number': {label:"#", width:tiny_co
                                      'spec': {'number': {label:"#", width:tiny_col_width},
                                               'adhoc': {label:'', width:tiny_col_width},
                                               'expand_feature': {label:'', width:tiny_col_width},
-                                              'name': {label:"Name", width:"auto", flex:1},
+                                              'name': {label:"Name", width:medium_col_width},
                                               'assignee': {label:"Assignee", width:medium_col_width},
                                               'status': {label:"Status", width:small_col_width},
-                                              'estimate_columns': {label:"Estimates", width:small_col_width}}
+                                              'estimate_columns': {label:"Estimates", width:medium_col_width}}
 }
 
+export function getIssueHeaderListForCurrentMien(state) {
+    return ISSUE_HEADERS_BY_MIEN[getMien(state)]
+}
 
 
 export function getMien(state) {
@@ -82,11 +85,6 @@ export function setMien(mien) {
         type: SET_MIEN,
         mien: mien
     }
-}
-
-export function updateMien(mien, page_key) {
-    const new_header_list = ISSUE_HEADERS_BY_MIEN[mien]
-    return updateHeaderList(new_header_list, page_key)
 }
 
 export function doesMienHaveFeature(state, feature_name) {

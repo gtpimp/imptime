@@ -1,7 +1,7 @@
 import {
     UPDATE_SETTINGS,
-    SET_MIEN
 } from '../actions/Settings'
+import {SET_MIEN} from '../actions/Mien'
 
 const page_template = {
     // Don't put any objects in here, only primitives
@@ -30,9 +30,7 @@ export default function settings(state = initialState, action) {
                                  {configured: true})
 
         case SET_MIEN:
-            state_copy = Object.assign(
-                {}, state, {mien: action.mien}
-            )
+            state_copy = Object.assign({}, state, {mien: action.mien})
             return state_copy
 
         default:
