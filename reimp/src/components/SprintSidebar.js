@@ -15,6 +15,7 @@ import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
 import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
+import { doesMienHaveFeature } from '../actions/Mien'
 
 class SprintSidebar extends Component {
 
@@ -66,7 +67,7 @@ class SprintSidebar extends Component {
     
     render() {
 
-        const { sprint_id, sprint, project, has_view_review_cycle_permission } = this.props
+        const { sprint_id, sprint, project, show_review_section } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -122,7 +123,7 @@ class SprintSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
-                { has_view_review_cycle_permission && 
+                { show_review_section &&
                   <PropertyStackComponent title="Reviews">
                     <SprintReviewPanel sprint_id={sprint.id} />
                   </PropertyStackComponent>
@@ -146,13 +147,14 @@ export function mapStateToProps(state, props) {
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
+    const show_review_section = has_view_review_cycle_permission && doesMienHaveFeature(state, 'review_schedule')
     
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
         project: project,
-        has_view_review_cycle_permission
+        show_review_section
     }
 }
 

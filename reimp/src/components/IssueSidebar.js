@@ -33,6 +33,8 @@ import {
     makeFeatureIssuesSuccessive,
     deleteIssues
 } from '../actions/Issues'
+import { doesMienHaveFeature } from '../actions/Mien'
+
 import { ensureUsersLoaded } from '../actions/Users'
 import {format_hours} from '../actions/lib'
 import {getProject} from '../actions/Projects'
@@ -94,7 +96,8 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const {issue, comments, testables, attachments, visual_spec_documents, sprint} = this.props
+        const {issue, comments, testables, attachments, visual_spec_documents,
+               sprint, show_review_section} = this.props
         const { emacs_hint_enabled } = this.state
 
         if (issue && issue.id) {
@@ -274,9 +277,11 @@ class IssueSidebar extends Component {
                           </PropertyStackComponent>
                         }
 
-                        <PropertyStackComponent title="Reviews">
-                          <IssueReviewPanel issue_id={issue.id} />
-                        </PropertyStackComponent>
+                        { show_review_section && 
+                          <PropertyStackComponent title="Reviews">
+                            <IssueReviewPanel issue_id={issue.id} />
+                          </PropertyStackComponent>
+                        }
 
                         { issue.id && <PropertyStackComponent>
                           <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
@@ -301,6 +306,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
+    const show_review_section = doesMienHaveFeature(state, 'review_schedule')
     populateEstimates(state, issue)
 
     return {
@@ -313,7 +319,8 @@ function mapStateToProps(state, props) {
         sprint_id: sprint_id,
         project_id: project_id,
         sprint,
-        assignable_user_ids: assignable_user_ids,
+        assignable_user_ids,
+        show_review_section
     }
 }
 
