@@ -30,13 +30,30 @@ class MultipleIssueSummary extends Component {
         dispatch(ensureMultipleIssueSummaryLoaded(issue_ids))
     }
 
+    renderEstimatesByUser(summary) {
+        return (
+            <table>
+              <thead>
+                <th>User</th>
+                <th>Raw estimate</th>
+              </thead>
+              <tbody>
+                { map(summary.estimates_by_user.raw_estimated_hours_by_user
+              </tbody>
+            </table>
+        )
+    }
+
     render() {
-        const {issues, issue_ids, project_id} = this.props
+        const {issues, issue_ids, project_id, summary} = this.props
         return (
             <div className="multiple-issue-summary">
               <PropertyStack>
                 <PropertyStackComponent>
                   Issue summary
+                </PropertyStackComponent>
+                <PropertyStackComponent>
+                  {this.renderEstimatesByUser(summary)}
                 </PropertyStackComponent>
               </PropertyStack>
             </div>
