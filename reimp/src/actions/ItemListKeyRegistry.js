@@ -71,6 +71,7 @@ export const SELECTOR__SPRINTS = 'selector_sprints'
 export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'
 export const FILTER_KEY__GLOBAL = 'global_filter'
 
+export const large_col_width = "300px"
 export const medium_col_width = "150px"
 export const small_col_width = "90px"
 export const tiny_col_width = "20px"

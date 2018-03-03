@@ -5,7 +5,7 @@ import { updateHeaderList } from './Page'
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 export const SET_MIEN = 'SET_MIEN'
 
-import { medium_col_width, small_col_width, tiny_col_width } from './ItemListKeyRegistry'
+import { large_col_width, medium_col_width, small_col_width, tiny_col_width } from './ItemListKeyRegistry'
 
 export const MIENS = ['dev', 'reviewer', 'finance', 'client', 'tester', 'spec']
 const MIEN_FEATURES = { 'spec': { 'multiple_issue_summary': true },
@@ -61,9 +61,10 @@ export var ISSUE_HEADERS_BY_MIEN = { 'dev': {'number': {label:"#", width:tiny_co
                                      'spec': {'number': {label:"#", width:tiny_col_width},
                                               'adhoc': {label:'', width:tiny_col_width},
                                               'expand_feature': {label:'', width:tiny_col_width},
-                                              'name': {label:"Name", width:medium_col_width},
+                                              'name': {label:"Name", width:large_col_width},
                                               'assignee': {label:"Assignee", width:medium_col_width},
                                               'status': {label:"Status", width:small_col_width},
+                                              'tag_columns': {label:"Tag Columns", width:medium_col_width},
                                               'estimate_columns': {label:"Estimates", width:medium_col_width}}
 }
 

@@ -219,9 +219,9 @@ class Issue extends Component {
                      <div>{issue.number}</div>
                    </div>
                   }
-                  {includes(visible_header_keys, "type") &&
+                 {includes(visible_header_keys, "adhoc") &&
                    <div className="div-table__cell"
-                        style={getCellStyle(header_list.type)} >
+                        style={getCellStyle(header_list.adhoc)} >
                      <div className={classNames({'issue-cell__issue-adhoc-icon':issue.type_name==='adhoc'})}></div>
                    </div>
                   }
@@ -301,7 +301,7 @@ class Issue extends Component {
                   {includes(visible_header_keys, "tag_columns") &&
                    map(tag_category_names, (tag_category_name) =>
                        <div key={tag_category_name}
-                            className="div-table__cell issue__cell__secondary"
+                            className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
                             style={getCellStyle(header_list.tag_columns)}>
                          <div className="issue-cell__tag_column">
                            {(tagsByCategoryName[tag_category_name] || {}).name}
