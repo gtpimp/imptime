@@ -8,8 +8,22 @@ export const SET_MIEN = 'SET_MIEN'
 import { large_col_width, medium_col_width, small_col_width, tiny_col_width } from './ItemListKeyRegistry'
 
 export const MIENS = ['dev', 'reviewer', 'finance', 'client', 'tester', 'spec']
-const MIEN_FEATURES = { 'spec': { 'multiple_issue_summary': true },
-                        'reviewer': { 'review_schedule': true }
+const MIEN_FEATURES = { 'spec':
+                        {
+                            'multiple_issue_summary': true
+                        },
+                        
+                        'reviewer':
+                        {
+                            'review_schedule': true
+                        },
+
+                        'finance':
+                        {
+                            'multiple_issue_summary': true,
+                            'costs': true
+                        },
+                        
 }
 
 export var ISSUE_HEADERS_BY_MIEN = { 'dev': {'number': {label:"#", width:tiny_col_width},

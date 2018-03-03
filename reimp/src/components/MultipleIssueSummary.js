@@ -13,6 +13,7 @@ import OtherUser from './OtherUser'
 import Hours from './Hours'
 import CurrencyValue from './CurrencyValue'
 import { has_permission } from '../actions/Users'
+import { doesMienHaveFeature } from '../actions/Mien'
 
 class MultipleIssueSummary extends Component {
 
@@ -39,30 +40,36 @@ class MultipleIssueSummary extends Component {
         return (
             <table>
               <thead>
-                <td>User</td>
-                <td>Raw estimate</td>
-                <td>Velocity estimate</td>
-                {show_costs && <td>Cost</td>}
-                {show_costs && <td>With commission</td>}
+                <tr>
+                  <th>User</th>
+                  <th>Raw estimate</th>
+                  <th>Velocity estimate</th>
+                  {show_costs && <th>Cost</th>}
+                  {show_costs && <th>With commission</th>}
+                </tr>
               </thead>
               <tbody>
                 {map(keys(summary.estimates_by_user), (user_id) =>
-                    <tr>
+                    <tr key={user_id}>
                       <td>
                         <OtherUser user_id={user_id} />
                       </td>
                       <td>
-                        <Hours value={summary.estimates_by_user[user_id].raw_estimates} />
+                        <Hours hours={summary.estimates_by_user[user_id].raw_estimates} />
                       </td>
                       <td>
-                        <Hours value={summary.estimates_by_user[user_id].velocity_estimates} />
+                        <Hours hours={summary.estimates_by_user[user_id].velocity_estimates} />
                       </td>
-                      <td>
-                        <CurrencyValue value={summary.estimates_by_user[user_id].velocity_adjusted_cost} />
-                      </td>
-                      <td>
-                        <CurrencyValue value={summary.estimates_by_user[user_id].velocity_commission_cost_estimates} />
-                      </td>
+                      { show_costs && 
+                        <td>
+                          <CurrencyValue value={summary.estimates_by_user[user_id].velocity_cost} />
+                        </td>
+                      }
+                      { show_costs && 
+                        <td>
+                          <CurrencyValue value={summary.estimates_by_user[user_id].velocity_commission_cost} />
+                        </td>
+                      }
                     </tr>
                 )}
               </tbody>
@@ -90,7 +97,7 @@ class MultipleIssueSummary extends Component {
 function mapStateToProps(state, props) {
     const {issue_ids, project_id} = props
     const summary = getMultipleIssueSummary(state, issue_ids) || {}
-    const show_costs = has_permission(state, project_id, 'has_view_ctc_billable_rates')
+    const show_costs = doesMienHaveFeature(state, 'costs') && has_permission(state, project_id, 'has_view_ctc_billable_rates')
     return {
         summary: summary,
         issue_ids: issue_ids,
