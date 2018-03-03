@@ -1,14 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import '../sass/mien-selector.css'
 import {
     PAGE_KEY__ISSUES_PAGE,
-    DEV_MIEN,
-    MANAGER_MIEN,
-    FINANCE_MIEN,
-    CLIENT_MIEN,
-    TESTER_MIEN,
-    SPEC_MIEN
+    MIENS
 } from '../actions/ItemListKeyRegistry'
 import { setMien,
          getMien,
@@ -31,34 +27,17 @@ class MienSelector extends Component {
 
     render() {
         const button_class = "button mien-button"
-        const { current_mien } = this.props
+        const { current_mien, available_miens } = this.props
 
         return (
             <div className="mien-select-panel">
-              <div onClick={() => this.onChangeMien(DEV_MIEN) }
-                   className={classNames(button_class, {'button--active': current_mien === DEV_MIEN})}>
-                Dev
-              </div>
-              <div onClick={() => this.onChangeMien(MANAGER_MIEN) }
-                   className={classNames(button_class, {'button--active': current_mien === MANAGER_MIEN})}>
-                Manager
-              </div>
-              <div onClick={() => this.onChangeMien(FINANCE_MIEN) }
-                   className={classNames(button_class, {'button--active': current_mien === FINANCE_MIEN})}>
-                Finance
-              </div>
-              <div onClick={() => this.onChangeMien(CLIENT_MIEN) }
-                   className={classNames(button_class, {'button--active': current_mien === CLIENT_MIEN})}>
-                Client
-              </div>
-              <div onClick={() => this.onChangeMien(TESTER_MIEN) }
-                   className={classNames(button_class, {'button--active': current_mien === TESTER_MIEN})}>
-                Tester
-              </div>
-              <div onClick={() => this.onChangeMien(SPEC_MIEN) }
-                   className={classNames(button_class, {'button--active': current_mien === SPEC_MIEN})}>
-                Spec
-              </div>
+              { map(available_miens, function(mien) {
+                    <div onClick={() => this.onChangeMien({mien}) }
+                         className={classNames(button_class, {'button--active': current_mien === mien})}>
+                      {mien}
+                    </div>
+                }
+              )}
             </div>
         )
     }
@@ -66,10 +45,12 @@ class MienSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const current_mien = getMien(state) || DEV_MIEN
+    const current_mien = getMien(state) || 'dev'
+    const available_miens = MIENS
 
     return {
-        current_mien: current_mien
+        current_mien,
+        available_miens
     }
 }
 
