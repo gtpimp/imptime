@@ -49,7 +49,7 @@ class MultipleIssueSummary extends Component {
                   <tr>
                     <th>User</th>
                     <th>Raw</th>
-                    <th>Velocity</th>
+                    <th>With velocity</th>
                     {show_costs && <th>Cost</th>}
                     {show_costs && <th>With commission</th>}
                   </tr>
@@ -108,7 +108,7 @@ class MultipleIssueSummary extends Component {
                                           <tr>
                                             <th>Tag</th>
                                             <th>Raw</th>
-                                            <th>Velocity</th>
+                                            <th>With velocity</th>
                                             {show_costs && <th>Cost</th>}
                                             {show_costs && <th>With commission</th>}
                                           </tr>
