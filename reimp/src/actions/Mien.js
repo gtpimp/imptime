@@ -12,6 +12,11 @@ const MIEN_FEATURES = { 'spec':
                         {
                             'multiple_issue_summary': true
                         },
+
+                        'dev':
+                        {
+                            'emacs': true
+                        },
                         
                         'reviewer':
                         {

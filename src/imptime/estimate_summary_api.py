@@ -71,7 +71,7 @@ class EstimateSummaryViewSet(BaseViewSet):
                          'Working cost',
                          'Scope creep',
                          'Total cost'])
-        for user_id, estimates in data['comparative_estimates'].items():
+        for user_id, estimates in data['comparative_estimates']['by_user'].items():
             writer.writerow([data['user_infos'][user_id]['username'],
                              estimates['developer_original_hours'],
                              estimates['developer_velocity'],

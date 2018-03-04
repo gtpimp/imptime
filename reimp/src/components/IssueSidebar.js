@@ -94,11 +94,51 @@ class IssueSidebar extends Component {
         dispatch(deleteIssues([issue.id]))
     }
 
+    renderEmacsHintSection() {
+        const {issue, sprint} = this.props
+        const { emacs_hint_enabled } = this.state
+        return (
+            <div>
+              <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
+
+              { emacs_hint_enabled &&
+                <div className="property-row">
+                  <div className="property-label">
+                    Emacs sprint
+                  </div>
+                  <div className="property-value">
+                    <input value={"** sprint" + sprint.id + " " + sprint.name}/>
+                  </div>
+                </div>
+              }
+                { emacs_hint_enabled &&
+                  <div className="property-row">
+                    <div className="property-label">
+                      Emacs issue
+                    </div>
+                    <div className="property-value">
+                      <input value={"*** issue" + issue.number + " " + issue.subject}/>
+                    </div>
+                  </div>
+                }
+                  { emacs_hint_enabled &&
+                    <div className="property-row">
+                      <div className="property-label">
+                        Git commit
+                      </div>
+                      <div className="property-value">
+                        <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
+                      </div>
+                    </div>
+                  }
+            </div>
+        )
+    }
+
     render() {
 
         const {issue, comments, testables, attachments, visual_spec_documents,
-               sprint, show_review_section} = this.props
-        const { emacs_hint_enabled } = this.state
+               sprint, show_review_section, show_emacs_section} = this.props
 
         if (issue && issue.id) {
 
@@ -135,40 +175,9 @@ class IssueSidebar extends Component {
                               <div className="property-cell"><OtherUser user_id={issue.created_by_id} /></div>
                             }
                           </div>
-                          <div>
-                            <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
 
-                            { emacs_hint_enabled &&
-                              <div className="property-row">
-                                <div className="property-label">
-                                  Emacs sprint
-                                </div>
-                                <div className="property-value">
-                                  <input value={"** sprint" + sprint.id + " " + sprint.name}/>
-                                </div>
-                              </div>
-                            }
-                            { emacs_hint_enabled &&
-                              <div className="property-row">
-                                <div className="property-label">
-                                  Emacs issue
-                                </div>
-                                <div className="property-value">
-                                  <input value={"*** issue" + issue.number + " " + issue.subject}/>
-                                </div>
-                              </div>
-                            }
-                            { emacs_hint_enabled &&
-                              <div className="property-row">
-                                <div className="property-label">
-                                  Git commit
-                                </div>
-                                <div className="property-value">
-                                  <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
-                                </div>
-                              </div>
-                            }
-                          </div>
+                          { show_emacs_section && this.renderEmacsHintSection() }
+
                         </PropertyStackComponent>
 
                         <PropertyStackComponent>
@@ -307,6 +316,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
     const show_review_section = doesMienHaveFeature(state, 'review_schedule')
+    const show_emacs_section = doesMienHaveFeature(state, 'emacs')
     populateEstimates(state, issue)
 
     return {
@@ -320,7 +330,8 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         sprint,
         assignable_user_ids,
-        show_review_section
+        show_review_section,
+        show_emacs_section
     }
 }
 

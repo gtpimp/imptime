@@ -4,7 +4,6 @@ import '../../sass/toolbar-panel.css'
 import {browserHistory} from 'react-router'
 import {
     startCandidateIssue,
-    startCandidateFeature,
     ensureIssuesLoaded,
     getIssue
 } from '../../actions/Issues'
@@ -23,7 +22,6 @@ class IssuesToolbarPanel extends Component {
     constructor(props) {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
-        this.onNewFeatureClick = this.onNewFeatureClick.bind(this)
     }
 
     componentDidMount() {
@@ -45,16 +43,10 @@ class IssuesToolbarPanel extends Component {
         dispatch(startCandidateIssue(sprint_id, last_selected_issue_id, selected_issue_ids))
     }
     
-    onNewFeatureClick() {
-        const { dispatch, last_selected_issue_id, sprint_id } = this.props
-        dispatch(startCandidateFeature(sprint_id, last_selected_issue_id))
-    }
-
     render() {
         return (
             <div className="toolbar-panel">
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
-              <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewFeatureClick}>+ New Feature</div>
             </div>
         )
     }

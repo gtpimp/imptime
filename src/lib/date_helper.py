@@ -40,3 +40,4 @@ def today_in_utc():
 def format_iso_string(iso_string):
     d = convert_iso_string_to_local_datetime(iso_string)
     return d.strftime("%d %B %Y")
+
