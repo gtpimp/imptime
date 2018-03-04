@@ -2687,7 +2687,7 @@ class Entry(BaseModel):
     date_updated = models.DateTimeField(auto_now=True)
     role = ProtectedForeignKey(ProjectRole, related_name='entries', null=True, blank=True)
 
-    hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    hours = models.DecimalField(max_digits=12, decimal_places=4, default=0)
 
     objects = EntryQuerySet.as_manager()
     objects_original = models.Manager()
@@ -2942,7 +2942,7 @@ class Entry(BaseModel):
 
     def save(self, *args, **kwargs):
         was_created = not self.id
-        self.hours = Decimal('%.2f' % round(self.total_hours, 2))
+        self.hours = Decimal('%.4f' % round(self.total_hours, 4))
         super(Entry, self).save(*args, **kwargs)
 
         if self.source != 'emacs':
