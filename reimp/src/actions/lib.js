@@ -110,22 +110,26 @@ export function impfetch(state, url, dispatch, args) {
     return res
 }
 
-export function format_hours(hours) {
+export function format_hours(decimal_hours, parts) {
+    parts = parts || convert_hours_to_parts(decimal_hours)
+    let {hours, minutes, seconds} = parts
+    if (hours   < 10) {hours   = "0"+hours}
+    if (minutes < 10) {minutes = "0"+minutes}
+    if (seconds < 10) {seconds = "0"+seconds}
+    return hours+':'+minutes+':'+seconds
+}
+
+export function convert_hours_to_parts(hours) {
     if ( ! hours ) {
         hours = 0
     }
     const raw_seconds = hours*60*60
     var sec_num = parseInt(raw_seconds, 10)
-    hours   = Math.floor(sec_num / 3600)
+    hours = Math.floor(sec_num / 3600)
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60)
     var seconds = sec_num - (hours * 3600) - (minutes * 60)
-
-    if (hours   < 10) {hours   = "0"+hours}
-    if (minutes < 10) {minutes = "0"+minutes}
-    if (seconds < 10) {seconds = "0"+seconds}
-    return hours+':'+minutes+":"+seconds
+    return {hours: hours, minutes:minutes, seconds:seconds}
 }
-
 
 export function download(state, url, params) {
     let form = document.createElement('form');
