@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import Sidebar from './Sidebar'
 import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
+import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import { has_permission } from '../actions/Users'
 import EditableSprintStatus from './EditableSprintStatus'
+import MultipleIssueSummary from './MultipleIssueSummary'
+import { doesMienHaveFeature } from '../actions/Mien'
 
 class MultipleSprintSidebar extends Component {
 
@@ -20,27 +22,36 @@ class MultipleSprintSidebar extends Component {
 
     render() {
 
-        const {sprints, sprint_ids, sprint} = this.props
+        const {sprints, sprint_ids, project_id, sprint, show_summary_section} = this.props
 
         return (
 
             <div className="sidebar sprint-sidebar">
-              <PropertyStackComponent>
-                <div className="property-row">
-                  <div className="property-value">
-                    { sprints.length } sprints selected
+              <PropertyStack>
+                <PropertyStackComponent>
+                  <div className="property-row">
+                    <div className="property-value">
+                      { sprints.length } sprints selected
+                    </div>
                   </div>
-                </div>
-                
-                <div className="property-row">
-                  <div className="property-label">
-                    Sprint
+                  
+                  <div className="property-row">
+                    <div className="property-label">
+                      Sprint
+                    </div>
+                    <div className="property-value">
+                      <EditableSprintStatus sprint_ids={sprint_ids}/>
+                    </div>
                   </div>
-                  <div className="property-value">
-                    <EditableSprintStatus sprint_ids={sprint_ids}/>
-                  </div>
-                </div>
-              </PropertyStackComponent>
+                </PropertyStackComponent>
+
+                { show_summary_section &&
+                  <PropertyStackComponent>
+                    <MultipleIssueSummary filter={{sprint_ids:sprint_ids}} project_id={project_id} />
+                  </PropertyStackComponent>
+                }
+              </PropertyStack>
+              
             </div>
         )
     }
@@ -53,11 +64,15 @@ function mapStateToProps(state, props) {
     if ( sprints && sprints.length > 0 ) {
         sprint = sprints[0]
     }
+    
+    const show_summary_section = doesMienHaveFeature(state, 'multiple_issue_summary')
+        
     return {
         sprints: sprints || [],
         sprint,
         sprint_ids,
-        project_id
+        project_id,
+        show_summary_section,
     }
 }
 

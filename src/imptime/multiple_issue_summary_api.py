@@ -37,7 +37,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             qs = self.allowed_issues()
             qs = self.apply_filter(qs, filter_args, issue_filter)
 
-            self.has_view_ctc_billable_rates = self._check_has_view_ctc_billable_rates(request, qs)
+            self._set_permissions(request, qs)
             
             res = {}
             res['all_user_ids'] = [x for x in qs.order_by("assigned_to_id").values_list("assigned_to_id", flat=True).distinct() if x]
@@ -56,7 +56,9 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
 
-    def _check_has_view_ctc_billable_rates(self, request, issues_qs):
+    def _set_permissions(self, request, issues_qs):
+        self.has_view_ctc_billable_rates = True
+        self.has_see_other_user_points = True
         for project_id in issues_qs.values('project__business__id')\
                                    .order_by('project__business__id')\
                                    .distinct()\
@@ -64,9 +66,11 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
             project = Project.objects.get(pk=project_id)
             bp = BusinessPermissions.for_user(request.user, project, auto_create=False)  # sic
+
             if not bp.has_view_ctc_billable_rates:
-                return False
-        return True
+                self.has_view_ctc_billable_rates = False
+            if not bp.has_see_other_user_points:
+                self.has_see_other_user_points = False
     
     def apply_filter(self, qs, raw_filter_args, issue_filter):
         issue_ids = issue_filter.pop('issue_ids', None)
@@ -92,7 +96,8 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         velocity_adjusted_hours_by_user = estimates_with_rates.annotate(velocity_adjusted_points=Sum(F('user__rates__velocity')*F('points')))
 
         for x in velocity_adjusted_hours_by_user:
-            estimates.setdefault(x['user_id'], {})['velocity_estimates'] = x['velocity_adjusted_points']
+            if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                estimates.setdefault(x['user_id'], {})['velocity_estimates'] = x['velocity_adjusted_points']
 
         if self.has_view_ctc_billable_rates:
 
@@ -101,7 +106,8 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                            output_field=FloatField()))
 
             for x in velocity_adjusted_costs:
-                estimates.setdefault(x['user_id'], {})['velocity_cost'] = x['velocity_adjusted_cost']
+                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                    estimates.setdefault(x['user_id'], {})['velocity_cost'] = x['velocity_adjusted_cost']
 
             cost_with_commission = estimates_with_rates\
                                    .annotate(velocity_adjusted_cost=Sum(F('user__rates__velocity')*F('points')*F('user__rates__billable_amount')*100/
@@ -109,7 +115,8 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                          output_field=FloatField()))
 
             for x in cost_with_commission:
-                estimates.setdefault(x['user_id'], {})['velocity_commission_cost'] = x['velocity_adjusted_cost']
+                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                    estimates.setdefault(x['user_id'], {})['velocity_commission_cost'] = x['velocity_adjusted_cost']
 
         return estimates
     
@@ -122,10 +129,11 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                            .distinct()\
                                            .annotate(sum_points=Sum("points"), category_id=F('issue__tags__category_id'))
         for x in raw_estimated_hours_by_tag:
-            estimates_by_tag_category.setdefault(x['category_id'], {})\
-                                     .setdefault(x['user_id'], {})\
-                                     .setdefault(x['issue__tags__id'], {})\
-                                     ['raw_estimates'] = x['sum_points']
+            if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                estimates_by_tag_category.setdefault(x['category_id'], {})\
+                                         .setdefault(x['user_id'], {})\
+                                         .setdefault(x['issue__tags__id'], {})\
+                                         ['raw_estimates'] = x['sum_points']
 
         estimates_with_rates_by_tag=points.filter(user__rates__project=F('issue__project'))\
                                           .values('user_id', "issue__tags__id", 'user__rates__velocity')\
@@ -136,10 +144,11 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                   .annotate(velocity_adjusted_points=Sum(F("user__rates__velocity")*F("points")),
                                                             category_id=F('issue__tags__category_id'))
         for x in velocity_adjusted_hours_by_user_and_tag:
-            estimates_by_tag_category.setdefault(x['category_id'], {})\
-                                     .setdefault(x['user_id'], {})\
-                                     .setdefault(x['issue__tags__id'], {})\
-                                     ['velocity_estimates'] = x['velocity_adjusted_points']
+            if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                estimates_by_tag_category.setdefault(x['category_id'], {})\
+                                         .setdefault(x['user_id'], {})\
+                                         .setdefault(x['issue__tags__id'], {})\
+                                         ['velocity_estimates'] = x['velocity_adjusted_points']
 
         if self.has_view_ctc_billable_rates:
             velocity_adjusted_costs = estimates_with_rates_by_tag\
@@ -147,10 +156,11 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                            output_field=FloatField()),
                                                 category_id=F('issue__tags__category_id'))
             for x in velocity_adjusted_costs:
-                estimates_by_tag_category.setdefault(x['category_id'], {})\
-                                         .setdefault(x['user_id'], {})\
-                                         .setdefault(x['issue__tags__id'], {})\
-                                         ['velocity_cost'] = x['velocity_adjusted_cost']
+                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                    estimates_by_tag_category.setdefault(x['category_id'], {})\
+                                             .setdefault(x['user_id'], {})\
+                                             .setdefault(x['issue__tags__id'], {})\
+                                             ['velocity_cost'] = x['velocity_adjusted_cost']
 
             costs_with_commission = estimates_with_rates_by_tag\
                                     .annotate(velocity_adjusted_cost=Sum(F('user__rates__velocity')*F('points')*F('user__rates__billable_amount')*100/
@@ -158,11 +168,11 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                          output_field=FloatField()),
                                               category_id=F('issue__tags__category_id'))
             for x in costs_with_commission:
-                estimates_by_tag_category.setdefault(x['category_id'], {})\
-                                         .setdefault(x['user_id'], {})\
-                                         .setdefault(x['issue__tags__id'], {})\
-                                         ['velocity_commission_cost'] = x['velocity_adjusted_cost']
-
+                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                    estimates_by_tag_category.setdefault(x['category_id'], {})\
+                                             .setdefault(x['user_id'], {})\
+                                             .setdefault(x['issue__tags__id'], {})\
+                                             ['velocity_commission_cost'] = x['velocity_adjusted_cost']
                 
             
         return estimates_by_tag_category

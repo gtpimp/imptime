@@ -157,7 +157,7 @@ class MultipleIssueSummary extends Component {
             <div className="multiple-issue-summary">
               <PropertyStack>
                 <PropertyStackComponent>
-                  Issue summary
+                  <h1>Estimate summary</h1>
                 </PropertyStackComponent>
                 {this.renderEstimatesByUser(summary)}
                 {this.renderEstimatesByTagCategory(summary)}
