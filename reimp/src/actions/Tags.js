@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import { compact, map, keys, keyBy, includes, difference, indexOf, identity } from 'lodash'
+import { groupBy, compact, map, keys, keyBy, includes, difference, indexOf, identity } from 'lodash'
 import move from 'lodash-move'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { setIssueStoreValue } from './Issues'
@@ -12,6 +12,7 @@ import {
     fetchItemsIfNeeded,
     ensureItemsLoaded,
     getItem,
+    getAllItems,
     getItems,
     updateItem,
     startCandidateItem,
@@ -46,6 +47,13 @@ export function fetchTagsIfNeeded(list_key) {
     return (dispatch, getState) => {
         dispatch(fetchItemsIfNeeded(ENTITY_KEY__TAG, list_key))
     }
+}
+
+export function getTagCategoryName(state, tag_category_id) {
+    // assumes at least one tag with this category has already been loaded
+    const tags = getAllItems(state, ENTITY_KEY__TAG)
+    const tags_by_category_id = groupBy(tags, 'category_id')
+    return ((tags_by_category_id[tag_category_id] || [])[0] || {}).category_name || "unknown"
 }
 
 export function ensureTagsLoaded(tag_ids) {

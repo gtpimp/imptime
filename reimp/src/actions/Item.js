@@ -366,6 +366,10 @@ export function getItem(state, entity_key, item_id) {
     return (((state.item || {})[entity_key] || {}).items_by_id || {})[item_id] || null
 }
 
+export function getAllItems(state, entity_key) {
+    return ((state.item || {})[entity_key] || {}).items_by_id
+}
+
 export function getItems(state, entity_key, item_ids) {
     const item_objs = (state.item || {})[entity_key]
     const items_by_id = (item_objs && item_objs.items_by_id) || {}

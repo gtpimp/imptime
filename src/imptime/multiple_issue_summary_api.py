@@ -120,6 +120,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                            .annotate(sum_points=Sum("points"), category_id=F('issue__tags__category_id'))
         for x in raw_estimated_hours_by_tag:
             estimates_by_tag_category.setdefault(x['category_id'], {}).setdefault(x['user_id'], {})['raw_estimates'] = x['sum_points']
+            estimates_by_tag_category.setdefault(x['category_id'], {}).setdefault(x['user_id'], {})['tag_id'] = x['issue__tags__id']
         
         return estimates_by_tag_category
     
