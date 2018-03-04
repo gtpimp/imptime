@@ -38,7 +38,7 @@ class ClientInvoiceDetails(models.Model):
 
 class InvoiceQuerySet(QuerySet):
     def cost_with_vat(self):
-        return (self.filter(client__taxable=True).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0) * (1+settings.INVOICE_DETAILS['vat_rate']) + \
+        return (self.filter(client__taxable=True).annotate(cost_with_vat=Sum('items__total_cost')*(1+F('vat_rate'))).aggregate(total_cost_with_vat=Sum('cost_with_vat'))['total_cost_with_vat'] or 0) + \
                (self.filter(client__taxable=False).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0)
 
     def vat(self):
@@ -83,10 +83,18 @@ class Invoice(models.Model):
     currency_symbol = models.CharField(max_length=3, blank=False, null=False, default="R", choices=CURRENCY_SYMBOLS)
     footer_terms = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=INVOICE_STATUSES)
+    vat_rate = models.FloatField(default=0)
 
     def save(self, *args, **kwargs):
         if self.project is not None:
             self.business = self.project.business
+
+        if self.id is None:
+            if self.client.taxable:
+                self.vat_rate = settings.INVOICE_DETAILS['vat_rate'] or 0
+            else:
+                self.vat_rate = 0
+                
         super(Invoice, self).save(*args, **kwargs)
 
     @classmethod
@@ -97,6 +105,14 @@ class Invoice(models.Model):
     def is_overdue(self):
         return self.status == 'open' and date.today() > self.payment_due
 
+    @property
+    def vat_rate_percentage(self):
+        return self.vat_rate*100
+
+    @property
+    def vat(self):
+        return self.cost_with_vat - self.cost
+    
     @property
     def days_paid_ago(self):
         paid_at = self.paid_at
@@ -128,15 +144,8 @@ class Invoice(models.Model):
         return self.items.all().aggregate(Sum('total_cost'))['total_cost__sum']
 
     @property
-    def vat(self):
-        if self.client.taxable:
-            return (self.cost or 0) * (settings.INVOICE_DETAILS['vat_rate'] or 0)
-        else:
-            return 0
-
-    @property
     def cost_with_vat(self):
-        return (self.cost or 0) + (self.vat or 0)
+        return (self.cost or 0) * (1+self.vat_rate)
 
     @property
     def amount_paid(self):
