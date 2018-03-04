@@ -44,7 +44,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             res['all_tag_ids'] = [x for x in Tag.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
 
             res['estimates_by_user'] = self._get_estimates_by_user(qs)
-            #res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
+            res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
             res['id'] = summary_id
             
             context['items'] = [ res ]
@@ -111,9 +111,15 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         return estimates
     
     def _get_estimates_by_tag_category(self, issues_qs):
-        estimates = {}
-        points = IssuePoints.objects.filter(issue__in=issues_qs, points__gt=0)
-        raw_estimated_hours = points.order_by("user_id", "issue__tags__category_id").values("user_id", "issue__tags__category_id").annotate(sum_points=Sum("points"))
+        estimates_by_tag_category = {}
+
+        points = IssuePoints.objects.filter(points__gt=0, issue__in=issues_qs)
+        raw_estimated_hours_by_tag = points.order_by("user_id", "issue__tags__id")\
+                                           .values("user_id", "issue__tags__id")\
+                                           .distinct()\
+                                           .annotate(sum_points=Sum("points"), category_id=F('issue__tags__category_id'))
+        for x in raw_estimated_hours_by_tag:
+            estimates_by_tag_category.setdefault(x['category_id'], {}).setdefault(x['user_id'], {})['raw_estimates'] = x['sum_points']
         
-        return estimates
+        return estimates_by_tag_category
     
