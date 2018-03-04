@@ -90,3 +90,9 @@
 .taglisttree__tag {
     cursor: pointer;
 }
+
+.tag_category_name {
+    border-radius: 8px;
+    background-color: $tag-background-color;
+    color: $tag-font-color;
+}

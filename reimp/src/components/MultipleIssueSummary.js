@@ -93,32 +93,40 @@ class MultipleIssueSummary extends Component {
                     return (
                         <PropertyStackComponent key={tag_category_id}>
                           <h2>
-                            Estimates for tag category <TagCategory tag_category_id={tag_category_id}/>
+                            <TagCategory tag_category_id={tag_category_id}/>
                           </h2>
-                          <table>
-                            <thead>
-                              <tr>
-                                <th>Tag</th>
-                                <th>User</th>
-                                <th>Raw estimate</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              { map(keys(estimates_by_user), (user_id) =>
-                                  <tr key={user_id}>
-                                    <td>
-                                      <Tag tag_id={estimates_by_user[user_id].tag_id} />
-                                    </td>
-                                    <td>
-                                      <OtherUser user_id={user_id} />
-                                    </td>
-                                    <td>
-                                      <Hours hours={estimates_by_user[user_id].raw_estimates} />
-                                    </td>
-                                  </tr>
-                                )}
-                            </tbody>
-                          </table>
+
+                          { map(keys(estimates_by_user), function(user_id) {
+                                const estimates_by_user_by_tag = estimates_by_user[user_id]
+                                return (
+                                    <PropertyStackComponent key={user_id}>
+                                      <h2>
+                                        <OtherUser user_id={user_id} />
+                                      </h2>
+                                      <table>
+                                        <thead>
+                                          <tr>
+                                            <th>Tag</th>
+                                            <th>Raw estimate</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {map(keys(estimates_by_user_by_tag), (tag_id) =>
+                                              <tr key={tag_id}>
+                                                <td>
+                                                  <Tag tag_id={tag_id} />
+                                                </td>
+                                                <td>
+                                                  <Hours hours={estimates_by_user_by_tag[tag_id].raw_estimates} />
+                                                </td>
+                                              </tr>
+                                           )}
+                                        </tbody>
+                                      </table>
+                                    </PropertyStackComponent>
+                                )
+                            }
+                            )}
                         </PropertyStackComponent>
                     )
                 }

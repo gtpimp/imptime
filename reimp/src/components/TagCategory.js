@@ -7,7 +7,7 @@ class TagCategory extends Component {
     render() {
         const {name} = this.props
 
-        return (<span>{name}</span>)
+        return (<div className="tag_category_name">{name}</div>)
     }
 }
 
