@@ -32,10 +32,10 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = {}
             summary_id = params.get('filter', {})['ids'][0]
-            additional_params = params['additional_params']
+            issue_filter = params['additional_params']['filter']
 
             qs = self.allowed_issues()
-            qs = self.apply_filter(qs, filter_args, additional_params)
+            qs = self.apply_filter(qs, filter_args, issue_filter)
 
             self.has_view_ctc_billable_rates = self._check_has_view_ctc_billable_rates(request, qs)
             
@@ -68,10 +68,13 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                 return False
         return True
     
-    def apply_filter(self, qs, raw_filter_args, additional_filter_args):
-        issue_ids = additional_filter_args.pop('issue_ids', None)
+    def apply_filter(self, qs, raw_filter_args, issue_filter):
+        issue_ids = issue_filter.pop('issue_ids', None)
         if issue_ids:
             qs = qs.filter(pk__in=issue_ids)
+        sprint_ids = issue_filter.pop('sprint_ids', None)
+        if sprint_ids:
+            qs = qs.filter(project_id__in=sprint_ids)
         return super(MultipleIssueSummaryViewSet, self).apply_filter(qs, raw_filter_args)
 
     def _get_estimates_by_user(self, issues_qs):

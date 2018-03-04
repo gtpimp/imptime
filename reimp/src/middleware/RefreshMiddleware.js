@@ -20,6 +20,7 @@ import { invalidateNudges } from '../actions/Nudges'
 import { addAsyncMessage } from '../actions/Async'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 import { invalidateAutoClocks } from '../actions/AutoClock'
+import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSummary'
 
 import {
     invalidateList
@@ -60,6 +61,7 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateIssues([d.entity_ref]))
         dispatch(invalidateIssueGeneralDetails([d.entity_ref]))
+        dispatch(invalidateAllMultipleIssueSummaries())
 
     } else if ( d.entity_name === 'issuetag' || d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {
         dispatch(invalidateIssues(d.params.issues))

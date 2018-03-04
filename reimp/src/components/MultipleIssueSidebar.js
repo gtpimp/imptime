@@ -136,7 +136,7 @@ class MultipleIssueSidebar extends Component {
 
                 { show_summary &&
                   <PropertyStackComponent>
-                    <MultipleIssueSummary issue_ids={issue_ids} project_id={project_id} />
+                    <MultipleIssueSummary filter={{issue_ids:issue_ids}} project_id={project_id} />
                   </PropertyStackComponent>
                 }
                 

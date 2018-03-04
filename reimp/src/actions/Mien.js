@@ -23,6 +23,11 @@ const MIEN_FEATURES = { 'spec':
                             'multiple_issue_summary': true,
                             'costs': true
                         },
+
+                        'client':
+                        {
+                            'deadlines': true
+                        }
                         
 }
 

@@ -1,4 +1,4 @@
-import { impfetch } from './lib.js'
+import { impfetch, hash_flat_object } from './lib.js'
 import { ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY } from '../actions/ItemListKeyRegistry'
 import { map, compact, reduce, sortBy } from 'lodash'
 import difference from 'lodash/difference'
@@ -13,8 +13,8 @@ import {
     getLoadingItemIds
 } from '../actions/Item'
 
-export function getSummaryKey(issue_ids) {
-    return reduce(sortBy(issue_ids), function (key, x) { return key+"_"+x })
+export function getSummaryKey(filter) {
+    return hash_flat_object(filter)
 }
 
 export function invalidateAllMultipleIssueSummaries() {
@@ -23,30 +23,30 @@ export function invalidateAllMultipleIssueSummaries() {
     }
 }
 
-export function invalidateMultipleIssueSummary(issue_ids) {
+export function invalidateMultipleIssueSummary(filter) {
     return (dispatch, getState) => {
-        const summary_key = getSummaryKey(issue_ids)
+        const summary_key = getSummaryKey(filter)
         dispatch(invalidateItems(ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key]))
     }
 }
 
-export function ensureMultipleIssueSummaryLoaded(issue_ids) {
-    const summary_key = getSummaryKey(issue_ids)
-    const additional_get_args = { issue_ids: issue_ids }
+export function ensureMultipleIssueSummaryLoaded(filter) {
+    const summary_key = getSummaryKey(filter)
+    const additional_get_args = {filter: filter}
     return ensureItemsLoaded(ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key], additional_get_args)
 }
 
-export function getMultipleIssueSummary(state, issue_ids) {
-    const summary_key = getSummaryKey(issue_ids)
+export function getMultipleIssueSummary(state, filter) {
+    const summary_key = getSummaryKey(filter)
     return getItem(state, ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, summary_key)
 }
 
-export function isMultipleIssueSummaryInvalidated(state, issue_ids) {
-    const summary_key = getSummaryKey(issue_ids)
+export function isMultipleIssueSummaryInvalidated(state, filter) {
+    const summary_key = getSummaryKey(filter)
     return is_item_invalidated(ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, state, summary_key)
 }
 
-export function isMultipleIssueSummaryLoading(state, issue_ids) {
-    const summary_key = getSummaryKey(issue_ids)
+export function isMultipleIssueSummaryLoading(state, filter) {
+    const summary_key = getSummaryKey(filter)
     return getLoadingItemIds(state, ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key])
 }

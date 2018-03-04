@@ -16,6 +16,7 @@ import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
 import { doesMienHaveFeature } from '../actions/Mien'
+import MultipleIssueSummary from './MultipleIssueSummary'
 
 class SprintSidebar extends Component {
 
@@ -67,7 +68,8 @@ class SprintSidebar extends Component {
     
     render() {
 
-        const { sprint_id, sprint, project, show_review_section } = this.props
+        const { sprint_id, sprint, project,
+                show_review_section, show_summary_section, show_deadline_section } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -128,14 +130,22 @@ class SprintSidebar extends Component {
                     <SprintReviewPanel sprint_id={sprint.id} />
                   </PropertyStackComponent>
                 }
-                
-                <PropertyStackComponent title="Deadlines">
-                  { map(sprint.deadline_ids, function (deadline_id, index) {
-                        return <EditableSprintDeadline key={sprint.id, deadline_id} sprint_id={sprint.id} deadline_id={deadline_id}/>
-                    })
-                  }
-                  <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
-                </PropertyStackComponent>
+
+                { show_summary_section &&
+                  <PropertyStackComponent>
+                    <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}} project_id={sprint.project_id} />
+                  </PropertyStackComponent>
+                }
+
+                { show_deadline_section &&
+                  <PropertyStackComponent title="Deadlines">
+                    { map(sprint.deadline_ids, function (deadline_id, index) {
+                          return <EditableSprintDeadline key={sprint.id, deadline_id} sprint_id={sprint.id} deadline_id={deadline_id}/>
+                      })
+                    }
+                    <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
+                  </PropertyStackComponent>
+                }
               </PropertyStack>
             </div>
         )
@@ -148,13 +158,17 @@ export function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
     const show_review_section = has_view_review_cycle_permission && doesMienHaveFeature(state, 'review_schedule')
+    const show_summary_section = doesMienHaveFeature(state, 'multiple_issue_summary')
+    const show_deadline_section = doesMienHaveFeature(state, 'deadlines')
     
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
         project: project,
-        show_review_section
+        show_review_section,
+        show_summary_section,
+        show_deadline_section
     }
 }
 

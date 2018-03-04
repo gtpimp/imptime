@@ -34,8 +34,8 @@ class MultipleIssueSummary extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, issue_ids, summary} = props
-        dispatch(ensureMultipleIssueSummaryLoaded(issue_ids))
+        const {dispatch, filter, summary} = props
+        dispatch(ensureMultipleIssueSummaryLoaded(filter))
         dispatch(ensureTagsLoaded(summary.all_tag_ids))
     }
 
@@ -152,7 +152,7 @@ class MultipleIssueSummary extends Component {
     }
 
     render() {
-        const {issues, issue_ids, project_id, summary} = this.props
+        const {issues, project_id, summary} = this.props
         return (
             <div className="multiple-issue-summary">
               <PropertyStack>
@@ -168,12 +168,13 @@ class MultipleIssueSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {issue_ids, project_id} = props
-    const summary = getMultipleIssueSummary(state, issue_ids) || {}
+    const {filter, project_id} = props
+    
+    const summary = getMultipleIssueSummary(state, filter) || {}
     const show_costs = doesMienHaveFeature(state, 'costs') && has_permission(state, project_id, 'has_view_ctc_billable_rates')
     return {
         summary: summary,
-        issue_ids: issue_ids,
+        filter,
         show_costs
     }
 }
