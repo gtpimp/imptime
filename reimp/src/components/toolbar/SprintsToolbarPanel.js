@@ -30,11 +30,7 @@ class SprintsToolbarPanel extends Component {
 
     constructor(props) {
         super(props)
-        this.onNewSprintClick = this.onNewSprintClick.bind(this)
-        this.onDashboardClick = this.onDashboardClick.bind(this)
-        this.onIssuesClick = this.onIssuesClick.bind(this)
         this.onSprintShowClosedToggleButtonClick = this.onSprintShowClosedToggleButtonClick.bind(this)
-        this.onBulkCreateIssuesClick = this.onBulkCreateIssuesClick.bind(this)
         this.onChangeFilterSprintType = this.onChangeFilterSprintType.bind(this)
     }
 
@@ -54,20 +50,6 @@ class SprintsToolbarPanel extends Component {
         }
     }
 
-    onNewSprintClick() {
-        const { dispatch, project_id, last_selected_sprint_id, selected_sprint_type_filter } = this.props
-        const default_sprint_args = {}
-        if ( selected_sprint_type_filter != "_all_" ) {
-            default_sprint_args.sprint_type = selected_sprint_type_filter
-        }
-        dispatch(startCandidateSprint(project_id, last_selected_sprint_id, default_sprint_args))
-    }
-
-    onDashboardClick() {
-        const { project_id, last_selected_sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+last_selected_sprint_id+'/dashboard');
-    }
-
     onChangeFilterSprintType(new_value) {
         const { dispatch } = this.props
         if( new_value ) {
@@ -80,11 +62,6 @@ class SprintsToolbarPanel extends Component {
         }
     }
 
-    onIssuesClick() {
-        const { project_id, sprint } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint.id+'/issues');
-    }
-
     onSprintShowClosedToggleButtonClick(new_value) {
         const { dispatch } = this.props
         const open_only = new_value
@@ -94,11 +71,6 @@ class SprintsToolbarPanel extends Component {
             dispatch(clear_list_filter_option(LIST_KEY__SPRINT_LIST, 'sprint_status'))
         }
         dispatch(invalidateList(LIST_KEY__SPRINT_LIST))
-    }
-
-    onBulkCreateIssuesClick() {
-        const { dispatch, project_id, last_selected_sprint_id } = this.props
-        browserHistory.push("/projects/" + project_id + "/sprints/" + last_selected_sprint_id + "/bulkCreate")
     }
 
     render() {
@@ -120,26 +92,7 @@ class SprintsToolbarPanel extends Component {
                         onChange={this.onChangeFilterSprintType}
                 />
               </div>
-              <div className="button button--large button--primary" onClick={this.onNewSprintClick}>
-                + New Sprint
-              </div>
-              { sprint && sprint.id &&
-                <div>
-                  <div className="button button--large button--primary" onClick={this.onIssuesClick}>
-                    Issues
-                  </div>
-                </div>
-              }
-              <div className="button toolbar-button--small button--large button--primary" onClick={this.onBulkCreateIssuesClick}>
-                + Bulk Issues
-              </div>
-              { sprint && sprint.id &&
-                <div>
-                  <div className="button button--large button--primary" onClick={this.onDashboardClick}>
-                    Dashboard
-                  </div>
-                </div>
-              }
+
             </div>
         )
     }

@@ -24,7 +24,6 @@ class IssuesToolbarPanel extends Component {
         super(props)
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.onNewFeatureClick = this.onNewFeatureClick.bind(this)
-        this.onBulkCreateIssuesClick = this.onBulkCreateIssuesClick.bind(this)
     }
 
     componentDidMount() {
@@ -51,21 +50,11 @@ class IssuesToolbarPanel extends Component {
         dispatch(startCandidateFeature(sprint_id, last_selected_issue_id))
     }
 
-    onBulkCreateIssuesClick() {
-        const { dispatch, project_id, sprint_id } = this.props
-        browserHistory.push("/projects/" + project_id + "/sprints/" + sprint_id + "/bulkCreate")
-    }
-
     render() {
         return (
             <div className="toolbar-panel">
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewFeatureClick}>+ New Feature</div>
-              <div>
-                <div className="button toolbar-button--small button--large button--primary" onClick={this.onBulkCreateIssuesClick}>
-                  + Bulk Issues
-                </div>
-              </div>
             </div>
         )
     }

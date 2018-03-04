@@ -39,11 +39,12 @@
 .breadcrumb-menu {
     position: absolute;
     top: 110px;
-    width: 145px;
+    min-width: 145px;
     z-index: 9;
     background-color: #fff;
     border: 1px solid #999;
     border-radius: 3px;
+    padding: 3px;
 }
 .breadcrumb-menu__item {
     color: #999;
