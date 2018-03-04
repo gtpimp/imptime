@@ -131,6 +131,9 @@ class Breadcrumb extends Component {
               </Link>
               { buttons && 
                 <div className="breadcrumb-menu">
+                  <Link className="breadcrumb-menu__item" to={to}>
+                    {label}
+                  </Link>
                   { map(buttons, function(button, index) {
                         return (
                             <div key={index}
