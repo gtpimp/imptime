@@ -48,8 +48,8 @@ class MultipleIssueSummary extends Component {
                 <thead>
                   <tr>
                     <th>User</th>
-                    <th>Raw estimate</th>
-                    <th>Velocity estimate</th>
+                    <th>Raw</th>
+                    <th>Velocity</th>
                     {show_costs && <th>Cost</th>}
                     {show_costs && <th>With commission</th>}
                   </tr>
@@ -107,7 +107,10 @@ class MultipleIssueSummary extends Component {
                                         <thead>
                                           <tr>
                                             <th>Tag</th>
-                                            <th>Raw estimate</th>
+                                            <th>Raw</th>
+                                            <th>Velocity</th>
+                                            {show_costs && <th>Cost</th>}
+                                            {show_costs && <th>With commission</th>}
                                           </tr>
                                         </thead>
                                         <tbody>
@@ -119,6 +122,19 @@ class MultipleIssueSummary extends Component {
                                                 <td>
                                                   <Hours hours={estimates_by_user_by_tag[tag_id].raw_estimates} />
                                                 </td>
+                                                <td>
+                                                  <Hours hours={estimates_by_user_by_tag[tag_id].velocity_estimates} />
+                                                </td>
+                                                { show_costs && 
+                                                  <td>
+                                                    <CurrencyValue value={estimates_by_user_by_tag[tag_id].velocity_cost} />
+                                                  </td>
+                                                }
+                                                { show_costs && 
+                                                  <td>
+                                                    <CurrencyValue value={estimates_by_user_by_tag[tag_id].velocity_commission_cost} />
+                                                  </td>
+                                                }
                                               </tr>
                                            )}
                                         </tbody>

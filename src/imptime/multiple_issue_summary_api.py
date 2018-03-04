@@ -123,6 +123,44 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                      .setdefault(x['user_id'], {})\
                                      .setdefault(x['issue__tags__id'], {})\
                                      ['raw_estimates'] = x['sum_points']
-        
+
+        estimates_with_rates_by_tag=points.filter(user__rates__project=F('issue__project'))\
+                                          .values('user_id', "issue__tags__id", 'user__rates__velocity')\
+                                          .order_by('user_id', "issue__tags__id")\
+                                          .distinct()
+
+        velocity_adjusted_hours_by_user_and_tag = estimates_with_rates_by_tag\
+                                                  .annotate(velocity_adjusted_points=Sum(F("user__rates__velocity")*F("points")),
+                                                            category_id=F('issue__tags__category_id'))
+        for x in velocity_adjusted_hours_by_user_and_tag:
+            estimates_by_tag_category.setdefault(x['category_id'], {})\
+                                     .setdefault(x['user_id'], {})\
+                                     .setdefault(x['issue__tags__id'], {})\
+                                     ['velocity_estimates'] = x['velocity_adjusted_points']
+
+        if self.has_view_ctc_billable_rates:
+            velocity_adjusted_costs = estimates_with_rates_by_tag\
+                                      .annotate(velocity_adjusted_cost=Sum(F('user__rates__velocity')*F('points')*F('user__rates__billable_amount'),
+                                                                           output_field=FloatField()),
+                                                category_id=F('issue__tags__category_id'))
+            for x in velocity_adjusted_costs:
+                estimates_by_tag_category.setdefault(x['category_id'], {})\
+                                         .setdefault(x['user_id'], {})\
+                                         .setdefault(x['issue__tags__id'], {})\
+                                         ['velocity_cost'] = x['velocity_adjusted_cost']
+
+            costs_with_commission = estimates_with_rates_by_tag\
+                                    .annotate(velocity_adjusted_cost=Sum(F('user__rates__velocity')*F('points')*F('user__rates__billable_amount')*100/
+                                                                        (100-F('user__rates__project__commission_percentage')),
+                                                                         output_field=FloatField()),
+                                              category_id=F('issue__tags__category_id'))
+            for x in costs_with_commission:
+                estimates_by_tag_category.setdefault(x['category_id'], {})\
+                                         .setdefault(x['user_id'], {})\
+                                         .setdefault(x['issue__tags__id'], {})\
+                                         ['velocity_commission_cost'] = x['velocity_adjusted_cost']
+
+                
+            
         return estimates_by_tag_category
     
