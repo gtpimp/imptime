@@ -61,6 +61,8 @@ class UserPermissionForm extends Component {
     render() {
         const { pup_id, is_loading, permission_name, handleSubmit } = this.props
 
+        return null
+        
         return (
             <div className="user-permission">
                 { !pup_id && <div>loading</div> }

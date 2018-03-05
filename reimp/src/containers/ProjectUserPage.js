@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import { setProjectUserBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureUsersLoaded, getUser} from '../actions/Users'
 import ProjectUsers from '../components/ProjectUsers'
@@ -49,21 +49,13 @@ class ProjectUserPage extends Component {
         user = user || {}
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
-            dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
-            breadcrumbs.push({to: '/projects', label: 'Projects'})
-            if ( project_id === project.id ) {
-                breadcrumbs.push({to: '/projects/'+project_id, label: project.name})
-            }
             if ( user_id ) {
                 dispatch(ensureUsersLoaded([user_id]))
-                breadcrumbs.push({to: '/projects/'+project_id+'/users', label: 'Users'})
-                if ( user_id === user.id ) {
-                    breadcrumbs.push({to: '/projects/'+project_id+'/users/'+user_id, label: user.username})
-                }
                 dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
             }
+            dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+            dispatch(setProjectUserBreadcrumbsHelper(project, user))
         }
-        dispatch(setBreadcrumbs(breadcrumbs))
     }
 
     navigateToSprintsPage() {

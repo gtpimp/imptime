@@ -2,6 +2,30 @@
 export const SET_BREADCRUMBS = 'SET_BREADCRUMBS'
 export const SET_BREADCRUMBS_ACTIVE = 'SET_BREADCRUMBS_ACTIVE'
 
+export function setProjectUserBreadcrumbsHelper(project, optional_user) {
+    const user = optional_user || {}
+    const breadcrumbs = [{to: '/projects',
+                          type: 'projects',
+                          label: 'Projects'},
+                         {to: '/projects/' + project.id,
+                          type: 'project',
+                          label: project.name,
+                          selected_entities: {project: project}},
+                         {to: '/projects/'+project.id+'/users/',
+                          label: 'Users',
+                          type: 'users',
+                          selected_entities: {project: project}}
+    ]
+    if ( user ) {
+        breadcrumbs.push({to: '/projects/'+project.id+'/users/'+user.id,
+                          type: 'project',
+                          label: user.username,
+                          selected_entities: {project: project,
+                                              user: user}})
+    }
+    return setBreadcrumbs(breadcrumbs)
+}
+
 export function setProjectBreadcrumbsHelper(optional_project) {
     const project = optional_project || {}
     const breadcrumbs = [{to: '/projects',
@@ -12,8 +36,8 @@ export function setProjectBreadcrumbsHelper(optional_project) {
                           type: 'project',
                           label: project.name,
                           selected_entities: {project: project}})
-        return setBreadcrumbs(breadcrumbs)
     }
+    return setBreadcrumbs(breadcrumbs)
 }
 
 export function setSprintBreadcrumbsHelper(project, optional_sprint) {

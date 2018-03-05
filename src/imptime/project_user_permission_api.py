@@ -27,6 +27,11 @@ class ProjectUserPermissionViewSet(BaseViewSet):
             pups = self.allowed_project_permissions()
             pups = self.apply_filter(qs=pups, raw_filter_args=filter_args)
 
+            if pups.count() > 0:
+                project = pups[0].business #sic
+                if self.logged_in_permissions(project) is None or not self.logged_in_permissions(project).has_view_permissions:
+                    pups = pups.none()
+
             if 'project_id' in filter_args and 'user_id' in filter_args and pups.count() == 0:
                 # We return an empty project permission so that the caller can tell what's going on.
                 pups = [ProjectPermissions(business_id=filter_args['project_id'],
@@ -52,7 +57,6 @@ class ProjectUserPermissionViewSet(BaseViewSet):
     def create(self, request):
         # not strictly a create, we use for updates as well
         try:
-            context = {}
             params = request.data
             project_pk = params['project_id']
             user_pks = params['user_ids']
