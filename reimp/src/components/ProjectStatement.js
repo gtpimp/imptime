@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { has_permission } from '../actions/Users'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { map, keys } from 'lodash'
 import OtherUser from './OtherUser'
@@ -155,8 +156,8 @@ class ProjectStatement extends Component {
     render_sprint_budgets(project_statement) {
         const { sprint_infos } = project_statement
         return (
-            <table className="project__statement__budgets_grid__table">
-              <thead className="project__statement__budgets_grid__header">
+            <table className="project__statement__table">
+              <thead className="project__statement__table_header">
                 <tr>
                   <th></th>
                   <th>Total budget</th>
@@ -289,9 +290,62 @@ class ProjectStatement extends Component {
         )
     }
 
+    render_invoices() {
+        const { project_statement } = this.props
+        const { sprint_infos } = project_statement
+        return (
+            <div className="project__statement__invoices_grid__header_summary">
+              <div className="project__statement__invoices_grid__header_summary_item">
+                <table className="project__statement__table">
+                  <thead className="project__statement__table_header">
+                    <tr>
+                      <th>Sprint</th>
+                      <th>Budget</th>
+                      <th>Spendable budget</th>
+                      <th>Actual</th>
+                      <th>Invoiced (exVAT)</th>
+                      <th>Paid</th>
+                      <th>Owed</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {map(project_statement.invoices, (invoice) =>
+                        <tr key={invoice.sprint_id}>
+                          <td>
+                            <SprintLink sprint_id={invoice.sprint_id}
+                                        sprint_name={sprint_infos[invoice.sprint_id].sprint_name}
+                                        project_id={sprint_infos[invoice.sprint_id].project_id} />
+                          </td>
+                          <td>
+                            <CurrencyValue value={invoice.budget} />
+                          </td>
+                          <td>
+                            <CurrencyValue value={invoice.spendable_budget} />
+                          </td>
+                          <td>
+                            <CurrencyValue value={invoice.total_billable_cost} />
+                          </td>
+                          <td>
+                            <CurrencyValue value={invoice.invoiced_ex_vat} />
+                          </td>
+                          <td>
+                            <CurrencyValue value={invoice.paid} />
+                          </td>
+                          <td>
+                            <CurrencyValue value={invoice.owed} />
+                          </td>
+                        </tr>
+                     )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+        )
+    }
+
     render() {
 
-        const { is_loading, project_statement, filter, project_id } = this.props
+        const { is_loading, project_statement, filter, project_id, show_invoices_section } = this.props
         const that = this;
 
         return (
@@ -340,6 +394,18 @@ class ProjectStatement extends Component {
                       <SprintTimeChartByUser project_id={project_id} filter={filter} />
                     </div>
 
+                    { show_invoices_section &&
+                      <div>
+                        <div className="project__statement__separator" />
+                        <div className="project__statement__times_grid">
+                          <h2 className="project__statement__times_grid__header">
+                            Invoices for sprints in this statement
+                          </h2>
+                          { this.render_invoices() }
+                        </div>
+                      </div>
+                    }
+
                     <div className="project__statement__separator" />
                     <div className="project__statement__remaining_grid">
                       <h2 className="project__statement__remaining_grid__header">
@@ -372,6 +438,7 @@ function mapStateToProps(state, props) {
     const project_statement = getProjectStatement(state, project_id) || {}
     const is_loading = isLoadingProjectStatement(state, project_id)
     const filter = get_project_statement_filter(state)
+    const show_invoices_section = has_permission(state, project_id, 'has_view_invoices')
 
     const num_days_before_month_become_interesting = 7
     if ( ! filter.date_from_inclusive ) {
@@ -390,11 +457,12 @@ function mapStateToProps(state, props) {
     }
     
     return {
-        project_id: project_id,
-        project: project,
-        project_statement: project_statement,
-        is_loading: is_loading,
-        filter: filter
+        project_id,
+        project,
+        project_statement,
+        is_loading,
+        filter,
+        show_invoices_section
     }
 }
 

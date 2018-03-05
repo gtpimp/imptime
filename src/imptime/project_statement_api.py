@@ -14,6 +14,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate
 from django.contrib.auth.models import User
 from imptime.authentication import FormTokenAuthenticated
+from invoicing.models import Invoice
 from project_statement_serializer import ProjectStatementFilterSerializer
 import csv
 
@@ -140,6 +141,7 @@ class ProjectStatementViewSet(BaseViewSet):
         users_with_time = self._remove_users_with_no_time(times_by_sprint)
         times_by_user = self._enrich_times_by_user(times_by_sprint)
         user_infos = self._get_user_infos(project)
+        self._enrich_with_sprint_budgets_across_time(times_by_sprint)
 
         project_statement = { "project_id": project.id,
                               "project_name": project.name,
@@ -153,7 +155,11 @@ class ProjectStatementViewSet(BaseViewSet):
                               "times_by_user": times_by_user,
                               "issues": self._get_affected_issue_ids(entries) }
         self._enrich_totals(project_statement)
-        self._enrich_with_sprint_budgets_across_time(times_by_sprint)
+        if bp.can_view_invoices:
+            invoices = self._get_invoices(times_by_sprint)
+        else:
+            invoices = {}
+        project_statement['invoices'] = invoices
 
         return project_statement
 
@@ -308,3 +314,17 @@ class ProjectStatementViewSet(BaseViewSet):
         writer.writerow(["From",filter['date_from_inclusive']])
         writer.writerow(["To",filter['date_to_inclusive']])
         return response, writer, data
+
+    def _get_invoices(self, times_by_sprint):
+        invoice_infos = {}
+        sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
+        for sprint in sprints:
+            invoices = Invoice.objects.all().filter(project=sprint) #sic
+            invoice_infos[sprint.id] = {'sprint_id': sprint.id,
+                                        'budget': sprint.budget,
+                                        'spendable_budget': sprint.spendable_budget,
+                                        'total_billable_cost': times_by_sprint[sprint.id]['totals'].get('total_billable_cost', 0),
+                                        'invoiced_ex_vat': invoices.cost(),
+                                        'paid': invoices.amount_paid(),
+                                        'owed': invoices.amount_owed()}
+        return invoice_infos

@@ -118,23 +118,23 @@ th.project__statement__times_grid__inner_cell {
     margin-top: 50px;
 }
 
-.project__statement__budgets_grid__table {
+.project__statement__table {
     width: 100%;
 }
 
-.project__statement__budgets_grid__header {
+.project__statement__table_header {
     background-color: $color-12;
 }
 
-.project__statement__times_grid__footer {
+.project__statement__table__footer {
     background-color: $color-12;
 }
 
-.project__statement__budgets_grid td {
+.project__statement__table td {
     border-bottom: 1px solid $color-6;
 }
 
-.project__statement__budgets_grid th {
+.project__statement__table th {
     border-bottom: 1px solid $color-6;
     padding: 3px;
 }

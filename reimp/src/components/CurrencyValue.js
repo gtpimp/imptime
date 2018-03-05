@@ -15,7 +15,7 @@ class CurrencyValue extends Component {
             // currency: 'ZAR',
             // currencyDisplay: 'symbol',
         })
-        const formatted_currency = formatter.format(value)
+        const formatted_currency = formatter.format(value || 0)
         
         return (
             <div className={classNames("currency_value", "currency_value--"+float_direction)}>
