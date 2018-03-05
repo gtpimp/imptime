@@ -71,19 +71,21 @@ class Nudge extends Component {
         return (
             <div className="nudge" onClick={this.onClickNudge}>
               <div className="nudge__title">
-                <div style={{"backgroundColor":stringToColour(nudge.reason)}}
+                <div style={{"backgroundColor":stringToColour(nudge.project_id+nudge.sprint_id)}}
                      className={classNames("nudge__reason", reason_class_name)}>
-                  {nudge.reason.replace(/_/g, " ")}
-                </div>
-              </div>
-              <div className="nudge__content">
-                <div className="nudge__header">
+
                   <div className="nudge__project">
                     <ProjectName project_id={nudge.project_id} />
                   </div>
                   <div className="nudge__sprint">
                     <SprintName sprint_id={nudge.sprint_id} display_mode={["status", "type"]} />
                   </div>
+                  
+                </div>
+              </div>
+              <div className="nudge__content">
+                <div className="nudge__header">
+                  {nudge.reason.replace(/_/g, " ")}
                 </div>
                 <div className="nudge__issue">
                   <IssueName issue_id={nudge.issue_id} />

@@ -38,7 +38,7 @@ class NudgeList extends Component {
     componentDidMount() {
 	const { dispatch, list_key, nested_objects } = this.props
 	dispatch(initList(list_key))
-        dispatch(update_list_pagination(list_key, { 'page_size': 10 }))
+        dispatch(update_list_pagination(list_key, { 'page_size': 50 }))
         dispatch(update_list_format(list_key, { 'spread': true }))
         dispatch(update_list_ordering(list_key, { 'due_date': 'asc' }))
         dispatch(fetchNudgesIfNeeded(list_key))

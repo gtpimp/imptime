@@ -6,6 +6,7 @@ from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import Issue, BusinessPermissions
+from project_dashboard_api import get_nonexpired_project_ids
 
 class Nudger(object):
 
@@ -22,7 +23,11 @@ class Nudger(object):
     #     self._nudge_for_inactive_projects()
  
     def refresh_all(self, user=None):
-        for project_id in Project.objects.all().values_list("pk", flat=True):
+        nudges = Nudge.objects.all()
+        if user is not None:
+            nudges.filter(user=user)
+        nudges.delete()
+        for project_id in get_nonexpired_project_ids():
             self.update_nudges_for_project(project_id, user=user)
     
     def update_nudges_for_project(self, project_id, user=None):

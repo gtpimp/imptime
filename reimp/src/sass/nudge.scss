@@ -87,6 +87,11 @@
 
 .nudge__sprint {
     display: flex;
+    font-size: $font-size-small;
+}
+
+.nudge__sprint .sprint_name--inline-small {
+    width: 100%;
 }
 
 .nudge__sprint .sprint_name__status {
@@ -95,4 +100,8 @@
 
 .nudge__sprint .sprint_name__type {
     font-size: $font-size-tiny;
+}
+
+.nudge__sprint .sprint_name__display_mode_extra {
+    float: right;
 }

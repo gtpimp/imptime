@@ -149,7 +149,15 @@ class ProjectDashboardViewSet(BaseViewSet):
         return sorted(project_dashboards, key=lambda x: x['recent_activity']['sort_date'],
                       reverse=True)
 
-
+def get_nonexpired_project_ids():
+    projects = Project.objects.all()
+    project_ids = []
+    for project in projects:
+        recent_activity = get_recent_activity(project)
+        if recent_activity['is_active'] or recent_activity['is_inactive']:
+            project_ids.append(project.id)
+    return project_ids
+    
 def get_recent_activity(project):
     """helper method to get a list of recent activity markers for a
        project, useful for sorting, exposed for use by other apis."""

@@ -47,16 +47,18 @@ class SprintName extends Component {
 		 onClick={this.on_clicked}
 	    >
 	      {sprint.name }
-              { includes(display_mode, "status") &&
-                <div className="sprint_name__status">
-                  {sprint.status_name}
-                </div>
-              }
-              { includes(display_mode, "type") &&
-                <div className="sprint_name__type">
-                  {sprint.sprint_type}
-                </div>
-              }
+              <div className="sprint_name__display_mode_extra">
+                { includes(display_mode, "status") &&
+                  <div className="sprint_name__status">
+                    {sprint.status_name}
+                  </div>
+                }
+                { includes(display_mode, "type") &&
+                  <div className="sprint_name__type">
+                    {sprint.sprint_type}
+                  </div>
+                }
+              </div>
 	    </div>
 	)
     }
