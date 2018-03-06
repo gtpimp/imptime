@@ -137,10 +137,17 @@
     border-radius: 7px;
 }
 
+.icon__status--paid {
+    height: 15px;
+    width: 15px;
+    background-color:green;
+    border-radius: 7px;
+}
+
 .icon__status--not_overdue {
     height: 15px;
     width: 15px;
-    background-color:red;
+    background-color:orange;
     border-radius: 7px;
 }
 

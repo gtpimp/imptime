@@ -124,7 +124,8 @@ class Invoice extends Component {
                                 style={getCellStyle(header_list.is_overdue)}>
                              <div className="invoice__cell--name">
                                <div className={classNames({"icon__status--overdue":invoice.is_overdue,
-                                                           "icon__status--not_overdue":!invoice.is_overdue})} />
+                                                           "icon__status--not_overdue":!invoice.is_overdue && invoice.status !== 'paid',
+                                                           "icon__status--paid":invoice.status == 'paid' })} />
                              </div>
                            </div>}
 
