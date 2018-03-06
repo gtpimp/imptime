@@ -67,7 +67,6 @@ class ProjectDashboardToolbarPanel extends Component {
               <button className="button button--large button--primary" onClick={this.navigateToProjectRoadmapPage}>Roadmap</button>
               <ToolbarButton tooltip="Back" icon="subdirectory_arrow_left" onClick={this.onOpenProjectClick}/>
               <ToolbarButton tooltip="Delete" icon="delete" onClick={this.onDeleteProjectClick}/>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

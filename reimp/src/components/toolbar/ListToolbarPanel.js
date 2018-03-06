@@ -23,7 +23,6 @@ class ListToolbarPanel extends Component {
             <div className="toolbar-panel">
               <ToolbarButton tooltip="Info" flavour="toggle" icon="info" isEnabled={true} onEnable={this.onEnableInfoClick} onDisable={this.onDisableInfoClick}/>
               <ToolbarButton tooltip="Settings" icon="settings" onClick={this.onSettingsClick}/>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

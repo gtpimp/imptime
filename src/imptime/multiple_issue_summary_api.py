@@ -194,7 +194,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         for x in hours:
             raw_estimate = estimates_by_user.get(x['user_id'], {'raw_estimates':0})['raw_estimates']
             actuals[x['user_id']] = {'hours':x['sum_hours'],
-                                     'calculated_velocity': raw_estimate / (float(x['sum_hours'] or 1))}
+                                     'calculated_velocity': (float(x['sum_hours'] or 1) / (raw_estimate or 1) )}
             if self.has_view_ctc_billable_rates:
                 actuals[x['user_id']]['cost'] = x['cost']
                 actuals[x['user_id']]['commission_cost'] = x['cost_with_commission']

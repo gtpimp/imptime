@@ -36,7 +36,6 @@ class EditableCopyIssueToSprint extends Component {
                     <div data-tip="Copy this issue to a different sprint" className="issue_sidebar__issue_copy_img" />
                     <Blank/>
                 </EditableProperty>
-                <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

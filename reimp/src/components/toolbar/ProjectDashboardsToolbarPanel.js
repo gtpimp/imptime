@@ -25,7 +25,6 @@ class ProjectDashboardsToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateComponents}/>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

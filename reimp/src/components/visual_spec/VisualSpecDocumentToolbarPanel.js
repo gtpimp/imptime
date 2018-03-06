@@ -61,7 +61,6 @@ class VisualSpecDocumentToolbarPanel extends Component {
                 </div>
               }
               <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateComponents}/>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

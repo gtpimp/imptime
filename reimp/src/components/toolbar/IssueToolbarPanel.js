@@ -173,7 +173,6 @@ class IssueToolbarPanel extends Component {
                   <ToolbarButton tooltip="Alarm" icon="alarm" onClick={this.onEstimateClick}/>
                 </div>
               }
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

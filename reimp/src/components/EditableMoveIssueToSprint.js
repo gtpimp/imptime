@@ -35,7 +35,6 @@ class EditableMoveIssueToSprint extends Component {
                 <div data-tip="Move this issue to a different sprint" className="issue_sidebar__issue_move_img" />
                 <Blank/>
               </EditableProperty>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

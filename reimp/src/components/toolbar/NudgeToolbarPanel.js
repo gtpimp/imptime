@@ -39,7 +39,6 @@ class NudgeToolbarPanel extends Component {
               />
               <div className="button toolbar-button--small button--large button--primary"
                              onClick={this.onRecalculateClicked}>Recalculate</div>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

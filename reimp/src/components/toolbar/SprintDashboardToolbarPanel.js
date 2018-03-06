@@ -47,7 +47,6 @@ class SprintDashboardToolbarPanel extends Component {
                     </div>
                   }
               <ToolbarButton tooltip="Delete" icon="delete" onClick={this.onDeleteSprintClick}/>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

@@ -75,7 +75,6 @@ export class Timestamp extends Component {
               }
             </div>
           }
-          <ReactTooltip place="bottom" type="info" />          
         </div>
     )
     }
