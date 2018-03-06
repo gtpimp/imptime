@@ -10,3 +10,6 @@ class IssueEstimateSerializer(BaseSerializer):
     user_id = serializers.CharField()
     estimate_hours = serializers.FloatField(source="points")
     
+class IssueHoursSerializer(BaseSerializer):
+    user_id = serializers.CharField()
+    hours = serializers.FloatField()

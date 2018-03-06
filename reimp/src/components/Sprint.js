@@ -3,7 +3,6 @@ import { includes, keys } from 'lodash';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {browserHistory} from 'react-router'
-import Progress from '../components/Progress'
 import Timestamp from '../components/Timestamp'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
@@ -111,14 +110,6 @@ class Sprint extends Component {
                         style={getCellStyle(header_list.num_issues)}>
                      <div className="sprint__cell--num-issues">
                        {sprint.num_issues || 0} Issues
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "progress") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.progress)}>
-                     <div className="sprint__cell--progress">
-                       <Progress issue={sprint} />
                      </div>
                    </div>
                   }

@@ -2,9 +2,10 @@ import logging
 from rest_framework import serializers
 from django.utils import timezone
 from drf_compound_fields.fields import ListField
+from django.db.models import Sum
 from base_serializer import BaseSerializer, BaseModelSerializer
 from tag_serializer import TagSerializer
-from issue_estimate_serializer import IssueEstimateSerializer
+from issue_estimate_serializer import IssueEstimateSerializer, IssueHoursSerializer
 from issue_comment_serializer import IssueCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
 from visual_spec_issue_annotation_serializer import VisualSpecIssueAnnotationSerializer
@@ -32,6 +33,7 @@ class IssueSerializer(BaseSerializer):
     tag_category_ids = serializers.ListField(child=serializers.CharField())
     dev_estimate_hours = serializers.FloatField()
     dev_estimate_user_quick_name = serializers.CharField()
+    all_actuals = IssueHoursSerializer(many=True)
     all_estimates = IssueEstimateSerializer(many=True)
     my_estimate = IssueEstimateSerializer(many=True)
     actual_hours = serializers.FloatField()
@@ -84,6 +86,14 @@ class IssueSerializer(BaseSerializer):
 
         if not bp.has_see_other_user_points:
             issue.all_estimates = None
+            issue.all_actuals = None
+        else:
+            all_actuals = {}
+            for entry in issue.all_entries:
+                all_actuals.setdefault(entry.user_id, {'user_id':entry.user_id}).setdefault('hours', 0)
+                all_actuals[entry.user_id]['hours'] += entry.hours
+            issue.all_actuals = all_actuals.values()
+            
 
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 

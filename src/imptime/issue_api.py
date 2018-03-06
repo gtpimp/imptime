@@ -89,6 +89,8 @@ class IssueViewSet(BaseViewSet):
                                                   queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
                        .prefetch_related(Prefetch('entries', to_attr='my_entries',
                                                   queryset=Entry.objects.filter(user=self.request.user).select_related('user')))\
+                       .prefetch_related(Prefetch('entries', to_attr='all_entries',
+                                                  queryset=Entry.objects.order_by('user_id')))\
                        .prefetch_related(Prefetch('issue_points', to_attr='all_estimates'))\
                        .prefetch_related(Prefetch('issue_points', to_attr='my_estimate',
                                                   queryset=IssuePoints.objects.filter(user=self.request.user, issue__in=issues)))\

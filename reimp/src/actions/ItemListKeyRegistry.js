@@ -125,7 +125,6 @@ export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                  'start_time': {label:"First clock", width:small_col_width},
                                  'end_time': {label:"Last clock", width:small_col_width},
                                  'num_issues': {label:"Issues", width: small_col_width},
-                                 //'progress': {label:"Progress", width: small_col_width},
                                  'status': {label:"Status", width:small_col_width},
                                  'type': {label:"Type", width:small_col_width}
 }
