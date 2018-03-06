@@ -80,7 +80,7 @@ class SprintBreakdown extends Component {
                                                   <tbody>
                                                     <tr>
                                                       <td className="project__statement__times_grid__inner_cell">
-                                                        <Hours hours={time_for_user.total_hours}/>
+                                                        <Hours hours={time_for_user.total_hours} show_seconds={true}/>
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell project__statement__times_grid__rate_cell">
                                                         <UserRate value={time_for_user.rate}/>
@@ -118,7 +118,7 @@ class SprintBreakdown extends Component {
                                     <tbody>
                                       <tr>
                                         <td className="project__statement__times_grid__inner_cell">
-                                          <Hours hours={time_for_user.total_hours}/>
+                                          <Hours hours={time_for_user.total_hours} show_seconds={true}/>
                                         </td>
                                         <td className="project__statement__times_grid__inner_cell">
                                         </td>

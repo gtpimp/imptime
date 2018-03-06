@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import { convert_hours_to_parts, format_hours } from '../actions/lib'
 
 class Hours extends Component {
-
+    
     render() {
 
         const {decimal_hours, formatted_hours, tooltip} = this.props
@@ -21,13 +21,15 @@ class Hours extends Component {
 }
 
 function mapStateToProps(state, props) {
-
+    const { show_seconds } = props
+    
     const decimal_hours = props.hours
     const fixed_hours = decimal_hours || 0
 
-    const time_parts = convert_hours_to_parts(fixed_hours)
+    let time_parts = convert_hours_to_parts(fixed_hours)
     const {hours, minutes, seconds} = time_parts
-    const formatted_hours = format_hours(hours, time_parts)
+
+    const formatted_hours = format_hours(hours, time_parts, show_seconds)
     const tooltip = "" + hours + "hours:" + minutes + "minutes:" + seconds + "seconds. " +
                     "  As decimal: " + decimal_hours + " hours"
     

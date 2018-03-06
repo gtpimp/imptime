@@ -81,10 +81,10 @@ class MainLayout extends Component {
               <Websocket/>
               <Header/>
               <AutoClockPopup/>
-              <ReactTooltip place="bottom" type="info" />
               <div className="main">
                 {this.props.children}
               </div>
+              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

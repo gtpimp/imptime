@@ -45,6 +45,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
             res['estimates_by_user'] = self._get_estimates_by_user(qs)
             res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
+            res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
             res['id'] = summary_id
             
             context['items'] = [ res ]
@@ -177,3 +178,25 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             
         return estimates_by_tag_category
     
+    def _get_actuals_by_user(self, issues_qs, estimates_by_user):
+        actuals = {}
+        entries = Entry.objects.filter(issue__in=issues_qs)
+        
+        hours = entries.order_by("user_id")\
+                       .filter(user__rates__project=F('issue__project'))\
+                       .values("user_id")\
+                       .annotate(sum_hours=Sum('hours'),
+                                 cost=Sum(F('hours')*F('user__rates__billable_amount')),
+                                 cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
+                                                          output_field=FloatField()))
+
+
+        for x in hours:
+            raw_estimate = estimates_by_user.get(x['user_id'], {'raw_estimates':0})['raw_estimates']
+            actuals[x['user_id']] = {'hours':x['sum_hours'],
+                                     'calculated_velocity': raw_estimate / (float(x['sum_hours'] or 1))}
+            if self.has_view_ctc_billable_rates:
+                actuals[x['user_id']]['cost'] = x['cost']
+                actuals[x['user_id']]['commission_cost'] = x['cost_with_commission']
+            
+        return actuals

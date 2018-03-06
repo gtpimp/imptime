@@ -110,13 +110,18 @@ export function impfetch(state, url, dispatch, args) {
     return res
 }
 
-export function format_hours(decimal_hours, parts) {
+export function format_hours(decimal_hours, parts, show_seconds) {
     parts = parts || convert_hours_to_parts(decimal_hours)
     let {hours, minutes, seconds} = parts
     if (hours   < 10) {hours   = "0"+hours}
     if (minutes < 10) {minutes = "0"+minutes}
     if (seconds < 10) {seconds = "0"+seconds}
-    return hours+':'+minutes+':'+seconds
+
+    if ( show_seconds === true ) {
+        return hours+':'+minutes+':'+seconds
+    } else {
+        return hours+':'+minutes
+    }
 }
 
 export function convert_hours_to_parts(hours) {
