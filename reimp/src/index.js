@@ -6,6 +6,7 @@ import DashboardPage from './containers/DashboardPage'
 import DevPage from './containers/DevPage'
 import ForgotPasswordPage from './containers/ForgotPasswordPage'
 import IssuesPage from './containers/IssuesPage'
+import InvoicesPage from './containers/InvoicesPage'
 import MainLayout from './components/MainLayout'
 import PasswordReminderSentPage from './containers/PasswordReminderSentPage'
 import ProjectDashboardPage from './containers/ProjectDashboardPage'
@@ -57,6 +58,7 @@ ReactDOM.render(
           <Route path="/password/reminded" component={PasswordReminderSentPage}/>
           <Route path="dev" component={DevPage}/>
           <Route path="release_notes_editor" component={ReleaseNotesPage}/>
+          <Route path="invoices" component={InvoicesPage}/>
           <Route path="projects" component={ProjectsPage}/>
           <Route path="projects/:projectId" component={ProjectsPage}/>
           <Route path="projects/:projectId/dashboard" component={ProjectDashboardPage}/>

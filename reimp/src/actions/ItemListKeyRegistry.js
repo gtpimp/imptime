@@ -2,6 +2,7 @@
 export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
 export const LIST_KEY__ISSUE_LIST = 'issues'
+export const LIST_KEY__INVOICE_LIST = 'invoices'
 export const LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details'
 export const LIST_KEY__USER_LIST = 'users'
 export const LIST_KEY__PROJECT_USER_LIST = 'project_users'
@@ -17,6 +18,7 @@ export const LIST_KEY__WIKI_LIST = 'wiki_list'
 export const LIST_KEY__AUTO_CLOCK = 'auto_clock'
 export const LIST_KEY__RECENT_AUTO_CLOCK = 'recent_auto_clock'
 
+export const ENTITY_KEY__INVOICE = 'invoice'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
 export const ENTITY_KEY__ISSUE = 'issue'
@@ -44,9 +46,11 @@ export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
 export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__VISUAL_SPEC_ISSUE,
                                   ENTITY_KEY__ISSUE,
+                                  ENTITY_KEY__INVOICE,
                                   ENTITY_KEY__WIKI ]
 
 export const PAGE_KEY__DASHBOARD_PATH = 'dashboard_page'
+export const PAGE_KEY__INVOICE_PATH = 'invoice_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
 export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'
 export const PAGE_KEY__PROJECT_ROADMAP_PAGE = 'project_roadmap_page'
@@ -83,6 +87,29 @@ export function getCellStyle(s) {
         "maxWidth":s.width,
         "flex":s.flex || 0
     }
+}
+
+export var INVOICE_HEADER_LIST = {'invoice_number': {label:"Number", width:"auto", flex:1},
+                                  'client_name': {label:'Client', width:'auto', flex:1},
+                                  //'internal_comment': {label:'Comment', width:'auto', flex:1},
+                                  'project_id': {label:'Project', width:'auto', flex:1},
+                                  'sprint_id': {label:'Sprint', width:'auto', flex:1},
+                                  'created': {label:'Created at', width:'auto', flex:1},
+                                  'issued_at': {label:'Issued at', width:'auto', flex:1},
+                                  'payment_due': {label:'Due at', width:'auto', flex:1},
+                                  'paid_at': {label:'Paid at', width:'auto', flex:1},
+                                  'status': {label:'status', width:'auto', flex:1},
+                                  'is_overdue': {label:'Overdue', width:'auto', flex:1},
+                                  'cost_ex_vat': {label:'cost_ex_vat', width:'auto', flex:1},
+                                  'vat': {label:'Vat', width:'auto', flex:1},
+                                  'cost_with_vat': {label:'cost_with_vat', width:'auto', flex:1},
+                                  'amount_paid': {label:'amount_paid', width:'auto', flex:1},
+                                  'amount_written_off': {label:'amount_written_off', width:'auto', flex:1},
+                                  'amount_owed': {label:'amount_owed', width:'auto', flex:1},
+                                  'invoice_note': {label:'Note', width:'auto', flex:1},
+                                  //'footer_terms': {label:'footer_terms', width:'auto', flex:1},
+                                  //'client_order_name': {label:'Order name', width:'auto', flex:1},
+                                  //'client_order_number': {label:'Order number', width:'auto', flex:1}
 }
 
 export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},

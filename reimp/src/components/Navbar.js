@@ -26,7 +26,7 @@ class Navbar extends Component {
 
     render() {
 
-        const {  is_loading, is_saving, is_websockets_connected, user_dashboard_expanded, username} = this.props
+        const {  is_loading, is_saving, is_websockets_connected, user_dashboard_expanded, username, show_invoices} = this.props
         const user_initiated_network_activity = is_loading || is_saving
 
         return (
@@ -45,6 +45,7 @@ class Navbar extends Component {
                   <div className="navbar__tab"><NavTab to="/dashboard" label="Dashboard" /></div>
                   <div className="navbar__tab"><NavTab to="/usertimesheets" label="Timesheets" /></div>
                   <div className="navbar__tab"><NavTab to="/projects" label="Projects" /></div>
+                  <div className="navbar__tab"><NavTab to="/invoices" label="Invoices"/></div>
                   <div className="navbar__tab"><NavTab to="/clients" label="Clients"/></div>
                   <div className="navbar__tab"><NavTab to="/team" label="Team" /></div>
                   <div className="navbar__tab" onClick={this.toggleUserDashboard}><NavTab variant="dashboard-toggle" expanded={user_dashboard_expanded} label={username} /></div>

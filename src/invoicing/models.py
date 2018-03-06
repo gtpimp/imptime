@@ -111,7 +111,7 @@ class Invoice(models.Model):
 
     @property
     def vat(self):
-        return self.cost_with_vat - self.cost
+        return (self.cost_with_vat or 0) - (self.cost or 0)
     
     @property
     def days_paid_ago(self):

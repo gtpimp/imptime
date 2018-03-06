@@ -6,6 +6,7 @@ import filter_api
 import issue_api
 import issue_attachment_api
 import clock_api
+import invoice_api
 import issue_comment_api
 import issue_estimate_api
 import issue_review_api
@@ -44,6 +45,8 @@ router.register(r'permission/project', project_user_permission_api.ProjectUserPe
                 base_name='project_permission')
 router.register(r'project', project_api.ProjectViewSet,
                 base_name='project')
+router.register('invoice', invoice_api.InvoiceViewSet,
+                base_name='invoice')
 router.register(r'time_chart', time_chart_api.TimeChartViewSet,
                 base_name='time_chart')
 router.register(r'sprint_deadline', sprint_deadline_api.SprintDeadlineViewSet,

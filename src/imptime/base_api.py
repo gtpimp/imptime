@@ -14,6 +14,7 @@ from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 from imptime.models import VisualSpecIssueAnnotation, WikiPage
+from invoicing.models import Invoice
 
 class PermissionHelper():
     @classmethod
@@ -204,6 +205,12 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_project_roles(self, project):
         return ProjectRole.objects.filter(business=project) #sic
+    
+    def allowed_invoices(self):
+        return Invoice.objects.filter(business__in=self.allowed_projects(), #sic
+                                      business__business_permissions__user=self.request.user,
+                                      business__business_permissions__can_view_invoices=True)
+                                      
     
     def allowed_wiki_pages(self):
         non_sensitive_wiki_pages = WikiPage.objects.filter(money_sensitive=False,
