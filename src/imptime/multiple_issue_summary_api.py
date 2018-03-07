@@ -40,13 +40,13 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             self._set_permissions(request, qs)
             
             res = {}
+            res['id'] = summary_id
             res['all_user_ids'] = [x for x in qs.order_by("assigned_to_id").values_list("assigned_to_id", flat=True).distinct() if x]
             res['all_tag_ids'] = [x for x in Tag.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
-
             res['estimates_by_user'] = self._get_estimates_by_user(qs)
             res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
             res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
-            res['id'] = summary_id
+            res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
             
             context['items'] = [ res ]
             
@@ -99,6 +99,8 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         for x in velocity_adjusted_hours_by_user:
             if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
                 estimates.setdefault(x['user_id'], {})['velocity_estimates'] = x['velocity_adjusted_points']
+                estimates[x['user_id']]['given_velocity'] = \
+                              estimates[x['user_id']]['velocity_estimates']/estimates[x['user_id']]['raw_estimates']
 
         if self.has_view_ctc_billable_rates:
 
@@ -150,6 +152,9 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                          .setdefault(x['user_id'], {})\
                                          .setdefault(x['issue__tags__id'], {})\
                                          ['velocity_estimates'] = x['velocity_adjusted_points']
+                estimates_by_tag_category[x['category_id']][x['user_id']][x['issue__tags__id']]['given_velocity'] = \
+                    estimates_by_tag_category[x['category_id']][x['user_id']][x['issue__tags__id']]['velocity_estimates'] /\
+                    estimates_by_tag_category[x['category_id']][x['user_id']][x['issue__tags__id']]['raw_estimates']
 
         if self.has_view_ctc_billable_rates:
             velocity_adjusted_costs = estimates_with_rates_by_tag\
@@ -200,3 +205,35 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                 actuals[x['user_id']]['commission_cost'] = x['cost_with_commission']
             
         return actuals
+
+    def _get_velocities_by_user(self, issues_qs, user_ids):
+        velocities = {}
+        cached_calcs_by_time_tracking_mode = {}
+        
+        for user_id in user_ids:
+            time_tracking_mode = self._get_likely_time_tracking_mode(issues_qs, user_id)
+            open_status_options = Issue.STATUSES_INDICATING_INCOMPLETE[time_tracking_mode]
+            
+            if time_tracking_mode not in cached_calcs_by_time_tracking_mode.keys():
+                closed_issues_qs = issues_qs.exclude(status2__name__in=open_status_options)
+                closed_estimates = self._get_estimates_by_user(closed_issues_qs) 
+                closed_actuals = self._get_actuals_by_user(issues_qs, closed_estimates)
+                cached_calcs_by_time_tracking_mode['closed_estimates'] = closed_estimates
+                cached_calcs_by_time_tracking_mode['closed_actuals'] = closed_actuals
+            else:
+                closed_estimates = cached_calcs_by_time_tracking_mode['closed_estimates']
+                closed_actuals = cached_calcs_by_time_tracking_mode['closed_actuals']
+
+
+            if user_id in closed_actuals.keys():
+                velocities[user_id] = { 'closed_velocity': closed_actuals[user_id]['calculated_velocity'],
+                                        'ignoring_issues_in_status': open_status_options,
+                                        'time_tracking_mode': time_tracking_mode }
+        return velocities
+            
+    def _get_likely_time_tracking_mode(self, issues_qs, user_id):
+        rate_guess = issues_qs.filter(project__rate__user_id=user_id)\
+                              .values('project__rate__time_tracking_mode').first()
+        if rate_guess is None:
+            return 'developer'
+        return rate_guess['project__rate__time_tracking_mode']

@@ -5,6 +5,28 @@
 	width: 100%;
 }
 
+.table__column_table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.table__column_table tr th {
+    border-bottom: 1px solid $color-26;
+    border-left: 1px solid $color-26;
+}
+
+.table__column_table tr td, .table__column_table tr th {
+    padding: 2px;
+}
+
+.table__column_table tr td:nth-child(odd) {
+    background: $table-odd-col-background-color;
+}
+
+.table__column_table tr td:nth-child(even) {
+    background: $table-even-col-background-color;
+}
+
 //.table {
 //    background-color: $form-background-color;
 //    margin: 0;

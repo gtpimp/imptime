@@ -44,12 +44,14 @@ class MultipleIssueSummary extends Component {
         return (
             <PropertyStackComponent>
               <h2>Actuals by user</h2>
-              <table>
+              <table className="table__column_table">
                 <thead>
                   <tr>
                     <th>User</th>
                     <th>Hours</th>
-                    <th>Calculated velocity</th>
+                    <th>Naive velocity</th>
+                    <th>Real velocity</th>
+                    <th>Role</th>
                     {show_costs && <th>Cost</th>}
                     {show_costs && <th>Cost with commission</th>}
                   </tr>
@@ -65,17 +67,31 @@ class MultipleIssueSummary extends Component {
                         </td>
                         <td>
                           {Math.round(summary.actuals_by_user[user_id].calculated_velocity*100)/100}
+                          <div className="multiple-issue-summary__tip">
+                            Naive velocity uses all issues, even if not closed. It is not as accurate as real velocity.
+                          </div>
+                        </td>
+                        <td>
+                          {Math.round(summary.velocities_by_user[user_id].closed_velocity*100)/100}
+                          <div className="multiple-issue-summary__tip">
+                            Real velocity ignores issues in states:
+                            {map(summary.velocities_by_user[user_id].ignoring_issues_in_status, (status) =>
+                                <div key={status}>{status}</div>)}
+                          </div>
+                        </td>
+                        <td>
+                          {summary.velocities_by_user[user_id].time_tracking_mode}
                         </td>
                         { show_costs && 
                           <td>
                             <CurrencyValue value={summary.actuals_by_user[user_id].cost} />
                           </td>
                         }
-                          { show_costs && 
-                            <td>
-                              <CurrencyValue value={summary.actuals_by_user[user_id].commission_cost} />
-                            </td>
-                          }
+                        { show_costs && 
+                          <td>
+                            <CurrencyValue value={summary.actuals_by_user[user_id].commission_cost} />
+                          </td>
+                        }
                       </tr>
                    )}
                 </tbody>
@@ -89,12 +105,13 @@ class MultipleIssueSummary extends Component {
         return (
             <PropertyStackComponent>
               <h2>Estimates by user</h2>
-              <table>
+              <table className="table__column_table">
                 <thead>
                   <tr>
                     <th>User</th>
                     <th>Raw</th>
-                    <th>With configured velocity</th>
+                    <th>Given velocity</th>
+                    <th>With given velocity</th>
                     {show_costs && <th>Cost</th>}
                     {show_costs && <th>Cost with commission</th>}
                   </tr>
@@ -107,6 +124,9 @@ class MultipleIssueSummary extends Component {
                         </td>
                         <td>
                           <Hours hours={summary.estimates_by_user[user_id].raw_estimates} />
+                        </td>
+                        <td>
+                          {Math.round(summary.estimates_by_user[user_id].given_velocity*100)/100}
                         </td>
                         <td>
                           <Hours hours={summary.estimates_by_user[user_id].velocity_estimates} />
@@ -148,12 +168,13 @@ class MultipleIssueSummary extends Component {
                                       <h2>
                                         <OtherUser user_id={user_id} />
                                       </h2>
-                                      <table>
+                                      <table className="table__column_table">
                                         <thead>
                                           <tr>
                                             <th>Tag</th>
                                             <th>Raw</th>
-                                            <th>With velocity</th>
+                                            <th>Given velocity</th>
+                                            <th>With given velocity</th>
                                             {show_costs && <th>Cost</th>}
                                             {show_costs && <th>With commission</th>}
                                           </tr>
@@ -166,6 +187,9 @@ class MultipleIssueSummary extends Component {
                                                 </td>
                                                 <td>
                                                   <Hours hours={estimates_by_user_by_tag[tag_id].raw_estimates} />
+                                                </td>
+                                                <td>
+                                                  {Math.round(estimates_by_user_by_tag[tag_id].given_velocity*100)/100}
                                                 </td>
                                                 <td>
                                                   <Hours hours={estimates_by_user_by_tag[tag_id].velocity_estimates} />
