@@ -211,13 +211,14 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         cached_calcs_by_time_tracking_mode = {}
         
         for user_id in user_ids:
+
             time_tracking_mode = self._get_likely_time_tracking_mode(issues_qs, user_id)
             open_status_options = Issue.STATUSES_INDICATING_INCOMPLETE[time_tracking_mode]
             
             if time_tracking_mode not in cached_calcs_by_time_tracking_mode.keys():
                 closed_issues_qs = issues_qs.exclude(status2__name__in=open_status_options)
                 closed_estimates = self._get_estimates_by_user(closed_issues_qs) 
-                closed_actuals = self._get_actuals_by_user(issues_qs, closed_estimates)
+                closed_actuals = self._get_actuals_by_user(closed_issues_qs, closed_estimates)
                 cached_calcs_by_time_tracking_mode['closed_estimates'] = closed_estimates
                 cached_calcs_by_time_tracking_mode['closed_actuals'] = closed_actuals
             else:
@@ -225,10 +226,10 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                 closed_actuals = cached_calcs_by_time_tracking_mode['closed_actuals']
 
 
-            if user_id in closed_actuals.keys():
-                velocities[user_id] = { 'closed_velocity': closed_actuals[user_id]['calculated_velocity'],
-                                        'ignoring_issues_in_status': open_status_options,
-                                        'time_tracking_mode': time_tracking_mode }
+            calculated_velocity = closed_actuals.setdefault(user_id, {}).setdefault('calculated_velocity', 0)
+            velocities[user_id] = { 'closed_velocity': calculated_velocity,
+                                    'ignoring_issues_in_status': open_status_options,
+                                    'time_tracking_mode': time_tracking_mode }
         return velocities
             
     def _get_likely_time_tracking_mode(self, issues_qs, user_id):
