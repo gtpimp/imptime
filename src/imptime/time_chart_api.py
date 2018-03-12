@@ -13,7 +13,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import BusinessPermissions, Entry, Rate, User, Holiday, CalendarEvent
+from timepiece.models import BusinessPermissions, Entry, User, Holiday, CalendarEvent
 from rest_framework.decorators import detail_route, list_route
 from time_chart_serializer import TimeChartFilterSerializer 
 from lib import chart_helper
