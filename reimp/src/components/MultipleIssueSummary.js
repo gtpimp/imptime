@@ -72,15 +72,15 @@ class MultipleIssueSummary extends Component {
                           </div>
                         </td>
                         <td>
-                          {Math.round(summary.velocities_by_user[user_id].closed_velocity*100)/100}
+                          {Math.round((summary.velocities_by_user[user_id] || {}).closed_velocity*100)/100}
                           <div className="multiple-issue-summary__tip">
                             Real velocity ignores issues in states:
-                            {map(summary.velocities_by_user[user_id].ignoring_issues_in_status, (status) =>
+                            {map((summary.velocities_by_user[user_id] || {})).ignoring_issues_in_status, (status) =>
                                 <div key={status}>{status}</div>)}
                           </div>
                         </td>
                         <td>
-                          {summary.velocities_by_user[user_id].time_tracking_mode}
+                          {(summary.velocities_by_user[user_id] ||  {}).time_tracking_mode}
                         </td>
                         { show_costs && 
                           <td>
