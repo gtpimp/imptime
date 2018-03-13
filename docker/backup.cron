@@ -1,1 +1,2 @@
 15 0 * * * python /opt/imptime/backup.py >> /opt/imptime/logs/backup-cron.log 2>&1
+
