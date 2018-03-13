@@ -100,8 +100,12 @@ th.project__statement__times_grid__inner_cell {
     background-color: $color-5;
 }
 
+.project__statement__date_filter {
+    float: right;
+}
+
 .project__statement__date_range {
-    clear: both;
+    float: left;
 }
 
 .project__statement__date_range__element {

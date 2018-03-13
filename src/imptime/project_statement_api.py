@@ -267,10 +267,11 @@ class ProjectStatementViewSet(BaseViewSet):
                                      .annotate(total_hours=Sum('hours'))
             spent = sum([float(x['total_hours']) * self._get_rate(x['user_id'],
                                                                   x['issue__project_id']) for x in all_entries])
-            remaining_budget = sprint.spendable_budget - spent
+            remaining_budget = float(sprint.budget) - float(spent)
             times_by_sprint[sprint.id]['totals_across_time'] = { 'spendable_budget': sprint.spendable_budget,
                                                                  'budget': sprint.budget,
                                                                  'total_billable_cost': spent,
+                                                                 'commission_cost': spent * float(sprint.commission_percentage)/100,
                                                                  'remaining_budget': remaining_budget }
 
     def _get_affected_issue_ids(self, entries):
@@ -325,6 +326,7 @@ class ProjectStatementViewSet(BaseViewSet):
                                         'spendable_budget': sprint.spendable_budget,
                                         'total_billable_cost': times_by_sprint[sprint.id]['totals'].get('total_billable_cost', 0),
                                         'invoiced_ex_vat': invoices.cost(),
+                                        'invoiced_with_vat': invoices.cost_with_vat(),
                                         'paid': invoices.amount_paid(),
                                         'owed': invoices.amount_owed()}
         return invoice_infos

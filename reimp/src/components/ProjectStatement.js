@@ -118,28 +118,39 @@ class ProjectStatement extends Component {
     }
 
     render_filter() {
-        const { filter } = this.props
+        const { filter, project_statement } = this.props
         return (
             <div className="project__statement__filter">
 
+              <div className="project__statement__date_filter">
+
               <div className="project__statement__filter__from">
-                From:
-                <DatePicker selected={filter.date_from_inclusive}
-                            dateFormat="DD/MM/YYYY"
-                            onChange={this.updateDateFromInclusive} />
+                  From:
+                  <DatePicker selected={filter.date_from_inclusive}
+                              dateFormat="DD/MM/YYYY"
+                              onChange={this.updateDateFromInclusive} />
+                </div>
+
+                <div className="project__statement__filter__to">
+                  To:
+                  <DatePicker selected={filter.date_to_inclusive}
+                              dateFormat="DD/MM/YYYY"
+                              onChange={this.updateDateToInclusive} />
+                </div>
+
+                <div className="project__statement__filter__submit">
+                  <button onClick={this.refreshStatement}>Filter</button>
+                </div>
               </div>
 
-              <div className="project__statement__filter__to">
-                To:
-                <DatePicker selected={filter.date_to_inclusive}
-                            dateFormat="DD/MM/YYYY"
-                            onChange={this.updateDateToInclusive} />
-              </div>
-
-              <div className="project__statement__filter__submit">
-                <button onClick={this.refreshStatement}>Filter</button>
-              </div>
-
+              <h3 className="project__statement__date_range">
+                <div className="project__statement__date_range__element">Statement from</div>
+                <div className="project__statement__date_range__element"><Timestamp value={project_statement.date_from_inclusive}/></div>
+                <div className="project__statement__date_range__element">to</div>
+                <div className="project__statement__date_range__element"><Timestamp value={project_statement.date_to_inclusive}/></div>
+                <div className="project__statement__date_range__element">(inclusive)</div>
+              </h3>
+              
               <div className="clear">
               </div>
               
@@ -161,10 +172,10 @@ class ProjectStatement extends Component {
                 <tr>
                   <th></th>
                   <th>Total budget</th>
-                  <th>Total spendable budget</th>
                   <th>Remaining budget</th>
                   <th>Budget progress</th>
                   <th>Spent</th>
+                  <th>Commission</th>
                 </tr>
               </thead>
               <tbody>
@@ -182,18 +193,18 @@ class ProjectStatement extends Component {
                                   <CurrencyValue value={ times_for_sprint.totals_across_time.budget }/>
                                 </td>
                                 <td>
-                                  <CurrencyValue value={ times_for_sprint.totals_across_time.spendable_budget } />
-                                </td>
-                                <td>
                                   <CurrencyValue value={ times_for_sprint.totals_across_time.remaining_budget } />
                                 </td>
                                 <td className="project__statement__budgets_grid__progress_bar">
                                   <ProgressBar current={ times_for_sprint.totals_across_time.total_billable_cost }
-                                               max={ times_for_sprint.totals_across_time.spendable_budget } />
+                                               max={ times_for_sprint.totals_across_time.budget } />
                                 </td>
                                 <th>
                                   <CurrencyValue value={ times_for_sprint.totals_across_time.total_billable_cost } />
                                 </th>
+                                <td>
+                                  <CurrencyValue value={ times_for_sprint.commission_cost } />
+                                </td>
                               </tr>
                           )
                       }
@@ -301,9 +312,9 @@ class ProjectStatement extends Component {
                     <tr>
                       <th>Sprint</th>
                       <th>Budget</th>
-                      <th>Spendable budget</th>
                       <th>Actual</th>
                       <th>Invoiced (exVAT)</th>
+                      <th>Invoiced (withVAT)</th>
                       <th>Paid</th>
                       <th>Owed</th>
                     </tr>
@@ -320,13 +331,13 @@ class ProjectStatement extends Component {
                             <CurrencyValue value={invoice.budget} />
                           </td>
                           <td>
-                            <CurrencyValue value={invoice.spendable_budget} />
-                          </td>
-                          <td>
                             <CurrencyValue value={invoice.total_billable_cost} />
                           </td>
                           <td>
                             <CurrencyValue value={invoice.invoiced_ex_vat} />
+                          </td>
+                          <td>
+                            <CurrencyValue value={invoice.invoiced_with_vat} />
                           </td>
                           <td>
                             <CurrencyValue value={invoice.paid} />
@@ -361,14 +372,6 @@ class ProjectStatement extends Component {
                 
                 { ! is_loading &&
                   <div className="project__statement__table_container">
-                    <h3 className="project__statement__date_range">
-                      <div className="project__statement__date_range__element">Statement from</div>
-                      <div className="project__statement__date_range__element"><Timestamp value={project_statement.date_from_inclusive}/></div>
-                      <div className="project__statement__date_range__element">to</div>
-                      <div className="project__statement__date_range__element"><Timestamp value={project_statement.date_to_inclusive}/></div>
-                      <div className="project__statement__date_range__element">(inclusive)</div>
-                    </h3>
-
                     <div className="project__statement__separator" />
                     <div className="project__statement__budgets_grid">
                       <h2 className="project__statement__times_grid__header">Sprint budgets (for sprints worked on in the selected period)
