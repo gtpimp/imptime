@@ -1066,7 +1066,7 @@ class Project(BaseModel):
             try:
                 rate = Rate.objects.get_or_create(project=self, user_id=user_id)[0]
                 time_tracking_mode = rate.time_tracking_mode
-                user_velocities[user_id] = rate.full_velocity
+                user_velocities[user_id] = rate.velocity
             except Rate.MultipleObjectsReturned:
                 time_tracking_mode = 'developer'
                 user_velocities[user_id] = 1
