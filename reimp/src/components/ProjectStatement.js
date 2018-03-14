@@ -203,7 +203,7 @@ class ProjectStatement extends Component {
                                   <CurrencyValue value={ times_for_sprint.totals_across_time.total_billable_cost } />
                                 </th>
                                 <td>
-                                  <CurrencyValue value={ times_for_sprint.commission_cost } />
+                                  <CurrencyValue value={ times_for_sprint.totals_across_time.commission_cost } />
                                 </td>
                               </tr>
                           )

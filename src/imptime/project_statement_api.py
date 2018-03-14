@@ -268,6 +268,7 @@ class ProjectStatementViewSet(BaseViewSet):
             spent = sum([float(x['total_hours']) * self._get_rate(x['user_id'],
                                                                   x['issue__project_id']) for x in all_entries])
             remaining_budget = float(sprint.budget) - float(spent)
+
             times_by_sprint[sprint.id]['totals_across_time'] = { 'spendable_budget': sprint.spendable_budget,
                                                                  'budget': sprint.budget,
                                                                  'total_billable_cost': spent,
