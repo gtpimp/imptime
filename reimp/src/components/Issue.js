@@ -14,7 +14,11 @@ import {
     clock,
     deleteIssues
 } from '../actions/Issues'
-import { makeSelEstimatesByUserId } from '../actions/IssueSelectors'
+import {
+    makeSelEstimatesByUserId,
+    makeSelActualsByUserId,
+    makeSelIssueTagsByCategoryName
+} from '../selectors/IssueSelectors'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getProject} from '../actions/Projects'
 import {
@@ -165,7 +169,7 @@ class Issue extends Component {
             is_invalidated, is_saving, is_fake,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
-            issue_id, visible_header_keys, header_list,
+            issue_id, header_list,
             isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
             tagsByCategoryName, all_estimates, all_estimates_by_user_id,
             all_actuals_by_user_id, sprint,
@@ -173,6 +177,7 @@ class Issue extends Component {
         } = this.props
 
         const onDeleteTag = this.onDeleteTag
+        const visible_header_keys = keys(header_list)
 
         if (!issue) {
             return (
@@ -414,6 +419,8 @@ class Issue extends Component {
 
 const makeMapStateToProps = () => {
     const selEstimatesByUserId = makeSelEstimatesByUserId()
+    const selActualsByUserId = makeSelActualsByUserId()
+    const selIssueTagsByCategoryName = makeSelIssueTagsByCategoryName()
     const mapStateToProps = (state, props) => {
         
         const {
@@ -447,11 +454,11 @@ const makeMapStateToProps = () => {
         const isSiblingOfSelectedIssue = includes(keys(keyBy(selectedIssues, 'parent_group_id')), issue.parent_group_id)
         const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
         const tags = getTags(state, issue.tag_ids || [])
-        const tagsByCategoryName = keyBy(tags, 'category_name')
+        const tagsByCategoryName = selIssueTagsByCategoryName(state, props)
         const all_estimates = issue.all_estimates
         const all_estimates_by_user_id = selEstimatesByUserId(state, props)
         const all_actuals = issue.all_actuals
-        const all_actuals_by_user_id = keyBy(all_actuals, 'user_id')
+        const all_actuals_by_user_id = selActualsByUserId(state, props)
         const logged_in_user_id = logged_in_user().user_id
         const logged_in_user_can_estimate_user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
 
@@ -472,7 +479,6 @@ const makeMapStateToProps = () => {
             show_children: show_children,
             subject_prefix: subject_prefix || "",
             subject_suffix: subject_suffix || "",
-            visible_header_keys: keys(header_list),
             tag_category_names,
             header_list: header_list,
             isFeatureOfSelectedIssue,

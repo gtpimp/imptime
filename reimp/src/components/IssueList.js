@@ -8,6 +8,10 @@ import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import OtherUser from './OtherUser'
 import { logged_in_user } from '../actions/Auth'
 import {
+    makeSelTagCategoryNamesForIssues,
+    makeSelTagIdsForIssues
+} from '../selectors/IssueListSelectors'
+import {
     initList,
     invalidateList,
     isListReadyToDisplay,
@@ -598,95 +602,98 @@ function createIssueObjectsToRender(issues, feature_issues, candidate_issue,
 }
 
 
-function mapStateToProps(state, props) {
-    const {item_list} = state
-    const {list_key, issue_header_list} = props
-    const filter = getListFilter(state, list_key)
-    const sprint_id = filter.sprint_id || null
-    const sprint = getSprint(state, sprint_id) || {}
-    const visible_item_ids = getVisibleItemIds(state, list_key)
+const makeMapStateToProps = () => {
+    const selTagCategoryNamesForIssues = makeSelTagCategoryNamesForIssues()
+    const selTagIdsForIssues = makeSelTagIdsForIssues()
+    const mapStateToProps = (state, props) => {
+        const {item_list} = state
+        const {list_key, issue_header_list} = props
+        const filter = getListFilter(state, list_key)
+        const sprint_id = filter.sprint_id || null
+        const sprint = getSprint(state, sprint_id) || {}
+        const visible_item_ids = getVisibleItemIds(state, list_key)
 
-    const items_by_id = getIssuesById(state, visible_item_ids)
-    const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
-    const all_item_ids = union(visible_item_ids, feature_issue_ids)
+        const items_by_id = getIssuesById(state, visible_item_ids)
+        const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
+        const all_item_ids = union(visible_item_ids, feature_issue_ids)
 
-    const loading_item_ids = getLoadingIssueIds(state, all_item_ids)
-    const invalidated_item_ids = getInvalidatedIssueIds(state, all_item_ids)
-    const saving_item_ids = getSavingIssueIds(state, all_item_ids)
-    const selected_item_ids = getSelectedItemIds(state, list_key)
-    const highlighted_item_ids = getHighlightedItemIds(state, list_key)
+        const loading_item_ids = getLoadingIssueIds(state, all_item_ids)
+        const invalidated_item_ids = getInvalidatedIssueIds(state, all_item_ids)
+        const saving_item_ids = getSavingIssueIds(state, all_item_ids)
+        const selected_item_ids = getSelectedItemIds(state, list_key)
+        const highlighted_item_ids = getHighlightedItemIds(state, list_key)
+        const tag_ids = selTagIdsForIssues(state, list_key)
 
-    const selected_items = selected_item_ids.map(function (selected_id, index) {
-        return items_by_id[selected_id] || {
-            'id': selected_id,
-            'loaded': false
+        const selected_items = selected_item_ids.map(function (selected_id, index) {
+            return items_by_id[selected_id] || {
+                'id': selected_id,
+                'loaded': false
+            }
+        })
+
+        const highlighted_items = highlighted_item_ids.map(function (highlighted_id, index) {
+            return items_by_id[highlighted_id] || {
+                'id': highlighted_id,
+                'loaded': false
+            }
+        })
+
+        const items = visible_item_ids.map(function (visible_item_id, index) {
+            return items_by_id[visible_item_id] || {
+                'id': visible_item_id,
+                'loaded': false
+            }
+        })
+
+        const feature_issues = getIssuesById(state, feature_issue_ids)
+
+        const candidate_issue = getCandidateIssue(state)
+        const is_creating_issue = candidate_issue || false
+        const cursor_item_id = getCursorItemId(state, list_key)
+        const display_mode = getDisplayMode(state, list_key)
+        const expanded_issues = getItemFlag(state, list_key, "flag_expanded_issues")
+        const autoexpanded_feature_ids = getItemFlag(state, list_key, "flag_autoexpanded_feature_ids")
+
+        const issue_items = createIssueObjectsToRender(items, feature_issues, candidate_issue,
+                                                       expanded_issues, is_creating_issue)
+        const tag_category_names = selTagCategoryNamesForIssues(state, props)
+        const logged_in_user_id = logged_in_user().user_id
+
+        return {
+            list_key: list_key,
+            visible_item_ids,
+            sprint_id: sprint_id,
+            sprint,
+            issues: items,
+            issue_items: issue_items,
+            issues_by_id: items_by_id,
+            issue_ids: map(items, 'id'),
+            feature_issue_ids: feature_issue_ids,
+            feature_issues: feature_issues,
+            selected_ids: selected_item_ids,
+            highlighted_ids: highlighted_item_ids,
+            cursor_item_id,
+            invalidated_issue_ids: invalidated_item_ids,
+            saving_issue_ids: saving_item_ids,
+            selected_items: selected_items || [],
+            loading_item_ids: loading_item_ids,
+            has_items: items && items.length > 0,
+            is_loading: isLoading(state, list_key),
+            is_collapsed: display_mode === "collapsed",
+            is_expanded: display_mode === "expanded" || !display_mode,
+            last_updated: getLastUpdated(state, list_key),
+            is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
+            candidate_issue: candidate_issue,
+            is_creating_issue: is_creating_issue,
+            expanded_issues: expanded_issues,
+            autoexpanded_feature_ids,
+            header_list: issue_header_list,
+            tag_ids,
+            tag_category_names,
+            logged_in_user_id
         }
-    })
-
-    const highlighted_items = highlighted_item_ids.map(function (highlighted_id, index) {
-        return items_by_id[highlighted_id] || {
-            'id': highlighted_id,
-            'loaded': false
-        }
-    })
-
-    const items = visible_item_ids.map(function (visible_item_id, index) {
-        return items_by_id[visible_item_id] || {
-            'id': visible_item_id,
-            'loaded': false
-        }
-    })
-
-    const feature_issues = getIssuesById(state, feature_issue_ids)
-
-    const candidate_issue = getCandidateIssue(state)
-    const is_creating_issue = candidate_issue || false
-    const cursor_item_id = getCursorItemId(state, list_key)
-    const display_mode = getDisplayMode(state, list_key)
-    const expanded_issues = getItemFlag(state, list_key, "flag_expanded_issues")
-    const autoexpanded_feature_ids = getItemFlag(state, list_key, "flag_autoexpanded_feature_ids")
-
-    const issue_items = createIssueObjectsToRender(items, feature_issues, candidate_issue,
-                                                   expanded_issues, is_creating_issue)
-    let tag_ids = []
-    items.map(function(item) { tag_ids = concat(tag_ids, item.tag_ids || []) })
-    const tags = getTags(state, tag_ids)
-    const tag_category_names = uniq(keys(keyBy(tags, 'category_name')))
-    const logged_in_user_id = logged_in_user().user_id
-
-    return {
-        list_key: list_key,
-        visible_item_ids,
-        sprint_id: sprint_id,
-        sprint,
-        issues: items,
-        issue_items: issue_items,
-        issues_by_id: items_by_id,
-        issue_ids: map(items, 'id'),
-        feature_issue_ids: feature_issue_ids,
-        feature_issues: feature_issues,
-        selected_ids: selected_item_ids,
-        highlighted_ids: highlighted_item_ids,
-        cursor_item_id,
-        invalidated_issue_ids: invalidated_item_ids,
-        saving_issue_ids: saving_item_ids,
-        selected_items: selected_items || [],
-        loading_item_ids: loading_item_ids,
-        has_items: items && items.length > 0,
-        is_loading: isLoading(state, list_key),
-        is_collapsed: display_mode === "collapsed",
-        is_expanded: display_mode === "expanded" || !display_mode,
-        last_updated: getLastUpdated(state, list_key),
-        is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
-        candidate_issue: candidate_issue,
-        is_creating_issue: is_creating_issue,
-        expanded_issues: expanded_issues,
-        autoexpanded_feature_ids,
-        header_list: issue_header_list,
-        tag_ids,
-        tag_category_names,
-        logged_in_user_id
     }
+    return mapStateToProps
 }
 
-export default connect(mapStateToProps)(IssueList)
+export default connect(makeMapStateToProps)(IssueList)
