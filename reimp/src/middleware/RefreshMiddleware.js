@@ -72,8 +72,6 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateProjects(d.params.projects))
 
     } else if ( d.entity_name === 'projectpermissions' ) {
-        // dispatch(invalidateUsers(d.params.users))
-        // dispatch(invalidateProjects(d.params.projects))
         dispatch(invalidatePups([d.entity_ref]))
 
     } else if ( d.entity_name === 'visualspecdocument' ) {
@@ -172,7 +170,6 @@ function refreshMiddleware(_ref) {
                         console.log("Unknown action_type for async refresh: " + d.action_type)
                     }
 
-                    //dispatch(addAsyncMessage(moment(), d.action_type + " " + d.entity_name + " " + d.entity_ref))
                 })
 
                 each(keys(list_keys_to_invalidate), (key) => dispatch(invalidateList(key)))

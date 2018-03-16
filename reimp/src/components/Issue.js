@@ -14,6 +14,7 @@ import {
     clock,
     deleteIssues
 } from '../actions/Issues'
+import { makeSelEstimatesByUserId } from '../actions/IssueSelectors'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getProject} from '../actions/Projects'
 import {
@@ -78,6 +79,14 @@ class Issue extends Component {
 
     componentWillReceiveProps(new_props) {
         this.refresh(new_props)
+    }
+
+    componentDidUpdate(prevProps) {
+        Object.keys(this.props).forEach(key => {
+            if (this.props[key] !== prevProps[key]) {
+                console.log("Issue", key, "changed from", prevProps[key], "to", this.props[key]);
+            }
+        });
     }
 
     refresh(these_props) {
@@ -403,77 +412,82 @@ class Issue extends Component {
 
 }
 
-function mapStateToProps(state, props) {
-    const {
-        issue_id, is_selected, is_highlighted, is_collapsed,
-        is_loading, is_invalidated, is_saving, show_children, is_fake,
-        subject_prefix, subject_suffix, header_list, list_key, is_cursor_item,
-        onDelete, tag_category_names
-    } = props
+const makeMapStateToProps = () => {
+    const selEstimatesByUserId = makeSelEstimatesByUserId()
+    const mapStateToProps = (state, props) => {
+        
+        const {
+            issue_id, is_selected, is_highlighted, is_collapsed,
+            is_loading, is_invalidated, is_saving, show_children, is_fake,
+            subject_prefix, subject_suffix, header_list, list_key, is_cursor_item,
+            onDelete, tag_category_names
+        } = props
 
-    const issue = getIssue(state, issue_id) || {'loaded': false}
-    const project_id = issue.project_id
-    const project = getProject(state, project_id) || {}
-    const sprint_id = issue.sprint_id
-    const sprint = getSprint(state, sprint_id) || {}
-    const assignable_user_ids = project.allowed_user_ids || []
-    const selectedIssues = getSelectedItems(state, list_key, ENTITY_KEY__ISSUE) || []
-    populateEstimates(state, issue)
+        const issue = getIssue(state, issue_id) || {'loaded': false}
+        const project_id = issue.project_id
+        const project = getProject(state, project_id) || {}
+        const sprint_id = issue.sprint_id
+        const sprint = getSprint(state, sprint_id) || {}
+        const assignable_user_ids = project.allowed_user_ids || []
+        const selectedIssues = getSelectedItems(state, list_key, ENTITY_KEY__ISSUE) || []
+        populateEstimates(state, issue)
 
-    // const feature_names = this_project.feature_names || []
-    /* const feature_options = feature_names.map(
-     *     function (feature_name) {
-     *         return {'value': feature_name, 'label': feature_name}
-     *     }
-     * )*/
+        // const feature_names = this_project.feature_names || []
+        /* const feature_options = feature_names.map(
+         *     function (feature_name) {
+         *         return {'value': feature_name, 'label': feature_name}
+         *     }
+         * )*/
 
-    const isParentOfSelectedIssue = includes(flatMap(selectedIssues, function(o) { return ["" + o.parent_group_id] }), "" + issue_id)
-    const isSelectedFeature = is_selected && issue.can_group_issues
-    const isFeatureOfSelectedIssue = isParentOfSelectedIssue || isSelectedFeature
+        const isParentOfSelectedIssue = includes(flatMap(selectedIssues, function(o) { return ["" + o.parent_group_id] }), "" + issue_id)
+        const isSelectedFeature = is_selected && issue.can_group_issues
+        const isFeatureOfSelectedIssue = isParentOfSelectedIssue || isSelectedFeature
 
-    const isChildOfSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
-    const isSiblingOfSelectedIssue = includes(keys(keyBy(selectedIssues, 'parent_group_id')), issue.parent_group_id)
-    const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
-    const tags = getTags(state, issue.tag_ids || [])
-    const tagsByCategoryName = keyBy(tags, 'category_name')
-    const all_estimates = issue.all_estimates
-    const all_estimates_by_user_id = keyBy(all_estimates, 'user_id')
-    const all_actuals = issue.all_actuals
-    const all_actuals_by_user_id = keyBy(all_actuals, 'user_id')
-    const logged_in_user_id = logged_in_user().user_id
-    const logged_in_user_can_estimate_user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
+        const isChildOfSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
+        const isSiblingOfSelectedIssue = includes(keys(keyBy(selectedIssues, 'parent_group_id')), issue.parent_group_id)
+        const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
+        const tags = getTags(state, issue.tag_ids || [])
+        const tagsByCategoryName = keyBy(tags, 'category_name')
+        const all_estimates = issue.all_estimates
+        const all_estimates_by_user_id = selEstimatesByUserId(state, props)
+        const all_actuals = issue.all_actuals
+        const all_actuals_by_user_id = keyBy(all_actuals, 'user_id')
+        const logged_in_user_id = logged_in_user().user_id
+        const logged_in_user_can_estimate_user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
 
-    return {
-        issue: issue,
-        issue_id: issue_id,
-        sprint,
-        is_selected: is_selected,
-        is_highlighted: is_highlighted,
-        is_loading: is_loading,
-        is_saving: is_saving,
-        is_collapsed: is_collapsed,
-        is_expanded: !is_collapsed,
-        is_fake,
-        is_cursor_item,
-        is_invalidated: is_invalidated || false,
-        assignable_user_ids: assignable_user_ids,
-        show_children: show_children,
-        subject_prefix: subject_prefix || "",
-        subject_suffix: subject_suffix || "",
-        visible_header_keys: keys(header_list),
-        tag_category_names,
-        header_list: header_list,
-        isFeatureOfSelectedIssue,
-        belongsToSelectedFeature,
-        onDelete: onDelete || null,
-        tagsByCategoryName,
-        all_estimates_by_user_id,
-        all_estimates,
-        all_actuals_by_user_id,
-        all_actuals,
-        logged_in_user_id,
-        logged_in_user_can_estimate_user_id
+        return {
+            issue: issue,
+            issue_id: issue_id,
+            sprint,
+            is_selected: is_selected,
+            is_highlighted: is_highlighted,
+            is_loading: is_loading,
+            is_saving: is_saving,
+            is_collapsed: is_collapsed,
+            is_expanded: !is_collapsed,
+            is_fake,
+            is_cursor_item,
+            is_invalidated: is_invalidated || false,
+            assignable_user_ids: assignable_user_ids,
+            show_children: show_children,
+            subject_prefix: subject_prefix || "",
+            subject_suffix: subject_suffix || "",
+            visible_header_keys: keys(header_list),
+            tag_category_names,
+            header_list: header_list,
+            isFeatureOfSelectedIssue,
+            belongsToSelectedFeature,
+            onDelete: onDelete || null,
+            tagsByCategoryName,
+            all_estimates_by_user_id,
+            all_estimates,
+            all_actuals_by_user_id,
+            all_actuals,
+            logged_in_user_id,
+            logged_in_user_can_estimate_user_id
+        }
     }
+    return mapStateToProps
 }
 
-export default connect(mapStateToProps)(Issue)
+export default connect(makeMapStateToProps)(Issue)

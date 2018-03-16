@@ -35,6 +35,8 @@ import {getCandidateIssue, getIssues} from '../actions/Issues'
 import cookie from 'react-cookie'
 import { getIssueHeaderListForCurrentMien } from '../actions/Mien'
 
+
+
 class IssuesPage extends Component {
 
     constructor(props) {

@@ -19,6 +19,7 @@
     "prop-types": "^15.5.8",
     "raven-js": "^3.17.0",
     "react": "^15.6.1",
+    "react-addons-perf": "^15.4.2",
     "react-autosize-textarea": "^0.3.6",
     "react-beautiful-dnd": "^2.6.4",
     "react-classnames": "^0.1.2",
@@ -49,7 +50,8 @@
     "redux": "^3.5.2",
     "redux-form": "^6.5.0",
     "redux-logger": "^2.6.1",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "reselect": "^3.0.1"
   },
   "scripts": {
     "start": "react-scripts-with-sass start",
