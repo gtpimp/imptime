@@ -60,7 +60,8 @@ class MainLayout extends Component {
         const { is_logged_in, are_settings_loaded } = this.props
 
         const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') != -1 ||
-                               this.props.location.pathname.indexOf('password/reminded') != -1
+                               this.props.location.pathname.indexOf('password/reminded') != -1 ||
+                               this.props.location.pathname.indexOf('account/create') != -1
 
         if ( ! are_settings_loaded ) {
             return (
@@ -72,6 +73,14 @@ class MainLayout extends Component {
             return (
                 <div className="app app--login">
                   <LoginPage />
+                </div>
+            )
+        }
+
+        if ( ! is_logged_in ) {
+            return (
+                <div className="app">
+                  {this.props.children}
                 </div>
             )
         }

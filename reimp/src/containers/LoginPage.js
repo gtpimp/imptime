@@ -21,6 +21,10 @@ class LoginPage extends Component {
     onClickedForgotPassword() {
         browserHistory.push('/password/forgot');
     }
+
+    onClickedCreateAccount() {
+        browserHistory.push('/account/create');
+    }
     
     render() {
 
@@ -46,9 +50,14 @@ class LoginPage extends Component {
                                       <Message variant="error">Invalid username/password combination</Message>
                                   </div>
                                 }
-                                <button disabled={submitting} type="submit" className="button button--large button--login">Log In</button>
-                                <div className="login__forgot-password-link" onClick={this.onClickedForgotPassword}>forgot password?</div>
-                                <a className="button button--large" href="http://api.imptime.com">Go to old ImpTime</a>
+                                  <button disabled={submitting} type="submit" className="button button--large button--login">Log In</button>
+                                  <div className="login__secondary_buttons">
+                                    <button className="button button--large login__forgot-password-link" onClick={this.onClickedForgotPassword}>forgot password</button>
+                                    <button className="button button--large" onClick={this.onClickedCreateAccount}>New account</button>
+                                  </div>
+                                  <div className="login__secondary_buttons">
+                                    <button className="button button--large" href="http://api.imptime.com">Old version</button>
+                                  </div>
                             </form>
                         </div>
                     </div>

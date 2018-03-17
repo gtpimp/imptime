@@ -111,11 +111,65 @@
     margin-bottom: 20px;
 }
 
-.login__forgot-password-link {
-    align-self: center;
-    color: $color-19;
-    cursor: pointer;
-    font: $font-2;
+.login__secondary_buttons {
+    display: flex;
+    flex-direction: row;
     margin-top: 36px;
-    text-transform: uppercase;
+
+    .button {
+        margin-left: 5px;
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: $font-size-default;
+    }
 }
+
+.blank-page {
+}
+
+.blank-page__header {
+    border-bottom: 1px solid $color-12;
+    font: $font-5;
+    padding-bottom: 23px;
+    padding-left: 32px;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: row;
+}
+
+.blank-container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    width: 100%
+}
+
+.blank-text {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-left: 40px;
+    padding-right: 40px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
+    border-radius: 2px;
+    width: 400px;
+}
+
+.blank-page__logo {
+    align-items: center;
+    background-image: url('../images/Logo.png');
+    background-position: center center;
+    background-size: 56px 56px;
+    cursor: pointer;
+    display: inline-flex;
+    height: 56px;
+    width: 56px;
+}
+
+.blank-page__title {
+    color: $color-1;
+    font: $font-10;
+    padding-left: 35px;
+}
+
