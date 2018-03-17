@@ -4,7 +4,6 @@ import cost_summary from './cost_summary'
 import estimate_summary from './estimate_summary'
 import editable_property from './editable_property'
 import filter from './filter'
-import header from './header'
 import issue from './issue'
 import issue_general_details from './issue_general_details'
 import item_list from './item_list'
@@ -38,7 +37,6 @@ const rootReducer = combineReducers({
     estimate_summary,
     filter,
     form: redux_form_reducer,
-    header,
     item,
     issue,
     issue_general_details,

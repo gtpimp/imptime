@@ -31,12 +31,12 @@ class UserDashboard extends Component {
         const { has_edit_release_notes_permission } = this.props
 
         return (
-            <div className="user-dashboard button">
-                <button className="button--primary button--large" onClick={this.onLogout}>Logout</button>
-                <button className="button--primary button--large" onClick={this.onChangePassword}>Change password</button>
+            <div className="user-dashboard">
+                <div className="user-dashboard-menu-item" onClick={this.onLogout}>Logout</div>
+                <div className="user-dashboard-menu-item" onClick={this.onChangePassword}>Change password</div>
 
                 { has_edit_release_notes_permission &&
-                  <button className="button--primary button--large" onClick={this.onShowReleaseNotesEditor}>Release notes</button>
+                  <div className="user-dashboard-menu-item" onClick={this.onShowReleaseNotesEditor}>Release notes</div>
                 }
 
             </div>
