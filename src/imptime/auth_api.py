@@ -42,11 +42,18 @@ class AuthViewSet(BaseViewSet):
 
     @list_route(methods=['POST'])
     def change_password(self, request):
-        password = request.data['password']
+        new_password = request.data['new_password']
+        old_password = request.data['old_password']
+        context = {}
         user = request.user
-        user.set_password(password)
-        user.save()
-        return Response({'status': 'success'})
+        if not user.check_password(old_password):
+            context['status'] = 'failure'
+            context['error'] = 'Incorrect password'
+        else:
+            user.set_password(new_password)
+            user.save()
+            context['status'] = 'success'
+        return Response(context)
 
 @permission_classes(())
 class AutoLoginViewSet(BaseViewSet):

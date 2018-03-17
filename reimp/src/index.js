@@ -1,6 +1,7 @@
 import './sass/imptime.css'
 import BulkIssueCreatorPage from './containers/BulkIssueCreatorPage'
 import ChangePasswordPage from './containers/ChangePasswordPage'
+import PasswordChangedPage from './containers/PasswordChangedPage'
 import ClientsPage from './containers/ClientsPage'
 import DashboardPage from './containers/DashboardPage'
 import DevPage from './containers/DevPage'
@@ -53,6 +54,7 @@ ReactDOM.render(
           <IndexRoute component={ProjectsPage}/>
           <Route path="/" component={NudgePage}/>
           <Route path="/nudge" component={NudgePage}/>
+          <Route path="/password/changed" component={PasswordChangedPage}/>
           <Route path="/password/change" component={ChangePasswordPage}/>
           <Route path="/password/forgot" component={ForgotPasswordPage}/>
           <Route path="/password/reminded" component={PasswordReminderSentPage}/>

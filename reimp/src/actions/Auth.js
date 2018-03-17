@@ -1,4 +1,4 @@
-
+import { get } from 'lodash'
 import { impfetch } from './lib.js'
 import cookie from 'react-cookie';
 import { SubmissionError } from 'redux-form'
@@ -6,6 +6,19 @@ import {browserHistory} from 'react-router'
 
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
+export const ANNOUNCE_REQUEST_NEW_USER_PASSWORD = 'ANNOUNCE_REQUEST_NEW_USER_PASSWORD'
+export const ANNOUNCE_SAVING_USER_PASSWORD = "ANNOUNCE_SAVING_USER_PASSWORD"
+export const ANNOUNCE_SAVED_USER_PASSWORD = "ANNOUNCE_SAVED_USER_PASSWORD"
+export const ANNOUNCE_SAVE_USER_PASSWORD_FAILED = "ANNOUNCE_SAVE_USER_PASSWORD_FAILED"
+export const ANNOUNCE_SAVE_USER_PASSWORD_REJECTED = "ANNOUNCE_SAVE_USER_PASSWORD_REJECTED"
+
+export function requestingNewUserPassword() {
+    return { type: ANNOUNCE_REQUEST_NEW_USER_PASSWORD }
+}
+
+export function getChangeUserPasswordError(state) {
+    return get(state, ['auth', 'change_password_error_message'])
+}
 
 function setAuthToken(username, token, user_id, has_usable_password, is_superuser) {
     return {
@@ -99,19 +112,33 @@ export function forgot_password(username) {
     }
 }
 
-export function change_password(dispatch, settings, password) {
+export function change_password(old_password, new_password) {
 
     return (dispatch, getState) => {
         const state = getState()
-        const data = { 'password': password }
+        dispatch({type: ANNOUNCE_SAVING_USER_PASSWORD})
+        const data = { old_password: old_password,
+                       new_password: new_password }
         const params = {method: "POST",
-                  credentials: 'same-origin',
-                  data: data,
-                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
-                  body: JSON.stringify(data)}
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
         
-        return impfetch(state, 'imp/auth/change_password/', dispatch, params).then(
-            () => { browserHistory.goBack() })
+        return impfetch(state, 'imp/auth/change_password/', dispatch, params)
+            .then(response => response.json())
+            .then(json => {
+                if ( json.status !== 'success' ) {
+                    dispatch({type: ANNOUNCE_SAVE_USER_PASSWORD_REJECTED,
+                              error: json.error})
+                } else {
+                    dispatch({type: ANNOUNCE_SAVED_USER_PASSWORD})
+                    browserHistory.push('/password/changed')
+                }
+            })
+            .catch(function (error) {
+                dispatch({type: ANNOUNCE_SAVE_USER_PASSWORD_FAILED, error: error})
+            })
     }
 }
 

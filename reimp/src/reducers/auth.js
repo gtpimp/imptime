@@ -1,11 +1,17 @@
 import {
     SET_AUTH_TOKEN,
-    CLEAR_AUTH_TOKEN
+    CLEAR_AUTH_TOKEN,
+    ANNOUNCE_REQUEST_NEW_USER_PASSWORD,
+    ANNOUNCE_SAVED_USER_PASSWORD,
+    ANNOUNCE_SAVE_USER_PASSWORD_REJECTED,
+    ANNOUNCE_SAVING_USER_PASSWORD
 } from '../actions/Auth'
 import cookie from 'react-cookie';
 
 const initialState = {
-    token: null
+    token: null,
+    change_password_error_message: null,
+    saving_password: false
 }
 
 export default function auth(state = initialState, action) {
@@ -34,6 +40,22 @@ export default function auth(state = initialState, action) {
                                    user_id: null,
                                    has_usable_password: null,
                                    is_superuser: null})
+
+        case ANNOUNCE_REQUEST_NEW_USER_PASSWORD:
+            return Object.assign({}, state, { change_password_error_message: null })
+            
+        case ANNOUNCE_SAVED_USER_PASSWORD:
+            return Object.assign({}, state, { change_password_error_message: null,
+                                              saving_password: false})
+            
+        case ANNOUNCE_SAVE_USER_PASSWORD_REJECTED:
+            return Object.assign({}, state, { change_password_error_message: action.error,
+                                              saving_password: false})
+
+        case ANNOUNCE_SAVING_USER_PASSWORD:
+            return Object.assign({}, state, { change_password_error_message: action.error,
+                                              saving_password: true})
+            
         default:
             return state
     }

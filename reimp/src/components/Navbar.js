@@ -22,7 +22,7 @@ class Navbar extends Component {
     }
 
     hideUserMenu() {
-        //this.setState({user_menu_visible: false})
+        this.setState({user_menu_visible: false})
     }
 
     render() {

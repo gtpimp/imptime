@@ -68,6 +68,7 @@ export const PAGE_KEY__BULK_CREATE_ISSUES_PAGE = 'bulk_create_issues_page'
 export const PAGE_KEY__RELEASE_NOTES_PAGE = 'release_notes_page'
 export const PAGE_KEY__NUDGE_PAGE = 'nudge_page'
 export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
+export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 

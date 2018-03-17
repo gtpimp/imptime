@@ -17,10 +17,6 @@ import NudgeList from '../components/NudgeList'
 
 class NudgePage extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
         const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__NUDGE_PAGE, ['nudge']))
