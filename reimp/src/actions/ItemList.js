@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import { indexOf, keys, map, compact, difference, includes } from 'lodash'
+import { get, indexOf, keys, map, compact, difference, includes } from 'lodash'
 import move from 'lodash-move'
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
@@ -162,9 +162,7 @@ export function highlightItems(list_key, highlighted_ids) {
 }
 
 export function getHighlightedItemIds(state, list_key) {
-    const item_list = ((state || {}).item_list || {})[list_key] || {}
-    const highlighted_item_ids = item_list.highlighted_ids || []
-    return highlighted_item_ids
+    return get(state, ["item_list", list_key, "highlighted_ids"])
 }
 
 export function setItemFlag(list_key, selected_ids, flag_name, flag_value) {

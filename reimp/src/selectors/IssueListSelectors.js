@@ -3,35 +3,27 @@ import {
     ENTITY_KEY__ISSUE,
     ENTITY_KEY__TAG
 } from '../actions/ItemListKeyRegistry'
-import {
-    getIssuesById,
-    getSelectedItemIds,
-    getAllIssues
-} from '../actions/Issues'
-import {
-    getVisibleItemIds
-} from '../actions/ItemList'
-import {
-    getAllItems
-} from '../actions/Item'
-import { getTags } from '../actions/Tags'
-import { union, intersection, get, compact, map, includes, filter, keyBy, keys, values, uniq, concat } from 'lodash'
-
+import { each, union, intersection, get, compact, map,
+         includes, filter, keyBy, keys, values, uniq, concat } from 'lodash'
 
 const selGetVisibleIssueIds = (state, props) => {
-    return getVisibleItemIds(state, props.list_key)
+    return get(state, ["item_list", props.list_key, "visible_item_ids"], null)
 }
 
 const selGetAllIssuesById = (state, props) => {
-    return getAllItems(state, ENTITY_KEY__ISSUE)
+    return get(state, ["item", ENTITY_KEY__ISSUE, "items_by_id"], null)
 }
 
 const selGetAllTagsById = (state, props) => {
-    return getAllItems(state, ENTITY_KEY__TAG)
+    return get(state, ["item", ENTITY_KEY__TAG, "items_by_id"], null)
 }
 
 const selGetInvalidatedIssueIds = (state, props) => {
     return get(state, ["item", ENTITY_KEY__ISSUE, "invalidated_item_ids"], null)
+}
+
+const selGetSavingIssueIds = (state, props) => {
+    return get(state, ["item", ENTITY_KEY__ISSUE, "saving_item_ids"], null)
 }
 
 const selGetLoadingIssueIds = (state, props) => {
@@ -42,28 +34,69 @@ const selGetSelectedIssueIds = (state, props) => {
     return get(state, ["item_list", props.list_key, "selected_ids"], null)
 }
 
-const helperGetTagIdsForIssues = (issue_ids, issues_by_id) => {
-    if ( ! issues_by_id || ! issue_ids ) {
+const selGetCandidateIssue = (state, props) => {
+    return get(state, ["item", ENTITY_KEY__ISSUE, "candidate_item"], null)
+}
+
+const selGetExpandedIssueIds = (state, props) => {
+    return get(state, ["item_list", props.list_key, "flag_expanded_issues"], null)
+}
+
+const helperGetTagIdsForIssues = (issues_by_id) => {
+    if ( ! issues_by_id ) {
         return []
     }
     let tag_ids = []
-    issue_ids.map(function(issue_id) {
-        tag_ids = concat(tag_ids, (issues_by_id[issue_id] || {}).tag_ids || [])
+    map(values(issues_by_id), function(issue) {
+        tag_ids = concat(tag_ids, (get(issue, 'tag_ids')))
     })
     return tag_ids
 }
 
+const helperGetFilteredIssuesById = (all_issues_by_id, filter_issue_ids) => {
+    return keyBy(filter(values(all_issues_by_id),
+                        function(issue) { return includes(filter_issue_ids, issue.id) }), 'id')
+}
+
+const helperGetVisibleIssuesById = (all_issues_by_id, visible_issue_ids) => {
+    return helperGetFilteredIssuesById(all_issues_by_id, visible_issue_ids)
+}
+
+const helperGetFeatureIssueIds = (all_issues_by_id, visible_issue_ids) => {
+    const visible_issues_by_id = helperGetVisibleIssuesById(all_issues_by_id, visible_issue_ids)
+    return compact(map(values(visible_issues_by_id), 'parent_group_id'))
+}
+
 const helperMergeFeatureAndIssueIds = (all_issues_by_id, visible_issue_ids) => {
-    const feature_issue_ids = compact(map(values(all_issues_by_id), 'parent_group_id'))
+    const feature_issue_ids = helperGetFeatureIssueIds(all_issues_by_id, visible_issue_ids)
     return union(visible_issue_ids, feature_issue_ids)
+}
+
+export const makeSelFeatureIssueIds = () => {
+    return createSelector (
+        [ selGetAllIssuesById, selGetVisibleIssueIds ],
+        (all_issues_by_id, visible_issue_ids) => {
+            return helperGetFeatureIssueIds(all_issues_by_id, visible_issue_ids)
+        }
+    )
+}
+
+export const makeSelFeatureIssuesById = () => {
+    return createSelector (
+        [ selGetAllIssuesById, selGetVisibleIssueIds ],
+        (all_issues_by_id, visible_issue_ids) => {
+            const feature_issue_ids = helperGetFeatureIssueIds(all_issues_by_id, visible_issue_ids)
+            return helperGetFilteredIssuesById(all_issues_by_id, feature_issue_ids)
+        }
+    )
 }
 
 export const makeSelTagCategoryNamesForIssues = () => {
     return createSelector(
         [ selGetAllIssuesById, selGetVisibleIssueIds, selGetAllTagsById ],
         (all_issues_by_id, visible_issue_ids, all_tags_by_id) => {
-
-            const visible_tag_ids = helperGetTagIdsForIssues(visible_issue_ids, all_issues_by_id)
+            const visible_issues_by_id = helperGetVisibleIssuesById(all_issues_by_id, visible_issue_ids)
+            const visible_tag_ids = helperGetTagIdsForIssues(visible_issues_by_id)
             const tags = filter(all_tags_by_id, function(tag) { return includes(visible_tag_ids, tag.id) })
             return uniq(keys(keyBy(values(tags), 'category_name')))
         }
@@ -74,7 +107,8 @@ export const makeSelTagIdsForIssues = () => {
     return createSelector(
         [ selGetAllIssuesById, selGetVisibleIssueIds, selGetAllTagsById ],
         (all_issues_by_id, visible_issue_ids, all_tags_by_id) => {
-            return helperGetTagIdsForIssues(visible_issue_ids, all_issues_by_id)
+            const visible_issues_by_id = helperGetVisibleIssuesById(all_issues_by_id, visible_issue_ids)
+            return helperGetTagIdsForIssues(visible_issues_by_id)
         }
     )
 }
@@ -92,7 +126,7 @@ export const makeSelIssuesById = () => {
     return createSelector(
         [ selGetAllIssuesById, selGetVisibleIssueIds ],
         ( all_issues_by_id, visible_issue_ids  ) => {
-            const issues = all_issues_by_id && visible_issue_ids && compact(map(visible_issue_ids, function(issue_id, index) {
+            const issues = all_issues_by_id && visible_issue_ids && compact(map(visible_issue_ids, function(issue_id) {
                 return all_issues_by_id[issue_id] || {
                     'id': issue_id,
                     'loaded': false
@@ -109,6 +143,16 @@ export const makeSelInvalidatedIssueIds = () => {
         ( all_issues_by_id, invalidated_issue_ids, visible_issue_ids ) => {
             const merged_issue_ids = helperMergeFeatureAndIssueIds(all_issues_by_id, visible_issue_ids)
             return intersection(merged_issue_ids, invalidated_issue_ids)
+        }
+    )
+}
+
+export const makeSelSavingIssueIds = () => {
+    return createSelector(
+        [ selGetAllIssuesById, selGetSavingIssueIds, selGetVisibleIssueIds ],
+        ( all_issues_by_id, saving_issue_ids, visible_issue_ids ) => {
+            const merged_issue_ids = helperMergeFeatureAndIssueIds(all_issues_by_id, visible_issue_ids)
+            return intersection(merged_issue_ids, saving_issue_ids)
         }
     )
 }
@@ -130,8 +174,8 @@ export const makeSelSelectedIssues = () => {
             if ( ! all_issues_by_id ) {
                 return []
             }
-            return selected_issue_ids.map(function (issue_id, index) {
-                return all_issues_by_id[issue_id] || {
+            return map(selected_issue_ids, function (issue_id) {
+                return (all_issues_by_id && all_issues_by_id[issue_id]) || {
                     'id': issue_id,
                     'loaded': false
                 }
@@ -139,3 +183,56 @@ export const makeSelSelectedIssues = () => {
         }
     )
 }
+
+export const makeSelIssues = () => {
+    return createSelector(
+        [ selGetAllIssuesById, selGetVisibleIssueIds ],
+        ( all_issues_by_id, visible_issue_ids ) => {
+            return map(visible_issue_ids, function (visible_issue_id) {
+                return (all_issues_by_id && all_issues_by_id[visible_issue_id]) || {
+                    'id': visible_issue_id,
+                    'loaded': false
+                }
+            })
+        }
+    )
+}
+
+export const makeSelIssueObjectsToRender = () => {
+    
+    return createSelector(
+        [ selGetAllIssuesById, selGetVisibleIssueIds, selGetCandidateIssue, selGetExpandedIssueIds ],
+        ( all_issues_by_id, visible_issue_ids, candidate_issue, expanded_issue_ids ) => {
+
+            const is_creating_issue = candidate_issue || false
+            const visible_issues_by_id = helperGetVisibleIssuesById(all_issues_by_id, visible_issue_ids)
+            const issues_to_render = []
+            let running_parent_issue_id = null
+            each(values(visible_issues_by_id), function(issue, index) {
+                if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
+                    issues_to_render.push({ issue: null, type: "candidate", id: null })
+                }
+
+                const show_issue = !issue.parent_group_id || includes(expanded_issue_ids, issue.parent_group_id)
+
+                if (show_issue ) {
+                    issues_to_render.push( {issue:issue, type:"issue", id: issue.id} )
+                }
+
+                if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
+                    issues_to_render.push( {issue:null, type:"candidate", id: null} )
+                }
+
+                if (issue.can_group_issues) {
+                    running_parent_issue_id = issue.id
+                } else {
+                    running_parent_issue_id = issue.parent_group_id
+                }
+                
+            })
+
+            return issues_to_render
+        }
+    )
+}
+

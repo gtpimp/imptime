@@ -14,7 +14,12 @@ import {
     makeSelIssuesById,
     makeSelInvalidatedIssueIds,
     makeSelLoadingIssueIds,
-    makeSelSelectedIssues
+    makeSelSelectedIssues,
+    makeSelFeatureIssueIds,
+    makeSelFeatureIssuesById,
+    makeSelSavingIssueIds,
+    makeSelIssues,
+    makeSelIssueObjectsToRender
 } from '../selectors/IssueListSelectors'
 import {
     initList,
@@ -442,7 +447,7 @@ class IssueList extends Component {
                         onClickedIssue={this.onClickedIssue}
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
-                        is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}
+                        is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue.id) !== -1}
                         is_cursor_item={""+issue.id==""+cursor_item_id}
                         issue_id={issue.id}
                         tag_category_names={tag_category_names}
@@ -488,7 +493,7 @@ class IssueList extends Component {
                    onClickedIssue={that.onClickedIssue}
                    is_loading={loading_item_ids.indexOf(issue_id) !== -1}
                    is_selected={selected_ids.indexOf(issue_id) !== -1}
-                   is_highlighted={highlighted_ids.indexOf(issue_id) !== -1}
+                   is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue_id) !== -1}
                    is_cursor_item={""+issue.id==""+cursor_item_id}
                    is_invalidated={invalidated_issue_ids.indexOf(issue_id) !== -1}
                    is_saving={saving_issue_ids.indexOf(issue_id) !== -1}
@@ -567,54 +572,6 @@ class IssueList extends Component {
     }
 }
 
-function createIssueObjectsToRender(issues, feature_issues, candidate_issue,
-                                    expanded_issues, is_creating_issue) {
-    const issues_to_render = []
-    const rendered_issue_ids = []
-    let running_parent_issue_id = null
-
-    each(issues, function (issue, index) {
-
-        if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
-            issues_to_render.push({ issue: null, type: "candidate", id: null })
-        }
-
-        const show_issue = !issue.parent_group_id || includes(expanded_issues, issue.parent_group_id)
-
-        /* if (issue.parent_group_id && ! includes(rendered_issue_ids, issue.parent_group_id) ) {
-         *     // this happens if the issue is separated from its group parent by another issue,
-         *     // so insert a 'fake' feature issue
-         *     const feature_issue = feature_issues[issue.parent_group_id] || { 'id': issue.parent_group_id }
-         *     issues_to_render.push( {issue: feature_issue, type: "feature", id: feature_issue.id} )
-         *     rendered_issue_ids.push(issue.parent_group_id)
-         *     running_parent_issue_id = issue.parent_group_id
-         * }*/
-
-        /* if (show_issue && (!issue.can_group_issues || !includes(rendered_issue_ids, issue.id) ) ) {
-         *     issues_to_render.push( {issue:issue, type:"issue", id: issue.id} )
-         *     rendered_issue_ids.push(issue.id)
-         * }*/
-
-        if (show_issue ) {
-            issues_to_render.push( {issue:issue, type:"issue", id: issue.id} )
-            rendered_issue_ids.push(issue.id)
-        }
-
-        if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
-            issues_to_render.push( {issue:null, type:"candidate", id: null} )
-        }
-
-        if (issue.can_group_issues) {
-            running_parent_issue_id = issue.id
-        } else {
-            running_parent_issue_id = issue.parent_group_id
-        }
-        return
-    })
-    return issues_to_render
-}
-
-
 const makeMapStateToProps = () => {
     const selTagCategoryNamesForIssues = makeSelTagCategoryNamesForIssues()
     const selTagIdsForIssues = makeSelTagIdsForIssues()
@@ -623,6 +580,11 @@ const makeMapStateToProps = () => {
     const selInvalidatedIssueIds = makeSelInvalidatedIssueIds()
     const selLoadingIssueIds = makeSelLoadingIssueIds()
     const selSelectedIssues = makeSelSelectedIssues()
+    const selFeatureIssueIds = makeSelFeatureIssueIds()
+    const selFeatureIssuesById = makeSelFeatureIssuesById()
+    const selSavingIssueIds = makeSelSavingIssueIds()
+    const selIssues = makeSelIssues()
+    const selIssueObjectsToRender = makeSelIssueObjectsToRender()
     const mapStateToProps = (state, props) => {
         const {item_list} = state
         const {list_key, issue_header_list} = props
@@ -632,34 +594,21 @@ const makeMapStateToProps = () => {
         const visible_item_ids = getVisibleItemIds(state, list_key)
 
         const items_by_id = selIssuesById(state, props)
-        const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
+        const feature_issue_ids = selFeatureIssueIds(state, props)
         const all_item_ids = union(visible_item_ids, feature_issue_ids)
 
         const loading_item_ids = selLoadingIssueIds(state, props)
         const invalidated_item_ids = selInvalidatedIssueIds(state, props)
-        const saving_item_ids = getSavingIssueIds(state, all_item_ids)
+        const saving_item_ids = selSavingIssueIds(state, props)
         const selected_item_ids = getSelectedItemIds(state, list_key)
         const highlighted_item_ids = getHighlightedItemIds(state, list_key)
         const tag_ids = selTagIdsForIssues(state, list_key)
 
         const selected_items = selSelectedIssues(state, props)
 
-        const highlighted_items = highlighted_item_ids.map(function (highlighted_id, index) {
-            return items_by_id[highlighted_id] || {
-                'id': highlighted_id,
-                'loaded': false
-            }
-        })
+        const items = selIssues(state, props)
 
-        const items = visible_item_ids.map(function (visible_item_id, index) {
-            return items_by_id[visible_item_id] || {
-                'id': visible_item_id,
-                'loaded': false
-            }
-        })
-
-        const feature_issues = getIssuesById(state, feature_issue_ids)
-
+        const feature_issues = selFeatureIssuesById(state, props)
         const candidate_issue = getCandidateIssue(state)
         const is_creating_issue = candidate_issue || false
         const cursor_item_id = getCursorItemId(state, list_key)
@@ -667,8 +616,7 @@ const makeMapStateToProps = () => {
         const expanded_issues = getItemFlag(state, list_key, "flag_expanded_issues")
         const autoexpanded_feature_ids = getItemFlag(state, list_key, "flag_autoexpanded_feature_ids")
 
-        const issue_items = createIssueObjectsToRender(items, feature_issues, candidate_issue,
-                                                       expanded_issues, is_creating_issue)
+        const issue_items = selIssueObjectsToRender(state, props)
         const tag_category_names = selTagCategoryNamesForIssues(state, props)
         const logged_in_user_id = logged_in_user().user_id
 
@@ -678,7 +626,7 @@ const makeMapStateToProps = () => {
             sprint_id: sprint_id,
             sprint,
             issues: items,
-            issue_items: issue_items,
+            issue_items,
             issues_by_id: items_by_id,
             issue_ids: selIssueIds(state, props),
             feature_issue_ids: feature_issue_ids,
