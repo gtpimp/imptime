@@ -9,7 +9,10 @@ import OtherUser from './OtherUser'
 import { logged_in_user } from '../actions/Auth'
 import {
     makeSelTagCategoryNamesForIssues,
-    makeSelTagIdsForIssues
+    makeSelTagIdsForIssues,
+    makeSelIssueIds,
+    makeSelIssuesById,
+    makeSelInvalidatedIssueIds
 } from '../selectors/IssueListSelectors'
 import {
     initList,
@@ -71,6 +74,14 @@ class IssueList extends Component {
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
         this.renderHeader = this.renderHeader.bind(this)
     }
+
+    componentDidUpdate(prevProps) {
+        Object.keys(this.props).forEach(key => {
+            if (this.props[key] !== prevProps[key]) {
+                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
+            }
+        });
+    }    
 
     componentDidMount() {
         const {dispatch, list_key, sprint_id, feature_issue_ids, tag_ids} = this.props
@@ -605,6 +616,9 @@ function createIssueObjectsToRender(issues, feature_issues, candidate_issue,
 const makeMapStateToProps = () => {
     const selTagCategoryNamesForIssues = makeSelTagCategoryNamesForIssues()
     const selTagIdsForIssues = makeSelTagIdsForIssues()
+    const selIssueIds = makeSelIssueIds()
+    const selIssuesById = makeSelIssuesById()
+    const selInvalidatedIssueIds = makeSelInvalidatedIssueIds()
     const mapStateToProps = (state, props) => {
         const {item_list} = state
         const {list_key, issue_header_list} = props
@@ -613,12 +627,12 @@ const makeMapStateToProps = () => {
         const sprint = getSprint(state, sprint_id) || {}
         const visible_item_ids = getVisibleItemIds(state, list_key)
 
-        const items_by_id = getIssuesById(state, visible_item_ids)
+        const items_by_id = selIssuesById(state, props)
         const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
         const all_item_ids = union(visible_item_ids, feature_issue_ids)
 
         const loading_item_ids = getLoadingIssueIds(state, all_item_ids)
-        const invalidated_item_ids = getInvalidatedIssueIds(state, all_item_ids)
+        const invalidated_item_ids = selInvalidatedIssueIds(state, props)
         const saving_item_ids = getSavingIssueIds(state, all_item_ids)
         const selected_item_ids = getSelectedItemIds(state, list_key)
         const highlighted_item_ids = getHighlightedItemIds(state, list_key)
@@ -667,7 +681,7 @@ const makeMapStateToProps = () => {
             issues: items,
             issue_items: issue_items,
             issues_by_id: items_by_id,
-            issue_ids: map(items, 'id'),
+            issue_ids: selIssueIds(state, props),
             feature_issue_ids: feature_issue_ids,
             feature_issues: feature_issues,
             selected_ids: selected_item_ids,
