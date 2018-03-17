@@ -85,14 +85,6 @@ class Issue extends Component {
         this.refresh(new_props)
     }
 
-    componentDidUpdate(prevProps) {
-        Object.keys(this.props).forEach(key => {
-            if (this.props[key] !== prevProps[key]) {
-                console.log("Issue", key, "changed from", prevProps[key], "to", this.props[key]);
-            }
-        });
-    }
-
     refresh(these_props) {
         const props = these_props || this.props
         const {dispatch, assignable_user_ids, issue} = props
