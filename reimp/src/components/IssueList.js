@@ -472,7 +472,7 @@ class IssueList extends Component {
                    list_key={list_key}
                    is_collapsed={false}
                    show_children={includes(expanded_issues, issue.id)}
-                   onClickedIssue={(event) => that.onClickedIssue(event, issue_id)}
+                   onClickedIssue={that.onClickedIssue}
                    is_loading={loading_item_ids.indexOf(issue_id) !== -1}
                    is_selected={selected_ids.indexOf(issue_id) !== -1}
                    is_highlighted={highlighted_ids.indexOf(issue_id) !== -1}

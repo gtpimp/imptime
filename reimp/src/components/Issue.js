@@ -74,7 +74,7 @@ class Issue extends Component {
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
         this.onCollapseFeaturesClick = this.onCollapseFeaturesClick.bind(this)
         this.onExpandFeaturesClick = this.onExpandFeaturesClick.bind(this)
-
+        this.onClickedIssue = this.onClickedIssue.bind(this)
     }
 
     componentDidMount() {
@@ -163,9 +163,14 @@ class Issue extends Component {
         )
     }
 
+    onClickedIssue(event) {
+        const { issue, onClickedIssue } = this.props
+        onClickedIssue(event, issue.id)
+    }
+
     render_expanded() {
         const {
-            issue, is_selected, is_highlighted, onClickedIssue, assignable_user_ids,
+            issue, is_selected, is_highlighted, assignable_user_ids,
             is_invalidated, is_saving, is_fake,
             isOver, connectDragSource, connectDropTarget, show_children,
             subject_prefix, subject_suffix,
@@ -190,7 +195,7 @@ class Issue extends Component {
         if (issue.loaded === false) {
             return (
                 <div key={this.key + "." + issue.id}
-                     onClick={onClickedIssue}
+                     onClick={this.onClickedIssue}
                      className={classNames("div-table__row", 'issue',
                                            {'div-table__row--selected': is_selected,
                                             'div-table__row--drop-target': isOver})}
@@ -208,7 +213,7 @@ class Issue extends Component {
 
             return (
                 <div key={this.key + "." + issue.id}
-                     onClick={(event) => onClickedIssue(event, issue.id)}
+                     onClick={this.onClickedIssue}
                      className={classNames("div-table__row",
                                            'issue',
                                            'list-table__row--compact',
