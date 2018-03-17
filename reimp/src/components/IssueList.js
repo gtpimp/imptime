@@ -13,7 +13,8 @@ import {
     makeSelIssueIds,
     makeSelIssuesById,
     makeSelInvalidatedIssueIds,
-    makeSelLoadingIssueIds
+    makeSelLoadingIssueIds,
+    makeSelSelectedIssues
 } from '../selectors/IssueListSelectors'
 import {
     initList,
@@ -621,6 +622,7 @@ const makeMapStateToProps = () => {
     const selIssuesById = makeSelIssuesById()
     const selInvalidatedIssueIds = makeSelInvalidatedIssueIds()
     const selLoadingIssueIds = makeSelLoadingIssueIds()
+    const selSelectedIssues = makeSelSelectedIssues()
     const mapStateToProps = (state, props) => {
         const {item_list} = state
         const {list_key, issue_header_list} = props
@@ -640,12 +642,7 @@ const makeMapStateToProps = () => {
         const highlighted_item_ids = getHighlightedItemIds(state, list_key)
         const tag_ids = selTagIdsForIssues(state, list_key)
 
-        const selected_items = selected_item_ids.map(function (selected_id, index) {
-            return items_by_id[selected_id] || {
-                'id': selected_id,
-                'loaded': false
-            }
-        })
+        const selected_items = selSelectedIssues(state, props)
 
         const highlighted_items = highlighted_item_ids.map(function (highlighted_id, index) {
             return items_by_id[highlighted_id] || {
@@ -691,7 +688,7 @@ const makeMapStateToProps = () => {
             cursor_item_id,
             invalidated_issue_ids: invalidated_item_ids,
             saving_issue_ids: saving_item_ids,
-            selected_items: selected_items || [],
+            selected_items: selected_items,
             loading_item_ids: loading_item_ids,
             has_items: items && items.length > 0,
             is_loading: isLoading(state, list_key),

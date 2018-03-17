@@ -38,6 +38,10 @@ const selGetLoadingIssueIds = (state, props) => {
     return get(state, ["item", ENTITY_KEY__ISSUE, "loading_item_ids"], null)
 }
 
+const selGetSelectedIssueIds = (state, props) => {
+    return get(state, ["item_list", props.list_key, "selected_ids"], null)
+}
+
 const helperGetTagIdsForIssues = (issue_ids, issues_by_id) => {
     if ( ! issues_by_id || ! issue_ids ) {
         return []
@@ -115,6 +119,23 @@ export const makeSelLoadingIssueIds = () => {
         ( all_issues_by_id, loading_issue_ids, visible_issue_ids ) => {
             const merged_issue_ids = helperMergeFeatureAndIssueIds(all_issues_by_id, visible_issue_ids)
             return filter(values(all_issues_by_id), (issue) => { issue.loaded === false && includes(merged_issue_ids, issue.id) })
+        }
+    )
+}
+
+export const makeSelSelectedIssues = () => {
+    return createSelector(
+        [ selGetAllIssuesById, selGetSelectedIssueIds ],
+        ( all_issues_by_id, selected_issue_ids ) => {
+            if ( ! all_issues_by_id ) {
+                return []
+            }
+            return selected_issue_ids.map(function (issue_id, index) {
+                return all_issues_by_id[issue_id] || {
+                    'id': issue_id,
+                    'loaded': false
+                }
+            })
         }
     )
 }
