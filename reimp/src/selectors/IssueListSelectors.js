@@ -54,8 +54,11 @@ const helperGetTagIdsForIssues = (issues_by_id) => {
 }
 
 const helperGetFilteredIssuesById = (all_issues_by_id, filter_issue_ids) => {
-    return keyBy(filter(values(all_issues_by_id),
-                        function(issue) { return includes(filter_issue_ids, issue.id) }), 'id')
+    if ( ! all_issues_by_id ) {
+        return null
+    }
+    const issues = map(filter_issue_ids, (issue_id) => all_issues_by_id[issue_id])
+    return keyBy(issues, 'id')
 }
 
 const helperGetVisibleIssuesById = (all_issues_by_id, visible_issue_ids) => {
@@ -204,11 +207,14 @@ export const makeSelIssueObjectsToRender = () => {
         [ selGetAllIssuesById, selGetVisibleIssueIds, selGetCandidateIssue, selGetExpandedIssueIds ],
         ( all_issues_by_id, visible_issue_ids, candidate_issue, expanded_issue_ids ) => {
 
+            if ( ! all_issues_by_id ) {
+                return []
+            }
             const is_creating_issue = candidate_issue || false
             const visible_issues_by_id = helperGetVisibleIssuesById(all_issues_by_id, visible_issue_ids)
             const issues_to_render = []
-            let running_parent_issue_id = null
-            each(values(visible_issues_by_id), function(issue, index) {
+            each(visible_issue_ids, function(issue_id, index) {
+                const issue = all_issues_by_id[issue_id] || {}
                 if (is_creating_issue && index === 0 && !candidate_issue.issue_id_before) {
                     issues_to_render.push({ issue: null, type: "candidate", id: null })
                 }
@@ -222,13 +228,6 @@ export const makeSelIssueObjectsToRender = () => {
                 if (is_creating_issue && candidate_issue.issue_id_before === issue.id) {
                     issues_to_render.push( {issue:null, type:"candidate", id: null} )
                 }
-
-                if (issue.can_group_issues) {
-                    running_parent_issue_id = issue.id
-                } else {
-                    running_parent_issue_id = issue.parent_group_id
-                }
-                
             })
 
             return issues_to_render

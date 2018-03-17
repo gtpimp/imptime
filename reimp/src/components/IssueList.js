@@ -586,7 +586,6 @@ const makeMapStateToProps = () => {
         const visible_item_ids = getVisibleItemIds(state, list_key)
         const items_by_id = selIssuesById(state, props)
         const feature_issue_ids = selFeatureIssueIds(state, props)
-        const all_item_ids = union(visible_item_ids, feature_issue_ids)
         const loading_item_ids = selLoadingIssueIds(state, props)
         const invalidated_item_ids = selInvalidatedIssueIds(state, props)
         const saving_item_ids = selSavingIssueIds(state, props)
