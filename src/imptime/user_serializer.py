@@ -14,6 +14,7 @@ class UserSerializer(BaseSerializer):
     last_name = serializers.CharField()
     visible_name = serializers.CharField()
     known_user_ids = serializers.ListField(child=serializers.CharField()) # only set for the logged in user
+    has_usable_password = serializers.BooleanField(source="logged_in_user_has_usable_password")
     
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user', None)
@@ -29,6 +30,11 @@ class UserSerializer(BaseSerializer):
         else:
             user.known_user_ids = None
 
+        if user == self.logged_in_user:
+            user.logged_in_user_has_usable_password = user.has_usable_password()
+        else:
+            user.logged_in_user_has_usable_password = True
+            
         if user.username == "gtp":
             user.visible_name = "gtp"
         else:

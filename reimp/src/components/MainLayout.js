@@ -31,18 +31,20 @@ class MainLayout extends Component {
          * }*/
 
         dispatch(updateSettings(window.LOCAL_SETTINGS))
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id ) {
+        if ( new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id ||
+             new_props.are_settings_loaded !== this.props.are_settings_loaded ) {
             this.refresh(new_props)
         }
     }
 
-    refresh(props) {
+    refresh(these_props) {
+        const props = these_props || this.props
         const { dispatch, location, logged_in_user_id, settings,
                 has_usable_password } = props
-        dispatch(ensureUsersLoaded([logged_in_user_id]))
         
         if ( logged_in_user_id ) {
             dispatch(ensureUsersLoaded([logged_in_user_id]))

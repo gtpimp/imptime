@@ -17,6 +17,7 @@ class UserDashboard extends Component {
     onLogout() {
         const { dispatch } = this.props
         dispatch(logout())
+        browserHistory.push('/')
     }
 
     onChangePassword() {

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
+import { logged_in_user } from '../actions/Auth'
 import { change_password, requestingNewUserPassword, getChangeUserPasswordError } from '../actions/Auth'
 import { Field, reduxForm } from 'redux-form'
 import Message from '../components/Message'
@@ -24,7 +25,7 @@ class ChangePasswordPage extends Component {
     
     render() {
         const that = this
-        const { handleSubmit, error_msg, submitting } = this.props
+        const { handleSubmit, error_msg, submitting, has_usable_password } = this.props
         
         return (
             <div className="login-page">
@@ -33,15 +34,17 @@ class ChangePasswordPage extends Component {
                         <div className="login__header">Change Password</div>
                         <div className="login__body">
                           <form onSubmit={handleSubmit(this.onChangePassword)}>
-                                <Field name="old_password" type="password" placeholder="Existing Password" component="input" />
-                                <Field name="new_password" type="password" placeholder="New Password" component="input" />
-                                { error_msg &&
-                                  <div className="login-form__message">
-                                      <Message variant="error">{error_msg}</Message>
-                                  </div>
-                                }
-                                <button disabled={submitting} type="submit" className="button button--large button--login">Save</button>
-                            </form>
+                            { has_usable_password &&
+                              <Field name="old_password" type="password" placeholder="Existing Password" component="input" />
+                            }
+                            <Field name="new_password" type="password" placeholder="New Password" component="input" />
+                            { error_msg &&
+                              <div className="login-form__message">
+                                <Message variant="error">{error_msg}</Message>
+                              </div>
+                            }
+                            <button disabled={submitting} type="submit" className="button button--large button--login">Save</button>
+                          </form>
                         </div>
                     </div>
                 </div>
@@ -52,9 +55,13 @@ class ChangePasswordPage extends Component {
 
 function mapStateToProps(state, props) {
 
+    const user = logged_in_user()
+    const has_usable_password = user.has_usable_password !== false && user.has_usable_password !== "false"
+    
     return {
         settings: state.settings,
-        error_msg: getChangeUserPasswordError(state)
+        error_msg: getChangeUserPasswordError(state),
+        has_usable_password: has_usable_password,
     }
 }
 

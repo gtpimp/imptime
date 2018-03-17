@@ -57,7 +57,6 @@ ReactDOM.render(
           <Route path="/account/create" component={AccountCreatePage}/>
           <Route path="/nudge" component={NudgePage}/>
           <Route path="/password/changed" component={PasswordChangedPage}/>
-          <Route path="/password/changed" component={PasswordChangedPage}/>
           <Route path="/password/change" component={ChangePasswordPage}/>
           <Route path="/password/forgot" component={ForgotPasswordPage}/>
           <Route path="/password/reminded" component={PasswordReminderSentPage}/>

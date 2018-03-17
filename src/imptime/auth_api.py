@@ -43,10 +43,10 @@ class AuthViewSet(BaseViewSet):
     @list_route(methods=['POST'])
     def change_password(self, request):
         new_password = request.data['new_password']
-        old_password = request.data['old_password']
+        old_password = request.data.get('old_password', None)
         context = {}
         user = request.user
-        if not user.check_password(old_password):
+        if user.has_usable_password() and not user.check_password(old_password):
             context['status'] = 'failure'
             context['error'] = 'Incorrect password'
         else:
@@ -97,7 +97,7 @@ class AutoLoginViewSet(BaseViewSet):
             
         auto_login_token = UserAutoLoginToken.get_auto_login_token(user)
             
-        content = content.format(LOGIN_LINK=settings.WEB_URL_BASE + "?autologin="+auto_login_token)
+        content = content.format(LOGIN_LINK=settings.WEB_URL_BASE + "password/change?autologin="+auto_login_token)
 
         queue_email(subject_content="ImpTime: Reset password",
                     from_address=settings.FROM_EMAIL,
