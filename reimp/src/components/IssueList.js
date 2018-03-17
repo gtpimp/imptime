@@ -12,7 +12,8 @@ import {
     makeSelTagIdsForIssues,
     makeSelIssueIds,
     makeSelIssuesById,
-    makeSelInvalidatedIssueIds
+    makeSelInvalidatedIssueIds,
+    makeSelLoadingIssueIds
 } from '../selectors/IssueListSelectors'
 import {
     initList,
@@ -619,6 +620,7 @@ const makeMapStateToProps = () => {
     const selIssueIds = makeSelIssueIds()
     const selIssuesById = makeSelIssuesById()
     const selInvalidatedIssueIds = makeSelInvalidatedIssueIds()
+    const selLoadingIssueIds = makeSelLoadingIssueIds()
     const mapStateToProps = (state, props) => {
         const {item_list} = state
         const {list_key, issue_header_list} = props
@@ -631,7 +633,7 @@ const makeMapStateToProps = () => {
         const feature_issue_ids = compact(map(values(items_by_id), 'parent_group_id'))
         const all_item_ids = union(visible_item_ids, feature_issue_ids)
 
-        const loading_item_ids = getLoadingIssueIds(state, all_item_ids)
+        const loading_item_ids = selLoadingIssueIds(state, props)
         const invalidated_item_ids = selInvalidatedIssueIds(state, props)
         const saving_item_ids = getSavingIssueIds(state, all_item_ids)
         const selected_item_ids = getSelectedItemIds(state, list_key)
