@@ -3,6 +3,7 @@ from user_serializer import UserSerializer
 from mailqueue.mailqueue_helper import queue_email
 from rest_framework.decorators import list_route
 from django.conf import settings
+from django.db.models import Q
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -81,28 +82,37 @@ class AutoLoginViewSet(BaseViewSet):
     @list_route(methods=['POST'])
     def forgot_password(self, request):
         username = request.data['username']
-        user = User.objects.filter(username=username).first()
+        user = User.objects.filter(Q(username=username)|Q(email=username)).first()
         if user is None:
             raise Exception("Unknown username")
         user.set_unusable_password()
         user.save()
 
-        content = """
+        plain_content = """
 
         Your password has been reset, click the link below to choose a new one:
 
         {LOGIN_LINK}
 
         """
+
+        html_content = """
+        Your password has been reset, click the link below to choose a new one:
+        <br/>
+        <a href="{LOGIN_LINK}">{LOGIN_LINK}</a>
+
+        """
             
         auto_login_token = UserAutoLoginToken.get_auto_login_token(user)
-            
-        content = content.format(LOGIN_LINK=settings.WEB_URL_BASE + "password/change?autologin="+auto_login_token)
+
+        login_link = settings.WEB_URL_BASE + "password/change?autologin="+auto_login_token
+        plain_content = plain_content.format(LOGIN_LINK=login_link)
+        html_content = html_content.format(LOGIN_LINK=login_link)
 
         queue_email(subject_content="ImpTime: Reset password",
                     from_address=settings.FROM_EMAIL,
-                    text_content=content,
-                    html_content=content.replace("\n","<br/>"),
+                    text_content=plain_content,
+                    html_content=html_content,
                     to_addresses=[user.email])
         
         return Response({'status': 'success'})

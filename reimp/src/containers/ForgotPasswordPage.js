@@ -33,7 +33,7 @@ class ForgotPasswordPage extends Component {
                         <div className="login__header">Forgot Password</div>
                         <div className="login__body">
                             <form onSubmit={handleSubmit(this.onForgotPassword)}>
-                                <Field name="username" type="text" placeholder="Your username" component="input" />
+                                <Field name="username" type="text" placeholder="Username or email" component="input" />
                                 { error &&
                                   <div className="login-form__message">
                                       <Message variant="error">Invalid username</Message>
