@@ -10,15 +10,6 @@ import { makeSelIssues } from '../selectors/EditableIssueStatusSelectors'
 
 class EditableIssueStatus extends Component {
 
-    componentDidUpdate(prevProps) {
-        Object.keys(this.props).forEach(key => {
-            if (this.props[key] !== prevProps[key]) {
-                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
-            }
-        });
-    }
-
-    
     constructor(props) {
         super(props)
         this.onChange = this.onChange.bind(this)
