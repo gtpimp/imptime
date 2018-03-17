@@ -6,9 +6,19 @@ import IssueStatusLabel from './form/IssueStatusLabel'
 import Blank from './form/Blank'
 import { updateIssueStatus, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
+import { makeSelIssues } from '../selectors/EditableIssueStatusSelectors'
 
 class EditableIssueStatus extends Component {
 
+    componentDidUpdate(prevProps) {
+        Object.keys(this.props).forEach(key => {
+            if (this.props[key] !== prevProps[key]) {
+                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
+            }
+        });
+    }
+
+    
     constructor(props) {
         super(props)
         this.onChange = this.onChange.bind(this)
@@ -39,20 +49,25 @@ class EditableIssueStatus extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
-    const { issue_ids, class_name } = props
-    const issues = getIssues(state, issue_ids) || []
-    const issue = issues && issues.length > 0 && issues[0]
-    const project_id = issue.project_id
-    const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+const makeMapStateToProps = () => {
+    const selIssues = makeSelIssues()
+    
+    const mapStateToProps = (state, props) => {
+        const { issue_ids, class_name } = props
+        const issues = selIssues(state, props)
+        const issue = issues && issues.length > 0 && issues[0]
+        const project_id = issue.project_id
+        const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
 
-    return {
-        issues: issues,
-        issue: issue,
-        project_id: project_id,
-        can_edit: can_edit,
-        class_name
+        return {
+            issues: issues,
+            issue: issue,
+            project_id: project_id,
+            can_edit: can_edit,
+            class_name
+        }
     }
+    return mapStateToProps
 }
 
-export default connect(mapStateToProps)(EditableIssueStatus)
+export default connect(makeMapStateToProps)(EditableIssueStatus)

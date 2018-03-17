@@ -12,6 +12,10 @@ import {
 
 const selGetIssue = (state, props) => getIssue(state, props.issue_id)
 
+const selGetIssueId = (state, props) => {
+    return props.issue_id
+}
+
 const selGetAllIssuesById = (state, props) => {
     return getAllItems(state, ENTITY_KEY__ISSUE)
 }
@@ -74,3 +78,11 @@ export const makeSelIssueTagsByCategoryName = () => {
     )
 }
 
+export const makeSelIssueAsList = () => {
+    return createSelector(
+        [ selGetIssueId ],
+        (issue_id) => {
+            return [issue_id]
+        }
+    )
+}

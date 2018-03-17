@@ -82,14 +82,6 @@ class IssueList extends Component {
         this.renderHeader = this.renderHeader.bind(this)
     }
 
-    componentDidUpdate(prevProps) {
-        Object.keys(this.props).forEach(key => {
-            if (this.props[key] !== prevProps[key]) {
-                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
-            }
-        });
-    }    
-
     componentDidMount() {
         const {dispatch, list_key, sprint_id, feature_issue_ids, tag_ids} = this.props
         if (sprint_id) {
@@ -592,22 +584,17 @@ const makeMapStateToProps = () => {
         const sprint_id = filter.sprint_id || null
         const sprint = getSprint(state, sprint_id) || {}
         const visible_item_ids = getVisibleItemIds(state, list_key)
-
         const items_by_id = selIssuesById(state, props)
         const feature_issue_ids = selFeatureIssueIds(state, props)
         const all_item_ids = union(visible_item_ids, feature_issue_ids)
-
         const loading_item_ids = selLoadingIssueIds(state, props)
         const invalidated_item_ids = selInvalidatedIssueIds(state, props)
         const saving_item_ids = selSavingIssueIds(state, props)
         const selected_item_ids = getSelectedItemIds(state, list_key)
         const highlighted_item_ids = getHighlightedItemIds(state, list_key)
         const tag_ids = selTagIdsForIssues(state, list_key)
-
         const selected_items = selSelectedIssues(state, props)
-
         const items = selIssues(state, props)
-
         const feature_issues = selFeatureIssuesById(state, props)
         const candidate_issue = getCandidateIssue(state)
         const is_creating_issue = candidate_issue || false
@@ -615,7 +602,6 @@ const makeMapStateToProps = () => {
         const display_mode = getDisplayMode(state, list_key)
         const expanded_issues = getItemFlag(state, list_key, "flag_expanded_issues")
         const autoexpanded_feature_ids = getItemFlag(state, list_key, "flag_autoexpanded_feature_ids")
-
         const issue_items = selIssueObjectsToRender(state, props)
         const tag_category_names = selTagCategoryNamesForIssues(state, props)
         const logged_in_user_id = logged_in_user().user_id

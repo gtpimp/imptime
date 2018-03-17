@@ -6,7 +6,7 @@ import TimeProgressBar from './TimeProgressBar'
 import { format_hours } from '../actions/lib'
 
 class Progress extends Component {
-
+    
     render() {
         const {issue, estimate, hours, force_show} = this.props
         const current = format_hours(hours)

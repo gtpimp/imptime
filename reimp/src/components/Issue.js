@@ -17,7 +17,8 @@ import {
 import {
     makeSelEstimatesByUserId,
     makeSelActualsByUserId,
-    makeSelIssueTagsByCategoryName
+    makeSelIssueTagsByCategoryName,
+    makeSelIssueAsList
 } from '../selectors/IssueSelectors'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getProject} from '../actions/Projects'
@@ -169,7 +170,7 @@ class Issue extends Component {
             issue_id, header_list,
             isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
             tagsByCategoryName, all_estimates, all_estimates_by_user_id,
-            all_actuals_by_user_id, sprint,
+            all_actuals_by_user_id, sprint, issue_id_as_list,
             logged_in_user_id, logged_in_user_can_estimate_user_id
         } = this.props
 
@@ -277,7 +278,7 @@ class Issue extends Component {
                   {includes(visible_header_keys, "assignee") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.assignee)}>
-                     <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                     <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                    </div>
                   }
                   {includes(visible_header_keys, "created_at") &&
@@ -291,14 +292,14 @@ class Issue extends Component {
                   {includes(visible_header_keys, "status") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.status)}>
-                     <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                     <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                    </div>
                   }
                   {includes(visible_header_keys, "tags") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.tags)}>
                      <div className="issue-cell__tag">
-                       <TagListFlat issue_ids={[issue.id]} can_edit={false} />
+                       <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
                      </div>
                    </div>
                   }
@@ -418,6 +419,7 @@ const makeMapStateToProps = () => {
     const selEstimatesByUserId = makeSelEstimatesByUserId()
     const selActualsByUserId = makeSelActualsByUserId()
     const selIssueTagsByCategoryName = makeSelIssueTagsByCategoryName()
+    const selIssueAsList = makeSelIssueAsList()
     const mapStateToProps = (state, props) => {
         
         const {
@@ -462,6 +464,7 @@ const makeMapStateToProps = () => {
         return {
             issue: issue,
             issue_id: issue_id,
+            issue_id_as_list: selIssueAsList(state, props),
             sprint,
             is_selected: is_selected,
             is_highlighted: is_highlighted,
