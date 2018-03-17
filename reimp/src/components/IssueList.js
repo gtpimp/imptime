@@ -426,7 +426,7 @@ class IssueList extends Component {
                         is_collapsed={true}
                         show_children={includes(expanded_issues, issue.id)}
                         reorderIssue={this.reorderIssue}
-                        onClickedIssue={(event) => this.onClickedIssue(event, issue.id)}
+                        onClickedIssue={this.onClickedIssue}
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
                         is_highlighted={highlighted_ids.indexOf(issue.id) !== -1}

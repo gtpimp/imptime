@@ -208,7 +208,7 @@ class Issue extends Component {
 
             return (
                 <div key={this.key + "." + issue.id}
-                     onClick={onClickedIssue}
+                     onClick={(event) => onClickedIssue(event, issue.id)}
                      className={classNames("div-table__row",
                                            'issue',
                                            'list-table__row--compact',

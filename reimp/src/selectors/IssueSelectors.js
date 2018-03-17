@@ -1,10 +1,20 @@
 import { createSelector } from 'reselect'
-import { ENTITY_KEY__ISSUE } from '../actions/ItemListKeyRegistry'
+import {
+    ENTITY_KEY__ISSUE,
+    ENTITY_KEY__TAG
+} from '../actions/ItemListKeyRegistry'
 import { getIssue } from '../actions/Issues'
 import { getTags } from '../actions/Tags'
-import { keyBy } from 'lodash'
+import { includes, filter, keyBy, keys, values, uniq, concat } from 'lodash'
+import {
+    getAllItems
+} from '../actions/Item'
 
 const selGetIssue = (state, props) => getIssue(state, props.issue_id)
+
+const selGetAllIssuesById = (state, props) => {
+    return getAllItems(state, ENTITY_KEY__ISSUE)
+}
 
 const selGetIssueTagIds = (state, props) => {
     const issue = getIssue(state, props.issue_id)
@@ -12,6 +22,10 @@ const selGetIssueTagIds = (state, props) => {
         return null
     }
     return issue.tag_ids
+}
+
+const selGetAllTagsById = (state, props) => {
+    return getAllItems(state, ENTITY_KEY__TAG)
 }
 
 const selGetIssueTags = (state, props) => {
@@ -48,9 +62,14 @@ export const makeSelActualsByUserId = () => {
 
 export const makeSelIssueTagsByCategoryName = () => {
     return createSelector(
-        [ selGetIssueTags ],
-        (issue_tags) => {
-            return keyBy(issue_tags, 'category_name')
+        [ selGetAllIssuesById, selGetAllTagsById, selGetIssue ],
+        (all_issues_by_id, all_tags_by_id, issue) => {
+            if ( ! issue ) {
+                return {}
+            }
+            const issue_tag_ids = issue.tag_ids
+            const tags = filter(all_tags_by_id, function(tag) { return includes(issue_tag_ids, tag.id) })
+            return uniq(keys(keyBy(values(tags), 'category_name')))
         }
     )
 }
