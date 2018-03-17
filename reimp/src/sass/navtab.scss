@@ -7,11 +7,11 @@
     font: $font-6;
     height: 56px;
     text-transform: uppercase;
-    border-bottom: 1px solid $color-2;
+    border-bottom: 1px solid $header-background-color;
 }
 
 .navtab:hover {
-    border-bottom: 1px solid $color-24;
+    border-bottom: 1px solid $color-5;
     cursor: pointer;
 }
 
