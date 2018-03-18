@@ -116,6 +116,7 @@ class ProjectViewSet(BaseViewSet):
             project.create_default_statuses()
             ProjectPermissions.ensure_user_belongs_to_business(user=request.user,
                                                                business=project) #sic
+            ProjectPermissions.give_all_permissions_to_user(user=request.user, business=project) #sic
 
             context['project'] = {'name': project.name}
             data = {'status': 'success', 'payload': context}

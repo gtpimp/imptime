@@ -521,6 +521,62 @@ class BusinessPermissions(BaseModel):
                                                          defaults={'is_active_member_of_business':True})[0]
 
     @classmethod
+    def give_all_permissions_to_user(self, user, business):
+        bp = self.ensure_user_belongs_to_business(user, business)
+        bp.can_invite_users = True
+        bp.can_set_user_permissions = True
+        bp.can_view_project_card = True
+        bp.can_edit_issues = True
+        bp.can_view_issues = True
+        bp.can_edit_issue_states = True
+        bp.can_edit_project_states = True
+        bp.can_add_issue = True
+        bp.can_delete_issue = True
+        bp.can_delete_project = True
+        bp.can_edit_description = True
+        bp.can_add_issue_comment = True
+        bp.can_edit_subject = True
+        bp.can_edit_feature = True
+        bp.can_edit_tags = True
+        bp.can_create_sprint = True
+        bp.can_edit_sprint_status = True
+        bp.can_edit_sprint_type = True
+        bp.can_edit_sprint = True
+        bp.can_assign_user = True
+        bp.can_be_scheduled = True
+        bp.can_view_business_comments = True
+        bp.can_view_testables = True
+        bp.can_view_actual_hours = True
+        bp.can_see_other_user_points = True
+        bp.can_estimate_own_points = True
+        bp.can_view_calendar = True
+        bp.can_import_actual_hours = True
+        bp.can_edit_business_comments = True
+        bp.can_view_review_cycle = True
+        bp.can_do_dev_checklist = True
+        bp.can_do_traffic_checklist = True
+        bp.can_do_finance_checklist = True
+        bp.can_edit_review_cycle = True
+        bp.can_edit_permissions = True
+        bp.can_view_permissions = True
+        bp.can_toggle_graphs = True
+        bp.can_edit_project_detail = True
+        bp.can_edit_deadlines = True
+        bp.can_view_deadlines = True
+        bp.can_edit_budget = True
+        bp.can_view_budget = True
+        bp.can_edit_invoices = True
+        bp.can_view_invoices = True
+        bp.can_edit_quotes = True
+        bp.can_view_quotes = True
+        bp.can_edit_ctc_billable_rates = True
+        bp.can_view_ctc_billable_rates = True
+        bp.can_view_ctc_rates = True
+        bp.can_view_documents = True
+        bp.can_edit_calendar = True
+        bp.save()
+    
+    @classmethod
     def for_user(self, user, business=None, auto_create=True):
         qs = user.business_permissions
         if business is not None:

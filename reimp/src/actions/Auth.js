@@ -137,6 +137,7 @@ export function change_password(old_password, new_password) {
                               error: json.error})
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PASSWORD})
+                    cookie.save('has_usable_password', true, { path: '/' })
                     browserHistory.push('/password/changed')
                 }
             })

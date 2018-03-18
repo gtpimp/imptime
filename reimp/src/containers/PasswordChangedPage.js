@@ -15,10 +15,6 @@ class PasswordChangedPage extends Component {
     render() {
         return (
             <div className="blank-page">
-              <div className="blank-page__header">
-                <div className="blank-page__logo"></div>
-                <div className="blank-page__title">Password changed</div>
-              </div>
               <div className="blank-container">
                 <div className="blank-text">
                   Your password has been changed
