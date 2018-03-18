@@ -4,14 +4,21 @@ import {
     ANNOUNCE_REQUEST_NEW_USER_PASSWORD,
     ANNOUNCE_SAVED_USER_PASSWORD,
     ANNOUNCE_SAVE_USER_PASSWORD_REJECTED,
-    ANNOUNCE_SAVING_USER_PASSWORD
+    ANNOUNCE_SAVING_USER_PASSWORD,
+    ANNOUNCE_CREATING_ACCOUNT,
+    ANNOUNCE_CREATE_ACCOUNT_REJECTED,
+    ANNOUNCE_ACCOUNT_CREATED,
+    ANNOUNCE_ACCOUNT_CREATION_FAILED
+
 } from '../actions/Auth'
 import cookie from 'react-cookie';
 
 const initialState = {
     token: null,
     change_password_error_message: null,
-    saving_password: false
+    saving_password: false,
+    creating_account: false
+    
 }
 
 export default function auth(state = initialState, action) {
@@ -55,6 +62,18 @@ export default function auth(state = initialState, action) {
         case ANNOUNCE_SAVING_USER_PASSWORD:
             return Object.assign({}, state, { change_password_error_message: action.error,
                                               saving_password: true})
+
+        case ANNOUNCE_CREATING_ACCOUNT:
+            return Object.assign({}, state, { creating_account: true})
+            
+        case ANNOUNCE_CREATE_ACCOUNT_REJECTED:
+            return Object.assign({}, state, { creating_account: false})
+            
+        case ANNOUNCE_ACCOUNT_CREATED:
+            return Object.assign({}, state, { creating_account: false})
+            
+        case ANNOUNCE_ACCOUNT_CREATION_FAILED:
+            return Object.assign({}, state, { creating_account: false})
             
         default:
             return state

@@ -11,6 +11,10 @@ export const ANNOUNCE_SAVING_USER_PASSWORD = "ANNOUNCE_SAVING_USER_PASSWORD"
 export const ANNOUNCE_SAVED_USER_PASSWORD = "ANNOUNCE_SAVED_USER_PASSWORD"
 export const ANNOUNCE_SAVE_USER_PASSWORD_FAILED = "ANNOUNCE_SAVE_USER_PASSWORD_FAILED"
 export const ANNOUNCE_SAVE_USER_PASSWORD_REJECTED = "ANNOUNCE_SAVE_USER_PASSWORD_REJECTED"
+export const ANNOUNCE_CREATING_ACCOUNT = "ANNOUNCE_CREATING_ACCOUNT"
+export const ANNOUNCE_CREATE_ACCOUNT_REJECTED = "ANNOUNCE_CREATE_ACCOUNT_REJECTED"
+export const ANNOUNCE_ACCOUNT_CREATED = "ANNOUNCE_ACCOUNT_CREATED"
+export const ANNOUNCE_ACCOUNT_CREATION_FAILED = "ANNOUNCE_ACCOUNT_CREATION_FAILED"
 
 export function requestingNewUserPassword() {
     return { type: ANNOUNCE_REQUEST_NEW_USER_PASSWORD }
@@ -172,4 +176,33 @@ export function can_delete_release_notes() {
 
 export function can_seen_by_release_notes() {
     return is_superuser()
+}
+
+export function create_account(values) {
+
+    return (dispatch, getState) => {
+        const state = getState()
+        dispatch({type: ANNOUNCE_CREATING_ACCOUNT})
+        const data = values
+        const params = {method: "POST",
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
+        
+        return impfetch(state, 'imp/auth/create_account/', dispatch, params)
+            .then(response => response.json())
+            .then(json => {
+                if ( json.status !== 'success' ) {
+                    dispatch({type: ANNOUNCE_CREATE_ACCOUNT_REJECTED,
+                              error: json.error})
+                } else {
+                    dispatch({type: ANNOUNCE_ACCOUNT_CREATED})
+                    browserHistory.push('/auth/account_created')
+                }
+            })
+            .catch(function (error) {
+                dispatch({type: ANNOUNCE_ACCOUNT_CREATION_FAILED, error: error})
+            })
+    }
 }

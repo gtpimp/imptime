@@ -15,6 +15,8 @@ import keymap from '../actions/Keymap'
 const shortcut_manager = new ShortcutManager(keymap)
 var HTML5Backend = require('react-dnd-html5-backend');
 import ReactTooltip from 'react-tooltip'
+import Error from './Error'
+import Maintenance from './Maintenance'
 
 class MainLayout extends Component {
 
@@ -82,6 +84,8 @@ class MainLayout extends Component {
         if ( ! is_logged_in ) {
             return (
                 <div className="app">
+                  <Maintenance/>
+                  <Error/>
                   {this.props.children}
                 </div>
             )

@@ -121,6 +121,10 @@
         text-transform: uppercase;
         font-size: $font-size-default;
     }
+
+    .button:first-child {
+        margin-right:10px;
+    }
 }
 .login__footer {
     margin-top: 10px;
@@ -181,3 +185,8 @@
     padding-left: 35px;
 }
 
+.blank-page__line {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: $font-size-default;
+}
