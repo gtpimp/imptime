@@ -48,37 +48,63 @@ class UserPermissionForm extends Component {
     }
 
     renderPermissionCheckbox(field) {
-        const { input } = field
-        const { permission_name } = this.props
+        const { input, data, onChange, label, ...rest } = field
         return <input type="checkbox"
-                      label={permission_name}
-                      key={permission_name}
+                      label={label}
+                      key={label}
                       checked={input.value}
                       onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                />
     }
 
     render() {
-        const { pup_id, is_loading, permission_name, handleSubmit } = this.props
+        const { pup_id, pup, is_loading, permission_names, handleSubmit, can_edit } = this.props
+        const that = this;
 
-        return null
-        
         return (
             <div className="user-permission">
-                { !pup_id && <div>loading</div> }
-                { pup_id &&
-                  <form onSubmit={handleSubmit}>
-                      <Field name={permission_name}
-                             component={this.renderPermissionCheckbox} />
-                  </form>
-                }
+              { !pup_id && <div>loading</div> }
+
+              <form onSubmit={handleSubmit}>
+                <table>
+                  {map(permission_names, function(permission_name, index) {
+                      return (
+                          <tr key={index}>
+                            <td>
+                              <div>
+                                <div className="user-permission__permission_name" key={index}>{permission_name.replace(/_/g, " ")}</div>
+                              </div>
+                            </td>
+                            <td>
+                              <div>
+                                { can_edit &&
+                                  <Field name={permission_name}
+                                         component={that.renderPermissionCheckbox} />
+                                }
+                                { ! can_edit &&
+                                  <div>
+                                    {pup[permission_name] === true &&
+                                     <div className="user-permission__permission_value--on">On</div>
+                                    }
+                                     {pup[permission_name] === false &&
+                                      <div className="user-permission__permission_value--off">Off</div>
+                                     }
+                                  </div>
+                                }
+                              </div>
+                            </td>
+                          </tr>
+                      )}
+                   )}
+                </table>
+              </form>
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, user_id, onClose, onChange, permission_name } = props
+    const { project_id, user_id, onClose, onSave, permission_names } = props
     const user = getUser(state, user_id) || {}
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
@@ -88,26 +114,26 @@ function mapStateToProps(state, props) {
     
     const is_loading = ! user.id || ! project.id || ! pup.id || includes(loading_pup_ids, pup.id)
     const is_invalidated = includes(invalidated_pup_ids, pup.id)
-
+ 
     const initialValues = {}
-    initialValues[permission_name] = pup[permission_name]
+    map(permission_names, (permission_name) => { initialValues[permission_name] = pup[permission_name] })
+    const can_edit = logged_in_users_permissions(state, project_id).has_edit_permissions
     
     return {
-        logged_in_users_permissions: logged_in_users_permissions(state, project_id),
-        initialValues: initialValues,
-        onSubmit: onChange,
-        form: 'project_permission_form__' + permission_name,
+        can_edit,
+        initialValues,
+        onSubmit: onSave,
         enableReinitialize: true,
-        project: project,
-        project_id: project_id,
-	user: user,
-	user_id: user_id,
-        pup: pup,
+        project,
+        project_id,
+        user,
+        user_id,
+        pup,
         pup_id: pup.id,
-        permission_name: permission_name,
-        is_loading: is_loading,
-        is_invalidated: is_invalidated
+        permission_names,
+        is_loading,
+        is_invalidated
     }
 }
 
-export default connect(mapStateToProps)(reduxForm()(UserPermissionForm))
+export default connect(mapStateToProps)(reduxForm({form:'project_permission_form'})(UserPermissionForm))

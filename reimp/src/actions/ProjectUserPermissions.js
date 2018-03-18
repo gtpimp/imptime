@@ -130,30 +130,6 @@ function fetchPupsPromise(dispatch, state, pup_ids) {
     })
 }
 
-/* export function fetchPupsIfNeeded(list_key) {
- *     const matching_items_key = ENTITY_KEY__PROJECT_USER_PERMISSION
- *     const matching_items_promise_func = fetchPupsPromise
- *     return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
- * }*/
-
-export function setProjectUserPermission(project_id, user_id, permission_name) {
-    return updatePup(project_id, user_id, permission_name, true)
-}
-
-export function unsetProjectUserPermission(project_id, user_id, permission_name) {
-    return updatePup(project_id, user_id, permission_name, false)
-}
-
-/* export function ensurePupsLoaded(pup_ids) {
- *     return (dispatch, getState) => {
- *         const state = getState()
- *         const pup_ids_to_load = getMissingItemIds(state, pup_ids, 'pup')
- *         if ( pup_ids_to_load.length > 0 ) {
- *             fetchPupsPromise(dispatch, state, pup_ids_to_load)
- *         }
- *     }
- * }*/
-
 function getPupIdForProjectUser(state, project_id, user_id) {
     return (((state.project_user_permission || {}).pup_ids_by_project_and_user || {})[project_id] || {})[user_id] || null
 }
@@ -243,48 +219,44 @@ function announcePupsSavedForProjectAndUser(project_id, user_id) {
     }
 }
 
-function announcePupsSavingForProjectAndUser(project_id, user_id, field_name, new_value) {
+function announcePupsSavingForProjectAndUser(project_id, user_id) {
     return {
         type: ANNOUNCE_PUPS_SAVING,
         project_id: project_id,
         user_id: user_id,
-	field_name: field_name,
-	new_value: new_value
     }
 }
 
-function updatePup(project_id, user_id, permission_name, new_value, on_done) {
+export function updateProjectUserPermissions(project_id, user_id, permission_values, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-	      dispatch(announcePupsSavingForProjectAndUser(project_id, user_id, permission_name, new_value))
-	      let data = {project_id: project_id,
+	dispatch(announcePupsSavingForProjectAndUser(project_id, user_id))
+	let data = {project_id: project_id,
                     user_ids: [user_id],
-                    permission_name: permission_name,
-		                value: new_value }
+                    permission_values}
 
-        // Use a descriptive url to prevent the throttling dropping saves on different permissions within the same project
-	      return impfetch(state, "imp/permission/project/?project_id="+project_id+"&user_id="+user_id+"&permission_name="+permission_name, dispatch,
-			                  {method: "POST",
-			                   credentials: 'same-origin',
-			                   data: data,
-			                   headers: {"Content-type": "application/json; charset=UTF-8"},
-			                   body: JSON.stringify(data)}
-	      ).then(response => response.json())
-	       .then(json => {
+	return impfetch(state, "imp/permission/project/?project_id="+project_id+"&user_id="+user_id, dispatch,
+			{method: "POST",
+			 credentials: 'same-origin',
+			 data: data,
+			 headers: {"Content-type": "application/json; charset=UTF-8"},
+			 body: JSON.stringify(data)}
+	).then(response => response.json())
+	 .then(json => {
              if ( json.status !== 'success' ) {
-		             console.log('Request failed with JSON response', json);
-		             dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, json.error))
+		 console.log('Request failed with JSON response', json);
+		 dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, json.error))
              } else {
-		             console.log('Request succeeded with JSON response', json);
+		 console.log('Request succeeded with JSON response', json);
                  dispatch(announcePupsSavedForProjectAndUser(project_id, user_id))
              }
-	           if ( on_done ) {
-		             on_done()
-	           }
-	       })
-	       .catch(function (error) {
+	     if ( on_done ) {
+		 on_done()
+	     }
+	 })
+	 .catch(function (error) {
              console.log('Request failed', error);
-	           dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, error))
-	       })
+	     dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, error))
+	 })
     }
 }

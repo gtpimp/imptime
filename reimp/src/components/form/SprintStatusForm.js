@@ -47,16 +47,16 @@ class SprintStatusForm extends Component {
         const { handleSubmit, status_options } = this.props
         return (
             <form onSubmit={handleSubmit}>
-            <div>
-            <label htmlFor="status">Status</label>
-            <Field name="sprint_status_name"
-            component={this.renderSingleValueSelector}
-            valueField="value"
-            textField="label"
-            data={status_options}
-            />
-            </div>
-            <button type="submit">Submit</button>
+              <div>
+                <label htmlFor="status">Status</label>
+                <Field name="sprint_status_name"
+                       component={this.renderSingleValueSelector}
+                       valueField="value"
+                       textField="label"
+                       data={status_options}
+                />
+              </div>
+              <button type="submit">Submit</button>
             </form>
         )
     }

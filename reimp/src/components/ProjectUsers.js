@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { union } from 'lodash'
 import {browserHistory} from 'react-router'
 import {getProject} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
@@ -51,7 +52,7 @@ class ProjectUsersPage extends Component {
         const {dispatch, project, project_id} = props
         dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id': project_id}))
         if ( project.id ) {
-            dispatch(ensureUsersLoaded(project.invited_user_ids+project.allowed_user_ids))
+            dispatch(ensureUsersLoaded(union(project.invited_user_ids, project.allowed_user_ids)))
         }
     }
 

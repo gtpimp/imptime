@@ -10,10 +10,8 @@ import { getProject, ensureProjectsLoaded } from '../actions/Projects'
 import { getProjectUserPermission, ensureProjectUserPermissionsLoaded } from '../actions/ProjectUserPermissions'
 import '../sass/user-permission.css'
 import {
-    setProjectUserPermission,
-    unsetProjectUserPermission
+    updateProjectUserPermissions
 } from '../actions/ProjectUserPermissions'
-
 
 class UserPermissions extends Component {
 
@@ -47,14 +45,10 @@ class UserPermissions extends Component {
     onChangePermission(new_values) {
         const { user_id, project_id, dispatch } = this.props
 
-        const permission_name = keys(new_values)[0]
-        const new_value = new_values[permission_name]
+        const permission_values = {}
+        map(keys(new_values), (permission_name) => permission_values[permission_name] = new_values[permission_name] === true)
 
-        if ( new_value === true ) {
-            dispatch(setProjectUserPermission(project_id, user_id, permission_name))
-        } else {
-            dispatch(unsetProjectUserPermission(project_id, user_id, permission_name))
-        }
+        dispatch(updateProjectUserPermissions(project_id, user_id, permission_values))
     }
 
     render() {
@@ -73,42 +67,19 @@ class UserPermissions extends Component {
                           <tr><td>Loading...</td></tr>
                         }
 
-                        { ! logged_in_users_permissions.has_view_permissions &&
+                        { !is_loading && ! logged_in_users_permissions.has_view_permissions &&
                           <tr><td>You are not allowed to view permissions</td></tr>
                         }
 
-                        { !is_loading && logged_in_users_permissions.has_view_permissions &&
-                          map(permission_names, (permission_name, index) =>
-                              <tr key={index}>
-                                  <td>
-                                      <div>
-                                          <div className="user-permission__permission_name" key={index}>{permission_name.replace(/_/g, " ")}</div>
-                                      </div>
-                                  </td>
-                                  <td>
-                                      <div>
-                                          { logged_in_users_permissions.has_edit_permissions &&
-                                            <UserPermissionForm permission_name={permission_name}
-                                                                user_id={user.id}
-                                                                project_id={project.id}
-                                                                onChange={this.onChangePermission}
-                                            />
-                                          }
-                                           { ! logged_in_users_permissions.has_edit_permissions &&
-                                             <div>
-                                                 {pup[permission_name] === true &&
-                                                  <div className="user-permission__permission_value--on">On</div>
-                                                 }
-                                                 {pup[permission_name] === false &&
-                                                  <div className="user-permission__permission_value--off">Off</div>
-                                                 }
-                                             </div>
-                                           }
-                                      </div>
-                                  </td>
-                              </tr>
-                          )
-                        }
+                          { !is_loading && logged_in_users_permissions.has_view_permissions &&
+
+                            <UserPermissionForm permission_names={permission_names}
+                                                user_id={user.id}
+                                                project_id={project.id}
+                                                onSave={this.onChangePermission} />
+                          }
+                          
+                        
 
                     </tbody>
                 </table>

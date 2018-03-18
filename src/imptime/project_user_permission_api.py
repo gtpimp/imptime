@@ -55,13 +55,11 @@ class ProjectUserPermissionViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
-        # not strictly a create, we use for updates as well
         try:
             params = request.data
             project_pk = params['project_id']
             user_pks = params['user_ids']
-            permission_name = params['permission_name']
-            value = params['value']
+            permission_values = params['permission_values']
 
             project = self.allowed_project(project_pk)
 
@@ -71,7 +69,10 @@ class ProjectUserPermissionViewSet(BaseViewSet):
                 for user_pk in user_pks:
                     user = self.allowed_user(user_pk)
                     pup = ProjectPermissions.for_user(user, project)
-                    pup.update_permission(permission_name, value)
+                    
+                    for permission_name, value in permission_values.items():
+                        pup.update_permission(permission_name, value, save=False)
+                    pup.save()
                 data = {'status': 'success', 'payload': {}}
 
         except Exception, ex:
