@@ -199,7 +199,7 @@ export function create_account(values) {
                     throw new SubmissionError(json.field_errors)
                 } else {
                     dispatch({type: ANNOUNCE_ACCOUNT_CREATED})
-                    browserHistory.push('/auth/account_created')
+                    browserHistory.push('/account/created')
                 }
             })
     }

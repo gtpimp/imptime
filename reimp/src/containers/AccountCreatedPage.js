@@ -1,35 +1,39 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {browserHistory} from 'react-router'
-import { change_password } from '../actions/Auth'
-import Message from '../components/Message'
+import { PAGE_KEY__AUTH_PAGE } from '../actions/ItemListKeyRegistry'
+import {
+    set_toolbars,
+} from '../actions/Page'
 
-class PasswordReminderSentPage extends Component {
+class AccountCreatedPage extends Component {
 
     constructor(props) {
         super(props)
         this.onClickedHome = this.onClickedHome.bind(this)
     }
+    
+    componentDidMount() {
+        const {dispatch} = this.props
+        dispatch(set_toolbars(PAGE_KEY__AUTH_PAGE, []))
+    }
 
     onClickedHome() {
         browserHistory.push('/projects');
     }
-
+    
     render() {
-        const that = this
-        const { handleSubmit, error, submitting } = this.props
-        
         return (
             <div className="blank-page">
               <div className="blank-page__header">
                 <div className="blank-page__logo"></div>
-                <div className="blank-page__title">Password reset</div>
+                <div className="blank-page__title">Account created</div>
               </div>
               <div className="blank-container">
                 <div className="blank-text">
-                  If that was a valid username, then you have been sent a password reset email.
-                  <br/><br/><br/>
-                  Check your email for the link to reset it.
+                  Your account has been created.
+                  <br/><br/>
+                  Please check your emails and click the link to login and set your password.
                   <br/><br/><br/>
                   <button onClick={this.onClickedHome} className="button button--large button--login">Home</button>
                 </div>
@@ -42,7 +46,8 @@ class PasswordReminderSentPage extends Component {
 function mapStateToProps(state, props) {
 
     return {
+        settings: state.settings
     }
 }
 
-export default connect(mapStateToProps)(PasswordReminderSentPage)
+export default connect(mapStateToProps)(AccountCreatedPage)
