@@ -2,6 +2,7 @@ import logging
 from user_serializer import UserSerializer
 from mailqueue.mailqueue_helper import queue_email
 from rest_framework.decorators import list_route
+from django import template
 from django.conf import settings
 from django.db.models import Q
 from rest_framework.renderers import JSONRenderer
@@ -11,10 +12,11 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import UserAutoLoginToken
+from timepiece.models import UserAutoLoginToken, User, UserProfile
 from rest_framework.authtoken import views as rest_views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from django.db.transaction import atomic
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,7 @@ class LoginViewSet(rest_views.ObtainAuthToken):
                          'is_superuser': user.is_superuser,
                          'has_usable_password': user.has_usable_password()})
 
+    
 @permission_classes((IsAuthenticated,))
 class AuthViewSet(BaseViewSet):
 
@@ -56,6 +59,8 @@ class AuthViewSet(BaseViewSet):
             context['status'] = 'success'
         return Response(context)
 
+
+    
 @permission_classes(())
 class AutoLoginViewSet(BaseViewSet):
     
@@ -116,4 +121,41 @@ class AutoLoginViewSet(BaseViewSet):
                     to_addresses=[user.email])
         
         return Response({'status': 'success'})
+
+    @list_route(methods=['POST'])
+    @atomic
+    def create_account(self, request):
+        context = {}
+        email = request.data['email']
+        first_name = request.data['first_name']
+        import pdb; pdb.set_trace()
+        last_name = request.data['last_name']
+        user = User.objects.filter(Q(email=email)).first()
+        if user is not None:
+            context['status'] = 'error'
+            context['error'] = 'Email address is already in use'
+        else:
+            user = User.objects.create(email=email,
+                                       username=email,
+                                       first_name=first_name,
+                                       last_name=last_name)
+            UserProfile.objects.create(user=user)
+            user.set_unusable_password()
+            user.save()
+
+            
+            auto_login_token = UserAutoLoginToken.get_auto_login_token(user)
+
+            email_context = {'login_link':settings.WEB_URL_BASE + "password/change?autologin="+auto_login_token}
+            plain_content = template.loader.get_template("imptime/emails/new_account.txt").render(email_context)
+            html_content = template.loader.get_template("imptime/emails/new_account.html").render(email_context)
+
+            queue_email(subject_content="ImpTime: Account created",
+                        from_address=settings.FROM_EMAIL,
+                        text_content=plain_content,
+                        html_content=html_content,
+                        to_addresses=[user.email] + [x[1] for x in settings.ADMINS])
+            context['status'] = 'success'
+        
+        return Response(context)
     

@@ -1,0 +1,4 @@
+Your account has been created. Click the link below to login and choose a password:
+
+{{login_link}}
+

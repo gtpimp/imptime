@@ -190,7 +190,7 @@ export function create_account(values) {
                         headers: {"Content-type": "application/json; charset=UTF-8"}, 
                         body: JSON.stringify(data)}
         
-        return impfetch(state, 'imp/auth/create_account/', dispatch, params)
+        return impfetch(state, 'imp/autologin/create_account/', dispatch, params)
             .then(response => response.json())
             .then(json => {
                 if ( json.status !== 'success' ) {
