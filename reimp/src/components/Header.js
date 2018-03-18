@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../sass/header.css'
+import { logged_in_user } from '../actions/Auth'
 import Navbar from '../components/Navbar'
 import Toolbar from './toolbar/Toolbar'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
@@ -10,20 +11,28 @@ import Error from './Error'
 class Header extends Component {
 
     render() {
+        const { has_usable_password } = this.props
+        
         return (
             <div className="header">
               <Maintenance/>
               <Error/>
               <Navbar/>
               <Toolbar />
-              <ReleaseNotesPopup />
+              { has_usable_password && 
+                <ReleaseNotesPopup />
+              }
             </div>
         )
     }
 }
 
 function mapStateToProps(state) {
+
+    const user = logged_in_user()
+    const has_usable_password = user['has_usable_password'] || false
     return {
+        has_usable_password
     }
 }
 
