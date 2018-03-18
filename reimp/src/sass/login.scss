@@ -117,7 +117,15 @@
     margin-top: 36px;
 
     .button {
-        margin-left: 5px;
+        cursor: pointer;
+        text-transform: uppercase;
+        font-size: $font-size-default;
+    }
+}
+.login__footer {
+    margin-top: 10px;
+
+    .button {
         cursor: pointer;
         text-transform: uppercase;
         font-size: $font-size-default;
