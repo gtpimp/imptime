@@ -5,6 +5,7 @@ import {getProject} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import ModalDialog from '../components/ModalDialog'
 import UserList from './UserList'
+import {ensureUsersLoaded, getUser} from '../actions/Users'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE,
     LIST_KEY__PROJECT_USER_LIST
@@ -35,20 +36,23 @@ class ProjectUsersPage extends Component {
     }
 
     componentDidMount() {
-        const {project_id} = this.props
-        this.refresh(project_id)
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
         const {project_id} = this.props
         if (new_props.project_id !== project_id || new_props.project.id !== this.props.project.id) {
-            this.refresh(new_props.project_id)
+            this.refresh(new_props)
         }
     }
 
-    refresh(project_id) {
-        const {dispatch} = this.props
+    refresh(these_props) {
+        const props = these_props || this.props
+        const {dispatch, project, project_id} = props
         dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id': project_id}))
+        if ( project.id ) {
+            dispatch(ensureUsersLoaded(project.invited_user_ids+project.allowed_user_ids))
+        }
     }
 
     onSelectUsers(user_ids) {
@@ -109,7 +113,10 @@ class ProjectUsersPage extends Component {
                 { is_inviting_user && this.renderInviteUser() }
 
                 <h2>Team</h2>
-                <div className="invite-user-button" onClick={this.onStartInviteUser}><i className="material-icons md-18">add_circle_outline</i></div>
+                <div className="button button-primary button__default-width" onClick={this.onStartInviteUser}>
+                  <i className="material-icons md-18">add_circle_outline</i>
+                  Add user
+                </div>
                 <UserList list_key={LIST_KEY__PROJECT_USER_LIST}
                           invited_user_ids={invited_user_ids}
                           onSelectUsers={this.onSelectUsers}

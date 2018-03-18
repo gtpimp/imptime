@@ -27,7 +27,6 @@ import ProjectWikiPage from './containers/ProjectWikiPage'
 import ReleaseNotesPage from './containers/ReleaseNotesPage'
 import SprintsPage from './containers/SprintsPage'
 import VisualSpecDocumentPage from './components/visual_spec/VisualSpecDocumentPage'
-import TeamPage from './containers/TeamPage'
 import configureStore from './store/configureStore'
 import {IndexRoute, Router, Route, browserHistory} from 'react-router'
 import {Provider} from 'react-redux'
@@ -91,7 +90,6 @@ ReactDOM.render(
           <Route path="dashboard" component={DashboardPage}/>
           <Route path="usertimesheets" component={UserTimesheetPage}/>
           <Route path="clients" component={ClientsPage}/>
-          <Route path="team" component={TeamPage}/>
         </Route>
       </Router>
     </Provider>,

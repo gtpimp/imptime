@@ -23,7 +23,6 @@ class ProjectUserPage extends Component {
 
     constructor(props) {
         super(props)
-        this.navigateToSprintsPage = this.navigateToSprintsPage.bind(this)
         this.navigateToProjectUserPermissions = this.navigateToProjectUserPermissions.bind(this)
         this.closeProjectUserPermissions = this.closeProjectUserPermissions.bind(this)
     }
@@ -58,21 +57,16 @@ class ProjectUserPage extends Component {
         }
     }
 
-    navigateToSprintsPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints');
-    }
-
     navigateToProjectUserPermissions(user, event) {
         const { project_id } = this.props
         event.stopPropagation()
         event.preventDefault()
-        browserHistory.push('/projects/'+project_id+'/users/'+user.id+'/?permissions=1')
+        browserHistory.push('/projects/'+project_id+'/users/'+user.id)
     }
 
     closeProjectUserPermissions() {
         const { user_id, project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/users/'+user_id+'/?permissions=0')
+        browserHistory.push('/projects/'+project_id+'/users/')
     }
 
     renderUserPermissions() {
@@ -92,9 +86,9 @@ class ProjectUserPage extends Component {
         const that = this
         return (
             <div>
-                { show_permissions && user_id && this.renderUserPermissions() }
+                { user_id && this.renderUserPermissions() }
 
-                { ! show_permissions &&
+                { ! user_id &&
                   <div>
                       <div className="project-user__project_users">
                           <ProjectUsers
@@ -122,7 +116,6 @@ function mapStateToProps(state, props) {
         project: project || {},
         user_id: user_id,
         user: user || {},
-        show_permissions: opts.permissions === '1',
         username: (user || {}).username
     }
 }
