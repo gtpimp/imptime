@@ -6,7 +6,7 @@ import {
     DUPLICATE_SAVING_ERROR_MESSAGE
 } from '../actions/lib'
 const ACTIONS_TO_IGNORE = [
-    
+    "@@redux-form/SET_SUBMIT_FAILED"
 ]
 
 function error_catcher_middleware(_ref) {

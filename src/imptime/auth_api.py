@@ -128,12 +128,12 @@ class AutoLoginViewSet(BaseViewSet):
         context = {}
         email = request.data['email']
         first_name = request.data['first_name']
-        import pdb; pdb.set_trace()
         last_name = request.data['last_name']
         user = User.objects.filter(Q(email=email)).first()
         if user is not None:
             context['status'] = 'error'
             context['error'] = 'Email address is already in use'
+            context['field_errors'] = {'email': 'Email address is already in use'}
         else:
             user = User.objects.create(email=email,
                                        username=email,
