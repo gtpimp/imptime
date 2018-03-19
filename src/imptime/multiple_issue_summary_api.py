@@ -211,15 +211,25 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
     def _get_actuals_by_tag_category(self, issues_qs):
         entries = Entry.objects.filter(issue__in=issues_qs)
-        entries = entries.order_by("user_id")\
+        entries = entries.order_by("user_id", "issue__tags__id")\
                        .filter(user__rates__project=F('issue__project'))\
                        .values("user_id", "issue__tags__id")\
                        .distinct()
         hours = self._get_actuals_enriched_with_costs(entries)
         hours = hours.annotate(category_id=F('issue__tags__category_id'))
-        actuals = {}
+        actuals_by_tag_category = {}
 
-        import pdb; pdb.set_trace()
+        for x in hours:
+            values = actuals_by_tag_category.setdefault(x['category_id'], {})\
+                                            .setdefault(x['user_id'], {})\
+                                            .setdefault(x['issue__tags__id'], {})\
+
+            values['hours'] = x['sum_hours']
+            if self.has_view_ctc_billable_rates:
+                values['cost'] = x['cost']
+                values['cost_with_commission'] = x['cost_with_commission']
+        
+        return actuals_by_tag_category
         
     
     def _get_velocities_by_user(self, issues_qs, user_ids):

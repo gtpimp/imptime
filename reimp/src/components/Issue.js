@@ -310,7 +310,11 @@ class Issue extends Component {
                            <div key={tag_category_name}
                                 className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
                                 style={getCellStyle(header_list.tag_columns)}>
-                             { map(tags, (tag) => <div className="issue-cell__tag_column">{tag.name}</div>) }
+                             { map(tags, (tag) =>
+                                 <div key={tag.id} className="issue-cell__tag_column">
+                                   {tag.name}
+                                 </div>
+                             )}
                            </div>
                        )
                    })

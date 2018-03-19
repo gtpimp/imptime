@@ -71,10 +71,10 @@ class TagListTree extends Component {
                 </div>
               }
 
-              { map(keys(project_tags_by_category), function(category_name) {
+              { map(keys(project_tags_by_category), function(category_name, index) {
                     const tags_for_category = project_tags_by_category[category_name]
                     return (
-                        <TreeView key={category_name}
+                        <TreeView key={index}
                                   nodeLabel={category_name}
                                   itemClassName="taglisttree__category-name"
                                   defaultCollapsed={false}>
@@ -109,7 +109,7 @@ function mapStateToProps(state, props) {
 
     const project_tag_ids = getVisibleItemIds(state, list_key) || []
     const project_tags = getItems(state, ENTITY_KEY__TAG, project_tag_ids) || []
-    const project_tags_by_category = groupBy(project_tags, 'category_name')
+    const project_tags_by_category = groupBy(uniq(project_tags), 'category_name')
     const filter = getListFilter(state, list_key)
 
     return {

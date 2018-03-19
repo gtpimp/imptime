@@ -53,7 +53,6 @@ class MultipleIssueSummary extends Component {
                     <th>Real velocity</th>
                     <th>Role</th>
                     {show_costs && <th>Cost</th>}
-                    {show_costs && <th>Cost with commission</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -84,11 +83,6 @@ class MultipleIssueSummary extends Component {
                         </td>
                         { show_costs && 
                           <td>
-                            <CurrencyValue value={summary.actuals_by_user[user_id].cost} />
-                          </td>
-                        }
-                        { show_costs && 
-                          <td>
                             <CurrencyValue value={summary.actuals_by_user[user_id].commission_cost} />
                           </td>
                         }
@@ -113,7 +107,6 @@ class MultipleIssueSummary extends Component {
                     <th>Given velocity</th>
                     <th>With given velocity</th>
                     {show_costs && <th>Cost</th>}
-                    {show_costs && <th>Cost with commission</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -131,11 +124,6 @@ class MultipleIssueSummary extends Component {
                         <td>
                           <Hours hours={summary.estimates_by_user[user_id].velocity_estimates} />
                         </td>
-                        { show_costs && 
-                          <td>
-                            <CurrencyValue value={summary.estimates_by_user[user_id].velocity_cost} />
-                          </td>
-                        }
                         { show_costs && 
                           <td>
                             <CurrencyValue value={summary.estimates_by_user[user_id].velocity_commission_cost} />
@@ -176,7 +164,6 @@ class MultipleIssueSummary extends Component {
                                             <th>Given velocity</th>
                                             <th>With given velocity</th>
                                             {show_costs && <th>Cost</th>}
-                                            {show_costs && <th>With commission</th>}
                                           </tr>
                                         </thead>
                                         <tbody>
@@ -194,11 +181,6 @@ class MultipleIssueSummary extends Component {
                                                 <td>
                                                   <Hours hours={estimates_by_user_by_tag[tag_id].velocity_estimates} />
                                                 </td>
-                                                { show_costs && 
-                                                  <td>
-                                                    <CurrencyValue value={estimates_by_user_by_tag[tag_id].velocity_cost} />
-                                                  </td>
-                                                }
                                                 { show_costs && 
                                                   <td>
                                                     <CurrencyValue value={estimates_by_user_by_tag[tag_id].velocity_commission_cost} />
@@ -220,6 +202,64 @@ class MultipleIssueSummary extends Component {
         )
     }
 
+    renderActualsByTagCategory(summary) {
+        const { show_costs } = this.props
+        return (
+            <div>
+              { map(keys(summary.actuals_by_tag_category), function(tag_category_id) {
+                    const actuals_by_user = summary.actuals_by_tag_category[tag_category_id]
+                    return (
+                        <PropertyStackComponent key={tag_category_id}>
+                          <h2>
+                            <TagCategory tag_category_id={tag_category_id}/>
+                          </h2>
+
+                          { map(keys(actuals_by_user), function(user_id) {
+                                const actuals_by_user_by_tag = actuals_by_user[user_id]
+                                return (
+                                    <PropertyStackComponent key={user_id}>
+                                      <h2>
+                                        <OtherUser user_id={user_id} />
+                                      </h2>
+                                      <table className="table__column_table">
+                                        <thead>
+                                          <tr>
+                                            <th>Tag</th>
+                                            <th>Hours</th>
+                                            {show_costs && <th>Cost</th>}
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {map(keys(actuals_by_user_by_tag), (tag_id) =>
+                                              <tr key={tag_id}>
+                                                <td>
+                                                  <Tag tag_id={tag_id} />
+                                                </td>
+                                                <td>
+                                                  <Hours hours={actuals_by_user_by_tag[tag_id].hours} />
+                                                </td>
+                                                { show_costs && 
+                                                  <td>
+                                                    <CurrencyValue value={actuals_by_user_by_tag[tag_id].cost_with_commission} />
+                                                  </td>
+                                                }
+                                              </tr>
+                                           )}
+                                        </tbody>
+                                      </table>
+                                    </PropertyStackComponent>
+                                )
+                            }
+                          )}
+                          
+                        </PropertyStackComponent>
+                    )
+                }
+                )}
+            </div>
+        )
+    }
+
     render() {
         const {issues, project_id, summary} = this.props
         return (
@@ -229,6 +269,7 @@ class MultipleIssueSummary extends Component {
                   <h1>Estimate summary</h1>
                 </PropertyStackComponent>
                 {this.renderActualsByUser(summary)}
+                {this.renderActualsByTagCategory(summary)}
                 {this.renderEstimatesByUser(summary)}
                 {this.renderEstimatesByTagCategory(summary)}
               </PropertyStack>
