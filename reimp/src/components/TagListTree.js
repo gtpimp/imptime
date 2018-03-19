@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map, keys, groupBy } from 'lodash'
+import { uniq, map, keys, groupBy } from 'lodash'
 import Tag from './Tag'
 import EditableIssueTag from './EditableIssueTag'
 import { getTags, ensureTagsLoaded, fetchTagsIfNeeded } from '../actions/Tags'
@@ -71,7 +71,8 @@ class TagListTree extends Component {
                 </div>
               }
 
-              { map(project_tags_by_category, function(tags_for_category, category_name) {
+              { map(keys(project_tags_by_category), function(category_name) {
+                    const tags_for_category = project_tags_by_category[category_name]
                     return (
                         <TreeView key={category_name}
                                   nodeLabel={category_name}

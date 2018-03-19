@@ -99,7 +99,7 @@ export function getIssueHeaderListForCurrentMien(state) {
 
 export function getMien(state) {
     if ( cookie.load("current_mien") ) {
-        return cookie.load("current_mien")
+        return cookie.load("current_mien") || "dev_mien"
     } else {
         return get(state.settings, "mien", "dev_mien")
     }

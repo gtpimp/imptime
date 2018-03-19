@@ -229,7 +229,7 @@ class Issue extends Component {
                   {includes(visible_header_keys, "number") &&
                    <div className="div-table__cell"
                         style={getCellStyle(header_list.number)}>
-                     <div>#{issue.id} {issue.number}</div>
+                     <div>{issue.number}</div>
                    </div>
                   }
                  {includes(visible_header_keys, "adhoc") &&

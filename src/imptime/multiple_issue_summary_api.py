@@ -46,6 +46,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             res['estimates_by_user'] = self._get_estimates_by_user(qs)
             res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
             res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
+            res['actuals_by_tag_category'] = self._get_actuals_by_tag_category(qs)
             res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
             
             context['items'] = [ res ]
@@ -182,19 +183,21 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                 
             
         return estimates_by_tag_category
+
+    def _get_actuals_enriched_with_costs(self, entries):
+        return entries.annotate(sum_hours=Sum('hours'),
+                                cost=Sum(F('hours')*F('user__rates__billable_amount')),
+                                cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
+                                                         output_field=FloatField()))
+    
     
     def _get_actuals_by_user(self, issues_qs, estimates_by_user):
-        actuals = {}
         entries = Entry.objects.filter(issue__in=issues_qs)
-        
-        hours = entries.order_by("user_id")\
+        entries = entries.order_by("user_id")\
                        .filter(user__rates__project=F('issue__project'))\
-                       .values("user_id")\
-                       .annotate(sum_hours=Sum('hours'),
-                                 cost=Sum(F('hours')*F('user__rates__billable_amount')),
-                                 cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
-                                                          output_field=FloatField()))
-
+                       .values("user_id")
+        hours = self._get_actuals_enriched_with_costs(entries)
+        actuals = {}
 
         for x in hours:
             raw_estimate = estimates_by_user.get(x['user_id'], {'raw_estimates':0})['raw_estimates']
@@ -206,6 +209,19 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             
         return actuals
 
+    def _get_actuals_by_tag_category(self, issues_qs):
+        entries = Entry.objects.filter(issue__in=issues_qs)
+        entries = entries.order_by("user_id")\
+                       .filter(user__rates__project=F('issue__project'))\
+                       .values("user_id", "issue__tags__id")\
+                       .distinct()
+        hours = self._get_actuals_enriched_with_costs(entries)
+        hours = hours.annotate(category_id=F('issue__tags__category_id'))
+        actuals = {}
+
+        import pdb; pdb.set_trace()
+        
+    
     def _get_velocities_by_user(self, issues_qs, user_ids):
         velocities = {}
         cached_calcs_by_time_tracking_mode = {}
