@@ -166,9 +166,10 @@ class UserList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {user, item_list} = state
+    const {user, item_list, user_ids} = state
     const {list_key, invited_user_ids, user_actions} = props
-    const items_by_id = (user && user.items_by_id) || {}
+    const all_items_by_id = (user && user.items_by_id) || {}
+    const items_by_id = map(user_ids, (user_id) => all_items_by_id[user_id])
     const l = (item_list && item_list[list_key]) || {}
     const filter = l.filter || {}
     const project_id = filter.project_id || null

@@ -107,7 +107,7 @@ class ProjectUsersPage extends Component {
 
     render() {
 
-        const {is_inviting_user, invited_user_ids} = this.props
+        const {is_inviting_user, invited_user_ids, project} = this.props
 
         return (
             <div>
@@ -120,6 +120,7 @@ class ProjectUsersPage extends Component {
                 </div>
                 <UserList list_key={LIST_KEY__PROJECT_USER_LIST}
                           invited_user_ids={invited_user_ids}
+                          user_ids={project.allowed_user_ids}
                           onSelectUsers={this.onSelectUsers}
                           user_actions={this.getActionRenderFunc()}
                 />

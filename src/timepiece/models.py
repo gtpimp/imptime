@@ -584,7 +584,7 @@ class BusinessPermissions(BaseModel):
             qs = qs.filter(business=business)
 
         bp = qs.first()
-        if bp is None and user.is_superuser:
+        if bp is None:
             if auto_create:
                 return self.objects.get_or_create(business=business, user=user)[0]
             else:

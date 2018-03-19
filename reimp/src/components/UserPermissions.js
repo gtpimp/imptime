@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import {browserHistory} from 'react-router'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
@@ -18,6 +19,7 @@ class UserPermissions extends Component {
     constructor(props) {
         super(props)
         this.onChangePermission = this.onChangePermission.bind(this)
+        this.onRemoveUser = this.onRemoveUser.bind(this)
     }
     
     componentDidMount() {
@@ -51,6 +53,11 @@ class UserPermissions extends Component {
         dispatch(updateProjectUserPermissions(project_id, user_id, permission_values))
     }
 
+    onRemoveUser() {
+        const { project_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/users/')
+    }
+
     render() {
         const { user, project, pup, is_loading, onChange,
                 permission_names, handleSubmit, logged_in_users_permissions } = this.props
@@ -76,6 +83,7 @@ class UserPermissions extends Component {
                           <UserPermissionForm permission_names={permission_names}
                                               user_id={user.id}
                                               project_id={project.id}
+                                              onRemoveUser={this.onRemoveUser}
                                               onSave={this.onChangePermission} />
                         }
 
@@ -93,7 +101,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
 
-    const permission_names = filter(keys(pup), function(o) { return o.startsWith("has_") })
+    const permission_names = filter(keys(pup), function(o) { return o.startsWith("has_") || o.startsWith('is_') })
     const is_loading = ( ! user.id || ! project.id || ! pup.id )
     
     return {

@@ -95,10 +95,26 @@ class UserPermissionForm extends Component {
         dispatch(ensureProjectUserPermissionsLoaded(project_id, user_id))
     }
 
-    onChangeAndSubmit(e, fieldOnChange) {
-        const { handleSubmit } = this.props
+    onChangeAndSubmit(e, fieldOnChange, permission_name) {
+        const { user_id, handleSubmit, onRemoveUser } = this.props
+
+        const is_removing_user = permission_name == "is_active_member_of_business"
+        if ( is_removing_user ) {
+            if (! confirm("Are you sure you want to remove this user from the project?" ) ) {
+                return
+            }
+        }
+        
         fieldOnChange(e)
-        setTimeout(() => handleSubmit(), 0)
+        setTimeout(
+            function() {
+                handleSubmit()
+                if ( is_removing_user ) {
+                    onRemoveUser(user_id)
+                }
+            },
+            0)
+        
     }
 
     onQuickRoleSelect(event, role_name) {
@@ -147,9 +163,8 @@ class UserPermissionForm extends Component {
         return <input type="checkbox"
                       label={label}
                       key={label}
-                      ref={(ref)=> this["permission_name_"+label]=ref}
                       checked={input.value}
-                      onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                      onChange={(e) => this.onChangeAndSubmit(e, input.onChange, input.name)}
                />
     }
 
@@ -201,7 +216,7 @@ class UserPermissionForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, user_id, onClose, onSave, permission_names } = props
+    const { project_id, user_id, onClose, onSave, onRemoveUser, permission_names } = props
     const user = getUser(state, user_id) || {}
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
@@ -220,6 +235,7 @@ function mapStateToProps(state, props) {
         can_edit,
         initialValues,
         onSubmit: onSave,
+        onRemoveUser,
         enableReinitialize: true,
         project,
         project_id,

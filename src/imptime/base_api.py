@@ -40,8 +40,7 @@ class PermissionHelper():
     @classmethod
     def allowed_project_permissions(self, user):
         return ProjectPermissions.objects.filter(business__in=self.allowed_projects(user), #sic
-                                                 is_active_member_of_business=True, #sic
-                                                 can_view_permissions=True)
+                                                 is_active_member_of_business=True)
 
 
 class BaseViewSet(viewsets.ViewSet):
