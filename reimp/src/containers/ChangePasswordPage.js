@@ -20,7 +20,7 @@ class ChangePasswordPage extends Component {
 
     onChangePassword(values) {
         const { dispatch, settings } = this.props
-        return dispatch(change_password(values.old_password, values.new_password))
+        return dispatch(change_password(values))
     }
     
     render() {
@@ -43,6 +43,8 @@ class ChangePasswordPage extends Component {
                                 <Message variant="error">{error_msg}</Message>
                               </div>
                             }
+                            <Field name="first_name" placeholder="First name" component="input" />
+                            <Field name="last_name" placeholder="Last name" component="input" />
                             <button disabled={submitting} type="submit" className="button button--large button--login">Save</button>
                           </form>
                         </div>
@@ -59,6 +61,9 @@ function mapStateToProps(state, props) {
     const has_usable_password = user.has_usable_password !== false && user.has_usable_password !== "false"
     
     return {
+        enableReinitialize: true,
+        initialValues: {first_name: user.first_name,
+                        last_name: user.last_name},
         settings: state.settings,
         error_msg: getChangeUserPasswordError(state),
         has_usable_password: has_usable_password,

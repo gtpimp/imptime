@@ -116,13 +116,12 @@ export function forgot_password(username) {
     }
 }
 
-export function change_password(old_password, new_password) {
+export function change_password(values) {
 
     return (dispatch, getState) => {
         const state = getState()
         dispatch({type: ANNOUNCE_SAVING_USER_PASSWORD})
-        const data = { old_password: old_password,
-                       new_password: new_password }
+        const data = values
         const params = {method: "POST",
                         credentials: 'same-origin',
                         data: data,

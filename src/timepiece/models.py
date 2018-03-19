@@ -664,7 +664,8 @@ class BusinessPermissions(BaseModel):
 
     @property
     def has_edit_permissions(self):
-        return self.is_active_member_of_business and self.can_edit_permissions
+        # superuser is just a short-term hack in case I've messed up the permission editor. Remove.
+        return (self.is_active_member_of_business or self.is_superuser) and self.can_edit_permissions
 
     @property
     def has_view_permissions(self):

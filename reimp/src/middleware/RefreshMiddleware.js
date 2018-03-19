@@ -89,6 +89,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateNudges([d.entity_ref]))
     } else if ( d.entity_name === 'entry' ) {
         dispatch(invalidateAutoClocks([d.entity_ref]))
+    } else if ( d.entity_name === 'user' ) {
+        dispatch(invalidateUsers([d.entity_ref]))
     }
 }
 

@@ -1,5 +1,6 @@
 import logging
 from user_serializer import UserSerializer
+from impasync.refresh_notifier import RefreshNotifier
 from mailqueue.mailqueue_helper import queue_email
 from rest_framework.decorators import list_route
 from django import template
@@ -48,6 +49,8 @@ class AuthViewSet(BaseViewSet):
     def change_password(self, request):
         new_password = request.data['new_password']
         old_password = request.data.get('old_password', None)
+        first_name = request.data['first_name']
+        last_name = request.data['last_name']
         context = {}
         user = request.user
         if user.has_usable_password() and not user.check_password(old_password):
@@ -55,8 +58,11 @@ class AuthViewSet(BaseViewSet):
             context['error'] = 'Incorrect password'
         else:
             user.set_password(new_password)
+            user.first_name = first_name
+            user.last_name = last_name
             user.save()
             context['status'] = 'success'
+            RefreshNotifier().notify_model_update(user)
         return Response(context)
 
 

@@ -93,7 +93,7 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}
 
-    const permission_names = filter(keys(pup), function(o) { return o.startsWith("has_") || o.startsWith("is_") })
+    const permission_names = filter(keys(pup), function(o) { return o.startsWith("has_") })
     const is_loading = ( ! user.id || ! project.id || ! pup.id )
     
     return {
