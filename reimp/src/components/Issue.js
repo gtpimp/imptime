@@ -304,15 +304,16 @@ class Issue extends Component {
                    </div>
                   }
                   {includes(visible_header_keys, "tag_columns") &&
-                   map(tag_category_names, (tag_category_name) =>
-                       <div key={tag_category_name}
-                            className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
-                            style={getCellStyle(header_list.tag_columns)}>
-                         <div className="issue-cell__tag_column">
-                           {(tagsByCategoryName[tag_category_name] || {}).name}
-                         </div>
-                       </div>
-                   )
+                   map(tag_category_names, function(tag_category_name) {
+                       const tags = tagsByCategoryName[tag_category_name]
+                       return (
+                           <div key={tag_category_name}
+                                className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
+                                style={getCellStyle(header_list.tag_columns)}>
+                             { map(tags, (tag) => <div className="issue-cell__tag_column">{tag.name}</div>) }
+                           </div>
+                       )
+                   })
                   }
                 {includes(visible_header_keys, "estimate_columns") &&
                  map(sprint.user_ids_who_can_estimate, (user_id) =>

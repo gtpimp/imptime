@@ -5,7 +5,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { getIssue } from '../actions/Issues'
 import { getTags } from '../actions/Tags'
-import { includes, filter, keyBy, keys, values, uniq, concat } from 'lodash'
+import { groupBy, includes, filter, keyBy, keys, values, uniq, concat } from 'lodash'
 import {
     getAllItems
 } from '../actions/Item'
@@ -73,7 +73,7 @@ export const makeSelIssueTagsByCategoryName = () => {
             }
             const issue_tag_ids = issue.tag_ids
             const tags = filter(all_tags_by_id, function(tag) { return includes(issue_tag_ids, tag.id) })
-            return uniq(keys(keyBy(values(tags), 'category_name')))
+            return groupBy(tags, 'category_name')
         }
     )
 }
