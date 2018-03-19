@@ -1,0 +1,14 @@
+{% extends "imptime/emails/base.txt" %}
+
+{% block content %}
+
+You have been invited to join the ImpTime project {{project_name}}
+
+Follow the link to open that project:
+
+  {{login_link}}
+
+{% endblock %}
+
+
+

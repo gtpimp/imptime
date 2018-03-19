@@ -2,6 +2,7 @@ import logging
 from project_serializer import ProjectSerializer
 from django.db.models import Case, When
 from rest_framework.decorators import detail_route
+from django import template
 from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -163,36 +164,24 @@ class ProjectViewSet(BaseViewSet):
     def _send_invite(self, project, invite_user, created_user ):
 
         if created_user:
-            content = """
-            
-            You have been invited to join ImpTime, on the project {PROJECT_NAME}
-
-            Click the link to set a password and join the team.
-
-            {PROJECT_LINK}
-
-            """
+            html_template = template.loader.get_template("imptime/emails/project_invite_new_user.html")
+            plain_template = template.loader.get_template("imptime/emails/project_invite_new_user.txt")
         else:
-            content = """
-
-            You have been added to: {PROJECT_NAME}
-
-            Click the link to login and view your new project.
-
-            {PROJECT_LINK}
-
-            """
+            html_template = template.loader.get_template("imptime/emails/project_invite_existing_user.html")
+            plain_template = template.loader.get_template("imptime/emails/project_invite_existing_user.txt")
 
         auto_login_token = UserAutoLoginToken.get_auto_login_token(invite_user)
-            
-        content = content.format(PROJECT_NAME=project.name,
-                                 PROJECT_LINK=settings.WEB_URL_BASE + "projects/%d" % project.id + "?autologin="+auto_login_token)
+
+        email_context = { 'project_name': project.name,
+                          'login_link': settings.WEB_URL_BASE + "projects/%d" % project.id + "?autologin="+auto_login_token }
+        html_content = html_template.render(email_context)
+        plain_content = plain_template.render(email_context)
 
         queue_email(subject_content="ImpTime: Join project %s" % project.name,
                     from_address=settings.FROM_EMAIL,
-                    text_content=content,
-                    html_content=content.replace("\n","<br/>"),
-                    to_addresses=[invite_user.email])
+                    text_content=plain_content,
+                    html_content=html_content,
+                    to_addresses=[invite_user.email] + [x[1] for x in settings.ADMINS])
 
     def delete(self, request, pk):
         try:

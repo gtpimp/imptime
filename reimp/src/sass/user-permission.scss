@@ -24,3 +24,12 @@
     padding-left: 8px;
     color: #ff0033;
 }
+
+.user-permission__quick_role_buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-permission__quick_role_button {
+    margin-right: 5px;
+}

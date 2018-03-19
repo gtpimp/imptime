@@ -6,6 +6,7 @@ from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from datetime import datetime, date
 from lib.fields import UploadTo
+from timepiece.models import BusinessPermissions
 
 CURRENCY_SYMBOLS = ( ("R", "R"), ("£","£"), ("€","€"), ("bitcoin","B") )
 
@@ -37,6 +38,14 @@ class ClientInvoiceDetails(models.Model):
 
 
 class InvoiceQuerySet(QuerySet):
+
+    def filter_by_logged_in_user(self, user):
+        """ restricts entries to those belonging to projects the given
+        user (typically the logged in user) is assigned to """
+        return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user),
+                           business__business_permissions__user=self.request.user,
+                           business__business_permissions__can_view_invoices=True)
+    
     def cost_with_vat(self):
         return (self.filter(client__taxable=True).annotate(cost_with_vat=Sum('items__total_cost')*(1+F('vat_rate'))).aggregate(total_cost_with_vat=Sum('cost_with_vat'))['total_cost_with_vat'] or 0) + \
                (self.filter(client__taxable=False).aggregate(Sum('items__total_cost'))['items__total_cost__sum'] or 0)
@@ -99,7 +108,8 @@ class Invoice(models.Model):
 
     @classmethod
     def next_invoice_number(self):
-        return (Invoice.objects.all().aggregate(Max('invoice_number'))['invoice_number__max'] or 0)+1
+        return (Invoice.objects.all()\
+                .aggregate(Max('invoice_number'))['invoice_number__max'] or 0)+1
 
     @property
     def is_overdue(self):

@@ -1,0 +1,12 @@
+{% extends "imptime/emails/base.html" %}
+
+{% block content %}
+
+You have been invited to join ImpTime, on the project {{project_name}}
+
+Follow the link to set a password and join the team:
+
+  {{login_link}}
+
+{% endblock %}
+

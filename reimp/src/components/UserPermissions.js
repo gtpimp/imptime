@@ -71,15 +71,13 @@ class UserPermissions extends Component {
                           <tr><td>You are not allowed to view permissions</td></tr>
                         }
 
-                          { !is_loading && logged_in_users_permissions.has_view_permissions &&
+                        { !is_loading && logged_in_users_permissions.has_view_permissions &&
 
-                            <UserPermissionForm permission_names={permission_names}
-                                                user_id={user.id}
-                                                project_id={project.id}
-                                                onSave={this.onChangePermission} />
-                          }
-                          
-                        
+                          <UserPermissionForm permission_names={permission_names}
+                                              user_id={user.id}
+                                              project_id={project.id}
+                                              onSave={this.onChangePermission} />
+                        }
 
                     </tbody>
                 </table>

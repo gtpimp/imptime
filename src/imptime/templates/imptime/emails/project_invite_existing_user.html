@@ -1,11 +1,14 @@
 {% extends "imptime/emails/base.html" %}
 
 {% block content %}
-Your account has been created.
+
+You have been invited to join the ImpTime project {{project_name}}
 <br/>
-Click the link below to login and choose a password:
+Click the link to open that project
 <br/>
 <a href="{{login_link}}">{{login_link}}</a>
 
 {% endblock %}
+
+
 

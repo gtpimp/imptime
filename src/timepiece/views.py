@@ -546,7 +546,9 @@ def get_project_card_for_business(request,business_id, project_id):
                 'current_user':request.user,
                 'project':project,
                 'quotes': Quote.objects.filter(project=project).order_by("accepted_at", "sent_to_client_at"),
-                'invoices': Invoice.objects.filter(project=project).order_by("invoice_number"),
+                'invoices': Invoice.objects\
+                            .filter_by_logged_in_user(request.user)\
+                            .filter(project=project).order_by("invoice_number"),
                 'business_permissions_by_user':timepiece.BusinessPermissions.by_user(business)
                 }
     return render(request, 'timepiece/project/card.html',
@@ -3083,7 +3085,7 @@ def invoice_list(request, template='timepiece/invoice/index.html', context=None)
     if from_date or to_date:
         query = query | Q(date_sent__isnull=True)
 
-    queryset = Invoice.objects.filter(query)
+    queryset = Invoice.objects.filter_by_logged_in_user(request.user).filter(query)
     project_id = request.GET.get('project_id')
     if project_id:
         queryset = queryset.filter(project__id=project_id)
@@ -4135,13 +4137,17 @@ def income_summary(request, template="timepiece/graphs/income_summary.html", con
     context['per_business'] = per_business
     context['per_user_per_business'] = per_user_per_business
 
-    context['invoices_sent'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=to_date))
+    context['invoices_sent'] = timepiece.Invoice.objects\
+                                                .filter_by_logged_in_user(request.user)\
+                                                .filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=to_date))
     invoices_sent_total = 0
     for invoice in context['invoices_sent']:
         invoices_sent_total += invoice.amount
     context['invoices_sent_total'] = invoices_sent_total
 
-    context['invoices_paid'] = timepiece.Invoice.objects.filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=to_date))
+    context['invoices_paid'] = timepiece.Invoice.objects\
+                                                .filter_by_logged_in_user(request.user)\
+                                                .filter(Q(date_sent__gte=from_date)&Q(date_sent__lte=to_date))
     invoices_paid_total = 0
     for invoice in context['invoices_paid']:
         invoices_paid_total += invoice.amount
@@ -5605,7 +5611,9 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
         running_billable += stats['billed_core_rate']
         project_infos.append(project_info)
 
-        invoices = Invoice.objects.all().filter(project=project)
+        invoices = Invoice.objects.all()\
+                                  .filter_by_logged_in_user(request.user)\
+                                  .filter(project=project)
         running_project_amount_invoiced = 0
         running_project_amount_paid = 0
         running_project_amount_owed = 0
@@ -5632,7 +5640,9 @@ def business_cost_summary(request, business_id, template="timepiece/project/busi
     sundry_invoiced = 0
     sundry_paid = 0
     sundry_owed = 0
-    for invoice in Invoice.objects.all().filter(business=business).filter(project__isnull=True):
+    for invoice in Invoice.objects.all()\
+                                  .filter_by_logged_in_user(request.user)\
+                                  .filter(business=business).filter(project__isnull=True):
         sundry_invoiced += invoice.cost
         sundry_paid += invoice.amount_paid
         sundry_owed += invoice.amount_owed
@@ -5907,8 +5917,12 @@ def dashboard(request, template="timepiece/dashboard/dashboard.html"):
                                             'quotes_by_accepted_at' : Quote.objects.filter(accepted_at__gte=date_from, accepted_at__lt=running_now)})
 
         context['invoices_by_month'].append({ 'month' : date_from,
-                                              'invoices_waiting' : Invoice.objects.filter(status='open', payment_due__gte=date_from, payment_due__lt=running_now),
-                                              'invoices_paid' : Invoice.objects.filter(status='paid', payment_due__gte=date_from, payment_due__lt=running_now)})
+                                              'invoices_waiting' : Invoice.objects\
+                                                                          .filter_by_logged_in_user(request.user)\
+                                                                          .filter(status='open', payment_due__gte=date_from, payment_due__lt=running_now),
+                                              'invoices_paid' : Invoice.objects\
+                                                                       .filter_by_logged_in_user(request.user)\
+                                                                       .filter(status='paid', payment_due__gte=date_from, payment_due__lt=running_now)})
 
         entries = timepiece.Entry.objects_for_reporting.filter(start_time__gte=date_from, start_time__lte=running_now)
         salaries = timepiece.Salary.objects.filter(date__gte=date_from, date__lt=running_now, amount__gt=0)

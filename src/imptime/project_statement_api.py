@@ -321,7 +321,9 @@ class ProjectStatementViewSet(BaseViewSet):
         invoice_infos = {}
         sprints = Sprint.objects.filter(pk__in=times_by_sprint.keys())
         for sprint in sprints:
-            invoices = Invoice.objects.all().filter(project=sprint) #sic
+            invoices = Invoice.objects.all()\
+                                      .filter_by_logged_in_user(self.request.user)\
+                                      .filter(project=sprint) #sic
             invoice_infos[sprint.id] = {'sprint_id': sprint.id,
                                         'budget': sprint.budget,
                                         'spendable_budget': sprint.spendable_budget,

@@ -63,42 +63,6 @@ class InviteUserForm extends Component {
                                data={invitable_user_options}
                         />
                     </div>
-                    { false &&
-                      <div>
-                          <div className="invite-user-form__list-wrapper">
-                              <div className="invite-user-form__list">
-                                  <div className="invite-user-form__list-item invite-user-form__list-item--selected">
-                                      <div className="invite-user-form__identity">
-                                          <div className="invite-user-form__name">Mike Smith</div>
-                                          <div className="invite-user-form__email">mike.smith@example.com</div>
-                                      </div>
-                                      <div className="invite-user-form__toggle invite-user-form__toggle--selected">
-                                          <i className="material-icons">check_circle</i>
-                                      </div>
-                                  </div>
-                                  <div className="invite-user-form__list-item invite-user-form__list-item--unselected">
-                                      <div className="invite-user-form__identity">
-                                          <div className="invite-user-form__name">Fran Jacobs</div>
-                                          <div className="invite-user-form__email">fran.jacobs@example.com</div>
-                                      </div>
-                                      <div className="invite-user-form__toggle invite-user-form__toggle--unselected">
-                                          <i className="material-icons">add_circle_outline</i>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div className="invite-user-form__new-contact">
-                              <div className="invite-user-form__new-contact-hint">Not listed above? Email an invite.</div>
-                              <input type="email" placeholder="Email Address" name="username" ref={(el) => {
-                                      this.usernameInput = el
-                                  }}/>
-                          </div>
-                          <div className="invite-user-form__footer">
-                              <button className="button button--large button--invite" gareth="if more than 1 person selected">Invite 3 People (or 1 Person)</button>
-                              <button className="button button--large button--close-invite" gareth="otherwise this one">Close</button>
-                          </div>
-                      </div>
-                    }
                 </form>
             </div>
         )

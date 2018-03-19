@@ -32,7 +32,7 @@ def invoices(request, template="invoicing/invoices.html", context=None):
     if not bp.has_view_invoices:
         raise PermissionDenied
 
-    invoices = models.Invoice.objects.all().order_by("-created")
+    invoices = models.Invoice.objects.all().order_by("-created").filter_by_logged_in_user(request.user)
     filter_form = InvoiceFilterForm(request.GET or None)
     if filter_form.is_valid():
         invoices = filter_form.filter(invoices)
@@ -110,7 +110,7 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
 @login_required
 def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", context=None):
     context = context or {}
-    invoice = models.Invoice.objects.get(pk=invoice_id)
+    invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
 
     bp = _get_best_bp(request, invoice)
     if not bp.has_edit_invoices:
@@ -165,7 +165,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
 
 @login_required
 def invoice_pay_in_full(request, invoice_id):
-    invoice = models.Invoice.objects.get(pk=invoice_id)
+    invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     if invoice.amount_owed:
         invoice_payment = models.InvoicePayment.objects.create(
             invoice=invoice,
@@ -181,7 +181,7 @@ def invoice_pay_in_full(request, invoice_id):
 @login_required
 def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.html", context=None):
 
-    invoice = models.Invoice.objects.get(pk=invoice_id)
+    invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     bp = _get_best_bp(request, invoice)
     if not bp.has_view_invoices:
         raise PermissionDenied
@@ -194,7 +194,7 @@ def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.htm
 @login_required
 def generate_invoice(request, invoice_id, context=None):
 
-    invoice = models.Invoice.objects.get(pk=invoice_id)
+    invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     bp = _get_best_bp(request, invoice)
     if not bp.has_view_invoices:
         raise PermissionDenied
@@ -240,7 +240,7 @@ def print_invoice_from_phantomjs(request, invoice_id, username, token, template=
     user = timepiece.UserProfile.objects.get(authenticate_token=token, user__username=username).user
     _override_login(request, user)
 
-    invoice = models.Invoice.objects.get(pk=invoice_id)
+    invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     bp = _get_best_bp(request, invoice)
     if not bp.has_view_invoices:
         raise PermissionDenied
@@ -258,11 +258,11 @@ def _get_best_bp(request, invoice=None):
 
 def clone_invoice(request, invoice_id, template="invoicing/edit_invoice.html", context=None):
     context = context or {}
-    invoice = models.Invoice.objects.get(pk=invoice_id)
+    invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     items = invoice.items.all().order_by("pk")
 
     invoice.invoice_number = models.Invoice.next_invoice_number()
-    invoice.pk = models.Invoice.objects.all().aggregate(Max('id'))['id__max']+1
+    invoice.pk = models.Invoice.objects.all().filter_by_logged_in_user(request.user).aggregate(Max('id'))['id__max']+1
     invoice.save()
 
     for item in items:
@@ -359,7 +359,7 @@ def statement(request,
 
     if not filter_form.is_valid():
         raise Exception("Couldn't generate statement: %s" % filter_form.errors)
-    invoices = models.Invoice.objects.all().order_by("invoice_number")
+    invoices = models.Invoice.objects.all().filter_by_logged_in_user(request.user).order_by("invoice_number")
     invoices = filter_form.filter(invoices)
     if invoices.count() > 0:
         bp = _get_best_bp(request, invoice=invoices[0])
@@ -406,7 +406,7 @@ def print_statement_from_phantomjs(request,
     filter_form = StatementFilterForm(request.GET or None)
     if not filter_form.is_valid():
         raise Exception("Couldn't generate statement: %s" % filter_form.errors)
-    invoices = models.Invoice.objects.all().order_by("invoice_number")
+    invoices = models.Invoice.objects.all().filter_by_logged_in_user(request.user).order_by("invoice_number")
     invoices = filter_form.filter(invoices)
     if invoices.count() > 0:
         bp = _get_best_bp(request, invoice=invoices[0])
