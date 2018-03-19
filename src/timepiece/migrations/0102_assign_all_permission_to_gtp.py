@@ -11,7 +11,7 @@ def migrate(apps, schema_editor):
 
     # We have to use real objects because I want to use the helpers on the timepiece models.
     # This means this migration will become stale over time.
-    for user in User.objects.filter(username__in=['olivia', 'gtp']):
+    for user in User.objects.filter(username__in=['olivia', 'gtp', 'laila']):
         for business in Business.objects.all():
             BusinessPermissions.give_all_permissions_to_user(user=user, business=business)
 
