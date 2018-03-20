@@ -30,9 +30,6 @@ class UserList extends Component {
         this.onRefresh = this.onRefresh.bind(this)
         this.onChangePage = this.onChangePage.bind(this)
         this.onClickedUser = this.onClickedUser.bind(this)
-        this.onStartInviteUser = this.onStartInviteUser.bind(this)
-        this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
-        this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
     }
 
     componentDidMount() {
@@ -100,27 +97,6 @@ class UserList extends Component {
         dispatch(cancelInviteUser())
     }
 
-    render_invite_user() {
-        const {list_key} = this.props
-
-        return (
-            <tr key={list_key + ".invite_user"} className="user_list__invite_user">
-                <td colSpan="20">Creating new user here</td>
-                { false && 
-                  <td>
-                      <RIEModeToggler propName="invite_user_title"
-                                      initialValue=""
-                                      initialState="editing"
-                                      onChange={this.onSaveInviteUser}
-                                      onCancel={this.onCancelInviteUser}>
-                          <RIEInput/>
-                      </RIEModeToggler>
-                  </td>
-                }
-            </tr>
-        )
-    }
-
     render() {
 
         const {
@@ -138,10 +114,6 @@ class UserList extends Component {
 
             const invitation_pending = includes(invited_user_ids, user.id)
             
-            if (is_inviting_user && index === 0 && !invite_user.user_id_before) {
-                user_rows.push(that.render_invite_user())
-            }
-
             user_rows.push(
                 <User key={list_key + user.id + index}
                       // onClickedUser={() => that.onClickedUser(user.id)}
@@ -152,9 +124,6 @@ class UserList extends Component {
                       user_actions={user_actions}
                 />
             )
-            if (is_inviting_user && invite_user.user_id_before === user.id) {
-                user_rows.push(that.render_invite_user())
-            }
         })
 
         return (
