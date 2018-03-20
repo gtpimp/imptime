@@ -17,6 +17,10 @@ import {
 } from '../../actions/ProjectUserPermissions'
 import '../../sass/user-permission.css'
 
+function convert_permission_name_to_label(permission_name) {
+    return permission_name.replace(/_/g, " ").replace(/business/g, "project")
+}
+
 const QUICK_ROLES = { 'owner': [ 'has_delete_project',
                                  'has_invite_users',
                                  'has_set_user_permissions',
@@ -118,7 +122,7 @@ class UserPermissionForm extends Component {
     }
 
     onQuickRoleSelect(event, role_name) {
-        const { dispatch } = this.props
+        const { dispatch, handleSubmit } = this.props
         const that = this
         event.stopPropagation()
         const permission_names = QUICK_ROLES[role_name]
@@ -127,16 +131,22 @@ class UserPermissionForm extends Component {
                             permission_name,
                             true))
         })
+        setTimeout(function() {handleSubmit()}, 0)
     }
 
     onClearPermissions(event) {
-        const { dispatch } = this.props
+        const { dispatch, handleSubmit } = this.props
         event.stopPropagation()
         const that = this
-        map(keys(QUICK_ROLES, (role_name) => map(QUICK_ROLES[role_name],
-                                                 (permission_name) => dispatch(change('project_permission_form', 
-                                                                                      permission_name,
-                                                                                      false)))))
+        map(keys(QUICK_ROLES), function(role_name) {
+            map(QUICK_ROLES[role_name],
+                function(permission_name) {
+                    dispatch(change('project_permission_form', 
+                                    permission_name,
+                                    false))
+                })
+        })
+        setTimeout(function() {handleSubmit()}, 0)
     }
 
     renderQuickRoleNames() {
@@ -179,35 +189,37 @@ class UserPermissionForm extends Component {
               { this.renderQuickRoleNames() }
               <form onSubmit={handleSubmit}>
                 <table>
-                  {map(permission_names, function(permission_name, index) {
-                      return (
-                          <tr key={index}>
-                            <td>
-                              <div>
-                                <div className="user-permission__permission_name" key={index}>{permission_name.replace(/_/g, " ")}</div>
-                              </div>
-                            </td>
-                            <td>
-                              <div>
-                                { can_edit &&
-                                  <Field name={permission_name}
-                                         component={that.renderPermissionCheckbox} />
-                                }
-                                { ! can_edit &&
-                                  <div>
-                                    {pup[permission_name] === true &&
-                                     <div className="user-permission__permission_value--on">On</div>
-                                    }
-                                     {pup[permission_name] === false &&
-                                      <div className="user-permission__permission_value--off">Off</div>
-                                     }
-                                  </div>
-                                }
-                              </div>
-                            </td>
-                          </tr>
-                      )}
-                   )}
+                  <tbody>
+                    {map(permission_names, function(permission_name, index) {
+                         return (
+                             <tr key={index}>
+                               <td>
+                                 <div>
+                                   <div className="user-permission__permission_name" key={index}>{convert_permission_name_to_label(permission_name)}</div>
+                                 </div>
+                               </td>
+                               <td>
+                                 <div>
+                                   { can_edit &&
+                                     <Field name={permission_name}
+                                            component={that.renderPermissionCheckbox} />
+                                   }
+                                   { ! can_edit &&
+                                     <div>
+                                       {pup[permission_name] === true &&
+                                        <div className="user-permission__permission_value--on">On</div>
+                                       }
+                                        {pup[permission_name] === false &&
+                                         <div className="user-permission__permission_value--off">Off</div>
+                                        }
+                                     </div>
+                                   }
+                                 </div>
+                               </td>
+                             </tr>
+                         )}
+                     )}
+                  </tbody>
                 </table>
               </form>
             </div>
