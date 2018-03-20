@@ -6,6 +6,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureUsersLoaded, getUser} from '../actions/Users'
 import ProjectUsers from '../components/ProjectUsers'
 import UserPermissions from '../components/UserPermissions'
+import UserRates from '../components/UserRates'
 import Modal from 'react-modal';
 import {
     PAGE_KEY__PROJECT_USER_PAGE
@@ -61,10 +62,22 @@ class ProjectUserPage extends Component {
         const { project_id } = this.props
         event.stopPropagation()
         event.preventDefault()
-        browserHistory.push('/projects/'+project_id+'/users/'+user.id)
+        browserHistory.push('/projects/'+project_id+'/users/'+user.id + '/permissions')
+    }
+
+    navigateToProjectUserRates(user, event) {
+        const { project_id } = this.props
+        event.stopPropagation()
+        event.preventDefault()
+        browserHistory.push('/projects/'+project_id+'/users/'+user.id + '/rates')
     }
 
     closeProjectUserPermissions() {
+        const { user_id, project_id } = this.props
+        browserHistory.push('/projects/'+project_id+'/users/')
+    }
+
+    closeProjectUserRates() {
         const { user_id, project_id } = this.props
         browserHistory.push('/projects/'+project_id+'/users/')
     }
@@ -81,23 +94,37 @@ class ProjectUserPage extends Component {
         )
     }
     
+    renderUserRates() {
+        const { project_id, user_id } = this.props
+        const that = this
+        return (
+            <div className="project-user__user_rates">
+              <UserRates project_id={project_id}
+                         user_id={user_id}
+                         onClose={that.closeProjectUserRates} />
+            </div>
+        )
+    }
+    
     render() {
-        const { project, user_id, show_permissions } = this.props
+        const { project, user_id, view_mode, show_permissions } = this.props
         const that = this
         return (
             <div>
-                { user_id && this.renderUserPermissions() }
+              { view_mode === 'permissions' && this.renderUserPermissions() }
+              { view_mode === 'rates' && this.renderUserRates() }
 
-                { ! user_id &&
-                  <div>
-                      <div className="project-user__project_users">
-                          <ProjectUsers
-                              project_id={project.id}
-                              onPermissionsAction={that.navigateToProjectUserPermissions}
-                          />
-                      </div>
+              { view_mode === 'list' &&
+                <div>
+                  <div className="project-user__project_users">
+                    <ProjectUsers
+                        project_id={project.id}
+                        onPermissionsAction={that.navigateToProjectUserPermissions}
+                        onRatesAction={that.navigateToProjectUserRates}
+                    />
                   </div>
-                }
+                </div>
+              }
             </div>
         )
     }
@@ -106,15 +133,17 @@ class ProjectUserPage extends Component {
 function mapStateToProps(state, props) {
     const project_id = props.params.projectId
     const user_id = props.params.userId
+    const view_mode = props.params.viewMode || 'list'
     const project = getProject(state, project_id)
     const user = getUser(state, user_id)
 
     const opts = props.location.query
         
     return {
-        project_id: project_id,
+        project_id,
         project: project || {},
-        user_id: user_id,
+        user_id,
+        view_mode,
         user: user || {},
         username: (user || {}).username
     }

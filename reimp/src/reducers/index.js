@@ -19,6 +19,7 @@ import rie from './rie'
 import item from './item'
 import settings from './settings'
 import sprint from './sprint'
+import sprint_user_rate from './sprint_user_rate'
 import user_timesheet from './user_timesheet'
 import time_chart from './time_chart'
 import time_summary from './time_summary'
@@ -53,6 +54,7 @@ const rootReducer = combineReducers({
     routing,
     settings,
     sprint,
+    sprint_user_rate,
     time_chart,
     time_summary,
     toolbar,

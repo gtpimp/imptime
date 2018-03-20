@@ -84,7 +84,7 @@ ReactDOM.render(
           <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
           <Route path="projects/:projectId/users" component={ProjectUserPage}/>
-          <Route path="projects/:projectId/users/:userId" component={ProjectUserPage}/>
+          <Route path="projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
           <Route path="visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
 
           <Route path="dashboard" component={DashboardPage}/>

@@ -98,7 +98,7 @@ class ProjectUsersPage extends Component {
     }
 
     getActionRenderFunc() {
-        const {onPermissionsAction, can_view_permissions} = this.props
+        const {onPermissionsAction, onRatesAction, can_view_permissions, can_view_rates} = this.props
         const that = this
         const funcs = {}
         if ( can_view_permissions ) {
@@ -107,6 +107,14 @@ class ProjectUsersPage extends Component {
                         key={user.id}
                         onClick={(event) => onPermissionsAction(user, event)}>
                   Permissions
+                </button>
+        }
+        if ( can_view_rates ) {
+            funcs.render_rates = (user) =>
+                <button className="button"
+                        key={user.id}
+                        onClick={(event) => onRatesAction(user, event)}>
+                  Rates
                 </button>
         }
         return funcs
@@ -138,15 +146,19 @@ class ProjectUsersPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {project_id} = props
+    const {project_id, onPermissionsAction, onRatesAction} = props
     const project = getProject(state, project_id)
     const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
     const can_view_permissions = has_permission(state, project_id, 'has_view_permissions')
+    const can_view_rates = has_permission(state, project_id, 'has_view_ctc_billable_rates')
     return {
         project_id,
         project: project || {},
         can_view_permissions,
+        can_view_rates,
         is_inviting_user,
+        onPermissionsAction,
+        onRatesAction,
         invited_user_ids: (project || {}).invited_user_ids || []
     }
 }
