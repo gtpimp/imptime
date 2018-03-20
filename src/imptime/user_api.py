@@ -24,14 +24,9 @@ class UserViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            project_id = filter_args.pop('project_id', None)
-
             users = self.allowed_users().order_by("username")
-            if project_id:
-                users = users.filter(business_permissions__business_id=project_id).distinct() #sic
             users = self.apply_filter(qs=users, raw_filter_args=filter_args)
             users = self.apply_pagination(qs=users, pagination=pagination)
-
 
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in users.values_list('id', flat=True)]
@@ -50,6 +45,7 @@ class UserViewSet(BaseViewSet):
     def apply_filter(self, qs, raw_filter_args):
         project_id = raw_filter_args.pop("project_id", None)
         if project_id:
-            qs = qs.filter(business_permissions__business_id=project_id).distinct() #sic
+            qs = qs.filter(business_permissions__business_id=project_id, #sic
+                           business_permissions__is_active_member_of_business=True).distinct()
 
         return super(UserViewSet, self).apply_filter(qs, raw_filter_args)
