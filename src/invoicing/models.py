@@ -43,7 +43,7 @@ class InvoiceQuerySet(QuerySet):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user),
-                           business__business_permissions__user=self.request.user,
+                           business__business_permissions__user=user,
                            business__business_permissions__can_view_invoices=True)
     
     def cost_with_vat(self):
