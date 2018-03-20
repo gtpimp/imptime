@@ -9,6 +9,24 @@
     float: left;
 }
 
+.user-permission__permission_list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.user-permission__permission_card {
+    display: flex;
+    min-width: 200px;
+    justify-content: space-between;
+    margin-right: 50px;
+    padding: 2px;
+}
+
+.user-permission__permission_card:hover {
+    background-color: $header-background-color;
+}
+
 .user-permission__permission_name {
     float: left;
 }
@@ -28,6 +46,7 @@
 .user-permission__quick_role_buttons {
     display: flex;
     flex-direction: row;
+    margin-bottom: 10px;
 }
 
 .user-permission__quick_role_button {

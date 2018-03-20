@@ -188,39 +188,33 @@ class UserPermissionForm extends Component {
 
               { this.renderQuickRoleNames() }
               <form onSubmit={handleSubmit}>
-                <table>
-                  <tbody>
-                    {map(permission_names, function(permission_name, index) {
-                         return (
-                             <tr key={index}>
-                               <td>
+
+                <div className="user-permission__permission_list">
+                  {map(permission_names, function(permission_name, index) {
+                       return (
+                           <div key={index}
+                                className="user-permission__permission_card">
+                             <div className="user-permission__permission_name" key={index}>{convert_permission_name_to_label(permission_name)}</div>
+                             <div className="user-permission__permission_value">
+                               { can_edit &&
+                                 <Field name={permission_name}
+                                        component={that.renderPermissionCheckbox} />
+                               }
+                               { ! can_edit &&
                                  <div>
-                                   <div className="user-permission__permission_name" key={index}>{convert_permission_name_to_label(permission_name)}</div>
-                                 </div>
-                               </td>
-                               <td>
-                                 <div>
-                                   { can_edit &&
-                                     <Field name={permission_name}
-                                            component={that.renderPermissionCheckbox} />
+                                   {pup[permission_name] === true &&
+                                    <div className="user-permission__permission_value--on">On</div>
                                    }
-                                   { ! can_edit &&
-                                     <div>
-                                       {pup[permission_name] === true &&
-                                        <div className="user-permission__permission_value--on">On</div>
-                                       }
-                                        {pup[permission_name] === false &&
-                                         <div className="user-permission__permission_value--off">Off</div>
-                                        }
-                                     </div>
-                                   }
+                                    {pup[permission_name] === false &&
+                                     <div className="user-permission__permission_value--off">Off</div>
+                                    }
                                  </div>
-                               </td>
-                             </tr>
-                         )}
-                     )}
-                  </tbody>
-                </table>
+                               }
+                             </div>
+                           </div>
+                       )}
+                   )}
+                </div>
               </form>
             </div>
         )
