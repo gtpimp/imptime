@@ -67,15 +67,12 @@ class UserPermissions extends Component {
 
                 <h2>Permissions for {user.username} in project {project.name}</h2>
 
-                <table>
-                    <tbody>
-                        
 	                { is_loading &&
-                          <tr><td>Loading...</td></tr>
+                          <div>Loading...</div>
                         }
 
                         { !is_loading && ! logged_in_users_permissions.has_view_permissions &&
-                          <tr><td>You are not allowed to view permissions</td></tr>
+                          <div>You are not allowed to view permissions</div>
                         }
 
                         { !is_loading && logged_in_users_permissions.has_view_permissions &&
@@ -87,9 +84,6 @@ class UserPermissions extends Component {
                                               onSave={this.onChangePermission} />
                         }
 
-                    </tbody>
-                </table>
-                
             </div>
         )
     }

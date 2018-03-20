@@ -1,8 +1,8 @@
+@import 'variables.scss';
 
 .project-user__user_permissions {
     padding: 50px;
     position: relative;
-    width: 50%;
 }
 
 .user-permission {
@@ -46,9 +46,17 @@
 .user-permission__quick_role_buttons {
     display: flex;
     flex-direction: row;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 }
 
 .user-permission__quick_role_button {
     margin-right: 5px;
+}
+
+.user-permission__checkbox__on {
+    
+}
+
+.user-permission__checkbox__off {
+    opacity:0.3;
 }

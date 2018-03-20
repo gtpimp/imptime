@@ -35,6 +35,7 @@ const QUICK_ROLES = { 'owner': [ 'has_delete_project',
                                    'has_edit_subject',
                                    'has_edit_feature',
                                    'has_edit_tags',
+                                   'has_view_deadlines',
                                    'has_edit_issue_states',
                                    'has_assign_user',
                                    'has_be_scheduled',
@@ -50,10 +51,12 @@ const QUICK_ROLES = { 'owner': [ 'has_delete_project',
                                    'has_edit_business_comments',
                                    'has_delete_issue',
                                    'has_create_sprint',
+                                   'has_edit_sprint',
                                    'has_do_dev_checklist',
                                    'has_edit_project_states',
                                    'has_do_traffic_checklist',
                                    'has_do_finance_checklist',
+                                   'has_edit_deadlines',
                                    'has_edit_sprint_status',
                                    'has_edit_sprint_type',
                                    'has_view_permissions',
@@ -68,6 +71,8 @@ const QUICK_ROLES = { 'owner': [ 'has_delete_project',
                                    'has_view_budget',
                                    'has_edit_invoices',
                                    'has_view_invoices',
+                                   'has_view_quotes',
+                                   'has_edit_quotes',
                                    'has_edit_ctc_billable_rates',
                                    'has_view_ctc_billable_rates',
                                    'has_view_ctc_rates' ]
@@ -138,12 +143,14 @@ class UserPermissionForm extends Component {
         const { dispatch, handleSubmit } = this.props
         event.stopPropagation()
         const that = this
+        const permissions_to_clear = []
         map(keys(QUICK_ROLES), function(role_name) {
             map(QUICK_ROLES[role_name],
                 function(permission_name) {
                     dispatch(change('project_permission_form', 
                                     permission_name,
                                     false))
+                    permissions_to_clear.push(permission_name)
                 })
         })
         setTimeout(function() {handleSubmit()}, 0)
@@ -179,7 +186,7 @@ class UserPermissionForm extends Component {
     }
 
     render() {
-        const { pup_id, pup, is_loading, permission_names, handleSubmit, can_edit } = this.props
+        const { pup_id, pup, is_loading, permission_names, handleSubmit, can_edit, initialValues } = this.props
         const that = this;
 
         return (
@@ -194,7 +201,12 @@ class UserPermissionForm extends Component {
                        return (
                            <div key={index}
                                 className="user-permission__permission_card">
-                             <div className="user-permission__permission_name" key={index}>{convert_permission_name_to_label(permission_name)}</div>
+                             <div className="user-permission__permission_name"
+                                  className={classNames({"user-permission__checkbox__on":initialValues[permission_name]===true,
+                                                         "user-permission__checkbox__off":initialValues[permission_name]!==true})}
+                                  key={index}>
+                               {convert_permission_name_to_label(permission_name)}
+                             </div>
                              <div className="user-permission__permission_value">
                                { can_edit &&
                                  <Field name={permission_name}
