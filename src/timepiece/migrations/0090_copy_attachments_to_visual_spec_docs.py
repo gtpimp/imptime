@@ -28,6 +28,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('timepiece', '0089_issue_subject_quality_error'),
+        ('imptime', '0053_release_notes_visual_spec_document_25Nov2017'),
     ]
 
     operations = [
