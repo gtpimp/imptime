@@ -6,7 +6,7 @@ import {getProject} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import ModalDialog from '../components/ModalDialog'
 import UserList from './UserList'
-import {ensureUsersLoaded, getUser} from '../actions/Users'
+import {ensureUsersLoaded, getUser, has_permission} from '../actions/Users'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE,
     LIST_KEY__PROJECT_USER_LIST
@@ -98,11 +98,18 @@ class ProjectUsersPage extends Component {
     }
 
     getActionRenderFunc() {
-        const {onPermissionsAction} = this.props
+        const {onPermissionsAction, can_view_permissions} = this.props
         const that = this
-        return {
-            render_permissions: (user) => <button className="button" key={user.id} onClick={() => onPermissionsAction(user, event)}>Permissions</button>
+        const funcs = {}
+        if ( can_view_permissions ) {
+            funcs.render_permissions = (user) =>
+                <button className="button"
+                        key={user.id}
+                        onClick={(event) => onPermissionsAction(user, event)}>
+                  Permissions
+                </button>
         }
+        return funcs
     }
 
     render() {
@@ -134,10 +141,12 @@ function mapStateToProps(state, props) {
     const {project_id} = props
     const project = getProject(state, project_id)
     const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
+    const can_view_permissions = has_permission(state, project_id, 'has_view_permissions')
     return {
-        project_id: project_id,
+        project_id,
         project: project || {},
-        is_inviting_user: is_inviting_user,
+        can_view_permissions,
+        is_inviting_user,
         invited_user_ids: (project || {}).invited_user_ids || []
     }
 }

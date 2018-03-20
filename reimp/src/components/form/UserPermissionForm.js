@@ -176,7 +176,7 @@ class UserPermissionForm extends Component {
             <div className="user-permission">
               { !pup_id && <div>loading</div> }
 
-              { false && this.renderQuickRoleNames() }
+              { this.renderQuickRoleNames() }
               <form onSubmit={handleSubmit}>
                 <table>
                   {map(permission_names, function(permission_name, index) {
