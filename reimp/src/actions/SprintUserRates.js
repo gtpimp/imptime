@@ -90,43 +90,43 @@ function fetchSprintUserRate(sprint_id, user_id) {
         dispatch(announceLoadingSursForSprintAndUser(sur_id, sprint_id, user_id))
         const params = { filter: { sprint_id: sprint_id,
                                    user_id: user_id },
-		                     pagination: {'enabled': false} }
+		         pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/rate/sprint/', dispatch, {params:params})
-	          .then(response => response.json())
-	          .then(json => {
+	    .then(response => response.json())
+	    .then(json => {
                 if (json.status !== 'success') {
-		                dispatch(announceSursLoadFailedForSprintAndUser(sprint_id, user_id))
+		    dispatch(announceSursLoadFailedForSprintAndUser(sprint_id, user_id))
                 } else {
-		                dispatch(announceSursLoadedForSprintAndUser(json.payload, sprint_id, user_id))
+		    dispatch(announceSursLoadedForSprintAndUser(json.payload, sprint_id, user_id))
                 }
-	          }).catch(function (error) {
-	              dispatch(announceSursLoadFailedForSprintAndUser("Failed to load surs: " + error, sprint_id, user_id))
-	          })
+	    }).catch(function (error) {
+	        dispatch(announceSursLoadFailedForSprintAndUser("Failed to load surs: " + error, sprint_id, user_id))
+	    })
 
     }
 }
 
 function fetchSursPromise(dispatch, state, sur_ids) {
     return new Promise(function(resolve, reject) {
-	      dispatch(announceLoadingSurs(sur_ids))
-	      const params = { filter: { ids: sur_ids },
-			                   pagination: {'enabled': false} }
+	dispatch(announceLoadingSurs(sur_ids))
+	const params = { filter: { ids: sur_ids },
+			 pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/rate/sprint/', dispatch, {params:params})
-	          .then(response => response.json())
-	          .then(json => {
+	    .then(response => response.json())
+	    .then(json => {
                 if (json.status !== 'success') {
-		                dispatch(announceSursLoadFailed())
-		                reject(json.error)
+		    dispatch(announceSursLoadFailed())
+		    reject(json.error)
                 } else {
-		                dispatch(announceSursLoaded(json.payload))
-		                resolve(json.payload)
+		    dispatch(announceSursLoaded(json.payload))
+		    resolve(json.payload)
                 }
-	          }).catch(function (error) {
-		            dispatch(announceSursLoadFailed("Failed to load surs: " + error))
-		            reject("Failed to load surs: " + error)
-	          })
+	    }).catch(function (error) {
+		dispatch(announceSursLoadFailed("Failed to load surs: " + error))
+		reject("Failed to load surs: " + error)
+	    })
     })
 }
 

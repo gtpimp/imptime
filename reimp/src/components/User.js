@@ -54,7 +54,9 @@ class User extends Component {
                         {invitation_pending && <div>Invite sent</div>}
                     </td>
                     <td className="list-table__cell">
+                      <div className="user__actions">
                         { map(keys(user_actions), (user_action_name, index) => user_actions[user_action_name](user)) }
+                      </div>
                     </td>
 		</tr>
             ))

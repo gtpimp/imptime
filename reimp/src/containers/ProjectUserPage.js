@@ -6,7 +6,6 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureUsersLoaded, getUser} from '../actions/Users'
 import ProjectUsers from '../components/ProjectUsers'
 import UserPermissions from '../components/UserPermissions'
-import UserRates from '../components/UserRates'
 import Modal from 'react-modal';
 import {
     PAGE_KEY__PROJECT_USER_PAGE
@@ -65,19 +64,7 @@ class ProjectUserPage extends Component {
         browserHistory.push('/projects/'+project_id+'/users/'+user.id + '/permissions')
     }
 
-    navigateToProjectUserRates(user, event) {
-        const { project_id } = this.props
-        event.stopPropagation()
-        event.preventDefault()
-        browserHistory.push('/projects/'+project_id+'/users/'+user.id + '/rates')
-    }
-
     closeProjectUserPermissions() {
-        const { user_id, project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/users/')
-    }
-
-    closeProjectUserRates() {
         const { user_id, project_id } = this.props
         browserHistory.push('/projects/'+project_id+'/users/')
     }
@@ -94,25 +81,12 @@ class ProjectUserPage extends Component {
         )
     }
     
-    renderUserRates() {
-        const { project_id, user_id } = this.props
-        const that = this
-        return (
-            <div className="project-user__user_rates">
-              <UserRates project_id={project_id}
-                         user_id={user_id}
-                         onClose={that.closeProjectUserRates} />
-            </div>
-        )
-    }
-    
     render() {
         const { project, user_id, view_mode, show_permissions } = this.props
         const that = this
         return (
             <div>
               { view_mode === 'permissions' && this.renderUserPermissions() }
-              { view_mode === 'rates' && this.renderUserRates() }
 
               { view_mode === 'list' &&
                 <div>
@@ -120,7 +94,6 @@ class ProjectUserPage extends Component {
                     <ProjectUsers
                         project_id={project.id}
                         onPermissionsAction={that.navigateToProjectUserPermissions}
-                        onRatesAction={that.navigateToProjectUserRates}
                     />
                   </div>
                 </div>

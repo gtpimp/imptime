@@ -31,7 +31,7 @@ class UserRates extends Component {
              new_props.user.id != this.props.user.id || new_props.sprint.id != this.props.sprint.id ) {
             this.refresh(new_props.sprint_id, new_props.user_id, new_props.user, new_props.sprint)
         }
-    }
+    } 
 
     refresh(sprint_id, user_id, user, sprint) {
         const {dispatch} = this.props
@@ -96,8 +96,8 @@ function mapStateToProps(state, props) {
 
     const rate_names = filter(keys(sur), function(o) { return o.startsWith("has_") || o.startsWith('is_') })
     const is_loading = ( ! user.id || ! sprint.id || ! sur.id )
-    const logged_in_users_permissions = logged_in_users_permissions(state, sprint_id)
-    const can_view = logged_in_users_permissions.can_view_ctc_billable_rates
+    const permissions = logged_in_users_permissions(state, sprint_id)
+    const can_view = permissions.can_view_ctc_billable_rates
     
     return {
         onChange: onChange,

@@ -109,24 +109,24 @@ function fetchProjectUserPermission(project_id, user_id) {
 
 function fetchPupsPromise(dispatch, state, pup_ids) {
     return new Promise(function(resolve, reject) {
-	      dispatch(announceLoadingPups(pup_ids))
-	      const params = { filter: { ids: pup_ids },
-			                   pagination: {'enabled': false} }
+	dispatch(announceLoadingPups(pup_ids))
+	const params = { filter: { ids: pup_ids },
+			 pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
-	          .then(response => response.json())
-	          .then(json => {
+	    .then(response => response.json())
+	    .then(json => {
                 if (json.status !== 'success') {
-		                dispatch(announcePupsLoadFailed())
-		                reject(json.error)
+		    dispatch(announcePupsLoadFailed())
+		    reject(json.error)
                 } else {
-		                dispatch(announcePupsLoaded(json.payload))
-		                resolve(json.payload)
+		    dispatch(announcePupsLoaded(json.payload))
+		    resolve(json.payload)
                 }
-	          }).catch(function (error) {
-		            dispatch(announcePupsLoadFailed("Failed to load pups: " + error))
-		            reject("Failed to load pups: " + error)
-	          })
+	    }).catch(function (error) {
+		dispatch(announcePupsLoadFailed("Failed to load pups: " + error))
+		reject("Failed to load pups: " + error)
+	    })
     })
 }
 

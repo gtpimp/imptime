@@ -6,4 +6,7 @@
   background-color: $color-8;
 }
 
-
+.user__actions {
+    display: flex;
+    flex-direction: row;
+}
