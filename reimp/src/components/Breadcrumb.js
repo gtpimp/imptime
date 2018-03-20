@@ -57,6 +57,9 @@ const menu_buttons = {
         { label: (objs) => 'Dashboard',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/dashboard'
         },
+        { label: (objs) => 'Rates',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/rates'
+        },
         { label: (objs) => 'Cost Summary',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary'
         },

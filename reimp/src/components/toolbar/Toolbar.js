@@ -8,6 +8,7 @@ import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
 import ReleaseNotesToolbarPanel from './ReleaseNotesToolbarPanel'
 import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
+import SprintRateToolbarPanel from './SprintRateToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import NudgeToolbarPanel from './NudgeToolbarPanel'
 import IssueToolbarPanel from './IssueToolbarPanel'
@@ -38,6 +39,8 @@ class ToolBar extends Component {
                 return <ProjectsToolbarPanel key="projects-panel"/>
             case 'sprint-dashboard':
                 return <SprintDashboardToolbarPanel key="sprint-dashboard-panel"/>
+            case 'sprint-rate':
+                return <SprintRateToolbarPanel key="sprint-rate-panel"/>
             case 'sprints':
                 return <SprintsToolbarPanel key="sprints-panel"/>
             case 'cost-summary':

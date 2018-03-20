@@ -5,9 +5,9 @@ import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName.js'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
-//import '../sass/sprint-dashboard.scss'
+//import '../sass/sprint-rate.scss'
 import {
-    PAGE_KEY__SPRINT_DASHBOARD_PAGE
+    PAGE_KEY__SPRINT_RATE_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -18,11 +18,15 @@ import {ensureSprintsLoaded,
         getSprint
 } from '../actions/Sprints'
 
-class ProjectDashboardPage extends Component {
+class SprintRatePage extends Component {
+
+    constructor(props) {
+        super(props)
+    }
 
     componentDidMount() {
         const {sprint_id, project_id, sprint, project, dispatch} = this.props
-        dispatch(set_toolbars(PAGE_KEY__SPRINT_DASHBOARD_PAGE, ['sprint-dashboard']))
+        dispatch(set_toolbars(PAGE_KEY__SPRINT_RATE_PAGE, ['sprint-rate']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         this.refresh(sprint, project)
@@ -44,7 +48,7 @@ class ProjectDashboardPage extends Component {
     refresh(sprint, project) {
         const { dispatch } = this.props
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
-        dispatch(select_sprints(PAGE_KEY__SPRINT_DASHBOARD_PAGE, [sprint.id]))
+        dispatch(select_sprints(PAGE_KEY__SPRINT_RATE_PAGE, [sprint.id]))
     }
 
     render() {
@@ -54,7 +58,7 @@ class ProjectDashboardPage extends Component {
         return (
             <div>
               <h2 className="header">
-                Sprint dashboard for {sprint.name}
+                Rates for {sprint.name}
               </h2>
               <SprintTimeSummary sprint_id={sprint_id} project_id={project_id} />
             </div>
@@ -76,4 +80,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectDashboardPage)
+export default connect(mapStateToProps)(SprintRatePage)

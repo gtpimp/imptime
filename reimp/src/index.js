@@ -20,6 +20,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import SprintCostSummaryPage from './containers/SprintCostSummaryPage'
 import SprintDashboardPage from './containers/SprintDashboardPage'
+import SprintRatePage from './containers/SprintRatePage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
 import NudgePage from './containers/NudgePage'
 import ProjectRoadmapPage from './containers/ProjectRoadmapPage'
@@ -76,6 +77,7 @@ ReactDOM.render(
           <Route path="projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
           <Route path="projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
+          <Route path="projects/:projectId/sprints/:sprintId/rates" component={SprintRatePage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
           <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" component={VisualSpecDocumentPage}/>
