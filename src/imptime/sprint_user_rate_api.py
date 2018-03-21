@@ -92,14 +92,16 @@ class SprintUserRateViewSet(BaseViewSet):
                     rate = Rate.objects.get_or_create(user=user, project=sprint)[0] #sic
 
                     if 'billable_amount' in rate_values and can_edit_billable_amount:
-                        rate.billable_amount = rate_values['billable_amount']
+                        rate.billable_amount = float(rate_values['billable_amount'])
                         rate.save()
                     if 'velocity' in rate_values and can_edit_velocity:
-                        rate.velocity = rate_values['velocity']
+                        rate.velocity = float(rate_values['velocity'])
                         rate.save()
                     if 'time_tracking_mode' in rate_values and can_edit_time_tracking_mode:
                         rate.time_tracking_mode = rate_values['time_tracking_mode']
                         rate.save()
+                        
+                sprint.recalc_secondary_estimates()
                         
             data = {'status': 'success', 'payload': {}}
 
