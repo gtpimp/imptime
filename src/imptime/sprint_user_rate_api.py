@@ -10,6 +10,7 @@ from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import User, Rate
 from timepiece.models import BusinessPermissions as ProjectPermissions
+from django.db.transaction import atomic
 
 logger = logging.getLogger(__name__)
 
@@ -56,27 +57,30 @@ class SprintUserRateViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
+    @atomic
     def create(self, request):
+        """ also used for update """
         try:
             params = request.data
-            sprint_pk = params['sprint_id']
+            sprint_pks = params['sprint_ids']
             user_pks = params['user_ids']
             rate_values = params['rate_values']
 
-            sprint = self.allowed_sprint(sprint_pk)
-            project = sprint.business #sic
+            for sprint_pk in sprint_pks:
+                sprint = self.allowed_sprint(sprint_pk)
+                project = sprint.business #sic
 
-            if self.logged_in_permissions(project) is None or not self.logged_in_permissions(project).can_edit_ctc_billable_rates:
-                data = {'status': 'failure', 'payload': {'error_msg':'No permissions to perform this action'}}
-            else:
-                for user_pk in user_pks:
-                    user = self.allowed_user(user_pk)
-                    sur = Rate.objects.get_or_create(user=user, sprint=project)[0] #sic
-                    
-                    for rate_name, value in rate_values.items():
-                        sur.update_rate(rate_name, value, save=False)
-                    sur.save()
-                data = {'status': 'success', 'payload': {}}
+                if self.logged_in_permissions(project) is None or not self.logged_in_permissions(project).can_edit_ctc_billable_rates:
+                    data = {'status': 'failure', 'payload': {'error_msg':'No permissions to perform this action'}}
+                    break
+                else:
+                    for user_pk in user_pks:
+                        user = self.allowed_user(user_pk)
+                        rate = Rate.objects.get_or_create(user=user, project=sprint)[0] #sic
+                        rate.billable_amount = rate_values['billable_amount']
+                        rate.save()
+                        
+            data = {'status': 'success', 'payload': {}}
 
         except Exception, ex:
             logger.exception(ex)

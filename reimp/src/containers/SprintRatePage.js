@@ -8,7 +8,7 @@ import OtherUser from '../components/OtherUser'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import EditableUserRate from '../components/EditableUserRate'
-import { logged_in_users_permissions } from '../actions/Users'
+import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
     PAGE_KEY__SPRINT_RATE_PAGE,
@@ -77,10 +77,12 @@ class SprintRatePage extends Component {
               }
 
                 { can_view &&
-                  <table>
+                  <table className="sprint-rates__user-list">
                     <thead>
-                      <th>User</th>
-                      <th>Billable rate</th>
+                      <tr>
+                        <th>User</th>
+                        <th>Billable rate</th>
+                      </tr>
                     </thead>
                     <tbody>
                       
@@ -112,8 +114,8 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const user_ids = project.allowed_user_ids
-    const can_view = logged_in_users_permissions(state, project_id).has_view_ctc_billable_rates
-    const can_edit = logged_in_users_permissions(state, project_id).has_edit_ctc_billable_rates
+    const can_view = has_permission(state, project_id, 'has_view_ctc_billable_rates')
+    const can_edit = has_permission(state, project_id, 'has_edit_ctc_billable_rates')
 
     return {
         project_id,

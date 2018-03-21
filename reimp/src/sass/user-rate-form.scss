@@ -1,0 +1,17 @@
+@import 'variables.scss';
+
+.user-rate-form__title {
+    display: flex;
+    flex-direction: column;
+}
+
+.user-rate__title__fluff {
+    font-size: $font-size-small;
+}
+
+.user-rate-form__title__value {
+    font-size: $font-size-default;
+}
+
+
+

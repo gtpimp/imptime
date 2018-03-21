@@ -8,6 +8,8 @@ import classNames from 'classnames'
 import { reduxForm, Field } from 'redux-form';
 import { getUser, ensureUsersLoaded, logged_in_users_permissions } from '../../actions/Users'
 import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
+import OtherUser from '../OtherUser'
+import SprintName from '../SprintName'
 import {change} from 'redux-form'
 import {
     getSprintUserRate,
@@ -22,10 +24,12 @@ class UserRateForm extends Component {
     constructor(props) {
         super(props)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        this.renderField = this.renderField.bind(this)
     }
     
     componentDidMount() {
         this.refresh()
+        this.input_el && this.input_el.focus()
     }
 
     componentWillReceiveProps(new_props) {
@@ -47,8 +51,23 @@ class UserRateForm extends Component {
         setTimeout(function() {handleSubmit()}, 0)
     }
 
+    renderField(field) {
+        const { onKeyDown } = this.props
+        const {input, data, onChange, ...rest} = field
+        return (
+            <input
+                 onKeyDown={onKeyDown}
+                 maxLength="10"
+                 placeholder="Billable amount"
+                 onChange={input.onChange}
+                 value={input.value}
+                 ref={(ref)=> this.input_el=ref}
+             />
+        )
+    }
+
     render() {
-        const { sur_id, sur, is_loading, handleSubmit, can_edit, can_view, initialValues } = this.props
+        const { user_id, sprint_id, sur_id, sur, is_loading, handleSubmit, can_edit, can_view, initialValues, onKeyDown } = this.props
         const that = this;
 
         if ( ! can_view ) {
@@ -56,13 +75,32 @@ class UserRateForm extends Component {
         }
         
         return (
-            <div className="user-rate">
+            <div className="user-rate-form">
               { !sur_id && <div>loading</div> }
 
-              <form onSubmit={handleSubmit}>
-                <div className="user-rate__rate_list">
-                  Hi there: {sur.id}
+              <h2>
+                <div className="user-rate-form__title">
+                  <div className="user-rate__title__fluff">
+                    Edit rates for
+                  </div>
+                  <div className="user-rate-form__title__value">
+                    <OtherUser value={user_id} />
+                  </div>
+                  <div className="user-rate-form__title__fluff">
+                    within sprint
+                  </div>
+                  <div className="user-rate-form__title__value">
+                    <SprintName sprint_id={sprint_id}/>
+                  </div>
                 </div>
+              </h2>
+              <br/>
+              <form onSubmit={handleSubmit}>
+                <div>
+                  R<Field name="billable_amount" component={this.renderField}/>
+                </div>
+                <br/>
+                <button type="submit" className="button button-primary">Save</button>
               </form>
             </div>
         )
@@ -70,7 +108,7 @@ class UserRateForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint_id, user_id, onSave } = props
+    const { onSubmitted, sprint_id, user_id, onSave } = props
     const user = getUser(state, user_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const sur = getSprintUserRate(state, sprint_id, user_id) || {}
@@ -81,7 +119,7 @@ function mapStateToProps(state, props) {
     const is_loading = ! user.id || ! sprint.id || ! sur.id || includes(loading_sur_ids, sur.id)
     const is_invalidated = includes(invalidated_sur_ids, sur.id)
  
-    const initialValues = {}
+    const initialValues = { billable_amount: sur.billable_amount}
     const can_view = logged_in_users_permissions(state, sprint.project_id).has_view_ctc_billable_rates
     const can_edit = logged_in_users_permissions(state, sprint.project_id).has_edit_ctc_billable_rates
     
@@ -89,7 +127,7 @@ function mapStateToProps(state, props) {
         can_view,
         can_edit,
         initialValues,
-        onSubmit: onSave,
+        onSubmit: onSubmitted,
         enableReinitialize: true,
         sprint,
         sprint_id,

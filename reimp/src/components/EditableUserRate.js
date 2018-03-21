@@ -6,7 +6,7 @@ import IssueStatusLabel from './form/IssueStatusLabel'
 import Blank from './form/Blank'
 import { updateIssueStatus, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
-import { ensureSprintUserRateLoaded, getSprintUserRate } from '../actions/SprintUserRates'
+import { ensureSprintUserRateLoaded, getSprintUserRate, updateSprintUserRates } from '../actions/SprintUserRates'
 import UserRateForm from './form/UserRateForm'
 import UserRate from './UserRate'
 import { getSprint, ensureSprintsLoaded } from '../actions/Sprints'
@@ -26,10 +26,9 @@ class EditableUserRate extends Component {
         dispatch(ensureSprintUserRateLoaded(sprint_id, user_id))
     }
     
-    onChange(new_value) {
-        alert("saving")
-        //const { dispatch, issue_ids } = this.props
-        //dispatch(updateIssueStatus(issue_ids, new_value.issue_status_name))
+    onChange(new_values) {
+        const { dispatch, sprint_id, user_id } = this.props
+        dispatch(updateSprintUserRates([sprint_id], [user_id], new_values))
     }
     
     render() {

@@ -241,15 +241,15 @@ function announceSursSavingForSprintAndUser(sprint_id, user_id) {
     }
 }
 
-export function updateSprintUserRates(sprint_id, user_id, rate_values, on_done) {
+export function updateSprintUserRates(sprint_ids, user_ids, rate_values, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-	dispatch(announceSursSavingForSprintAndUser(sprint_id, user_id))
-	let data = {sprint_id: sprint_id,
-                    user_ids: [user_id],
-                    rate_values}
+	dispatch(announceSursSavingForSprintAndUser(sprint_ids[0], user_ids[0]))
+	let data = {sprint_ids: sprint_ids,
+                    user_ids: user_ids,
+                    rate_values: rate_values}
 
-	return impfetch(state, "imp/rate/sprint/?sprint_id="+sprint_id+"&user_id="+user_id, dispatch,
+	return impfetch(state, "imp/rate/sprint/", dispatch,
 			{method: "POST",
 			 credentials: 'same-origin',
 			 data: data,
@@ -259,10 +259,10 @@ export function updateSprintUserRates(sprint_id, user_id, rate_values, on_done) 
 	 .then(json => {
              if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
-		 dispatch(announceSurSaveFailedForSprintAndUser(sprint_id, user_id, json.error))
+		 dispatch(announceSurSaveFailedForSprintAndUser(sprint_ids[0], user_ids[0], json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
-                 dispatch(announceSursSavedForSprintAndUser(sprint_id, user_id))
+                 dispatch(announceSursSavedForSprintAndUser(sprint_ids[0], user_ids[0]))
              }
 	     if ( on_done ) {
 		 on_done()
@@ -270,7 +270,7 @@ export function updateSprintUserRates(sprint_id, user_id, rate_values, on_done) 
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
-	     dispatch(announceSurSaveFailedForSprintAndUser(sprint_id, user_id, error))
+	     dispatch(announceSurSaveFailedForSprintAndUser(sprint_ids[0], user_ids[0], error))
 	 })
     }
 }
