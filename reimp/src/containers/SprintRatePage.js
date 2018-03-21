@@ -8,6 +8,7 @@ import OtherUser from '../components/OtherUser'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import EditableUserRate from '../components/EditableUserRate'
+import EditableUserVelocity from '../components/EditableUserVelocity'
 import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
@@ -63,46 +64,48 @@ class SprintRatePage extends Component {
 
     render() {
 
-        const { can_view, user_ids, sprint, sprint_id, project_id } = this.props
+        const { can_view_rates, can_view_velocity, user_ids,
+                sprint, sprint_id, project_id } = this.props
         
         return (
             <div className="sprint-rates">
               <h2 className="header">
                 Rates for {sprint.name}
               </h2>
-              { !can_view &&
-                <div>
-                  No permission to view rates
-                </div>
-              }
-
-                { can_view &&
-                  <table className="sprint-rates__user-list">
-                    <thead>
-                      <tr>
-                        <th>User</th>
-                        <th>Billable rate</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      
-                      {map(user_ids, function(user_id) {
-                           return (
-                               <tr key={user_id}>
+              <table className="sprint-rates__user-list">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    { can_view_rates && <th>Billable rate</th> }
+                    { can_view_velocity && <th>Velocity</th> }
+                  </tr>
+                </thead>
+                <tbody>
+                  
+                  {map(user_ids, function(user_id) {
+                       return (
+                           <tr key={user_id}>
+                             <td>
+                               <OtherUser user_id={user_id}/>
+                             </td>
+                             { can_view_rates &&
+                               <td>
+                                 <EditableUserRate user_id={user_id}
+                                                   sprint_id={sprint_id} />
+                               </td>
+                             }
+                               { can_view_velocity &&
                                  <td>
-                                   <OtherUser user_id={user_id}/>
+                                   <EditableUserVelocity user_id={user_id}
+                                                         sprint_id={sprint_id} />
                                  </td>
-                                 <td>
-                                   <EditableUserRate user_id={user_id}
-                                                     sprint_id={sprint_id} />
-                                 </td>
-                               </tr>
-                           )
-                       })
-                      }
-                    </tbody>
-                  </table>
-                }
+                               }
+                           </tr>
+                       )
+                   })
+                  }
+                </tbody>
+              </table>
             </div>
         )
     }
@@ -114,8 +117,8 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const user_ids = project.allowed_user_ids
-    const can_view = has_permission(state, project_id, 'has_view_ctc_billable_rates')
-    const can_edit = has_permission(state, project_id, 'has_edit_ctc_billable_rates')
+    const can_view_rates = has_permission(state, project_id, 'has_view_ctc_billable_rates')
+    const can_view_velocity = has_permission(state, project_id, 'has_view_velocity')
 
     return {
         project_id,
@@ -123,7 +126,8 @@ function mapStateToProps(state, props) {
         user_ids,
         sprint_id,
         sprint,
-        can_view
+        can_view_rates,
+        can_view_velocity
     }
 }
 

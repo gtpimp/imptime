@@ -1,29 +1,29 @@
 @import 'variables.scss';
 
-.user-rate-form {
+.popup-form {
     text-align: center;
 }
 
-.user-rate-form__title {
+.popup-form__title {
     display: flex;
     flex-direction: column;
 }
 
-.user-rate-form__title__fluff {
+.popup-form__title__fluff {
     font-size: $font-size-small;
 }
 
-.user-rate-form__title__value {
+.popup-form__title__value {
     font-size: $font-size-large;
     font-weight: bold;
 }
 
-.user-rate-form input {
+.popup-form input {
     padding: 5px;
     margin-left: 2px;
 }
 
-.user-rate-form__submit {
+.popup-form__submit {
     margin: auto;
 }
 

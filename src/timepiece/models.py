@@ -476,6 +476,8 @@ class BusinessPermissions(BaseModel):
     can_view_invoices = models.BooleanField(default=False, verbose_name="Can View Invoices")
     can_edit_quotes = models.BooleanField(default=False, verbose_name="Can Edit Quotes")
     can_view_quotes = models.BooleanField(default=False, verbose_name="Can View Quotes")
+    can_edit_velocity = models.BooleanField(default=False, verbose_name="Can Edit Velocity")
+    can_view_velocity = models.BooleanField(default=False, verbose_name="Can View Velocity")
     can_edit_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can Edit Ctc Billable")
     can_view_ctc_billable_rates = models.BooleanField(default=False, verbose_name="Can View Ctc Billable")
     can_view_ctc_rates = models.BooleanField(default=False, verbose_name="Can View Ctc") # a subpermission of can_view_ctc_billable_rates, used for clients who shouldn't see our internal costing.
@@ -664,7 +666,7 @@ class BusinessPermissions(BaseModel):
     @property
     def has_edit_permissions(self):
         # superuser is just a short-term hack in case I've messed up the permission editor. Remove.
-        return (self.is_active_member_of_business or self.is_superuser) and self.can_edit_permissions
+        return (self.is_active_member_of_business or self.user.is_superuser) and self.can_edit_permissions
 
     @property
     def has_view_permissions(self):
@@ -714,6 +716,14 @@ class BusinessPermissions(BaseModel):
     def has_view_quotes(self):
         return self.is_active_member_of_business and self.can_view_quotes
 
+    @property
+    def has_edit_velocity(self):
+        return self.is_active_member_of_business and self.can_edit_velocity
+
+    @property
+    def has_view_velocity(self):
+        return self.is_active_member_of_business and self.can_view_velocity
+    
     @property
     def has_edit_ctc_billable_rates(self):
         return self.is_active_member_of_business and self.can_edit_ctc_billable_rates
@@ -3742,6 +3752,11 @@ class Rate(BaseModel):
                                                                 'user_id': str(self.user_id)})
             
 
+    def sanitize_rate(self):
+        """ Helper function to ensure that all sensitive financial information is cleared. 
+            This is mainly for serialization, you wouldn't expect to save this object now """
+        self.billable_amount = None
+        self.amount = None
     @classmethod
     def full_rate_for_project(self, user_id, project_id):
         rate = self.objects.filter(user_id=user_id, project_id=project_id).first()

@@ -12,14 +12,14 @@ import OtherUser from '../OtherUser'
 import SprintName from '../SprintName'
 import {change} from 'redux-form'
 import {
-    getSprintUserRate,
-    ensureSprintUserRateLoaded,
-    getLoadingSprintUserRateIds,
-    getInvalidatedSprintUserRateIds
-} from '../../actions/SprintUserRates'
+    getSprintUserVelocity,
+    ensureSprintUserVelocityLoaded,
+    getLoadingSprintUserVelocityIds,
+    getInvalidatedSprintUserVelocityIds
+} from '../../actions/SprintUserVelocity'
 import '../../sass/popup-form.css'
 
-class UserRateForm extends Component {
+class UserVelocityForm extends Component {
 
     constructor(props) {
         super(props)
@@ -42,7 +42,7 @@ class UserRateForm extends Component {
         user_id = user_id || this.props.user_id
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureUsersLoaded([user_id]))
-        dispatch(ensureSprintUserRateLoaded(sprint_id, user_id))
+        dispatch(ensureSprintUserVelocityLoaded(sprint_id, user_id))
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
@@ -58,7 +58,7 @@ class UserRateForm extends Component {
             <input
                  onKeyDown={onKeyDown}
                  maxLength="10"
-                 placeholder="Billable amount"
+                 placeholder="Velocity"
                  onChange={input.onChange}
                  value={input.value}
                  ref={(ref)=> this.input_el=ref}
@@ -67,20 +67,20 @@ class UserRateForm extends Component {
     }
 
     render() {
-        const { user_id, sprint_id, sur_id, sur, is_loading, handleSubmit, can_edit, can_view, initialValues, onKeyDown } = this.props
+        const { user_id, sprint_id, suv_id, suv, is_loading, handleSubmit, can_edit, can_view, initialValues, onKeyDown } = this.props
         const that = this;
 
         if ( ! can_view ) {
-            return (<div>No permission to view rates</div>)
+            return (<div>No permission to view velocities</div>)
         }
         
         return (
             <div className="popup-form">
-              { !sur_id && <div>loading</div> }
+              { !suv_id && <div>loading</div> }
 
               <div className="popup-form__title">
                 <div className="popup-form__title__fluff">
-                  Edit rates for
+                  Edit velocity for
                 </div>
                 <div className="popup-form__title__value">
                   <OtherUser value={user_id} />
@@ -95,7 +95,17 @@ class UserRateForm extends Component {
               <br/>
               <form onSubmit={handleSubmit}>
                 <div>
-                  R<Field name="billable_amount" component={this.renderField}/>
+                  <Field name="velocity" component={this.renderField}/>
+                </div>
+                <br/>
+                <div className="popup-form__title__fluff">
+                  A value of 1 means estimates are perfect.
+                  <br/>
+                  A value >1 means the user is over-confident.
+                  <br/>
+                  A value beween 0 and 1 means the user is pessimistic.
+                  <br/>
+                  If in doubt, go with 1.3.
                 </div>
                 <br/>
                 <button type="submit" className="popup-form__submit button button-primary">Save</button>
@@ -109,17 +119,17 @@ function mapStateToProps(state, props) {
     const { onSubmitted, sprint_id, user_id, onSave } = props
     const user = getUser(state, user_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
-    const sur = getSprintUserRate(state, sprint_id, user_id) || {}
+    const suv = getSprintUserVelocity(state, sprint_id, user_id) || {}
 
-    const loading_sur_ids = getLoadingSprintUserRateIds(state) || []
-    const invalidated_sur_ids = getInvalidatedSprintUserRateIds(state) || []
+    const loading_suv_ids = getLoadingSprintUserVelocityIds(state) || []
+    const invalidated_suv_ids = getInvalidatedSprintUserVelocityIds(state) || []
     
-    const is_loading = ! user.id || ! sprint.id || ! sur.id || includes(loading_sur_ids, sur.id)
-    const is_invalidated = includes(invalidated_sur_ids, sur.id)
+    const is_loading = ! user.id || ! sprint.id || ! suv.id || includes(loading_suv_ids, suv.id)
+    const is_invalidated = includes(invalidated_suv_ids, suv.id)
  
-    const initialValues = { billable_amount: sur.billable_amount}
-    const can_view = logged_in_users_permissions(state, sprint.project_id).has_view_ctc_billable_rates
-    const can_edit = logged_in_users_permissions(state, sprint.project_id).has_edit_ctc_billable_rates
+    const initialValues = { velocity: suv.velocity}
+    const can_view = logged_in_users_permissions(state, sprint.project_id).has_view_velocity
+    const can_edit = logged_in_users_permissions(state, sprint.project_id).has_edit_velocity
     
     return {
         can_view,
@@ -131,11 +141,11 @@ function mapStateToProps(state, props) {
         sprint_id,
         user,
         user_id,
-        sur,
-        sur_id: sur.id,
+        suv,
+        suv_id: suv.id,
         is_loading,
         is_invalidated
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'sprint_rate_form'})(UserRateForm))
+export default connect(mapStateToProps)(reduxForm({form:'sprint_velocity_form'})(UserVelocityForm))

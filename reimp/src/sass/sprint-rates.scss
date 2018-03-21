@@ -4,3 +4,22 @@
 .sprint-rates__user-list {
     line-height: 20px;
 }
+
+.sprint-rates__user-list table {
+    border-collapse: collapse;
+    margin: auto;
+}
+
+.sprint-rates__user-list td {
+    padding: 2px;
+    padding-left: 10px;
+}
+
+.sprint-rates__user-list thead th {
+    border-bottom: 1px solid $header-background-color;
+}
+
+.sprint-rates__user-list tr:hover {
+    background-color: $row-hover-color;
+}
+

@@ -65,6 +65,8 @@ const QUICK_ROLES = { 'owner': [ 'has_delete_project',
                                    'has_edit_project_detail',
                                    'has_view_documents',
                                    'has_edit_calendar',
+                                   'has_view_velocity',
+                                   'has_edit_velocity',
                                    'has_edit_review_cycle' ],
                       
                       'finance': [ 'has_edit_budget',

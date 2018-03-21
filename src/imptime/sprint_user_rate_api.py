@@ -32,8 +32,9 @@ class SprintUserRateViewSet(BaseViewSet):
             if surs.count() > 0:
                 sprint = surs[0].project #sic
                 project = sprint.business #sic
-                if self.logged_in_permissions(project) is None or not self.logged_in_permissions(project).can_view_ctc_billable_rates:
-                    surs = surs.none()
+
+            can_view_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_ctc_billable_rates
+            can_view_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_velocity
 
             if 'sprint_id' in filter_args and 'user_id' in filter_args and surs.count() == 0:
                 # We return an empty sprint rate so that the caller can tell what's going on.
@@ -46,7 +47,9 @@ class SprintUserRateViewSet(BaseViewSet):
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in surs.values_list('id', flat=True)]
             else:
-                s = SprintUserRateSerializer(surs, many=True)
+                s = SprintUserRateSerializer(surs, many=True,
+                                             can_view_billable_amount=can_view_billable_amount,
+                                             can_view_velocity=can_view_velocity)
                 surs_data = s.data
                 context['sprint_user_rates'] = surs_data
             context['pagination'] = pagination
@@ -70,14 +73,18 @@ class SprintUserRateViewSet(BaseViewSet):
                 sprint = self.allowed_sprint(sprint_pk)
                 project = sprint.business #sic
 
-                if self.logged_in_permissions(project) is None or not self.logged_in_permissions(project).can_edit_ctc_billable_rates:
-                    data = {'status': 'failure', 'payload': {'error_msg':'No permissions to perform this action'}}
-                    break
-                else:
-                    for user_pk in user_pks:
-                        user = self.allowed_user(user_pk)
-                        rate = Rate.objects.get_or_create(user=user, project=sprint)[0] #sic
+                can_edit_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_edit_ctc_billable_rates
+                can_edit_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_edit_velocity
+                
+                for user_pk in user_pks:
+                    user = self.allowed_user(user_pk)
+                    rate = Rate.objects.get_or_create(user=user, project=sprint)[0] #sic
+
+                    if 'billable_amount' in rate_values and can_edit_billable_amount:
                         rate.billable_amount = rate_values['billable_amount']
+                        rate.save()
+                    if 'velocity' in rate_values and can_edit_velocity:
+                        rate.velocity = rate_values['velocity']
                         rate.save()
                         
             data = {'status': 'success', 'payload': {}}

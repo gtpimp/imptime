@@ -60,6 +60,8 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     has_view_review_cycle = serializers.BooleanField()
     has_edit_review_cycle = serializers.BooleanField()
     has_edit_tags = serializers.BooleanField()
+    has_view_velocity = serializers.BooleanField()
+    has_edit_velocity = serializers.BooleanField()
 
     def to_representation(self, project_permission, *args, **kwargs):
         pp = project_permission
