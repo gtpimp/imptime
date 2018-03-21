@@ -1,9 +1,12 @@
 @import 'variables.scss';
 
+.user-rate-form {
+    text-align: center;
+}
+
 .user-rate-form__title {
     display: flex;
     flex-direction: column;
-    text-align: center;
 }
 
 .user-rate-form__title__fluff {
@@ -13,6 +16,15 @@
 .user-rate-form__title__value {
     font-size: $font-size-large;
     font-weight: bold;
+}
+
+.user-rate-form input {
+    padding: 5px;
+    margin-left: 2px;
+}
+
+.user-rate-form__submit {
+    margin: auto;
 }
 
 

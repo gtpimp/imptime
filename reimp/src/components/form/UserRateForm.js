@@ -98,7 +98,7 @@ class UserRateForm extends Component {
                   R<Field name="billable_amount" component={this.renderField}/>
                 </div>
                 <br/>
-                <button type="submit" className="button button-primary">Save</button>
+                <button type="submit" className="user-rate-form__submit button button-primary">Save</button>
               </form>
             </div>
         )
