@@ -104,12 +104,10 @@ class SprintViewSet(BaseViewSet):
                             ProjectSprintOrder.insert_after(sprint, set_after_this_project=after_sprint) #sic
                 elif field_name == 'commission_percentage' and self.logged_in_permissions(sprint.business).has_edit_ctc_billable_rates:
                     sprint.commission_percentage = new_value
-                elif field_name == 'ratio_management' and self.logged_in_permissions(sprint.business).has_edit_velocity:
-                    sprint.ratio_management = new_value
-                elif field_name == 'ratio_testing' and self.logged_in_permissions(sprint.business).has_edit_velocity:
-                    sprint.ratio_testing = new_value
-                elif field_name == 'ratio_scope_creep' and self.logged_in_permissions(sprint.business).has_edit_velocity:
-                    sprint.ratio_scope_creep = new_value
+                elif field_name == 'ratios' and self.logged_in_permissions(sprint.business).has_edit_velocity:
+                    sprint.ratio_management = new_value['ratio_management']
+                    sprint.ratio_testing = new_value['ratio_testing']
+                    sprint.ratio_scope_creep = new_value['ratio_scope_creep']
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 sprint.save()

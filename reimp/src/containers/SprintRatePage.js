@@ -11,6 +11,7 @@ import EditableUserRate from '../components/EditableUserRate'
 import EditableUserVelocity from '../components/EditableUserVelocity'
 import EditableUserTimeTrackingMode from '../components/EditableUserTimeTrackingMode'
 import EditableSprintCommission from '../components/EditableSprintCommission'
+import EditableSprintRatios from '../components/EditableSprintRatios'
 import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
@@ -68,13 +69,20 @@ class SprintRatePage extends Component {
         const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
                 user_ids, sprint, sprint_id, project_id } = this.props
         return (
-            <div>
+            <div className="sprint-rates__card">
               <h2 className="header">
                 Ratios
               </h2>
-              <div className="sprint-rates__user-list">
+              <div className="sprint-rates__ratios-list">
+                { can_view_time_tracking_mode &&
+                  <div className="sprint-rates__sprint-ratios">
+                    <EditableSprintRatios sprint_id={sprint_id} />
+                  </div>
+                }
                 { can_view_rates &&
-                  <EditableSprintCommission sprint_id={sprint_id} />
+                  <div className="sprint-rates__sprint-commission">
+                    <EditableSprintCommission sprint_id={sprint_id} />
+                  </div>
                 }
               </div>
             </div>
@@ -87,7 +95,7 @@ class SprintRatePage extends Component {
                 user_ids, sprint, sprint_id, project_id } = this.props
 
         return (
-            <div>
+            <div className="sprint-rates__card">
               <h2 className="header">
                 Rates
               </h2>

@@ -1,20 +1,21 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
-import SprintCommissionForm from './form/SprintCommissionForm'
-import { ensureSprintsLoaded, updateSprintCommission, getSprint, is_sprint_invalidated } from '../actions/Sprints'
+import SprintRatiosForm from './form/SprintRatiosForm'
+import SprintRatios from './SprintRatios'
+import { ensureSprintsLoaded, updateSprintRatios, getSprint, is_sprint_invalidated } from '../actions/Sprints'
 import { has_permission } from '../actions/Users'
 
-class EditableSprintCommission extends Component {
+class EditableSprintRatios extends Component {
 
     constructor(props) {
         super(props)
         this.onChange = this.onChange.bind(this)
     }
 
-    onChange(new_value) {
+    onChange(new_values) {
         const { dispatch, sprint } = this.props
-        dispatch(updateSprintCommission([sprint.id], new_value.commission_percentage))
+        dispatch(updateSprintRatios([sprint.id], new_values))
     }
 
     componentDidMount() {
@@ -35,17 +36,17 @@ class EditableSprintCommission extends Component {
         const { sprint, can_edit, can_view } = this.props
 
         return (
-            <EditableProperty property_key={'sprint_commission_'+sprint.id}
-                              initial_value={sprint.commission_percentage}
+            <EditableProperty property_key={'sprint_ratios_'+sprint.id}
+                              initial_value={{ratio_management: sprint.ratio_management,
+                                              ratio_testing: sprint.ratio_testing,
+                                              ratio_scope_creep: sprint.ratio_scope_creep}}
                               onChange={this.onChange}
                               can_edit={can_edit}
                               edit_as_modal={true}
-                              actionLabel="Edit Sprint Commission"
+                              actionLabel="Edit Sprint Ratios"
             >
-              <SprintCommissionForm sprint_id={sprint.id} />
-              <div className="text-component--readonly">
-                { can_view && <div>Commission: {sprint.commission_percentage}%</div> }
-              </div>
+              <SprintRatiosForm sprint_id={sprint.id} />
+              <SprintRatios sprint_id={sprint.id} />
               <div className="text-component--empty"></div>
             </EditableProperty>
         )
@@ -56,8 +57,8 @@ function mapStateToProps(state, props) {
     const { sprint_id } = props
     const sprint = getSprint(state, sprint_id) || {}
     const is_invalidated = is_sprint_invalidated(state, sprint_id)
-    const can_edit = has_permission(state, sprint.project_id, 'has_edit_ctc_billable_rates')
-    const can_view = has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
+    const can_edit = has_permission(state, sprint.project_id, 'has_edit_velocity')
+    const can_view = has_permission(state, sprint.project_id, 'has_view_velocity')
 
     return {
         sprint: sprint,
@@ -68,4 +69,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(EditableSprintCommission)
+export default connect(mapStateToProps)(EditableSprintRatios)

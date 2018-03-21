@@ -4,16 +4,20 @@
 .sprint-rates {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     flex-flow: row wrap;
     margin-left: 50px;
-    margin-right: 50px; 
+    margin-right: 50px;
+    line-height: 40px;
 }
- 
+
+.sprint-rates__card {
+    margin-right: 50px;
+}
+
 .sprint-rates__user-list {
     line-height: 20px;
     border-collapse: collapse;
-    margin: auto;
 }
 
 .sprint-rates__user-list td, .sprint-rates__user-list th {
@@ -29,3 +33,10 @@
     background-color: $row-hover-color;
 }
 
+.sprint-rates__sprint-ratios:hover {
+    background-color: $row-hover-color;
+}
+
+.sprint-rates__sprint-commission:hover {
+    background-color: $row-hover-color;
+}

@@ -4,6 +4,7 @@ import { reduxForm, Field } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import { getSprint } from '../../actions/Sprints'
 import SprintName from '../../components/SprintName'
+import { has_permission } from '../../actions/Users'
 
 class SprintCommissionForm extends Component {
 
@@ -30,7 +31,12 @@ class SprintCommissionForm extends Component {
     }
 
     render() {
-        const { handleSubmit, sprint } = this.props
+        const { handleSubmit, sprint, can_edit } = this.props
+
+        if ( ! can_edit ) {
+            return "Insufficient permissions"
+        }
+        
         return (
 
             
@@ -63,12 +69,14 @@ function mapStateToProps(state, props) {
     const { onSubmitted, sprint_id } = props
 
     const sprint = getSprint(state, sprint_id)
+    const can_edit = has_permission(state, sprint.project_id, 'has_edit_ctc_billable_rates')
     
     return {
         initialValues: {commission_percentage:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        sprint
+        sprint,
+        can_edit
     }
 }
 
