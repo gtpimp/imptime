@@ -1,6 +1,15 @@
 @import 'variables.scss';
 
 
+.sprint-rates {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-flow: row wrap;
+    margin-left: 50px;
+    margin-right: 50px; 
+}
+ 
 .sprint-rates__user-list {
     line-height: 20px;
     border-collapse: collapse;

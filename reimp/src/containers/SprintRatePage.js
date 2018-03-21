@@ -10,6 +10,7 @@ import SprintTimeSummary from '../components/SprintTimeSummary'
 import EditableUserRate from '../components/EditableUserRate'
 import EditableUserVelocity from '../components/EditableUserVelocity'
 import EditableUserTimeTrackingMode from '../components/EditableUserTimeTrackingMode'
+import EditableSprintCommission from '../components/EditableSprintCommission'
 import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
@@ -63,15 +64,32 @@ class SprintRatePage extends Component {
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
     }
 
-    render() {
-
+    renderSprintRatios() {
         const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
                 user_ids, sprint, sprint_id, project_id } = this.props
-        
         return (
-            <div className="sprint-rates">
+            <div>
               <h2 className="header">
-                Rates for {sprint.name}
+                Ratios
+              </h2>
+              <div className="sprint-rates__user-list">
+                { can_view_rates &&
+                  <EditableSprintCommission sprint_id={sprint_id} />
+                }
+              </div>
+            </div>
+        )
+
+    }
+
+    renderUserRates() {
+        const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
+                user_ids, sprint, sprint_id, project_id } = this.props
+
+        return (
+            <div>
+              <h2 className="header">
+                Rates
               </h2>
               <table className="sprint-rates__user-list">
                 <thead>
@@ -114,6 +132,23 @@ class SprintRatePage extends Component {
                   }
                 </tbody>
               </table>
+            </div>
+        )
+        
+    }
+    
+    render() {
+
+        const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
+                user_ids, sprint, sprint_id, project_id } = this.props
+        
+        return (
+            <div>
+              <h2>{sprint.name}</h2>
+              <div className="sprint-rates">
+                {this.renderUserRates()}
+                {this.renderSprintRatios()}
+              </div>
             </div>
         )
     }

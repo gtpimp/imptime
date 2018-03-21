@@ -151,6 +151,10 @@ export function updateSprintReviewCycle(sprint_ids, value) {
     return updateSprint(sprint_ids, "review_cycle_days", value)
 }
 
+export function updateSprintCommission(sprint_ids, value) {
+    return updateSprint(sprint_ids, "commission_percentage", value)
+}
+
 export function reorderSprints(sprint_id_before, sprint_id_after, list_key, index_of_destination, on_done) {
     return (dispatch, getState) => {
         dispatch(updateVisibleItemIdAbove(list_key, [sprint_id_before], sprint_id_after, index_of_destination))

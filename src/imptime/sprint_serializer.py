@@ -29,6 +29,10 @@ class SprintSerializer(BaseSerializer):
     deadline_ids = serializers.ListField(child=serializers.CharField(), source="ordered_deadline_ids")
     review_ids = serializers.ListField(child=serializers.CharField())
     user_ids_who_can_estimate = serializers.ListField(child=serializers.CharField())
+    ratio_management = serializers.FloatField()
+    ratio_testing = serializers.FloatField()
+    ratio_scope_creep = serializers.FloatField()
+    commission_percentage = serializers.FloatField()
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -55,5 +59,12 @@ class SprintSerializer(BaseSerializer):
             users_who_can_estimate = users_who_can_estimate.filter(pk=self.logged_in_user.id)
         sprint.user_ids_who_can_estimate = users_who_can_estimate.values_list('id', flat=True)
 
+        if not bp.has_edit_ctc_billable_rates:
+            sprint.commission_percentage = None
+        if not bp.has_view_velocity:
+            sprint.ratio_management = None
+            sprint.ratio_testing = None
+            sprint.ratio_scope_creep = None
+        
         
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)
