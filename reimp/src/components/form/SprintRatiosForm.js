@@ -16,7 +16,7 @@ class SprintRatiosForm extends Component {
     }
 
     componentDidMount() {
-        this.input_el && this.input_el.focus()
+        this.input_testing_el && this.input_testing_el.focus()
     }
     
     renderRatioManagementField(field) {
@@ -27,7 +27,7 @@ class SprintRatiosForm extends Component {
                 placeholder="Management"
                 value={input.value}
                 onChange={input.onChange}
-                ref={(ref)=> this.input_el=ref}
+                ref={(ref)=> this.input_management_el=ref}
             />
         )
     }
@@ -40,7 +40,7 @@ class SprintRatiosForm extends Component {
                 placeholder="Testing"
                 value={input.value}
                 onChange={input.onChange}
-                ref={(ref)=> this.input_el=ref}
+                ref={(ref)=> this.input_testing_el=ref}
             />
         )
     }
@@ -53,7 +53,7 @@ class SprintRatiosForm extends Component {
                 placeholder="Scope creep"
                 value={input.value}
                 onChange={input.onChange}
-                ref={(ref)=> this.input_el=ref}
+                ref={(ref)=> this.input_scope_creep_el=ref}
             />
         )
     }

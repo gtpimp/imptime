@@ -11,6 +11,7 @@ import EditableUserRate from '../components/EditableUserRate'
 import EditableUserVelocity from '../components/EditableUserVelocity'
 import EditableUserTimeTrackingMode from '../components/EditableUserTimeTrackingMode'
 import EditableSprintCommission from '../components/EditableSprintCommission'
+import EditableSprintBudget from '../components/EditableSprintBudget'
 import EditableSprintRatios from '../components/EditableSprintRatios'
 import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
@@ -66,7 +67,7 @@ class SprintRatePage extends Component {
     }
 
     renderSprintRatios() {
-        const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
+        const { can_view_rates, can_view_velocity, can_view_time_tracking_mode, can_view_budget,
                 user_ids, sprint, sprint_id, project_id } = this.props
         return (
             <div className="sprint-rates__card">
@@ -82,6 +83,11 @@ class SprintRatePage extends Component {
                 { can_view_rates &&
                   <div className="sprint-rates__sprint-commission">
                     <EditableSprintCommission sprint_id={sprint_id} />
+                  </div>
+                }
+                { can_view_budget &&
+                  <div className="sprint-rates__sprint-budget">
+                    <EditableSprintBudget sprint_id={sprint_id} />
                   </div>
                 }
               </div>
@@ -170,6 +176,7 @@ function mapStateToProps(state, props) {
     const user_ids = project.allowed_user_ids
     const can_view_rates = has_permission(state, project_id, 'has_view_ctc_billable_rates')
     const can_view_velocity = has_permission(state, project_id, 'has_view_velocity')
+    const can_view_budget = has_permission(state, project_id, 'has_view_budget')
     const can_view_time_tracking_mode = can_view_velocity
 
     return {
@@ -180,7 +187,8 @@ function mapStateToProps(state, props) {
         sprint,
         can_view_rates,
         can_view_velocity,
-        can_view_time_tracking_mode
+        can_view_time_tracking_mode,
+        can_view_budget
     }
 }
 

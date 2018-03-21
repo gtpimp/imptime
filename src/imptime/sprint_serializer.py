@@ -33,6 +33,7 @@ class SprintSerializer(BaseSerializer):
     ratio_testing = serializers.FloatField()
     ratio_scope_creep = serializers.FloatField()
     commission_percentage = serializers.FloatField()
+    budget = serializers.FloatField()
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -65,6 +66,8 @@ class SprintSerializer(BaseSerializer):
             sprint.ratio_management = None
             sprint.ratio_testing = None
             sprint.ratio_scope_creep = None
+        if not bp.has_view_budget:
+            sprint.budget = None
         
         
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)
