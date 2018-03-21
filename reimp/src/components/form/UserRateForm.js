@@ -11,7 +11,7 @@ import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
 import {change} from 'redux-form'
 import {
     getSprintUserRate,
-    ensureSprintUserRatesLoaded,
+    ensureSprintUserRateLoaded,
     getLoadingSprintUserRateIds,
     getInvalidatedSprintUserRateIds
 } from '../../actions/SprintUserRates'
@@ -38,7 +38,7 @@ class UserRateForm extends Component {
         user_id = user_id || this.props.user_id
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureUsersLoaded([user_id]))
-        dispatch(ensureSprintUserRatesLoaded(sprint_id, user_id))
+        dispatch(ensureSprintUserRateLoaded(sprint_id, user_id))
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
@@ -48,11 +48,11 @@ class UserRateForm extends Component {
     }
 
     render() {
-        const { sur_id, sur, is_loading, rate_names, handleSubmit, can_edit, can_view, initialValues } = this.props
+        const { sur_id, sur, is_loading, handleSubmit, can_edit, can_view, initialValues } = this.props
         const that = this;
 
         if ( ! can_view ) {
-            return (<div>"No permission to view rates"</div>)
+            return (<div>No permission to view rates</div>)
         }
         
         return (
@@ -60,8 +60,8 @@ class UserRateForm extends Component {
               { !sur_id && <div>loading</div> }
 
               <form onSubmit={handleSubmit}>
-
                 <div className="user-rate__rate_list">
+                  Hi there: {sur.id}
                 </div>
               </form>
             </div>
@@ -70,7 +70,7 @@ class UserRateForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint_id, user_id, onClose, onSave, onRemoveUser, rate_names } = props
+    const { sprint_id, user_id, onSave } = props
     const user = getUser(state, user_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const sur = getSprintUserRate(state, sprint_id, user_id) || {}
@@ -82,16 +82,14 @@ function mapStateToProps(state, props) {
     const is_invalidated = includes(invalidated_sur_ids, sur.id)
  
     const initialValues = {}
-    map(rate_names, (rate_name) => { initialValues[rate_name] = sur[rate_name] })
-    const can_view = logged_in_users_permissions(state, sprint_id).can_view_ctc_billable_rates
-    const can_edit = logged_in_users_permissions(state, sprint_id).can_edit_ctc_billable_rates
+    const can_view = logged_in_users_permissions(state, sprint.project_id).has_view_ctc_billable_rates
+    const can_edit = logged_in_users_permissions(state, sprint.project_id).has_edit_ctc_billable_rates
     
     return {
         can_view,
         can_edit,
         initialValues,
         onSubmit: onSave,
-        onRemoveUser,
         enableReinitialize: true,
         sprint,
         sprint_id,
@@ -99,7 +97,6 @@ function mapStateToProps(state, props) {
         user_id,
         sur,
         sur_id: sur.id,
-        rate_names,
         is_loading,
         is_invalidated
     }

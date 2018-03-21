@@ -17,6 +17,7 @@ export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
 export const LIST_KEY__AUTO_CLOCK = 'auto_clock'
 export const LIST_KEY__RECENT_AUTO_CLOCK = 'recent_auto_clock'
+export const LIST_KEY__SPRINT_RATES = 'sprint_rates'
 
 export const ENTITY_KEY__INVOICE = 'invoice'
 export const ENTITY_KEY__PROJECT = 'project'
@@ -40,6 +41,7 @@ export const ENTITY_KEY__NUDGE = 'nudge'
 export const ENTITY_KEY__WIKI = 'wiki'
 export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
 export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
+export const ENTITY_KEY__SPRINT_USER_RATE = 'sprint_user_rate'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
@@ -47,7 +49,8 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__VISUAL_SPEC_ISSUE,
                                   ENTITY_KEY__ISSUE,
                                   ENTITY_KEY__INVOICE,
-                                  ENTITY_KEY__WIKI ]
+                                  ENTITY_KEY__WIKI,
+                                  ENTITY_KEY__SPRINT_USER_RATE ]
 
 export const PAGE_KEY__DASHBOARD_PATH = 'dashboard_page'
 export const PAGE_KEY__INVOICE_PATH = 'invoice_page'

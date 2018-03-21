@@ -21,6 +21,7 @@ import sprint_api
 import sprint_deadline_api
 import sprint_review_api
 import sprint_roadmap_api
+import sprint_user_rate_api
 import testable_api
 import tag_api
 import time_chart_api
@@ -43,6 +44,8 @@ router.register(r'autologin', auth_api.AutoLoginViewSet,
                 base_name='authlogin')
 router.register(r'permission/project', project_user_permission_api.ProjectUserPermissionViewSet,
                 base_name='project_permission')
+router.register(r'rate/sprint', sprint_user_rate_api.SprintUserRateViewSet,
+                base_name='sprint_user_rate')
 router.register(r'project', project_api.ProjectViewSet,
                 base_name='project')
 router.register('invoice', invoice_api.InvoiceViewSet,

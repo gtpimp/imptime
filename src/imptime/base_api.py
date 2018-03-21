@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import Issue, IssueReview, Tag, ProjectRole
+from timepiece.models import Issue, IssueReview, Tag, ProjectRole, Rate
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
@@ -209,7 +209,11 @@ class BaseViewSet(viewsets.ViewSet):
         return Invoice.objects.filter(business__in=self.allowed_projects(), #sic
                                       business__business_permissions__user=self.request.user,
                                       business__business_permissions__can_view_invoices=True)
-                                      
+
+    def allowed_sprint_rates(self):
+        return Rate.objects.filter(project__business__in=self.allowed_projects(), #sic
+                                   project__business__business_permissions__user=self.request.user,
+                                   project__business__business_permissions__can_view_ctc_billable_rates=True)
     
     def allowed_wiki_pages(self):
         non_sensitive_wiki_pages = WikiPage.objects.filter(money_sensitive=False,

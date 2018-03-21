@@ -6,6 +6,7 @@ import editable_property from './editable_property'
 import filter from './filter'
 import issue from './issue'
 import issue_general_details from './issue_general_details'
+import item from './item'
 import item_list from './item_list'
 import loading from './loading'
 import maintenance from './maintenance'
@@ -16,15 +17,14 @@ import project_dashboard from './project_dashboard'
 import project_statement from './project_statement'
 import project_user_permission from './project_user_permission'
 import rie from './rie'
-import item from './item'
 import settings from './settings'
 import sprint from './sprint'
 import sprint_user_rate from './sprint_user_rate'
-import user_timesheet from './user_timesheet'
 import time_chart from './time_chart'
 import time_summary from './time_summary'
 import toolbar from './toolbar'
 import user from './user'
+import user_timesheet from './user_timesheet'
 import websockets from './websockets'
 import { combineReducers } from 'redux'
 import { reducer as redux_form_reducer } from 'redux-form'
@@ -54,7 +54,7 @@ const rootReducer = combineReducers({
     routing,
     settings,
     sprint,
-    sprint_user_rate,
+    sprint_user_rate,    
     time_chart,
     time_summary,
     toolbar,

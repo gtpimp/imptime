@@ -1,13 +1,17 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import {browserHistory} from 'react-router'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName.js'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
+import UserRateForm from '../components/form/UserRateForm'
+import { logged_in_users_permissions } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
-    PAGE_KEY__SPRINT_RATE_PAGE
+    PAGE_KEY__SPRINT_RATE_PAGE,
+    LIST_KEY__SPRINT_RATES
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -17,6 +21,13 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded,
         getSprint
 } from '../actions/Sprints'
+import {
+    initList,
+    selectItems,
+    update_list_filter,
+    update_list_pagination,
+    invalidateList
+} from '../actions/ItemList'
 
 class SprintRatePage extends Component {
 
@@ -34,7 +45,6 @@ class SprintRatePage extends Component {
 
     componentWillReceiveProps(new_props) {
         const { sprint_id, project_id, dispatch } = this.props
-
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
 
@@ -46,21 +56,44 @@ class SprintRatePage extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch } = this.props
+        const { dispatch, sprint_id, user_ids } = this.props
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
-        dispatch(select_sprints(PAGE_KEY__SPRINT_RATE_PAGE, [sprint.id]))
+    }
+
+    onSaveUserRate(user_id, sprint_id, new_values) {
+        alert("saving")
     }
 
     render() {
 
-        const { sprint, sprint_id, project_id } = this.props
+        const { can_view, user_ids, sprint, sprint_id, project_id } = this.props
         
         return (
-            <div>
+            <div className="sprint-rates">
               <h2 className="header">
                 Rates for {sprint.name}
               </h2>
-              <SprintTimeSummary sprint_id={sprint_id} project_id={project_id} />
+              { !can_view &&
+                <div>
+                  No permission to view rates
+                </div>
+              }
+
+              { can_view &&
+                <div>
+                  {map(user_ids, function(user_id) {
+                       return (
+                           <div key={user_id} className="sprint-rate">
+                             <UserRateForm user_id={user_id}
+                                           sprint_id={sprint_id}
+                                           onSave={(new_values) => this.onSaveUserRate(user_id, sprint_id, new_values)}
+                             />
+                           </div>
+                       )
+                   })
+                  }
+                </div>
+              }
             </div>
         )
     }
@@ -71,12 +104,17 @@ function mapStateToProps(state, props) {
     const sprint_id = props.params.sprintId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
+    const user_ids = project.allowed_user_ids
+    const can_view = logged_in_users_permissions(state, project_id).has_view_ctc_billable_rates
+    const can_edit = logged_in_users_permissions(state, project_id).has_edit_ctc_billable_rates
 
     return {
-        project_id: project_id,
-        project: project,
-        sprint_id: sprint_id,
-        sprint: sprint
+        project_id,
+        project,
+        user_ids,
+        sprint_id,
+        sprint,
+        can_view
     }
 }
 

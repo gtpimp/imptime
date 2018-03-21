@@ -26,7 +26,7 @@ class SprintUserRateViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             surs = self.allowed_sprint_rates()
-            surs = self.apply_filter(qs=surs, raw_filter_args=filter_args)
+            surs = self.apply_filter(qs=surs, filter_args=filter_args)
 
             if surs.count() > 0:
                 sprint = surs[0].project #sic
@@ -83,3 +83,18 @@ class SprintUserRateViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
+    
+    def apply_filter(self, qs, filter_args):
+        ids = filter_args.pop('ids', [])
+        if len(ids)>0:
+            sprint_ids = []
+            user_ids = []
+            for id in ids:
+                sprint_id, user_id = id.split("_")
+                sprint_ids.append(sprint_id)
+                user_ids.append(user_id)
+            filter_args['sprint_id__in'] = sprint_ids
+            filter_args['user_id__in'] = user_ids
+            
+        return super(SprintUserRateViewSet, self).apply_filter(qs, filter_args)
+        

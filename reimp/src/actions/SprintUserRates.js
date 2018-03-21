@@ -1,8 +1,5 @@
 import { impfetch } from './lib.js'
-import indexOf from 'lodash/indexOf'
-import keyBy from 'lodash/keyBy'
-import includes from 'lodash/includes'
-import map from 'lodash/map'
+import { map, keyBy, includes, indexOf, get } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__SPRINT_USER_RATE } from '../actions/ItemListKeyRegistry'
 
@@ -131,7 +128,7 @@ function fetchSursPromise(dispatch, state, sur_ids) {
 }
 
 function getSurIdForSprintUser(state, sprint_id, user_id) {
-    return (((state.sprint_user_rate || {}).sur_ids_by_sprint_and_user || {})[sprint_id] || {})[user_id] || null
+    return get(state, ["sprint_user_rate", "sur_ids_by_sprint_and_user", sprint_id, user_id], null)
 }
 
 function getSurIdsForSprintUsers(state, sprint_id, user_ids) {
@@ -139,18 +136,18 @@ function getSurIdsForSprintUsers(state, sprint_id, user_ids) {
 }
 
 function isSurLoadingForSprintUser(state, sprint_id, user_id) {
-    return (((state.sprint_user_rate || {}).loading_surs_by_sprint_and_user || {})[sprint_id] || {})[user_id] === true
+    return get(state, ["sprint_user_rate", "loading_surs_by_sprint_and_user", sprint_id, user_id], false) === true
 }
 
 export function getLoadingSprintUserRateIds(state) {
-    return state.sprint_user_rate.loading_item_ids
+    return get(state, ["sprint_user_rate", "loading_item_ids"], [])
 }
 
 export function getInvalidatedSprintUserRateIds(state) {
-    return state.sprint_user_rate.invalidated_item_ids
+    return get(state, ["sprint_user_rate", "invalidated_item_ids"], [])
 }
 
-export function ensureSprintUserRatesLoaded(sprint_id, user_id) {
+export function ensureSprintUserRateLoaded(sprint_id, user_id) {
     return (dispatch, getState) => {
         const state = getState()
         if ( isSurLoadingForSprintUser(state, sprint_id, user_id) ) {
