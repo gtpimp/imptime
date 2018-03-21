@@ -6,7 +6,7 @@ import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName.js'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
-import UserRateForm from '../components/form/UserRateForm'
+import EditableUserRate from '../components/EditableUserRate'
 import { logged_in_users_permissions } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
@@ -60,10 +60,6 @@ class SprintRatePage extends Component {
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
     }
 
-    onSaveUserRate(user_id, sprint_id, new_values) {
-        alert("saving")
-    }
-
     render() {
 
         const { can_view, user_ids, sprint, sprint_id, project_id } = this.props
@@ -84,10 +80,8 @@ class SprintRatePage extends Component {
                   {map(user_ids, function(user_id) {
                        return (
                            <div key={user_id} className="sprint-rate">
-                             <UserRateForm user_id={user_id}
-                                           sprint_id={sprint_id}
-                                           onSave={(new_values) => this.onSaveUserRate(user_id, sprint_id, new_values)}
-                             />
+                             <EditableUserRate user_id={user_id}
+                                               sprint_id={sprint_id} />
                            </div>
                        )
                    })

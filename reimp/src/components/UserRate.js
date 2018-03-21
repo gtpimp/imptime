@@ -1,9 +1,32 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import { has_permission } from '../actions/Users'
+import { getUser, ensureUsersLoaded } from '../actions/Users'
+import { getSprint, ensureSprintsLoaded } from '../actions/Sprints'
+import {
+    getSprintUserRate,
+    ensureSprintUserRateLoaded,
+} from '../actions/SprintUserRates'
 
 class UserRate extends Component {
 
+    componentDidMount() {
+        this.refresh()
+    }
+    
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+    
+    refresh(these_props) {
+        const props = these_props || this.props
+        const {dispatch, sprint_id, user_id} = props
+        dispatch(ensureSprintsLoaded([sprint_id]))
+        dispatch(ensureUsersLoaded([user_id]))
+        dispatch(ensureSprintUserRateLoaded(sprint_id, user_id))
+    }
+    
     render() {
         const { value, class_name } = this.props
 
@@ -20,18 +43,23 @@ class UserRate extends Component {
         return (
             <div className={classNames("user_rate",
                                        {"user_rate--empty" :value==0})}>
-              @R {formatted_currency}
+              R {formatted_currency}
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { value, class_name } = props
+    const { sprint_id, user_id } = props
 
+    const user = getUser(state, user_id) || {}
+    const sprint = getSprint(state, sprint_id) || {}
+    const sur = getSprintUserRate(state, sprint_id, user_id) || {}
+    const can_view = has_permission(state, sprint.project_id, "has_view_ctc_billable_rates")
+    
     return {
-        value: value || 0,
-        class_name: class_name || "currency_value"
+        value: sur.billable_amount,
+        can_view
     }
 }
 

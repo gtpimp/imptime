@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import UserRate from './UserRate'
 import { map, keys } from 'lodash'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import ProgressBar from './ProgressBar' 
@@ -86,13 +85,13 @@ class SprintEstimateSummary extends Component {
                                 <td><Hours hours={estimates.developer_original_hours}/></td>
                                 <td>{estimates.developer_velocity}</td>
                                 <td><Hours hours={estimates.developer_adjusted_hours}/></td>
-                                <td><UserRate value={estimates.developer_rate_with_commission}/></td>
+                                <td><CurrencyValue value={estimates.developer_rate_with_commission} prefix="@"/></td>
                                 <td><CurrencyValue value={estimates.developer_cost}/></td>
                                 <td><Hours hours={estimates.tester_adjusted_hours}/></td>
-                                <td><UserRate value={estimates.tester_rate_with_commission}/></td>
+                                <td><CurrencyValue value={estimates.tester_rate_with_commission} prefix="@"/></td>
                                 <td><CurrencyValue value={estimates.tester_cost}/></td>
                                 <td><Hours hours={estimates.manager_adjusted_hours}/></td>
-                                <td><UserRate value={estimates.manager_rate_with_commission}/></td>
+                                <td><CurrencyValue value={estimates.manager_rate_with_commission} prefix="@"/></td>
                                 <td><CurrencyValue value={estimates.manager_cost}/></td>
                                 <th><CurrencyValue value={estimates.working_cost}/></th>
                                 <td>{estimates.ratio_scope_creep}</td>

@@ -14,7 +14,7 @@ import { ensureUsersLoaded } from '../actions/Users'
 import ProjectName from './ProjectName'
 import SprintName from './SprintName'
 import OtherUser from './OtherUser'
-import UserRate from './UserRate'
+import CurrencyValue from './CurrencyValue'
 import ProgressBar from './ProgressBar'
 import Hours from './Hours'
 import Timestamp from './Timestamp'
@@ -148,7 +148,7 @@ class ProjectDashboard extends Component {
                                               <OtherUser user_id={user_id}/>
                                             </td>
                                             <td className="project_dashboard__sprint_users__rate">
-                                              <UserRate value={user_info.rate}/>
+                                              <CurrencyValue value={user_info.rate} prefix="@"/>
                                             </td>
                                             <td className="project_dashboard__sprint_users__hours">
                                               <Hours hours={user_info.hours}/>

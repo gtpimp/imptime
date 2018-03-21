@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import UserRate from './UserRate'
 import map from 'lodash/map'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import ProgressBar from './ProgressBar' 
@@ -71,7 +70,7 @@ class SprintTimeSummary extends Component {
                         <OtherUser user_id={developer_id} />
                       </th>
                       <td>
-                        <UserRate value={developer.dev_rate} />
+                        <CurrencyValue value={developer.dev_rate} prefix="@" />
                       </td>
                       <td>
                         <Hours hours={developer.dev_hours_used}/>

@@ -5,7 +5,7 @@ import classNames from 'classnames'
 class CurrencyValue extends Component {
 
     render() {
-        const { value, float_direction } = this.props
+        const { value, float_direction, prefix } = this.props
 
         var formatter = new Intl.NumberFormat('en-GB', {
             style: 'decimal',
@@ -19,14 +19,14 @@ class CurrencyValue extends Component {
         
         return (
             <div className={classNames("currency_value", "currency_value--"+float_direction)}>
-              R {formatted_currency}
+              {prefix || ""}R {formatted_currency}
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { value } = props
+    const { value, prefix } = props
     let { float_direction } = props
     if ( float_direction === undefined  ) {
         float_direction = "right"
@@ -34,7 +34,8 @@ function mapStateToProps(state, props) {
     
     return {
         value: value,
-        float_direction: float_direction
+        float_direction: float_direction,
+        prefix
     }
 }
 

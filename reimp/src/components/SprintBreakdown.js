@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import OtherUser from './OtherUser'
 import { map, keys } from 'lodash'
-import UserRate from './UserRate'
 import Hours from './Hours'
 import CurrencyValue from './CurrencyValue'
 import SprintLink from './SprintLink'
@@ -83,7 +82,7 @@ class SprintBreakdown extends Component {
                                                         <Hours hours={time_for_user.total_hours} show_seconds={true}/>
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell project__statement__times_grid__rate_cell">
-                                                        <UserRate value={time_for_user.rate}/>
+                                                        <CurrencyValue value={time_for_user.rate} prefix="@"/>
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell">
                                                         <CurrencyValue value={time_for_user.billable_cost}/>
