@@ -35,9 +35,11 @@ class SprintUserRateViewSet(BaseViewSet):
 
                 can_view_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_ctc_billable_rates
                 can_view_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_velocity
+                can_view_time_tracking_mode = can_view_velocity
             else:
                 can_view_billable_amount = False
                 can_view_velocity = False
+                can_view_time_tracking_mode = can_view_velocity
 
             if 'sprint_id' in filter_args and 'user_id' in filter_args and surs.count() == 0:
                 # We return an empty sprint rate so that the caller can tell what's going on.
@@ -56,7 +58,8 @@ class SprintUserRateViewSet(BaseViewSet):
             else:
                 s = SprintUserRateSerializer(surs, many=True,
                                              can_view_billable_amount=can_view_billable_amount,
-                                             can_view_velocity=can_view_velocity)
+                                             can_view_velocity=can_view_velocity,
+                                             can_view_time_tracking_mode = can_view_time_tracking_mode)
                 surs_data = s.data
                 context['sprint_user_rates'] = surs_data
             context['pagination'] = pagination
@@ -82,6 +85,7 @@ class SprintUserRateViewSet(BaseViewSet):
 
                 can_edit_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_edit_ctc_billable_rates
                 can_edit_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_edit_velocity
+                can_edit_time_tracking_mode = can_edit_velocity
                 
                 for user_pk in user_pks:
                     user = self.allowed_user(user_pk)
@@ -92,6 +96,9 @@ class SprintUserRateViewSet(BaseViewSet):
                         rate.save()
                     if 'velocity' in rate_values and can_edit_velocity:
                         rate.velocity = rate_values['velocity']
+                        rate.save()
+                    if 'time_tracking_mode' in rate_values and can_edit_time_tracking_mode:
+                        rate.time_tracking_mode = rate_values['time_tracking_mode']
                         rate.save()
                         
             data = {'status': 'success', 'payload': {}}

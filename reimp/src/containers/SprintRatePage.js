@@ -9,6 +9,7 @@ import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import EditableUserRate from '../components/EditableUserRate'
 import EditableUserVelocity from '../components/EditableUserVelocity'
+import EditableUserTimeTrackingMode from '../components/EditableUserTimeTrackingMode'
 import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
@@ -64,8 +65,8 @@ class SprintRatePage extends Component {
 
     render() {
 
-        const { can_view_rates, can_view_velocity, user_ids,
-                sprint, sprint_id, project_id } = this.props
+        const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
+                user_ids, sprint, sprint_id, project_id } = this.props
         
         return (
             <div className="sprint-rates">
@@ -78,6 +79,7 @@ class SprintRatePage extends Component {
                     <th>User</th>
                     { can_view_rates && <th>Billable rate</th> }
                     { can_view_velocity && <th>Velocity</th> }
+                    { can_view_time_tracking_mode && <th>Time tracking mode</th> }
                   </tr>
                 </thead>
                 <tbody>
@@ -94,12 +96,18 @@ class SprintRatePage extends Component {
                                                    sprint_id={sprint_id} />
                                </td>
                              }
-                               { can_view_velocity &&
-                                 <td>
-                                   <EditableUserVelocity user_id={user_id}
-                                                         sprint_id={sprint_id} />
-                                 </td>
-                               }
+                             { can_view_velocity &&
+                               <td>
+                                 <EditableUserVelocity user_id={user_id}
+                                                       sprint_id={sprint_id} />
+                               </td>
+                             }
+                             { can_view_time_tracking_mode &&
+                               <td>
+                                 <EditableUserTimeTrackingMode user_id={user_id}
+                                                               sprint_id={sprint_id} />
+                               </td>
+                             }
                            </tr>
                        )
                    })
@@ -119,6 +127,7 @@ function mapStateToProps(state, props) {
     const user_ids = project.allowed_user_ids
     const can_view_rates = has_permission(state, project_id, 'has_view_ctc_billable_rates')
     const can_view_velocity = has_permission(state, project_id, 'has_view_velocity')
+    const can_view_time_tracking_mode = can_view_velocity
 
     return {
         project_id,
@@ -127,7 +136,8 @@ function mapStateToProps(state, props) {
         sprint_id,
         sprint,
         can_view_rates,
-        can_view_velocity
+        can_view_velocity,
+        can_view_time_tracking_mode
     }
 }
 

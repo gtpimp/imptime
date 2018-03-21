@@ -16,6 +16,7 @@ class SprintUserRateSerializer(BaseSerializer):
     def __init__(self, *args, **kwargs):
         self.can_view_billable_amount=kwargs.pop('can_view_billable_amount', False)
         self.can_view_velocity=kwargs.pop('can_view_velocity', False)
+        self.can_view_time_tracking_mode=kwargs.pop('can_view_time_tracking_mode', False)
         super(SprintUserRateSerializer, self).__init__(*args, **kwargs)
         
     
@@ -25,4 +26,6 @@ class SprintUserRateSerializer(BaseSerializer):
             rate.sanitize_rate()
         if not self.can_view_velocity:
             rate.velocity = None
+        if not self.can_view_time_tracking_mode:
+            rate.time_tracking_mode = None
         return super(SprintUserRateSerializer, self).to_representation(rate, *args, **kwargs)
