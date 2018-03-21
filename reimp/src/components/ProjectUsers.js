@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { union } from 'lodash'
 import {browserHistory} from 'react-router'
-import {getProject} from '../actions/Projects'
+import {getProject, is_project_invalidated} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import ModalDialog from '../components/ModalDialog'
 import UserList from './UserList'
@@ -114,7 +114,7 @@ class ProjectUsersPage extends Component {
 
     render() {
 
-        const {is_inviting_user, invited_user_ids, project} = this.props
+        const {is_inviting_user, invited_user_ids, allowed_user_ids, project} = this.props
 
         return (
             <div>
@@ -125,9 +125,9 @@ class ProjectUsersPage extends Component {
                   <i className="material-icons md-18">add_circle_outline</i>
                   Add user
                 </div>
-                <UserList list_key={LIST_KEY__PROJECT_USER_LIST}
+                <UserList project_id={project.id}
                           invited_user_ids={invited_user_ids}
-                          user_ids={project.allowed_user_ids}
+                          user_ids={allowed_user_ids}
                           onSelectUsers={this.onSelectUsers}
                           user_actions={this.getActionRenderFunc()}
                 />
@@ -142,13 +142,17 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id)
     const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
     const can_view_permissions = has_permission(state, project_id, 'has_view_permissions')
+    const is_invalidated = is_project_invalidated(state, project_id)
     return {
         project_id,
         project: project || {},
         can_view_permissions,
         is_inviting_user,
         onPermissionsAction,
-        invited_user_ids: (project || {}).invited_user_ids || []
+        invited_user_ids: (project || {}).invited_user_ids || [],
+        is_invalidated,
+        is_loading: !project || !project.id,
+        allowed_user_ids: (project || {}).allowed_user_ids || []
     }
 }
 

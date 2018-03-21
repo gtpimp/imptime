@@ -20,47 +20,35 @@ class User extends Component {
     }
     
     render_wide() {
-        const { user, is_loading, is_selected, isOver, invitation_pending,
+        const { user, is_selected, isOver, invitation_pending,
 		onClickedUser, connectDragSource, connectDropTarget, user_actions } = this.props
 
 	if ( ! user ) {
 	    return (<tr><td>Loading...</td></tr>)
 	}
 	
-	if ( ! is_loading === false ) {
-	    return (
-		<tr key={this.key+"."+user.id}
-		    onClick={onClickedUser}
-		    className={is_selected ? 'tr--selected' : ''}
-		>
-		    <td>{user && user.id}</td>
-		    <td>Loading...</td>
-		</tr>
-	    )
-	} else {
-            return connectDragSource(connectDropTarget(
-		<tr key={this.key+"."+user.id}
-		    onClick={onClickedUser}
-		    className={classNames('user', {'tr--selected': is_selected,
-                                                   'tr--drop-target': isOver,
-                                                   'list-table__row--unselected': !is_selected,
-                                                   'list-table__row--selected': is_selected})}
-		    >
-		    <td className="list-table__cell">{user.username}</td>
-                    <td className="list-table__cell">{user.email}</td>
-                    <td className="list-table__cell">{user.first_name}</td>
-                    <td className="list-table__cell">{user.last_name}</td>
-                    <td className="list-table__cell">
-                        {invitation_pending && <div>Invite sent</div>}
-                    </td>
-                    <td className="list-table__cell">
-                      <div className="user__actions">
-                        { map(keys(user_actions), (user_action_name, index) => user_actions[user_action_name](user)) }
-                      </div>
-                    </td>
-		</tr>
-            ))
-	}
+        return connectDragSource(connectDropTarget(
+	    <tr key={this.key+"."+user.id}
+		onClick={onClickedUser}
+		className={classNames('user', {'tr--selected': is_selected,
+                                               'tr--drop-target': isOver,
+                                               'list-table__row--unselected': !is_selected,
+                                               'list-table__row--selected': is_selected})}
+	    >
+	      <td className="list-table__cell">{user.username}</td>
+              <td className="list-table__cell">{user.email}</td>
+              <td className="list-table__cell">{user.first_name}</td>
+              <td className="list-table__cell">{user.last_name}</td>
+              <td className="list-table__cell">
+                {invitation_pending && <div>Invite sent</div>}
+              </td>
+              <td className="list-table__cell">
+                <div className="user__actions">
+                  { map(keys(user_actions), (user_action_name, index) => user_actions[user_action_name](user)) }
+                </div>
+              </td>
+	    </tr>
+        ))
     }
 
     render() {
@@ -78,14 +66,13 @@ class User extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { user_id, is_selected, is_narrow, is_loading, invitation_pending, user_actions } = props
+    const { user_id, is_selected, is_narrow, invitation_pending, user_actions } = props
     const user = getUser(state, user_id)
     
     return {
 	user: user,
 	user_id: user_id,
 	is_selected: is_selected,
-	is_loading: is_loading,
 	is_narrow: is_narrow,
 	is_wide: !is_narrow,
         invitation_pending: invitation_pending,

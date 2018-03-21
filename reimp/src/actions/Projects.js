@@ -326,3 +326,8 @@ export function saveInviteUser(project_id, user_email) {
 export function canShowProjectDelete(project) {
     return project.can_delete_project || false
 }
+
+export function is_project_invalidated(state, project_id) {
+    return get(state, ["project", "invalidated_item_ids"], []).indexOf(project_id) !== -1
+}
+
