@@ -33,14 +33,21 @@ class SprintUserRateViewSet(BaseViewSet):
                 sprint = surs[0].project #sic
                 project = sprint.business #sic
 
-            can_view_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_ctc_billable_rates
-            can_view_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_velocity
+                can_view_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_ctc_billable_rates
+                can_view_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_velocity
+            else:
+                can_view_billable_amount = False
+                can_view_velocity = False
 
             if 'sprint_id' in filter_args and 'user_id' in filter_args and surs.count() == 0:
                 # We return an empty sprint rate so that the caller can tell what's going on.
-                surs = [Rate(project_id=filter_args['sprint_id'],
-                             user_id=filter_args['user_id'],
-                             id="not_allowed")]
+                sprint = self.allowed_sprint(filter_args['sprint_id'])
+                user = self.allowed_user(filter_args['user_id'])
+                bp = ProjectPermissions.for_user(user=user, business=sprint.business, auto_create=False)
+                if bp is not None and bp.is_active_member_of_business:
+                    surs = [Rate.objects.get_or_create(project_id=sprint.id, #sic
+                                                       user_id=user.id)[0]]
+                    
             else:
                 surs = self.apply_pagination(qs=surs, pagination=pagination)
 

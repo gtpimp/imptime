@@ -211,9 +211,10 @@ class BaseViewSet(viewsets.ViewSet):
                                       business__business_permissions__can_view_invoices=True)
 
     def allowed_sprint_rates(self):
-        return Rate.objects.filter(project__business__in=self.allowed_projects(), #sic
-                                   project__business__business_permissions__user=self.request.user,
-                                   project__business__business_permissions__can_view_ctc_billable_rates=True)
+        return Rate.objects.filter(project__business__in=self.allowed_projects())\
+                           .filter(Q(project__business__business_permissions__user=self.request.user)&
+                                   (Q(project__business__business_permissions__can_view_ctc_billable_rates=True)|
+                                    Q(project__business__business_permissions__can_view_velocity=True)))
     
     def allowed_wiki_pages(self):
         non_sensitive_wiki_pages = WikiPage.objects.filter(money_sensitive=False,

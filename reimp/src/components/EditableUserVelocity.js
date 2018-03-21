@@ -8,6 +8,7 @@ import { updateIssueStatus, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 import { ensureSprintUserVelocityLoaded, getSprintUserVelocity, updateSprintUserVelocities } from '../actions/SprintUserVelocity'
 import UserVelocityForm from './form/UserVelocityForm'
+import UserVelocity from './UserVelocity'
 import { getSprint, ensureSprintsLoaded } from '../actions/Sprints'
 import { getUser, ensureUsersLoaded } from '../actions/Users'
 
@@ -42,7 +43,7 @@ class EditableUserVelocity extends Component {
                               actionLabel="User velocity"
             >
               <UserVelocityForm user_id={user_id} sprint_id={sprint_id}/>
-              <div>{(suv || {}).velocity}</div>
+              <UserVelocity sprint_id={sprint_id} user_id={user_id}/>
               <div className="text-component--empty">No velocity</div>
             </EditableProperty>
         )
@@ -54,8 +55,8 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const user = getUser(state, user_id) || {}
     const suv = getSprintUserVelocity(state, sprint_id, user_id)
-    const can_view = has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
-    const can_edit = has_permission(state, sprint.project_id, 'has_edit_ctc_billable_rates')
+    const can_view = has_permission(state, sprint.project_id, 'has_view_velocity')
+    const can_edit = has_permission(state, sprint.project_id, 'has_edit_velocity')
 
     return {
         sprint_id,
