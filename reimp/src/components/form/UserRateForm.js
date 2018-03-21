@@ -78,22 +78,20 @@ class UserRateForm extends Component {
             <div className="user-rate-form">
               { !sur_id && <div>loading</div> }
 
-              <h2>
-                <div className="user-rate-form__title">
-                  <div className="user-rate__title__fluff">
-                    Edit rates for
-                  </div>
-                  <div className="user-rate-form__title__value">
-                    <OtherUser value={user_id} />
-                  </div>
-                  <div className="user-rate-form__title__fluff">
-                    within sprint
-                  </div>
-                  <div className="user-rate-form__title__value">
-                    <SprintName sprint_id={sprint_id}/>
-                  </div>
+              <div className="user-rate-form__title">
+                <div className="user-rate-form__title__fluff">
+                  Edit rates for
                 </div>
-              </h2>
+                <div className="user-rate-form__title__value">
+                  <OtherUser value={user_id} />
+                </div>
+                <div className="user-rate-form__title__fluff">
+                  within sprint
+                </div>
+                <div className="user-rate-form__title__value">
+                  <SprintName sprint_id={sprint_id}/>
+                </div>
+              </div>
               <br/>
               <form onSubmit={handleSubmit}>
                 <div>

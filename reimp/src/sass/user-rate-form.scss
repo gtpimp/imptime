@@ -3,14 +3,16 @@
 .user-rate-form__title {
     display: flex;
     flex-direction: column;
+    text-align: center;
 }
 
-.user-rate__title__fluff {
+.user-rate-form__title__fluff {
     font-size: $font-size-small;
 }
 
 .user-rate-form__title__value {
-    font-size: $font-size-default;
+    font-size: $font-size-large;
+    font-weight: bold;
 }
 
 
