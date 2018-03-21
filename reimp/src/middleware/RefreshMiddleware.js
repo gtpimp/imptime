@@ -21,6 +21,7 @@ import { addAsyncMessage } from '../actions/Async'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 import { invalidateAutoClocks } from '../actions/AutoClock'
 import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSummary'
+import { invalidateSurForSprintAndUser } from '../actions/SprintUserRates'
 
 import {
     invalidateList
@@ -91,6 +92,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateAutoClocks([d.entity_ref]))
     } else if ( d.entity_name === 'user' ) {
         dispatch(invalidateUsers([d.entity_ref]))
+    } else if ( d.entity_name === 'rate' ) {
+        dispatch(invalidateSurForSprintAndUser(d.params.sprint_id, d.params.user_id))
     }
 }
 

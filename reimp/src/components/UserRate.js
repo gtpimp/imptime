@@ -7,6 +7,8 @@ import { getSprint, ensureSprintsLoaded } from '../actions/Sprints'
 import {
     getSprintUserRate,
     ensureSprintUserRateLoaded,
+    isSurInvalidated,
+    isSurLoading
 } from '../actions/SprintUserRates'
 
 class UserRate extends Component {
@@ -56,10 +58,14 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const sur = getSprintUserRate(state, sprint_id, user_id) || {}
     const can_view = has_permission(state, sprint.project_id, "has_view_ctc_billable_rates")
+    const is_invalidated = isSurInvalidated(state, sur.id)
+    const is_loading = isSurLoading(state, sur.id)
     
     return {
         value: sur.billable_amount,
-        can_view
+        can_view,
+        is_invalidated,
+        is_loading
     }
 }
 

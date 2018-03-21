@@ -1,9 +1,5 @@
 import assign from 'lodash/assign'
-import keys from 'lodash/keys'
-import union from 'lodash/union'
-import forEach from 'lodash/forEach'
-import difference from 'lodash/difference'
-import without from 'lodash/without'
+import { get, keys, keyBy, filter, union, forEach, difference, without } from 'lodash'
 import { setErrorMessage } from '../actions/Error'
 import { stringifyIds } from '../actions/lib.js'
 
@@ -16,6 +12,7 @@ import {
     ANNOUNCE_LOADING_SURS,
     INVALIDATE_SURS,
     INVALIDATE_ALL_SURS,
+    INVALIDATE_SUR_FOR_SPRINT_AND_USER
 } from '../actions/SprintUserRates.js'
 
 const initialState = {
@@ -43,11 +40,16 @@ export default function sprint_user_rate(state = initialState, action) {
             
         case INVALIDATE_SURS:
             ids = stringifyIds(action.sur_ids_to_invalidate)
-            
             return Object.assign({}, state,
                                  {invalidated_item_ids: union(state.invalidated_item_ids, ids)})
                                  
 
+        case INVALIDATE_SUR_FOR_SPRINT_AND_USER:
+            const surs = get(state, 'items_by_id')
+            const surs_ids_to_invalidate = stringifyIds(keys(keyBy(filter(surs, (sur) => sur.sprint_id===action.sprint_id && sur.user_id===action.user_id), "id")))
+            return Object.assign({}, state,
+                                 {invalidated_item_ids: union(state.invalidated_item_ids, surs_ids_to_invalidate)})
+            
         case ANNOUNCE_LOADING_SURS:
             const loading_surs = Object.assign({}, state_copy.loading_surs_by_sprint_and_user)
             ids = stringifyIds(action.sur_ids_to_load)

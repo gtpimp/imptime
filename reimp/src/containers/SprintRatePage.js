@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import { map } from 'lodash'
 import {browserHistory} from 'react-router'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
-import EditableSprintName from '../components/EditableSprintName.js'
+import EditableSprintName from '../components/EditableSprintName'
+import OtherUser from '../components/OtherUser'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import EditableUserRate from '../components/EditableUserRate'
@@ -75,19 +76,31 @@ class SprintRatePage extends Component {
                 </div>
               }
 
-              { can_view &&
-                <div>
-                  {map(user_ids, function(user_id) {
-                       return (
-                           <div key={user_id} className="sprint-rate">
-                             <EditableUserRate user_id={user_id}
-                                               sprint_id={sprint_id} />
-                           </div>
-                       )
-                   })
-                  }
-                </div>
-              }
+                { can_view &&
+                  <table>
+                    <thead>
+                      <th>User</th>
+                      <th>Billable rate</th>
+                    </thead>
+                    <tbody>
+                      
+                      {map(user_ids, function(user_id) {
+                           return (
+                               <tr key={user_id}>
+                                 <td>
+                                   <OtherUser user_id={user_id}/>
+                                 </td>
+                                 <td>
+                                   <EditableUserRate user_id={user_id}
+                                                     sprint_id={sprint_id} />
+                                 </td>
+                               </tr>
+                           )
+                       })
+                      }
+                    </tbody>
+                  </table>
+                }
             </div>
         )
     }

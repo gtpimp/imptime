@@ -14,6 +14,7 @@ export const ANNOUNCE_SURS_LOAD_FAILED = 'ANNOUNCE_SURS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_SURS = 'ANNOUNCE_LOADING_SURS'
 export const INVALIDATE_SURS = 'INVALIDATE_SURS'
 export const INVALIDATE_ALL_SURS = 'INVALIDATE_ALL_SURS'
+export const INVALIDATE_SUR_FOR_SPRINT_AND_USER = 'INVALIDATE_SUR_FOR_SPRINT_AND_USER'
 
 export function invalidateAllSurs() {
     return {
@@ -25,6 +26,14 @@ export function invalidateSurs(sur_ids) {
     return {
         type: INVALIDATE_SURS,
 	sur_ids_to_invalidate: sur_ids
+    }
+}
+
+export function invalidateSurForSprintAndUser(sprint_id, user_id) {
+    return {
+        type: INVALIDATE_SUR_FOR_SPRINT_AND_USER,
+        sprint_id: sprint_id,
+        user_id: user_id
     }
 }
 
@@ -143,8 +152,16 @@ export function getLoadingSprintUserRateIds(state) {
     return get(state, ["sprint_user_rate", "loading_item_ids"], [])
 }
 
+export function isSurLoading(state, sur_id) {
+    return includes(getLoadingSprintUserRateIds(state), sur_id)
+}
+
 export function getInvalidatedSprintUserRateIds(state) {
     return get(state, ["sprint_user_rate", "invalidated_item_ids"], [])
+}
+
+export function isSurInvalidated(state, sur_id) {
+    return includes(getInvalidatedSprintUserRateIds(state), sur_id)
 }
 
 export function ensureSprintUserRateLoaded(sprint_id, user_id) {

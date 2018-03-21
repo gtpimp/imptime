@@ -485,7 +485,6 @@ class BusinessPermissions(BaseModel):
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(BusinessPermissions, self).save(*args, **kwargs)
-        affected_project = self.business #sic
         if was_created:
             RefreshNotifier().notify_model_create(
                 self, params={'projects': [self.business_id],
@@ -3730,9 +3729,18 @@ class Rate(BaseModel):
 
     def save(self, *args, **kwargs):
         recalc_secondary_estimates = kwargs.pop('recalc_secondary_estimates', False)
+        was_created = not self.id
         super(Rate, self).save(*args, **kwargs)
         if recalc_secondary_estimates:
             self.project.recalc_secondary_estimates()
+            
+        if was_created:
+            RefreshNotifier().notify_model_create(self, params={'sprint_id': str(self.project_id),
+                                                                'user_id': str(self.user_id)})
+        else:
+            RefreshNotifier().notify_model_update(self, params={'sprint_id': str(self.project_id),
+                                                                'user_id': str(self.user_id)})
+            
 
     @classmethod
     def full_rate_for_project(self, user_id, project_id):
