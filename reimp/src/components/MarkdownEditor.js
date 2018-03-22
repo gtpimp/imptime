@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import 'react-mde/lib/styles/css/react-mde-all.css'
-import '../../node_modules/font-awesome/css/font-awesome.css'
 import { ReactMde } from 'react-mde'
 
 class MarkdownEditor extends Component {
