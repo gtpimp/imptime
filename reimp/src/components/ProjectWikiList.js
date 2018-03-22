@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map, values, includes } from 'lodash'
 import classNames from 'classnames'
+import { has_permission } from '../actions/Users'
 import {
     initList,
     invalidateList,
@@ -27,7 +28,7 @@ import {
 } from '../actions/ItemList'
 import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
 import {
-    fetchWikisIfNeeded, getWikis
+    fetchWikisIfNeeded, getWikis, deleteWiki
 } from '../actions/Wikis'
 import DivTable from './DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
@@ -67,19 +68,33 @@ class WikiList extends Component {
         event.stopPropagation()
     }
 
+    onDeleteWiki(event, wiki_id) {
+        const { dispatch } = this.props
+        if ( ! confirm("Are you sure you want to delete this wiki?") ) {
+            return
+        }
+        dispatch(deleteWiki(wiki_id))
+    }
+
     render_row(wiki) {
-        const { selected_wiki_ids } = this.props
+        const { selected_wiki_ids, can_delete } = this.props
         const is_selected = includes(selected_wiki_ids, ""+wiki.id)
         return (
-            <div className="wiki-list__row" key={wiki.id}>
-              <div className={classNames("wiki-list__wiki_name",
-                                         {"div-table__row--selected":is_selected})}
+            <div className={classNames("wiki-list__row",
+                           {"div-table__row--selected":is_selected})}
+                 key={wiki.id}>
+              <div className="wiki-list__wiki_name"
                    onClick={(event) => this.onSelectWiki(event, wiki.id)}>
                 {wiki.name}
+                { wiki.money_sensitive &&
+                  <div className="icon--commercially-sensitive"/>
+                }
               </div>
-              { wiki.money_sensitive &&
-                <div className="icon--commercially-sensitive"/>
-              }
+              <div className="wiki-list__row_buttons">
+                { can_delete &&
+                  <div onClick={(event) => this.onDeleteWiki(event, wiki.id)} className="icon--small-delete"/>
+                }
+              </div>
             </div>
         )
     }
@@ -123,6 +138,7 @@ function mapStateToProps(state, props) {
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__WIKI, visible_item_ids)
     const items_by_id = getWikis(state, visible_item_ids)
     const filter = getListFilter(state, list_key)
+    const can_delete = has_permission(state, project_id, 'has_edit_business_comments')
 
     return {
         wiki_ids: visible_item_ids,
@@ -134,7 +150,8 @@ function mapStateToProps(state, props) {
         nested_objects,
         selected_wiki_ids,
         project_id,
-        filter
+        filter,
+        can_delete
     }
 }
 

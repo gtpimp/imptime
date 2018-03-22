@@ -112,3 +112,29 @@ class WikiViewSet(BaseViewSet):
         raw_filter_args['__business_project_switch_filter_required'] = False
         return super(WikiViewSet, self).apply_filter(qs,  raw_filter_args)
     
+
+    def delete(self, request, pk):
+        try:
+            params = request.data
+            data = None
+
+            if 'item_ids' in params:
+                wiki_pks = params['item_ids']
+            else:
+                wiki_pks = [pk]
+
+            for wiki_pk in wiki_pks:
+                wiki = self.allowed_wiki_pages().get(pk=wiki_pk)
+                if self.logged_in_permissions(wiki.project).can_edit_description:
+                    wiki.delete()
+                else:
+                    data = {'status': 'failed', 'error_message': 'Permission denied to delete wikis'}
+
+            if not data:
+                data = {'status': 'success', 'payload': wiki_pks}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
