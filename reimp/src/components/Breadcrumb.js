@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {Link, withRouter} from 'react-router'
 import '../sass/breadcrumb.css'
 import {browserHistory} from 'react-router'
-import { map } from 'lodash'
+import { map, get, filter, includes } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
 import {
@@ -12,6 +12,7 @@ import {
     deleteIssues,
     updateIssueToggleAsFeature
 } from '../actions/Issues'
+import { logged_in_users_permissions } from '../actions/Users'
 
 const menu_buttons = {
 
@@ -53,16 +54,19 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/issues'
         },
         { label: (objs) => 'Bulk Create Issues',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate',
+          perms: (objs) => ['has_create_issue']
         },
         { label: (objs) => 'Dashboard',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/dashboard'
         },
         { label: (objs) => 'Rates',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/rates'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/rates',
+          perms: (objs) => ['has_view_ctc_billable_rates']
         },
         { label: (objs) => 'Cost Summary',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary',
+          perms: (objs) => ['has_view_ctc_billable_rates']
         },
     ],
     'issues': [
@@ -121,7 +125,7 @@ class Breadcrumb extends Component {
     }
     
     render() {
-        const {label, to, is_last, breadcrumb } = this.props
+        const {label, to, is_last, breadcrumb, permissions } = this.props
         const { show_breadcrumb_menu } = this.state
         const that = this
 
@@ -139,6 +143,11 @@ class Breadcrumb extends Component {
                     {label}
                   </Link>
                   { map(buttons, function(button, index) {
+                        const can_view = button.perms === undefined || permissions === null ||
+                                         filter(button.perms(breadcrumb.selected_entities), (perm) => permissions[perm] === true).length>0
+                        if ( ! can_view ) {
+                            return null
+                        }
                         return (
                             <div key={index}
                                  className="breadcrumb-menu__item"
@@ -160,11 +169,14 @@ class Breadcrumb extends Component {
 
 function mapStateToProps(state, props) {
     const { breadcrumb } = props
+    const project_id = get(breadcrumb, ["selected_entities", "project", "id"], null)
+    const permissions = (project_id && logged_in_users_permissions(state, project_id)) || null
 
     return {
         label: breadcrumb.label,
         to: breadcrumb.to,
-        breadcrumb: breadcrumb
+        breadcrumb,
+        permissions
     }
 }
 

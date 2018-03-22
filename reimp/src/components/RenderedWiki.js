@@ -4,6 +4,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
 import {browserHistory} from 'react-router'
 import ReactMarkdown from 'react-markdown'
+import { has_permission } from '../actions/Users'
 
 const renderers = {
     link: (props) => {

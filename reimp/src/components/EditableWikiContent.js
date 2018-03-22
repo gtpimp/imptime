@@ -47,7 +47,7 @@ class EditableWikiContent extends Component {
                               can_edit={can_edit}
             >
               <WikiForm />
-              <RenderedWiki wiki_id={wiki.id}
+              <RenderedWiki wiki_id={wiki.id} />
               <div className="text-component--empty text-component--description">
                 Click to edit
               </div>
@@ -65,7 +65,7 @@ function mapStateToProps(state, props) {
     const can_edit = has_permission(state, project_id, 'has_edit_business_comments')
     const can_view = has_permission(state, project_id, 'has_view_business_comments')
     return {
-        wiki
+        wiki,
         project_id,
         can_edit,
         can_view
