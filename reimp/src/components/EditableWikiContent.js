@@ -6,19 +6,7 @@ import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
 import { has_permission } from '../actions/Users'
 import Blank from './form/Blank'
-import ReactMarkdown from 'react-markdown'
-
-const renderers = {
-    link: (props) => {
-        return (
-          <a href={props.href}
-             target="_blank"
-             onClick={(event) => event.stopPropagation()}>
-             {(props.children && props.children[0]) || props.href}
-          </a> 
-        )
-    }
-}
+import RenderedWiki from './RenderedWiki'
 
 class EditableWikiContent extends Component {
 
@@ -59,9 +47,7 @@ class EditableWikiContent extends Component {
                               can_edit={can_edit}
             >
               <WikiForm />
-              <div className="text-component--readonly text-component--description">
-                <ReactMarkdown source={content} renderers={renderers} />
-              </div>
+              <RenderedWiki wiki_id={wiki.id}
               <div className="text-component--empty text-component--description">
                 Click to edit
               </div>
@@ -77,10 +63,12 @@ function mapStateToProps(state, props) {
     const project_id = wiki.project_id
     const project = getProject(state, project_id) || {}
     const can_edit = has_permission(state, project_id, 'has_edit_business_comments')
+    const can_view = has_permission(state, project_id, 'has_view_business_comments')
     return {
-        wiki: wiki,
-        project_id: project_id,
-        can_edit: can_edit
+        wiki
+        project_id,
+        can_edit,
+        can_view
     }
 }
 

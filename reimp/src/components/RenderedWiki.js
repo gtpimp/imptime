@@ -1,0 +1,68 @@
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
+import {browserHistory} from 'react-router'
+import ReactMarkdown from 'react-markdown'
+
+const renderers = {
+    link: (props) => {
+        return (
+            <a href={props.href}
+               target="_blank"
+               onClick={(event) => event.stopPropagation()}>
+              {(props.children && props.children[0]) || props.href}
+            </a> 
+        )
+    }
+}
+
+class RenderedWiki extends Component {
+
+    constructor(props) {
+        super(props)
+        this.on_clicked = this.on_clicked.bind(this)
+    }
+
+    componentDidMount() {
+        this.refresh(this.props)
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(props) {
+	const { dispatch, project_id, wiki_id } = props
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureWikisLoaded([wiki_id]))
+    }
+
+    render() {
+        const { wiki, project_id, project, render_mode, loading_value, onClick } = this.props
+        const content = (wiki.content || "").trim()
+        return (
+            <div className="text-component--readonly text-component--description">
+              <ReactMarkdown source={content} renderers={renderers} />
+            </div>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+    const { wiki_id } = props
+    const wiki = getWiki(state, wiki_id) || {}
+    const project_id = wiki.project_id
+    const project = getProject(state, project_id) || {}
+    const can_view = has_permission(state, project_id, 'has_view_business_comments')
+
+    return {
+	project: project,
+        project_id: project_id,
+        can_view,
+        wiki,
+        wiki_id
+    }
+}
+
+export default connect(mapStateToProps)(RenderedWiki)

@@ -36,7 +36,8 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
         },
         { label: (objs) => 'Wiki',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/',
+          perms: (objs) => ['has_view_business_comments']
         },
         { label: (objs) => 'Users',
           nav_url: (objs) => '/projects/' + objs.project.id + '/users'
