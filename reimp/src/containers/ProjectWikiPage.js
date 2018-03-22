@@ -137,7 +137,6 @@ class ProjectWikiPage extends Component {
         if ( show_sidebar ) {
             return (
                 <div className="list-layout">
-                  <h2>Wiki for {project.name}</h2>
                   <SplitPane split="vertical" minSize={50} defaultSize={"20%"}
                              defaultSize={splitter_size}
                              onChange={this.onChangeSplitterSize}

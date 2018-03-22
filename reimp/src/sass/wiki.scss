@@ -33,7 +33,9 @@
 
 .wiki-header__name {
     font: $bold-extra-large;
-    flex-grow: 1
+    flex-grow: 1;
+    text-align: right;
+    margin-right: 50px;
 }
 
 .wiki__content {
