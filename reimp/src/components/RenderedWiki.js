@@ -20,11 +20,6 @@ const renderers = {
 
 class RenderedWiki extends Component {
 
-    constructor(props) {
-        super(props)
-        this.on_clicked = this.on_clicked.bind(this)
-    }
-
     componentDidMount() {
         this.refresh(this.props)
     }

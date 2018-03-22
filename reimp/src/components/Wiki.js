@@ -16,6 +16,7 @@ import ReactMarkdown from 'react-markdown'
 import EditableWikiContent from './EditableWikiContent'
 import EditableWikiName from './EditableWikiName'
 import ToggleButton from './toolbar/ToggleButton'
+import { has_permission } from '../actions/Users'
 
 class Wiki extends Component {
 
@@ -41,7 +42,7 @@ class Wiki extends Component {
     
     render() {
 
-        const { wiki, is_loading } = this.props
+        const { wiki, is_loading, can_edit, can_view_sensitive_wikis } = this.props
         const that = this
 
         if ( ! wiki.id ) {
@@ -54,15 +55,23 @@ class Wiki extends Component {
                 <div className="wiki-header__name"> 
                   <EditableWikiName wiki_id={wiki.id} />
                 </div>
-                <div className="wiki-header__commercially_sensitive">
-                  <ToggleButton value={wiki.money_sensitive}
-                                onChange={this.onCommerciallySensitiveClick}
-                                on_label={"Sensitive"}
-                                off_label={"Safe"} />
-                </div>
+                { can_edit && can_view_sensitive_wikis && 
+                  <div className="wiki-header__commercially_sensitive">
+                    <ToggleButton value={wiki.money_sensitive}
+                                  onChange={this.onCommerciallySensitiveClick}
+                                  on_label={"Sensitive"}
+                                  off_label={"Safe"} />
+                  </div>
+                }
               </div>
               <div className="wiki__content">
-                <EditableWikiContent wiki_id={wiki.id} />
+                { !can_view_sensitive_wikis && wiki.money_sensitive &&
+                  <div className="error">Sensitive content hidden</div>
+                }
+
+                { (can_view_sensitive_wikis || !wiki.money_sensitive) &&
+                  <EditableWikiContent wiki_id={wiki.id} />
+                }
               </div>
             </div>
         )
@@ -72,10 +81,14 @@ class Wiki extends Component {
 function mapStateToProps(state, props) {
     const { wiki_id } = props
     const wiki = getWiki(state, wiki_id) || {}
+    const can_edit = has_permission(state, wiki.project_id, 'has_edit_business_comments')
+    const can_view_sensitive_wikis = has_permission(state, wiki.project_id, 'has_view_ctc_billable_rates')
 
     return {
         wiki,
-        is_loading: !wiki.id
+        is_loading: !wiki.id,
+        can_edit,
+        can_view_sensitive_wikis
     }
 }
 
