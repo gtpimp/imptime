@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form'
 import Textarea from 'react-expanding-textarea'
 import ReactTimeout from 'react-timeout'
+import MarkdownEditor from '../MarkdownEditor'
 
 const AUTOSAVE_TIMEOUT_MILLISECONDS = 5000
 
@@ -10,50 +11,31 @@ class WikiForm extends Component {
 
     constructor(props) {
         super(props)
-        this.renderTextarea = this.renderTextarea.bind(this)
+        this.renderMarkdownEditor = this.renderMarkdownEditor.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
-        this.keyDown = this.keyDown.bind(this)
         this.autoSaveTimer = null
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
-        fieldOnChange(e)
-    }
-
-    componentDidMount() {
-        this.content_el.refs.textarea && this.content_el.refs.textarea.focus()
-    }
-
-    keyDown(event) {
-        const { onKeyDown, clearTimeout, handleSubmit } = this.props
-        if (onKeyDown) {
-            onKeyDown(event)
-        }
-
+        const { handleSubmit } = this.props
         if ( this.autoSaveTimer ) {
             clearTimeout(this.autoSaveTimer)
             this.autoSaveTimer = null
         }
+        
+        fieldOnChange(e)
+        
         this.autoSaveTimer = setTimeout(handleSubmit, AUTOSAVE_TIMEOUT_MILLISECONDS)
     }
 
-    renderTextarea(field) {
-        const {input} = field
+    renderMarkdownEditor(field) {
+        const {input, wiki} = field
         return (
-            <Textarea
-                rows="50"
-                className="textarea textarea--text-component textarea--content wiki__content--editor"
-                placeholder="Content"
+            <MarkdownEditor
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
-                ref={(ref)=> this.content_el=ref}
                 value={input.value}
-                onKeyDown={this.keyDown}
-            />
+                name={input.name} />
         )
-    }
-
-    renderWikiName(field) {
-        
     }
 
     render() {
@@ -64,7 +46,7 @@ class WikiForm extends Component {
             <form onSubmit={handleSubmit}>
               <div>
                 <div className="project_sidebar--textarea">
-                  <Field name="content" component={this.renderTextarea} />
+                  <Field name="content" component={this.renderMarkdownEditor} />
                 </div>
               </div>
               <button className="button project_sidebar--textarea" type="submit">Submit</button>
