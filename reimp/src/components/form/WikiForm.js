@@ -2,6 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form'
 import Textarea from 'react-expanding-textarea'
+import ReactTimeout from 'react-timeout'
+
+const AUTOSAVE_TIMEOUT_MILLISECONDS = 5000
 
 class WikiForm extends Component {
 
@@ -10,6 +13,7 @@ class WikiForm extends Component {
         this.renderTextarea = this.renderTextarea.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
         this.keyDown = this.keyDown.bind(this)
+        this.autoSaveTimer = null
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
@@ -21,10 +25,16 @@ class WikiForm extends Component {
     }
 
     keyDown(event) {
-        const { onKeyDown } = this.props
+        const { onKeyDown, clearTimeout, handleSubmit } = this.props
         if (onKeyDown) {
             onKeyDown(event)
         }
+
+        if ( this.autoSaveTimer ) {
+            clearTimeout(this.autoSaveTimer)
+            this.autoSaveTimer = null
+        }
+        this.autoSaveTimer = setTimeout(handleSubmit, AUTOSAVE_TIMEOUT_MILLISECONDS)
     }
 
     renderTextarea(field) {
@@ -75,4 +85,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'wiki_form'})(WikiForm))
+export default connect(mapStateToProps)(reduxForm({form:'wiki_form'})(ReactTimeout(WikiForm)))
