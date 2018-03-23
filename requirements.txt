@@ -132,4 +132,4 @@ django-storages==1.6.5
 imaplib2==2.45.0
 html2text==2017.10.4
 django-imagekit==4.0.1
-
+pySqsListener==0.8.0

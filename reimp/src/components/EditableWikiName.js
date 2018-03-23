@@ -56,6 +56,7 @@ class EditableWikiName extends Component {
             <EditableProperty property_key={'wiki_name_'+wiki.id}
                               initial_value={name}
                               onChange={this.onChange}
+                              edit_as_modal={true}
                               can_edit={can_edit}
             >
               <WikiNameForm />
@@ -70,7 +71,7 @@ class EditableWikiName extends Component {
     }
 
 }
-
+ 
 function mapStateToProps(state, props) {
     const { wiki_id } = props
     const wiki = getWiki(state, wiki_id) || {}

@@ -31,6 +31,7 @@ class WikiNameForm extends Component {
             <form onSubmit={handleSubmit}>
               <div>
 
+                <h2>Wiki name</h2>
                 <div className="project_sidebar--textarea">
                   <WikiNameField onKeyDown={onKeyDown} />
                 </div>

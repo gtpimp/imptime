@@ -23,6 +23,7 @@ class EditableProjectName extends Component {
             <EditableProperty property_key={'project_name'+project.id}
                               initial_value={project.name}
                               onChange={this.onChange}
+                              edit_as_modal={true}
             >
                 <ProjectNameForm />
                 <div className="text-component--readonly">{project.name}</div>

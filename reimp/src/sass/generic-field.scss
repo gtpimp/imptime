@@ -1,0 +1,12 @@
+@import 'variables.scss';
+
+.generic-field {
+    padding: 2px;
+    margin-bottom: 5px;
+}
+
+.generic-field--wide {
+    @inherit .generic_field;
+    width: 100%;
+}
+

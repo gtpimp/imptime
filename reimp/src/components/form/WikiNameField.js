@@ -23,7 +23,7 @@ class WikiNameField extends Component {
             <input
                 onKeyDown={onKeyDown}
                 maxLength="3000"
-                className="textarea textarea--text-component textarea--name"
+                className="generic-field--wide"
                 placeholder="Name"
                 onChange={input.onChange}
                 value={input.value}
