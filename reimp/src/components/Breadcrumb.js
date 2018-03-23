@@ -55,7 +55,7 @@ const menu_buttons = {
         },
         { label: (objs) => 'Bulk Create Issues',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate',
-          perms: (objs) => ['has_create_issue']
+          perms: (objs) => ['has_add_issue']
         },
         { label: (objs) => 'Dashboard',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/dashboard'
