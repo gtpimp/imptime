@@ -37,9 +37,54 @@ class Command(BaseCommand):
             self.start()
         elif kwargs["action"] == "start_no_thread":
             self.idle()
+        elif kwargs["action"] == "test":
+            self.test()
         else:
             raise Exception("Unknown action")
 
+    def test(self):
+        raw_email_message = """Return-Path: <gtp@impd.co.za>
+Received: from implicitdesign.co.za (impd.co.za [197.242.72.50])
+ by inbound-smtp.eu-west-1.amazonaws.com with SMTP id s225sj16aum59auh7cdittjjj1sifvsao0oq37o1
+ for yucky@imptime.com;
+ Sat, 24 Mar 2018 11:21:55 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of impd.co.za designates 197.242.72.50 as permitted sender) client-ip=197.242.72.50; envelope-from=gtp@impd.co.za; helo=impd.co.za;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of impd.co.za designates 197.242.72.50 as permitted sender) client-ip=197.242.72.50; envelope-from=gtp@impd.co.za; helo=impd.co.za;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFHWElRd0RuOTFIRzRvdUs2a3czN0ZMRFhDUkZIV0M4MktLY0xBZzd3ZTNEUWxieHZUWFpnSjFIaEhneFMrWmVrYkhlbTFnc3g2OVl3TVJqT2M1aDdIdmRWZ0h4Sk1HaHdKSFJ1eGp0K0lsSXdHUUFlYkJGRk9wUWpIcjdTVmhuZG9nbVpWSmwrdElpcEVNMmlYbnVnSnVxRHRiYlV0MXdSc0xDZU5Qa1ZENDFtVlZmbGo4QjljL2R0R2g2cnNUZjh5RnJ0VndCTS9TOGVwK1oxM0xxZ2FoajlaVmV0eDZsYkZRcUhEcVhzbk53YVBST2JmbytxQ3ppdXM3REpoSTZPMm5OTkd1bVA2ZkxjUi9mZXJldktmTE9Yb3RjbldyUnFtWEtYczBZeFd5VUE9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=gtCgUY7sCvtkIA86CvGfDywI/NI7YT5mc1DTfbeRCJbEJWWdRDvonFqfarggSZBEiheE0yJeQu2i1Sm1GYkaW0UEqOECR/NJDT4n25z/wzEwTZaoT4s907/skM5TSH8BgEhXxEMr2y43HxKA3p0uQy8t38zY0KJgVASFD0YUhvA=; c=relaxed/simple; s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1521890517; v=1; bh=J/rMiMS/8hdwWzoWYDHdxX92AVL3HMlXnu3ily8CfWw=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Received: from gtplap3.mail.impd.co.za (unknown [105.225.71.229])
+	by implicitdesign.co.za (Postfix) with ESMTPSA id 248C516B69ED
+	for <yucky@imptime.com>; Sat, 24 Mar 2018 13:21:52 +0200 (SAST)
+User-agent: mu4e 0.9.15; emacs 24.5.1
+From: Gareth Priede <gtp@impd.co.za>
+To: malcolm@imptime.com
+Subject: yukcy is icky
+Date: Sat, 24 Mar 2018 13:21:51 +0200
+Message-ID: <87k1u190s0.fsf@impd.co.za>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="=-=-="
+
+--=-=-=
+Content-Type: text/plain
+
+
+icky is yucky is ploo
+
+
+--=-=-=
+Content-Type: text/plain
+Content-Disposition: inline; filename=blah.txt
+
+this is the colour of yukc
+
+--=-=-=--
+
+"""
+        self.process_email_message(raw_email_message, "test")
+        
     def stop(self):
         if not os.path.exists(self.PID_FILENAME):
             return
@@ -117,8 +162,181 @@ class Command(BaseCommand):
         temp_file_path = os.path.join(settings.ISSUE_INBOX_TEMP_FOLDER, email_s3_id)
         self.s3_bucket.download_file(email_s3_id, temp_file_path)
         raw_email_message = open(temp_file_path).read()
-        self.process_email_message(raw_email_message)
+        self.process_email_message(raw_email_message, email_s3_id)
 
-    def process_email_message(self, raw_email_message):
-        logger.info("Processing raw email message: %s..." % raw_email_message[0:200])
+    def process_email_message(self, raw_email_message, email_s3_id):
+        issues_created = []        
+        try:
+            logger.info("Processing raw email message: %s %s..." % (email_s3_id,raw_email_message[0:500]))
+            email_message = email.message_from_string(raw_email_message)
+            message = self.unpack_email(email_message)
+        except Exception, ex:
+            logger.exception(ex)
+            send_mail(subject="Problems parsing email: %s" % email_s3_id,
+                      message=raw_email_message,
+                      from_email=settings.FROM_EMAIL,
+                      recipient_list=settings.EMACS_ADMIN_USER_EMAILS,
+                      fail_silently=False)
+            return
+
+        user_email = message['from']
+
+        try:
+            user, project, sprint, default_subject = self.resolve_parts(message)
+            user_email = user.email
+            raw_issues = self.resolve_issue_content(message, default_subject, project)
+            for raw_issue in raw_issues:
+                new_issue = self.create_issue(message, user, project, sprint, raw_issue)
+                logger.debug("Created issue %s %s" % (new_issue.id, new_issue.subject))
+                issues_created.append(new_issue)
+            self.notify_issues_created(user, project, issues_created)
+        except Exception, ex:
+            logger.exception(ex)
+            to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user_email]
+            send_mail(subject="Couldn't create issues from email",
+                      message="Failed to process your email. Please resend it \n\n%s\n\n%s" % (ex, str(email_message)),
+                      from_email=settings.FROM_EMAIL,
+                      recipient_list=to_addresses,
+                      fail_silently=False)
+
+            
+    def unpack_email(self, message):
+        res = {
+            'from' : email.utils.parseaddr(message['From'])[1],
+            'from_name' : email.utils.parseaddr(message['From'])[0],
+            'time' : datetime.fromtimestamp(email.utils.mktime_tz(email.utils.parsedate_tz(message['Date']))),
+            'to' : message['To'],
+            'subject' : email.Header.decode_header(message["Subject"])[0][0],
+            'content' : '',
+            'files' : []
+        }
+        for part in message.walk():
+            if part.get_content_maintype() == 'multipart':
+                continue
+            if part.get_filename():
+                res['files'].append({'filename': part.get_filename(),
+                                     'content_type': part.get_content_type(),
+                                     'content': part.get_payload(decode = True)})
+            elif part.get_content_maintype() == 'text':
+                text = part.get_payload(decode = True)
+                if part.get_content_subtype() == "html":
+                    res['content'] = html2text.html2text(text.decode('utf8'))
+                elif 'content' not in res or not res['content']:
+                    # prefer html over plain text
+                    res['content'] = text
+        return res
+
+    def resolve_parts(self, message):
+        user = self.get_user(message)
+
+        project_name = message['to'].split("@")[0]
+        subject = message['subject'].strip()
         
+        project_name = project_name.strip().lower()
+        project = Project.objects.filter(name__iexact=project_name)\
+                                 .filter_by_logged_in_user(user)\
+                                 .first()
+        if project is None:
+            raise Exception("No project found with name %s" % project_name)
+
+        sprint_name = settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME
+        sprint = Sprint.objects.get_or_create(business=project,
+                                              name=sprint_name,
+                                              defaults={'status3': SprintStatus.objects.get_or_create(name='pending',
+                                                                                                      business=project)[0],
+                                                        'project_type': 'inbox',
+                                                        'description': "For incoming unprocessed issues"})[0]
+        return user, project, sprint, subject
+    
+        
+    def resolve_issue_content(self, message, default_subject, project):
+        content = message['content'].strip()
+        raw_issues = []
+        if content.startswith("***"):
+            orgnodes = makelist_from_string(content)
+            for orgnode in orgnodes:
+                if orgnode.Level() == 3:
+                    subject = orgnode.Heading()
+                    if '|' in subject:
+                        feature_name, subject = subject.split('|')
+                        feature = Feature.objects.get_or_create(name=feature_name, business=project)[0]
+                    else:
+                        feature = None
+                    description = orgnode.CleanBody()
+                    raw_issues.append({'subject': subject,
+                                       'description': description,
+                                       'feature': feature})
+        else:
+            content = content or ''
+            raw_issues.append({'subject': default_subject or content[0:20],
+                               'description': content,
+                               'feature': None})
+        return raw_issues
+    
+    def get_user(self, message):
+        user = User.objects.filter(email=message['from']).first()
+        if user is None:
+            raise Exception("No user found with email %s" % message['from'])
+        if not user.is_active:
+            raise Exception("User is not active")
+        return user
+
+    def create_issue(self, message, user, project, sprint, raw_issue):
+        issue = Issue.objects.filter(project=sprint, subject=raw_issue['subject'])\
+                             .order_by_project_id(project.id, descending=True)\
+                             .first()
+        if issue is None:
+            issue = Issue.objects.create(project=sprint,
+                                         subject=raw_issue['subject'],
+                                         auto_created_during_import=True,
+                                         adhoc=False,
+                                         status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
+                                         feature=raw_issue['feature'],
+                                         assigned_to=user,
+                                         number=Issue.get_next_issue_number(project),
+                                         description=raw_issue['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
+                                         story_points=0,
+                                         created=message['time'],
+                                         modified=message['time'])
+            SprintIssueOrder.insert_at_the_end(issue)
+        else:
+            IssueComment.objects.create(issue=issue,
+                                        comment=raw_issue['description'],
+                                        author=user,
+                                        created=message['time'],
+                                        modified=message['time'])
+
+        for attachment_content in message['files']:
+            temp_physical_filename = os.path.join(settings.ISSUE_INBOX_TEMP_ATTACHMENT_FOLDER,
+                                                  attachment_content['filename'])
+            with open(temp_physical_filename, "wb") as f:
+                f.write(attachment_content['content'])
+            django_file = DjangoFile(open(temp_physical_filename))
+
+            VisualSpecDocument.create_for_doc(user=user,
+                                              project=project,
+                                              doc=django_file,
+                                              name=attachment_content['filename'],
+                                              content_type=attachment_content['content_type'],
+                                              issue=issue)
+            
+        logger.info("Created issue %s for %s by email" % (issue.id, user.username))
+        return issue
+
+    def notify_issues_created(self, user, project, issues_created):
+
+        if len(issues_created) == 1:
+            subject = "Issue by email for %s: %s" % (project.name, issues_created[0].subject)
+        else:
+            subject = "%d issues by email for %s" % (len(issues_created), project.name)
+
+        body = ""
+        for issue in issues_created:
+            body += "#%s %s\n===============\n%s\n\n" % (issue.number, issue.subject, issue.description)
+            
+        to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user.email]
+        send_mail(subject=subject.replace("\n", "").replace("\r", ""),
+                  message=body,
+                  from_email=settings.FROM_EMAIL,
+                  recipient_list=to_addresses,
+                  fail_silently=False)
