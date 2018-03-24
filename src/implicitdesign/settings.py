@@ -335,6 +335,19 @@ EMACSIMPORTER_TEMP_DIR = "/tmp"
 EMACS_USERS_TO_PROCESS = ["test", ]
 EMACS_ADMIN_USER_EMAILS = ["gtp@impd.co.za",]
 
+# Used for polling sqs for incoming messages. Note: This is not
+# necessarily the same as the region for SES.
+IMPBOX_SQS_REGION_NAME = "sqs_region_not_configured"
+
+# The name of the incoming message queue
+IMPBOX_SQS_INCOMING_QUEUE_NAME = "impbox_alerts"
+
+# The name of the S3 bucket where emails are placed
+IMPBOX_S3_BUCKET_NAME = "impbox.bucket.not.configured"
+
+IMPBOX_S3_REGION_NAME = "eu-west-2"
+
+
 PDF_TEMP_FOLDER = "/tmp"
 CALDAV_TEMP_FOLDER = "/tmp"
 
@@ -464,6 +477,7 @@ ISSUE_INBOX_FOLDER = "INBOX"
 ISSUE_INBOX_DEFAULT_SPRINT_NAME = "Inbox"
 ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH = 4000
 ISSUE_INBOX_TEMP_ATTACHMENT_FOLDER = "/tmp"
+ISSUE_INBOX_TEMP_FOLDER = "/tmp"
 
 # AUTH_USER_MODEL = 'timepiece.ClientUser'
 
