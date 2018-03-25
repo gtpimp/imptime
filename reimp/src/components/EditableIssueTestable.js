@@ -17,6 +17,7 @@ import Label from './form/Label'
 import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
 import ReactMarkdown from 'react-markdown'
+import IssueTestable from './IssueTestable'
 
 class EditableIssueTestable extends Component {
 
@@ -47,13 +48,18 @@ class EditableIssueTestable extends Component {
         }
     }
 
-    onDelete(new_value) {
+    onDelete(event) {
         const { dispatch, issue_id, testable_id } = this.props
+        event.stopPropagation()
+        if (! confirm("Are you sure you want to delete this testable?" ) ) {
+            return false;
+        }
         dispatch(deleteIssueTestable(issue_id, testable_id))
     }
 
-    onPromoteToIssue() {
+    onPromoteToIssue(event) {
         const { dispatch, issue_id, testable_id } = this.props
+        event.stopPropagation()
         if ( ! confirm( "Convert this testable to a new issue?" ) ) {
             return
         }
@@ -73,18 +79,11 @@ class EditableIssueTestable extends Component {
                     >
                   <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
                                      issue_id={issue_id} testable={testable}/>
-                  <div className="text-component--readonly text-component--testable">
-                    <div className={classNames("issue_sidebar--textarea--readonly",
-                                               {"issue-testable__quality_error":testable.quality_error})}>
-                      <h1 className="issue-testable__testable-name">{testable.name}</h1>
-                      { testable.quality_error &&
-                        <div className="issue_testable__quality_error_reason">
-                          Low quality testable: {testable.quality_error}
-                        </div>
-                      }
-                      <ReactMarkdown source={testable.steps} />
-                    </div>
-                  </div>
+                  <IssueTestable issue_id={issue_id}
+                                 testable={testable}
+                                 onDelete={this.onDelete}
+                                 onPromoteToIssue={this.onPromoteToIssue}
+                  />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
@@ -106,8 +105,6 @@ class EditableIssueTestable extends Component {
                   </div>
                 }
 
-                { testable.id && <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button> }
-                { testable.id && issue_id && <button className="button button--secondary issue_sidebar--button" onClick={this.onPromoteToIssue}>promote to issue</button> }
               </div>
             </div>
         )

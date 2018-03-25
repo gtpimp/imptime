@@ -147,7 +147,7 @@ issue--grouped {
     background-color: $color-26;
 }
 
-.issue-comment {
+.issue-comment, .issue-testable {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -155,7 +155,7 @@ issue--grouped {
     color: $color-10;
 }
 
-.issue-comment__text {
+.issue-comment__text, .issue-testable__text {
     padding: 5px;
     border: 1px solid $color-26;
     border-radius: 10px;
@@ -164,7 +164,7 @@ issue--grouped {
     min-height: 50px;
 }
 
-.issue-comment__info {
+.issue-comment__info, .issue-testable__info {
     display: flex;
     flex-direction: column;
     font-size: $font-size-small;
