@@ -48,8 +48,6 @@ class Navbar extends Component {
                   <div className="navbar__tab"><NavTab to="/usertimesheets" label="Timesheets" /></div>
                   <div className="navbar__tab"><NavTab to="/projects" label="Projects" /></div>
                   <div className="navbar__tab"><NavTab to="/invoices" label="Invoices"/></div>
-                  <div className="navbar__tab"><NavTab to="/clients" label="Clients"/></div>
-                  <div className="navbar__tab"><NavTab to="/team" label="Team" /></div>
                   <div className="navbar__tab" onMouseOver={this.showUserMenu} onMouseLeave={this.hideUserMenu} >
                     <NavTab variant="dashboard-toggle" label={username} />
                     { user_menu_visible &&

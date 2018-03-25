@@ -4,7 +4,6 @@ import AccountCreatedPage from './containers/AccountCreatedPage'
 import BulkIssueCreatorPage from './containers/BulkIssueCreatorPage'
 import ChangePasswordPage from './containers/ChangePasswordPage'
 import PasswordChangedPage from './containers/PasswordChangedPage'
-import ClientsPage from './containers/ClientsPage'
 import DashboardPage from './containers/DashboardPage'
 import DevPage from './containers/DevPage'
 import ForgotPasswordPage from './containers/ForgotPasswordPage'
@@ -91,7 +90,6 @@ ReactDOM.render(
 
           <Route path="dashboard" component={DashboardPage}/>
           <Route path="usertimesheets" component={UserTimesheetPage}/>
-          <Route path="clients" component={ClientsPage}/>
         </Route>
       </Router>
     </Provider>,
