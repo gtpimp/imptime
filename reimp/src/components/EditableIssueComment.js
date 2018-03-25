@@ -47,8 +47,12 @@ class EditableIssueComment extends Component {
 
 
 
-    onDelete(new_value) {
+    onDelete(event) {
         const { dispatch, issue_id, comment_id } = this.props
+        event.stopPropagation()
+        if ( ! confirm("Are you sure you want to delete this comment?" ) ) {
+            return false;
+        }
         dispatch(deleteIssueComment(issue_id, comment_id))
     }
 
@@ -65,7 +69,9 @@ class EditableIssueComment extends Component {
                     >
                   <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
                                     issue_id={issue_id} comment={comment}/>
-                  <IssueComment issue_id={issue_id} comment={comment} />
+                  <IssueComment issue_id={issue_id}
+                                comment={comment}
+                                onDelete={this.onDelete} />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
@@ -86,7 +92,6 @@ class EditableIssueComment extends Component {
                 </div>
               }
 
-              { comment.id && <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>delete</button> }
             </div>
         )
     }

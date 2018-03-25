@@ -17,7 +17,7 @@ class IssueComment extends Component {
     }
 
     render() {
-        const { issue, comment } = this.props
+        const { issue, comment, onDelete } = this.props
 
         return (
             <div className="issue-comment">
@@ -31,6 +31,9 @@ class IssueComment extends Component {
                 <div className="issue_sidebar--comment_author">
                   <OtherUser user_id={comment.author_id} />
                 </div>
+                { onDelete &&
+                  <div onClick={onDelete} className="icon--small-delete" />
+                }
               </div>
             </div>
         )
@@ -39,12 +42,13 @@ class IssueComment extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { issue_id, comment } = props
+    const { issue_id, comment, onDelete } = props
     const issue = getIssue(state, issue_id)
     
     return {
         issue,
-        comment
+        comment,
+        onDelete
     }
 }
 
