@@ -237,6 +237,15 @@ class IssueSidebar extends Component {
                             </div>
                           </div>
 
+                          <div className="property-row">
+                            <div className="property-label">
+                              Tags
+                            </div>
+                            <div className="property-value">
+                              <TagListFlat issue_ids={[issue.id]}/>
+                            </div>
+                          </div>
+
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Description">
@@ -249,10 +258,6 @@ class IssueSidebar extends Component {
                             })
                           }
                           <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Tags">
-                          <TagListFlat issue_ids={[issue.id]}/>
                         </PropertyStackComponent>
 
                         <PropertyStackComponent title="Comments">

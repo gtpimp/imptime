@@ -26,7 +26,6 @@
 }
 
 .property-stack-component__inner {
-    box-shadow: inset 0 -1px 0 0 #e0e0e0;
     margin-left: 16px;
     margin-right: 16px;
     margin-top: 18px;
@@ -120,12 +119,18 @@
 
 .property-label {
     width: 50%;
-    font: $bold;
+    opacity: 0.5;
+    font-size: $font-size-small;
 }
 
 .property-value {
     width: 50%;
     font: $plain;
+    opacity: 0.8;
+}
+
+.property-value:hover {
+    opacity: 1.0;
 }
 
 .property-cell {

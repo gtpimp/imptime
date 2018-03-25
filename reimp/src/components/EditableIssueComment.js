@@ -15,6 +15,7 @@ import Label from './form/Label'
 import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
 import OtherUser from '../components/OtherUser'
+import IssueComment from './IssueComment'
 
 class EditableIssueComment extends Component {
 
@@ -64,15 +65,7 @@ class EditableIssueComment extends Component {
                     >
                   <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
                                     issue_id={issue_id} comment={comment}/>
-                  <div className="text-component--readonly text-component--comment">
-                    <div className="issue_sidebar--comment_date" >
-                      {comment.modified} - <div className="issue_sidebar--comment_author">
-                      <OtherUser user_id={comment.author_id} /></div>
-                    </div>
-                    <div className="issue_sidebar--textarea--readonly" >
-                      {comment.comment}
-                    </div>
-                  </div>
+                  <IssueComment issue_id={issue_id} comment={comment} />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }

@@ -23,19 +23,12 @@
   color: $color-10;
   font: $font-1;
   line-height: 20px;
-  white-space: pre-wrap;
-}
-
-.text-component--comment {
-  color: $color-10;
-  font: $font-1;
-  line-height: 20px;
-  white-space: pre-wrap;
+    white-space: pre-wrap;
+    border: 1px solid $color-26;
+    border-radius: 10px;
+    padding: 10px;
 }
 
 .text-component--testable {
-  color: $color-10;
-  font: $font-1;
-  line-height: 20px;
-  white-space: pre-wrap;
+    @extend .text-component--description;
 }
