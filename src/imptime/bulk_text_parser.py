@@ -32,7 +32,7 @@ class BulkTextParser(object):
         issue, is_new = Issue.objects.get_or_create(project=sprint,
                                                     subject=subject,
                                                     defaults={'auto_created_during_import':True,
-                                                              'adhoc':False,
+                                                              'issue_type':'issue',
                                                               'status2':IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0], #sic
                                                               'feature':feature,
                                                               'assigned_to':self.logged_in_user,

@@ -4744,7 +4744,7 @@ def sprint_report(request, project_id, context=None):
                 issues = issues.filter(number__in=form.cleaned_data['only_these_issue_numbers'])
 
             if not form.cleaned_data.get('include_adhoc_issues', False):
-                issues = issues.exclude(adhoc=True)
+                issues = issues.exclude(issue_type='adhoc')
 
         if form == quote_form:
             context['estimate_stats'] = project.estimate_stats(issues, preferred_user_id=form.cleaned_data['preferred_user_for_estimates'])
@@ -5294,9 +5294,9 @@ def bulk_change_issue_adhoc(request, context=None):
     new_adhoc = (form.cleaned_data['adhoc'] == 'set_adhoc')
     for selected_issue_id in selected_issue_ids:
         issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if new_adhoc != issue.adhoc:
-            old_adhoc = issue.adhoc
-            issue.adhoc = new_adhoc
+        if new_adhoc != issue.issue_type:
+            old_adhoc = issue.issue_type
+            issue.issue_type = 'adhoc' if new_adhoc == True else 'issue'
             issue.save()
             timepiece.IssueHistory.add_history(request.user, issue, "changed adhoc", old_adhoc, new_adhoc)
     messages.info(request, "%d issues changed adhoc: : %s" % (len(selected_issue_ids), form.cleaned_data['adhoc']))
@@ -5892,7 +5892,7 @@ def clear_issue_adhoc_status(request, issue_id, context=None):
     bp = timepiece.BusinessPermissions.for_user(request.user, issue.project.business)
     if not bp.has_add_issue:
         return HttpResponse("No permission to do that")
-    issue.adhoc = False
+    issue.issue_type = 'issue'
     issue.save()
     return HttpResponse("{'status':'ok'}")
 
@@ -6075,7 +6075,7 @@ def _get_quick_clocker_issue(project, user):
         issue = timepiece.Issue.objects.create(project=project,
                                                subject=issue_subject,
                                                auto_created_during_import=True,
-                                               adhoc=False,
+                                               issue_type='issue',
                                                status2=timepiece.IssueStatus.objects.get_or_create(name='quick_clocker', business=project.business)[0],
                                                assigned_to=user,
                                                created_by=user,

@@ -86,7 +86,7 @@ class ProjectSerializer(BaseSerializer):
                                                .order_by("name")\
                                                .values_list('name', flat=True)] #sic
 
-        project.allowed_issue_type_names = ['issue', 'adhoc']
+        project.allowed_issue_type_names = [x[0] for x in Issue.ISSUE_TYPES]
         
         project.allowed_sprint_status_names = [x for x in SprintStatus.objects.all()\
                                                .filter(business=project)\

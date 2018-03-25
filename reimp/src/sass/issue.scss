@@ -112,6 +112,12 @@ issue--grouped {
     opacity: 0.5;
 }
 
+.issue-cell__issue-correspondence-icon {
+    @extend .div-table__cell--default;
+    @extend .icon--correspondence;
+    opacity: 0.5;
+}
+
 .div-table__row.issue--feature .issue-cell__issue-name {
     font: $font-3;
 }

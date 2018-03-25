@@ -113,6 +113,10 @@
     @include icon(15px, 15px, 'adhoc.png');
 }
 
+.icon--correspondence {
+    @include icon(15px, 15px, 'correspondence.png');
+}
+
 .icon--commercially-sensitive {
     @include icon(15px, 15px, 'commercially_sensitive.png');
 }

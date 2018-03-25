@@ -289,7 +289,7 @@ this is the colour of yukc
             issue = Issue.objects.create(project=sprint,
                                          subject=raw_issue['subject'],
                                          auto_created_during_import=True,
-                                         adhoc=False,
+                                         issue_type='correspondence',
                                          status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
                                          feature=raw_issue['feature'],
                                          assigned_to=user,

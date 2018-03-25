@@ -104,7 +104,7 @@ class TestableViewSet(BaseViewSet):
                 raise Exception("Can't add issues")
             new_issue = Issue.objects.create(project=issue.project,
                                              subject="%s (Testable %s)" % (issue.subject, testable.order),
-                                             adhoc=False,
+                                             issue_type='issue',
                                              status2=IssueStatus.objects.get_or_create(name='new', business=issue.project.business)[0],
                                              feature=issue.feature,
                                              assigned_to=issue.assigned_to,

@@ -152,13 +152,8 @@ class IssueViewSet(BaseViewSet):
                             new_status.name)
                 elif field_name == "type_name":
                     if self.logged_in_permissions(issue.project.business).has_add_issue:
-                        old_value = "adhoc" if issue.adhoc else "issue"
-                        if new_value == "issue":
-                            issue.adhoc = False
-                        elif new_value == "adhoc":
-                            issue.adhoc = True
-                        else:
-                            raise Exception("Unknown issue type name: %s" % new_value)
+                        old_value = issue.issue_type
+                        issue.issue_type = new_value
                         IssueHistory.add_history(request.user, issue, "changed type", old_value, new_value)
 
                 elif field_name == "feature_name":

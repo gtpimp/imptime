@@ -232,10 +232,10 @@ class Issue extends Component {
                      <div>{issue.number}</div>
                    </div>
                   }
-                 {includes(visible_header_keys, "adhoc") &&
+                 {includes(visible_header_keys, "issue_type") &&
                    <div className="div-table__cell"
-                        style={getCellStyle(header_list.adhoc)} >
-                     <div className={classNames({'issue-cell__issue-adhoc-icon':issue.type_name==='adhoc'})}></div>
+                        style={getCellStyle(header_list.issue_type)} >
+                     <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
                    </div>
                   }
                   {includes(visible_header_keys, "expand_feature") &&
