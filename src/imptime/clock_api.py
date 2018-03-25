@@ -74,6 +74,8 @@ class ClockViewSet(BaseViewSet):
                 description = description or most_recent_entry.comments
                 role_name = role_name or (most_recent_entry.role and most_recent_entry.role.name) or "manager"
 
+            role_name = role_name or "manager"
+                
             if project_id is None:
                 if project_name is None:
                     raise Exception("Must clock into a project")
