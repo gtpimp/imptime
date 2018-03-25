@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd'
-import {includes, keys} from 'lodash'
+import {get, includes, keys} from 'lodash'
 import {browserHistory} from 'react-router'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
@@ -94,9 +94,9 @@ class Project extends Component {
                     <div className="div-table__cell project__cell__secondary"
                          style={getCellStyle(header_list.active)}>
                       <div className={classNames("project-cell__active_status",
-                                                 {"icon__status--active":project.recent_activity.is_active,
-                                                  "icon__status--inactive":project.recent_activity.is_inactive,
-                                                  "icon__status--expired":project.recent_activity.is_expired})}
+                                                 {"icon__status--active":get(project, ["recent_activity","is_active"], false),
+                                                  "icon__status--inactive":get(project, ["recent_activity", "is_inactive"], false),
+                                                  "icon__status--expired":get(project, ["recent_activity", "is_expired"], false)})}
                       >
                         
                       </div>
