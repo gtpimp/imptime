@@ -180,11 +180,11 @@ class WorkSummary extends Component {
     }
     
     render() {
-        const { summary_id, summary } = this.props
+        const { summary_id, summary, is_empty } = this.props
 
         return (
             <div className="work-summary">
-              { ! summary_id &&
+              { ! summary.id &&
                 <div>Loading...</div>
               }
               { summary_id &&
@@ -193,8 +193,13 @@ class WorkSummary extends Component {
                     <h2 className="work-summary__name">
                       Work summary for <Timestamp value={summary.day} format="date" />
                     </h2>
-                    { summary.length == 0 && <p>Nothing to see here</p> }
 
+                    { is_empty &&
+                      <div className="work-summary__project-card">
+                        On this day, nothing happened
+                      </div>
+                    }
+                    
                     <div className="work-summary__project-cards">
                       { summary.length != 0 &&
                         map(keys(summary.projects), (project_id) => this.render_project_card(project_id))
@@ -215,7 +220,8 @@ function mapStateToProps(state, props) {
 
     return {
 	summary: summary || {},
-        summary_id: (summary || {}).id
+        summary_id: (summary || {}).id,
+        is_empty: keys(get(summary, ["projects"], {})).length === 0
     }
 }
 
