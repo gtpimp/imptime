@@ -49,9 +49,7 @@ class InvoiceQuerySet(QuerySet):
                                      Q(business__business_permissions__user=user)&\
                                      Q(business__business_permissions__can_view_invoices=True)
 
-        invoices_by_me_for_no_business = Q(business__isnull=True)&Q(project__isnull=True)&Q(created_by=user)
-        
-        return self.filter(invoices_for_my_businesses|invoices_by_me_for_no_business)
+        return self.filter(invoices_for_my_businesses)
     
     def cost_with_vat(self):
         return (self.filter(client__taxable=True).annotate(cost_with_vat=Sum('items__total_cost')*(1+F('vat_rate'))).aggregate(total_cost_with_vat=Sum('cost_with_vat'))['total_cost_with_vat'] or 0) + \
