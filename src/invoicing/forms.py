@@ -32,6 +32,21 @@ class InvoiceForm(forms.ModelForm):
         self.fields['client'].queryset = models.ClientInvoiceDetails.objects.filter(archived=False).order_by("name").distinct()
         self.fields['business'].queryset = timepiece.Business.objects.filter(archived=False).order_by("name")
 
+    def clean(self, *args):
+        cleaned_data = super(InvoiceForm, self).clean()
+        business = cleaned_data['business']
+        project = cleaned_data['project']
+
+        if business is None and project is None:
+            self.add_error('business', "Business and project can't both be empty")
+            raise forms.ValidationError("Business and project can't both be empty")
+        if business is None:
+            business = project.business
+        if business != project.business:
+            business = project.business
+        return cleaned_data
+        
+        
 class InvoiceItemForm(forms.ModelForm):
 
     class Meta:

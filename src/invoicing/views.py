@@ -91,6 +91,8 @@ def new_invoice(request, template="invoicing/new_invoice.html", context=None):
     items_formset = invoice_item_formset(request.POST or None, prefix='items', queryset=models.InvoiceItem.objects.none())
     if form.is_valid() and items_formset.is_valid():
         invoice = form.save()
+        invoice.created_by=request.user
+        invoice.save()
         items = items_formset.save(commit=False)
         item_count = 1
         for item in items:

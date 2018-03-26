@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 from django.conf import settings
+from lib.fields import ProtectedForeignKey
 from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q, F, Max, Min
@@ -42,9 +43,15 @@ class InvoiceQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user),
-                           business__business_permissions__user=user,
-                           business__business_permissions__can_view_invoices=True)
+
+        invoices_for_my_businesses = (Q(business__in=BusinessPermissions.active_businesses_for_user(user))|\
+                                      Q(project__business__in=BusinessPermissions.active_businesses_for_user(user)))&\
+                                     Q(business__business_permissions__user=user)&\
+                                     Q(business__business_permissions__can_view_invoices=True)
+
+        invoices_by_me_for_no_business = Q(business__isnull=True)&Q(project__isnull=True)&Q(created_by=user)
+        
+        return self.filter(invoices_for_my_businesses|invoices_by_me_for_no_business)
     
     def cost_with_vat(self):
         return (self.filter(client__taxable=True).annotate(cost_with_vat=Sum('items__total_cost')*(1+F('vat_rate'))).aggregate(total_cost_with_vat=Sum('cost_with_vat'))['total_cost_with_vat'] or 0) + \
@@ -79,7 +86,7 @@ class Invoice(models.Model):
 
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False, related_name='invoices')
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
-    business = models.ForeignKey("timepiece.Business", blank=True, null=True, related_name='invoices')
+    business = models.ForeignKey("timepiece.Business", blank=True, null=False, related_name='invoices')
     project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='invoices')
     invoice_number = models.IntegerField(default=0, null=False, blank=False, unique=True)
     client_order_name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order name")
@@ -93,7 +100,8 @@ class Invoice(models.Model):
     footer_terms = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=INVOICE_STATUSES)
     vat_rate = models.FloatField(default=0)
-
+    created_by = ProtectedForeignKey(User, related_name='invoices_created_by', null=True)
+                                                                                       
     def save(self, *args, **kwargs):
         if self.project is not None:
             self.business = self.project.business

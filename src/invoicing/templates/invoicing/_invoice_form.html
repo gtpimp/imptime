@@ -5,6 +5,12 @@
 {% csrf_token %}
 
 
+{% for error in form.errors.values %}
+<div class="has-error">
+  {{error}}
+</div>
+{% endfor %}
+
 <div class="invoice--form-left_container">
   <h3>Invoice details</h3>
   <div class='form-group{% if form.errors.invoice_number%} has-error{%endif%}'>
@@ -39,7 +45,7 @@
 
   <div class='form-group{% if form.errors.business%} has-error{%endif%}'>
     <div class="col-md-5">
-      Project (optional if project is specified)
+      Project (optional only if sprint is specified)
     </div>
     <div class="col-md-5">
       {{ form.business|add_class:'form-control' }}
