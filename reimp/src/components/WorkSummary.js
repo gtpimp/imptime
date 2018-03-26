@@ -22,6 +22,7 @@ import Hours from './Hours'
 import Timestamp from './Timestamp'
 import TimeChart from './TimeChart'
 import IssueName from './IssueName'
+import IssueStatus from './IssueStatus'
 
 class WorkSummary extends Component {
 
@@ -109,6 +110,18 @@ class WorkSummary extends Component {
          * )*/
     }
 
+    render_issue(issue_id) {
+        return (
+            <div key={issue_id}
+                 className="work-summary__project-card__issue">
+              <IssueName issue_id={issue_id} />
+              <div className="work-summary__project-card__issue_props">
+                <IssueStatus issue_id={issue_id} />
+              </div>
+            </div>
+        )
+    }
+
     render_project_card_created_issues(project_items) {
         if ( ! project_items.created_issues ) {
             return null
@@ -119,9 +132,7 @@ class WorkSummary extends Component {
                 New issues
               </div>
               <div className="work-summary__project-card__issues_list">
-                { map(project_items.created_issues, (project_item) =>
-                    <IssueName key={project_item.issue_id} issue_id={project_item.issue_id} />
-                  )}
+                { map(project_items.created_issues, (project_item) => this.render_issue(project_item.issue_id)) }
               </div>
             </div>
         )
@@ -137,9 +148,7 @@ class WorkSummary extends Component {
                 Modified issues
               </div>
               <div className="work-summary__project-card__issues_list">
-                { map(project_items.modified_issues, (project_item) =>
-                    <IssueName key={project_item.issue_id} issue_id={project_item.issue_id} />
-                  )}
+                { map(project_items.modified_issues, (project_item) => this.render_issue(project_item.issue_id)) }
               </div>
             </div>
         )
@@ -155,9 +164,7 @@ class WorkSummary extends Component {
                 Issues worked on
               </div>
               <div className="work-summary__project-card__issues_list">
-                { map(project_items.issues_with_time, (project_item) =>
-                    <IssueName key={project_item.issue_id} issue_id={project_item.issue_id} />
-                  )}
+                { map(project_items.issues_with_time, (project_item) => this.render_issue(project_item.issue_id)) }
               </div>
             </div>
         )
