@@ -148,7 +148,7 @@ class Extractor(object):
                 issue, is_new = Issue.objects.get_or_create(project=project,
                                                             subject=subject,
                                                             defaults={'auto_created_during_import':True,
-                                                                      'adhoc':True,
+                                                                      'issue_type':'adhoc',
                                                                       'status2':IssueStatus.objects.get_or_create(name='dev done', business=business)[0],
                                                                       'feature':feature,
                                                                       'assigned_to':timesheet_user,
