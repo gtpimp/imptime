@@ -1,0 +1,73 @@
+@import 'variables.scss';
+
+.project_summary {
+    font-size: $font-size-small;
+    /*background-color: $color-26;*/
+    border: 1px solid $color-26;
+}
+
+.project_summary__title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.project_summary.project_summary--active .project_summary__title {
+    background-color: $color-27;
+}
+
+.project_summary.project_summary--inactive .project_summary__title {
+    background-color: $color-28;
+}
+
+.project_summary.project_summary--expired .project_summary__title {
+    background-color: $color-29;
+}
+
+.project_summary h2 {
+}
+
+.project_summary h3 {
+    background-color: $color-12;
+}
+
+.project_summary table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.project_summary__recent_entries_per_user {
+}
+
+.project_summary__sprint_info {
+    border-bottom: 1px solid $color-26;
+}
+
+.project_summary__open_sprints {
+}
+
+.project_summary__recent_entries_per_user {
+    margin-top: 15px;
+}
+
+.project_summary__recent_entry_for_user {
+    width: 100%;
+}
+
+.project_summary__sprint_progress {
+    min-width: 50px;
+}
+
+
+.project_summary__sprint_users__username {
+    width: 33%;
+    text-align: right;
+}
+
+.project_summary__sprint_users__rate {
+    width: 33%;
+}
+
+.project_summary__sprint_users__hours {
+    width: 33%;
+}

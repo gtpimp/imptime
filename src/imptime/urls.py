@@ -15,6 +15,7 @@ import nudge_api
 import project_api
 import project_dashboard_api
 import project_statement_api
+import work_summary_api
 import project_user_permission_api
 import release_note_api
 import sprint_api
@@ -31,7 +32,7 @@ import views
 import visual_spec_document_api
 import visual_spec_issue_api
 import visual_spec_issue_annotation_api
-import wiki_api
+import wiki_api 
 from rest_framework.routers import DefaultRouter
 from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
@@ -105,6 +106,8 @@ router.register(r'release_note', release_note_api.ReleaseNoteViewSet,
                 base_name='release_note')
 router.register(r'wiki', wiki_api.WikiViewSet,
                 base_name='wiki')
+router.register(r'work_summary', work_summary_api.WorkSummaryViewSet,
+                base_name='work_summary')
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),

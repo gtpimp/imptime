@@ -14,10 +14,14 @@ export const LIST_KEY__RELEASE_NOTES_LIST = 'release_notes_list'
 export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
 export const LIST_KEY__NUDGE_LIST = 'nudge_list'
 export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
+
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
 export const LIST_KEY__AUTO_CLOCK = 'auto_clock'
 export const LIST_KEY__RECENT_AUTO_CLOCK = 'recent_auto_clock'
 export const LIST_KEY__SPRINT_RATES = 'sprint_rates'
+
+export const LIST_KEY__WORK_SUMMARY_LIST = 'work_summaries'
+
 
 export const ENTITY_KEY__INVOICE = 'invoice'
 export const ENTITY_KEY__PROJECT = 'project'
@@ -42,6 +46,7 @@ export const ENTITY_KEY__WIKI = 'wiki'
 export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
 export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
 export const ENTITY_KEY__SPRINT_USER_RATE = 'sprint_user_rate'
+export const ENTITY_KEY__WORK_SUMMARY = 'work_summary'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
@@ -75,6 +80,7 @@ export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
 export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
+export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
 
 export const SELECTOR__SPRINTS = 'selector_sprints'
 export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'

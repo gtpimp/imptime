@@ -22,6 +22,7 @@ import SprintDashboardPage from './containers/SprintDashboardPage'
 import SprintRatePage from './containers/SprintRatePage'
 import UserTimesheetPage from './containers/UserTimesheetPage'
 import NudgePage from './containers/NudgePage'
+import WorkSummaryPage from './containers/WorkSummaryPage'
 import ProjectRoadmapPage from './containers/ProjectRoadmapPage'
 import ProjectWikiPage from './containers/ProjectWikiPage'
 import ReleaseNotesPage from './containers/ReleaseNotesPage'
@@ -56,6 +57,7 @@ ReactDOM.render(
           <Route path="/" component={NudgePage}/>
           <Route path="/account/create" component={AccountCreatePage}/>
           <Route path="/account/created" component={AccountCreatedPage}/>
+          <Route path="/work_summary" component={WorkSummaryPage}/>
           <Route path="/nudge" component={NudgePage}/>
           <Route path="/password/changed" component={PasswordChangedPage}/>
           <Route path="/password/change" component={ChangePasswordPage}/>

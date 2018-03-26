@@ -44,6 +44,7 @@ class Navbar extends Component {
                 </div>
                 <div className="navbar__right">
                   <div className="navbar__tab"><NavTab to="/nudge" label="Nudge" /></div>
+                  <div className="navbar__tab"><NavTab to="/work_summary" label="Work summary" /></div>
                   <div className="navbar__tab"><NavTab to="/dashboard" label="Dashboard" /></div>
                   <div className="navbar__tab"><NavTab to="/usertimesheets" label="Timesheets" /></div>
                   <div className="navbar__tab"><NavTab to="/projects" label="Projects" /></div>
