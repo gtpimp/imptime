@@ -86,7 +86,6 @@ class WorkSummaryList extends Component {
         const { summaries, list_key, is_loading } = this.props
 	return (
 	    <div>
-              <div>Daily Summaries</div>
               { is_loading && <div>Loading...</div> }
               { ! is_loading &&
                 <div>
@@ -98,7 +97,6 @@ class WorkSummaryList extends Component {
                         </div> 
                      )}
                   </div>
-                  <Pagination list_key={list_key} on_changed={this.onRefresh} />
                 </div>
               }
 	    </div>

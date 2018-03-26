@@ -18,7 +18,8 @@ const initialState = {
     loading_item_ids: [],
     saving_item_ids: [],
     all_sprint_ids: [],
-    all_user_ids: []
+    all_user_ids: [],
+    all_issue_ids: []
 }
 
 export default function summary(state = initialState, action) {
@@ -46,7 +47,8 @@ export default function summary(state = initialState, action) {
 					   assign(state.items_by_id, action.items_by_id)),
                 all_sprint_ids: action.all_sprint_ids,
                 all_project_ids: action.all_project_ids,
-                all_user_ids: action.all_user_ids
+                all_user_ids: action.all_user_ids,
+                all_issue_ids: action.all_issue_ids
 	    })
             state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy

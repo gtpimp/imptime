@@ -33,6 +33,7 @@ function announceSummariesLoaded(payload) {
     return {
         type: ANNOUNCE_SUMMARIES_LOADED,
         items_by_id: keyBy(payload.summaries, 'id'),
+        all_issue_ids: payload.all_issue_ids,
         all_sprint_ids: payload.all_sprint_ids,
         all_project_ids: payload.all_project_ids,
         all_user_ids: payload.all_user_ids,

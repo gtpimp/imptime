@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { get, isEmpty, map, size } from 'lodash'
+import { keys, get, isEmpty, map, size } from 'lodash'
 import { DragSource, DropTarget } from 'react-dnd'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
@@ -21,9 +21,7 @@ import ProgressBar from './ProgressBar'
 import Hours from './Hours'
 import Timestamp from './Timestamp'
 import TimeChart from './TimeChart'
-import IssueLink from './IssueLink'
-import SprintLink from './SprintLink'
-import ProjectLink from './ProjectLink'
+import IssueName from './IssueName'
 
 class WorkSummary extends Component {
 
@@ -50,82 +48,159 @@ class WorkSummary extends Component {
             if ( summary.project_ids ) {
                 dispatch(ensureProjectsLoaded(summary.project_ids))
             }
-            if ( summary.issue_ids ) {
-                dispatch(ensureIssuesLoaded(summary.issue_ids))
+            if ( summary.all_issue_ids ) {
+                dispatch(ensureIssuesLoaded(summary.all_issue_ids))
             }
         }
     }
 
+    render_junk() {
+        /* return (
+         *     <div>
+         * { show_new_issues && <div><h3>New issues:</h3>
+         *   <ul>
+         *     { map(new_issues, (issue) => {
+         *           return <li key={issue.id}>
+         *     <ProjectName project_id={issue.project_id} />
+         *     <SprintName sprint_id={issue.sprint_id} />
+         *     <IssueLink issue_id={issue.id}
+         *                sprint_id={issue.sprint_id}
+         *                project_id={issue.project_id}
+         *                issue_number={issue.number}
+         *     />
+         *           </li>
+         *       }) }
+         *   </ul></div> }
+         * { show_with_time_issues && <div><h3>Issues with time:</h3>
+         *     <ul>
+         *       { map(with_time_issues, (issue) => {
+         *             return <li key={issue.id}>
+         *       <ProjectName project_id={issue.project_id} />
+         *       <SprintName sprint_id={issue.sprint_id} />
+         *       <IssueLink issue_id={issue.id}
+         *                  sprint_id={issue.sprint_id}
+         *                  project_id={issue.project_id}
+         *                  issue_number={issue.number}
+         *       />
+         *             </li>
+         *         }) }
+         *     </ul></div> }
+         * { show_new_sprints && <div><h3>New sprints:</h3>
+         *       <ul>
+         *         { map(new_sprints, (sprint) => {
+         *               return <li key={sprint.id}>
+         *         <ProjectName project_id={sprint.project_id} />
+         *         <SprintLink sprint_id={sprint.id}
+         *                     sprint_name={sprint.name}
+         *                     project_id={sprint.project_id}
+         *         />
+         *               </li>
+         *           }) }
+         *       </ul></div> }
+         * { show_new_projects && <div><h3>New projects:</h3>
+         *         <ul>
+         *           { map(new_projects, (project) => {
+         *                 return <li key={project.id}><ProjectLink project_id={project.id}
+         *                                                          project_name={project.name}
+         *                                             /></li>
+         *             }) }
+         *         </ul></div> }
+         *     </div>
+         * )*/
+    }
+
+    render_project_card_created_issues(project_items) {
+        if ( ! project_items.created_issues ) {
+            return null
+        }
+        return (
+            <div className="work-summary__project-card__content">
+              <div className="work-summary__project-card__content-title">
+                New issues
+              </div>
+              <div className="work-summary__project-card__issues_list">
+                { map(project_items.created_issues, (project_item) =>
+                    <IssueName key={project_item.issue_id} issue_id={project_item.issue_id} />
+                  )}
+              </div>
+            </div>
+        )
+    }
+    
+    render_project_card_modified_issues(project_items) {
+        if ( ! project_items.modified_issues ) {
+            return null
+        }
+        return (
+            <div className="work-summary__project-card__content">
+              <div className="work-summary__project-card__content-title">
+                Modified issues
+              </div>
+              <div className="work-summary__project-card__issues_list">
+                { map(project_items.modified_issues, (project_item) =>
+                    <IssueName key={project_item.issue_id} issue_id={project_item.issue_id} />
+                  )}
+              </div>
+            </div>
+        )
+    }
+    
+    render_project_card_issues_with_time(project_items) {
+        if ( ! project_items.issues_with_time ) {
+            return null
+        }
+        return (
+            <div className="work-summary__project-card__content">
+              <div className="work-summary__project-card__content-title">
+                Issues worked on
+              </div>
+              <div className="work-summary__project-card__issues_list">
+                { map(project_items.issues_with_time, (project_item) =>
+                    <IssueName key={project_item.issue_id} issue_id={project_item.issue_id} />
+                  )}
+              </div>
+            </div>
+        )
+    }
+    
+    render_project_card(project_id) {
+        const { summary } = this.props
+        const project_items = summary.projects[project_id]
+        return (
+            <div key={project_id} className="work-summary__project-card">
+              <div className="work-summary__project-card__title">
+                <ProjectName project_id={project_id} />
+              </div>
+              { this.render_project_card_issues_with_time(project_items) }
+              { this.render_project_card_created_issues(project_items) }
+              { this.render_project_card_modified_issues(project_items) }
+              
+            </div>
+        )
+    }
+    
     render() {
-        const { summary_id, summary, new_issues, with_time_issues, new_sprints, new_projects } = this.props
-
-        const show_new_issues = !isEmpty(new_issues)
-        const show_with_time_issues = !isEmpty(with_time_issues)
-        const show_new_sprints = !isEmpty(new_sprints)
-        const show_new_projects = !isEmpty(new_projects)
-
-        const show_empty = !show_new_issues && !show_with_time_issues && !show_new_sprints && !show_new_projects
+        const { summary_id, summary } = this.props
 
         return (
-            <div className={classNames("summary")}>
+            <div className="work-summary">
               { ! summary_id &&
                 <div>Loading...</div>
               }
               { summary_id &&
                 <div>
-                  <div className="summary__title">
-                    <h2 className="summary__name">
-                      { summary.day }
+                  <div className="work-summary__title">
+                    <h2 className="work-summary__name">
+                      Work summary for <Timestamp value={summary.day} format="date" />
                     </h2>
-                    { show_empty && <p>Nothing to see here</p> }
-                    { show_new_issues && <div><h3>New issues:</h3>
-                    <ul>
-                      { map(new_issues, (issue) => {
-                        return <li key={issue.id}>
-                          <ProjectName project_id={issue.project_id} />
-                          <SprintName sprint_id={issue.sprint_id} />
-                          <IssueLink issue_id={issue.id}
-                                     sprint_id={issue.sprint_id}
-                                     project_id={issue.project_id}
-                                     issue_number={issue.number}
-                          />
-                        </li>
-                      }) }
-                    </ul></div> }
-                    { show_with_time_issues && <div><h3>Issues with time:</h3>
-                    <ul>
-                    { map(with_time_issues, (issue) => {
-                        return <li key={issue.id}>
-                          <ProjectName project_id={issue.project_id} />
-                          <SprintName sprint_id={issue.sprint_id} />
-                          <IssueLink issue_id={issue.id}
-                                     sprint_id={issue.sprint_id}
-                                     project_id={issue.project_id}
-                                     issue_number={issue.number}
-                          />
-                        </li>
-                    }) }
-                    </ul></div> }
-                    { show_new_sprints && <div><h3>New sprints:</h3>
-                    <ul>
-                    { map(new_sprints, (sprint) => {
-                        return <li key={sprint.id}>
-                          <ProjectName project_id={sprint.project_id} />
-                          <SprintLink sprint_id={sprint.id}
-                                      sprint_name={sprint.name}
-                                      project_id={sprint.project_id}
-                          />
-                        </li>
-                    }) }
-                    </ul></div> }
-                    { show_new_projects && <div><h3>New projects:</h3>
-                    <ul>
-                    { map(new_projects, (project) => {
-                        return <li key={project.id}><ProjectLink project_id={project.id}
-                                            project_name={project.name}
-                        /></li>
-                    }) }
-                    </ul></div> }
+                    { summary.length == 0 && <p>Nothing to see here</p> }
+
+                    <div className="work-summary__project-cards">
+                      { summary.length != 0 &&
+                        map(keys(summary.projects), (project_id) => this.render_project_card(project_id))
+                      }
+                    </div>
+
                   </div>
                 </div>
               }
@@ -140,11 +215,7 @@ function mapStateToProps(state, props) {
 
     return {
 	summary: summary || {},
-        summary_id: (summary || {}).id,
-        new_issues: getIssues(state, get(summary, 'new_issues', [])),
-        with_time_issues: getIssues(state, get(summary, 'with_time_issues', [])),
-        new_sprints: getSprints(state, get(summary, 'new_sprints', [])),
-        new_projects: getProjects(state, get(summary, 'new_projects', []))
+        summary_id: (summary || {}).id
     }
 }
 

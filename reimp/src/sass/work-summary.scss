@@ -1,0 +1,33 @@
+@import 'variables.scss';
+
+.work-summary__project-cards {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: $font-size-default;
+}
+
+.work-summary__project-card {
+    margin: 20px;
+    border: 1px solid $color-26;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.work-summary__project-card__title {
+    font: $plain-large;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.work-summary__project-card__content {
+}
+
+.work-summary__project-card__content-title {
+    margin-bottom: 10px;
+    border-bottom: 1px solid $color-26;
+    text-align: center;
+}
+
+.work-summary__project-card__issues_list {
+}
+

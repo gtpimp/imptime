@@ -17,6 +17,8 @@ from timepiece.models import BusinessPermissions, Entry, Rate, Issue, IssueHisto
 from django.contrib.auth.models import User
 import csv
 from lib import chart_helper
+from operator import itemgetter
+from itertools import groupby
 
 logger = logging.getLogger(__name__)
 
@@ -44,18 +46,20 @@ class WorkSummaryViewSet(BaseViewSet):
             for id in ids:
                 summaries.append({'id': id, 'day': (now - timezone.timedelta(days=int(id) - 1)).date()})
 
-            #summaries = self.sort(summaries)
             summaries = self.apply_pagination(qs=summaries, pagination=pagination)
 
             if format_args.get('ids_only', None):
                 context['ids'] = [ x['id'] for x in summaries ]
             else:
-                summaries = [ self.populate_summary(request.user, self.allowed_projects(), summary) for summary in summaries ]
+                context['all_sprint_ids'] = []
+                all_project_ids = set()
+                all_issue_ids = set()
+                context['all_user_ids'] = []
+                summaries = [ self.populate_summary(request.user, self.allowed_projects(), summary,
+                                                    all_issue_ids, all_project_ids) for summary in summaries ]
+                context['all_project_ids'] = list(all_project_ids)
+                context['all_issue_ids'] = list(all_issue_ids)
                 context['summaries'] = summaries
-                context['all_project_ids'] = list(set(list(chain.from_iterable( [x['project_ids'] for x in summaries]))))
-                context['all_sprint_ids'] = list(set(list(chain.from_iterable( [x['sprint_ids'] for x in summaries]))))
-                context['all_issue_ids'] = list(set(list(chain.from_iterable( [x['issue_ids'] for x in summaries]))))
-                context['all_user_ids'] = list(set(list(chain.from_iterable( [x['user_ids'] for x in summaries]))))
             
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
@@ -66,34 +70,54 @@ class WorkSummaryViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    def populate_summary(self, user, projects, summary):
+    def _group_by_project_id(self, items, key_name):
+        items_by_project_id = groupby(items, key=itemgetter("project_id"))
+        d = {}
+        for project_id, items in items_by_project_id:
+            d[project_id] = {key_name:list(items)}
+        return d
+    
+    def _get_issues_with_time_by_project(self, user, projects, day, all_issue_ids, all_project_ids):
+        entries = Entry.objects.all().filter(issue__project__business__in=projects, start_time__date=day)
+        issues = entries.order_by("issue__project__business_id", "issue_id")\
+                        .values('issue__project__business_id', 'issue_id').distinct()
+        issues = [ {'project_id': x['issue__project__business_id'],
+                    'issue_id': x['issue_id']} for x in issues ]
+        all_issue_ids.update([x['issue_id'] for x in issues])
+        all_project_ids.update([x['project_id'] for x in issues])
+        return self._group_by_project_id(issues,
+                                         key_name='issues_with_time')
+
+    def _get_new_issues_by_project(self, user, projects, day, all_issue_ids, all_project_ids):
+        issues = Issue.objects.all().filter(project__business__in=projects, created__date=day)\
+                                    .values("project__business_id", "id")\
+                                    .order_by("project__business__id").distinct()
+        issues = [ {'project_id': x['project__business_id'],
+                    'issue_id': x['id']} for x in issues ]
+        all_issue_ids.update([x['issue_id'] for x in issues])
+        all_project_ids.update([x['project_id'] for x in issues])
+        return self._group_by_project_id(issues,
+                                         key_name='new_issues')
+
+    def _get_modified_issues_by_project(self, user, projects, day, all_issue_ids, all_project_ids):
+        issues = Issue.objects.all().filter(project__business__in=projects, modified__date=day)\
+                                    .values("project__business_id", "id")\
+                                    .order_by("project__business__id").distinct()
+        issues = [ {'project_id': x['project__business_id'],
+                    'issue_id': x['id']} for x in issues ]
+        all_issue_ids.update([x['issue_id'] for x in issues])
+        all_project_ids.update([x['project_id'] for x in issues])
+        return self._group_by_project_id(issues,
+                                         key_name='modified_issues')
+    
+    
+    def populate_summary(self, user, projects, summary, all_issue_ids, all_project_ids):
         d = {'id': summary['id'], 'day': summary['day']}
 
-        entries = Entry.objects.all().filter(issue__project__business__in=projects, start_time__date=d['day'])
-
-        d['issue_ids'] = set(entries.values_list('issue_id', flat=True).distinct())
-        d['with_time_issues'] = d['issue_ids'].copy()
-
-        new_issues = Issue.objects.all().filter(project__business__in=projects, created__date=d['day'])
-
-        d['new_issues'] = new_issues.values_list('id', flat=True)
-        d['issue_ids'].update(d['new_issues'])
-
-        d['project_ids'] = set(entries.values_list('issue__project__business_id', flat=True).distinct())
-
-        new_projects = Project.objects.all().filter(id__in=projects, created__date=d['day'])
-
-        d['new_projects'] = new_projects.values_list('id', flat=True)
-        d['project_ids'].update(d['new_projects'])
-
-        d['sprint_ids'] = set(entries.values_list('issue__project_id', flat=True).distinct())
-
-        new_sprints = Sprint.objects.all().filter(business__in=projects, created__date=d['day'])
-
-        d['new_sprints'] = new_sprints.values_list('id', flat=True)
-        d['sprint_ids'].update(d['new_sprints'])
-
-        d['user_ids'] = entries.values_list('user_id', flat=True).distinct()
+        d['projects'] = {}
+        d['projects'].update(self._get_issues_with_time_by_project(user, projects, summary['day'], all_issue_ids, all_project_ids))
+        d['projects'].update(self._get_new_issues_by_project(user, projects, summary['day'], all_issue_ids, all_project_ids))
+        d['projects'].update(self._get_modified_issues_by_project(user, projects, summary['day'], all_issue_ids, all_project_ids))
 
         return d
 
