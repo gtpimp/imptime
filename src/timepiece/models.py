@@ -4248,11 +4248,18 @@ class Issue(BaseModel):
         return self.fixed_ctc_amount is not None
 
 class IssueComment(BaseModel):
+
+    COMMENT_TYPES = ( ('comment', 'Comment'),
+                      ('correspondence', 'Correspondence'),
+                      ('timesheet', 'Timesheet'),
+                      ('raw_spec', 'Raw spec' ) )
+    
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')
     comment = models.TextField(blank=True)
     author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    comment_type = models.CharField(max_length=50, choices=COMMENT_TYPES, null=False, default='comment')
 
     def copy(self):
         return IssueComment.objects.create(issue=self.issue,

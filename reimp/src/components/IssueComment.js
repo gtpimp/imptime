@@ -25,11 +25,14 @@ class IssueComment extends Component {
                 {comment.comment}
               </div>
               <div className="issue-comment__info" >
-                <div>
-                  {comment.modified}
+                <div className="issue_sidebar--comment_type">
+                  <div className={"icon--comment-type--"+comment.comment_type} />
                 </div>
                 <div className="issue_sidebar--comment_author">
                   <OtherUser user_id={comment.author_id} />
+                </div>
+                <div>
+                  {comment.modified}
                 </div>
                 { onDelete &&
                   <div onClick={onDelete} className="icon--small-delete" />

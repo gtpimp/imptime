@@ -61,7 +61,7 @@ Received: from gtplap3.mail.impd.co.za (unknown [105.225.71.229])
 User-agent: mu4e 0.9.15; emacs 24.5.1
 From: Gareth Priede <gtp@impd.co.za>
 To: malcolm@imptime.com
-Subject: yukcy is icky
+Subject: lucy galloosyt
 Date: Sat, 24 Mar 2018 13:21:51 +0200
 Message-ID: <87k1u190s0.fsf@impd.co.za>
 MIME-Version: 1.0
@@ -286,6 +286,15 @@ this is the colour of yukc
                              .order_by_project_id(project.id, descending=True)\
                              .first()
         if issue is None:
+
+            description = """Email from {first_name} {last_name} ({username}). 
+Sent at {sent_at} using email address {from_email} """.format(
+                            first_name=user.first_name,
+                            last_name=user.last_name,
+                            username=user.username,
+                            sent_at=message['time'],
+                            from_email=message['from'])
+            
             issue = Issue.objects.create(project=sprint,
                                          subject=raw_issue['subject'],
                                          auto_created_during_import=True,
@@ -294,24 +303,25 @@ this is the colour of yukc
                                          feature=raw_issue['feature'],
                                          assigned_to=user,
                                          number=Issue.get_next_issue_number(project),
-                                         description=raw_issue['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
+                                         description=description,
                                          story_points=0,
                                          created=message['time'],
                                          modified=message['time'])
             SprintIssueOrder.insert_at_the_end(issue)
-        else:
-            IssueComment.objects.create(issue=issue,
-                                        comment=raw_issue['description'],
-                                        author=user,
-                                        created=message['time'],
-                                        modified=message['time'])
+
+        IssueComment.objects.create(issue=issue,
+                                    comment=raw_issue['description'],
+                                    author=user,
+                                    comment_type='correspondence',
+                                    created=message['time'],
+                                    modified=message['time'])
 
         for attachment_content in message['files']:
             temp_physical_filename = os.path.join(settings.ISSUE_INBOX_TEMP_ATTACHMENT_FOLDER,
                                                   attachment_content['filename'])
             with open(temp_physical_filename, "wb") as f:
                 f.write(attachment_content['content'])
-            django_file = DjangoFile(open(temp_physical_filename))
+                django_file = DjangoFile(open(temp_physical_filename))
 
             VisualSpecDocument.create_for_doc(user=user,
                                               project=project,

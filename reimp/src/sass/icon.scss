@@ -163,8 +163,6 @@
     border-radius: 7px;
 }
 
-
-
 .issue_sidebar__issue_copy_img {
     @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');
     background-color: black;
@@ -175,3 +173,18 @@
     background-color: black;
 }
 
+.icon--comment-type--comment {
+    @include icon(20px, 20px, 'icon-comment.png');
+}
+
+.icon--comment-type--correspondence {
+    @include icon(20px, 20px, 'correspondence.png');
+}
+
+.icon--comment-type--timesheet {
+    @include icon(20px, 20px, 'icon-comment-timesheet.png');
+}
+
+.icon--comment-type--raw_spec {
+    @include icon(20px, 20px, 'icon-comment-raw-spec.png');
+}
