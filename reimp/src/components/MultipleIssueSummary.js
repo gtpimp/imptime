@@ -41,6 +41,7 @@ class MultipleIssueSummary extends Component {
 
     renderActualsByUser(summary) {
         const { show_costs } = this.props
+        summary.velocities_by_user = summary.velocities_by_user || {}
         return (
             <PropertyStackComponent>
               <h2>Actuals by user</h2>

@@ -71,14 +71,18 @@ class IssueToolbarPanel extends Component {
         dispatch(setItemFlag(LIST_KEY__ISSUE_LIST, issue_ids, 'expanded_issues', true))
     }
 
-    onMakeFeatureClick() {
-        event.stopPropagation()
+    onMakeFeatureClick(event) {
+        if ( event ) {
+            event.stopPropagation()
+        }
         const {dispatch, issue_ids} = this.props
         dispatch(updateIssueToggleAsFeature(issue_ids, true))
     }
 
-    onUnmakeFeatureClick() {
-        event.stopPropagation()
+    onUnmakeFeatureClick(event) {
+        if ( event ) {
+            event.stopPropagation()
+        }
         const {dispatch, issue_ids} = this.props
         dispatch(updateIssueToggleAsFeature(issue_ids, false))
     }
