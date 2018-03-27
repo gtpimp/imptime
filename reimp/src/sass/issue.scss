@@ -159,9 +159,9 @@ issue--grouped {
     padding: 5px;
     border: 1px solid $color-26;
     border-radius: 10px;
-    flex-grow: 1;
     margin-right: 20px;
     min-height: 50px;
+    width: 100%;
 }
 
 .issue-comment__info, .issue-testable__info {
@@ -169,5 +169,6 @@ issue--grouped {
     flex-direction: column;
     font-size: $font-size-small;
     opacity: 0.5;
+    min-width: 75px;
 } 
 

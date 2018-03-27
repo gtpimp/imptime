@@ -3,20 +3,8 @@ import { connect } from 'react-redux'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
 import {browserHistory} from 'react-router'
-import ReactMarkdown from 'react-markdown'
+import RenderedMarkdown from './RenderedMarkdown'
 import { has_permission } from '../actions/Users'
-
-const renderers = {
-    link: (props) => {
-        return (
-            <a href={props.href}
-               target="_blank"
-               onClick={(event) => event.stopPropagation()}>
-              {(props.children && props.children[0]) || props.href}
-            </a> 
-        )
-    }
-}
 
 class RenderedWiki extends Component {
 
@@ -39,7 +27,7 @@ class RenderedWiki extends Component {
         const content = (wiki.content || "").trim()
         return (
             <div className="text-component--readonly text-component--description">
-              <ReactMarkdown source={content} renderers={renderers} />
+              <RenderedMarkdown source={content} />
             </div>
         )
     }

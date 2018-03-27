@@ -8,7 +8,7 @@ from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from django.contrib.auth.models import User
 from timepiece.models import Business, Project, Activity, Entry, Location, Attribute
-from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder
+from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder, IssueComment
 import logging
 logger = logging.getLogger(__name__)
 
@@ -142,21 +142,22 @@ class Extractor(object):
                 
         feature, subject = self._unpack_subject(orgnode.Heading(), project.business)
 
+        issue_is_new = False
         if issue_id is None or issue is None:
             # Auto create the issue
             try:
-                issue, is_new = Issue.objects.get_or_create(project=project,
-                                                            subject=subject,
-                                                            defaults={'auto_created_during_import':True,
-                                                                      'issue_type':'adhoc',
-                                                                      'status2':IssueStatus.objects.get_or_create(name='dev done', business=business)[0],
-                                                                      'feature':feature,
-                                                                      'assigned_to':timesheet_user,
-                                                                      'number':Issue.get_next_issue_number(project.business),
-                                                                      'description':(orgnode.CleanBody() or "").strip(),
-                                                                      'story_points':0})
+                issue, issue_is_new = Issue.objects.get_or_create(project=project,
+                                                                  subject=subject,
+                                                                  defaults={'auto_created_during_import':True,
+                                                                            'issue_type':'adhoc',
+                                                                            'status2':IssueStatus.objects.get_or_create(name='dev done', business=business)[0],
+                                                                            'feature':feature,
+                                                                            'assigned_to':timesheet_user,
+                                                                            'number':Issue.get_next_issue_number(project.business),
+                                                                            'description':(orgnode.CleanBody() or "").strip(),
+                                                                            'story_points':0})
                 ProjectIssueOrder.insert_at_the_end(issue)
-                if is_new:
+                if issue_is_new:
                     self.status['num_issues_created'] += 1
             except Issue.MultipleObjectsReturned:
                 issue = Issue.objects.filter(project=project, subject=subject).first()
@@ -168,6 +169,7 @@ class Extractor(object):
                 self.status['errors'].append("Clock entry spans more than one day, if this is real then split the entry. From=%s, To=%s. Issue=%s:%s" % (clock['from'], clock['to'], issue.number, subject))
                 continue
             
+            timesheet_comment_text = orgnode.CleanBody().strip()
             Entry.objects.create(user=timesheet_user,
                                  source='emacs',
                                  start_time=clock['from'], end_time=clock['to'],
@@ -175,8 +177,7 @@ class Extractor(object):
                                  location=location,
                                  issue=issue,
                                  status='approved',
-                                 comments=orgnode.Heading(),
-                                 extended_comments=orgnode.CleanBody())
+                                 comments=orgnode.Heading())
 
             if issue is not None:
 
@@ -185,6 +186,15 @@ class Extractor(object):
                     issue.save()
                 
                 issues_processed.add(issue)
+
+                if not issue_is_new and len(timesheet_comment_text) > 0:
+                    timesheet_comment = IssueComment.objects.get_or_create(issue=issue,
+                                                                           comment_type='timesheet',
+                                                                           author=timesheet_user)[0]
+                    if timesheet_comment.comment != timesheet_comment_text:
+                        timesheet_comment.comment = timesheet_comment_text
+                        timesheet_comment.save()
+                
 
             self.status['num_entries_refreshed'] += 1
 

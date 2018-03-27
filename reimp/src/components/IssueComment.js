@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
 import {browserHistory} from 'react-router'
 import OtherUser from '../components/OtherUser'
+import RenderedMarkdown from './RenderedMarkdown'
 
 class IssueComment extends Component {
 
@@ -22,7 +23,7 @@ class IssueComment extends Component {
         return (
             <div className="issue-comment">
               <div className="issue-comment__text" >
-                {comment.comment}
+                <RenderedMarkdown content={comment.comment} />
               </div>
               <div className="issue-comment__info" >
                 <div className="issue_sidebar--comment_type">

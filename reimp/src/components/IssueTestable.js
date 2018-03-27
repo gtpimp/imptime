@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
 import {browserHistory} from 'react-router'
 import OtherUser from '../components/OtherUser'
-import ReactMarkdown from 'react-markdown'
+import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
 
 class IssueTestable extends Component {
@@ -25,7 +25,7 @@ class IssueTestable extends Component {
             <div className="issue-testable">
 
               <div className="issue-testable__text" >
-                <ReactMarkdown source={testable.steps} />
+                <RenderedMarkdown content={testable.steps} />
               </div>
 
               <div className="issue-testable__info" >

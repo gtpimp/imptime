@@ -5,19 +5,7 @@ import IssueDescriptionForm from './form/IssueDescriptionForm'
 import { updateIssueDescription, getIssue } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 import Blank from './form/Blank'
-import ReactMarkdown from 'react-markdown'
-
-const renderers = {
-    link: (props) => {
-        return (
-          <a href={props.href}
-             target="_blank"
-             onClick={(event) => event.stopPropagation()}>
-             {(props.children && props.children[0]) || props.href}
-          </a> 
-        )
-    }
-}
+import RenderedMarkdown from './RenderedMarkdown'
 
 class EditableIssueDescription extends Component {
 
@@ -45,7 +33,7 @@ class EditableIssueDescription extends Component {
             >
               <IssueDescriptionForm />
               <div className="text-component--readonly text-component--description">
-                <ReactMarkdown source={description} renderers={renderers} />
+                <RenderedMarkdown content={description} />
               </div>
               <div className="text-component--empty text-component--description">
                 ...
