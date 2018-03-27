@@ -17,6 +17,7 @@ var HTML5Backend = require('react-dnd-html5-backend');
 import ReactTooltip from 'react-tooltip'
 import Error from './Error'
 import Maintenance from './Maintenance'
+import GlobalCommentAnnotation from './GlobalCommentAnnotation'
 
 class MainLayout extends Component {
 
@@ -96,6 +97,7 @@ class MainLayout extends Component {
               <Websocket/>
               <Header/>
               <AutoClockPopup/>
+              <GlobalCommentAnnotation/>
               <div className="main">
                 {this.props.children}
               </div>

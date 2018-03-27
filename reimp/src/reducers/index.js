@@ -4,6 +4,7 @@ import cost_summary from './cost_summary'
 import estimate_summary from './estimate_summary'
 import editable_property from './editable_property'
 import filter from './filter'
+import global_comment_annotation from './global_comment_annotation'
 import issue from './issue'
 import issue_general_details from './issue_general_details'
 import item from './item'
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
     estimate_summary,
     filter,
     form: redux_form_reducer,
+    global_comment_annotation,
     item,
     issue,
     issue_general_details,
