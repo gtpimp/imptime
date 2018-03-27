@@ -2,16 +2,17 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { keyBy } from 'lodash'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
-import {browserHistory} from 'react-router'
-import OtherUser from '../components/OtherUser'
 import RenderedMarkdown from './RenderedMarkdown'
 import { has_permission } from '../actions/Users'
-import { getGlobalCommentAnnotation } from '../actions/GlobalCommentAnnotation'
+import { getGlobalCommentAnnotation, stopGlobalCommentAnnotation } from '../actions/GlobalCommentAnnotation'
+import Rnd from 'react-rnd'
+import IssueName from './IssueName'
 
 class GlobalCommentAnnotation extends Component {
 
     constructor(props) {
         super(props)
+        this.onCancel = this.onCancel.bind(this)
     }
     
     componentDidMount() {
@@ -24,8 +25,13 @@ class GlobalCommentAnnotation extends Component {
         dispatch(ensureIssuesLoaded([issue_id]))
     }
 
+    onCancel() {
+        const { dispatch } = this.props
+        dispatch(stopGlobalCommentAnnotation())
+    }
+
     render() {
-        const { issue, comment_id, can_annotate } = this.props
+        const { issue, issue_id, comment_id, can_annotate } = this.props
 
         if ( ! can_annotate ) {
             return null
@@ -37,11 +43,19 @@ class GlobalCommentAnnotation extends Component {
         const comment = keyBy(issue.comments, "id")[comment_id]
         
         return (
-            <div className="issue-comment">
-              <div className="issue-comment__text" >
+            <Rnd className="global-comment-annotation">
+              <div className="global-comment-annotation--header">
+                <h3 >
+                  Annotating for <IssueName issue_id={issue_id}/>
+                </h3>
+                <div className="global-comment-annotation__close">
+                  <i className="material-icons" onClick={this.onCancel}>close</i>
+                </div>
+              </div>
+              <div className="global-comment-annotation--body">
                 <RenderedMarkdown content={comment.comment} />
               </div>
-            </div>
+            </Rnd>
         )
     }
 }
