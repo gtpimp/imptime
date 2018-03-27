@@ -138,7 +138,7 @@ class IssueSidebar extends Component {
     render() {
 
         const {issue, comments, testables, attachments, visual_spec_documents,
-               sprint, show_review_section, show_emacs_section} = this.props
+               sprint, show_review_section, show_emacs_section, show_estimate_section} = this.props
 
         if (issue && issue.id) {
 
@@ -248,7 +248,7 @@ class IssueSidebar extends Component {
 
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Description">
+                        <PropertyStackComponent title="Context">
                           <EditableIssueDescription issue_id={issue.id}/>
                         </PropertyStackComponent>
 
@@ -268,12 +268,14 @@ class IssueSidebar extends Component {
                           <EditableIssueComment issue_id={issue.id} comment_id={null}/>
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Estimates">
-                          <div>
-                            <EditableIssueEstimate issue_id={issue.id} />
-                          </div>
-                          <IssueEstimatesSummary issue_id={issue.id} />
-                        </PropertyStackComponent>
+                        { show_estimate_section && 
+                          <PropertyStackComponent title="Estimates">
+                            <div>
+                              <EditableIssueEstimate issue_id={issue.id} />
+                            </div>
+                            <IssueEstimatesSummary issue_id={issue.id} />
+                          </PropertyStackComponent>
+                        }
 
                         <PropertyStackComponent title="Attachments">
                           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
@@ -322,6 +324,7 @@ function mapStateToProps(state, props) {
     const assignable_user_ids = project.allowed_user_ids || []
     const show_review_section = doesMienHaveFeature(state, 'review_schedule')
     const show_emacs_section = doesMienHaveFeature(state, 'emacs')
+    const show_estimate_section = doesMienHaveFeature(state, 'sidebar_issue_estimates')
     populateEstimates(state, issue)
 
     return {
@@ -336,7 +339,8 @@ function mapStateToProps(state, props) {
         sprint,
         assignable_user_ids,
         show_review_section,
-        show_emacs_section
+        show_emacs_section,
+        show_estimate_section
     }
 }
 

@@ -10,17 +10,18 @@ import { large_col_width, medium_col_width, small_col_width, tiny_col_width } fr
 export const MIENS = ['dev', 'reviewer', 'finance', 'client', 'tester', 'spec']
 const MIEN_FEATURES = { 'spec':
                         {
-                            'multiple_issue_summary': true
+                            'multiple_issue_summary': true,
                         },
 
                         'dev':
                         {
-                            'emacs': true
+                            'emacs': true,
                         },
                         
                         'reviewer':
                         {
-                            'review_schedule': true
+                            'review_schedule': true,
+                            'sidebar_issue_estimates': true
                         },
 
                         'finance':
