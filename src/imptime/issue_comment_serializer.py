@@ -17,3 +17,6 @@ class IssueCommentSerializer(BaseSerializer):
 
     def get_modified(self, obj):
         return obj.created.strftime('%b, %d, %Y, %I:%M %p')
+
+class IssueShareCommentSerializer(IssueCommentSerializer):
+    pass

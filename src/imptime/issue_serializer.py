@@ -6,7 +6,7 @@ from django.db.models import Sum
 from base_serializer import BaseSerializer, BaseModelSerializer
 from tag_serializer import TagSerializer
 from issue_estimate_serializer import IssueEstimateSerializer, IssueHoursSerializer
-from issue_comment_serializer import IssueCommentSerializer
+from issue_comment_serializer import IssueCommentSerializer, IssueShareCommentSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
 from visual_spec_issue_annotation_serializer import VisualSpecIssueAnnotationSerializer
 from imptime.models import VisualSpecDocument, VisualSpecIssueAnnotation
@@ -62,7 +62,7 @@ class IssueSerializer(BaseSerializer):
         issue.assigned_to_quick_name = \
             issue.assigned_to.username if issue.assigned_to_id else None
 
-        bp = BusinessPermissions.for_user(user=self.logged_in_user, business=issue.project.business, auto_create=False) 
+        bp = BusinessPermissions.for_user(user=self.logged_in_user, business=issue.project.business, auto_create=False)
         
         issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.status2_name = issue.status2.name if issue.status2_id else None
@@ -73,6 +73,7 @@ class IssueSerializer(BaseSerializer):
         issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
+            
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
         issue.visual_spec_document_ids = VisualSpecDocument.objects.filter(visual_spec_issues__issue=issue)\
                                                                    .order_by("visual_spec_issues__order")\
@@ -116,3 +117,27 @@ class IssueEstimate(BaseSerializer):
 
 class IssueWithEstimatesSerializer(IssueSerializer):
     issue_estimates = IssueEstimate(many=True)
+
+class IssueShareSerializer(BaseSerializer):
+    id = serializers.CharField()
+    subject = serializers.CharField()
+    description = serializers.CharField()
+    status_name = serializers.CharField(source='status2.name')
+    type_name = serializers.CharField(source="issue_type")
+    number = serializers.IntegerField()
+    sprint_id = serializers.CharField(source="project_id")
+    project_id = serializers.CharField(source="project.business_id")
+    tag_ids = serializers.ListField(child=serializers.CharField())
+    tag_category_ids = serializers.ListField(child=serializers.CharField())
+    can_group_issues = serializers.BooleanField()
+    group_children = ListField(source="group_children_ids")
+    comments = IssueShareCommentSerializer(many=True, source='allowed_comments')
+    created_at = serializers.DateTimeField(source='created')
+    modified_at = serializers.DateTimeField(source='modified')
+    share_ref = serializers.CharField()
+    
+    def to_representation(self, issue, *args, **kwargs):
+        issue.tag_category_ids = [x.category_id for x in issue.tags.all()]
+        issue.tag_ids = [x.id for x in issue.tags.all()]
+        issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
+        return super(IssueShareSerializer, self).to_representation(issue, *args, **kwargs)

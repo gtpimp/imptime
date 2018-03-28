@@ -9,8 +9,8 @@ import RenderedMarkdown from '../RenderedMarkdown'
 class ReadOnlyIssueComment extends Component {
 
     componentDidMount() {
-        const { dispatch, issue_ref } = this.props
-        dispatch(ensureIssuesLoadedByRef(issue_ref))
+        const { dispatch, issue_ref, comment_ref } = this.props
+        dispatch(ensureIssuesLoadedByRef(issue_ref, comment_ref))
     }
 
     render() {
@@ -52,7 +52,7 @@ function mapStateToProps(state, props) {
     const { obj_ref, subref } = props
     const issue_ref = obj_ref
     const comment_ref = subref
-    const issue = getIssueByRef(issue_ref)
+    const issue = getIssueByRef(state, issue_ref)
     
     return {
         issue,

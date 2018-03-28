@@ -1,5 +1,5 @@
 import logging
-from issue_serializer import IssueSerializer
+from issue_serializer import IssueSerializer, IssueShareSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from lib import hours_helper
@@ -420,3 +420,29 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
         
+@permission_classes(())
+class IssueShareViewSet(BaseViewSet):
+    """ Public non-authenticated endpoint """
+    def list(self, request):
+
+        try:
+            data = {}
+            params = json.loads(request.GET.get('params', '{}'))
+            additional_params = params['additional_params']
+            issue_share_ref = additional_params['ref']
+            comment_share_ref = additional_params['comment_ref']
+            issue = Issue.objects.get(share_ref=issue_share_ref)
+
+            issue.allowed_comments = [issue.comments.get(share_ref=comment_share_ref)]
+            
+            if not self.can_be_shared(issue) or not self.can_be_shared(issue.allowed_comments[0]):
+                data['status']='expired'
+            else:
+                data['status'] = 'success'
+                data['payload'] = {'issues': [IssueShareSerializer(issue).data]}
+            return HttpResponse(JSONRenderer().render(data))
+        
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        return HttpResponse(JSONRenderer().render(data))

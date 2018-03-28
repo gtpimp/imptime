@@ -54,7 +54,7 @@ class IssueComment extends Component {
     renderShareModal() {
         const { issue, comment } = this.props
         const loading = !comment.share_ref
-        const share_link = window.location.protocol + "//" + window.location.host + "/readonly/issue_comment/" + issue.share_ref + "/" + comment.share_ref
+        const share_link = window.location.protocol + "//" + window.location.host + "/share/issue_comment/" + issue.share_ref + "/" + comment.share_ref
         
         return (
             <Modal isOpen={true}

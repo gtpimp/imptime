@@ -96,7 +96,13 @@ function fetchItemsPromise(dispatch, state, entity_key, item_ids, additional_get
                          pagination: {'enabled': false},
                          additional_params: additional_get_args || null }
 
-        return impfetch(state, 'imp/'+entity_key+'/', dispatch, {params:params})
+        let url = 'imp/'+entity_key
+        if ( additional_get_args && additional_get_args.url_suffix ) {
+            url = url + additional_get_args.url_suffix
+        }
+        url = url + "/"
+        
+        return impfetch(state, url, dispatch, {params:params})
             .then(response => response.json())
             .then(json => {
                 if (json.status !== 'success') {
@@ -370,7 +376,7 @@ export function getItemByRef(state, entity_key, ref) {
     // Only gets the item if it's already loaded, use
     // ensureItemsLoaded to trigger a fetch from the server
     const items_by_id = get(state, ["item", entity_key, "items_by_id"], null)
-    const items_by_ref = keyBy(values(items_by_id, "ref"))
+    const items_by_ref = keyBy(values(items_by_id), "share_ref")
     return items_by_ref[ref]
 }
 

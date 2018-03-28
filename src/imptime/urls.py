@@ -82,6 +82,8 @@ router.register(r'visual_spec_issue_annotation', visual_spec_issue_annotation_ap
                 base_name='visual_spec_issue_annotation')
 router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')
+router.register(r'issue_share', issue_api.IssueShareViewSet,
+                base_name='share_issue')
 router.register(r'tag', tag_api.TagViewSet,
                 base_name='tag')
 router.register(r'user', user_api.UserViewSet,

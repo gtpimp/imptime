@@ -248,3 +248,9 @@ class BaseViewSet(viewsets.ViewSet):
         m.share_ref_created_at = now
         m.save()
         return m.share_ref
+
+    def can_be_shared(self, m):
+        now = timezone.now()
+        share_ref_expires_at = now - timezone.timedelta(days=settings.SHARE_REF_EXPIRY_DAYS)
+        return m.share_ref_created_at > share_ref_expires_at
+        

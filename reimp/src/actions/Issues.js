@@ -53,9 +53,12 @@ export function fetchIssuesIfNeeded(list_key) {
     }
 }
 
-export function ensureIssuesLoadedByRef(ref) {
-    const additional_get_args = {'ref':ref}
-    return ensureItemsLoaded(ENTITY_KEY__ISSUE, null, additional_get_args)
+export function ensureIssuesLoadedByRef(ref, comment_ref) {
+    const additional_get_args = {'ref':ref,
+                                 'comment_ref': comment_ref,
+                                 'url_suffix': '_share'}
+    const fake_issue_id = -1
+    return ensureItemsLoaded(ENTITY_KEY__ISSUE, [fake_issue_id], additional_get_args)
 }
 
 export function ensureIssuesLoaded(issue_ids) {
