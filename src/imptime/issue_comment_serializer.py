@@ -10,6 +10,7 @@ class IssueCommentSerializer(BaseSerializer):
     created = serializers.DateTimeField()
     modified = serializers.SerializerMethodField()
     comment_type = serializers.CharField()
+    share_ref = serializers.CharField()
 
     def to_representation(self, obj, *args, **kwargs):
         return super(IssueCommentSerializer, self).to_representation(obj, *args, **kwargs)

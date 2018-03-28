@@ -438,7 +438,7 @@ export function deleteTagFromIssues(tag_id, issue_ids) {
 }
 
 export function generateReadOnlyIssueCommentLink(issue_id, comment_id) {
-    const url = "imp/" + ENTITY_KEY__TAG + "/gen_readonly_comment_link/"
+    const url = "imp/" + ENTITY_KEY__ISSUE + "/gen_readonly_comment_link/"
     const field_name = "readonly_comment_link"
     const field_value = issue_id
     const method = "POST"

@@ -52,6 +52,7 @@ class IssueSerializer(BaseSerializer):
     created_by_id = serializers.CharField()
     modified_at = serializers.DateTimeField(source='modified')
     review_ids = serializers.ListField(child=serializers.CharField())
+    share_ref = serializers.CharField()
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -93,7 +94,9 @@ class IssueSerializer(BaseSerializer):
                 all_actuals.setdefault(entry.user_id, {'user_id':entry.user_id}).setdefault('hours', 0)
                 all_actuals[entry.user_id]['hours'] += entry.hours
             issue.all_actuals = all_actuals.values()
-            
+
+        if not bp.has_share_issues:
+            issue.share_ref = None
 
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 

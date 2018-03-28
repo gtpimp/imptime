@@ -1,36 +1,36 @@
 @import 'variables.scss';
 
-.editable-property-modal {
+.share-modal {
     background-color: $color-2;
     border-radius: 2px;
     box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
     padding: 16px;
-    width: 350px;
     position: absolute;
     top: 20%;
     bottom: 25%;
-    left: 40%;
+    left: 20%;
     outline: none;
     overflow: auto;
 }
 
-.editable-property-modal__overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.share-modal__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
-.editable-property-modal__close {
+.share-modal__close {
     cursor: pointer;
 }
 
-.editable-property-modal__content {
-  margin-top: 13px;
+.share-modal__content {
+    margin-top: 13px;
 }
 
-.editable-property-modal__title {
-  color: $color-1;
-  font: $font-4;
+.share-modal__title {
+    color: $color-1;
+    font: $font-4;
 }

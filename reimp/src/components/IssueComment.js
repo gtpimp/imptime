@@ -39,6 +39,10 @@ class IssueComment extends Component {
 
     onShare(event) {
         const { dispatch, issue_id, comment } = this.props
+        if ( event ) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
         dispatch(generateReadOnlyIssueCommentLink(issue_id, comment.id))
         this.setState({show_share_link: true})
     }
@@ -48,16 +52,19 @@ class IssueComment extends Component {
     }
 
     renderShareModal() {
-        const { comment } = this.props
+        const { issue, comment } = this.props
+        const loading = !comment.share_ref
+        const share_link = window.location.protocol + "//" + window.location.host + "/readonly/issue_comment/" + issue.share_ref + "/" + comment.share_ref
+        
         return (
             <Modal isOpen={true}
                    className="share-modal"
                    overlayClassName="share-modal__overlay"
                    onRequestClose={this.onCloseShareModal}
-                   contentLabel={"Share comment"}>
+                   contentLabel={"Share issue comment"}>
               <div>
                 <div className="share-modal__row share-modal__row--header">
-                  <label htmlFor="assigned" className="share-modal__title">{this.props.actionLabel}</label>
+                  <label htmlFor="assigned" className="share-modal__title">Share issue comment</label>
                   <div className="share-modal__close">
                     <i className="material-icons" onClick={this.onCloseShareModal}>
                       close
@@ -65,9 +72,13 @@ class IssueComment extends Component {
                   </div>
                 </div>
                 <div className="share-modal__content">
-                  { ! comment.share_link && <div>Loading...</div> }
-                  { comment.share_link &&
-                    <a target="_blank" href="{ comment.share_link }">{ comment.share_link }</a>
+                  { loading && <div>Loading...</div> }
+                  { ! loading &&
+                    <div>
+                      Share the following link:
+                      <br/>
+                      <a target="_blank" href="{ share_link }">{ share_link }</a>
+                    </div>
                   }
                 </div>
               </div>

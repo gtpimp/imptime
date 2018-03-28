@@ -1,5 +1,7 @@
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.utils import timezone
+import uuid
 from django.db.models import Q
 import math
 from django.http import HttpResponse
@@ -235,3 +237,14 @@ class BaseViewSet(viewsets.ViewSet):
         pup = ProjectPermissions.for_user(self.request.user, project)
         self._logged_in_permissions_by_project[project.id] = pup
         return pup
+
+    def generate_share_ref(self, m, force=False):
+        now = timezone.now()
+        share_ref_expires_at = now - timezone.timedelta(days=settings.SHARE_REF_EXPIRY_DAYS)
+        if not force and m.share_ref and m.share_ref_created_at > share_ref_expires_at:
+            return m.share_ref
+        share_ref = str(uuid.uuid4()).replace("-","")
+        m.share_ref = share_ref
+        m.share_ref_created_at = now
+        m.save()
+        return m.share_ref

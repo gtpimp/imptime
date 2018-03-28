@@ -15,18 +15,27 @@ class ReadOnlyIssueComment extends Component {
 
     render() {
         const { issue, comment_ref } = this.props
-        const comment = keyBy(issue.comments, "ref")[comment_ref]
+        const comments = (issue && issue.comments) || []
+        const comment = keyBy(comments, "share_ref")[comment_ref]
 
+        if ( ! comment ) {
+            return (
+                <div className="readonly__issue-comment">
+                  Loading...
+                </div>
+            )
+        }
+        
         return (
-            <div className="issue-comment">
-              <div className="issue-comment__text" >
+            <div className="readonly__issue-comment">
+              <div className="readonly__issue-comment__text" >
                 <RenderedMarkdown content={comment.comment} />
               </div>
-              <div className="issue-comment__info" >
-                <div className="issue_sidebar--comment_type">
+              <div className="readonly__issue-comment__info" >
+                <div className="readonly__issue_sidebar--comment_type">
                   <div className={"icon--comment-type--"+comment.comment_type} />
                 </div>
-                <div className="issue_sidebar--comment_author">
+                <div className="readonly__issue_sidebar--comment_author">
                   <OtherUser user_id={comment.author_id} />
                 </div>
                 <div>
@@ -40,8 +49,8 @@ class ReadOnlyIssueComment extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { ref, subref } = props
-    const issue_ref = ref
+    const { obj_ref, subref } = props
+    const issue_ref = obj_ref
     const comment_ref = subref
     const issue = getIssueByRef(issue_ref)
     

@@ -4,21 +4,17 @@ import {
     selectItems,
     invalidateList
 } from '../actions/ItemList'
-import { ReadOnlyIssueComment } from '../components/readonly/ReadOnlyIssueComment'
+import ReadOnlyIssueComment from '../components/readonly/ReadOnlyIssueComment'
 
 class ReadOnlyPage extends Component {
     
-    componentDidMount() {
-        const {dispatch, object_ref, ref} = this.props
-    }
-            
     render() {
-        const { object_type, ref, subref } = this.props
+        const { object_type, obj_ref, subref } = this.props
         
         return (
             <div className="read-only-page">
               { object_type === 'issue_comment' &&
-                <ReadOnlyIssueComment ref={ref} subref={subref} />
+                <ReadOnlyIssueComment obj_ref={obj_ref} subref={subref} />
               }
             </div>
         )
@@ -28,12 +24,12 @@ class ReadOnlyPage extends Component {
 function mapStateToProps(state, props) {
 
     const object_type = props.params.type
-    const ref = props.params.ref
+    const obj_ref = props.params.obj_ref
     const subref = props.params.subref
     
     return {
         object_type,
-        ref,
+        obj_ref,
         subref
     }
 }

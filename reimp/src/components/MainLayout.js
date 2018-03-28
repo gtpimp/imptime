@@ -66,7 +66,8 @@ class MainLayout extends Component {
 
         const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') != -1 ||
                                this.props.location.pathname.indexOf('password/reminded') != -1 ||
-                               this.props.location.pathname.indexOf('account/create') != -1
+                               this.props.location.pathname.indexOf('account/create') != -1 ||
+                               this.props.location.pathname.indexOf('readonly/') != -1
 
         if ( ! are_settings_loaded ) {
             return (

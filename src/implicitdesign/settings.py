@@ -470,6 +470,9 @@ EMAIL_PORT = 587
 FROM_EMAIL="imptime@impd.co.za"
 WEEKLY_HOURS_MAIL_RECIPIENT = ""
 
+# the number of days before share refs expire
+SHARE_REF_EXPIRY_DAYS = 30
+
 ISSUE_INBOX_HOST = 'mail.impd.co.za'
 ISSUE_INBOX_USER = 'impbox@impd.co.za'
 ISSUE_INBOX_PASSWORD = 'xxxx'

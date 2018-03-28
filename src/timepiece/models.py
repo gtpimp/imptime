@@ -3973,6 +3973,9 @@ class Issue(BaseModel):
     parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
     tags = models.ManyToManyField("Tag", related_name="issues")
 
+    share_ref = models.CharField(max_length=40, null=True)
+    share_ref_created_at = models.DateTimeField(null=True)
+
     objects = IssueQuerySet().as_manager()
 
     def save(self, *args, **kwargs):
@@ -4267,6 +4270,9 @@ class IssueComment(BaseModel):
     modified = models.DateTimeField(auto_now=True)
     comment_type = models.CharField(max_length=50, choices=COMMENT_TYPES, null=False, default='comment')
 
+    share_ref = models.CharField(max_length=40, null=True)
+    share_ref_created_at = models.DateTimeField(null=True)
+    
     def copy(self):
         return IssueComment.objects.create(issue=self.issue,
                                            comment=self.comment,

@@ -395,3 +395,28 @@ class IssueViewSet(BaseViewSet):
         if project_id is not None:
             raw_filter_args['sprint__project_id'] = project_id
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
+
+    @list_route(methods=['POST'])
+    def gen_readonly_comment_link(self, request):
+        try:
+            params = request.data
+            issue_id = params['issue_id']
+            comment_id = params['comment_id']
+            issue = self.allowed_issue(issue_id)
+            comment = issue.comments.get(pk=comment_id)
+            if not self.logged_in_permissions(issue.project.business).has_share_issues:
+                raise Exception("No permission to share issues")
+
+            self.generate_share_ref(issue)
+            self.generate_share_ref(comment)
+
+            issue = self.allowed_issue(issue_id)
+
+            data = {'status': 'success', 'issues': []}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+        

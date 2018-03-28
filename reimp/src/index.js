@@ -91,8 +91,8 @@ ReactDOM.render(
           <Route path="projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
           <Route path="visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
 
-          <Route path="readonly/:type/:ref" component={ReadOnlyPage}/>
-          <Route path="readonly/:type/:ref/:subref" component={ReadOnlyPage}/>
+          <Route path="readonly/:type/:obj_ref" component={ReadOnlyPage}/>
+          <Route path="readonly/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
 
           <Route path="dashboard" component={DashboardPage}/>
           <Route path="usertimesheets" component={UserTimesheetPage}/>
