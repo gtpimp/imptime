@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
+import { getIssue, ensureIssuesLoaded, generateReadOnlyIssueCommentLink } from '../actions/Issues'
+import Modal from 'react-modal';
 import {browserHistory} from 'react-router'
 import OtherUser from '../components/OtherUser'
 import RenderedMarkdown from './RenderedMarkdown'
@@ -12,6 +13,9 @@ class IssueComment extends Component {
     constructor(props) {
         super(props)
         this.onAnnotate = this.onAnnotate.bind(this)
+        this.onShare = this.onShare.bind(this)
+        this.onCloseShareModal = this.onCloseShareModal.bind(this)
+        this.state = {show_share_link: false}
     }
     
     componentDidMount() {
@@ -33,11 +37,52 @@ class IssueComment extends Component {
         dispatch(startGlobalCommentAnnotation(issue_id, comment.id))
     }
 
+    onShare(event) {
+        const { dispatch, issue_id, comment } = this.props
+        dispatch(generateReadOnlyIssueCommentLink(issue_id, comment.id))
+        this.setState({show_share_link: true})
+    }
+
+    onCloseShareModal(event) {
+        this.setState({show_share_link: false})
+    }
+
+    renderShareModal() {
+        const { comment } = this.props
+        return (
+            <Modal isOpen={true}
+                   className="share-modal"
+                   overlayClassName="share-modal__overlay"
+                   onRequestClose={this.onCloseShareModal}
+                   contentLabel={"Share comment"}>
+              <div>
+                <div className="share-modal__row share-modal__row--header">
+                  <label htmlFor="assigned" className="share-modal__title">{this.props.actionLabel}</label>
+                  <div className="share-modal__close">
+                    <i className="material-icons" onClick={this.onCloseShareModal}>
+                      close
+                    </i>
+                  </div>
+                </div>
+                <div className="share-modal__content">
+                  { ! comment.share_link && <div>Loading...</div> }
+                  { comment.share_link &&
+                    <a target="_blank" href="{ comment.share_link }">{ comment.share_link }</a>
+                  }
+                </div>
+              </div>
+            </Modal>
+        )
+    }
+    
     render() {
-        const { comment, onDelete, can_annotate } = this.props
+        const { comment, onDelete, can_annotate, can_share } = this.props
+        const { show_share_link } = this.state
 
         return (
             <div className="issue-comment">
+              { show_share_link && this.renderShareModal() }
+              
               <div className="issue-comment__text" >
                 <RenderedMarkdown content={comment.comment} />
               </div>
@@ -57,6 +102,9 @@ class IssueComment extends Component {
                 { can_annotate &&
                   <div onClick={this.onAnnotate} className="icon--comment-annotate" />
                 }
+                { can_share &&
+                  <div onClick={this.onShare} className="icon--comment-share" />
+                }
               </div>
             </div>
         )
@@ -68,14 +116,15 @@ function mapStateToProps(state, props) {
     const { issue_id, comment, onDelete } = props
     const issue = getIssue(state, issue_id)
     const can_annotate = has_permission(state, issue.project_id, 'has_add_issue')
+    const can_share = has_permission(state, issue.project_id, 'has_share_issues')
     
     return {
         issue,
         comment,
         onDelete,
-        can_annotate
+        can_annotate,
+        can_share
     }
 }
-
 
 export default connect(mapStateToProps)(IssueComment)

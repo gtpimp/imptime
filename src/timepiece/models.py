@@ -432,6 +432,7 @@ class BusinessPermissions(BaseModel):
     can_view_project_card = models.BooleanField(default=True, verbose_name="Can View Sprint Card")
     can_edit_issues = models.BooleanField(default=True, verbose_name="Can Edit Issues")
     can_view_issues = models.BooleanField(default=True, verbose_name="Can View Issues")
+    can_share_issues = models.BooleanField(default=True, verbose_name="Can Share Issues")
     can_edit_issue_states = models.BooleanField(default=True, verbose_name="Can Edit Issue States")
     can_edit_project_states = models.BooleanField(default=True, verbose_name="Can Edit Sprint States")
     can_add_issue = models.BooleanField(default=True, verbose_name="Can Add Issue")
@@ -530,6 +531,7 @@ class BusinessPermissions(BaseModel):
         bp.can_view_project_card = True
         bp.can_edit_issues = True
         bp.can_view_issues = True
+        bp.can_share_issues = True
         bp.can_edit_issue_states = True
         bp.can_edit_project_states = True
         bp.can_add_issue = True
@@ -679,6 +681,10 @@ class BusinessPermissions(BaseModel):
     @property
     def has_edit_issues(self):
         return self.is_active_member_of_business and self.can_edit_issues
+
+    @property
+    def has_share_issues(self):
+        return self.is_active_member_of_business and self.can_share_issues
     
     @property
     def has_view_issues(self):

@@ -153,6 +153,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_view_testables'].widget.attrs['class'] = 'safe'
 
         self.fields['can_view_actual_hours'].widget.attrs['class'] = 'safe'
+        self.fields['can_share_issues'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_estimate_own_points'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_see_other_user_points'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_view_calendar'].widget.attrs['class'] = 'medium-safe'

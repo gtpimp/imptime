@@ -14,6 +14,7 @@ import {
     getItem,
     getItems,
     getItemsById,
+    getItemByRef,
     updateItem,
     startCandidateItem,
     saveCandidateItem,
@@ -52,8 +53,17 @@ export function fetchIssuesIfNeeded(list_key) {
     }
 }
 
+export function ensureIssuesLoadedByRef(ref) {
+    const additional_get_args = {'ref':ref}
+    return ensureItemsLoaded(ENTITY_KEY__ISSUE, null, additional_get_args)
+}
+
 export function ensureIssuesLoaded(issue_ids) {
     return ensureItemsLoaded(ENTITY_KEY__ISSUE, issue_ids)
+}
+
+export function getIssueByRef(state, ref) {
+    return getItemByRef(state, ENTITY_KEY__ISSUE, ref)
 }
 
 export function getIssue(state, issue_id) {
@@ -425,4 +435,13 @@ export function deleteTagFromIssues(tag_id, issue_ids) {
     const method = "DELETE"
     const data = { issue_ids: issue_ids }
     return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data)
+}
+
+export function generateReadOnlyIssueCommentLink(issue_id, comment_id) {
+    const url = "imp/" + ENTITY_KEY__TAG + "/gen_readonly_comment_link/"
+    const field_name = "readonly_comment_link"
+    const field_value = issue_id
+    const method = "POST"
+    const data = { issue_id: issue_id, comment_id: comment_id }
+    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
 }

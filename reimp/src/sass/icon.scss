@@ -192,3 +192,7 @@
 .icon--comment-annotate {
     @include icon(20px, 20px, 'icon-comment-raw-spec.png');
 }
+
+.icon--comment-share {
+    @include icon(20px, 20px, 'icon-share.png');
+}

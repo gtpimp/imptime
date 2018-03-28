@@ -25,6 +25,7 @@ import NudgePage from './containers/NudgePage'
 import WorkSummaryPage from './containers/WorkSummaryPage'
 import ProjectRoadmapPage from './containers/ProjectRoadmapPage'
 import ProjectWikiPage from './containers/ProjectWikiPage'
+import ReadOnlyPage from './containers/ReadOnlyPage'
 import ReleaseNotesPage from './containers/ReleaseNotesPage'
 import SprintsPage from './containers/SprintsPage'
 import VisualSpecDocumentPage from './components/visual_spec/VisualSpecDocumentPage'
@@ -89,6 +90,9 @@ ReactDOM.render(
           <Route path="projects/:projectId/users" component={ProjectUserPage}/>
           <Route path="projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
           <Route path="visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+
+          <Route path="readonly/:type/:ref" component={ReadOnlyPage}/>
+          <Route path="readonly/:type/:ref/:subref" component={ReadOnlyPage}/>
 
           <Route path="dashboard" component={DashboardPage}/>
           <Route path="usertimesheets" component={UserTimesheetPage}/>

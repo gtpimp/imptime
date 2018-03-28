@@ -1,7 +1,7 @@
 import { impfetch } from './lib.js'
 
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
-import { map, difference, intersection, keyBy, compact, find, filter } from 'lodash'
+import { get, values, map, difference, intersection, keyBy, compact, find, filter } from 'lodash'
 
 export const ANNOUNCE_ITEMS_SAVING = 'ANNOUNCE_ITEMS_SAVING'
 export const ANNOUNCE_ITEMS_SAVED = 'ANNOUNCE_ITEMS_SAVED'
@@ -364,6 +364,14 @@ export function getItem(state, entity_key, item_id) {
     // Only gets the item if it's already loaded, use
     // ensureItemsLoaded to trigger a fetch from the server
     return (((state.item || {})[entity_key] || {}).items_by_id || {})[item_id] || null
+}
+
+export function getItemByRef(state, entity_key, ref) {
+    // Only gets the item if it's already loaded, use
+    // ensureItemsLoaded to trigger a fetch from the server
+    const items_by_id = get(state, ["item", entity_key, "items_by_id"], null)
+    const items_by_ref = keyBy(values(items_by_id, "ref"))
+    return items_by_ref[ref]
 }
 
 export function getAllItems(state, entity_key) {
