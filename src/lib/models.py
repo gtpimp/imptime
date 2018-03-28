@@ -3,6 +3,8 @@ from django.forms.models import model_to_dict as _model_to_dict
 from datetime import datetime, date
 from api import apidate
 import decimal
+from django.conf import settings
+from django.utils import timezone
 
 def model_to_dict_with_date_support(m):
     d = _model_to_dict(m)
@@ -39,3 +41,9 @@ class BaseModel(models.Model):
     
     def model_to_dict(self):
         return model_to_dict_with_date_support(self)
+
+    @property
+    def share_ref_expiry(self):
+        if not hasattr(self, "share_ref_created_at"):
+            return None
+        return self.share_ref_created_at + timezone.timedelta(days=settings.SHARE_REF_EXPIRY_DAYS)

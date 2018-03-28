@@ -3,8 +3,9 @@ import {connect} from 'react-redux'
 import { keyBy } from 'lodash'
 import { getIssueByRef, ensureIssuesLoadedByRef } from '../../actions/Issues'
 import {browserHistory} from 'react-router'
-import OtherUser from '../../components/OtherUser'
 import RenderedMarkdown from '../RenderedMarkdown'
+import IssueName from '../IssueName'
+import Timestamp from '../Timestamp'
 
 class ReadOnlyIssueComment extends Component {
 
@@ -20,27 +21,28 @@ class ReadOnlyIssueComment extends Component {
 
         if ( ! comment ) {
             return (
-                <div className="readonly__issue-comment">
+                <div className="sharing__issue-comment">
                   Loading...
                 </div>
             )
         }
         
         return (
-            <div className="readonly__issue-comment">
-              <div className="readonly__issue-comment__text" >
+            <div className="sharing__issue-comment">
+              <div className="sharing__title">
+                <h3><IssueName issue_id={issue.id} /></h3>
+              </div>
+              <div className="sharing__disclaimer">
+                <div>
+                  This is a read-only and shared version of this text. It will expire
+                </div>
+                <Timestamp value={comment.share_ref_expiry} format='from_now' />
+              </div>
+              <div className="sharing__issue-comment__text" >
                 <RenderedMarkdown content={comment.comment} />
               </div>
-              <div className="readonly__issue-comment__info" >
-                <div className="readonly__issue_sidebar--comment_type">
-                  <div className={"icon--comment-type--"+comment.comment_type} />
-                </div>
-                <div className="readonly__issue_sidebar--comment_author">
-                  <OtherUser user_id={comment.author_id} />
-                </div>
-                <div>
-                  {comment.modified}
-                </div>
+              <div className="sharing__issue-comment__info" >
+                Last modified <Timestamp value={comment.modified} format='from_now' />
               </div>
             </div>
         )

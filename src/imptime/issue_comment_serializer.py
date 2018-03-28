@@ -11,6 +11,7 @@ class IssueCommentSerializer(BaseSerializer):
     modified = serializers.SerializerMethodField()
     comment_type = serializers.CharField()
     share_ref = serializers.CharField()
+    share_ref_expiry = serializers.DateTimeField()
 
     def to_representation(self, obj, *args, **kwargs):
         return super(IssueCommentSerializer, self).to_representation(obj, *args, **kwargs)

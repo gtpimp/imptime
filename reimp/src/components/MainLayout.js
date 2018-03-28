@@ -69,6 +69,8 @@ class MainLayout extends Component {
                                this.props.location.pathname.indexOf('account/create') != -1 ||
                                this.props.location.pathname.indexOf('share/') != -1
 
+        const is_share = this.props.location.pathname.indexOf('share/') != -1
+        
         if ( ! are_settings_loaded ) {
             return (
                 <div>Loading settings...</div>
@@ -84,6 +86,7 @@ class MainLayout extends Component {
         }
 
         if ( ! is_logged_in ) {
+
             return (
                 <div className="app">
                   <Maintenance/>
@@ -92,7 +95,7 @@ class MainLayout extends Component {
                 </div>
             )
         }
-        
+
         return (
             <div className="app">
               <Websocket/>

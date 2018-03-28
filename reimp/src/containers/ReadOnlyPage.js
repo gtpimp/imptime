@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
+import Websocket from '../components/Websocket'
 import {connect} from 'react-redux'
 import {
     selectItems,
     invalidateList
 } from '../actions/ItemList'
 import ReadOnlyIssueComment from '../components/readonly/ReadOnlyIssueComment'
+import ReadOnlyHeader from '../components/readonly/ReadOnlyHeader'
 
 class ReadOnlyPage extends Component {
     
@@ -12,10 +14,14 @@ class ReadOnlyPage extends Component {
         const { object_type, obj_ref, subref } = this.props
         
         return (
-            <div className="read-only-page">
-              { object_type === 'issue_comment' &&
-                <ReadOnlyIssueComment obj_ref={obj_ref} subref={subref} />
-              }
+            <div className="sharing-page">
+              <Websocket/>
+              <ReadOnlyHeader/>
+              <div className="sharing-page-content">
+                { object_type === 'issue_comment' &&
+                  <ReadOnlyIssueComment obj_ref={obj_ref} subref={subref} />
+                }
+              </div>
             </div>
         )
     }

@@ -135,6 +135,7 @@ class IssueShareSerializer(BaseSerializer):
     created_at = serializers.DateTimeField(source='created')
     modified_at = serializers.DateTimeField(source='modified')
     share_ref = serializers.CharField()
+    share_ref_expiry = serializers.DateTimeField()
     
     def to_representation(self, issue, *args, **kwargs):
         issue.tag_category_ids = [x.category_id for x in issue.tags.all()]
