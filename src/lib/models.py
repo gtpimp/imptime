@@ -44,6 +44,7 @@ class BaseModel(models.Model):
 
     @property
     def share_ref_expiry(self):
-        if not hasattr(self, "share_ref_created_at"):
+        if not hasattr(self, "share_ref_created_at") or self.share_ref_created_at is None:
             return None
         return self.share_ref_created_at + timezone.timedelta(days=settings.SHARE_REF_EXPIRY_DAYS)
+ 
