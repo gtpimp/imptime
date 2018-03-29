@@ -3955,6 +3955,7 @@ class Issue(BaseModel):
     subject = models.TextField(db_index=True)
     subject_quality_error = models.TextField(null=True)
     description = models.TextField(blank=True)
+    enriched_description = models.TextField(blank=True, null=True)
     story_points = models.FloatField(null=True,blank=True)
     order_deprecated = models.FloatField(null=True,blank=True) #deprecated
     feature = models.ForeignKey("Feature", blank=True, null=True, related_name='issues')
@@ -4269,10 +4270,11 @@ class IssueComment(BaseModel):
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     comment_type = models.CharField(max_length=50, choices=COMMENT_TYPES, null=False, default='comment')
+    enriched_comment = models.TextField(blank=True, null=True)
 
     share_ref = models.CharField(max_length=40, null=True)
     share_ref_created_at = models.DateTimeField(null=True)
-    
+
     def copy(self):
         return IssueComment.objects.create(issue=self.issue,
                                            comment=self.comment,

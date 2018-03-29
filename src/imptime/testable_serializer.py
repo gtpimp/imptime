@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 class TestableSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     steps = serializers.CharField()
+    enriched_steps = serializers.CharField()
     name = serializers.CharField()
     quality_error = serializers.CharField()
 

@@ -2,6 +2,7 @@ import logging
 from issue_serializer import IssueSerializer, IssueShareSerializer
 from issue_attachment_serializer import IssueAttachmentSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
+from markdown_enrichment import MarkdownEnrichment
 from lib import hours_helper
 from imptime.bulk_text_parser import BulkTextParser
 from issue_serializer import IssueWithEstimatesSerializer
@@ -137,6 +138,7 @@ class IssueViewSet(BaseViewSet):
                     if self.logged_in_permissions(issue.project.business).has_edit_description:
                         old_description = issue.description
                         issue.description = new_value
+                        issue.enriched_description = MarkdownEnrichment(request.user).enrich(issue.description)
                         IssueHistory.add_history(
                             request.user, issue, "changed description",
                             old_description, issue.description)

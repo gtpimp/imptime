@@ -4,6 +4,7 @@ from issue_serializer import IssueGeneralDetailsSerializer
 from issue_serializer import IssueWithEstimatesSerializer
 from django.utils import timezone
 from rest_framework.decorators import detail_route
+from markdown_enrichment import MarkdownEnrichment
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -37,6 +38,7 @@ class TestableViewSet(BaseViewSet):
 
             testable = Testable.objects.get_or_create(issue=issue,
                                                       steps=testable_value,
+                                                      enriched_steps=MarkdownEnrichment(request.user).enrich(testable_value),
                                                       order=max_order+1)[0]
             issue.save()
             IssueHistory.add_history(request.user, issue,
@@ -60,6 +62,7 @@ class TestableViewSet(BaseViewSet):
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
             old_testable_value = testable.steps
             testable.steps = testable_value
+            testable.enriched_steps = MarkdownEnrichment(request.user).enrich(testable.steps)
 
             IssueHistory.add_history(request.user, issue, "edited testable %s" % testable_id,
                                      old_testable_value, testable.steps)
@@ -96,7 +99,6 @@ class TestableViewSet(BaseViewSet):
     @detail_route(methods=['POST'])
     def promoteToIssue(self, request, pk):
         try:
-            params = request.data
             testable_id = pk
             testable = Testable.objects.get(pk=testable_id)
             issue = self.allowed_issue(testable.issue_id)

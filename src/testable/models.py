@@ -12,6 +12,7 @@ class Testable(models.Model):
     include_in_regression_test = models.BooleanField(default=True, blank=True)
     issue = models.ForeignKey(Issue, blank=True, null=False, related_name='testables')
     steps = models.TextField(null=False)
+    enriched_steps = models.TextField(null=True)
     order = models.IntegerField(null=False, default=0)
     quality_error = models.CharField(max_length=255, null=True)
 

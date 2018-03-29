@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 class IssueCommentSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     comment = serializers.CharField()
+    enriched_comment = serializers.CharField()
     author_id = serializers.CharField()
     created = serializers.DateTimeField()
     modified = serializers.SerializerMethodField()

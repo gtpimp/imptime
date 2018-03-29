@@ -95,7 +95,7 @@ class IssueComment extends Component {
               { show_share_link && this.renderShareModal() }
               
               <div className="issue-comment__text" >
-                <RenderedMarkdown content={comment.comment} />
+                <RenderedMarkdown content={comment.enriched_comment || comment.comment} />
               </div>
               <div className="issue-comment__info" >
                 <div className="issue_sidebar--comment_type">

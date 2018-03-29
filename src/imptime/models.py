@@ -272,6 +272,7 @@ class WikiPage(BaseModel):
     name = models.CharField(max_length=100, null=False, blank=False)
     project = ProtectedForeignKey(Project, related_name='wikis', null=False)
     content = models.TextField(null=True)
+    enriched_content = models.TextField(null=True)
 
     def save(self, *args, **kwargs):
         was_created = not self.id

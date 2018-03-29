@@ -12,5 +12,6 @@ class WikiPageSerializer(BaseModelSerializer):
                    'project_id',
                    'money_sensitive',
                    'name',
-                   'content' ]
+                   'content',
+                   'enriched_content']
         

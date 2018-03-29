@@ -5,6 +5,7 @@ from issue_serializer import IssueWithEstimatesSerializer
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
+from imptime.markdown_enrichment import MarkdownEnrichment
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.db.models import Count, Sum
@@ -26,11 +27,13 @@ class IssueCommentViewSet(BaseViewSet):
             params = request.data
             issue_pk = params['issue_id']
             comment_value = params['comment']
+            enriched_comment_value = MarkdownEnrichment(request.user).enrich(comment_value)
 
             issue = self.allowed_issue(issue_pk)
             comment = IssueComment.objects.get_or_create(issue=issue,
                                                          author=request.user,
-                                                         comment=comment_value)[0]
+                                                         comment=comment_value,
+                                                         enriched_comment=enriched_comment_value)[0]
             issue.comments.add(comment)
             issue.save()
 
@@ -56,9 +59,11 @@ class IssueCommentViewSet(BaseViewSet):
             old_comment_value = comment.comment
             comment.comment = comment_value
             comment.author = request.user
-
+            comment.enriched_comment = MarkdownEnrichment(request.user).enrich(comment.comment)
+            
             IssueHistory.add_history(request.user, issue, "edited comment %s" % comment_id,
                                      old_comment_value, comment.comment)
+
             comment.save()
             issue.save()
             data = {'status': 'success'}

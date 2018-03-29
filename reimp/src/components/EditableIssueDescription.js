@@ -24,6 +24,7 @@ class EditableIssueDescription extends Component {
         const { issue, can_edit } = this.props
 
         const description = (issue.description || "").trim()
+        const enriched_description = (issue.enriched_description || "").trim() || description
         
         return (
             <EditableProperty property_key={'issue_description'+issue.id}
@@ -33,11 +34,9 @@ class EditableIssueDescription extends Component {
             >
               <IssueDescriptionForm />
               <div className="text-component--readonly text-component--description">
-                <RenderedMarkdown content={description} />
+                <RenderedMarkdown content={enriched_description} />
               </div>
-              <div className="text-component--empty text-component--description">
-                ...
-              </div>
+              <div className="text-component--empty text-component--description"> </div>
             </EditableProperty>
         )
     }

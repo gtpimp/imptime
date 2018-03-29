@@ -3,6 +3,7 @@ from wiki_serializer import WikiPageSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
+from markdown_enrichment import MarkdownEnrichment
 from django.db.models import Prefetch, Count, Sum
 import json
 from django.utils import timezone
@@ -71,6 +72,7 @@ class WikiViewSet(BaseViewSet):
                         wiki_page.money_sensitive = new_value
                 elif field_name == "content":
                     wiki_page.content = new_value
+                    wiki_page.enriched_content = MarkdownEnrichment(request.user).enrich(wiki_page.content)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 wiki_page.save()
