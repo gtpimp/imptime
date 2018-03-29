@@ -22,6 +22,7 @@ import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../a
 import { invalidateAutoClocks } from '../actions/AutoClock'
 import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSummary'
 import { invalidateSurForSprintAndUser } from '../actions/SprintUserRates'
+import { invalidateWikis } from '../actions/Wikis'
 
 import {
     invalidateList
@@ -94,6 +95,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateUsers([d.entity_ref]))
     } else if ( d.entity_name === 'rate' ) {
         dispatch(invalidateSurForSprintAndUser(d.params.sprint_id, d.params.user_id))
+    } else if ( d.entity_name === 'wikipage' ) {
+        dispatch(invalidateWikis([d.entity_ref]))
     }
 }
 
