@@ -31,7 +31,6 @@ class IssueCommentForm extends Component {
         return (
             <Textarea
                 rows="1"
-                maxLength="3000"
                 className="textarea textarea--text-component textarea--comment"
                 placeholder="Comment"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}

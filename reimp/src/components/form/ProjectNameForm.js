@@ -23,7 +23,7 @@ class ProjectNameForm extends Component {
         return (
             <Textarea
                 rows="1"
-                maxLength="3000"
+                maxLength="300"
                 className="textarea textarea--text-component"
                 placeholder="Name"
                 onChange={input.onChange}

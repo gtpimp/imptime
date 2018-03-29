@@ -30,7 +30,6 @@ class IssueTestableForm extends Component {
         return (
             <Textarea
                 rows="1"
-                maxLength="3000"
                 className="textarea textarea--text-component textarea--testable"
                 placeholder="Testable"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}

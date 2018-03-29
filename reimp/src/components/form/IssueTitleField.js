@@ -22,7 +22,7 @@ class IssueTitleField extends Component {
         return (
             <input
                 onKeyDown={onKeyDown}
-                maxLength="3000"
+                maxLength="300"
                 className="textarea textarea--text-component textarea--title"
                 placeholder="Title"
                 onChange={input.onChange}
