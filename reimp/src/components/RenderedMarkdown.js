@@ -45,6 +45,7 @@ class RenderedMarkdownEnrichedIssue extends Component {
         super(props)
         this.showPopup = this.showPopup.bind(this)
         this.hidePopup = this.hidePopup.bind(this)
+        this.gotoIssue = this.gotoIssue.bind(this)
         this.state = {show_popup: false}
     }
 
@@ -54,6 +55,14 @@ class RenderedMarkdownEnrichedIssue extends Component {
 
     hidePopup() {
         this.setState({show_popup: false})
+    }
+
+    gotoIssue(event) {
+        event.preventDefault()
+        event.stopPropagation()
+        const { attrs } = this.props
+        const { project_id, sprint_id, issue_id } = attrs
+        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
     }
     
     render() {
@@ -69,16 +78,17 @@ class RenderedMarkdownEnrichedIssue extends Component {
               { show_popup &&
                 <div className="rendered_markdown__tooltip">
                   
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue">
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_number"
+                       onClick={this.gotoIssue}>
                     issue{attrs.issue_number}
                   </div>
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue">
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_subject">
                     {attrs.issue_subject}
                   </div>
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue">
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_status">
                     Issue status: {attrs.issue_status}
                   </div>
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--modified">
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_modified">
                     Issue last modified <Timestamp value={attrs.issue_modified} format="from_now"/>
                   </div>
                   <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--sprint">

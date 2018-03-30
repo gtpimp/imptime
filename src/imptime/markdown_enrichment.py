@@ -26,12 +26,15 @@ class MarkdownEnrichment(object):
                 issue = PermissionHelper().allowed_issues(self.logged_in_user)\
                                           .get(project__business_id=project_id, #sic
                                                number=issue_number)
-                inline_issue = {"issue_number":issue_number,
+                inline_issue = {"issue_id": issue.id,
+                                "issue_number": issue_number,
                                 "issue_status": issue.status2.name,
                                 "issue_subject": issue.subject,
                                 "issue_modified": issue.modified,
                                 "sprint_name": issue.project.name, #sic
-                                "sprint_status": issue.project.status3.name #sic
+                                "sprint_id": issue.project_id, #sic
+                                "sprint_status": issue.project.status3.name, #sic
+                                "project_id": issue.project.business_id #sic
                                 }
             except Issue.DoesNotExist:
                 inline_issue = {"issue_number":str(issue_number) + " (not found or permission denied)"}
