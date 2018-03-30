@@ -6,7 +6,7 @@ from markdown_enrichment_serializer import MarkdownEnrichmentSerializer
 
 class MarkdownEnrichment(object):
 
-    issue_pattern = re.compile("`issue(\d*)`")
+    issue_pattern = re.compile("issue(\d*)")
     imptime_constant = "__imptime__" # must match RenderedMarkdown
     
     def __init__(self, logged_in_user):
@@ -42,7 +42,7 @@ class MarkdownEnrichment(object):
             data = MarkdownEnrichmentSerializer(inline_issue).data
                 
             inline_text = "`" + self.imptime_constant + json.dumps(data) + "`"
-            enriched = s[running_index:start_index] + inline_text
+            enriched += s[running_index:start_index] + inline_text
             running_index = end_index
             
         enriched += s[running_index:]

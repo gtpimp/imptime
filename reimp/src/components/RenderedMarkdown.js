@@ -76,23 +76,25 @@ class RenderedMarkdownEnrichedIssue extends Component {
                 issue{attrs.issue_number} ({attrs.issue_status})
               </code>
               { show_popup &&
-                <div className="rendered_markdown__tooltip">
-                  
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_number"
-                       onClick={this.gotoIssue}>
-                    issue{attrs.issue_number}
-                  </div>
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_subject">
-                    {attrs.issue_subject}
-                  </div>
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_status">
-                    Issue status: {attrs.issue_status}
-                  </div>
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_modified">
-                    Issue last modified <Timestamp value={attrs.issue_modified} format="from_now"/>
-                  </div>
-                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--sprint">
-                    Sprint: {attrs.sprint_name} ({attrs.sprint_status})
+                <div className="rendered_markdown__tooltip_wrapper">
+                  <div className="rendered_markdown__tooltip">
+                    
+                    <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_number"
+                         onClick={this.gotoIssue}>
+                      issue{attrs.issue_number}
+                    </div>
+                    <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_subject">
+                      {attrs.issue_subject}
+                    </div>
+                    <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_status">
+                      Issue status: {attrs.issue_status}
+                    </div>
+                    <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue_modified">
+                      Issue last modified <Timestamp value={attrs.issue_modified} format="from_now"/>
+                    </div>
+                    <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--sprint">
+                      Sprint: {attrs.sprint_name} ({attrs.sprint_status})
+                    </div>
                   </div>
                 </div>
 
