@@ -26,10 +26,12 @@ class IssueCommentViewSet(BaseViewSet):
         try:
             params = request.data
             issue_pk = params['issue_id']
-            comment_value = params['comment']
-            enriched_comment_value = MarkdownEnrichment(request.user).enrich(comment_value)
-
             issue = self.allowed_issue(issue_pk)
+
+            comment_value = params['comment']
+            enriched_comment_value = MarkdownEnrichment(request.user).enrich(comment_value,
+                                                                             project_id=issue.project.business_id) #sic
+
             comment = IssueComment.objects.get_or_create(issue=issue,
                                                          author=request.user,
                                                          comment=comment_value,
@@ -59,7 +61,8 @@ class IssueCommentViewSet(BaseViewSet):
             old_comment_value = comment.comment
             comment.comment = comment_value
             comment.author = request.user
-            comment.enriched_comment = MarkdownEnrichment(request.user).enrich(comment.comment)
+            comment.enriched_comment = MarkdownEnrichment(request.user).enrich(comment.comment,
+                                                                               project_id=issue.project.business_id) #sic
             
             IssueHistory.add_history(request.user, issue, "edited comment %s" % comment_id,
                                      old_comment_value, comment.comment)

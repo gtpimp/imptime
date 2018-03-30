@@ -72,7 +72,8 @@ class WikiViewSet(BaseViewSet):
                         wiki_page.money_sensitive = new_value
                 elif field_name == "content":
                     wiki_page.content = new_value
-                    wiki_page.enriched_content = MarkdownEnrichment(request.user).enrich(wiki_page.content)
+                    wiki_page.enriched_content = MarkdownEnrichment(request.user).enrich(wiki_page.content,
+                                                                                         project_id=wiki_page.project_id)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 wiki_page.save()

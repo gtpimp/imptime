@@ -138,7 +138,8 @@ class IssueViewSet(BaseViewSet):
                     if self.logged_in_permissions(issue.project.business).has_edit_description:
                         old_description = issue.description
                         issue.description = new_value
-                        issue.enriched_description = MarkdownEnrichment(request.user).enrich(issue.description)
+                        issue.enriched_description = MarkdownEnrichment(request.user).enrich(issue.description,
+                                                                                             project_id=issue.project.business_id) #sic
                         IssueHistory.add_history(
                             request.user, issue, "changed description",
                             old_description, issue.description)

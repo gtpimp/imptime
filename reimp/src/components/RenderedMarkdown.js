@@ -4,6 +4,8 @@ import { map } from 'lodash'
 import {browserHistory} from 'react-router'
 import ReactMarkdown from 'react-markdown'
 import { has_permission } from '../actions/Users'
+import SprintName from './SprintName'
+import Timestamp from './Timestamp'
 
 const imptime_constant = "__imptime__"
 
@@ -36,19 +38,24 @@ const renderers = {
         return (
             <div className="imptime_inline_code">
               <code>
-                {attrs.readable_name}
+                issue{attrs.issue_number} ({attrs.issue_status})
               </code>
-              <div className="imptime_inline_code__infos">
-                {map(attrs.infos, (info) =>
-                    <div className="imptime_inline_code__info">{info}</div>
-                 )}
-              </div>
               <div className="imptime_inline_code__tooltip">
-                {map(attrs.tooltips, (tooltip_row) =>
-                    <div className="imptime_inline_code__tooltip_row">
-                      {tooltip_row}
-                    </div>
-                 )}
+                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--issue">
+                  issue{attrs.issue_number}
+                </div>
+                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--issue">
+                  {attrs.issue_subject}
+                </div>
+                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--issue">
+                  Issue status: {attrs.issue_status}
+                </div>
+                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--modified">
+                  Issue last modified <Timestamp value={attrs.issue_modified} format="from_now"/>
+                </div>
+                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--sprint">
+                  Sprint: {attrs.sprint_name} ({attrs.sprint_status})
+                </div>
               </div>
             </div>
         )

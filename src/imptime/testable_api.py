@@ -38,7 +38,9 @@ class TestableViewSet(BaseViewSet):
 
             testable = Testable.objects.get_or_create(issue=issue,
                                                       steps=testable_value,
-                                                      enriched_steps=MarkdownEnrichment(request.user).enrich(testable_value),
+                                                      enriched_steps=MarkdownEnrichment(request.user)\
+                                                                       .enrich(testable_value,
+                                                                               project_id=issue.project.business_id), #sic
                                                       order=max_order+1)[0]
             issue.save()
             IssueHistory.add_history(request.user, issue,
@@ -62,7 +64,9 @@ class TestableViewSet(BaseViewSet):
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
             old_testable_value = testable.steps
             testable.steps = testable_value
-            testable.enriched_steps = MarkdownEnrichment(request.user).enrich(testable.steps)
+            testable.enriched_steps = MarkdownEnrichment(request.User)\
+                                                .enrich(testable.steps,
+                                                        project_id=issue.project.business_id) #sic
 
             IssueHistory.add_history(request.user, issue, "edited testable %s" % testable_id,
                                      old_testable_value, testable.steps)
