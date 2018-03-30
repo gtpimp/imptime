@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown'
 import { has_permission } from '../actions/Users'
 import SprintName from './SprintName'
 import Timestamp from './Timestamp'
+import classNames from 'classnames'
 
 const imptime_constant = "__imptime__"
 
@@ -25,7 +26,6 @@ const renderers = {
                 <code>{props.children}</code>
             )
         }
-
         const raw_attrs = props.children.slice(imptime_constant.length)
         let attrs
         try {
@@ -34,31 +34,62 @@ const renderers = {
             console.error("Failed to parse imptime attr: " + raw_attrs + " : " + err)
             return <code>{props.children}</code>
         }
-        
+        return (<RenderedMarkdownEnrichedIssue attrs={attrs} />)
+    }
+    
+}
+
+class RenderedMarkdownEnrichedIssue extends Component {
+
+    constructor(props) {
+        super(props)
+        this.showPopup = this.showPopup.bind(this)
+        this.hidePopup = this.hidePopup.bind(this)
+        this.state = {show_popup: false}
+    }
+
+    showPopup() {
+        this.setState({show_popup: true})
+    }
+
+    hidePopup() {
+        this.setState({show_popup: false})
+    }
+    
+    render() {
+
+        const { attrs } = this.props
+        const { show_popup } = this.state
+
         return (
-            <div className="imptime_inline_code">
-              <code>
+            <div className="rendered-markdown__imptime_inline_code" onMouseLeave={this.hidePopup}>
+              <code onMouseOver={this.showPopup}>
                 issue{attrs.issue_number} ({attrs.issue_status})
               </code>
-              <div className="imptime_inline_code__tooltip">
-                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--issue">
-                  issue{attrs.issue_number}
+              { show_popup &&
+                <div className="rendered_markdown__tooltip">
+                  
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue">
+                    issue{attrs.issue_number}
+                  </div>
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue">
+                    {attrs.issue_subject}
+                  </div>
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--issue">
+                    Issue status: {attrs.issue_status}
+                  </div>
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--modified">
+                    Issue last modified <Timestamp value={attrs.issue_modified} format="from_now"/>
+                  </div>
+                  <div className="rendered_markdown__tooltip_row rendered_markdown__tooltip_row--sprint">
+                    Sprint: {attrs.sprint_name} ({attrs.sprint_status})
+                  </div>
                 </div>
-                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--issue">
-                  {attrs.issue_subject}
-                </div>
-                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--issue">
-                  Issue status: {attrs.issue_status}
-                </div>
-                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--modified">
-                  Issue last modified <Timestamp value={attrs.issue_modified} format="from_now"/>
-                </div>
-                <div className="imptime_inline_code__tooltip_row imptime_inline_code__tooltip_row--sprint">
-                  Sprint: {attrs.sprint_name} ({attrs.sprint_status})
-                </div>
-              </div>
+
+              }
             </div>
         )
+        
     }
     
 }

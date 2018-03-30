@@ -1,0 +1,19 @@
+@import 'variables.scss';
+
+.rendered-markdown__imptime_inline_code {
+    position: relative;
+}
+
+.rendered_markdown__tooltip {
+    position: absolute;
+    margin-top: 10px;
+    background: $color-35;
+}
+
+.rendered_markdown__tooltip_row--modified {
+    display: flex;
+}
+
+.rendered_markdown__tooltip_row--modified .timestamp__wrapper {
+    margin-left: 3px;
+}

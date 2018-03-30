@@ -34,7 +34,7 @@ class MarkdownEnrichment(object):
                                 "sprint_status": issue.project.status3.name #sic
                                 }
             except Issue.DoesNotExist:
-                inline_issue = {"readable_name":"Issue " + issue_number + " not found or permission denied"}
+                inline_issue = {"issue_number":str(issue_number) + " (not found or permission denied)"}
 
             data = MarkdownEnrichmentSerializer(inline_issue).data
                 
