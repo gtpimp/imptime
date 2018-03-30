@@ -39,7 +39,7 @@ class ReadOnlyIssueComment extends Component {
                 <Timestamp value={comment.share_ref_expiry} format='from_now' />
               </div>
               <div className="sharing__issue-comment__text" >
-                <RenderedMarkdown content={comment.comment} />
+                <RenderedMarkdown content={comment.enriched_comment || comment.comment} />
               </div>
               <div className="sharing__issue-comment__info" >
                 Last modified <Timestamp value={comment.modified} format='from_now' />
