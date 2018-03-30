@@ -15,3 +15,5 @@ class MarkdownEnrichmentSerializer(BaseSerializer):
     sprint_status = serializers.CharField()
     project_id = serializers.CharField()
 
+class MarkdownEnrichmentFailedSerializer(BaseSerializer):
+    error = serializers.CharField()

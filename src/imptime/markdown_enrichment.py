@@ -2,7 +2,7 @@ import re
 from imptime.base_api import PermissionHelper
 import json
 from timepiece.models import Issue
-from markdown_enrichment_serializer import MarkdownEnrichmentSerializer
+from markdown_enrichment_serializer import MarkdownEnrichmentSerializer, MarkdownEnrichmentFailedSerializer
 
 class MarkdownEnrichment(object):
 
@@ -36,10 +36,11 @@ class MarkdownEnrichment(object):
                                 "sprint_status": issue.project.status3.name, #sic
                                 "project_id": issue.project.business_id #sic
                                 }
-            except Issue.DoesNotExist:
-                inline_issue = {"issue_number":str(issue_number) + " (not found or permission denied)"}
+                data = MarkdownEnrichmentSerializer(inline_issue).data
 
-            data = MarkdownEnrichmentSerializer(inline_issue).data
+            except Issue.DoesNotExist:
+                inline_issue = {"error":"Error: Issue %s not found or permission denied" % issue_number }
+                data = MarkdownEnrichmentFailedSerializer(inline_issue).data
                 
             inline_text = "`" + self.imptime_constant + json.dumps(data) + "`"
             enriched += s[running_index:start_index] + inline_text

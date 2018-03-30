@@ -5,6 +5,10 @@
     display: inline;
 }
 
+.rendered-markdown__imptime_inline_code--error {
+    color: $error-color;
+}
+ 
 .rendered_markdown__tooltip_wrapper {
     position: absolute;
 }

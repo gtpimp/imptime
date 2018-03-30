@@ -70,6 +70,14 @@ class RenderedMarkdownEnrichedIssue extends Component {
         const { attrs } = this.props
         const { show_popup } = this.state
 
+        if ( attrs.error ) {
+            return (
+                <div className="rendered-markdown__imptime_inline_code rendered-markdown__imptime_inline_code--error">
+                  {attrs.error}
+                </div>
+            )
+        }
+        
         return (
             <div className="rendered-markdown__imptime_inline_code" onMouseLeave={this.hidePopup}>
               <code onMouseOver={this.showPopup}>
