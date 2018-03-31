@@ -2937,52 +2937,6 @@ class Entry(BaseModel):
                 'start_time': entry.start_time,
                 'end_time': entry.end_time
             }
-            #Conflicting saved entries
-            # if entry.end_time:
-            #     if entry.start_time.date() == start.date() \
-            #     and entry.end_time.date() == end.date():
-            #         entry_data['start_time'] = entry.start_time.strftime(
-            #             '%H:%M:%S')
-            #         entry_data['end_time'] = entry.end_time.strftime(
-            #             '%H:%M:%S')
-            #         output = 'Start time overlaps with: ' + \
-            #         '%(project)s - %(activity)s - ' % entry_data + \
-            #         'from %(start_time)s to %(end_time)s' % entry_data
-            #         raise ValidationError(output)
-            #     else:
-            #         entry_data['start_time'] = entry.start_time.strftime(
-            #             '%H:%M:%S on %m\%d\%Y')
-            #         entry_data['end_time'] = entry.end_time.strftime(
-            #             '%H:%M:%S on %m\%d\%Y')
-            #         output = 'Start time overlaps with: ' + \
-            #         '%(project)s - %(activity)s - ' % entry_data + \
-            #         'from %(start_time)s to %(end_time)s' % entry_data
-            #         raise ValidationError(output)
-        try:
-            act_group = self.issue.project.activity_group
-            if act_group:
-                activity = self.activity
-                if not act_group.activities.filter(pk=activity.pk).exists():
-                    name = activity.name
-                    err_msg = '%s is not allowed for this project. ' % name
-                    allowed = act_group.activities.filter()
-                    allowed = allowed.values_list('name', flat=True)
-                    allowed_names = ['among ']
-                    if len(allowed) > 1:
-                        for index, activity in enumerate(allowed):
-                            allowed_names += activity
-                            if index < len(allowed) - 2:
-                                allowed_names += ', '
-                            elif index < len(allowed) - 1:
-                                allowed_names += ', and '
-                        allowed_activities = ''.join(allowed_names)
-                    else:
-                        allowed_activities = allowed[0]
-                    err_msg += 'Please choose %s' % allowed_activities
-                    raise ValidationError(err_msg)
-        except (Project.DoesNotExist, Activity.DoesNotExist):
-            # Will be caught by field requirements
-            pass
         if end <= start:
             raise ValidationError('Ending time must exceed the starting time')
         delta = (end - start)
