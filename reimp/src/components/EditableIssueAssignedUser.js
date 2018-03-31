@@ -6,6 +6,7 @@ import Blank from './form/Blank'
 import { updateIssueAssignedTo, getIssues } from '../actions/Issues'
 import OtherUser from '../components/OtherUser'
 import { has_permission } from '../actions/Users'
+import { makeSelGetIssues } from '../selectors/IssueSelectors'
 
 class EditableIssueAssignedUser extends Component {
 
@@ -19,6 +20,14 @@ class EditableIssueAssignedUser extends Component {
         dispatch(updateIssueAssignedTo(issue_ids, new_value.assigned_user))
     }
 
+    componentDidUpdate(prevProps) {
+        Object.keys(this.props).forEach(key => {
+            if (this.props[key] !== prevProps[key]) {
+                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
+            }
+        });
+    }
+    
     render() {
         const { project_id, issue, can_edit, class_name} = this.props
 
@@ -27,7 +36,7 @@ class EditableIssueAssignedUser extends Component {
                               initial_value={issue && issue.assigned_to_id || null}
                               edit_as_modal={true}
                               onChange={this.onChange}
-                              class_name={class_name}
+                              class_name={class_name || ""}
                               actionLabel="Assign to"
                               can_edit={can_edit}
             >
@@ -39,21 +48,29 @@ class EditableIssueAssignedUser extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
-    const { issue_ids, class_name } = props
-    const issues = getIssues(state, issue_ids) || []
-    const issue = issues && issues.length > 0 && issues[0]
-    const project_id = issue.project_id
-    const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
 
-    return {
-        issues: issues,
-        issue: issue,
-        project_id: project_id,
-        can_edit: can_edit,
-        class_name: class_name || ""
+// selGetIssues
+const makeMapStateToProps = () => {
+    const selGetIssues = makeSelGetIssues()
+
+    const mapStateToProps = (state, props) => {
+        const { issue_ids, class_name } = props
+        const issues = selGetIssues(state, props)
+        const issue = issues && issues.length > 0 && issues[0]
+        const project_id = issue.project_id
+        const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+
+        return {
+            issues,
+            issue_ids,
+            issue,
+            project_id,
+            can_edit,
+            class_name
+        }
     }
+    return mapStateToProps
 }
 
 
-export default connect(mapStateToProps)(EditableIssueAssignedUser)
+export default connect(makeMapStateToProps)(EditableIssueAssignedUser)

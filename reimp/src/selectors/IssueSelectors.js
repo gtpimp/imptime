@@ -12,6 +12,10 @@ import {
 
 const selGetIssue = (state, props) => getIssue(state, props.issue_id)
 
+const selGetIssueIds = (state, props) => {
+    return props.issue_ids
+}
+
 const selGetIssueId = (state, props) => {
     return props.issue_id
 }
@@ -38,6 +42,15 @@ const selGetIssueTags = (state, props) => {
         return null
     }
     return getTags(state, tag_ids)
+}
+
+export const makeSelGetIssues = () => {
+    return createSelector(
+        [ selGetAllIssuesById, selGetIssueIds ],
+        ( all_issues_by_id, issue_ids ) => {
+            return filter(values(all_issues_by_id), function(issue) { return includes(issue_ids, issue.id) })
+        }
+    )
 }
 
 export const makeSelEstimatesByUserId = () => {

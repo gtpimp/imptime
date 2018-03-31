@@ -21,34 +21,30 @@ class OtherUser extends Component {
         }
     }
 
-    render_inline_small() {
-        const { user, loading_value, onClick, display_mode } = this.props
-
-        return (
-            <div className="other_user"
-                 key={this.key+".collapsed_user."+user.id}
-                 onClick={onClick}
-            >
-              { ! user.username && loading_value }
-              { display_mode=="username" && user.username && user.username }
-              { display_mode=="visible_name" && user.username && user.visible_name }
-            </div>
-        )
-    }
-
     render() {
-        const { user_id, user, render_mode, loading_value, onClick } = this.props
+        const { user_id, user, render_mode, loading_value, onClick, display_mode } = this.props
 
         if ( ! user_id ) {
             return ( <div onClick={onClick}></div> )
         }
 
-        if ( user.loaded === false ) {
+        const display_user = (user || { 'loaded': false, 'id': user_id }) || { 'username': 'no-one' }
+
+        if ( display_user.loaded === false ) {
             return ( <div onClick={onClick}>{loading_value}</div> )
         }
 
         if ( render_mode === 'inline--small' ) {
-            return this.render_inline_small()
+            return (
+                <div className="other_user"
+                     key={this.key+".collapsed_user."+display_user.id}
+                     onClick={onClick}
+                >
+                  { ! display_user.username && loading_value }
+                  { display_mode=="username" && display_user.username && display_user.username }
+                  { display_mode=="visible_name" && display_user.username && display_user.visible_name }
+                </div>
+            )
         } else {
             return ( <div>Dev error, unsupported render mode: {render_mode}</div> )
         }
@@ -59,7 +55,7 @@ function mapStateToProps(state, props) {
     const { render_mode, loading_value, display_mode } = props
     let { user_id, value } = props
     user_id = user_id || value
-    const user = ((user_id && (getUser(state, user_id))) || { 'loaded': false, 'id': user_id }) || { 'username': 'no-one' }
+    const user = getUser(state, user_id)
 
     return {
         user,
