@@ -82,6 +82,14 @@ class IssueList extends Component {
         this.renderHeader = this.renderHeader.bind(this)
     }
 
+    componentDidUpdate(prevProps) {
+        Object.keys(this.props).forEach(key => {
+            if (this.props[key] !== prevProps[key]) {
+                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
+            }
+        });
+    }
+    
     componentDidMount() {
         const {dispatch, list_key, sprint_id, feature_issue_ids, tag_ids} = this.props
         if (sprint_id) {
@@ -604,6 +612,7 @@ const makeMapStateToProps = () => {
         const issue_items = selIssueObjectsToRender(state, props)
         const tag_category_names = selTagCategoryNamesForIssues(state, props)
         const logged_in_user_id = logged_in_user().user_id
+        const issue_ids = selIssueIds(state, props)
 
         return {
             list_key: list_key,
@@ -613,15 +622,15 @@ const makeMapStateToProps = () => {
             issues: items,
             issue_items,
             issues_by_id: items_by_id,
-            issue_ids: selIssueIds(state, props),
+            issue_ids,
             feature_issue_ids: feature_issue_ids,
             feature_issues: feature_issues,
             selected_ids: selected_item_ids,
+            selected_items: selected_items,
             highlighted_ids: highlighted_item_ids,
             cursor_item_id,
             invalidated_issue_ids: invalidated_item_ids,
             saving_issue_ids: saving_item_ids,
-            selected_items: selected_items,
             loading_item_ids: loading_item_ids,
             has_items: items && items.length > 0,
             is_loading: isLoading(state, list_key),

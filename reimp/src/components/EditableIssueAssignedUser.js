@@ -6,7 +6,7 @@ import Blank from './form/Blank'
 import { updateIssueAssignedTo, getIssues } from '../actions/Issues'
 import OtherUser from '../components/OtherUser'
 import { has_permission } from '../actions/Users'
-import { makeSelGetIssues } from '../selectors/IssueSelectors'
+import { makeSelGetIssues, makeSelGetSampleIssue } from '../selectors/IssueSelectors'
 
 class EditableIssueAssignedUser extends Component {
 
@@ -20,14 +20,6 @@ class EditableIssueAssignedUser extends Component {
         dispatch(updateIssueAssignedTo(issue_ids, new_value.assigned_user))
     }
 
-    componentDidUpdate(prevProps) {
-        Object.keys(this.props).forEach(key => {
-            if (this.props[key] !== prevProps[key]) {
-                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
-            }
-        });
-    }
-    
     render() {
         const { project_id, issue, can_edit, class_name} = this.props
 
@@ -52,11 +44,12 @@ class EditableIssueAssignedUser extends Component {
 // selGetIssues
 const makeMapStateToProps = () => {
     const selGetIssues = makeSelGetIssues()
+    const selGetSampleIssue = makeSelGetSampleIssue()
 
     const mapStateToProps = (state, props) => {
         const { issue_ids, class_name } = props
         const issues = selGetIssues(state, props)
-        const issue = issues && issues.length > 0 && issues[0]
+        const issue = selGetSampleIssue(state, props)
         const project_id = issue.project_id
         const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
 

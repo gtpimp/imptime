@@ -44,11 +44,25 @@ const selGetIssueTags = (state, props) => {
     return getTags(state, tag_ids)
 }
 
+const helperGetIssues = (all_issues_by_id, issue_ids) => {
+    return filter(values(all_issues_by_id), function(issue) { return includes(issue_ids, issue.id) })
+}
+
 export const makeSelGetIssues = () => {
     return createSelector(
         [ selGetAllIssuesById, selGetIssueIds ],
         ( all_issues_by_id, issue_ids ) => {
-            return filter(values(all_issues_by_id), function(issue) { return includes(issue_ids, issue.id) })
+            return helperGetIssues(all_issues_by_id, issue_ids)
+        }
+    )
+}
+
+export const makeSelGetSampleIssue = () => {
+    return createSelector(
+        [ selGetAllIssuesById, selGetIssueIds ],
+        ( all_issues_by_id, issue_ids ) => {
+            const issues = helperGetIssues(all_issues_by_id, issue_ids)
+            return issues && issues.length > 0 && issues[0]
         }
     )
 }
