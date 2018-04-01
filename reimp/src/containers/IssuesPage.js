@@ -8,7 +8,6 @@ import IssueList from '../components/IssueList'
 import {setIssueBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
 import SplitPane from 'react-split-pane'
-import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {
     LIST_KEY__ISSUE_LIST,
     PAGE_KEY__ISSUES_PAGE
@@ -53,28 +52,23 @@ class IssuesPage extends Component {
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
-        dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id, default_issue_id))
                                                     
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, default_issue_id, selected_issue_ids } = new_props
+        const { dispatch, default_issue_id } = new_props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
 
         if ( new_props.sprint.id !== this.props.sprint.id ||
              new_props.sprint.name !== this.props.sprint.name ||
-             new_props.project.name !== this.props.project.name ||
-             new_props.selected_issue.id !== this.props.selected_issue.id ||
-             new_props.selected_issue.loaded !== this.props.selected_issue.loaded) {
+             new_props.project.name !== this.props.project.name ) {
 
             if ( new_props.sprint_id != this.props.sprint_id ) {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
                 dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [new_props.sprint_id]))
                 dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [new_props.project_id]))
-                dispatch(setActivelyAvailableAutoClockEntity(new_props.project_id, new_props.sprint_id,
-                                                            selected_issue_ids && selected_issue_ids.length > 0 && selected_issue_ids[0]))
                 dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             }
             this.refresh(new_props)
@@ -86,7 +80,7 @@ class IssuesPage extends Component {
     }
 
     refresh(these_props) {
-        const {dispatch, selected_issue_ids, sprint, filter_sprint_id,
+        const {dispatch, sprint, filter_sprint_id,
                project, default_issue_id, selected_issue} = these_props || this.props
 
         if ( sprint.id != filter_sprint_id ) {
@@ -108,7 +102,6 @@ class IssuesPage extends Component {
         if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
             dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
             dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
-            dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id, default_issue_id))
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }
@@ -119,8 +112,6 @@ class IssuesPage extends Component {
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
         dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
-        dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id,
-                                                    issue_ids && issue_ids.length > 0 && issue_ids[0]))
 
         if ( issue_ids && issue_ids.length === 1 ) {
             browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);
@@ -174,7 +165,7 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { sprint_id, project_id, selected_issues, selected_issue_ids,
+        const { sprint_id, project_id, selected_issue_ids,
                 is_single_selection, is_multiple_selection, is_creating_issue,
                 issue_header_list, show_sidebar, selected_issue, splitter_size
         } = this.props
@@ -233,7 +224,6 @@ function mapStateToProps(state, props) {
         project: project,
         default_issue_id,
         splitter_size,
-        selected_issues: selected_items,
         selected_issue: selected_issue || {},
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,

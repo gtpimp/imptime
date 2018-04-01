@@ -4,6 +4,7 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { ENTITY_KEY__ISSUE, getCellStyle } from '../actions/ItemListKeyRegistry'
 import { getSelectedItems, setItemFlag } from '../actions/ItemList'
+import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {
     updateIssueStatus,
     updateIssueFeature,
@@ -88,10 +89,15 @@ class Issue extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, assignable_user_ids, issue} = props
+        const {dispatch, assignable_user_ids, issue, is_selected} = props
         dispatch(ensureUsersLoaded(assignable_user_ids))
         dispatch(ensureTagsLoaded(issue.tag_ids || []))
         dispatch(ensureSprintsLoaded([issue.sprint_id]))
+
+        if ( issue.id && is_selected ) {
+            dispatch(setActivelyAvailableAutoClockEntity(issue.project_id, issue.sprint_id, issue.id))
+        }
+        
     }
 
     onChangeAssignedTo(issue_id, new_value) {
