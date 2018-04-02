@@ -7,7 +7,7 @@ import {
 } from '../actions/Page'
 
 const required = value => value ? undefined : 'Required'
-
+ 
 class AccountCreatePage extends Component {
 
     componentDidMount() {

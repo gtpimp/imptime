@@ -30,7 +30,6 @@ import user_timesheet from './user_timesheet'
 import websockets from './websockets'
 import { combineReducers } from 'redux'
 import { reducer as redux_form_reducer } from 'redux-form'
-import { routerReducer as routing } from 'react-router-redux'
 
 const rootReducer = combineReducers({
     auth,
@@ -55,7 +54,6 @@ const rootReducer = combineReducers({
     project_user_permission,
     work_summary,
     rie,
-    routing,
     settings,
     sprint,
     sprint_user_rate,    

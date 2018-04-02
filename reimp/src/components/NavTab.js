@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link, IndexLink, withRouter} from 'react-router'
+import {withRouter} from 'react-router'
+import { Link } from 'react-router-dom' 
 import classNames from 'classnames'
 import '../sass/navtab.css'
 import without from 'lodash/without'
@@ -8,29 +9,26 @@ import without from 'lodash/without'
 class NavTab extends Component {
 
     render() {
-        const {router} = this.props
-        const {index, to, children, variant} = this.props
+        const {match, index, to, children, variant} = this.props
 
         if (variant === 'link') {
             let isActive
-            if (router.isActive('/', true) && index) {
-                isActive = true
-            } else {
-                isActive = router.isActive(to)
-            }
-            const LinkComponent = index ? IndexLink : Link
-            const filteredProps = without(this.props, ['router'])
+            isActive = match.path == to
 
             return (
                 <div className={classNames('navtab', 'navtab--' + (isActive ? 'active' : 'inactive'))}>
-                    { this.props.label &&
+                  { this.props.label &&
                     <div className="navtab__label-wrapper">
-                        <div className={classNames('navtab__label', 'navtab__label--' + (isActive ? 'active' : 'inactive'))}><LinkComponent to={to} {...filteredProps}>{this.props.label}</LinkComponent></div>
+                      <div className={classNames('navtab__label', 'navtab__label--' + (isActive ? 'active' : 'inactive'))}>
+                        <Link to={to}>
+                          {this.props.label}
+                        </Link>
+                      </div>
                     </div>
-                    }
-                    { !this.props.label &&
-                    <LinkComponent to={to} {...filteredProps}>{children}</LinkComponent>
-                    }
+                  }
+                  { !this.props.label &&
+                    <Link to={to}>{children}</Link>
+                  }
                 </div>
             )
         } else if (variant === 'dashboard-toggle') {
@@ -47,14 +45,10 @@ class NavTab extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { routing } = state
-
-    const location = routing.locationBeforeTransitions || {}
-    const pathname = location.pathname || null
+    const { } = state
 
     return {
         variant: props.variant || 'link',
-        pathname: pathname
     }
 }
 

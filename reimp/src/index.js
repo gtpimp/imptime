@@ -5,7 +5,7 @@ import configureStore from './store/configureStore'
 import {Provider} from 'react-redux'
 import Raven from 'raven-js'
 import { BrowserRouter } from 'react-router-dom'
-import MainRouter from './containers/MainRouter'
+import MainLayout from './containers/MainLayout'
 
 const store = configureStore({})
 
@@ -18,7 +18,7 @@ if (RAVEN_DSN) {
 ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <MainRouter />
+        <MainLayout />
       </BrowserRouter>
     </Provider>,
     document.getElementById('root')

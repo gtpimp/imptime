@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {browserHistory, withRouter} from 'react-router'
 import Header from '../components/Header'
 import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
@@ -10,14 +10,14 @@ import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 import { ShortcutManager } from 'react-shortcuts'
-import AutoClockPopup from './auto_clock/AutoClockPopup'
+import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
 import keymap from '../actions/Keymap'
 const shortcut_manager = new ShortcutManager(keymap)
 var HTML5Backend = require('react-dnd-html5-backend');
 import ReactTooltip from 'react-tooltip'
-import Error from './Error'
-import Maintenance from './Maintenance'
-import GlobalCommentAnnotation from './GlobalCommentAnnotation'
+import Error from '../components/Error'
+import Maintenance from '../components/Maintenance'
+import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
 
 class MainLayout extends Component {
@@ -127,7 +127,7 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(DragDropContext(HTML5Backend)(MainLayout))
+export default connect(mapStateToProps)(DragDropContext(HTML5Backend)(withRouter(MainLayout)))
 
 MainLayout.childContextTypes = {
   shortcuts: PropTypes.object.isRequired
