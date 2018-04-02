@@ -18,6 +18,7 @@ import ReactTooltip from 'react-tooltip'
 import Error from './Error'
 import Maintenance from './Maintenance'
 import GlobalCommentAnnotation from './GlobalCommentAnnotation'
+import MainRouter from './MainRouter'
 
 class MainLayout extends Component {
 
@@ -85,27 +86,27 @@ class MainLayout extends Component {
             )
         }
 
-        if ( ! is_logged_in ) {
-
-            return (
-                <div className="app">
-                  <Maintenance/>
-                  <Error/>
-                  {this.props.children}
-                </div>
-            )
-        }
-
         return (
             <div className="app">
-              <Websocket/>
-              <Header/>
-              <AutoClockPopup/>
-              <GlobalCommentAnnotation/>
-              <div className="main">
-                {this.props.children}
-              </div>
-              <ReactTooltip place="bottom" type="info" />
+              { ! is_logged_in &&
+                <div>
+                  <Maintenance/>
+                  <Error/>
+                  <MainRouter />
+                </div>
+              }
+              { is_logged_in &&
+                <div>
+                  <Websocket/>
+                  <Header/>
+                  <AutoClockPopup/>
+                  <GlobalCommentAnnotation/>
+                  <div className="main">
+                    <MainRouter />
+                  </div>
+                  <ReactTooltip place="bottom" type="info" />
+                </div>
+              }  
             </div>
         )
     }
