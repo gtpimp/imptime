@@ -1,5 +1,7 @@
 import React, {Component, PropTypes} from 'react'
+import {connect} from 'react-redux'
 import { Route } from 'react-router-dom'
+import {withRouter} from 'react-router'
 import AccountCreatePage from './AccountCreatePage'
 import AccountCreatedPage from './AccountCreatedPage'
 import BulkIssueCreatorPage from './BulkIssueCreatorPage'
@@ -78,4 +80,8 @@ class MainRouter extends Component {
     
 }
 
-export default MainRouter
+function mapStateToProps(state) {
+    return {}
+}
+
+export default connect(mapStateToProps)(withRouter(MainRouter))
