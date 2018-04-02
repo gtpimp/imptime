@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureReleaseNotesLoaded, getReleaseNote} from '../actions/ReleaseNotes'
 import includes from 'lodash/includes'
@@ -62,4 +62,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ReleaseNotesPage)
+export default connect(mapStateToProps)(withRouter(ReleaseNotesPage))

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import { PAGE_KEY__AUTH_PAGE } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -32,4 +33,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(PasswordChangedPage)
+export default connect(mapStateToProps)(withRouter(PasswordChangedPage))

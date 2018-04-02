@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -50,15 +50,15 @@ class BulkIssueCreatorPage extends Component {
     }
 
     onCancel() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id)
+        const { project_id, sprint_id, history } = this.props
+        history.push('/projects/' + project_id + '/sprints/' + sprint_id)
     }
 
     onIssuesCreated(new_issue_ids) {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch, history, project_id, sprint_id } = this.props
         dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, new_issue_ids))
         dispatch(selectItems(LIST_KEY__ISSUE_LIST, new_issue_ids))
-        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + "/issues/")
+        history.push('/projects/' + project_id + '/sprints/' + sprint_id + "/issues/")
     }
     
     onSubmitBulkCreate(new_values) {
@@ -85,8 +85,8 @@ class BulkIssueCreatorPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const sprint_id = props.params.sprintId
-    const project_id = props.params.projectId
+    const sprint_id = props.match.params.sprintId
+    const project_id = props.match.params.projectId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
  
@@ -98,4 +98,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(BulkIssueCreatorPage)
+export default connect(mapStateToProps)(withRouter(BulkIssueCreatorPage))

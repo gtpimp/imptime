@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 
 class SprintRateToolbarPanel extends Component {

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
 import WorkSummaryList from '../components/WorkSummaryList'
 
@@ -37,4 +38,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(WorkSummaryPage)
+export default connect(mapStateToProps)(withRouter(WorkSummaryPage))

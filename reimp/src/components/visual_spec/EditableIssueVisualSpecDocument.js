@@ -7,7 +7,7 @@ import VisualSpecDocumentForm from './VisualSpecDocumentForm'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
 import Blank from '../form/Blank'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 
 class EditableIssueVisualSpecDocument extends Component {
 

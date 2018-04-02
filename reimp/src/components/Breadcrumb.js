@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link, withRouter} from 'react-router'
+import {Link, withRouter} from 'react-router-dom'
 import '../sass/breadcrumb.css'
-import {browserHistory} from 'react-router'
 import { map, get, filter, includes } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
@@ -112,7 +111,7 @@ class Breadcrumb extends Component {
     }
 
     onClickBreadcrumbActionButton(breadcrumb_button) {
-        const { dispatch, breadcrumb } = this.props
+        const { dispatch, history, breadcrumb } = this.props
 
         if ( breadcrumb_button['dispatch_action'] ) {
             const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities)
@@ -120,7 +119,7 @@ class Breadcrumb extends Component {
                 dispatch(action)
             }
         } else {
-            browserHistory.push(breadcrumb_button['nav_url'](breadcrumb.selected_entities))
+            history.push(breadcrumb_button['nav_url'](breadcrumb.selected_entities))
         }
     }
     

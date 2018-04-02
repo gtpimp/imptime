@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import Websocket from '../components/Websocket'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import {
     selectItems,
     invalidateList
@@ -29,9 +30,9 @@ class ReadOnlyPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const object_type = props.params.type
-    const obj_ref = props.params.obj_ref
-    const subref = props.params.subref
+    const object_type = props.match.params.type
+    const obj_ref = props.match.params.obj_ref
+    const subref = props.match.params.subref
     
     return {
         object_type,
@@ -40,5 +41,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ReadOnlyPage)
+export default connect(mapStateToProps)(withRouter(ReadOnlyPage))
 

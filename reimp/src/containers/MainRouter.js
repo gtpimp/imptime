@@ -34,46 +34,44 @@ class MainRouter extends Component {
         return (
             <div>
               <Route path="/" exact component={NudgePage}/>
-              <Route path="/account/create" component={AccountCreatePage}/>
-              <Route path="/account/created" component={AccountCreatedPage}/>
-              <Route path="/work_summary" component={WorkSummaryPage}/>
-              <Route path="/nudge" component={NudgePage}/>
-              <Route path="/password/changed" component={PasswordChangedPage}/>
-              <Route path="/password/change" component={ChangePasswordPage}/>
-              <Route path="/password/forgot" component={ForgotPasswordPage}/>
-              <Route path="/password/reminded" component={PasswordReminderSentPage}/>
-              <Route path="dev" component={DevPage}/>
-              <Route path="release_notes_editor" component={ReleaseNotesPage}/>
-              <Route path="invoices" component={InvoicesPage}/>
-              <Route path="projects" component={ProjectsPage}/>
-              <Route path="projects/:projectId" component={ProjectsPage}/>
-              <Route path="projects/:projectId/dashboard" component={ProjectDashboardPage}/>
-              <Route path="projects/:projectId/projectStatement" component={ProjectStatementPage}/>
-              <Route path="projects/:projectId/sprints" component={SprintsPage}/>
-              <Route path="projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
-              <Route path="projects/:projectId/gallery/" component={VisualSpecDocumentPage}/>
-              <Route path="projects/:projectId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
-              <Route path="projects/:projectId/wiki/" component={ProjectWikiPage}/>
-              <Route path="projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/rates" component={SprintRatePage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" component={VisualSpecDocumentPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
-              <Route path="projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
-              <Route path="projects/:projectId/users" component={ProjectUserPage}/>
-              <Route path="projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
-              <Route path="visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
-
-              <Route path="share/:type/:obj_ref" component={ReadOnlyPage}/>
-              <Route path="share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
-
-              <Route path="dashboard" component={DashboardPage}/>
-              <Route path="usertimesheets" component={UserTimesheetPage}/>
+              <Route path="/account/create" exact component={AccountCreatePage}/>
+              <Route path="/account/created" exact component={AccountCreatedPage}/>
+              <Route path="/work_summary" exact component={WorkSummaryPage}/>
+              <Route path="/nudge" exact component={NudgePage}/>
+              <Route path="/password/changed" exact component={PasswordChangedPage}/>
+              <Route path="/password/change" exact component={ChangePasswordPage}/>
+              <Route path="/password/forgot" exact component={ForgotPasswordPage}/>
+              <Route path="/password/reminded" exact component={PasswordReminderSentPage}/>
+              <Route path="/dev" exact component={DevPage}/>
+              <Route path="/release_notes_editor" exact component={ReleaseNotesPage}/>
+              <Route path="/invoices" exact component={InvoicesPage}/>
+              <Route path="/projects" exact component={ProjectsPage}/>
+              <Route path="/projects/:projectId" exact component={ProjectsPage}/>
+              <Route path="/projects/:projectId/dashboard" exact component={ProjectDashboardPage}/>
+              <Route path="/projects/:projectId/projectStatement" exact component={ProjectStatementPage}/>
+              <Route path="/projects/:projectId/sprints" exact component={SprintsPage}/>
+              <Route path="/projects/:projectId/roadmap" exact component={ProjectRoadmapPage}/>
+              <Route path="/projects/:projectId/gallery/" exact component={VisualSpecDocumentPage}/>
+              <Route path="/projects/:projectId/gallery/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
+              <Route path="/projects/:projectId/wiki/" exact component={ProjectWikiPage}/>
+              <Route path="/projects/:projectId/wiki/:wikiId" exact component={ProjectWikiPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId" exact component={SprintsPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/dashboard" exact component={SprintDashboardPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/rates" exact component={SprintRatePage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/issues" exact component={IssuesPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId" exact component={IssuesPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" exact component={VisualSpecDocumentPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/costSummary" exact component={SprintCostSummaryPage}/>
+              <Route path="/projects/:projectId/sprints/:sprintId/bulkCreate" exact component={BulkIssueCreatorPage}/>
+              <Route path="/projects/:projectId/users" exact component={ProjectUserPage}/>
+              <Route path="/projects/:projectId/users/:userId/:viewMode" exact component={ProjectUserPage}/>
+              <Route path="/visualSpec/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
+              <Route path="/share/:type/:obj_ref" exact component={ReadOnlyPage}/>
+              <Route path="/share/:type/:obj_ref/:subref" exact component={ReadOnlyPage}/>
+              <Route path="/dashboard" exact component={DashboardPage}/>
+              <Route path="/usertimesheets" exact component={UserTimesheetPage}/>
             </div>
         )
     }

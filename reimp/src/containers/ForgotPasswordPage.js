@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { forgot_password } from '../actions/Auth'
 import { Field, reduxForm } from 'redux-form'
 import Message from '../components/Message'
@@ -56,4 +56,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'forgot_password_page'})(ForgotPasswordPage))
+export default connect(mapStateToProps)(reduxForm({form:'forgot_password_page'})(withRouter(ForgotPasswordPage)))

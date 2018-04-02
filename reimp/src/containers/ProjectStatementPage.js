@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureUsersLoaded, getUser} from '../actions/Users'
@@ -63,7 +63,7 @@ class ProjectStatementPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = props.params.projectId
+    const project_id = props.match.params.projectId
     const project = getProject(state, project_id)
  
     const opts = props.location.query
@@ -74,4 +74,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectStatementPage)
+export default connect(mapStateToProps)(withRouter(ProjectStatementPage))

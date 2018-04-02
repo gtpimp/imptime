@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../../actions/Issues'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import '../../sass/issue-label.css'
 
 class IssueLabel extends Component {
@@ -29,9 +29,9 @@ class IssueLabel extends Component {
     }
 
     onGotoIssue(event) {
-        const { issue_id, sprint_id, project_id } = this.props
+        const { history, issue_id, sprint_id, project_id } = this.props
         event.stopPropagation()
-        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
+        history.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
     }
     
     render() {
@@ -67,5 +67,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(IssueLabel)
+export default connect(mapStateToProps)(withRouter(IssueLabel))
 

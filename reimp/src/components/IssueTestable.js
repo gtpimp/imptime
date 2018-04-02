@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import OtherUser from '../components/OtherUser'
 import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'

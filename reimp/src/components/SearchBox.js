@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import '../sass/search-box.css'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {initFilter, runFilter, getFilter, hideResults, showResults, clearResults} from '../actions/Filter'
 import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
@@ -68,17 +68,20 @@ class SearchBox extends Component {
     }
 
     onClickProjectResult(res) {
-        browserHistory.push('/projects/' + res.project_id + '/sprints');
+        const { history } = this.props
+        history.push('/projects/' + res.project_id + '/sprints');
         this.onHideResults()
     }
 
     onClickSprintResult(res) {
-        browserHistory.push('/projects/' + res.project_id + '/sprints/' + res.sprint_id + '/issues');
+        const { history } = this.props
+        history.push('/projects/' + res.project_id + '/sprints/' + res.sprint_id + '/issues');
         this.onHideResults()
     }
 
     onClickIssueResult(res) {
-        browserHistory.push('/projects/' + res.project_id + '/sprints/' + res.sprint_id + '/issues/' + res.issue_id);
+        const { history } = this.props
+        history.push('/projects/' + res.project_id + '/sprints/' + res.sprint_id + '/issues/' + res.issue_id);
         this.onHideResults()
     }
 
@@ -212,4 +215,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ReactTimeout(SearchBox))
+export default connect(mapStateToProps)(ReactTimeout(withRouter(SearchBox)))

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import Modal from 'react-modal';
 import { map, includes, compact } from 'lodash'
 import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
@@ -150,22 +150,22 @@ class VisualSpecDocumentPage extends Component {
     }
 
     onSelectIssues(selected_issue_ids) {
-        const { dispatch, visual_spec_documents,
+        const { dispatch, history, visual_spec_documents,
                 project_id, sprint_id, issue_id, active_visual_spec_document_id } = this.props
         if ( !selected_issue_ids || !selected_issue_ids.length ) {
             return
         }
         const selected_issue_id = selected_issue_ids[0]
         const vsd_id = compact(map(visual_spec_documents, (vsd) => { return includes(vsd.issue_ids, selected_issue_id) && vsd.id }))[0]
-        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + selected_issue_id + '/visualSpec/' + vsd_id)
+        history.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + selected_issue_id + '/visualSpec/' + vsd_id)
     }
 
     onSelectDocument(visual_spec_document_id) {
-        const {project_id, sprint_id, issue_id} = this.props
+        const {history, project_id, sprint_id, issue_id} = this.props
         if ( issue_id ) {
-            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document_id)
+            history.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id + '/visualSpec/' + visual_spec_document_id)
         } else {
-            browserHistory.push('/visualSpec/' + visual_spec_document_id)
+            history.push('/visualSpec/' + visual_spec_document_id)
         }
     }
 
@@ -289,4 +289,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(VisualSpecDocumentPage)
+export default connect(mapStateToProps)(withRouter(VisualSpecDocumentPage))

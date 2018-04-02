@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import RIEModeToggler from '../widgets/RIEModeToggler'
 import RIEInput from '../widgets/RIEInput'

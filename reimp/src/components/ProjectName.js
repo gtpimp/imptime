@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import {
     ensureProjectsLoaded, getProject
 } from '../actions/Projects'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 
 class ProjectName extends Component {
 
@@ -28,12 +28,12 @@ class ProjectName extends Component {
     }
 
     on_clicked(event) {
-        const { project, onClick, open_on_click } = this.props
+        const { history, project, onClick, open_on_click } = this.props
         event.stopPropagation()
         if ( onClick ) {
             onClick(project.id)
         } else if ( open_on_click ) {
-            browserHistory.push('/projects/' + project.id);
+            history.push('/projects/' + project.id);
         }
     }
 
@@ -83,4 +83,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectName)
+export default connect(mapStateToProps)(withRouter(ProjectName))

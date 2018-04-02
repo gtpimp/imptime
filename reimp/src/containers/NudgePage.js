@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__NUDGE_LIST,
@@ -37,5 +37,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(NudgePage)
+export default connect(mapStateToProps)(withRouter(NudgePage))
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import Sidebar from './Sidebar'
 import PropertyStack from './PropertyStack'

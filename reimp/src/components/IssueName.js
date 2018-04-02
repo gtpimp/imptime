@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 
 class IssueName extends Component {
 
@@ -21,12 +21,12 @@ class IssueName extends Component {
     }
 
     on_clicked(event) {
-        const { issue, onClick, open_on_click } = this.props
+        const { history, issue, onClick, open_on_click } = this.props
         event.stopPropagation()
         if ( onClick ) {
             onClick(issue.id)
         } else if ( open_on_click ) {
-            browserHistory.push('/projects/' + issue.project_id + "/sprints/" + issue.sprint_id + "/issues/" + issue.id);
+            history.push('/projects/' + issue.project_id + "/sprints/" + issue.sprint_id + "/issues/" + issue.id);
         }
     }
     
@@ -60,4 +60,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(IssueName)
+export default connect(mapStateToProps)(withRouter(IssueName))

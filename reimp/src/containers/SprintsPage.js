@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {includes} from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
 import SprintTemplateSidebar from '../components/SprintTemplateSidebar'
@@ -101,14 +101,15 @@ class SprintsPage extends Component {
     }
 
     onSelectSprints(sprint_ids) {
-        const {dispatch, project_id, project_name, project, list_key, page_key} = this.props
+        const {dispatch, history, project_id, project_name,
+               project, list_key, page_key} = this.props
         dispatch(selectItems(list_key, sprint_ids))
         dispatch(select_sprints(page_key, sprint_ids))
         
     dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_ids && sprint_ids.length > 0 && sprint_ids[0]))
         
         if ( sprint_ids && sprint_ids.length === 1 ) {
-            browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);
+            history.push('/projects/'+project_id+'/sprints/'+sprint_ids[0]);
         }
     }
 
@@ -209,8 +210,8 @@ function mapStateToProps(state, props) {
                                             'loaded': false }
     })
 
-    const project_id = props.params.projectId
-    const default_sprint_id = props.params.sprintId
+    const project_id = props.match.params.projectId
+    const default_sprint_id = props.match.params.sprintId
     const project = getProject(state, project_id) || {}
     const project_name = project.name
     const candidate_sprint = getCandidateSprint(state) || null
@@ -243,4 +244,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintsPage)
+export default connect(mapStateToProps)(withRouter(SprintsPage))

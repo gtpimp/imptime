@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import EditableProjectName from '../components/EditableProjectName'

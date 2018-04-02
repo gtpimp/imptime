@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map } from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import classNames from 'classnames'
 import {
     ensureWikisLoaded,

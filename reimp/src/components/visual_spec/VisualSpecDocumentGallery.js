@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import { getVisualSpecDocuments,
          ensureVisualSpecDocumentsLoaded
@@ -39,15 +39,15 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     selectDocument(event, visual_spec_document) {
-        const { onSelect, issue } = this.props
+        const { history, onSelect, issue } = this.props
         const vsd = visual_spec_document
         if ( onSelect ){
             onSelect(vsd.id)
         } else {
             if ( issue.id ) {
-                browserHistory.push('/projects/' + issue.project_id + '/sprints/' + issue.sprint_id + '/issues/' + issue.id + '/visualSpec/' + vsd.id)
+                history.push('/projects/' + issue.project_id + '/sprints/' + issue.sprint_id + '/issues/' + issue.id + '/visualSpec/' + vsd.id)
             } else {
-                browserHistory.push('/visualSpec/' + vsd.id)
+                history.push('/visualSpec/' + vsd.id)
             }
         }
     }
@@ -115,4 +115,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(VisualSpecDocumentGallery)
+export default connect(mapStateToProps)(withRouter(VisualSpecDocumentGallery))

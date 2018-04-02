@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 
 class ProjectLink extends Component {
 
@@ -10,11 +10,11 @@ class ProjectLink extends Component {
     }
     
     on_clicked() {
-        const { project_id, onClick, open_on_click } = this.props
+        const { project_id, history, onClick, open_on_click } = this.props
         if ( onClick ) {
             onClick(project_id)
         } else if ( open_on_click ) {
-            browserHistory.push('/projects/' + project_id);
+            history.push('/projects/' + project_id);
         }
     }
     
@@ -40,4 +40,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectLink)
+export default connect(mapStateToProps)(withRouter(ProjectLink))

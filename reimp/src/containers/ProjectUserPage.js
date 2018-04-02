@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { setProjectUserBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureUsersLoaded, getUser} from '../actions/Users'
@@ -58,15 +58,15 @@ class ProjectUserPage extends Component {
     }
 
     navigateToProjectUserPermissions(user, event) {
-        const { project_id } = this.props
+        const { project_id, history } = this.props
         event.stopPropagation()
         event.preventDefault()
-        browserHistory.push('/projects/'+project_id+'/users/'+user.id + '/permissions')
+        history.push('/projects/'+project_id+'/users/'+user.id + '/permissions')
     }
 
     closeProjectUserPermissions() {
-        const { user_id, project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/users/')
+        const { user_id, project_id, history } = this.props
+        history.push('/projects/'+project_id+'/users/')
     }
 
     renderUserPermissions() {
@@ -104,9 +104,9 @@ class ProjectUserPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = props.params.projectId
-    const user_id = props.params.userId
-    const view_mode = props.params.viewMode || 'list'
+    const project_id = props.match.params.projectId
+    const user_id = props.match.params.userId
+    const view_mode = props.match.params.viewMode || 'list'
     const project = getProject(state, project_id)
     const user = getUser(state, user_id)
 
@@ -122,4 +122,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectUserPage)
+export default connect(mapStateToProps)(withRouter(ProjectUserPage))

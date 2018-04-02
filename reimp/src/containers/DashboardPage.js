@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
 import ProjectDashboardList from '../components/ProjectDashboardList'
 import UserTimesheetList from '../components/UserTimesheetList'
+import {withRouter} from 'react-router-dom'
 
 import { PAGE_KEY__DASHBOARD_PAGE,
          LIST_KEY__PROJECT_DASHBOARD_LIST,
@@ -39,4 +40,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(DashboardPage)
+export default connect(mapStateToProps)(withRouter(DashboardPage))

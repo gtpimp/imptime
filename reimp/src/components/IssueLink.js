@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router'
 
 class IssueLink extends Component {
 
@@ -10,12 +10,12 @@ class IssueLink extends Component {
     }
     
     on_clicked(event) {
-        const { issue_id, sprint_id, project_id, onClick, open_on_click } = this.props
+        const { issue_id, history, sprint_id, project_id, onClick, open_on_click } = this.props
         event.stopPropagation()
         if ( onClick ) {
             onClick(sprint_id, project_id, issue_id)
         } else if ( open_on_click ) {
-            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
+            history.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
         }
     }
     
@@ -43,4 +43,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(IssueLink)
+export default connect(mapStateToProps)(withRouter(IssueLink))

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import InvoiceList from '../components/InvoiceList'
 import { ensureInvoicesLoaded } from '../actions/Invoices'
 import { includes, compact } from 'lodash'
@@ -54,4 +54,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(InvoicesPage)
+export default connect(mapStateToProps)(withRouter(InvoicesPage))

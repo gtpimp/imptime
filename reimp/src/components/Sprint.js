@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { includes, keys } from 'lodash';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import Timestamp from '../components/Timestamp'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
@@ -18,9 +18,9 @@ class Sprint extends Component {
     }
     
     onIssuesClick(event) {
-        const { sprint } = this.props
+        const { sprint, history } = this.props
         event.stopPropagation()
-        browserHistory.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues');
+        history.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues');
     }
 
     render_collapsed() {
@@ -165,4 +165,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(Sprint)
+export default connect(mapStateToProps)(withRouter(Sprint))

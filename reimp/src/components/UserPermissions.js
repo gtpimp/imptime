@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
@@ -54,8 +54,8 @@ class UserPermissions extends Component {
     }
 
     onRemoveUser() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/users/')
+        const { project_id, history } = this.props
+        history.push('/projects/'+project_id+'/users/')
     }
 
     render() {
@@ -112,4 +112,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(UserPermissions)
+export default connect(mapStateToProps)(withRouter(UserPermissions))

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { change_password } from '../actions/Auth'
 import Message from '../components/Message'
 
@@ -12,7 +12,8 @@ class PasswordReminderSentPage extends Component {
     }
 
     onClickedHome() {
-        browserHistory.push('/projects');
+        const { history } = this.props
+        history.push('/projects');
     }
 
     render() {
@@ -45,4 +46,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(PasswordReminderSentPage)
+export default connect(mapStateToProps)(withRouter(PasswordReminderSentPage))

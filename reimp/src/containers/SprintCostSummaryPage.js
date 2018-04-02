@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -134,9 +135,9 @@ class SprintCostSummaryPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const sprint_id = props.params.sprintId
+    const sprint_id = props.match.params.sprintId
     const sprint = getSprint(state, sprint_id) || {}
-    const project_id = props.params.projectId
+    const project_id = props.match.params.projectId
     const project = getProject(state, project_id) || {}
     const is_loading = isLoadingCostSummary(state, sprint_id) || isLoadingTimeSummary(state, sprint_id)
     const project_statement = getProjectStatement(state, project_id)
@@ -153,4 +154,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintCostSummaryPage)
+export default connect(mapStateToProps)(withRouter(SprintCostSummaryPage))

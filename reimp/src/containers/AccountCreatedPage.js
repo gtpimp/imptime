@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { PAGE_KEY__AUTH_PAGE } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -19,7 +19,8 @@ class AccountCreatedPage extends Component {
     }
 
     onClickedHome() {
-        browserHistory.push('/projects');
+        const { history } = this.props
+        history.push('/projects');
     }
     
     render() {
@@ -50,4 +51,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(AccountCreatedPage)
+export default connect(mapStateToProps)(withRouter(AccountCreatedPage))

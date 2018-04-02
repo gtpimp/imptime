@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import ProjectList from '../components/ProjectList'
 import SprintList from '../components/SprintList'
 import IssueList from '../components/IssueList'
@@ -51,5 +52,5 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(DevPage)
+export default connect(mapStateToProps)(withRouter(DevPage))
 

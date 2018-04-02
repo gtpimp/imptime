@@ -4,7 +4,7 @@ import { map } from 'lodash'
 import {
     ensureIssuesLoaded, getIssue
 } from '../actions/Issues'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import OtherUser from './OtherUser'
 import Hours from './Hours'
 import '../sass/issue-estimate-summary.scss'

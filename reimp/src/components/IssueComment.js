@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded, generateReadOnlyIssueCommentLink } from '../actions/Issues'
 import Modal from 'react-modal';
-import {browserHistory} from 'react-router'
 import OtherUser from '../components/OtherUser'
 import RenderedMarkdown from './RenderedMarkdown'
 import { has_permission } from '../actions/Users'

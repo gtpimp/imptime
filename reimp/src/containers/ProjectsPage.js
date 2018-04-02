@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {includes} from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
 import NewProjectSidebar from '../components/NewProjectSidebar'
@@ -79,12 +79,12 @@ class ProjectsPage extends Component {
     }
 
     onSelectProjects(project_ids) {
-        const { dispatch } = this.props
+        const { dispatch, history } = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
         dispatch(select_projects(PAGE_KEY__PROJECTS_PAGE, project_ids))
         dispatch(setActivelyAvailableAutoClockEntity(project_ids && project_ids.length > 0 && project_ids[0]))
         if ( project_ids && project_ids.length === 1 ) {
-            browserHistory.push('/projects/' + project_ids[0]);
+            history.push('/projects/' + project_ids[0]);
         }
     }
 
@@ -171,7 +171,7 @@ function mapStateToProps(state, props) {
     const {project} = state
     const items_by_id = (project && project.items_by_id) || {}
     const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__PROJECTS_PAGE)
-    const default_project_id = props.params.projectId
+    const default_project_id = props.match.params.projectId
 
     const selected_items = items_by_id && selected_project_ids && selected_project_ids.map(function (selected_id, index) {
         return items_by_id[selected_id] || {'id': selected_id,
@@ -199,5 +199,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectsPage)
+export default connect(mapStateToProps)(withRouter(ProjectsPage))
 

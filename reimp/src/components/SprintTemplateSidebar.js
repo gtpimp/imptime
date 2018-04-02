@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
@@ -45,19 +45,19 @@ class SprintTemplateSidebar extends Component {
     }
 
     navigateToIssuesPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
+        const { history, project_id, sprint_id } = this.props
+        history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
     }
 
     navigateToDashboardPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id);
+        const { history, project_id, sprint_id } = this.props
+        history.push('/projects/'+project_id+'/sprints/'+sprint_id);
     }
 
     cloneSprint() {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch, history, project_id, sprint_id } = this.props
         const onDone = function(new_sprint_id) {
-            browserHistory.push('/projects/'+project_id+'/sprints/'+new_sprint_id);
+            history.push('/projects/'+project_id+'/sprints/'+new_sprint_id);
         }
         dispatch(cloneTemplateSprint(sprint_id, onDone))
     }             
@@ -131,4 +131,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintTemplateSidebar)
+export default connect(mapStateToProps)(withRouter(SprintTemplateSidebar))

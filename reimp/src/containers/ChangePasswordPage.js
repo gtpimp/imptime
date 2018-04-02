@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { logged_in_user } from '../actions/Auth'
 import { change_password, requestingNewUserPassword, getChangeUserPasswordError } from '../actions/Auth'
 import { Field, reduxForm } from 'redux-form'
@@ -70,4 +70,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'change_password_page'})(ChangePasswordPage))
+export default connect(mapStateToProps)(reduxForm({form:'change_password_page'})(withRouter(ChangePasswordPage)))

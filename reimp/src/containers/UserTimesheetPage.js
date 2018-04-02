@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {browserHistory, withRouter} from 'react-router-dom'
 import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
 import ProjectDashboardList from '../components/ProjectDashboardList'
 import UserTimesheetList from '../components/UserTimesheetList'
@@ -38,4 +39,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(UserTimesheetPage)
+export default connect(mapStateToProps)(withRouter(UserTimesheetPage))

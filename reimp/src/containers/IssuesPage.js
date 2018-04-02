@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import IssueSidebar from '../components/IssueSidebar'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
@@ -107,14 +107,14 @@ class IssuesPage extends Component {
     }
 
     onSelectIssues(issue_ids) {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch, history, project_id, sprint_id } = this.props
         dispatch(selectItems(LIST_KEY__ISSUE_LIST, issue_ids))
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
         dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
 
         if ( issue_ids && issue_ids.length === 1 ) {
-            browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);
+            history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);
         }
     }
 
@@ -204,9 +204,9 @@ function mapStateToProps(state, props) {
     const selected_items = getIssues(state, selected_issue_ids)
 
     const filter_sprint_id = (getListFilter(state, LIST_KEY__ISSUE_LIST) || {}).sprint_id
-    const sprint_id = props.params.sprintId
-    const project_id = props.params.projectId
-    const default_issue_id = props.params.issueId
+    const sprint_id = props.match.params.sprintId
+    const project_id = props.match.params.projectId
+    const default_issue_id = props.match.params.issueId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const candidate_issue = getCandidateIssue(state) || null
@@ -234,4 +234,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(IssuesPage)
+export default connect(mapStateToProps)(withRouter(IssuesPage))

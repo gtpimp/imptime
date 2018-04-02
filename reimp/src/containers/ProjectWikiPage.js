@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { includes } from 'lodash'
 import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
@@ -81,15 +81,15 @@ class ProjectWikiPage extends Component {
     }
 
     onSelectWiki(wiki_id) {
-        const { dispatch, project_id } = this.props
+        const { dispatch, history, project_id } = this.props
         dispatch(selectItems(LIST_KEY__WIKI_LIST, wiki_id))
         dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+wiki_id]))
-        browserHistory.push('/projects/'+project_id+'/wiki/'+wiki_id);
+        history.push('/projects/'+project_id+'/wiki/'+wiki_id);
     }
 
     navigateToWikisPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/wiki');
+        const { project_id, history } = this.props
+        history.push('/projects/'+project_id+'/wiki');
     }
 
     renderContentsPane() {
@@ -162,8 +162,8 @@ class ProjectWikiPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = props.params.projectId
-    const default_wiki_id = props.params.wikiId
+    const project_id = props.match.params.projectId
+    const default_wiki_id = props.match.params.wikiId
     const project = getProject(state, project_id)
 
     const candidate_wiki = getCandidateWiki(state) || null
@@ -188,4 +188,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectWikiPage)
+export default connect(mapStateToProps)(withRouter(ProjectWikiPage))

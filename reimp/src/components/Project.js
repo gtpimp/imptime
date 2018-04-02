@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd'
+import {withRouter} from 'react-router'
 import {get, includes, keys} from 'lodash'
-import {browserHistory} from 'react-router'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'
@@ -22,9 +22,9 @@ class Project extends Component {
     }
 
     onSprintsClick(event) {
-        const { project_id } = this.props
+        const { project_id, history } = this.props
         event.stopPropagation()
-        browserHistory.push('/projects/'+project_id+'/sprints/');
+        history.push('/projects/'+project_id+'/sprints/');
     }
 
     render_collapsed() {
@@ -210,4 +210,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(Project)
+export default connect(mapStateToProps)(withRouter(Project))

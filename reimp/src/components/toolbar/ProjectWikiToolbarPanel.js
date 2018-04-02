@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { startCandidateWiki } from '../../actions/Wikis'
 import { PAGE_KEY__PROJECT_WIKI_PAGE } from '../../actions/ItemListKeyRegistry'
 import {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {login} from '../actions/Auth'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { Field, reduxForm } from 'redux-form'
 import Message from '../components/Message'
 
@@ -21,11 +21,13 @@ class LoginPage extends Component {
     }
 
     onClickedForgotPassword() {
-        browserHistory.push('/password/forgot');
+        const { history } = this.props
+        history.push('/password/forgot');
     }
 
     onClickedCreateAccount() {
-        browserHistory.push('/account/create');
+        const { history } = this.props
+        history.push('/account/create');
     }
 
     onClickedOldImpTime() {
@@ -81,4 +83,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'login_page'})(LoginPage))
+export default connect(mapStateToProps)(reduxForm({form:'login_page'})(withRouter(LoginPage)))

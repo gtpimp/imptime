@@ -2,7 +2,6 @@ import { get } from 'lodash'
 import { impfetch } from './lib.js'
 import cookie from 'react-cookie';
 import { SubmissionError } from 'redux-form'
-import {browserHistory} from 'react-router'
 
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
@@ -63,7 +62,7 @@ export function auto_login(auto_login_token) {
                     dispatch(setAuthToken(json.username, json.token, json.user_id,
                                           json.has_usable_password, json.is_superuser))
                     if ( json.has_usable_password === "false" ) {
-                        browserHistory.push('/password/change')
+                        window.open('/password/change')
                     }
                 } else {
                     throw new SubmissionError({ _error: 'Failed to login' })
@@ -112,7 +111,7 @@ export function forgot_password(username) {
                   headers: {"Content-type": "application/json; charset=UTF-8"}, 
                   body: JSON.stringify(data)}
         return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params).then(
-            () => { browserHistory.push('/password/reminded') })
+            () => { window.open('/password/reminded') })
     }
 }
 
@@ -137,7 +136,7 @@ export function change_password(values) {
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PASSWORD})
                     cookie.save('has_usable_password', true, { path: '/' })
-                    browserHistory.push('/password/changed')
+                    window.open('/password/changed')
                 }
             })
             .catch(function (error) {
@@ -199,7 +198,7 @@ export function create_account(values) {
                     throw new SubmissionError(json.field_errors)
                 } else {
                     dispatch({type: ANNOUNCE_ACCOUNT_CREATED})
-                    browserHistory.push('/account/created')
+                    window.open('/account/created')
                 }
             })
     }

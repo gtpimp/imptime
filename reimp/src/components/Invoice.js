@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {includes, keys} from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { DndTypes } from '../actions/Dnd'

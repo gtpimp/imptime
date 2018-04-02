@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import RenderedMarkdown from './RenderedMarkdown'
 import { has_permission } from '../actions/Users'
 

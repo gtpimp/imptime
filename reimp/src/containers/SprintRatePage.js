@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName'
 import OtherUser from '../components/OtherUser'
@@ -169,8 +169,8 @@ class SprintRatePage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = props.params.projectId
-    const sprint_id = props.params.sprintId
+    const project_id = props.match.params.projectId
+    const sprint_id = props.match.params.sprintId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const user_ids = project.allowed_user_ids
@@ -192,4 +192,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintRatePage)
+export default connect(mapStateToProps)(withRouter(SprintRatePage))

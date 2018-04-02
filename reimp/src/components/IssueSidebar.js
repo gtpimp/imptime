@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import EditableIssueTitle from './EditableIssueTitle'
@@ -70,8 +70,8 @@ class IssueSidebar extends Component {
     }
 
     showIssueVisualSpecGallery() {
-        const { issue } = this.props
-        browserHistory.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id+'/gallery/')
+        const { issue, history } = this.props
+        history.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id+'/gallery/')
     }
 
     makeFeatureIssuesSuccessive() {
@@ -344,4 +344,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(IssueSidebar)
+export default connect(mapStateToProps)(withRouter(IssueSidebar))

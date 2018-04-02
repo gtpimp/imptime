@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 
 class SprintLink extends Component {
 
@@ -10,11 +10,11 @@ class SprintLink extends Component {
     }
     
     on_clicked() {
-        const { sprint_id, project_id, onClick, open_on_click } = this.props
+        const { history, sprint_id, project_id, onClick, open_on_click } = this.props
         if ( onClick ) {
             onClick(sprint_id, project_id, sprint_id)
         } else if ( open_on_click ) {
-            browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id);
+            history.push('/projects/' + project_id + '/sprints/' + sprint_id);
         }
     }
     
@@ -41,4 +41,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintLink)
+export default connect(mapStateToProps)(withRouter(SprintLink))

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { union } from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {getProject, is_project_invalidated} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import ModalDialog from '../components/ModalDialog'
@@ -57,11 +57,11 @@ class ProjectUsersPage extends Component {
     }
 
     onSelectUsers(user_ids) {
-        const {dispatch, project_id} = this.props
+        const {dispatch, history, project_id} = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_USER_LIST, user_ids))
         dispatch(select_users(PAGE_KEY__PROJECT_DASHBOARD_PAGE, user_ids))
         if (user_ids && user_ids.length === 1) {
-            browserHistory.push('/projects/' + project_id + '/users/' + user_ids[0]);
+            history.push('/projects/' + project_id + '/users/' + user_ids[0]);
         }
     }
 
@@ -156,4 +156,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectUsersPage)
+export default connect(mapStateToProps)(withRouter(ProjectUsersPage))

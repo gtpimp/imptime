@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import '../sass/user-dashboard.css'
 import { logout } from '../actions/Auth'
 import { can_create_release_notes } from '../actions/Auth'
@@ -15,17 +15,19 @@ class UserDashboard extends Component {
     }
 
     onLogout() {
-        const { dispatch } = this.props
+        const { dispatch, history } = this.props
         dispatch(logout())
-        browserHistory.push('/')
+        history.push('/')
     }
 
     onChangePassword() {
-        browserHistory.push('/password/change')
+        const { history } = this.props
+        history.push('/password/change')
     }
 
     onShowReleaseNotesEditor() {
-        browserHistory.push('/release_notes_editor')
+        const { history } = this.props
+        history.push('/release_notes_editor')
     }
 
     render() {
@@ -53,4 +55,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(UserDashboard)
+export default connect(mapStateToProps)(withRouter(UserDashboard))

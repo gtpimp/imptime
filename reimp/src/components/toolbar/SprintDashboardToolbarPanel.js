@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
 import ReactTooltip from 'react-tooltip'
@@ -23,13 +23,13 @@ class SprintDashboardToolbarPanel extends Component {
     }
 
     navigateToIssuesPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
+        const { history, project_id, sprint_id } = this.props
+        history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues');
     }
 
     navigateToCostSummaryPage() {
-        const { project_id, sprint_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints/'+sprint_id+'/costSummary');
+        const { history, project_id, sprint_id } = this.props
+        history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/costSummary');
     }
 
     render() {
@@ -70,4 +70,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(SprintDashboardToolbarPanel)
+export default connect(mapStateToProps)(withRouter(SprintDashboardToolbarPanel))

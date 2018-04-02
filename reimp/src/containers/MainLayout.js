@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory, withRouter} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import Header from '../components/Header'
 import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
@@ -47,13 +47,13 @@ class MainLayout extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, location, logged_in_user_id, settings,
+        const { dispatch, history, location, logged_in_user_id, settings,
                 has_usable_password } = props
         
         if ( logged_in_user_id ) {
             dispatch(ensureUsersLoaded([logged_in_user_id]))
             if ( has_usable_password === "false" ) {
-                browserHistory.push('/password/change')
+                history.push('/password/change')
             }
         } else {
             if ( settings.configured && location.query.autologin !== undefined ) {

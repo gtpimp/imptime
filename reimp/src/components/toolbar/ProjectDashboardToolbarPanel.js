@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
 import ReactTooltip from 'react-tooltip'
@@ -27,33 +27,33 @@ class ProjectDashboardToolbarPanel extends Component {
     }
 
     onOpenProjectClick() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints');
+        const { history, project_id } = this.props
+        history.push('/projects/'+project_id+'/sprints');
     }
 
     navigateToSprintsPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprints');
+        const { history, project_id } = this.props
+        history.push('/projects/'+project_id+'/sprints');
     }
 
     navigateToSprintTemplatesPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/sprintTemplates');
+        const { history, project_id } = this.props
+        history.push('/projects/'+project_id+'/sprintTemplates');
     }
 
     navigateToProjectUsersPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/users');
+        const { history, project_id } = this.props
+        history.push('/projects/'+project_id+'/users');
     }
 
     navigateToProjectStatementPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/projectStatement');
+        const { history, project_id } = this.props
+        history.push('/projects/'+project_id+'/projectStatement');
     }
 
     navigateToProjectRoadmapPage() {
-        const { project_id } = this.props
-        browserHistory.push('/projects/'+project_id+'/roadmap');
+        const { history, project_id } = this.props
+        history.push('/projects/'+project_id+'/roadmap');
     }
 
     render() {
@@ -83,4 +83,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(ProjectDashboardToolbarPanel)
+export default connect(mapStateToProps)(withRouter(ProjectDashboardToolbarPanel))

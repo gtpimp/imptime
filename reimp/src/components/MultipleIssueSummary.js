@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import { map, keys } from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {
     invalidateMultipleIssueSummary,
     ensureMultipleIssueSummaryLoaded,

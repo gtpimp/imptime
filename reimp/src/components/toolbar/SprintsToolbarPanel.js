@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import { map, concat } from 'lodash'
 import Select from 'react-select';
 import '../../sass/toolbar-panel.css'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {
     PAGE_KEY__SPRINTS_PAGE,
     PAGE_KEY__SPRINTS_TOOLBAR,

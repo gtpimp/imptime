@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from '../toolbar/ToolbarButton'
 import ReactTooltip from 'react-tooltip'
@@ -38,10 +38,10 @@ class VisualSpecDocumentToolbarPanel extends Component {
     }
 
     onCloneIssueClick() {
-        const { dispatch, selected_issue, active_visual_spec_document_id } = this.props
+        const { dispatch, history, selected_issue, active_visual_spec_document_id } = this.props
         dispatch(cloneIssueForVisualSpec(active_visual_spec_document_id, selected_issue.id,
                                          function(new_visual_spec_document_id, new_issue_id) {
-                                             browserHistory.push('/projects/' + selected_issue.project_id +
+                                             history.push('/projects/' + selected_issue.project_id +
                                                                  '/sprints/' + selected_issue.sprint_id +
                                                                  '/issues/' + new_issue_id +
                                                                  '/visualSpec/' + new_visual_spec_document_id)

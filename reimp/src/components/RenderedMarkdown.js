@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map } from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import { has_permission } from '../actions/Users'
 import SprintName from './SprintName'
@@ -58,11 +58,12 @@ class RenderedMarkdownEnrichedIssue extends Component {
     }
 
     gotoIssue(event) {
+        const { history } = this.props
         event.preventDefault()
         event.stopPropagation()
         const { attrs } = this.props
         const { project_id, sprint_id, issue_id } = attrs
-        browserHistory.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
+        history.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
     }
     
     render() {

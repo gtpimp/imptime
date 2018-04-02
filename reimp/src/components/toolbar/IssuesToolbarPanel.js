@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {
     startCandidateIssue,
     ensureIssuesLoaded,

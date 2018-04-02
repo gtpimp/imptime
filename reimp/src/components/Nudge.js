@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map } from 'lodash'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import classNames from 'classnames'
 import {
     ensureNudgesLoaded,
@@ -53,8 +53,8 @@ class Nudge extends Component {
     }
 
     onClickNudge() {
-        const { dispatch, nudge } = this.props
-        browserHistory.push('/projects/' + nudge.project_id + '/sprints/' + nudge.sprint_id + '/issues/' + nudge.issue_id);
+        const { dispatch, history, nudge } = this.props
+        history.push('/projects/' + nudge.project_id + '/sprints/' + nudge.sprint_id + '/issues/' + nudge.issue_id);
     }
 
     render() {
@@ -127,4 +127,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(Nudge)
+export default connect(mapStateToProps)(withRouter(Nudge))

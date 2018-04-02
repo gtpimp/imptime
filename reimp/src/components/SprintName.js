@@ -4,7 +4,7 @@ import { includes } from 'lodash'
 import {
     ensureSprintsLoaded, getSprint
 } from '../actions/Sprints'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 
 class SprintName extends Component {
 
@@ -29,12 +29,12 @@ class SprintName extends Component {
     }
 
     on_clicked(event) {
-        const { sprint, onClick, open_on_click } = this.props
+        const { history, sprint, onClick, open_on_click } = this.props
         event.stopPropagation()
         if ( onClick ) {
             onClick(sprint.id)
         } else if ( open_on_click ) {
-            browserHistory.push('/projects/' + sprint.project_id + '/sprints/' + sprint.id);
+            history.push('/projects/' + sprint.project_id + '/sprints/' + sprint.id);
         }
     }
 
@@ -97,4 +97,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(SprintName)
+export default connect(mapStateToProps)(withRouter(SprintName))

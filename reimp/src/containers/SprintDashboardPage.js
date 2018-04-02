@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import EditableSprintName from '../components/EditableSprintName.js'
 import PropertyStackComponent from '../components/PropertyStackComponent'
@@ -63,8 +63,8 @@ class ProjectDashboardPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = props.params.projectId
-    const sprint_id = props.params.sprintId
+    const project_id = props.match.params.projectId
+    const sprint_id = props.match.params.sprintId
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
 
@@ -76,4 +76,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectDashboardPage)
+export default connect(mapStateToProps)(withRouter(ProjectDashboardPage))

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory} from 'react-router'
+import {withRouter} from 'react-router-dom'
 import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import ProjectUsers from '../components/ProjectUsers'
@@ -60,7 +60,7 @@ class ProjectRoadmapPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = props.params.projectId
+    const project_id = props.match.params.projectId
     const project = getProject(state, project_id) || {}
     return {
         project_id: project_id,
@@ -69,4 +69,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ProjectRoadmapPage)
+export default connect(mapStateToProps)(withRouter(ProjectRoadmapPage))
