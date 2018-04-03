@@ -30,22 +30,21 @@ class ProjectUserPage extends Component {
     componentDidMount() {
         const {dispatch, project_id, user_id} = this.props
         // dispatch(set_toolbars(PAGE_KEY__PROJECT_USER_PAGE, ['project-user']))
-        this.refresh(project_id, user_id, null, null)
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
         const { project_id, user_id, dispatch } = this.props
         if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ||
              new_props.user_id !== user_id || new_props.user.id != this.props.user.id) {
-            this.refresh(new_props.project_id, new_props.user_id, new_props.project, new_props.user)
+            this.refresh(new_props)
         }
     }
     
-    refresh(project_id, user_id, project, user) {
-        const { dispatch } = this.props
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, project_id, user_id, project, user } = props
         const breadcrumbs = []
-        project = project || {}
-        user = user || {}
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             if ( user_id ) {
@@ -53,6 +52,8 @@ class ProjectUserPage extends Component {
                 dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
             }
             dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+        }
+        if ( project && project.id ) {
             dispatch(setProjectUserBreadcrumbsHelper(project, user))
         }
     }

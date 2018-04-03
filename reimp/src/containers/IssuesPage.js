@@ -222,11 +222,8 @@ function mapStateToProps(state, props) {
         project: project,
         default_issue_id,
         splitter_size,
-        // selected_issue: selected_issue || {},
-        // selected_issue_ids: selected_issue_ids,
-        selected_issue: null,
-        selected_issue_ids: null,
-        
+        selected_issue: selected_issue || {},
+        selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue: is_creating_issue,
