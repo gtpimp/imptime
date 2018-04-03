@@ -83,4 +83,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(withRouter(ProjectDashboardToolbarPanel))
+export default withRouter(connect(mapStateToProps)(ProjectDashboardToolbarPanel))

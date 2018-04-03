@@ -215,4 +215,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ReactTimeout(withRouter(SearchBox)))
+export default withRouter(connect(mapStateToProps)(ReactTimeout(SearchBox)))

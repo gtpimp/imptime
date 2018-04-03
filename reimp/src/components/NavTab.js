@@ -52,4 +52,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(NavTab))
+export default withRouter(connect(mapStateToProps)(NavTab))

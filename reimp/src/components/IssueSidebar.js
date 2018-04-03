@@ -344,4 +344,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(IssueSidebar))
+export default withRouter(connect(mapStateToProps)(IssueSidebar))

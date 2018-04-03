@@ -37,5 +37,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(NudgePage))
+export default withRouter(connect(mapStateToProps)(NudgePage))
 

@@ -67,5 +67,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(IssueLabel))
+export default withRouter(connect(mapStateToProps)(IssueLabel))
 

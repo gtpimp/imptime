@@ -192,4 +192,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(SprintRatePage))
+export default withRouter(connect(mapStateToProps)(SprintRatePage))

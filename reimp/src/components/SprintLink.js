@@ -41,4 +41,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(SprintLink))
+export default withRouter(connect(mapStateToProps)(SprintLink))

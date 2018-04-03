@@ -84,4 +84,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'account_create_page'})(withRouter(AccountCreatePage)))
+export default withRouter(connect(mapStateToProps)(reduxForm({form:'account_create_page'})(AccountCreatePage)))

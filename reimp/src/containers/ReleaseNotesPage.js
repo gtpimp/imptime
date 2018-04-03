@@ -62,4 +62,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(ReleaseNotesPage))
+export default withRouter(connect(mapStateToProps)(ReleaseNotesPage))

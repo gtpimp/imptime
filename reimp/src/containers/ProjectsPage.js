@@ -199,5 +199,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(ProjectsPage))
+export default withRouter(connect(mapStateToProps)(ProjectsPage))
 

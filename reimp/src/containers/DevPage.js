@@ -52,5 +52,5 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(withRouter(DevPage))
+export default withRouter(connect(mapStateToProps)(DevPage))
 

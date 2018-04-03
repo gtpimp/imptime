@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import {withRouter} from 'react-router'
 import AccountCreatePage from './AccountCreatePage'
 import AccountCreatedPage from './AccountCreatedPage'
@@ -34,47 +34,47 @@ class MainRouter extends Component {
 
     render() {
         return (
-            <div>
-              <Route path="/" exact component={NudgePage}/>
-              <Route path="/account/create" exact component={AccountCreatePage}/>
-              <Route path="/account/created" exact component={AccountCreatedPage}/>
-              <Route path="/work_summary" exact component={WorkSummaryPage}/>
-              <Route path="/nudge" exact component={NudgePage}/>
-              <Route path="/password/changed" exact component={PasswordChangedPage}/>
-              <Route path="/password/change" exact component={ChangePasswordPage}/>
-              <Route path="/password/forgot" exact component={ForgotPasswordPage}/>
-              <Route path="/password/reminded" exact component={PasswordReminderSentPage}/>
-              <Route path="/dev" exact component={DevPage}/>
-              <Route path="/release_notes_editor" exact component={ReleaseNotesPage}/>
-              <Route path="/invoices" exact component={InvoicesPage}/>
-              <Route path="/projects" exact component={ProjectsPage}/>
-              <Route path="/projects/:projectId" exact component={ProjectsPage}/>
-              <Route path="/projects/:projectId/dashboard" exact component={ProjectDashboardPage}/>
-              <Route path="/projects/:projectId/projectStatement" exact component={ProjectStatementPage}/>
-              <Route path="/projects/:projectId/sprints" exact component={SprintsPage}/>
-              <Route path="/projects/:projectId/roadmap" exact component={ProjectRoadmapPage}/>
-              <Route path="/projects/:projectId/gallery/" exact component={VisualSpecDocumentPage}/>
-              <Route path="/projects/:projectId/gallery/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
-              <Route path="/projects/:projectId/wiki/" exact component={ProjectWikiPage}/>
-              <Route path="/projects/:projectId/wiki/:wikiId" exact component={ProjectWikiPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId" exact component={SprintsPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/dashboard" exact component={SprintDashboardPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/rates" exact component={SprintRatePage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/issues" exact component={IssuesPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId" exact component={IssuesPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" exact component={VisualSpecDocumentPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/costSummary" exact component={SprintCostSummaryPage}/>
-              <Route path="/projects/:projectId/sprints/:sprintId/bulkCreate" exact component={BulkIssueCreatorPage}/>
-              <Route path="/projects/:projectId/users" exact component={ProjectUserPage}/>
-              <Route path="/projects/:projectId/users/:userId/:viewMode" exact component={ProjectUserPage}/>
-              <Route path="/visualSpec/:visualSpecDocumentId" exact component={VisualSpecDocumentPage}/>
-              <Route path="/share/:type/:obj_ref" exact component={ReadOnlyPage}/>
-              <Route path="/share/:type/:obj_ref/:subref" exact component={ReadOnlyPage}/>
-              <Route path="/dashboard" exact component={DashboardPage}/>
-              <Route path="/usertimesheets" exact component={UserTimesheetPage}/>
-            </div>
+            <Switch>
+              <Route exact path="/" component={NudgePage}/>
+              <Route exact path="/account/create" component={AccountCreatePage}/>
+              <Route exact path="/account/created" component={AccountCreatedPage}/>
+              <Route exact path="/work_summary" component={WorkSummaryPage}/>
+              <Route exact path="/nudge" component={NudgePage}/>
+              <Route exact path="/password/changed" component={PasswordChangedPage}/>
+              <Route exact path="/password/change" component={ChangePasswordPage}/>
+              <Route exact path="/password/forgot" component={ForgotPasswordPage}/>
+              <Route exact path="/password/reminded" component={PasswordReminderSentPage}/>
+              <Route exact path="/dev" component={DevPage}/>
+              <Route exact path="/release_notes_editor" component={ReleaseNotesPage}/>
+              <Route exact path="/invoices" component={InvoicesPage}/>
+              <Route exact path="/projects" component={ProjectsPage}/>
+              <Route exact path="/projects/:projectId" component={ProjectsPage}/>
+              <Route exact path="/projects/:projectId/dashboard" component={ProjectDashboardPage}/>
+              <Route exact path="/projects/:projectId/projectStatement" component={ProjectStatementPage}/>
+              <Route exact path="/projects/:projectId/sprints" component={SprintsPage}/>
+              <Route exact path="/projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
+              <Route exact path="/projects/:projectId/gallery/" component={VisualSpecDocumentPage}/>
+              <Route exact path="/projects/:projectId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+              <Route exact path="/projects/:projectId/wiki/" component={ProjectWikiPage}/>
+              <Route exact path="/projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/rates" component={SprintRatePage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" component={VisualSpecDocumentPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
+              <Route exact path="/projects/:projectId/users" component={ProjectUserPage}/>
+              <Route exact path="/projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
+              <Route exact path="/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
+              <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
+              <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
+              <Route exact path="/dashboard" component={DashboardPage}/>
+              <Route exact path="/usertimesheets" component={UserTimesheetPage}/>
+            </Switch>
         )
     }
     
@@ -84,4 +84,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(withRouter(MainRouter))
+export default withRouter(connect(mapStateToProps)(MainRouter))

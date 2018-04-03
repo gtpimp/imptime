@@ -41,5 +41,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(ReadOnlyPage))
+export default withRouter(connect(mapStateToProps)(ReadOnlyPage))
 

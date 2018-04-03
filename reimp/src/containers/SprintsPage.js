@@ -244,4 +244,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(SprintsPage))
+export default withRouter(connect(mapStateToProps)(SprintsPage))

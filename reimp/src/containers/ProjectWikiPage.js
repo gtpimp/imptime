@@ -188,4 +188,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(ProjectWikiPage))
+export default withRouter(connect(mapStateToProps)(ProjectWikiPage))

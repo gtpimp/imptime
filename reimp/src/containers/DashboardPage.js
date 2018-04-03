@@ -40,4 +40,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(withRouter(DashboardPage))
+export default withRouter(connect(mapStateToProps)(DashboardPage))

@@ -54,4 +54,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(InvoicesPage))
+export default withRouter(connect(mapStateToProps)(InvoicesPage))

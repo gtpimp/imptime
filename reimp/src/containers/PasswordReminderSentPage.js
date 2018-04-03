@@ -46,4 +46,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(PasswordReminderSentPage))
+export default withRouter(connect(mapStateToProps)(PasswordReminderSentPage))

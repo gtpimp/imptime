@@ -39,4 +39,4 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(withRouter(UserTimesheetPage))
+export default withRouter(connect(mapStateToProps)(UserTimesheetPage))

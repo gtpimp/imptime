@@ -70,4 +70,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'change_password_page'})(withRouter(ChangePasswordPage)))
+export default withRouter(connect(mapStateToProps)(reduxForm({form:'change_password_page'})(ChangePasswordPage)))

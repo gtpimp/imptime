@@ -97,4 +97,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(SprintName))
+export default withRouter(connect(mapStateToProps)(SprintName))

@@ -289,4 +289,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(VisualSpecDocumentPage))
+export default withRouter(connect(mapStateToProps)(VisualSpecDocumentPage))

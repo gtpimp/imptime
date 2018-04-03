@@ -4,8 +4,9 @@ import ReactDOM from 'react-dom';
 import configureStore from './store/configureStore'
 import {Provider} from 'react-redux'
 import Raven from 'raven-js'
-import { BrowserRouter } from 'react-router-dom'
+import { Router } from 'react-router-dom'
 import MainLayout from './containers/MainLayout'
+import history from './history'
 
 const store = configureStore({})
 
@@ -17,9 +18,9 @@ if (RAVEN_DSN) {
 
 ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter>
+      <Router history={history}>
         <MainLayout />
-      </BrowserRouter>
+      </Router>
     </Provider>,
     document.getElementById('root')
 )

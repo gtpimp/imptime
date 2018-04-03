@@ -131,4 +131,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(SprintTemplateSidebar))
+export default withRouter(connect(mapStateToProps)(SprintTemplateSidebar))

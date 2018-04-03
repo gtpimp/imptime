@@ -127,4 +127,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(Nudge))
+export default withRouter(connect(mapStateToProps)(Nudge))

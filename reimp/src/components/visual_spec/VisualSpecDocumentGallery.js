@@ -115,4 +115,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(VisualSpecDocumentGallery))
+export default withRouter(connect(mapStateToProps)(VisualSpecDocumentGallery))

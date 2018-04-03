@@ -179,4 +179,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(Breadcrumb))
+export default withRouter(connect(mapStateToProps)(Breadcrumb))

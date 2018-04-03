@@ -43,4 +43,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(IssueLink))
+export default withRouter(connect(mapStateToProps)(IssueLink))

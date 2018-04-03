@@ -70,4 +70,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(withRouter(SprintDashboardToolbarPanel))
+export default withRouter(connect(mapStateToProps)(SprintDashboardToolbarPanel))

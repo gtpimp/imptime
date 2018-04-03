@@ -55,4 +55,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(UserDashboard))
+export default withRouter(connect(mapStateToProps)(UserDashboard))

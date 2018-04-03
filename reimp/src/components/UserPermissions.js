@@ -112,4 +112,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(UserPermissions))
+export default withRouter(connect(mapStateToProps)(UserPermissions))

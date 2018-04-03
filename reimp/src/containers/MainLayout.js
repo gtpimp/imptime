@@ -127,7 +127,7 @@ function mapStateToProps(state) {
     }
 }
 
-export default connect(mapStateToProps)(DragDropContext(HTML5Backend)(withRouter(MainLayout)))
+export default withRouter(connect(mapStateToProps)(DragDropContext(HTML5Backend)(MainLayout)))
 
 MainLayout.childContextTypes = {
   shortcuts: PropTypes.object.isRequired

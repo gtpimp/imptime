@@ -51,4 +51,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(AccountCreatedPage))
+export default withRouter(connect(mapStateToProps)(AccountCreatedPage))

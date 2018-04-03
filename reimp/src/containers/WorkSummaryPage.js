@@ -38,4 +38,5 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default connect(mapStateToProps)(withRouter(WorkSummaryPage))
+export default withRouter(connect(mapStateToProps)(WorkSummaryPage))
+

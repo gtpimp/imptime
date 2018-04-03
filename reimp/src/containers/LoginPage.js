@@ -83,4 +83,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'login_page'})(withRouter(LoginPage)))
+export default withRouter(connect(mapStateToProps)(reduxForm({form:'login_page'})(LoginPage)))
