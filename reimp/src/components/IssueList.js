@@ -82,14 +82,6 @@ class IssueList extends Component {
         this.renderHeader = this.renderHeader.bind(this)
     }
 
-    componentDidUpdate(prevProps) {
-        Object.keys(this.props).forEach(key => {
-            if (this.props[key] !== prevProps[key]) {
-                console.log(key, "changed from", prevProps[key], "to", this.props[key]);
-            }
-        });
-    }
-    
     componentDidMount() {
         const {dispatch, list_key, sprint_id, feature_issue_ids, tag_ids} = this.props
         if (sprint_id) {

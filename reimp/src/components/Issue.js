@@ -414,8 +414,6 @@ class Issue extends Component {
             return null
         }
 
-        console.log("rendering issue")
-        
         if (is_collapsed) {
             return this.render_collapsed()
         }

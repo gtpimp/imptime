@@ -34,8 +34,6 @@ import {getCandidateIssue, getIssues} from '../actions/Issues'
 import cookie from 'react-cookie'
 import { getIssueHeaderListForCurrentMien } from '../actions/Mien'
 
-
-
 class IssuesPage extends Component {
 
     constructor(props) {
@@ -224,8 +222,11 @@ function mapStateToProps(state, props) {
         project: project,
         default_issue_id,
         splitter_size,
-        selected_issue: selected_issue || {},
-        selected_issue_ids: selected_issue_ids,
+        // selected_issue: selected_issue || {},
+        // selected_issue_ids: selected_issue_ids,
+        selected_issue: null,
+        selected_issue_ids: null,
+        
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue: is_creating_issue,
