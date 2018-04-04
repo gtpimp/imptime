@@ -21,6 +21,10 @@ class MarkdownEnrichment(object):
         running_index = 0
         for match in re.finditer(self.issue_pattern, s):
             issue_number = match.group(1)
+            try:
+                issue_number = int(issue_number)
+            except ValueError:
+                continue
             start_index, end_index = match.span(0)
             try:
                 issue = PermissionHelper().allowed_issues(self.logged_in_user)\
