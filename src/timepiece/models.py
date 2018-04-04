@@ -4156,25 +4156,7 @@ class Issue(BaseModel):
         self.set_points(self.assigned_to, hours)
 
     @property
-    def best_hours_estimate(self):
-        """ 'best' means for the either the assigned user or the user who has put time against the issue. """
-
-        if self.assigned_to:
-            user_issue_points = self.get_user_issue_points(self.assigned_to)
-            if user_issue_points is not None and user_issue_points.points is not None:
-                return user_issue_points.points, self.assigned_to
-
-        for user_id, bp in BusinessPermissions._by_user(self.project.business).items():
-            if bp.has_estimate_own_points:
-                user = User.objects.get(pk=user_id)
-                user_issue_points = self.get_user_issue_points(user)
-                if user_issue_points and user_issue_points.points:
-                    return user_issue_points.points, user
-        return 0, None
-
-    @property
     def ctc(self):
-        x= self.related_entries.all().aggregate(total=Sum(F('hours')*F('rate')))[0]['total']
         cost = 0
         for entry in self.related_entries:
             cost += entry.atrate

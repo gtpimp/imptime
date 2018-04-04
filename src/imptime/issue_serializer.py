@@ -32,8 +32,6 @@ class IssueSerializer(BaseSerializer):
     project_id = serializers.CharField()
     tag_ids = serializers.ListField(child=serializers.CharField())
     tag_category_ids = serializers.ListField(child=serializers.CharField())
-    dev_estimate_hours = serializers.FloatField()
-    dev_estimate_user_quick_name = serializers.CharField()
     all_actuals = IssueHoursSerializer(many=True)
     all_estimates = IssueEstimateSerializer(many=True)
     my_estimate = IssueEstimateSerializer(many=True)
@@ -70,7 +68,6 @@ class IssueSerializer(BaseSerializer):
         issue.type_name = issue.issue_type
         issue.sprint_id = str(issue.project_id)  # sic
         issue.project_id = str(issue.project.business_id)  # sic
-        issue.dev_estimate_hours, issue.dev_estimate_user_quick_name = issue.best_hours_estimate
         issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
