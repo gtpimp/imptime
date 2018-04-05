@@ -44,7 +44,7 @@ class IssueDescriptionForm extends Component {
 
     render() {
 
-        const { handleSubmit } = this.props
+        const { handleSubmit, onCancel } = this.props
 
         return (
             <form onSubmit={handleSubmit}>
@@ -54,7 +54,10 @@ class IssueDescriptionForm extends Component {
                          component={this.renderTextarea} />
                 </div>
               </div>
-              <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+              <div className="issue_sidebar__button_row">
+                <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                <button className="button issue_sidebar--textarea" onClick={onCancel}>Cancel</button>
+              </div>
             </form>
         )
     }
@@ -62,12 +65,13 @@ class IssueDescriptionForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted } = props
+    const { onSubmitted, onCancel } = props
 
     return {
         initialValues: {description:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onSubmitted
+        onSubmit: onSubmitted,
+        onCancel
     }
 }
 

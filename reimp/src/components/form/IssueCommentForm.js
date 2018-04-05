@@ -42,7 +42,7 @@ class IssueCommentForm extends Component {
 
     render() {
 
-        const { comment, handleSubmit } = this.props
+        const { comment, handleSubmit, onCancel } = this.props
 
         return (
             <div>
@@ -61,7 +61,10 @@ class IssueCommentForm extends Component {
                            component={this.renderTextarea} />
                   </div>
                 </div>
-                <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                <div className="issue_sidebar__button_row">
+                  <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                  <button className="button issue_sidebar--textarea" onClick={onCancel}>Cancel</button>
+                </div>
               </form>
             </div>
         )
@@ -69,7 +72,7 @@ class IssueCommentForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSubmitted, issue_id, comment } = props
+    const { onSubmitted, issue_id, comment, onCancel } = props
     const { issue } = state;
     /* const loading_item_id = issue.loading_item_ids || {}*/
     /* const initial_value = comment.comment;*/
@@ -79,6 +82,7 @@ function mapStateToProps(state, props) {
         initialValues: {comment:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
+        onCancel: onCancel
         /* initial_value: initial_value,
          * loading_item_id: loading_item_id*/
     }

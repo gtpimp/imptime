@@ -41,7 +41,7 @@ class IssueTestableForm extends Component {
 
     render() {
 
-        const { testable, handleSubmit } = this.props
+        const { testable, handleSubmit, onCancel } = this.props
 
         return (
             <div>
@@ -56,7 +56,10 @@ class IssueTestableForm extends Component {
                            component={this.renderTextarea} />
                   </div>
                 </div>
-                <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                <div className="issue_sidebar__button_row">
+                  <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                  <button className="button issue_sidebar--textarea" onClick={onCancel}>Cancel</button>
+                </div>
               </form>
             </div>
         )
@@ -64,7 +67,7 @@ class IssueTestableForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSubmitted, issue_id, testable } = props
+    const { onSubmitted, issue_id, testable, onCancel } = props
     const { issue } = state;
     /* const loading_item_id = issue.loading_item_ids || {}*/
     /* const initial_value = testable.testable;*/
@@ -74,6 +77,7 @@ function mapStateToProps(state, props) {
         initialValues: {testable:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
+        onCancel
         /* initial_value: initial_value,
          * loading_item_id: loading_item_id*/
     }

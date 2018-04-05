@@ -56,6 +56,7 @@ class EditableProperty extends Component {n
             return
         }
         if ( event ) {
+            event.preventDefault()
             event.stopPropagation()
         }
         dispatch(setReadonly(property_key))
@@ -149,14 +150,16 @@ function mapStateToProps(state, props) {
     const {property_key, initial_value, edit_as_modal, can_edit,
            class_name, wideView, action_label} = props
 
+    const is_editing = can_edit && isEditing(state, property_key)
+
     return {
-        property_key: property_key,
-        initial_value: initial_value,
-        edit_as_modal: edit_as_modal,
-        can_edit: can_edit,
-        is_editing: can_edit && isEditing(state, property_key),
+        property_key,
+        initial_value,
+        edit_as_modal,
+        can_edit,
+        is_editing,
         is_readonly: isReadonly(state, property_key),
-        is_empty: !initial_value,
+        is_empty: !is_editing && !initial_value,
         class_name: class_name || "",
         wideView: wideView || false,
         action_label,
