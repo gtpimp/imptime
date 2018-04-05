@@ -301,7 +301,7 @@ this is the colour of yukc
                                          modified=message['time'])
             SprintIssueOrder.insert_at_the_end(issue)
 
-        comment = """Email from {first_name} {last_name} ({username}). 
+        comment = """Created by email from {first_name} {last_name} ({username}). 
 Sent at {sent_at} using email address {from_email} """.format(
                         first_name=user.first_name,
                         last_name=user.last_name,
