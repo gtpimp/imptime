@@ -5,7 +5,9 @@ import Modal from 'react-modal';
 import '../../sass/editable-property.scss'
 import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode, getMode } from '../../actions/EditableProperty'
 
-class EditableProperty extends Component {n
+const MOUSE_MOVE_THRESHOLD = 5
+
+class EditableProperty extends Component {
 
     // The first child must be the editing component for the property
     // The (optional) second child must be the readonly component for the property
@@ -17,6 +19,9 @@ class EditableProperty extends Component {n
         this.cancelEditing = this.cancelEditing.bind(this)
         this.keyDown = this.keyDown.bind(this)
         this.onEdited = this.onEdited.bind(this)
+        this.onMouseDown = this.onMouseDown.bind(this)
+        this.state = { mouse_pos_x: null,
+                       mouse_pos_y: null }
     }
 
     componentDidMount() {
@@ -37,16 +42,24 @@ class EditableProperty extends Component {n
         }
     }
 
+    onMouseDown(event) {
+        this.setState({mouse_pos_x:event.clientX,
+                       mouse_pos_y:event.clientY})
+    }
+
     startEditing(event) {
         const {dispatch, property_key, can_edit, is_editing} = this.props
         if ( is_editing ) {
             return
         }
-        if ( event ) {
-            event.stopPropagation()
-        }
-        if ( can_edit ) {
+        const mouse_moved = Math.abs(this.state.mouse_pos_x-event.clientX) > MOUSE_MOVE_THRESHOLD ||
+                             Math.abs(this.state.mouse_pos_y-event.clientY) > MOUSE_MOVE_THRESHOLD
+        
+        if ( can_edit && ! mouse_moved ) {
             dispatch(setEditing(property_key))
+        }
+        if ( event && ! mouse_moved ) {
+            event.stopPropagation()
         }
     }
 
@@ -118,7 +131,9 @@ class EditableProperty extends Component {n
         }
 
         return (
-            <div className={classNames(class_name, "editable-property")} onClick={this.startEditing}>
+            <div className={classNames(class_name, "editable-property")}
+                 onMouseDown={this.onMouseDown}
+                 onClick={this.startEditing}>
               <div>
                 { is_editing && edit_as_modal &&
                   <Modal isOpen={true}
