@@ -1,20 +1,21 @@
 @import 'variables.scss';
 
 .textarea {
-  background-color: $color-8;
-  border: none;
-  color: $color-1;
-  outline: 0;
-  padding: 0;
-  resize: none;
-  width: 100%;
+    background-color: $color-35;
+    border: none;
+    color: $color-1;
+    outline: 0;
+    padding: 0;
+    resize: none;
+    width: 100%;
 }
 
 .textarea--description {
   color: $color-10;
   font: $font-1;
   line-height: 20px;
-  white-space: pre-wrap;
+    white-space: pre-wrap;
+    min-height: 100px;
 }
 
 .textarea--title {

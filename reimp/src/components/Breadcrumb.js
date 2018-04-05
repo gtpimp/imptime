@@ -122,6 +122,27 @@ class Breadcrumb extends Component {
             history.push(breadcrumb_button['nav_url'](breadcrumb.selected_entities))
         }
     }
+
+    renderBreadcrumbLink(button, breadcrumb, key) {
+        const label = button.label(breadcrumb.selected_entities)
+        if ( button['dispatch_action'] ) {
+            return (
+                <div key={key}
+                     className="breadcrumb-menu__item"
+                     onClick={() => this.onClickBreadcrumbActionButton(button)}>
+                  {label}
+                </div>
+            )
+        } else {
+            return (
+                <div key={key} className="breadcrumb-menu__item">
+                  <Link to={button['nav_url'](breadcrumb.selected_entities)}>
+                    {label}
+                  </Link>
+                </div>
+            )
+        }
+    }
     
     render() {
         const {label, to, is_last, breadcrumb, permissions } = this.props
@@ -147,13 +168,7 @@ class Breadcrumb extends Component {
                         if ( ! can_view ) {
                             return null
                         }
-                        return (
-                            <div key={index}
-                                 className="breadcrumb-menu__item"
-                                 onClick={() => that.onClickBreadcrumbActionButton(button)}>
-                              {button.label(breadcrumb.selected_entities)}
-                            </div>
-                        )
+                        return that.renderBreadcrumbLink(button, breadcrumb, index)
                     })
                   }
                 </div>

@@ -36,7 +36,7 @@ class EditableIssueDescription extends Component {
               <div className="text-component--readonly text-component--description">
                 <RenderedMarkdown content={enriched_description} />
               </div>
-              <div className="text-component--empty text-component--description"> </div>
+              <div> </div>
             </EditableProperty>
         )
     }

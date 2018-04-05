@@ -31,7 +31,7 @@ class IssueDescriptionForm extends Component {
         const {input} = field
         return (
             <Textarea
-                rows="1"
+                rows="10"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}

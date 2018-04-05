@@ -248,7 +248,7 @@ class IssueSidebar extends Component {
 
                         </PropertyStackComponent>
 
-                        <PropertyStackComponent title="Context">
+                        <PropertyStackComponent title="Description">
                           <EditableIssueDescription issue_id={issue.id}/>
                         </PropertyStackComponent>
 
