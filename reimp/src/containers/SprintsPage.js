@@ -45,7 +45,7 @@ class SprintsPage extends Component {
         dispatch(set_toolbars(page_key, ['sprints']))
 
         const new_filter = { project_id: project_id }
-        if ( ! filter.sprint_status ) {
+        if ( !filter.project_id || filter.project_id != project_id ) {
             new_filter.sprint_status = 'open'
         }
         
