@@ -4,14 +4,9 @@ import { includes } from 'lodash'
 import {
     ensureSprintsLoaded, getSprint
 } from '../actions/Sprints'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 
 class SprintName extends Component {
-
-    constructor(props) {
-        super(props)
-        this.on_clicked = this.on_clicked.bind(this)
-    }
 
     componentDidMount() {
         this.refresh(this.props)
@@ -28,24 +23,13 @@ class SprintName extends Component {
 	}
     }
 
-    on_clicked(event) {
-        const { history, sprint, onClick, open_on_click } = this.props
-        event.stopPropagation()
-        if ( onClick ) {
-            onClick(sprint.id)
-        } else if ( open_on_click ) {
-            history.push('/projects/' + sprint.project_id + '/sprints/' + sprint.id);
-        }
-    }
-
     render_inline_small() {
 	const { sprint, loading_value, display_mode } = this.props
 
 	return (
-	    <div className="sprint_name--inline-small"
-                 key={this.key+".collapsed_sprint."+sprint.id}
-		 onClick={this.on_clicked}
-	    >
+	    <Link className="sprint_name--inline-small"
+                  to={'/projects/' + sprint.project_id + '/sprints/' + sprint.id}
+                  key={this.key+".collapsed_sprint."+sprint.id} >
 	      {sprint.name }
               <div className="sprint_name__display_mode_extra">
                 { includes(display_mode, "status") &&
@@ -59,7 +43,7 @@ class SprintName extends Component {
                   </div>
                 }
               </div>
-	    </div>
+	    </Link>
 	)
     }
 
@@ -67,11 +51,18 @@ class SprintName extends Component {
         const { sprint_id, sprint, render_mode, loading_value, onClick } = this.props
 
         if ( ! sprint_id ) {
-            return ( <div onClick={onClick}></div> )
+            return (
+                <Link to={'/projects/' + sprint.project_id + '/sprints/' + sprint.id}>
+                </Link>
+            )
         }
 
 	if ( sprint.loaded === false ) {
-	    return ( <div onClick={onClick}>{loading_value}</div> )
+	    return (
+                <Link to={'/projects/' + sprint.project_id + '/sprints/' + sprint.id}>
+                  {loading_value}
+                </Link>
+            )
 	}
 
 	if ( render_mode === 'inline--small' ) {
@@ -91,8 +82,6 @@ function mapStateToProps(state, props) {
         sprint_id: sprint_id,
 	render_mode: render_mode || "inline--small",
 	loading_value: loading_value || "...",
-        onClick: props.onClick,
-        open_on_click: props.open_on_click || true,
         display_mode: display_mode || ["name"]
     }
 }

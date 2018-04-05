@@ -1,31 +1,17 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {withRouter} from 'react-router'
+import {withRouter, Link} from 'react-router-dom'
 
 class IssueLink extends Component {
 
-    constructor(props) {
-        super(props)
-        this.on_clicked = this.on_clicked.bind(this)
-    }
-    
-    on_clicked(event) {
-        const { issue_id, history, sprint_id, project_id, onClick, open_on_click } = this.props
-        event.stopPropagation()
-        if ( onClick ) {
-            onClick(sprint_id, project_id, issue_id)
-        } else if ( open_on_click ) {
-            history.push('/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id);
-        }
-    }
-    
     render() {
-        const { issue_id, issue_number, onClick } = this.props
+        const { project_id, sprint_id, issue_id, issue_number, onClick } = this.props
 
-        return (
-            <div className="issue_link" onClick={this.on_clicked}>
+        return ( 
+            <Link to={'/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id}
+                  className="issue_link" onClick={this.on_clicked}>
 	      #{issue_number}
-	    </div>
+	    </Link>
         )
     }
 }
@@ -37,9 +23,7 @@ function mapStateToProps(state, props) {
         issue_id: issue_id,
         sprint_id: sprint_id,
         project_id: project_id,
-        issue_number: issue_number,
-        onClick: props.onClick,
-        open_on_click: props.open_on_click || true
+        issue_number: issue_number
     }
 }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { DragSource, DropTarget } from 'react-dnd'
-import {withRouter} from 'react-router'
+import {withRouter, Link} from 'react-router-dom'
 import {get, includes, keys} from 'lodash'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
@@ -17,14 +17,7 @@ class Project extends Component {
 
     constructor(props) {
         super(props)
-        this.onSprintsClick = this.onSprintsClick.bind(this)
         this.onDeleteProject = this.onDeleteProject.bind(this)
-    }
-
-    onSprintsClick(event) {
-        const { project_id, history } = this.props
-        event.stopPropagation()
-        history.push('/projects/'+project_id+'/sprints/');
     }
 
     render_collapsed() {
@@ -104,9 +97,9 @@ class Project extends Component {
                    }
                    
                   {includes(visible_header_keys, "num_sprints") &&
-                   <div className="div-table__cell sprint__cell__secondary"
-                        onClick={this.onSprintsClick}
-                        style={getCellStyle(header_list.num_sprints)}>
+                   <Link className="div-table__cell sprint__cell__secondary"
+                         to={'/projects/'+project.id+'/sprints/'}
+                         style={getCellStyle(header_list.num_sprints)}>
                      <div className="project__cell--num-sprints">
                        { project && project.num_open_sprints > 0 &&
                          <div>
@@ -114,7 +107,7 @@ class Project extends Component {
                          </div>
                        }
                      </div>
-                   </div>
+                   </Link>
                   }
 
                    {includes(visible_header_keys, "created_at") &&

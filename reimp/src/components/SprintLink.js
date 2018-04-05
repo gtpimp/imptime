@@ -1,30 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 
 class SprintLink extends Component {
 
-    constructor(props) {
-        super(props)
-        this.on_clicked = this.on_clicked.bind(this)
-    }
-    
-    on_clicked() {
-        const { history, sprint_id, project_id, onClick, open_on_click } = this.props
-        if ( onClick ) {
-            onClick(sprint_id, project_id, sprint_id)
-        } else if ( open_on_click ) {
-            history.push('/projects/' + project_id + '/sprints/' + sprint_id);
-        }
-    }
-    
     render() {
-        const { sprint_id, sprint_name, onClick } = this.props
+        const { sprint_id, project_id, sprint_name } = this.props
 
         return (
-            <div className="sprint_link" onClick={this.on_clicked}>
+            <Link
+                to={'/projects/' + project_id + '/sprints/' + sprint_id}
+                className="sprint_link">
 	      {sprint_name}
-	    </div>
+	    </Link>
         )
     }
 }
@@ -35,9 +23,7 @@ function mapStateToProps(state, props) {
     return {
         sprint_name: sprint_name,
         sprint_id: sprint_id,
-        project_id: project_id,
-        onClick: props.onClick,
-        open_on_click: props.open_on_click || true
+        project_id: project_id
     }
 }
 

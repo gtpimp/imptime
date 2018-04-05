@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { includes, keys } from 'lodash';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 import Timestamp from '../components/Timestamp'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
@@ -20,7 +20,7 @@ class Sprint extends Component {
     onIssuesClick(event) {
         const { sprint, history } = this.props
         event.stopPropagation()
-        history.push('/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues');
+        history.push();
     }
 
     render_collapsed() {
@@ -105,13 +105,14 @@ class Sprint extends Component {
                    </div>
                   }
                   {includes(visible_header_keys, "num_issues") &&
-                   <div className="div-table__cell sprint__cell__secondary"
-                        onClick={this.onIssuesClick}
-                        style={getCellStyle(header_list.num_issues)}>
+                   <Link to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                         className="div-table__cell sprint__cell__secondary"
+                         onClick={this.onIssuesClick}
+                         style={getCellStyle(header_list.num_issues)}>
                      <div className="sprint__cell--num-issues">
                        {sprint.num_issues || 0} Issues
                      </div>
-                   </div>
+                   </Link>
                   }
                   {includes(visible_header_keys, "status") &&
                    <div className="div-table__cell sprint__cell__secondary"
