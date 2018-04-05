@@ -22,6 +22,10 @@
     color: $color-5;
 }
 
+.progress__time--no-estimate {
+    color: inherit;
+}
+
 .progress__time-separator {
   display: inline-block;
   padding-left: 4px;

@@ -11,6 +11,7 @@ class Progress extends Component {
         const {issue, estimate, hours, force_show} = this.props
         const current = format_hours(hours)
         const max = format_hours(estimate)
+        const max_valid = estimate !== undefined && estimate > 0
 
         const show = force_show || hours > 0 || estimate > 0
         
@@ -19,16 +20,23 @@ class Progress extends Component {
               { show && 
                 <div className="progress__component progress__component--progress">
                   <div className="progress__time">
-                    <div className={classNames('progress__time', 'progress__time--' + ( current <= max ? 'progress' : 'over'))}>
+                    <div className={classNames('progress__time',
+                                               {'progress__time--progress': max_valid && current<=max,
+                                                'progress__time--over': max_valid && current>max,
+                                                'progress__time--no-estimate': !max_valid})}>
                       <Duration value={current}/>
                     </div>
-                    <div className="progress__time-separator">/</div>
-                    <div className="progress__time progress__time--max">
-                      <Duration value={max}/>
-                    </div>
+                    { max_valid && <div className="progress__time-separator">/</div> }
+                    { max_valid && 
+                      <div className="progress__time progress__time--max">
+                        <Duration value={max}/>
+                      </div>
+                    }
                   </div>
                   <div className="progress__progress_bar">
-                    <TimeProgressBar current={current} max={max}/>
+                    { max_valid && 
+                      <TimeProgressBar current={current} max={max}/>
+                    }
                   </div>
                 </div>
               }
