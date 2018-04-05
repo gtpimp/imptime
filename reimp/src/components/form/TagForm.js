@@ -38,7 +38,7 @@ class TagForm extends Component {
 
     renderCategoryInput(field) {
         const { onKeyDown } = this.props
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <input
                 rows="1"
@@ -55,7 +55,7 @@ class TagForm extends Component {
     
     renderNameInput(field) {
         const { onKeyDown } = this.props
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <input
                 rows="1"
@@ -71,7 +71,7 @@ class TagForm extends Component {
     }
     
     render() {
-        const { handleSubmit, onKeyDown, is_edit, project_id, tag_id } = this.props
+        const { handleSubmit, is_edit, project_id, tag_id } = this.props
 
         return (
             <form onSubmit={handleSubmit} className="tagform">
@@ -118,7 +118,7 @@ class TagForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { tag_id, onSubmitted, onKeyDown, initialValues, project_id } = props
+    const { tag_id, onSubmitted, onKeyDown, project_id } = props
     const tag = (tag_id && getTag(state, tag_id)) || {}
 
     const initial_values = { category_name: tag.category_name,

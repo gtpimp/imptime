@@ -1,12 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
 import EditableProperty from './form/EditableProperty'
-import Timestamp from '../components/Timestamp'
 import {
-    ensureSprintsLoaded,
     getSprint,
-    is_sprint_invalidated
 } from '../actions/Sprints'
 import { updateSprintDeadline,
          createSprintDeadline,
@@ -16,10 +12,7 @@ import { updateSprintDeadline,
 } from '../actions/SprintDeadlines'
 
 import SprintDeadlineForm from './form/SprintDeadlineForm'
-import Label from './form/Label'
-import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
-import TickCross from './TickCross'
 import SprintDeadline from './SprintDeadline'
 import moment from 'moment'
 

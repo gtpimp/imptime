@@ -1,13 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
-import { Field, reduxForm } from 'redux-form'
 import EditableProperty from './form/EditableProperty'
 import SprintTypeForm from './form/SprintTypeForm'
 import Blank from './form/Blank'
 import { updateSprintType, getSprints } from '../actions/Sprints'
-import OtherUser from '../components/OtherUser'
-import { getUser } from '../actions/Users'
 import { has_permission } from '../actions/Users'
 
 class EditableSprintType extends Component {
@@ -31,7 +27,7 @@ class EditableSprintType extends Component {
         
         return (
             <EditableProperty property_key={'sprint_type_name'+sprint.id}
-                              initial_value={sprint && sprint.type_name || null}
+                              initial_value={(sprint && sprint.type_name) || null}
                               edit_as_modal={true}
                               class_name={class_name}
                               can_edit={can_edit}

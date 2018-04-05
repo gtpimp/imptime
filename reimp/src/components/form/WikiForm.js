@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form'
-import Textarea from 'react-expanding-textarea'
 import ReactTimeout from 'react-timeout'
 import MarkdownEditor from '../MarkdownEditor'
 
@@ -29,7 +28,7 @@ class WikiForm extends Component {
     }
 
     renderMarkdownEditor(field) {
-        const {input, wiki} = field
+        const {input} = field
         return (
             <MarkdownEditor
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
@@ -40,7 +39,7 @@ class WikiForm extends Component {
 
     render() {
 
-        const { handleSubmit, onKeyDown } = this.props
+        const { handleSubmit } = this.props
 
         return (
             <form onSubmit={handleSubmit}>

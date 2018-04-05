@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import 'react-mde/lib/styles/css/react-mde-all.css'
 import { ReactMde } from 'react-mde'
 

@@ -2,22 +2,18 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { uniq, map, keys, groupBy } from 'lodash'
 import Tag from './Tag'
-import EditableIssueTag from './EditableIssueTag'
-import { getTags, ensureTagsLoaded, fetchTagsIfNeeded } from '../actions/Tags'
-import { has_permission } from '../actions/Users'
+import { ensureTagsLoaded, fetchTagsIfNeeded } from '../actions/Tags'
 import {
     initList,
     invalidateList,
     update_list_filter,
     getVisibleItemIds,
-    getVisibleItems,
     getListFilter
 } from '../actions/ItemList'
 import { getItems } from '../actions/Item'
-import { getIssues,
-         addTagToIssues,
+/*import { addTagToIssues,
          deleteTagFromIssues
-} from '../actions/Issues'
+} from '../actions/Issues'*/
 import TreeView from 'react-treeview';
 import { ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry.js'
 
@@ -44,7 +40,7 @@ class TagListTree extends Component {
         const props = these_props || this.props
         const { tag_ids, dispatch, list_key, project_id } = props
         dispatch(ensureTagsLoaded(tag_ids))
-        if ( props.filter.project_id != project_id ) {
+        if ( props.filter.project_id !== project_id ) {
             dispatch(update_list_filter(list_key, {'project_id':  project_id}))
             dispatch(invalidateList(list_key))
         }
@@ -60,12 +56,12 @@ class TagListTree extends Component {
     }
 
     render() {
-        const {project_tags_by_category, issue_ids} = this.props
+        const {project_tags_by_category} = this.props
         const that = this
         
         return (
             <div className="tag_list">
-              { !project_tags_by_category || !project_tags_by_category.length &&
+              { (!project_tags_by_category || !project_tags_by_category.length) &&
                 <div className="tag-list__empty">
                   No tags
                 </div>

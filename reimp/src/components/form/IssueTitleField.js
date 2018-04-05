@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
 
 class IssueTitleField extends Component {
@@ -18,7 +17,7 @@ class IssueTitleField extends Component {
 
     renderTextarea(field) {
         const { onKeyDown } = this.props
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <input
                 onKeyDown={onKeyDown}

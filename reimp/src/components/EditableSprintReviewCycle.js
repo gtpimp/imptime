@@ -12,7 +12,6 @@ import {
     getSprintReview
 } from '../actions/SprintReviews'
 import SprintReview from './SprintReview'
-import OtherUser from './OtherUser'
 
 class EditableSprintReviewCycle extends Component {
 

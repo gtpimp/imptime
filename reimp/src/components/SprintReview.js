@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import Timestamp from '../components/Timestamp'
 import { has_permission } from '../actions/Users'
 import { getSprintReview,
          ensureSprintReviewsLoaded
@@ -9,7 +8,6 @@ import {
     ensureSprintsLoaded,
     getSprint
 } from '../actions/Sprints'
-import moment from 'moment'
 import OtherUser from './OtherUser'
 
 class SprintReview extends Component {
@@ -33,7 +31,7 @@ class SprintReview extends Component {
 
     render() {
 
-        const {sprint_review, can_view, sprint_id} = this.props
+        const {sprint_review, can_view} = this.props
         if ( ! can_view ) {
             return (<div></div>)
         }

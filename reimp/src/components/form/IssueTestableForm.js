@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
-import { getIssue } from '../../actions/Issues'
 
 class IssueTestableForm extends Component {
 
@@ -64,8 +63,7 @@ class IssueTestableForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSubmitted, issue_id, testable } = props
-    const { issue } = state;
+    const { onSubmitted, testable } = props
     /* const loading_item_id = issue.loading_item_ids || {}*/
     /* const initial_value = testable.testable;*/
 

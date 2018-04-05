@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
-import {withRouter} from 'react-router-dom'
 
 class IssueStatus extends Component {
 

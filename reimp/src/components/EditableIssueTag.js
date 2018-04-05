@@ -1,18 +1,13 @@
 import React, {Component} from 'react'
-import { intersection, map } from 'lodash'
 import {connect} from 'react-redux'
-import classNames from 'classnames' 
 import EditableProperty from './form/EditableProperty'
 import Tag from './Tag'
 import TagForm from './form/TagForm'
 import {
-    updateIssueSubject,
-    getIssues,
     addOrEditIssueTag,
     deleteTagFromIssues
 } from '../actions/Issues'
-import { updateTags, ensureTagsLoaded, getTag } from '../actions/Tags'
-import { has_permission } from '../actions/Users'
+import { ensureTagsLoaded, getTag } from '../actions/Tags'
 
 class EditableIssueTag extends Component {
 
@@ -58,7 +53,7 @@ class EditableIssueTag extends Component {
     }
 
     render() {
-        const { issue, can_edit, tag_id, project_id } = this.props
+        const { can_edit, tag_id, project_id } = this.props
 
         return (
             <div>

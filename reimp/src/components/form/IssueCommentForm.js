@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
-import { getIssue } from '../../actions/Issues'
 import OtherUser from '../../components/OtherUser'
 
 class IssueCommentForm extends Component {
@@ -69,8 +68,7 @@ class IssueCommentForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSubmitted, issue_id, comment } = props
-    const { issue } = state;
+    const { onSubmitted, comment } = props
     /* const loading_item_id = issue.loading_item_ids || {}*/
     /* const initial_value = comment.comment;*/
 
