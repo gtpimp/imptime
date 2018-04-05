@@ -56,7 +56,7 @@ class MainLayout extends Component {
                 history.push('/password/change')
             }
         } else {
-            if ( settings.configured && location.query.autologin !== undefined ) {
+            if ( settings.configured && location && location.query && location.query.autologin !== undefined ) {
                 dispatch(auto_login(location.query.autologin))
             }
         }
