@@ -287,30 +287,30 @@ this is the colour of yukc
                              .first()
         if issue is None:
 
-            description = """Email from {first_name} {last_name} ({username}). 
-Sent at {sent_at} using email address {from_email} """.format(
-                            first_name=user.first_name,
-                            last_name=user.last_name,
-                            username=user.username,
-                            sent_at=message['time'],
-                            from_email=message['from'])
-            
             issue = Issue.objects.create(project=sprint,
                                          subject=raw_issue['subject'],
                                          auto_created_during_import=True,
-                                         issue_type='correspondence',
+                                         issue_type='issue',
                                          status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
                                          feature=raw_issue['feature'],
                                          assigned_to=user,
                                          number=Issue.get_next_issue_number(project),
-                                         description=description,
+                                         description=raw_issue['description'],
                                          story_points=0,
                                          created=message['time'],
                                          modified=message['time'])
             SprintIssueOrder.insert_at_the_end(issue)
 
+        comment = """Email from {first_name} {last_name} ({username}). 
+Sent at {sent_at} using email address {from_email} """.format(
+                        first_name=user.first_name,
+                        last_name=user.last_name,
+                        username=user.username,
+                        sent_at=message['time'],
+                        from_email=message['from'])
+            
         IssueComment.objects.create(issue=issue,
-                                    comment=raw_issue['description'],
+                                    comment=comment,
                                     author=user,
                                     comment_type='correspondence',
                                     created=message['time'],

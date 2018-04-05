@@ -41,12 +41,15 @@ class SprintsPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, project_id, project, list_key, page_key, default_filter} = this.props
+        const {dispatch, filter, project_id, project, list_key, page_key, default_filter} = this.props
         dispatch(set_toolbars(page_key, ['sprints']))
-        dispatch(update_list_filter(list_key, Object.assign({},
-                                                            default_filter,
-                                                            {project_id: project.id,
-                                                             sprint_status: 'open'})))
+
+        const new_filter = { project_id: project_id }
+        if ( ! filter.sprint_status ) {
+            new_filter.sprint_status = 'open'
+        }
+        
+        dispatch(update_list_filter(list_key, Object.assign({}, new_filter)))
         this.refresh()
     }
 
@@ -202,6 +205,7 @@ function mapStateToProps(state, props) {
     const default_filter = props.default_filter || {}
     let list_key = props.list_key || LIST_KEY__SPRINT_LIST
     let page_key = props.page_key || PAGE_KEY__SPRINTS_PAGE
+    const filter = getListFilter(state, list_key)
     const items_by_id = (sprint && sprint.items_by_id) || {}
     const selected_sprint_ids = get_selected_sprint_ids(state, page_key)
     
@@ -220,7 +224,6 @@ function mapStateToProps(state, props) {
     const selected_sprint = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const splitter_size = getPageFlag(state, PAGE_KEY__SPRINTS_PAGE, 'splitter_size', "80%")
     const show_sidebar = (is_creating_sprint || (selected_sprint && selected_sprint.id)) || false
-    const filter = getListFilter(state, list_key)
 
     return {
         list_key,
