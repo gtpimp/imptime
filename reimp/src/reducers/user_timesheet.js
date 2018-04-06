@@ -22,7 +22,6 @@ const initialState = {
 export default function user_timesheet(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let new_items_by_id = null
 
     switch (action.type) {
 	case INVALIDATE_ALL_USER_TIMESHEETS:

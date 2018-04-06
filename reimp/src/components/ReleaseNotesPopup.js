@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map } from 'lodash'
 import Modal from 'react-modal';
 import {
     fetchReleaseNotesIfNeeded,
     markReleaseNotesAsSeen
 } from '../actions/ReleaseNotes'
 import { update_list_filter, initList, getVisibleItemIds, shouldFetchList } from '../actions/ItemList'
-import { ENTITY_KEY__RELEASE_NOTE, LIST_KEY__RELEASE_NOTES_LIST, } from '../actions/ItemListKeyRegistry'
+import { LIST_KEY__RELEASE_NOTES_LIST, } from '../actions/ItemListKeyRegistry'
 import ReleaseNotes from './ReleaseNotes'
 
 class ReleaseNotesPopup extends Component {
@@ -42,7 +41,6 @@ class ReleaseNotesPopup extends Component {
     }
 
     willReadLater() {
-        const { dispatch, release_note_ids } = this.props
         this.setState({userClosedModal: true})
     }
 

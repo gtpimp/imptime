@@ -2,10 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import InvoiceList from '../components/InvoiceList'
-import { ensureInvoicesLoaded } from '../actions/Invoices'
-import { includes, compact } from 'lodash'
-import SplitPane from 'react-split-pane'
-import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {
     LIST_KEY__INVOICE_LIST,
     PAGE_KEY__INVOICES_PAGE,
@@ -14,14 +10,10 @@ import {
 import {
     update_list_filter,
     update_list_pagination,
-    getListFilter,
-    invalidateList
 } from '../actions/ItemList'
 import {
     set_toolbars,
-    get_header_list
 } from '../actions/Page'
-import cookie from 'react-cookie'
 
 class InvoicesPage extends Component {
 
@@ -45,7 +37,6 @@ class InvoicesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {} = state
     const invoice_header_list = INVOICE_HEADER_LIST
     
     return {

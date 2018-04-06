@@ -1,12 +1,6 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { map } from 'lodash'
-import {withRouter} from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
-import { has_permission } from '../actions/Users'
-import SprintName from './SprintName'
 import Timestamp from './Timestamp'
-import classNames from 'classnames'
 
 const imptime_constant = "__imptime__"
 

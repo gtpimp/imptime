@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
-import EditableSprintName from '../components/EditableSprintName.js'
-import PropertyStackComponent from '../components/PropertyStackComponent'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 //import '../sass/sprint-dashboard.scss'
 import {

@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { change_password } from '../actions/Auth'
-import Message from '../components/Message'
 
 class PasswordReminderSentPage extends Component {
 
@@ -17,8 +15,6 @@ class PasswordReminderSentPage extends Component {
     }
 
     render() {
-        const that = this
-        const { handleSubmit, error, submitting } = this.props
         
         return (
             <div className="blank-page">
