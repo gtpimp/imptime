@@ -120,6 +120,7 @@ class ProjectViewSet(BaseViewSet):
                 name=params['name'])
 
             project.create_default_statuses()
+            self.create_inbox_sprint(project)
             ProjectPermissions.ensure_user_belongs_to_business(user=request.user,
                                                                business=project) #sic
             ProjectPermissions.give_all_permissions_to_user(user=request.user, business=project) #sic
@@ -223,7 +224,7 @@ class ProjectViewSet(BaseViewSet):
 
     def auto_create_self_project(self, user):
         project, is_new = Project.objects.get_or_create(name='me',
-                                                description='My personal project (for %s)' % user.email)
+                                                description='My personal project for whatever I want. (and I am %s)' % user.email)
         if is_new:
             ProjectPermissions.ensure_user_belongs_to_business(user=user,
                                                                business=project) #sic
@@ -243,4 +244,16 @@ class ProjectViewSet(BaseViewSet):
                                                           'description':"The best way to feel relaxed is to create an issue for everything thing you have on your mind",
                                                           'created':timezone.now(),
                                                           'modified':timezone.now()})[0]
+            self.create_inbox_sprint(project)
             SprintIssueOrder.insert_at_the_end(issue)
+
+    def create_inbox_sprint(self, project):
+        inbox_description = """For incoming unprocessed issues. 
+
+You can add issues here normally, or by emailing %s@%s""" % (project.inbox_email_name(), "imptime.com")
+        
+        Sprint.objects.get_or_create(name=settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME,
+                                     business=project, #sic
+                                     project_type="inbox", #sic
+                                     status3=SprintStatus.objects.get(business=project, name='pending'),
+                                     description=inbox_description)[0]

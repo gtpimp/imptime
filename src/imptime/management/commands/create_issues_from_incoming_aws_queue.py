@@ -233,7 +233,7 @@ this is the colour of yukc
         subject = message['subject'].strip()
         
         project_name = project_name.strip().lower()
-        project = Project.objects.filter(name__iexact=project_name)\
+        project = Project.objects.filter(name__iexact=Project.convert_to_email_name(project_name))\
                                  .filter_by_logged_in_user(user)\
                                  .first()
         if project is None:

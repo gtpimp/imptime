@@ -178,6 +178,13 @@ class Business(BaseModel):
     def wiki_name(self):
         return self.name.replace(" ", "_").lower()
 
+    def inbox_email_name(self):
+        return self.convert_to_email_name(self.name)
+
+    @classmethod
+    def convert_to_email_name(self, name):
+        return name.replace(" ","").lower()
+    
     def has_recent_traffic_checklist(self):
         return TrafficChecklist.objects.filter(business=self).filter(created_at__gte=datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_TRAFFIC_SPRINT_CHECKLISTS)).count() > 0
 
