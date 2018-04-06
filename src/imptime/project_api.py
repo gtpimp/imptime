@@ -14,8 +14,11 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
+from timepiece.models import Project as Sprint
+from timepiece.models import ProjectStatus as SprintStatus
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import BusinessHistory
-from timepiece.models import Issue
+from timepiece.models import Issue, IssueStatus
 from imptime.models import VisualSpecProject
 from imptime.models import VisualSpecIssue
 from timepiece.models import BusinessPermissions as ProjectPermissions
@@ -40,6 +43,8 @@ class ProjectViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
+            self.auto_create_self_project(request.user)
+            
             projects = self.allowed_projects()
             projects = self.apply_filter(qs=projects,
                                          raw_filter_args=filter_args)
@@ -215,3 +220,27 @@ class ProjectViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    def auto_create_self_project(self, user):
+        project, is_new = Project.objects.get_or_create(name='me',
+                                                description='My personal project (for %s)' % user.email)
+        if is_new:
+            ProjectPermissions.ensure_user_belongs_to_business(user=user,
+                                                               business=project) #sic
+            ProjectPermissions.give_all_permissions_to_user(user=user, business=project) #sic
+            project.create_default_statuses()
+            sprint = Sprint.objects.get_or_create(name='Sprint1 - ' + timezone.now().strftime("%b %Y"),
+                                                  business=project, #sic
+                                                  status3=SprintStatus.objects.get(business=project, name='pending'),
+                                                  description="Things to do this month")[0]
+            issue = Issue.objects.get_or_create(project=sprint,
+                                                subject="Offload all the things that worry me",
+                                                auto_created_during_import=False,
+                                                issue_type='issue',
+                                                status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
+                                                assigned_to=user,
+                                                defaults={'number':Issue.get_next_issue_number(project),
+                                                          'description':"The best way to feel relaxed is to create an issue for everything thing you have on your mind",
+                                                          'created':timezone.now(),
+                                                          'modified':timezone.now()})[0]
+            SprintIssueOrder.insert_at_the_end(issue)
