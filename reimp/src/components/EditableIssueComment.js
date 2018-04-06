@@ -11,10 +11,7 @@ import {
     is_issue_invalidated
 } from '../actions/Issues'
 import IssueCommentForm from './form/IssueCommentForm'
-import Label from './form/Label'
-import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
-import OtherUser from '../components/OtherUser'
 import IssueComment from './IssueComment'
 
 class EditableIssueComment extends Component {

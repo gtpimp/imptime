@@ -211,7 +211,6 @@ export const makeSelIssueObjectsToRender = () => {
                 return []
             }
             const is_creating_issue = candidate_issue || false
-            const visible_issues_by_id = helperGetVisibleIssuesById(all_issues_by_id, visible_issue_ids)
             const issues_to_render = []
             each(visible_issue_ids, function(issue_id, index) {
                 const issue = all_issues_by_id[issue_id] || {}

@@ -1,6 +1,5 @@
 import cookie from 'react-cookie';
 import { get } from 'lodash'
-import { updateHeaderList } from './Page'
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 export const SET_MIEN = 'SET_MIEN'

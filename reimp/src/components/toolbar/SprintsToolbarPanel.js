@@ -3,10 +3,8 @@ import {connect} from 'react-redux'
 import { map, concat } from 'lodash'
 import Select from 'react-select';
 import '../../sass/toolbar-panel.css'
-import {withRouter} from 'react-router-dom'
 import {
     PAGE_KEY__SPRINTS_PAGE,
-    PAGE_KEY__SPRINTS_TOOLBAR,
     LIST_KEY__SPRINT_LIST
 } from '../../actions/ItemListKeyRegistry'
 import {
@@ -15,9 +13,6 @@ import {
     clear_list_filter_option,
     invalidateList
 } from '../../actions/ItemList'
-import {
-    startCandidateSprint,
-} from '../../actions/Sprints.js'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import {
@@ -53,7 +48,7 @@ class SprintsToolbarPanel extends Component {
     onChangeFilterSprintType(new_value) {
         const { dispatch } = this.props
         if( new_value ) {
-            if ( new_value.value == "_all_" ) {
+            if ( new_value.value === "_all_" ) {
                 dispatch(clear_list_filter_option(LIST_KEY__SPRINT_LIST, 'sprint_type'))
             } else {
                 dispatch(update_list_filter(LIST_KEY__SPRINT_LIST, {'sprint_type': new_value.value}))
@@ -75,7 +70,7 @@ class SprintsToolbarPanel extends Component {
 
     render() {
 
-        const { sprint, selected_sprint_type_filter,
+        const { selected_sprint_type_filter,
                 sprint_type_filter_options, selected_sprint_status_filter } = this.props
 
         return (

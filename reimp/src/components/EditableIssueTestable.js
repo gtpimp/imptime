@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import classNames from 'classnames'
 import EditableProperty from './form/EditableProperty'
 import {
     updateIssueTestable,
@@ -13,10 +12,7 @@ import {
     promoteIssueTestableToIssue
 } from '../actions/Issues'
 import IssueTestableForm from './form/IssueTestableForm'
-import Label from './form/Label'
-import Blank from './form/Blank'
 import { has_permission } from '../actions/Users'
-import ReactMarkdown from 'react-markdown'
 import IssueTestable from './IssueTestable'
 
 class EditableIssueTestable extends Component {

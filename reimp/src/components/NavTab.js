@@ -4,16 +4,15 @@ import {withRouter} from 'react-router-dom'
 import { Link } from 'react-router-dom' 
 import classNames from 'classnames'
 import '../sass/navtab.css'
-import without from 'lodash/without'
 
 class NavTab extends Component {
 
     render() {
-        const {match, index, to, children, variant} = this.props
+        const {match, to, children, variant} = this.props
 
         if (variant === 'link') {
             let isActive
-            isActive = match.path == to
+            isActive = match.path === to
 
             return (
                 <div className={classNames('navtab', 'navtab--' + (isActive ? 'active' : 'inactive'))}>
@@ -45,7 +44,6 @@ class NavTab extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { } = state
 
     return {
         variant: props.variant || 'link',

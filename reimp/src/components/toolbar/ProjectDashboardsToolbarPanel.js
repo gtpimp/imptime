@@ -1,9 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
-import ReactTooltip from 'react-tooltip'
 import { invalidateAllProjectDashboards } from '../../actions/ProjectDashboards'
 import { LIST_KEY__PROJECT_DASHBOARD_LIST } from '../../actions/ItemListKeyRegistry'
 import { invalidateList } from '../../actions/ItemList'
@@ -16,7 +14,7 @@ class ProjectDashboardsToolbarPanel extends Component {
     }
 
     invalidateComponents() {
-        const { dispatch, project_id } = this.props
+        const { dispatch } = this.props
         dispatch(invalidateAllProjectDashboards())
         dispatch(invalidateList(LIST_KEY__PROJECT_DASHBOARD_LIST))
     }

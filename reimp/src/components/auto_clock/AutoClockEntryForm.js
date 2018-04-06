@@ -6,13 +6,8 @@ import { map } from 'lodash'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Field, reduxForm } from 'redux-form'
-import { UPLOAD_RELATIVE_URL } from '../../actions/VisualSpecDocuments'
 import { getAutoClock, ensureAutoClocksLoaded } from '../../actions/AutoClock'
-import ProjectName from '../ProjectName'
-import SprintName from '../SprintName'
-import IssueName from '../IssueName'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
-import AutoClockEntity from './AutoClockEntity'
 import AutoClockEntry from './AutoClockEntry'
 
 class AutoClockEntryForm extends Component {
@@ -41,12 +36,12 @@ class AutoClockEntryForm extends Component {
 
     renderRoleField(field) {
         const { role_options } = this.props
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <div>
               {
                   map(role_options, function(option) {
-                      const checked = input.value && input.value == option.value
+                      const checked = input.value && input.value === option.value
                       return (
                           <label key={option.value}
                                  className={classNames("auto-clock__radio",
@@ -67,7 +62,7 @@ class AutoClockEntryForm extends Component {
     }
 
     renderDescriptionField(field) {
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <input
                 maxLength="100"
@@ -80,7 +75,7 @@ class AutoClockEntryForm extends Component {
     }
 
     renderDateTimePicker(field) {
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <DatePicker selected={input.value}
                         dateFormat="LLL"
@@ -92,7 +87,7 @@ class AutoClockEntryForm extends Component {
     }
 
     render() {
-        const { handleSubmit, entry_id, onDelete, project, project_id, role_options } = this.props
+        const { handleSubmit, entry_id, onDelete, role_options } = this.props
 
         return (
             <form className="auto-clock-form" onSubmit={handleSubmit}>

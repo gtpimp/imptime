@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import ReactTooltip from 'react-tooltip'
 
 export class Timestamp extends Component {
 

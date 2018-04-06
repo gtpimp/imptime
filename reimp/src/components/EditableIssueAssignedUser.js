@@ -2,8 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import IssueAssignedUserForm from './form/IssueAssignedUserForm'
-import Blank from './form/Blank'
-import { updateIssueAssignedTo, getIssues } from '../actions/Issues'
+import { updateIssueAssignedTo } from '../actions/Issues'
 import OtherUser from '../components/OtherUser'
 import { has_permission } from '../actions/Users'
 import { makeSelGetIssues, makeSelGetSampleIssue } from '../selectors/IssueSelectors'
@@ -25,7 +24,7 @@ class EditableIssueAssignedUser extends Component {
 
         return (
             <EditableProperty property_key={'issue_assigned_to'+issue.id}
-                              initial_value={issue && issue.assigned_to_id || null}
+                              initial_value={(issue && issue.assigned_to_id) || null}
                               edit_as_modal={true}
                               onChange={this.onChange}
                               class_name={class_name || ""}

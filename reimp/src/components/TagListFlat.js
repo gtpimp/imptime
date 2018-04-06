@@ -5,10 +5,7 @@ import Tag from './Tag'
 import EditableIssueTag from './EditableIssueTag'
 import { getTags, ensureTagsLoaded } from '../actions/Tags'
 import { has_permission } from '../actions/Users'
-import { getIssues,
-         addTagToIssues,
-         deleteTagFromIssues
-} from '../actions/Issues'
+import { getIssues } from '../actions/Issues'
 
 class TagListFlat extends Component {
 
@@ -31,7 +28,7 @@ class TagListFlat extends Component {
         
         return (
             <div className="tag_list">
-              { tags.length == 0 &&
+              { tags.length === 0 &&
                 <div className="tag-list__empty">
                   No tags
                 </div>

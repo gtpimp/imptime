@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
-import ReactTooltip from 'react-tooltip'
 
 class ListToolbarPanel extends Component {
 

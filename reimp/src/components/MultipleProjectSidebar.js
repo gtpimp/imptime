@@ -1,12 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
-import {withRouter} from 'react-router-dom'
 // import PropertyStack from './PropertyStack'
 // import PropertyStackComponent from './PropertyStackComponent'
 // import ProjectDescription from './ProjectDescription'
-import Timestamp from './Timestamp'
-import moment from 'moment'
 import Sidebar from './Sidebar'
 import {ensureProjectsLoaded, getProjects} from '../actions/Projects'
 
@@ -24,7 +20,7 @@ class MultipleProjectSidebar extends Component {
     
     render() {
 
-        const {projects, project_ids, project_id} = this.props
+        const {projects} = this.props
         
         return (
 

@@ -1,15 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
-import {ensureReleaseNotesLoaded, getReleaseNote} from '../actions/ReleaseNotes'
-import includes from 'lodash/includes'
 import {
     PAGE_KEY__RELEASE_NOTES_PAGE,
     LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
 } from '../actions/ItemListKeyRegistry.js'
 import {
-    selectItems,
     update_list_filter
 } from '../actions/ItemList'
 import ReleaseNotes from '../components/ReleaseNotes'
@@ -18,7 +14,7 @@ import {
     set_toolbars
 } from '../actions/Page'
 import { can_create_release_notes } from '../actions/Auth'
-import { createReleaseNote, deleteReleaseNote } from '../actions/ReleaseNotes'
+import { createReleaseNote } from '../actions/ReleaseNotes'
 
 class ReleaseNotesPage extends Component {
 

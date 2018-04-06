@@ -3,8 +3,7 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import IssueStatusForm from './form/IssueStatusForm'
 import IssueStatusLabel from './form/IssueStatusLabel'
-import Blank from './form/Blank'
-import { updateIssueStatus, getIssues } from '../actions/Issues'
+import { updateIssueStatus } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 import { makeSelGetIssues, makeSelGetSampleIssue } from '../selectors/IssueSelectors'
 
@@ -25,7 +24,7 @@ class EditableIssueStatus extends Component {
 
         return (
             <EditableProperty property_key={'issue_status_name_'+issue.id}
-                              initial_value={issue && issue.status_name || null}
+                              initial_value={(issue && issue.status_name) || null}
                               edit_as_modal={true}
                               class_name={class_name}
                               onChange={this.onChange}
@@ -45,7 +44,7 @@ const makeMapStateToProps = () => {
     const selGetSampleIssue = makeSelGetSampleIssue()
     
     const mapStateToProps = (state, props) => {
-        const { issue_ids, class_name } = props
+        const { class_name } = props
         const issues = selGetIssues(state, props)
         const issue = selGetSampleIssue(state, props)
         const project_id = issue.project_id

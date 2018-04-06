@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom';
 import { map } from 'lodash'
 import { connect } from 'react-redux'
 import {DndTypes} from '../../actions/Dnd'
@@ -40,7 +39,7 @@ class VisualSpecDocumentEditor extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-	const { dispatch, visual_spec_document_id, visual_spec_document, issue_id,
+	const { dispatch, visual_spec_document_id, issue_id,
                 visual_spec_issue_annotation_ids } = props
         
 	if ( visual_spec_document_id ) {
@@ -52,7 +51,7 @@ class VisualSpecDocumentEditor extends Component {
         if ( visual_spec_issue_annotation_ids ) {
             dispatch(ensureVisualSpecIssueAnnotationsLoaded(visual_spec_issue_annotation_ids))
         }
-        if ( !these_props || this.props.visual_spec_document_id != these_props.visual_spec_document_id ) {
+        if ( !these_props || this.props.visual_spec_document_id !== these_props.visual_spec_document_id ) {
             this.setState({visual_spec_document_image_loaded: false})
         }
     }
@@ -73,7 +72,7 @@ class VisualSpecDocumentEditor extends Component {
     }
 
     deleteVisualSpecAnnotation(visual_spec_issue_annotation_id) {
-        const { dispatch, visual_spec_document_id } = this.props
+        const { dispatch } = this.props
         dispatch(deleteVisualSpecIssueAnnotation(visual_spec_issue_annotation_id))
     }
 
@@ -174,9 +173,8 @@ function mapStateToProps(state, props) {
 
 const headingTarget = {
     drop: (props, monitor, component) => {
-        const {dispatch, visual_spec_document_id, img_element_unique_id} = props 
+        const {visual_spec_document_id, img_element_unique_id} = props 
         const distance_moved = monitor.getDifferenceFromInitialOffset()
-        const dragging_item = monitor.getItem()
         const child_pos = monitor.getClientOffset()
         const img_element = document.getElementById(img_element_unique_id)
         const img_size = img_element.getBoundingClientRect()

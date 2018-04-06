@@ -6,7 +6,7 @@ import {getProject, is_project_invalidated} from '../actions/Projects'
 import InviteUserForm from '../components/form/InviteUserForm'
 import ModalDialog from '../components/ModalDialog'
 import UserList from './UserList'
-import {ensureUsersLoaded, getUser, has_permission} from '../actions/Users'
+import {ensureUsersLoaded, has_permission} from '../actions/Users'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE,
     LIST_KEY__PROJECT_USER_LIST
@@ -16,7 +16,6 @@ import {
     selectItems
 } from '../actions/ItemList'
 import {
-    set_toolbars,
     select_users,
     setPageFlag,
     clearPageFlag,
@@ -99,7 +98,6 @@ class ProjectUsersPage extends Component {
 
     getActionRenderFunc() {
         const {onPermissionsAction, can_view_permissions} = this.props
-        const that = this
         const funcs = {}
         if ( can_view_permissions ) {
             funcs.render_permissions = (user) =>

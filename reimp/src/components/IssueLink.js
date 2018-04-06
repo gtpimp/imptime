@@ -20,7 +20,7 @@ class IssueLink extends Component {
     }
     
     render() {
-        const { issue_id, issue_number, onClick } = this.props
+        const { issue_number } = this.props
 
         return (
             <div className="issue_link" onClick={this.on_clicked}>

@@ -1,10 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
 import '../sass/search-input.css'
-import {withRouter} from 'react-router-dom'
-import {initFilter, runFilter, getFilter, hideResults, showResults} from '../actions/Filter'
-import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
 
 class SearchInput extends Component {

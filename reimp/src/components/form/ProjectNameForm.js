@@ -13,13 +13,12 @@ class ProjectNameForm extends Component {
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
-        const {handleSubmit} = this.props
         fieldOnChange(e)
         // setTimeout(() => handleSubmit(), 0)
     }
     
     renderTextarea(field) {
-        const {input, data, ...rest} = field
+        const {input} = field
         return (
             <Textarea
                 rows="1"

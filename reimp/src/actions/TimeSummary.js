@@ -1,9 +1,5 @@
 import { impfetch } from './lib.js'
-import indexOf from 'lodash/indexOf'
-import keyBy from 'lodash/keyBy'
 import includes from 'lodash/includes'
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
-import { ENTITY_KEY__TIME_SUMMARY } from '../actions/ItemListKeyRegistry'
 
 export const ANNOUNCE_TIME_SUMMARY_LOADED = 'ANNOUNCE_TIME_SUMMARY_LOADED'
 export const ANNOUNCE_TIME_SUMMARY_LOAD_FAILED = 'ANNOUNCE_TIME_SUMMARY_LOAD_FAILED'
@@ -11,7 +7,7 @@ export const ANNOUNCE_LOADING_TIME_SUMMARY = 'ANNOUNCE_LOADING_TIME_SUMMARY'
 export const INVALIDATE_TIME_SUMMARY = 'INVALIDATE_TIME_SUMMARY'
 
 export function invalidateTimeSummary(sprint_id) {
-    sprint_id = parseInt(sprint_id)
+    sprint_id = parseInt(sprint_id, 10)
     return {
         type: INVALIDATE_TIME_SUMMARY,
 	      sprint_id_to_invalidate: sprint_id
@@ -19,7 +15,7 @@ export function invalidateTimeSummary(sprint_id) {
 }
 
 function announceLoadingTimeSummary(sprint_id) {
-    sprint_id = parseInt(sprint_id)
+    sprint_id = parseInt(sprint_id, 10)
     return {
         type: ANNOUNCE_LOADING_TIME_SUMMARY,
 	      sprint_id_to_load: sprint_id
@@ -45,7 +41,7 @@ function announceTimeSummaryLoadFailed(error) {
 }
 
 export function ensureTimeSummaryLoaded(sprint_id) {
-    sprint_id = parseInt(sprint_id)
+    sprint_id = parseInt(sprint_id, 10)
     return (dispatch, getState) => {
         const state = getState()
         if ( isLoadingTimeSummary(state, sprint_id) ) {
@@ -58,7 +54,7 @@ export function ensureTimeSummaryLoaded(sprint_id) {
 }
 
 function fetchTimeSummary(sprint_id) {
-    sprint_id = parseInt(sprint_id)
+    sprint_id = parseInt(sprint_id, 10)
     return (dispatch, getState) => {
         const state = getState()
 	      dispatch(announceLoadingTimeSummary(sprint_id))
@@ -78,12 +74,12 @@ function fetchTimeSummary(sprint_id) {
 
 
 export function getTimeSummary(state, sprint_id) {
-    sprint_id = parseInt(sprint_id)
+    sprint_id = parseInt(sprint_id, 10)
     return ((state.time_summary || {}).items_by_sprint_id || {})[sprint_id] || null
 }
 
 export function isLoadingTimeSummary(state, sprint_id) {
-    sprint_id = parseInt(sprint_id)
+    sprint_id = parseInt(sprint_id, 10)
     const loading_ids = (state.time_summary || {}).loading_sprint_ids || []
     return includes(loading_ids, sprint_id)
 }

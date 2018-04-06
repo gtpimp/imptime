@@ -1,10 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
-import IssueStatusForm from './form/IssueStatusForm'
-import IssueStatusLabel from './form/IssueStatusLabel'
-import Blank from './form/Blank'
-import { updateIssueStatus, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 import { ensureSprintUserVelocityLoaded, getSprintUserVelocity, updateSprintUserVelocities } from '../actions/SprintUserVelocity'
 import UserVelocityForm from './form/UserVelocityForm'
@@ -32,7 +28,7 @@ class EditableUserVelocity extends Component {
     }
     
     render() {
-        const { sprint_id, user_id, suv, can_view, can_edit } = this.props
+        const { sprint_id, user_id, suv, can_edit } = this.props
 
         return (
             <EditableProperty property_key={'user_velocity_name_'+sprint_id + "_" + user_id}

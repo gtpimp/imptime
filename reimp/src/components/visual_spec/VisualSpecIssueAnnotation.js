@@ -1,26 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import ReactDOM from 'react-dom';
 import {DndTypes} from '../../actions/Dnd'
-import {DragSource, DragLayer} from 'react-dnd';
+import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
-import { getIssue } from '../../actions/Issues'
-import EditableIssueTitle from '../EditableIssueTitle'
-import EditableIssueDescription from '../EditableIssueDescription'
-import EditableIssueAssignedUser from '../EditableIssueAssignedUser'
-import EditableIssueStatus from '../EditableIssueStatus'
-import EditableIssueEstimate from '../EditableIssueEstimate'
 import ToolTip from 'react-portal-tooltip'
-import {
-    LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST
-} from '../../actions/ItemListKeyRegistry'
 import {
     ensureVisualSpecIssueAnnotationsLoaded,
     is_visual_spec_issue_annotation_invalidated,
     getVisualSpecIssueAnnotation
 } from '../../actions/VisualSpecIssueAnnotations'
-import { highlightItems } from '../../actions/ItemList'
 
 class VisualSpecIssueAnnotationDragLayer extends Component {
     render() {
@@ -57,22 +46,22 @@ class VisualSpecIssueAnnotation extends Component {
     }
 
     showTooltip() {
-        const { dispatch, issue, tooltips_enabled } = this.props
+        const { tooltips_enabled } = this.props
         if ( tooltips_enabled ) {
             this.setState({isTooltipActive: true})
         }
     }
 
     hideTooltip() {
-        const { dispatch, tooltips_enabled } = this.props
+        const { tooltips_enabled } = this.props
         if ( tooltips_enabled ) {
             this.setState({isTooltipActive: false})
         }
     }
 
     render() {
-        const { visual_spec_issue_annotation, isDragging, connectDragSource, connectDragPreview,
-                shape, tooltips_enabled, annotation_size_px, container_img_element_unique_id,
+        const { visual_spec_issue_annotation, isDragging, connectDragSource,
+                shape, tooltips_enabled, annotation_size_px,
                 container_img_size} = this.props
         const { isTooltipActive } = this.state
 
@@ -186,7 +175,7 @@ const headingSource = {
         }
     },
     endDrag(props, monitor, component) {
-        const { visual_spec_issue_annotation, annotation_size_px,
+        const { visual_spec_issue_annotation,
                 onUpdate, onCreate, onDelete, shape, can_edit } = props
         if ( ! can_edit ) {
             return
@@ -216,14 +205,6 @@ const headingSource = {
                       x_pos: x_pos,
                       y_pos: y_pos})
         }
-    }
-}
-
-function dragLayer(monitor, options) {
-    return {
-        item: monitor.getItem(),
-        currentOffset: monitor.getSourceClientOffset(),
-        isDragging: monitor.isDragging()
     }
 }
 

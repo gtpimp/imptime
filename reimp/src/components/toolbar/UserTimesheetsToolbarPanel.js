@@ -1,9 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
-import ReactTooltip from 'react-tooltip'
 import { invalidateAllUserTimesheets } from '../../actions/UserTimesheets'
 import { LIST_KEY__USER_TIMESHEET_LIST } from '../../actions/ItemListKeyRegistry'
 import { invalidateList } from '../../actions/ItemList'
@@ -16,7 +14,7 @@ class UserTimesheetsToolbarPanel extends Component {
     }
 
     invalidateComponents() {
-        const { dispatch, project_id } = this.props
+        const { dispatch } = this.props
         dispatch(invalidateAllUserTimesheets())
         dispatch(invalidateList(LIST_KEY__USER_TIMESHEET_LIST))
     }

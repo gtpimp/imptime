@@ -1,30 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import {
-    BarChart, ComposedChart, Bar, XAxis, YAxis, CartesianGrid,
-    Tooltip, Legend, ReferenceLine, Scatter, ReferenceArea, Rectangle
+    ComposedChart, Bar, XAxis, YAxis,
+    Tooltip, ReferenceLine, Scatter, Rectangle
 } from 'recharts'
-import { map, keys, isEqual, isArray } from 'lodash'
-import OtherUser from './OtherUser'
-import SprintTimeSummary from './SprintTimeSummary'
-import SprintLink from './SprintLink'
-import SprintBreakdown from './SprintBreakdown'
-import IssueLink from './IssueLink'
-import CurrencyValue from './CurrencyValue'
-import UserRate from './UserRate'
-import ProgressBar from './ProgressBar'
-import Timestamp from './Timestamp'
-import Hours from './Hours'
-import {
-    ensureTimeChartLoaded,
-    getTimeChart,
-    isLoadingTimeChart,
-    invalidateTimeChart
-} from '../actions/TimeChart'
-import { ensureUsersLoaded } from '../actions/Users'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import { map } from 'lodash'
 import moment from 'moment';
 
 class TimeChartTooltip extends Component {
@@ -42,22 +23,22 @@ class TimeChartTooltip extends Component {
               { map(payload, (series) =>
                   (
                       <div key={series.dataKey+"_"+label+"_"+name} className="time_chart__tooltip_series">
-                        { series.dataKey == 'graph_y' &&
+                        { series.dataKey === 'graph_y' &&
                           <div>{series.value} hours on {moment(label).format('dddd DD-MMM-YYYY')}</div>
                         }
-                        { series.dataKey == 'daily_hours' &&
+                        { series.dataKey === 'daily_hours' &&
                           <div>{series.value} hours on {moment(label).format('dddd DD-MMM-YYYY')}</div>
                         }
-                        { series.dataKey == 'sick_days' && series.value > 0 &&
+                        { series.dataKey === 'sick_days' && series.value > 0 &&
                           <div>Sick day</div>
                         }
-                        { series.dataKey == 'leave_days' && series.value > 0 &&
+                        { series.dataKey === 'leave_days' && series.value > 0 &&
                           <div>Leave</div>
                         }
-                        { series.dataKey == 'office_closed' && series.value > 0 &&
+                        { series.dataKey === 'office_closed' && series.value > 0 &&
                           <div>Office closed</div>
                         }
-                        { series.dataKey == 'public_holidays' && series.value > 0 &&
+                        { series.dataKey === 'public_holidays' && series.value > 0 &&
                           <div>Public holiday</div>
                         }
                       </div>

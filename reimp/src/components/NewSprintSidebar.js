@@ -1,17 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
-import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
-import PropertyStackComponent from './PropertyStackComponent'
-import EditableSprintName from '../components/EditableSprintName'
-import Timestamp from './Timestamp'
-import moment from 'moment'
 import Sidebar from './Sidebar'
 import {
     getCandidateSprint,
     updateCandidateName,
-    cancelCandidateSprint,
     saveCandidateSprint
 } from '../actions/Sprints'
 import SprintNameForm from './form/SprintNameForm'
@@ -30,8 +23,6 @@ class NewSprintSidebar extends Component {
     }
 
     render() {
-
-        const {sprint, comments, attachments} = this.props
 
         return (
             <Sidebar>

@@ -2,9 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
 import '../sass/mien-selector.css'
-import {
-    PAGE_KEY__ISSUES_PAGE,
-} from '../actions/ItemListKeyRegistry'
 import { setMien,
          getMien,
          MIENS

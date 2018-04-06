@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
-import { DragSource, DropTarget } from 'react-dnd'
 import {withRouter} from 'react-router'
 import {get, includes, keys} from 'lodash'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { DndTypes } from '../actions/Dnd'
-import { ENTITY_KEY__PROJECT, getCellStyle } from '../actions/ItemListKeyRegistry'
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import '../sass/project.css'
 import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
-import { getSelectedItems, setItemflag } from '../actions/ItemList'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
@@ -49,8 +46,8 @@ class Project extends Component {
     }    
     
     render_expanded() {
-        const { project, is_loading, is_selected, isOver,
-		            onClickedProject, connectDragSource, connectDropTarget,
+        const { project, is_loading, is_selected,
+		            onClickedProject,
                 visible_header_keys, header_list, can_show_project_delete } = this.props
 	      if ( ! project ) {
 	          return (
@@ -152,7 +149,7 @@ class Project extends Component {
                         style={getCellStyle(header_list.delete)}>
                      <div className="reveal-on-hover--block issue__cell--issue-delete">
                        <DeleteProject
-                           onDelete= {this.onDeleteProject}
+                           onDelete={this.onDeleteProject}
                        />
                      </div>
                    </div>
@@ -190,9 +187,8 @@ class Project extends Component {
 
 function mapStateToProps(state, props) {
     const { project } = state
-    const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete, list_key } = props
+    const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete } = props
     const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
-    const selectedProjects = getSelectedItems(state, list_key, ENTITY_KEY__PROJECT) || []
     const can_show_project_delete = canShowProjectDelete(this_project) &&
                                     has_permission(state, project_id, 'has_delete_project')
     

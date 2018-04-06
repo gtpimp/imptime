@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 import { has_permission } from '../actions/Users'
-import { getUser, ensureUsersLoaded } from '../actions/Users'
 import { getSprint, ensureSprintsLoaded, is_sprint_invalidated } from '../actions/Sprints'
 
 class SprintRatios extends Component {
@@ -17,7 +15,7 @@ class SprintRatios extends Component {
     
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, sprint_id, user_id} = props
+        const {dispatch, sprint_id} = props
         dispatch(ensureSprintsLoaded([sprint_id]))
     }
     
@@ -41,7 +39,7 @@ class SprintRatios extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint_id, user_id } = props
+    const { sprint_id } = props
 
     const sprint = getSprint(state, sprint_id) || {}
     const can_view = has_permission(state, sprint.project_id, "has_view_velocity")

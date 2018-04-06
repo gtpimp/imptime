@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import classNames from 'classnames'
 import { has_permission } from '../actions/Users'
-import { getUser, ensureUsersLoaded } from '../actions/Users'
+import { ensureUsersLoaded } from '../actions/Users'
 import { getSprint, ensureSprintsLoaded } from '../actions/Sprints'
 import {
     getSprintUserVelocity,
@@ -30,7 +29,7 @@ class UserVelocity extends Component {
     }
     
     render() {
-        const { value, class_name } = this.props
+        const { value } = this.props
         return (
             <div>
               {value}
@@ -42,7 +41,6 @@ class UserVelocity extends Component {
 function mapStateToProps(state, props) {
     const { sprint_id, user_id } = props
 
-    const user = getUser(state, user_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const suv = getSprintUserVelocity(state, sprint_id, user_id) || {}
     const can_view = has_permission(state, sprint.project_id, "has_view_velocity")

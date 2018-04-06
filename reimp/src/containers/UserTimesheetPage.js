@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {browserHistory, withRouter} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import { setBreadcrumbsActive } from '../actions/Breadcrumbs'
-import ProjectDashboardList from '../components/ProjectDashboardList'
 import UserTimesheetList from '../components/UserTimesheetList'
 
 import { PAGE_KEY__USER_TIMESHEET_PAGE,

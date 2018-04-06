@@ -3,22 +3,14 @@ import { connect } from 'react-redux'
 import { map } from 'lodash'
 import {
     initList,
-    invalidateList,
-    selectItems,
-    collapse_list,
-    expand_list,
     getVisibleItemIds,
     getVisibleItems,
     isLoading,
     getLastUpdated,
     getLoadingItemIds,
-    getSelectedItemIds,
-    getSelectedItems,
-    getDisplayMode
 } from '../actions/ItemList'
 import { isLoadingItems } from '../actions/Item'
 import {
-    invalidateAllReleaseNotes,
     fetchReleaseNotesIfNeeded,
     deleteReleaseNote
 } from '../actions/ReleaseNotes'
@@ -76,7 +68,7 @@ class ReleaseNotes extends Component {
                             }
                             { has_seen_by_permission &&
                               <div className="release_note__seen_by">
-                                { release_note.seen_by_user_ids.length == 0 && <div>Not seen by anyone yet</div> }
+                                { release_note.seen_by_user_ids.length === 0 && <div>Not seen by anyone yet</div> }
                                 { release_note.seen_by_user_ids.length > 0 &&
                                   <div>
                                     Seen by:

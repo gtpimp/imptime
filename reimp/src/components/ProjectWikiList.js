@@ -5,24 +5,13 @@ import classNames from 'classnames'
 import { has_permission } from '../actions/Users'
 import {
     initList,
-    invalidateList,
-    selectItems,
-    collapse_list,
-    expand_list,
     shouldFetchList,
     getVisibleItemIds,
-    getVisibleItems,
     getNestedObjects,
     ensureNestedObjectsLoaded,
     isLoading,
     getLastUpdated,
-    getLoadingItemIds,
-    getSelectedItemIds,
-    getSelectedItems,
-    getDisplayMode,
-    update_list_pagination,
     update_list_ordering,
-    update_list_format,
     update_list_filter,
     getListFilter
 } from '../actions/ItemList'
@@ -32,7 +21,6 @@ import {
 } from '../actions/Wikis'
 import DivTable from './DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
-import Wiki from './Wiki'
 
 class WikiList extends Component {
 
@@ -42,7 +30,7 @@ class WikiList extends Component {
     }
     
     componentDidMount() {
-	const { dispatch, list_key, filter, nested_objects } = this.props
+	const { dispatch, list_key } = this.props
 	dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'name': 'asc' }))
         this.refresh()
@@ -55,7 +43,7 @@ class WikiList extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, list_key, project_id, filter, nested_objects } = props
-        if ( filter.project_id != project_id ) {
+        if ( filter.project_id !== project_id ) {
             dispatch(update_list_filter(list_key, {project_id:project_id}))
         }
         dispatch(fetchWikisIfNeeded(list_key))
@@ -102,9 +90,8 @@ class WikiList extends Component {
     render() {
 
         const { wikis_by_id, is_loading } = this.props
-        const that = this
 
-        if ( is_loading && !wikis_by_id && wikis_by_id.length == 0 ) {
+        if ( (is_loading && !wikis_by_id && wikis_by_id.length) === 0 ) {
             return (
                 <div>Loading...</div>
             )
@@ -115,7 +102,7 @@ class WikiList extends Component {
               <DivTable>
                 { map(values(wikis_by_id), (wiki) => this.render_row(wiki) ) }
               </DivTable>
-              { !wikis_by_id || wikis_by_id.length == 0 &&
+              { (!wikis_by_id || wikis_by_id.length) === 0 &&
                 (
                     <div className="wiki-list__empty">
                       { ! is_loading && "No pages." }

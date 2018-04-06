@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link, withRouter} from 'react-router-dom'
 import '../sass/breadcrumb.css'
-import { map, get, filter, includes } from 'lodash'
+import { map, get, filter } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
 import {
@@ -101,12 +101,10 @@ class Breadcrumb extends Component {
     }
 
     showBreadCrumbMenu() {
-        const {show_breadcrumb_menu} = this.state
         this.setState({show_breadcrumb_menu:true})
     }
 
     hideBreadCrumbMenu() {
-        const {show_breadcrumb_menu} = this.state
         this.setState({show_breadcrumb_menu:false})
     }
 

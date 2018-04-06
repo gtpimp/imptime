@@ -1,10 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import RIEInput from '../widgets/RIEInput'
-import RIEModeToggler from '../widgets/RIEModeToggler'
-import { keyBy, each, map, union, includes, difference, keys } from 'lodash'
+import { each, map, union, includes, difference, keys } from 'lodash'
 import {
-    PAGE_KEY__SPRINTS_TOOLBAR,
     SPRINT_TYPE_ORDER,
     getCellStyle
 } from '../actions/ItemListKeyRegistry'
@@ -13,7 +10,6 @@ import {
     invalidateList,
     collapse_list,
     expand_list,
-    update_list_filter
 } from '../actions/ItemList'
 import {
     invalidateAllSprints,
@@ -123,7 +119,6 @@ class SprintList extends Component {
         const {dispatch, list_key, sprints_by_type} = this.props
 
         const sprints = sprints_by_type[sprint_type]
-        const sprint_ids = keyBy(sprints, 'id')
         let index_of_destination = original_index_of_destination
 
         if ( index_of_row_being_moved > index_of_destination ) {
@@ -174,10 +169,10 @@ class SprintList extends Component {
                     <div key={k}
                          className="div-table__header_cell"
                          style={getCellStyle(v)}>
-                      { k == "name" &&
+                      { k === "name" &&
                         <div className="sprint_header__type">{sprint_type}</div>
                       }
-                      { k != "name" && v.label }
+                      { k !== "name" && v.label }
                     </div>
                 ))}
             </div>
@@ -185,8 +180,8 @@ class SprintList extends Component {
     }
 
     create_sprint_rows(sprints) {
-        const { list_key, selected_ids, is_creating_sprint,
-                candidate_sprint, loading_item_ids, sprints_by_type } = this.props
+        const { list_key, selected_ids,
+                loading_item_ids } = this.props
 
         const that = this
         const sprint_rows = []
@@ -208,10 +203,8 @@ class SprintList extends Component {
 
     render() {
 
-        const { sprints, list_key, selected_ids, is_creating_sprint,
-                candidate_sprint, loading_item_ids, sprints_by_type } = this.props
+        const { sprints_by_type } = this.props
         const that = this
-        const sprint_rows = []
 
         const sprint_types = union(SPRINT_TYPE_ORDER, keys(sprints_by_type))
         
@@ -219,7 +212,7 @@ class SprintList extends Component {
             <div className="sprint_list__container">
               { map(sprint_types, function(sprint_type) {
                     const sprints = sprints_by_type[sprint_type]
-                    if ( !sprints || sprints.length == 0 ) {
+                    if ( !sprints || sprints.length === 0 ) {
                         return null
                     }
                     const sprint_rows = that.create_sprint_rows(sprints)

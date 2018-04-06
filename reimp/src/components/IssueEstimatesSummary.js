@@ -4,7 +4,6 @@ import { map } from 'lodash'
 import {
     ensureIssuesLoaded, getIssue
 } from '../actions/Issues'
-import {withRouter} from 'react-router-dom'
 import OtherUser from './OtherUser'
 import Hours from './Hours'
 import '../sass/issue-estimate-summary.scss'
@@ -28,7 +27,7 @@ class IssueEstimatesSummary extends Component {
     }
 
     render_inline_small() {
-	const { issue, loading_value } = this.props
+	const { issue } = this.props
 
 	return (
 	    <div className="issue_estimate_summary--inline-small"

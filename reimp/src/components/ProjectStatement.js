@@ -3,16 +3,13 @@ import { connect } from 'react-redux'
 import { has_permission } from '../actions/Users'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { map, keys } from 'lodash'
-import OtherUser from './OtherUser'
 import SprintTimeSummary from './SprintTimeSummary'
 import SprintLink from './SprintLink'
 import SprintBreakdown from './SprintBreakdown'
 import IssueLink from './IssueLink'
 import CurrencyValue from './CurrencyValue'
-import UserRate from './UserRate'
 import ProgressBar from './ProgressBar'
 import Timestamp from './Timestamp'
-import Hours from './Hours'
 import {
     ensureProjectStatementLoaded,
     getProjectStatement,

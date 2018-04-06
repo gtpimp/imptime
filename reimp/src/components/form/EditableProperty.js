@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import Modal from 'react-modal';
 import '../../sass/editable-property.scss'
-import { isEditing, isReadonly, isEmpty, setEditing, setReadonly, setMode, getMode } from '../../actions/EditableProperty'
+import { isEditing, isReadonly, setEditing, setReadonly, setMode, getMode } from '../../actions/EditableProperty'
 
 class EditableProperty extends Component {n
 
@@ -22,16 +22,16 @@ class EditableProperty extends Component {n
     componentDidMount() {
         const {property_key, dispatch, mode} = this.props
         const initial_mode = this.props.initial_mode || 'read'
-        if ( mode != initial_mode ) {
+        if ( mode !== initial_mode ) {
             dispatch(setMode(property_key, initial_mode))
         }
     }
 
     componentWillReceiveProps(new_props) {
         const {dispatch, property_key} = this.props
-        if ( new_props.mode === undefined || new_props.property_key != property_key ) {
+        if ( new_props.mode === undefined || new_props.property_key !== property_key ) {
             const initial_mode = new_props.initial_mode || 'read'
-            if ( new_props.mode != initial_mode ) {
+            if ( new_props.mode !== initial_mode ) {
                 dispatch(setMode(new_props.property_key, initial_mode))
             }
         }

@@ -6,7 +6,6 @@ import ReadOnlyNavbar from './ReadOnlyNavbar'
 class ReadOnlyHeader extends Component {
 
     render() {
-        const { has_usable_password } = this.props
         
         return (
             <div className="header">

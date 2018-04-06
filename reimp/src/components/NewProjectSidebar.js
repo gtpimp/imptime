@@ -1,17 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
-import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
-import PropertyStackComponent from './PropertyStackComponent'
-import EditableProjectName from '../components/EditableProjectName'
-import Timestamp from './Timestamp'
-import moment from 'moment'
 import Sidebar from './Sidebar'
 import {
     getCandidateProject,
     updateCandidateName,
-    cancelCandidateProject,
     saveCandidateProject
 } from '../actions/Projects'
 import ProjectNameForm from './form/ProjectNameForm'
@@ -30,8 +23,6 @@ class NewProjectSidebar extends Component {
     }
 
     render() {
-
-        const {project, comments, attachments} = this.props
 
         return (
             <Sidebar>

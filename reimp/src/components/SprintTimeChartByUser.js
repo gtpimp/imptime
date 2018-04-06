@@ -1,18 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
-import {BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine} from 'recharts'
 import { map, keys, isEqual, isArray } from 'lodash'
 import OtherUser from './OtherUser'
-import SprintTimeSummary from './SprintTimeSummary'
-import SprintLink from './SprintLink'
-import SprintBreakdown from './SprintBreakdown'
-import IssueLink from './IssueLink'
-import CurrencyValue from './CurrencyValue'
-import UserRate from './UserRate'
-import ProgressBar from './ProgressBar'
-import Timestamp from './Timestamp'
-import Hours from './Hours'
 import TimeChart from './TimeChart'
 import {
     ensureTimeChartLoaded,
@@ -20,14 +10,11 @@ import {
     isLoadingTimeChart,
     invalidateTimeChart
 } from '../actions/TimeChart'
-import { ensureUsersLoaded } from '../actions/Users'
-import { setBreadcrumbs } from '../actions/Breadcrumbs'
-import moment from 'moment';
 
 class SprintTimeChartByUser extends Component {
 
     componentDidMount() {
-        const { project_id, project, dispatch, project_statement, filter } = this.props
+        const { project_id, dispatch, filter } = this.props
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(ensureTimeChartLoaded([project_id], filter))
@@ -43,7 +30,7 @@ class SprintTimeChartByUser extends Component {
             dispatch(ensureProjectsLoaded([new_props.project_id]))
             dispatch(ensureTimeChartLoaded([new_props.project_id], filter))
         }
-        if ( new_props.filter != filter &&
+        if ( new_props.filter !== filter &&
              isArray(new_props.filter.sprint_ids) &&
              isArray(filter.sprint_ids) &&
              ! isEqual(filter.sprint_ids.sort(), new_props.filter.sprint_ids.sort()) ) {
@@ -53,8 +40,7 @@ class SprintTimeChartByUser extends Component {
 
     render() {
 
-        const { is_loading, time_chart, filter } = this.props
-        const that = this;
+        const { time_chart } = this.props
 
         return (
 

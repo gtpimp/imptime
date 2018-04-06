@@ -8,7 +8,7 @@ export const INVALIDATE_PROJECT_STATEMENT = 'INVALIDATE_PROJECT_STATEMENT'
 export const UPDATE_PROJECT_STATEMENT_FILTER = 'UPDATE_PROJECT_STATEMENT_FILTER'
 
 export function invalidateProjectStatement(project_id) {
-    project_id = parseInt(project_id)
+    project_id = parseInt(project_id, 10)
     return {
         type: INVALIDATE_PROJECT_STATEMENT,
 	      project_id_to_invalidate: project_id
@@ -16,7 +16,7 @@ export function invalidateProjectStatement(project_id) {
 }
 
 function announceLoadingProjectStatement(project_id) {
-    project_id = parseInt(project_id)
+    project_id = parseInt(project_id, 10)
     return {
         type: ANNOUNCE_LOADING_PROJECT_STATEMENT,
 	      project_id_to_load: project_id
@@ -42,7 +42,7 @@ function announceProjectStatementLoadFailed(error) {
 }
 
 export function ensureProjectStatementLoaded(project_id, override_filter) {
-    project_id = parseInt(project_id)
+    project_id = parseInt(project_id, 10)
     return (dispatch, getState) => {
         const state = getState()
         const filter = override_filter || get_project_statement_filter(state)
@@ -56,7 +56,7 @@ export function ensureProjectStatementLoaded(project_id, override_filter) {
 }
 
 function fetchProjectStatement(project_id, filter) {
-    project_id = parseInt(project_id)
+    project_id = parseInt(project_id, 10)
     return (dispatch, getState) => {
         const state = getState()
         const params = { filter: filter }
@@ -76,12 +76,12 @@ function fetchProjectStatement(project_id, filter) {
 }
 
 export function getProjectStatement(state, project_id) {
-    project_id = parseInt(project_id)
+    project_id = parseInt(project_id, 10)
     return ((state.project_statement || {}).items_by_project_id || {})[project_id] || null
 }
 
 export function isLoadingProjectStatement(state, project_id) {
-    project_id = parseInt(project_id)
+    project_id = parseInt(project_id, 10)
     const loading_ids = (state.project_statement || {}).loading_project_ids || []
     return includes(loading_ids, project_id)
 }

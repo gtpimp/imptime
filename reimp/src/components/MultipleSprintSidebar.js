@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
 import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
-import { has_permission } from '../actions/Users'
 import EditableSprintStatus from './EditableSprintStatus'
 import MultipleIssueSummary from './MultipleIssueSummary'
 import { doesMienHaveFeature } from '../actions/Mien'
@@ -22,7 +21,7 @@ class MultipleSprintSidebar extends Component {
 
     render() {
 
-        const {sprints, sprint_ids, project_id, sprint, show_summary_section} = this.props
+        const {sprints, sprint_ids, project_id, show_summary_section} = this.props
 
         return (
 

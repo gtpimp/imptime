@@ -19,7 +19,7 @@ class SprintLink extends Component {
     }
     
     render() {
-        const { sprint_id, sprint_name, onClick } = this.props
+        const { sprint_name } = this.props
 
         return (
             <div className="sprint_link" onClick={this.on_clicked}>

@@ -12,10 +12,6 @@ import Hours from './Hours'
 
 class SprintTimeSummary extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
         this.refresh(this.props)
     }
@@ -25,7 +21,7 @@ class SprintTimeSummary extends Component {
     }
 
     refresh(props) {
-        const {sprint_id, project_id, sprint, project, time_summary, dispatch} = props
+        const {sprint_id, project_id, time_summary, dispatch} = props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureTimeSummaryLoaded(sprint_id))
@@ -92,7 +88,7 @@ class SprintTimeSummary extends Component {
     }
 
     render() {
-        const { sprint, project, per_user, show_heading } = this.props
+        const { per_user, show_heading } = this.props
         return (
             <div>
               { per_user &&

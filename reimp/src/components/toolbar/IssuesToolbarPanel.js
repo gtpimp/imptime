@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
-import {withRouter} from 'react-router-dom'
 import {
     startCandidateIssue,
     ensureIssuesLoaded,
@@ -15,7 +14,6 @@ import {
     get_selected_sprint_ids
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
-import ToggleButton from './ToggleButton'
 
 class IssuesToolbarPanel extends Component {
 

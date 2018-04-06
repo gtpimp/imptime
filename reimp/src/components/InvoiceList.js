@@ -1,23 +1,13 @@
 import React, { Component } from 'react'
-import { indexOf } from 'lodash'
 import map from 'lodash/map'
-import union from 'lodash/union'
-import includes from 'lodash/includes'
-import difference from 'lodash/difference'
 import { connect } from 'react-redux'
 import {
     invalidateList,
-    selectItems,
-    collapse_list,
-    expand_list,
     getVisibleItemIds,
     getVisibleItems,
     isLoading,
     getLastUpdated,
     getLoadingItemIds,
-    getSelectedItemIds,
-    getSelectedItems,
-    getDisplayMode
 } from '../actions/ItemList'
 import {
     invalidateAllInvoices,
@@ -76,7 +66,6 @@ class InvoiceList extends Component {
     
     renderExpandedInvoice(invoice, index) {
         const { list_key, loading_item_ids, header_list } = this.props
-        const that = this
 
         const is_loading = loading_item_ids.indexOf(invoice.id) !== -1 || invoice.loaded === false
         
@@ -105,13 +94,9 @@ class InvoiceList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { invoice, item_list } = state
     const { list_key, header_list } = props
-    const items_by_id = (invoice && invoice.items_by_id) || {}
-    const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__INVOICE)
-    const display_mode = getDisplayMode(state, list_key) || "expanded"
     const loading_item_ids = getLoadingItemIds(state, list_key)
     const is_loading = isLoading(state, list_key)
     const last_updated = getLastUpdated(state, list_key)

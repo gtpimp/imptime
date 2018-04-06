@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map, keys } from 'lodash'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import ProgressBar from './ProgressBar' 
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureEstimateSummaryLoaded,
         getEstimateSummary,
@@ -21,7 +20,7 @@ class SprintEstimateSummary extends Component {
     }
  
     componentDidMount() {
-        const {sprint_id, project_id, sprint, project, estimate_summary, dispatch} = this.props
+        const {sprint_id, project_id, estimate_summary, dispatch} = this.props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureEstimateSummaryLoaded(sprint_id))
@@ -106,7 +105,6 @@ class SprintEstimateSummary extends Component {
     }
 
     render() {
-        const { sprint, project } = this.props
         return (
             <div>
               <div className="sprint_estimate__comparative_summary"> 

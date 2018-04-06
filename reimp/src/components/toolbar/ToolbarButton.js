@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import '../../sass/toolbar-button.css'
-import ToolTip from 'react-portal-tooltip'
 
 class ToolbarButton extends Component {
 
@@ -18,14 +17,14 @@ class ToolbarButton extends Component {
     }
 
     showTooltip() {
-        const { dispatch, issue, tooltips_enabled } = this.props
+        const { tooltips_enabled } = this.props
         if ( tooltips_enabled ) {
             this.setState({isTooltipActive: true})
         }
     }
     
     hideTooltip() {
-        const { dispatch, tooltips_enabled } = this.props
+        const { tooltips_enabled } = this.props
         if ( tooltips_enabled ) {
             this.setState({isTooltipActive: false})
         }
@@ -49,8 +48,6 @@ class ToolbarButton extends Component {
 
     render() {
         const {flavour} = this.props
-        const { isTooltipActive } = this.state
-        const that = this
 
         return (
             <div ref={(el) => { this.button_el = el }}

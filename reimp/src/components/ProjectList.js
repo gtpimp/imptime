@@ -53,7 +53,6 @@ class ProjectList extends Component {
     }
 
     componentDidMount() {
-        const { dispatch, list_key } = this.props
         this.switchToSampleContext()
 
         // only fetch on WillReceiveProps so that the pagination has time to take effect from the parent.
@@ -66,7 +65,7 @@ class ProjectList extends Component {
     }
 
     onDeleteProject(project_id) {
-        const {dispatch, visible_item_ids} = this.props
+        const {visible_item_ids} = this.props
         const {onSelectProjects} = this.props
         const project_index = indexOf(visible_item_ids, project_id)
         let next_index = project_index - 1
@@ -174,7 +173,7 @@ class ProjectList extends Component {
             <Project key={list_key + "_" + project.id + "_" + project.name + "_" + index}
                      is_collapsed={false}
                      reorderProjects={that.reorderProjects}
-                     onDelete = {that.onDeleteProject}
+                     onDelete={that.onDeleteProject}
                      onClickedProject={(event) => that.onClickedProject(event, project.id)}
                      is_loading={is_loading}
                      header_list={header_list}
@@ -209,10 +208,7 @@ class ProjectList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project, item_list } = state
     const { list_key, header_list } = props
-    const items_by_id = (project && project.items_by_id) || {}
-    const l = (item_list && item_list[list_key]) || {}
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__PROJECT)
     const selected_item_ids = getSelectedItemIds(state, list_key)

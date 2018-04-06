@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
 import { getSprint } from '../../actions/Sprints'
 import SprintName from '../../components/SprintName'
 import { has_permission } from '../../actions/Users'
@@ -20,7 +19,7 @@ class SprintRatiosForm extends Component {
     }
     
     renderRatioManagementField(field) {
-        const {input, data, ...rest} = field
+        const {input} = field
         return (
             <input
                 maxLength="10"
@@ -33,7 +32,7 @@ class SprintRatiosForm extends Component {
     }
 
     renderRatioTestingField(field) {
-        const {input, data, ...rest} = field
+        const {input} = field
         return (
             <input
                 maxLength="10"
@@ -46,7 +45,7 @@ class SprintRatiosForm extends Component {
     }
 
     renderRatioScopeCreepField(field) {
-        const {input, data, ...rest} = field
+        const {input} = field
         return (
             <input
                 maxLength="10"

@@ -39,7 +39,7 @@ class SprintName extends Component {
     }
 
     render_inline_small() {
-	const { sprint, loading_value, display_mode } = this.props
+	const { sprint, display_mode } = this.props
 
 	return (
 	    <div className="sprint_name--inline-small"

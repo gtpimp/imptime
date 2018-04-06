@@ -23,47 +23,18 @@ import {
 } from '../selectors/IssueSelectors'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getProject} from '../actions/Projects'
-import {
-    ensureUsersLoaded,
-    getUser
-} from '../actions/Users'
-import { ensureTagsLoaded, getTags } from '../actions/Tags'
-import OtherUser from '../components/OtherUser'
+import { ensureUsersLoaded } from '../actions/Users'
+import { ensureTagsLoaded } from '../actions/Tags'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueEstimate from './EditableIssueEstimate'
 import Progress from '../components/Progress'
-import IssueEstimatesSummary from '../components/IssueEstimatesSummary'
 import TimerSwitch from '../components/TimerSwitch'
 import ElapsedTime from '../components/ElapsedTime'
 import DeleteIssue from '../components/DeleteIssue'
 import TagListFlat from '../components/TagListFlat'
-import {format_hours} from '../actions/lib'
-import IssueStatusLabel from '../components/form/IssueStatusLabel'
 import Timestamp from './Timestamp'
 import { logged_in_user } from '../actions/Auth'
-
-const ISSUE_STATUS_CHOICES = [
-    {value: 'new', label: 'new'},
-    {value: 'devdone', label: 'dev_done'},
-    {value: 'in_internal_qa', label: 'internal qa'},
-    {value: 'internal_qa_passed', label: 'internal qa passed'},
-    {value: 'in_client_qa', label: 'external qa'},
-    {value: 'client_qa_passed', label: 'external qa passed'},
-    {value: 'reopened', label: 'reopened'},
-    {value: 'onhold', label: 'on hold'},
-    {value: 'bug', label: 'bug'},
-    {value: 'to be estimated', label: 'to be estimated'},
-    {value: 'needscodereview', label: 'needs code review'},
-    {value: "cannot reproduce", label: "cannot reproduce"},
-    {value: "discuss with client", label: "discuss with client"},
-    {value: 'dev unclear', label: 'dev unclear'},
-    {value: 'duplicate', label: 'duplicate'},
-    {value: 'to be designed', label: 'to be designed'},
-    {value: 'imported', label: 'imported'},
-    {value: 'management', label: 'management'},
-    {value: 'quick_clocker', label: 'quick clocker'}
-]
 
 class Issue extends Component {
 
@@ -169,18 +140,17 @@ class Issue extends Component {
 
     render_expanded() {
         const {
-            issue, is_selected, is_highlighted, assignable_user_ids,
+            issue, is_selected, is_highlighted,
             is_invalidated, is_saving, is_fake,
-            isOver, connectDragSource, connectDropTarget, show_children,
+            isOver, show_children,
             subject_prefix, subject_suffix,
-            issue_id, header_list,
+            header_list,
             isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
-            tagsByCategoryName, all_estimates, all_estimates_by_user_id,
+            tagsByCategoryName, all_estimates_by_user_id,
             all_actuals_by_user_id, sprint, issue_id_as_list,
             logged_in_user_id, logged_in_user_can_estimate_user_id
         } = this.props
 
-        const onDeleteTag = this.onDeleteTag
         const visible_header_keys = keys(header_list)
 
         if (!issue) {
@@ -389,7 +359,7 @@ class Issue extends Component {
                         style={getCellStyle(header_list.delete)}>
                      <div className="reveal-on-hover--block issue__cell--issue-delete">
                        <DeleteIssue
-                           onDelete ={this.onDeleteIssue}
+                           onDelete={this.onDeleteIssue}
                        />
                      </div>
                    </div>
@@ -463,7 +433,6 @@ const makeMapStateToProps = () => {
         const isChildOfSelectedFeature = includes(flatMap(selectedIssues, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue_id)
         const isSiblingOfSelectedIssue = includes(keys(keyBy(selectedIssues, 'parent_group_id')), issue.parent_group_id)
         const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
-        const tags = getTags(state, issue.tag_ids || [])
         const tagsByCategoryName = selIssueTagsByCategoryName(state, props)
         const all_estimates = issue.all_estimates
         const all_estimates_by_user_id = selEstimatesByUserId(state, props)

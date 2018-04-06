@@ -4,7 +4,6 @@ import EditableProperty from './form/EditableProperty'
 import IssueEstimateForm from './form/IssueEstimateForm'
 import { getIssue, updateIssueEstimate } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
-import Hours from './Hours'
 import Progress from './Progress'
 import { format_hours } from '../actions/lib'
 
