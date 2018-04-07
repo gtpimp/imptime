@@ -18,7 +18,7 @@ class PasswordChangedPage extends Component {
             <div className="blank-page">
               <div className="blank-container">
                 <div className="blank-text">
-                  Your password has been changed
+                  Your user details have been changed
                 </div>
               </div>
             </div>

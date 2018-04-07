@@ -99,7 +99,7 @@ export function login(username, password) {
     }
 }
 
-export function forgot_password(username) {
+export function forgot_password(username, on_done) {
 
     return (dispatch, getState) => {
 
@@ -110,8 +110,8 @@ export function forgot_password(username) {
                   data: data,
                   headers: {"Content-type": "application/json; charset=UTF-8"}, 
                   body: JSON.stringify(data)}
-        return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params).then(
-            () => { window.open('/password/reminded') })
+        return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params)
+            .then( on_done() )
     }
 }
 

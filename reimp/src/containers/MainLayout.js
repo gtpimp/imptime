@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
+import { parse } from 'query-string'
 import { DragDropContext } from 'react-dnd';
 import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
@@ -56,8 +57,11 @@ class MainLayout extends Component {
                 history.push('/password/change')
             }
         } else {
-            if ( settings.configured && location && location.query && location.query.autologin !== undefined ) {
-                dispatch(auto_login(location.query.autologin))
+            if ( settings.configured && location && location.search ) {
+                const query_params = parse(location.search)
+                if ( query_params.autologin ) {
+                    dispatch(auto_login(query_params.autologin))
+                }
             }
         }
     }
