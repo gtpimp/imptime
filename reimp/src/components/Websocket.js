@@ -22,7 +22,6 @@ class Websocket extends Component {
     componentWillReceiveProps(new_props) {
         if ( new_props.url !== this.props.url ) {
             this.state.ws.close()
-//            this.state.ws = new WebSocket(new_props.url);
             this.setState({ws: new WebSocket(new_props.url)})
         }
     }
@@ -61,7 +60,6 @@ class Websocket extends Component {
     }    
 
     setupWebsocket() {
-//        this.state.ws = this.state.ws || new WebSocket(this.props.url);
         if(!this.state.ws){
             this.setState({ws: new WebSocket(this.props.url)})
         }
@@ -84,7 +82,6 @@ class Websocket extends Component {
             if (this.props.reconnect) {
                 let time = this.generateInterval(this.state.attempts);
                 this.setState({ws: null})
-//                this.state.ws = null;
                 setTimeout(() => {
                     this.setState({attempts: this.state.attempts++});
                     this.setupWebsocket();
