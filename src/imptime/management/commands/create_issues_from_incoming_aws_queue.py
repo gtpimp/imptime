@@ -233,9 +233,12 @@ this is the colour of yukc
         subject = message['subject'].strip()
         
         project_name = project_name.strip().lower()
-        project = Project.objects.filter(name__iexact=Project.convert_to_email_name(project_name))\
-                                 .filter_by_logged_in_user(user)\
-                                 .first()
+        matching_projects = Project.objects.filter(name__iexact=Project.convert_to_email_name(project_name))\
+                                           .filter_by_logged_in_user(user)
+        if matching_projects.count() > 1:
+            raise Exception("There is more than one project matching the name %s, please use an alias" % project_name)
+        project = matching_projects.first()
+        
         if project is None:
             raise Exception("No project found with name %s" % project_name)
 
