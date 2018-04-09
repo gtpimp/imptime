@@ -251,10 +251,10 @@ class VisualSpecDocumentPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    let active_visual_spec_document_id = props.params.visualSpecDocumentId
-    const project_id = props.params.projectId
-    const sprint_id = props.params.sprintId
-    const issue_id = props.params.issueId
+    let active_visual_spec_document_id = props.match.params.visualSpecDocumentId
+    const project_id = props.match.params.projectId
+    const sprint_id = props.match.params.sprintId
+    const issue_id = props.match.params.issueId
     const active_visual_spec_document = getVisualSpecDocument(state, active_visual_spec_document_id) || { "loaded": false}
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id)
