@@ -105,8 +105,6 @@ class BusinessQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
-            return self
         return self.filter(pk__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_has_any_active_projects(self):
@@ -674,8 +672,7 @@ class BusinessPermissions(BaseModel):
 
     @property
     def has_edit_permissions(self):
-        # superuser is just a short-term hack in case I've messed up the permission editor. Remove.
-        return (self.is_active_member_of_business or self.user.is_superuser) and self.can_edit_permissions
+        return self.is_active_member_of_business and self.can_edit_permissions
 
     @property
     def has_view_permissions(self):
@@ -908,8 +905,6 @@ class ProjectQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
-            return self
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def order_by_business_id(self, business_id, descending=False, by_type_first=False):
@@ -2086,7 +2081,7 @@ class Project(BaseModel):
         return self.total_hours_for_user(user=None)
 
     def can_view_by_user(self, user):
-        return user.is_superuser or (user in self.users.all())
+        return user in self.users.all()
 
     def total_hours_for_user(self, user=None):
         entries_qs = Entry.objects.filter(issue__project=self)
@@ -2515,8 +2510,6 @@ class EntriesQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        if user.is_superuser:
-            return self
         return self.filter(issue__project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def cost_totals_for_project(self, project):
@@ -3850,8 +3843,6 @@ class IssueQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        if user.is_superuser or user.has_perm('timepiece.belongs_to_all_projects'):
-            return self
         return self.filter(project__business__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_open(self, user):
