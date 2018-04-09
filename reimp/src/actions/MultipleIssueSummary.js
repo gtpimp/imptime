@@ -1,7 +1,5 @@
-import { impfetch, hash_flat_object } from './lib.js'
+import { hash_flat_object } from './lib.js'
 import { ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY } from '../actions/ItemListKeyRegistry'
-import { map, compact, reduce, sortBy } from 'lodash'
-import difference from 'lodash/difference'
 
 import {
     invalidateAllItems,
@@ -9,7 +7,6 @@ import {
     ensureItemsLoaded,
     getItem,
     is_item_invalidated,
-    getInvalidatedItemIds,
     getLoadingItemIds
 } from '../actions/Item'
 

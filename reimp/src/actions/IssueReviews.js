@@ -1,5 +1,3 @@
-import { impfetch } from './lib.js'
-import { setDisplayMode, getDisplayMode } from  './ItemList'
 import { ENTITY_KEY__ISSUE_REVIEW } from '../actions/ItemListKeyRegistry'
 
 import {

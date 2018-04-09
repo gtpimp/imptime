@@ -1,5 +1,3 @@
-import { impfetch } from './lib.js'
-import { setDisplayMode, getDisplayMode } from './ItemList'
 import cookie from 'react-cookie';
 import { ENTITY_KEY__AUTO_CLOCK, CONTEXT_KEY__AUTO_CLOCK } from '../actions/ItemListKeyRegistry'
 import { compact } from 'lodash'
@@ -7,15 +5,12 @@ import { compact } from 'lodash'
 import {
     invalidateAllItems,
     invalidateItems,
-    fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
     getItem,
     getItems,
     getItemsById,
     itemPost,
-    deleteItem,
-    deleteItems,
     setGlobalEntityFlag,
     getGlobalEntityFlag
 } from '../actions/Item'
@@ -29,7 +24,7 @@ import {
 } from '../actions/Page'
 
 export function shouldShowAutoClockPopup() {
-    return cookie.load('show_auto_clock_popup') == "1" || false
+    return cookie.load('show_auto_clock_popup') === "1" || false
 }
 
 export function hideAutoClockPopup() {
@@ -53,7 +48,7 @@ export function disableAutoClocking() {
 export function isAutoClockingEnabled(state) {
     let enabled = getGlobalEntityFlag(state, "auto_clocking")
     if ( enabled === undefined ) {
-        enabled = cookie.load('auto_clocking') == "1"
+        enabled = cookie.load('auto_clocking') === "1"
         if ( enabled ) {
             enableAutoClocking()
         } else {
@@ -114,7 +109,7 @@ export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue
         let selected_sprint_ids = get_selected_sprint_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
         let selected_issue_ids = get_selected_issue_ids(state, CONTEXT_KEY__AUTO_CLOCK) || []
         if ( project_id ) {
-            if ( !selected_project_ids || selected_project_ids.length == 0 || selected_project_ids[0] != project_id ) {
+            if ( !selected_project_ids || selected_project_ids.length === 0 || selected_project_ids[0] !== project_id ) {
                 dispatch(select_projects(CONTEXT_KEY__AUTO_CLOCK, compact([project_id])))
             }
         } else {
@@ -124,7 +119,7 @@ export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue
         }
 
         if ( sprint_id ) {
-            if ( !selected_sprint_ids || selected_sprint_ids.length == 0 || selected_sprint_ids[0] != sprint_id ) {
+            if ( !selected_sprint_ids || selected_sprint_ids.length === 0 || selected_sprint_ids[0] !== sprint_id ) {
                 dispatch(select_sprints(CONTEXT_KEY__AUTO_CLOCK, compact([sprint_id])))
             }
         } else {
@@ -134,7 +129,7 @@ export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue
         }
 
         if ( issue_id ) {
-            if ( !selected_issue_ids || selected_issue_ids.length == 0 || selected_issue_ids[0] != issue_id ) {
+            if ( !selected_issue_ids || selected_issue_ids.length === 0 || selected_issue_ids[0] !== issue_id ) {
                 dispatch(select_issues(CONTEXT_KEY__AUTO_CLOCK, compact([issue_id])))
             }
         } else {

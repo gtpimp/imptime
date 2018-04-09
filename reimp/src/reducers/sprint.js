@@ -2,7 +2,6 @@ import assign from 'lodash/assign'
 import keys from 'lodash/keys'
 import union from 'lodash/union'
 import difference from 'lodash/difference'
-import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
 import { stringifyIds } from '../actions/lib.js'
 
@@ -38,7 +37,6 @@ export default function sprint(state = initialState, action) {
 
     let state_copy
     let new_items_by_id = null
-    let l
     let ids = null
 
     switch (action.type) {

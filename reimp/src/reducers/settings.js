@@ -3,15 +3,6 @@ import {
 } from '../actions/Settings'
 import {SET_MIEN} from '../actions/Mien'
 
-const page_template = {
-    // Don't put any objects in here, only primitives
-    toolbars: null,
-    settings: null,
-    selection: null,
-    sidebars: null,
-    header_list: null
-}
-
 const initialState = {
     configured: false,
     WEBSOCKET_BASE_URL: "wss://not/configured",
@@ -21,7 +12,6 @@ const initialState = {
 export default function settings(state = initialState, action) {
 
     let state_copy
-    let l
 
     switch (action.type) {
         case UPDATE_SETTINGS:

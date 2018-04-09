@@ -1,4 +1,3 @@
-import assign from 'lodash/assign'
 import union from 'lodash/union'
 import difference from 'lodash/difference'
 import without from 'lodash/without'
@@ -19,7 +18,6 @@ const initialState = {
 export default function cost_summary(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let new_items_by_sprint_id = null
 
     switch (action.type) {
         case INVALIDATE_COST_SUMMARY:

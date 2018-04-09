@@ -119,7 +119,6 @@ export function deleteProjects(project_ids) {
 
 export function startCandidateProject() {
     return (dispatch, getState) => {
-	      const state = getState()
 	      dispatch({
 	          type: ANNOUNCE_CAPTURING_NEW_PROJECT
 	      })

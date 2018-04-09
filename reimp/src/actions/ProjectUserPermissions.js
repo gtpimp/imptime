@@ -1,10 +1,8 @@
 import { impfetch } from './lib.js'
-import indexOf from 'lodash/indexOf'
+//import indexOf from 'lodash/indexOf'
 import keyBy from 'lodash/keyBy'
 import includes from 'lodash/includes'
 import map from 'lodash/map'
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
-import { ENTITY_KEY__PROJECT_USER_PERMISSION } from '../actions/ItemListKeyRegistry'
 
 // PUP === ProjectUserPermission
 
@@ -40,21 +38,6 @@ function announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id) {
     }
 }
 
-function announceLoadingPups(pup_ids) {
-    return {
-        type: ANNOUNCE_LOADING_PUPS,
-	pup_ids_to_load: pup_ids
-    }
-}
-
-function announcePupsLoaded(payload) {
-    return {
-        type: ANNOUNCE_PUPS_LOADED,
-        items_by_id: keyBy(payload.project_user_permissions, 'id'),
-	received_at: Date.now()
-    }
-}
-
 function announcePupsLoadedForProjectAndUser(payload, project_id, user_id) {
     return {
         type: ANNOUNCE_PUPS_LOADED,
@@ -62,14 +45,6 @@ function announcePupsLoadedForProjectAndUser(payload, project_id, user_id) {
 	received_at: Date.now(),
         project_id: project_id,
         user_id: user_id
-    }
-}
-
-function announcePupsLoadFailed(error) {
-    return {
-        type: ANNOUNCE_PUPS_LOAD_FAILED,
-        error: error,
-        received_at: Date.now()
     }
 }
 
@@ -107,35 +82,8 @@ function fetchProjectUserPermission(project_id, user_id) {
     }
 }
 
-function fetchPupsPromise(dispatch, state, pup_ids) {
-    return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingPups(pup_ids))
-	const params = { filter: { ids: pup_ids },
-			 pagination: {'enabled': false} }
-
-        return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
-                if (json.status !== 'success') {
-		    dispatch(announcePupsLoadFailed())
-		    reject(json.error)
-                } else {
-		    dispatch(announcePupsLoaded(json.payload))
-		    resolve(json.payload)
-                }
-	    }).catch(function (error) {
-		dispatch(announcePupsLoadFailed("Failed to load pups: " + error))
-		reject("Failed to load pups: " + error)
-	    })
-    })
-}
-
 function getPupIdForProjectUser(state, project_id, user_id) {
     return (((state.project_user_permission || {}).pup_ids_by_project_and_user || {})[project_id] || {})[user_id] || null
-}
-
-function getPupIdsForProjectUsers(state, project_id, user_ids) {
-    return map(user_ids, (user_id) => getPupIdForProjectUser(state, project_id, user_id))
 }
 
 function isPupLoadingForProjectUser(state, project_id, user_id) {
@@ -174,17 +122,6 @@ export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
 
 function getPup(state, pup_id) {
     return ((state.project_user_permission || {}).items_by_id || {})[pup_id] || null
-}
-
-function getPups(state, pup_ids) {
-    const pup_objs = state.pup
-    const items_by_id = (pup_objs && pup_objs.items_by_id) || {}
-    return items_by_id && pup_ids && pup_ids.map(function (pup_id, index) {
-        return items_by_id[pup_id] || {
-            'id': pup_id,
-            'loaded': false
-        }
-    })
 }
 
 export function hasPermission(state, project_id, user_id, permission_name) {

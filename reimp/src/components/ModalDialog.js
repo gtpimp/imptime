@@ -7,7 +7,6 @@ import classNames from 'classnames'
 class ModalDialog extends Component {
 
     render() {
-        const {} = this.props
 
         return (
             <Modal isOpen={this.props.isOpen || false}

@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
 import Modal from 'react-modal';
-import classNames from 'classnames'
 import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity,
          clockIn,
@@ -17,8 +15,6 @@ import { getAvailableAutoClockEntity,
 import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import AutoClockList from './AutoClockList'
 import AutoClockEntry from './AutoClockEntry'
-import AutoClockEntity from './AutoClockEntity'
-import EditableAutoClockEntry from './EditableAutoClockEntry'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
@@ -28,24 +24,14 @@ import {
 } from '../../actions/AutoClock'
 import {
     initList,
-    invalidateList,
-    selectItems,
-    collapse_list,
-    expand_list,
     shouldFetchList,
     getVisibleItemIds,
-    getVisibleItems,
     getNestedObjects,
     ensureNestedObjectsLoaded,
     isLoading,
     getLastUpdated,
-    getLoadingItemIds,
-    getSelectedItemIds,
-    getSelectedItems,
-    getDisplayMode,
     update_list_pagination,
     update_list_ordering,
-    update_list_format,
     update_list_filter,
     getListFilter
 } from '../../actions/ItemList'
@@ -66,7 +52,7 @@ class AutoClockPopup extends Component {
     }
 
     componentDidMount() {
-        const { dispatch, list_key, filter } = this.props
+        const { dispatch, list_key } = this.props
         dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
         dispatch(update_list_pagination(list_key, { page_size: 1 }))
@@ -80,7 +66,7 @@ class AutoClockPopup extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, filter, logged_in_user_id, list_key, nested_objects } = props
-        if ( filter.user_id != logged_in_user_id ) {
+        if ( filter.user_id !== logged_in_user_id ) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
         }
         dispatch(fetchAutoClocksIfNeeded(list_key))
@@ -184,7 +170,7 @@ class AutoClockPopup extends Component {
     }
 
     renderAvailableClock() {
-        const { available_project, available_project_id,
+        const { available_project_id,
                 available_sprint_id, available_issue_id,
                 auto_clocking_enabled } = this.props
         
@@ -218,7 +204,6 @@ class AutoClockPopup extends Component {
     }
 
     renderClockHistory() {
-        const { show_list } = this.state
 
         return (
             <div className="auto-clock__history">
@@ -258,8 +243,7 @@ class AutoClockPopup extends Component {
     }
 
     render() {
-        const { show_popup, show_list } = this.state
-        const { most_recent_entry, auto_clocking_enabled } = this.props
+        const { show_popup } = this.state
 
         return (
 
@@ -289,7 +273,6 @@ class AutoClockPopup extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {  } = props
     const list_key = LIST_KEY__RECENT_AUTO_CLOCK
 
     const { available_project_id,

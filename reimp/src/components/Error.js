@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../sass/maintenance.css'
-import ModalDialog from '../components/ModalDialog'
 import { isMaintenanceModeActive } from '../actions/Maintenance'
 import { getErrorMessage, clearErrorMessage } from '../actions/Error'
 
@@ -54,7 +53,6 @@ class Error extends Component {
 }
 
 function mapStateToProps(state) {
-    const { } = state;
 
     const error_message = getErrorMessage(state)
     const has_error = error_message && error_message.length && error_message.length > 0

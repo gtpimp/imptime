@@ -1,7 +1,5 @@
 import { impfetch } from './lib.js'
-import { map, keyBy, includes, indexOf, get } from 'lodash'
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
-import { ENTITY_KEY__SPRINT_USER_RATE } from '../actions/ItemListKeyRegistry'
+import { map, keyBy, includes, get } from 'lodash'
 
 // SUR === SprintUserRate
 
@@ -46,21 +44,6 @@ function announceLoadingSursForSprintAndUser(sur_id, sprint_id, user_id) {
     }
 }
 
-function announceLoadingSurs(sur_ids) {
-    return {
-        type: ANNOUNCE_LOADING_SURS,
-	sur_ids_to_load: sur_ids
-    }
-}
-
-function announceSursLoaded(payload) {
-    return {
-        type: ANNOUNCE_SURS_LOADED,
-        items_by_id: keyBy(payload.sprint_user_rates, 'id'),
-	received_at: Date.now()
-    }
-}
-
 function announceSursLoadedForSprintAndUser(payload, sprint_id, user_id) {
     return {
         type: ANNOUNCE_SURS_LOADED,
@@ -68,14 +51,6 @@ function announceSursLoadedForSprintAndUser(payload, sprint_id, user_id) {
 	received_at: Date.now(),
         sprint_id: sprint_id,
         user_id: user_id
-    }
-}
-
-function announceSursLoadFailed(error) {
-    return {
-        type: ANNOUNCE_SURS_LOAD_FAILED,
-        error: error,
-        received_at: Date.now()
     }
 }
 
@@ -113,35 +88,8 @@ function fetchSprintUserRate(sprint_id, user_id) {
     }
 }
 
-function fetchSursPromise(dispatch, state, sur_ids) {
-    return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingSurs(sur_ids))
-	const params = { filter: { ids: sur_ids },
-			 pagination: {'enabled': false} }
-
-        return impfetch(state, 'imp/rate/sprint/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
-                if (json.status !== 'success') {
-		    dispatch(announceSursLoadFailed())
-		    reject(json.error)
-                } else {
-		    dispatch(announceSursLoaded(json.payload))
-		    resolve(json.payload)
-                }
-	    }).catch(function (error) {
-		dispatch(announceSursLoadFailed("Failed to load surs: " + error))
-		reject("Failed to load surs: " + error)
-	    })
-    })
-}
-
 function getSurIdForSprintUser(state, sprint_id, user_id) {
     return get(state, ["sprint_user_rate", "sur_ids_by_sprint_and_user", sprint_id, user_id], null)
-}
-
-function getSurIdsForSprintUsers(state, sprint_id, user_ids) {
-    return map(user_ids, (user_id) => getSurIdForSprintUser(state, sprint_id, user_id))
 }
 
 function isSurLoadingForSprintUser(state, sprint_id, user_id) {
@@ -188,17 +136,6 @@ export function ensureSprintUserRateLoaded(sprint_id, user_id) {
 
 function getSur(state, sur_id) {
     return ((state.sprint_user_rate || {}).items_by_id || {})[sur_id] || null
-}
-
-function getSurs(state, sur_ids) {
-    const sur_objs = state.sur
-    const items_by_id = (sur_objs && sur_objs.items_by_id) || {}
-    return items_by_id && sur_ids && sur_ids.map(function (sur_id, index) {
-        return items_by_id[sur_id] || {
-            'id': sur_id,
-            'loaded': false
-        }
-    })
 }
 
 export function hasRate(state, sprint_id, user_id, rate_name) {

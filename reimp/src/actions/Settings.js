@@ -1,5 +1,3 @@
-import { get } from 'lodash'
-
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS'
 
 export function updateSettings(new_settings) {

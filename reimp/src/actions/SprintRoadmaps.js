@@ -1,11 +1,9 @@
-import { impfetch } from './lib.js'
 import { setDisplayMode, getDisplayMode } from './ItemList'
 import { ENTITY_KEY__SPRINT_ROADMAP } from '../actions/ItemListKeyRegistry'
 
 import {
     invalidateAllItems,
     invalidateItems,
-    fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
     getItem,
