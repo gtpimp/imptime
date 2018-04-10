@@ -149,16 +149,17 @@ class Project extends Component {
                    </div>
                   }
 
-                  { includes(visible_header_keys, "small_delete") &&
-                    <div className="div-table__cell project__cell__secondary"
-                         style={getCellStyle(header_list.small_delete)}>
-                      { can_show_project_delete &&
-                        <div className={"reveal-on-hover--block"}>
-                          <div className="project__small-delete-image"
-                               onClick={this.onDeleteProject} />
-                        </div>
-                       }
-
+                   { includes(visible_header_keys, "small_delete") &&
+                     <div className="div-table__cell project__cell__secondary"
+                     style={getCellStyle(header_list.small_delete)}>
+                     { can_show_project_delete &&
+                       <div className={"reveal-on-hover--block"}>
+                         <div className="project__small-delete-image"
+                              onClick={this.onDeleteProject} />
+                       </div>
+                     }
+                   }
+                      
                         
                         {includes(visible_header_keys, "delete") &&
                          <div className="div-table__cell issue__cell__secondary"
