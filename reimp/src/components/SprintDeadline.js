@@ -9,7 +9,6 @@ import {
     ensureSprintsLoaded,
     getSprint
 } from '../actions/Sprints'
-import moment from 'moment'
 
 class SprintDeadline extends Component {
 
@@ -32,7 +31,7 @@ class SprintDeadline extends Component {
 
     render() {
 
-        const {deadline, can_view, can_edit, sprint_id} = this.props
+        const {deadline, can_view} = this.props
         if ( ! can_view ) {
             return (<div></div>)
         }

@@ -3,10 +3,10 @@ import {connect} from 'react-redux'
 import { map } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
-import EditableSprintName from '../components/EditableSprintName'
+//import EditableSprintName from '../components/EditableSprintName'
 import OtherUser from '../components/OtherUser'
-import PropertyStackComponent from '../components/PropertyStackComponent'
-import SprintTimeSummary from '../components/SprintTimeSummary'
+//import PropertyStackComponent from '../components/PropertyStackComponent'
+//import SprintTimeSummary from '../components/SprintTimeSummary'
 import EditableUserRate from '../components/EditableUserRate'
 import EditableUserVelocity from '../components/EditableUserVelocity'
 import EditableUserTimeTrackingMode from '../components/EditableUserTimeTrackingMode'
@@ -17,29 +17,29 @@ import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
     PAGE_KEY__SPRINT_RATE_PAGE,
-    LIST_KEY__SPRINT_RATES
+//    LIST_KEY__SPRINT_RATES
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_sprints
+//    select_sprints
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded,
         getSprint
 } from '../actions/Sprints'
-import {
-    initList,
-    selectItems,
-    update_list_filter,
-    update_list_pagination,
-    invalidateList
-} from '../actions/ItemList'
+//import {
+//    initList,
+//    selectItems,
+//    update_list_filter,
+//    update_list_pagination,
+//    invalidateList
+//} from '../actions/ItemList'
 
 class SprintRatePage extends Component {
 
-    constructor(props) {
-        super(props)
-    }
+//    constructor(props) {
+//        super(props)
+//    }
 
     componentDidMount() {
         const {sprint_id, project_id, sprint, project, dispatch} = this.props
@@ -62,13 +62,13 @@ class SprintRatePage extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch, sprint_id, user_ids } = this.props
+        const { dispatch } = this.props
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
     }
 
     renderSprintRatios() {
-        const { can_view_rates, can_view_velocity, can_view_time_tracking_mode, can_view_budget,
-                user_ids, sprint, sprint_id, project_id } = this.props
+        const { can_view_rates, can_view_time_tracking_mode, can_view_budget,
+                sprint_id } = this.props
         return (
             <div className="sprint-rates__card">
               <h2 className="header">
@@ -98,7 +98,7 @@ class SprintRatePage extends Component {
 
     renderUserRates() {
         const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
-                user_ids, sprint, sprint_id, project_id } = this.props
+                user_ids, sprint_id } = this.props
 
         return (
             <div className="sprint-rates__card">
@@ -153,8 +153,7 @@ class SprintRatePage extends Component {
     
     render() {
 
-        const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
-                user_ids, sprint, sprint_id, project_id } = this.props
+        const { sprint } = this.props
         
         return (
             <div>

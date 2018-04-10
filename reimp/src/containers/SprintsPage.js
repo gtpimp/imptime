@@ -56,18 +56,18 @@ class SprintsPage extends Component {
     componentWillReceiveProps(new_props) {
 
         const { dispatch, list_key, filter, default_filter } = this.props
-        if ( new_props.project_id != filter.project_id ) {
+        if ( new_props.project_id !== filter.project_id ) {
             dispatch(update_list_filter(list_key, Object.assign({},
                                                                 default_filter,
                                                                 {project_id: new_props.project_id})))
         }
         
         if ( new_props.project !== this.props.project ||
-             new_props.project_id != this.props.project_id ||
+             new_props.project_id !== this.props.project_id ||
              new_props.project.name !== this.props.project.name ||
-             new_props.selected_sprint_id != this.props.selected_sprint_id ||
-             new_props.selected_sprint.id != this.props.selected_sprint.id ||
-             new_props.selected_sprint.loaded != this.props.selected_sprint.loaded) {
+             new_props.selected_sprint_id !== this.props.selected_sprint_id ||
+             new_props.selected_sprint.id !== this.props.selected_sprint.id ||
+             new_props.selected_sprint.loaded !== this.props.selected_sprint.loaded) {
 
             
             this.refresh(new_props)
@@ -77,7 +77,7 @@ class SprintsPage extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const {dispatch, project_id, list_key, page_key,
-               default_filter, default_sprint_id, project, 
+               default_sprint_id, project, 
                selected_sprint_ids, selected_sprint} = props
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
@@ -104,8 +104,8 @@ class SprintsPage extends Component {
     }
 
     onSelectSprints(sprint_ids) {
-        const {dispatch, history, project_id, project_name,
-               project, list_key, page_key} = this.props
+        const {dispatch, history, project_id,
+               list_key, page_key} = this.props
         dispatch(selectItems(list_key, sprint_ids))
         dispatch(select_sprints(page_key, sprint_ids))
         
@@ -118,9 +118,8 @@ class SprintsPage extends Component {
 
     renderLeftPane() {
 
-        const {project_id, selected_sprints, selected_sprint_ids, sprint_id,
-               is_single_selection, is_multiple_selection, is_creating_sprint,
-               list_key, sprint_header_list, selected_sprint } = this.props
+        const {project_id,
+               list_key, sprint_header_list } = this.props
         
         return (
             <div className="list-layout__list">
@@ -176,7 +175,7 @@ class SprintsPage extends Component {
         if ( show_sidebar ) {
             return (
                 <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50} defaultSize={"80%"}
+                  <SplitPane split="vertical" minSize={50}
                              defaultSize={splitter_size}
                              onChange={this.onChangeSplitterSize} >
                     <div className="left">
@@ -242,7 +241,6 @@ function mapStateToProps(state, props) {
         sprint_header_list,
         show_sidebar,
         splitter_size,
-        project,
         project_name
     }
 }

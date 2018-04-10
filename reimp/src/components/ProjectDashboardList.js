@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import map from 'lodash/map'
-import union from 'lodash/union'
-import includes from 'lodash/includes'
-import difference from 'lodash/difference'
 import { connect } from 'react-redux'
 import {
     initList,
@@ -24,7 +21,7 @@ import {
 } from '../actions/ProjectDashboards'
 import {ensureUsersLoaded} from '../actions/Users'
 import {ensureProjectsLoaded} from '../actions/Projects'
-import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
+import {ensureSprintsLoaded} from '../actions/Sprints'
 import ProjectDashboard from './ProjectDashboard'
 import '../sass/project-dashboard-list.scss'
 import {
@@ -103,7 +100,6 @@ class ProjectDashboardList extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project, item_list } = state
     const { list_key } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__PROJECT_DASHBOARD)
@@ -115,7 +111,7 @@ function mapStateToProps(state, props) {
 
     const is_loading = isLoading(state, list_key) ||
                        !haveItemsBeenRetrieved(state, all_sprint_ids, ENTITY_KEY__SPRINT) ||
-                       !haveItemsBeenRetrieved(state, all_project_ids, ENTITY_KEY__PROJECT)
+                       !haveItemsBeenRetrieved(state, all_project_ids, ENTITY_KEY__PROJECT) ||
                        !haveItemsBeenRetrieved(state, all_user_ids, ENTITY_KEY__USER)
     
     return {

@@ -19,7 +19,7 @@ class SprintNameForm extends Component {
      * }*/
 
     renderTextarea(field) {
-        const {input, data, ...rest} = field
+        const {input} = field
         return (
             <Textarea
                 rows="1"

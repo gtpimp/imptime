@@ -11,7 +11,7 @@ import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType from '../components/EditableSprintType'
 import EditableSprintDeadline from '../components/EditableSprintDeadline'
-import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
+//import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
 import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
@@ -47,7 +47,7 @@ class SprintSidebar extends Component {
     }
 
     showEmacsSprint() {
-        const { issue, sprint } = this.props
+        const { sprint } = this.props
         const text = "** sprint#" + sprint.id + " " + sprint.name
         window.prompt("Press Ctrl+C then Enter, then paste into emacs:", text);
     }
@@ -68,7 +68,7 @@ class SprintSidebar extends Component {
     
     render() {
 
-        const { sprint_id, sprint, project,
+        const { sprint_id, sprint,
                 show_review_section, show_summary_section, show_deadline_section } = this.props
         
         return (
@@ -140,7 +140,7 @@ class SprintSidebar extends Component {
                 { show_deadline_section &&
                   <PropertyStackComponent title="Deadlines">
                     { map(sprint.deadline_ids, function (deadline_id, index) {
-                          return <EditableSprintDeadline key={sprint.id, deadline_id} sprint_id={sprint.id} deadline_id={deadline_id}/>
+                          return <EditableSprintDeadline key={sprint.id} sprint_id={sprint.id} deadline_id={deadline_id}/>
                       })
                     }
                     <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>

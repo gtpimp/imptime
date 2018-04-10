@@ -10,7 +10,6 @@ import {
     getSprint
 } from '../actions/Sprints'
 import OtherUser from './OtherUser'
-import moment from 'moment'
 
 class IssueReview extends Component {
 

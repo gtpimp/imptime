@@ -24,14 +24,12 @@ import {
     get_selected_issue_ids,
     select_sprints,
     select_projects,
-    get_header_list,
     getPageFlag,
     setPageFlag
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getCandidateIssue, getIssues} from '../actions/Issues'
-import cookie from 'react-cookie'
 import { getIssueHeaderListForCurrentMien } from '../actions/Mien'
 
 class IssuesPage extends Component {
@@ -43,7 +41,7 @@ class IssuesPage extends Component {
     }
 
     componentDidMount() {
-        const {sprint_id, project_id, sprint, project, dispatch, default_issue_id} = this.props
+        const {sprint_id, project_id, sprint, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__ISSUES_PAGE, ['issues', 'issue']))
         dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
@@ -63,7 +61,7 @@ class IssuesPage extends Component {
              new_props.sprint.name !== this.props.sprint.name ||
              new_props.project.name !== this.props.project.name ) {
 
-            if ( new_props.sprint_id != this.props.sprint_id ) {
+            if ( new_props.sprint_id !== this.props.sprint_id ) {
                 dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
                 dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [new_props.sprint_id]))
                 dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [new_props.project_id]))
@@ -71,7 +69,7 @@ class IssuesPage extends Component {
             }
             this.refresh(new_props)
         } else {
-            if ( this.state && this.state.noticed_default_issue_id != default_issue_id ) {
+            if ( this.state && this.state.noticed_default_issue_id !== default_issue_id ) {
                 this.selectDefaultIssue(new_props)
             }
         }
@@ -81,7 +79,7 @@ class IssuesPage extends Component {
         const {dispatch, sprint, filter_sprint_id,
                project, default_issue_id, selected_issue} = these_props || this.props
 
-        if ( sprint.id != filter_sprint_id ) {
+        if ( sprint.id !== filter_sprint_id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
             dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
@@ -95,9 +93,9 @@ class IssuesPage extends Component {
     }
 
     selectDefaultIssue(these_props) {
-        const {dispatch, project_id, sprint_id, selected_issue_ids,
+        const {dispatch, selected_issue_ids,
                default_issue_id} = these_props || this.props
-        if ( default_issue_id != undefined && !includes(selected_issue_ids, default_issue_id) ) {
+        if ( default_issue_id !== undefined && !includes(selected_issue_ids, default_issue_id) ) {
             dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
             dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
         }
@@ -125,7 +123,7 @@ class IssuesPage extends Component {
         const { issue_header_list, sprint_id, filter_sprint_id } = this.props
         return (
             <div className="list-layout__list">
-              { filter_sprint_id == sprint_id &&
+              { filter_sprint_id === sprint_id &&
                 <IssueList list_key={LIST_KEY__ISSUE_LIST}
                            onSelectIssues={this.onSelectIssues}
                            issue_header_list={issue_header_list}
@@ -163,15 +161,13 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { sprint_id, project_id, selected_issue_ids,
-                is_single_selection, is_multiple_selection, is_creating_issue,
-                issue_header_list, show_sidebar, selected_issue, splitter_size
+        const { show_sidebar, splitter_size
         } = this.props
 
         if ( show_sidebar ) {
             return (
                 <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50} defaultSize={"80%"}
+                  <SplitPane split="vertical" minSize={50}
                              defaultSize={splitter_size}
                              onChange={this.onChangeSplitterSize}
                   >
@@ -197,7 +193,6 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {issue} = state
     const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
     const selected_items = getIssues(state, selected_issue_ids)
 

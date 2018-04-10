@@ -27,7 +27,7 @@ class Navbar extends Component {
 
     render() {
 
-        const {  is_loading, is_saving, is_websockets_connected, username, show_invoices} = this.props
+        const {  is_loading, is_saving, is_websockets_connected, username } = this.props
         const user_initiated_network_activity = is_loading || is_saving
         const user_menu_visible = this.state.user_menu_visible
 

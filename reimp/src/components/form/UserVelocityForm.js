@@ -1,16 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import keys from 'lodash/keys'
-import map from 'lodash/map'
 import includes from 'lodash/includes'
-import filter from 'lodash/filter'
-import classNames from 'classnames'
 import { reduxForm, Field } from 'redux-form';
 import { getUser, ensureUsersLoaded, logged_in_users_permissions } from '../../actions/Users'
 import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
 import OtherUser from '../OtherUser'
 import SprintName from '../SprintName'
-import {change} from 'redux-form'
 import {
     getSprintUserVelocity,
     ensureSprintUserVelocityLoaded,
@@ -46,14 +41,14 @@ class UserVelocityForm extends Component {
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
-        const { user_id, handleSubmit } = this.props
+        const { handleSubmit } = this.props
         fieldOnChange(e)
         setTimeout(function() {handleSubmit()}, 0)
     }
 
     renderField(field) {
         const { onKeyDown } = this.props
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <input
                  onKeyDown={onKeyDown}
@@ -67,8 +62,7 @@ class UserVelocityForm extends Component {
     }
 
     render() {
-        const { user_id, sprint_id, suv_id, suv, is_loading, handleSubmit, can_edit, can_view, initialValues, onKeyDown } = this.props
-        const that = this;
+        const { user_id, sprint_id, suv_id, handleSubmit, can_view } = this.props
 
         if ( ! can_view ) {
             return (<div>No permission to view velocities</div>)
@@ -116,7 +110,7 @@ class UserVelocityForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSubmitted, sprint_id, user_id, onSave } = props
+    const { onSubmitted, sprint_id, user_id } = props
     const user = getUser(state, user_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const suv = getSprintUserVelocity(state, sprint_id, user_id) || {}

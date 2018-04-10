@@ -33,7 +33,7 @@ class ProjectWikiPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, project_id} = this.props
+        const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECT_WIKI_PAGE, ['project-wiki']))
         this.refresh()
     }
@@ -44,19 +44,19 @@ class ProjectWikiPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { project_id, wiki_id, default_wiki_id, dispatch } = this.props
+        const { project_id, wiki_id, default_wiki_id } = this.props
         if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ||
-             new_props.wiki_id !== wiki_id || new_props.wiki.id != this.props.wiki.id) {
+             new_props.wiki_id !== wiki_id || new_props.wiki.id !== this.props.wiki.id) {
             this.refresh(new_props)
         } else {
-            if ( this.state && this.state.noticed_default_wiki_id != default_wiki_id ) {
+            if ( this.state && this.state.noticed_default_wiki_id !== default_wiki_id ) {
                 this.selectDefaultWiki(new_props)
             }
         }
     }
     
     refresh(these_props) {
-        const { project_id, project, wiki_id, wiki, default_wiki_id, dispatch } = these_props || this.props
+        const { project_id, project, wiki_id, default_wiki_id, dispatch } = these_props || this.props
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(select_projects(PAGE_KEY__PROJECT_WIKI_PAGE, [project_id]))
@@ -73,7 +73,7 @@ class ProjectWikiPage extends Component {
 
     selectDefaultWiki(these_props) {
         const {dispatch, selected_wiki_ids, default_wiki_id} = these_props || this.props
-        if ( default_wiki_id != undefined && !includes(selected_wiki_ids, default_wiki_id) ) {
+        if ( default_wiki_id !== undefined && !includes(selected_wiki_ids, default_wiki_id) ) {
             dispatch(selectItems(LIST_KEY__WIKI_LIST, [default_wiki_id]))
             dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+default_wiki_id]))
         }
@@ -131,13 +131,12 @@ class ProjectWikiPage extends Component {
     }
 
     render() {
-        const { project, wiki_id, show_sidebar, splitter_size } = this.props
-        const that = this
+        const { show_sidebar, splitter_size } = this.props
 
         if ( show_sidebar ) {
             return (
                 <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50} defaultSize={"20%"}
+                  <SplitPane split="vertical" minSize={50}
                              defaultSize={splitter_size}
                              onChange={this.onChangeSplitterSize}
                   >

@@ -1,13 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
 import EditableProperty from '../form/EditableProperty'
 import { getIssue } from '../../actions/Issues'
 import VisualSpecDocumentForm from './VisualSpecDocumentForm'
-import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
 import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
 import Blank from '../form/Blank'
-import {withRouter} from 'react-router-dom'
 
 class EditableIssueVisualSpecDocument extends Component {
 
@@ -38,18 +35,17 @@ class EditableIssueVisualSpecDocument extends Component {
     }
 
     onDelete() {
-        const { dispatch, issue_id, visual_spec_document_id, onDeleteDocument } = this.props
+        const { visual_spec_document_id, onDeleteDocument } = this.props
         onDeleteDocument(visual_spec_document_id)
     }
 
     onOpen() {
-        const { dispatch, issue_id, visual_spec_document_id, onOpenDocument } = this.props
+        const { visual_spec_document_id, onOpenDocument } = this.props
         onOpenDocument(visual_spec_document_id)
     }
 
     render() {
-        const {issue_id, project_id, visual_spec_document, visual_spec_document_id,
-               selectDocument, reorderDocuments, is_active} = this.props
+        const {issue_id, project_id, visual_spec_document, visual_spec_document_id} = this.props
 
 	return (
 

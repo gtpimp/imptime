@@ -4,7 +4,6 @@ import {withRouter} from 'react-router-dom'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
-import classNames from 'classnames'
 import UserPermissionForm from './form/UserPermissionForm'
 import { getUser, ensureUsersLoaded, logged_in_users_permissions } from '../actions/Users'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
@@ -27,8 +26,8 @@ class UserPermissions extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.user_id != this.props.user_id || new_props.project_id != this.props.project_id ||
-             new_props.user.id != this.props.user.id || new_props.project.id != this.props.project.id ) {
+        if ( new_props.user_id !== this.props.user_id || new_props.project_id !== this.props.project_id ||
+             new_props.user.id !== this.props.user.id || new_props.project.id !== this.props.project.id ) {
             this.refresh(new_props.project_id, new_props.user_id, new_props.user, new_props.project)
         }
     }
@@ -59,8 +58,8 @@ class UserPermissions extends Component {
     }
 
     render() {
-        const { user, project, pup, is_loading, onChange,
-                permission_names, handleSubmit, logged_in_users_permissions } = this.props
+        const { user, project, is_loading,
+                permission_names, logged_in_users_permissions } = this.props
 
         return (
             <div className="user-permission">
@@ -90,7 +89,7 @@ class UserPermissions extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, user_id, onClose, onChange } = props
+    const { project_id, user_id, onChange } = props
     const user = getUser(state, user_id) || {}
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}

@@ -18,7 +18,7 @@ import {
     unassociateVisualSpecDocumentWithProject
 } from '../../actions/VisualSpecDocuments'
 import {
-    update_list_filter, setItemFlag, selectItems, update_list_format
+    update_list_filter, setItemFlag, selectItems
 } from '../../actions/ItemList'
 import {
     setPageFlag
@@ -32,7 +32,6 @@ import {
     select_projects,
     select_sprints,
     select_issues,
-    get_selected_project_ids
 } from '../../actions/Page'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
@@ -63,11 +62,11 @@ class VisualSpecDocumentPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.active_visual_spec_document_id != this.props.active_visual_spec_document_id ||
-             new_props.active_visual_spec_document.loaded != this.props.active_visual_spec_document.loaded ||
-             new_props.is_loaded != this.props.is_loaded ||
-             new_props.project.id != this.props.project.id ||
-             new_props.issue_is_invalidated != this.props.issue_is_invalidated ) {
+        if ( new_props.active_visual_spec_document_id !== this.props.active_visual_spec_document_id ||
+             new_props.active_visual_spec_document.loaded !== this.props.active_visual_spec_document.loaded ||
+             new_props.is_loaded !== this.props.is_loaded ||
+             new_props.project.id !== this.props.project.id ||
+             new_props.issue_is_invalidated !== this.props.issue_is_invalidated ) {
             this.refresh(new_props)
         }
     }
@@ -150,8 +149,8 @@ class VisualSpecDocumentPage extends Component {
     }
 
     onSelectIssues(selected_issue_ids) {
-        const { dispatch, history, visual_spec_documents,
-                project_id, sprint_id, issue_id, active_visual_spec_document_id } = this.props
+        const { history, visual_spec_documents,
+                project_id, sprint_id } = this.props
         if ( !selected_issue_ids || !selected_issue_ids.length ) {
             return
         }
@@ -170,7 +169,7 @@ class VisualSpecDocumentPage extends Component {
     }
 
     renderSelectForIssue() {
-        const { issue_id, visual_spec_document_ids_for_project, project_id } = this.props
+        const { visual_spec_document_ids_for_project, project_id } = this.props
         const { selecting_from_gallery } = this.state
 
         if ( ! selecting_from_gallery ) {
@@ -205,7 +204,6 @@ class VisualSpecDocumentPage extends Component {
 
         const { visual_spec_document_ids,
                 active_visual_spec_document_id,
-                visual_spec_documents_editor_urls,
                 issue, issue_id, project_id,
                 issue_header_list } = this.props
 

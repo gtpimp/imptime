@@ -1,12 +1,8 @@
-import { impfetch } from './lib.js'
-import { compact, map, keys, keyBy, includes, difference, indexOf, identity } from 'lodash'
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__VISUAL_SPEC_ISSUE_ANNOTATION } from '../actions/ItemListKeyRegistry'
 
 import {
     invalidateAllItems,
     invalidateItems,
-    fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
     getItem,
@@ -15,9 +11,6 @@ import {
     startCandidateItem,
     saveCandidateItem,
     deleteItems,
-    announceItemSaveFailed,
-    announceItemsSaved,
-    announceItemsSaving,
     UPDATE_ENTIRE_ITEM_FIELD_NAME
 } from '../actions/Item'
 

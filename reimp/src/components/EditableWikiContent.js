@@ -3,9 +3,8 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import WikiForm from './form/WikiForm'
 import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
-import { getProject, ensureProjectsLoaded } from '../actions/Projects'
+import { ensureProjectsLoaded } from '../actions/Projects'
 import { has_permission } from '../actions/Users'
-import Blank from './form/Blank'
 import RenderedWiki from './RenderedWiki'
 
 class EditableWikiContent extends Component {
@@ -61,7 +60,6 @@ function mapStateToProps(state, props) {
     const { wiki_id } = props
     const wiki = getWiki(state, wiki_id) || {}
     const project_id = wiki.project_id
-    const project = getProject(state, project_id) || {}
     const can_edit = has_permission(state, project_id, 'has_edit_business_comments')
     const can_view = has_permission(state, project_id, 'has_view_business_comments')
     return {

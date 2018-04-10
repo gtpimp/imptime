@@ -61,7 +61,6 @@ function mapStateToProps(state, props) {
         hours,
         minutes,
         seconds,
-        decimal_hours,
         formatted_hours
     }
 }

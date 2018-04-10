@@ -415,11 +415,11 @@ export function getNestedObjects(state, list_key) {
 export function ensureNestedObjectsLoaded(nested_objects) {
     return (dispatch, getState) => {
         map(nested_objects, function(ids, id_name) {
-            if ( id_name == "project_ids" ) {
+            if ( id_name === "project_ids" ) {
                 dispatch(ensureProjectsLoaded(ids))
-            } else if ( id_name == "sprint_ids" ) {
+            } else if ( id_name === "sprint_ids" ) {
                 dispatch(ensureSprintsLoaded(ids))
-            } else if ( id_name == "issue_ids" ) {
+            } else if ( id_name === "issue_ids" ) {
                 dispatch(ensureIssuesLoaded(ids))
             }
         })
@@ -482,7 +482,7 @@ export function haveItemsBeenRetrieved(state, ids, entity_key) {
     // instead of triggering them piecemeal.
     // This function is used to check if those secondary objects have been retrieved, and so the rest of the rendering can continue.
     // It does not attempt to check invalidation or loading flags, since its purpose is just to check if the bulk loads have been completed.
-    if ( !ids || ids.length == 0 ) {
+    if ( !ids || ids.length === 0 ) {
         return true
     }
     const items = getItemsById(state, entity_key)
@@ -497,5 +497,5 @@ export function isListReadyToDisplay(state, list_key) {
 export function areItemsReadyToDisplay(state, list_key) {
     return isListReadyToDisplay(state, list_key) === true &&
            isInvalidated(state, list_key) !== true &&
-           getLoadingItemIds(state, list_key).length == 0
+           getLoadingItemIds(state, list_key).length === 0
 }

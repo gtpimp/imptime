@@ -1,12 +1,8 @@
 import React, { Component } from 'react'
 import {includes, keys} from 'lodash'
-import {withRouter} from 'react-router-dom'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { DndTypes } from '../actions/Dnd'
-import { ENTITY_KEY__INVOICE, getCellStyle } from '../actions/ItemListKeyRegistry'
-import { getSelectedItems, setItemflag } from '../actions/ItemList'
-import { has_permission } from '../actions/Users'
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import { getInvoice } from '../actions/Invoices'
 import Timestamp from './Timestamp'
 import SprintName from './SprintName'
@@ -16,8 +12,8 @@ import CurrencyValue from './CurrencyValue'
 class Invoice extends Component {
 
     render() {
-        const { invoice, is_loading, isOver,
-                visible_header_keys, header_list, can_show_invoice_delete } = this.props
+        const { invoice, is_loading,
+                visible_header_keys, header_list } = this.props
 	if ( ! invoice ) {
 	    return (
                 <div className="div-table__row">
@@ -125,7 +121,7 @@ class Invoice extends Component {
                              <div className="invoice__cell--name">
                                <div className={classNames({"icon__status--overdue":invoice.is_overdue,
                                                            "icon__status--not_overdue":!invoice.is_overdue && invoice.status !== 'paid',
-                                                           "icon__status--paid":invoice.status == 'paid' })} />
+                                                           "icon__status--paid":invoice.status === 'paid' })} />
                              </div>
                            </div>}
 

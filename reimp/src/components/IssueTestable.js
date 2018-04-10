@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
-import {withRouter} from 'react-router-dom'
-import OtherUser from '../components/OtherUser'
 import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
 
@@ -19,7 +17,7 @@ class IssueTestable extends Component {
     }
 
     render() {
-        const { issue, testable, onDelete, onPromoteToIssue } = this.props
+        const { testable, onDelete, onPromoteToIssue } = this.props
 
         return (
             <div className="issue-testable">

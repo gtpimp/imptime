@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import ProjectUsers from '../components/ProjectUsers'
 import {
     PAGE_KEY__PROJECT_ROADMAP_PAGE,
     LIST_KEY__PROJECT_ROADMAP
@@ -16,12 +15,8 @@ import ProjectRoadmap from '../components/ProjectRoadmap'
 
 class ProjectRoadmapPage extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
-        const {dispatch, project_id} = this.props
+        const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECT_ROADMAP_PAGE, ['project-roadmap']))
         this.refresh()
     }

@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import map from 'lodash/map'
-import union from 'lodash/union'
-import includes from 'lodash/includes'
-import difference from 'lodash/difference'
 import { connect } from 'react-redux'
 import {
     initList,
@@ -25,7 +22,7 @@ import {
 } from '../actions/WorkSummary'
 import {ensureUsersLoaded} from '../actions/Users'
 import {ensureProjectsLoaded} from '../actions/Projects'
-import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
+import {ensureSprintsLoaded} from '../actions/Sprints'
 import {ensureIssuesLoaded} from '../actions/Issues'
 import WorkSummary from './WorkSummary'
 import '../sass/project-summary-list.scss'
@@ -106,7 +103,6 @@ class WorkSummaryList extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { item_list } = state
     const { list_key } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__WORK_SUMMARY)

@@ -11,8 +11,6 @@ import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
 import {
     ensureVisualSpecIssueAnnotationsLoaded,
     getVisualSpecIssueAnnotations,
-    createVisualSpecIssueAnnotation,
-    updateVisualSpecIssueAnnotation
 } from '../../actions/VisualSpecIssueAnnotations'
 
 class VisualSpecDocumentGalleryImage extends Component {
@@ -50,7 +48,6 @@ class VisualSpecDocumentGalleryImage extends Component {
                 connectDragSource, connectDropTarget, onSelected, visual_spec_issue_annotation_ids,
                 img_element_unique_id} = this.props
         const { visual_spec_document_image_loaded } = this.state || {}
-        const that = this
 
         if ( isDragging ) {
             return null
@@ -67,6 +64,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                      src={image_url}
                      onClick={onSelected}
                      onLoad={this.onVisualSpecDocumentImageLoaded}
+                     alt=""
                 />
                 { visual_spec_document_image_loaded && map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
                       return (

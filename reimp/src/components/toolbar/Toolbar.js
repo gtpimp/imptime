@@ -70,7 +70,7 @@ class ToolBar extends Component {
     }
 
     render() {
-        const {breadcrumbs, panelIds} = this.props
+        const {panelIds} = this.props
         return (
             <div className="toolbar">
                 <div className="toolbar__container toolbar__container--left">

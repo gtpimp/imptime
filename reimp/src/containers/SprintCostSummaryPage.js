@@ -5,11 +5,9 @@ import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {
-    ensureCostSummaryLoaded,
     isLoadingCostSummary,
 } from '../actions/CostSummary'
 import {
-    ensureTimeSummaryLoaded,
     isLoadingTimeSummary,
 } from '../actions/TimeSummary'
 import {
@@ -24,11 +22,9 @@ import SprintTimeSummary from '../components/SprintTimeSummary'
 import SprintEstimateSummary from '../components/SprintEstimateSummary'
 import SprintBreakdown from '../components/SprintBreakdown'
 import SprintTimeChartByUser from '../components/SprintTimeChartByUser'
-import Timestamp from '../components/Timestamp'
 import {
     ensureProjectStatementLoaded,
     getProjectStatement,
-    isLoadingProjectStatement,
     update_project_statement_filter,
     invalidateProjectStatement,
     download_sprint_breakdown
@@ -42,7 +38,7 @@ class SprintCostSummaryPage extends Component {
     }
 
     componentDidMount() {
-        const { sprint_id, project_id, sprint, project, filter, dispatch } = this.props
+        const { sprint_id, project_id, sprint, project, dispatch } = this.props
         dispatch(set_toolbars(PAGE_KEY__SPRINTS_PAGE, ['cost-summary']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))

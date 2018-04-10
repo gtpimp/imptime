@@ -1,15 +1,9 @@
 import React, {Component} from 'react'
-import ReactDOM from 'react-dom'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
 import { populateDefaultRequestHeaders } from '../../actions/lib'
 import DropzoneComponent from 'react-dropzone-component';
 
 class FileUploader extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     render() {
 

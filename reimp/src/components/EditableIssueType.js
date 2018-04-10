@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import IssueTypeForm from './form/IssueTypeForm'
 import IssueTypeLabel from './form/IssueTypeLabel'
-import Blank from './form/Blank'
 import { updateIssueType, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 
@@ -24,7 +23,7 @@ class EditableIssueType extends Component {
 
         return (
             <EditableProperty property_key={'issue_type_name_'+issue.id}
-                              initial_value={issue && issue.type_name || null}
+                              initial_value={(issue && issue.type_name) || null}
                               edit_as_modal={true}
                               class_name={class_name}
                               onChange={this.onChange}

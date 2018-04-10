@@ -13,13 +13,12 @@ class ForgotPasswordPage extends Component {
     }
 
     onForgotPassword(values) {
-        const { dispatch, settings, history } = this.props
+        const { dispatch, history } = this.props
         return dispatch(forgot_password(values.username,
                                         () => history.push("/password/reminded")))
     }
     
     render() {
-        const that = this
         const { handleSubmit, error, submitting } = this.props
         
         return (

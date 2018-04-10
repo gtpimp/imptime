@@ -2,21 +2,13 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
-import map from 'lodash/map'
-import {withRouter} from 'react-router-dom'
-// import PropertyStack from './PropertyStack'
-// import PropertyStackComponent from './PropertyStackComponent'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
 import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import EditableIssueStatus from '../components/EditableIssueStatus'
 import EditableIssueType from '../components/EditableIssueType'
 import EditableIssueParent from './EditableIssueParent'
-// import IssueDescription from './IssueDescription'
-import Timestamp from './Timestamp'
 import MultipleIssueSummary from './MultipleIssueSummary'
-import moment from 'moment'
-import Sidebar from './Sidebar'
 import TagListFlat from './TagListFlat'
 import {
     ensureIssuesLoaded,
@@ -43,7 +35,7 @@ class MultipleIssueSidebar extends Component {
     }
 
     onDelete(event) {
-        const { issue_ids, dispatch, onDelete } = this.props
+        const { issue_ids, dispatch } = this.props
         event.stopPropagation()
         if ( ! confirm( "Delete these issues?") ) {
             return

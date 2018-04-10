@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes} from 'lodash'
+//import {includes} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
@@ -23,9 +23,9 @@ import {
 import {
     initList,
     selectItems,
-    update_list_filter,
+//    update_list_filter,
     update_list_pagination,
-    invalidateList
+//    invalidateList
 } from '../actions/ItemList'
 import {getCandidateProject} from '../actions/Projects'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
@@ -39,7 +39,7 @@ class ProjectsPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, selected_project_ids, default_project_id} = this.props
+        const {dispatch, default_project_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
         dispatch(initList(LIST_KEY__PROJECT_LIST))        
         dispatch(update_list_pagination(LIST_KEY__PROJECT_LIST, {page_size:20}))
@@ -52,9 +52,9 @@ class ProjectsPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.selected_project_ids.length != this.props.selected_project_ids.length ||
+        if ( new_props.selected_project_ids.length !== this.props.selected_project_ids.length ||
              (new_props.selected_project_ids.length > 0 &&
-              new_props.selected_project_ids[0] != this.props.selected_project_ids[0] )) {
+              new_props.selected_project_ids[0] !== this.props.selected_project_ids[0] )) {
             this.refresh(new_props)
         }
     }
@@ -63,7 +63,7 @@ class ProjectsPage extends Component {
         const props = these_props || this.props
         const { dispatch, selected_projects } = props
         let selected_project = null
-        if ( selected_projects && selected_projects.length == 1 ) {
+        if ( selected_projects && selected_projects.length === 1 ) {
             selected_project = selected_projects[0]
         }
         const breadcrumbs = [ {to: '/projects',
@@ -94,8 +94,7 @@ class ProjectsPage extends Component {
     }
 
     renderLeftPane() {
-        const {selected_projects,
-               project_header_list, selected_project} = this.props
+        const {project_header_list} = this.props
         
         return (
             <div className="list-layout__list">
@@ -108,9 +107,9 @@ class ProjectsPage extends Component {
     }
 
     renderRightPane() {
-        const {selected_projects, selected_project_ids,
+        const {selected_project_ids,
                is_single_selection, is_multiple_selection, is_creating_project,
-               project_header_list, selected_project} = this.props
+               selected_project} = this.props
 
         if ( is_creating_project ) {
             return (
@@ -143,7 +142,7 @@ class ProjectsPage extends Component {
         if ( show_sidebar ) {
             return (
                 <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50} defaultSize={"80%"}
+                  <SplitPane split="vertical" minSize={50}
                              defaultSize={splitter_size}
                              onChange={this.onChangeSplitterSize} >
                     <div className="left">

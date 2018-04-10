@@ -16,7 +16,7 @@ class LoginPage extends Component {
     }
 
     onLogin(values) {
-        const { dispatch, settings } = this.props
+        const { dispatch } = this.props
         return dispatch(login(values.username, values.password))
     }
 
@@ -36,7 +36,6 @@ class LoginPage extends Component {
     
     render() {
 
-        const that = this
         const { handleSubmit, error, submitting } = this.props
         
         return (

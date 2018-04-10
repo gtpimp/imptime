@@ -34,7 +34,7 @@ class Sprint extends Component {
 
     render_expanded() {
         const { sprint, is_loading, is_selected, isOver,
-		onClickedSprint, connectDragSource, connectDropTarget,
+		onClickedSprint,
                 header_list, visible_header_keys} = this.props
 
 	if ( ! sprint ) {
@@ -49,8 +49,7 @@ class Sprint extends Component {
 
 	if ( ! is_loading === false ) {
 	    return (
-		<div className="div-table__row"
-                     key={this.key+"."+sprint.id}
+		<div key={this.key+"."+sprint.id}
                      onClick={onClickedSprint}
                      className={classNames("div-table__row",
                                            {'div-table__row--selected':is_selected})}

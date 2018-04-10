@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
-import { map, size } from 'lodash'
-import { DragSource, DropTarget } from 'react-dnd'
+import { map } from 'lodash'
 import { connect } from 'react-redux'
-import classNames from 'classnames'
-import { DndTypes } from '../actions/Dnd'
 import '../sass/user-timesheet.css'
 import {
     initList,
@@ -83,7 +80,6 @@ class UserTimesheetList extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { item_list } = state
     const { list_key } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__USER_TIMESHEET)

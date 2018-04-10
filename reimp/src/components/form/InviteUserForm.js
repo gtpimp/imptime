@@ -5,7 +5,7 @@ import {reduxForm, Field} from 'redux-form'
 import {ensureUsersLoaded, getUsers, getLoggedInUser} from '../../actions/Users'
 import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'
-import SearchInput from '../SearchInput'
+//import SearchInput from '../SearchInput'
 import '../../sass/invite-user-form.css'
 
 class InviteUserForm extends Component {

@@ -5,11 +5,10 @@ import {withRouter, Link} from 'react-router-dom'
 class IssueLink extends Component {
 
     render() {
-        const { project_id, sprint_id, issue_id, issue_number, onClick } = this.props
-
+        const { project_id, sprint_id, issue_id, issue_number } = this.props
         return ( 
             <Link to={'/projects/' + project_id + '/sprints/' + sprint_id + '/issues/' + issue_id}
-                  className="issue_link" onClick={this.on_clicked}>
+                  className="issue_link">
 	      #{issue_number}
 	    </Link>
         )

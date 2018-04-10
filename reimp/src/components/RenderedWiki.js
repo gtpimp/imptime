@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
-import {withRouter} from 'react-router-dom'
+import { getWiki, ensureWikisLoaded } from '../actions/Wikis'
 import RenderedMarkdown from './RenderedMarkdown'
 import { has_permission } from '../actions/Users'
 
@@ -23,7 +22,7 @@ class RenderedWiki extends Component {
     }
 
     render() {
-        const { wiki, project_id, project, render_mode, loading_value, onClick } = this.props
+        const { wiki } = this.props
         const content = (wiki.enriched_content || "").trim() || wiki.content.trim()
         return (
             <div className="text-component--readonly text-component--description">

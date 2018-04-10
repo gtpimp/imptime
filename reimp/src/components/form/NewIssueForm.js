@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { reduxForm, Field } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import { reduxForm } from 'redux-form';
 import '../../sass/text-component.scss'
 import SprintSelectorField from './SprintSelectorField'
 import IssueTitleField from './IssueTitleField';
@@ -10,7 +9,7 @@ import PropertyStackComponent from '../PropertyStackComponent'
 class NewIssueForm extends Component {
 
     render() {
-        const { handleSubmit, onKeyDown, project_id, initialValues } = this.props
+        const { handleSubmit, onKeyDown, project_id } = this.props
 
         return (
             <form onSubmit={handleSubmit}>

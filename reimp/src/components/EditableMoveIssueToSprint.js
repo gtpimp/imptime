@@ -5,7 +5,6 @@ import SelectSprintForm from './form/SelectSprintForm'
 import Blank from './form/Blank'
 import { moveIssuesToSprint, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
-import ReactTooltip from 'react-tooltip'
 
 class EditableMoveIssueToSprint extends Component {
 

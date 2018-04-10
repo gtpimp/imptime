@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { has_permission } from '../actions/Users'
-import { getUser, ensureUsersLoaded } from '../actions/Users'
+import { ensureUsersLoaded } from '../actions/Users'
 import { getSprint, ensureSprintsLoaded } from '../actions/Sprints'
 import {
     getSprintUserRate,
@@ -30,7 +30,7 @@ class UserRate extends Component {
     }
     
     render() {
-        const { value, class_name } = this.props
+        const { value } = this.props
 
         var formatter = new Intl.NumberFormat('en-GB', {
             style: 'decimal',
@@ -44,7 +44,7 @@ class UserRate extends Component {
         
         return (
             <div className={classNames("user_rate",
-                                       {"user_rate--empty" :value==0})}>
+                                       {"user_rate--empty" :value===0})}>
               R {formatted_currency}
             </div>
         )
@@ -54,7 +54,6 @@ class UserRate extends Component {
 function mapStateToProps(state, props) {
     const { sprint_id, user_id } = props
 
-    const user = getUser(state, user_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const sur = getSprintUserRate(state, sprint_id, user_id) || {}
     const can_view = has_permission(state, sprint.project_id, "has_view_ctc_billable_rates")

@@ -10,12 +10,8 @@ import CurrencyValue from '../components/CurrencyValue'
 
 class SprintCostSummary extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
-        const {sprint_id, project_id, sprint, project, dispatch} = this.props
+        const {sprint_id, project_id, dispatch} = this.props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureCostSummaryLoaded(sprint_id))
@@ -104,7 +100,7 @@ class SprintCostSummary extends Component {
 
     render() {
 
-        const { sprint, project, cost_summary, per_role } = this.props
+        const { cost_summary, per_role } = this.props
 
         return (
             <div className="cost-summary__content">

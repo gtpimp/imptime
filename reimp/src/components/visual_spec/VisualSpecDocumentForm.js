@@ -9,7 +9,7 @@ class VisualSpecDocumentForm extends Component {
 
     render() {
         const { issue_id, project_id,
-                onChange, onDelete, onOpen, onCancel, visual_spec_document } = this.props
+                onChange, onDelete, onCancel, visual_spec_document } = this.props
 
         const upload_params = {project_id: project_id}
 

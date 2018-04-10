@@ -3,9 +3,6 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { map } from 'lodash'
 import { Field, reduxForm } from 'redux-form'
-import FileUploader from '../form/FileUploader'
-import FileLabel from '../form/FileLabel'
-import { UPLOAD_RELATIVE_URL } from '../../actions/VisualSpecDocuments'
 import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
@@ -33,7 +30,7 @@ class AutoClockNewEntryForm extends Component {
     }
 
     clockProject(new_values) {
-        const { onSubmit, dispatch, project_id } = this.props
+        const { onSubmit, project_id } = this.props
         onSubmit({...new_values,
                   project_id:project_id,
                   sprint_id:null,
@@ -41,7 +38,7 @@ class AutoClockNewEntryForm extends Component {
     }
 
     clockSprint(new_values) {
-        const { onSubmit, dispatch, project_id, sprint_id } = this.props
+        const { onSubmit, project_id, sprint_id } = this.props
         onSubmit({...new_values,
                   project_id:project_id,
                   sprint_id:sprint_id,
@@ -49,7 +46,7 @@ class AutoClockNewEntryForm extends Component {
     }
 
     clockIssue(new_values) {
-        const { onSubmit, dispatch, project_id, sprint_id, issue_id } = this.props
+        const { onSubmit, project_id, sprint_id, issue_id } = this.props
         onSubmit({...new_values,
                   project_id:project_id,
                   sprint_id:sprint_id,
@@ -57,7 +54,7 @@ class AutoClockNewEntryForm extends Component {
     }
 
     clockAdmin() {
-        const { onSubmit, dispatch, project_id, sprint_id, issue_id } = this.props
+        const { onSubmit } = this.props
         onSubmit({project_name: 'admin'})
     }
 
@@ -69,12 +66,12 @@ class AutoClockNewEntryForm extends Component {
 
     renderRoleField(field) {
         const { role_options } = this.props
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <div>
               {
                   map(role_options, function(option) {
-                      const checked = input.value && input.value == option.value
+                      const checked = input.value && input.value === option.value
                       return (
                           <label key={option.value}
                                  className={classNames("auto-clock__radio",
@@ -95,7 +92,7 @@ class AutoClockNewEntryForm extends Component {
     }
 
     renderDescriptionField(field) {
-        const {input, data, onChange, ...rest} = field
+        const {input} = field
         return (
             <input
                 maxLength="100"
@@ -108,7 +105,7 @@ class AutoClockNewEntryForm extends Component {
     }
 
     render() {
-        const { handleSubmit, project, project_id, sprint_id, issue_id,
+        const { handleSubmit, project_id, sprint_id, issue_id,
                 can_clock_admin, role_options } = this.props
 
         return (

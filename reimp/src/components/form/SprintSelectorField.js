@@ -9,8 +9,7 @@ import {
 import {
     initList,
     update_list_filter,
-    getListFilter,
-    invalidateList
+    getListFilter
 } from '../../actions/ItemList'
 import SingleValueSelector from './SingleValueSelector'
 
@@ -44,7 +43,7 @@ class SprintSelectorField extends Component {
     refresh() {
         const { dispatch, project_id, filter } = this.props
         dispatch(initList(SELECTOR__SPRINTS))
-        if ( filter.project_id != project_id ) {
+        if ( filter.project_id !== project_id ) {
             dispatch(update_list_filter(SELECTOR__SPRINTS, {project_id: project_id}))
         }
         dispatch(fetchSprintsIfNeeded(SELECTOR__SPRINTS))
@@ -66,7 +65,7 @@ class SprintSelectorField extends Component {
     }
     
     render() {
-        const { handleSubmit, sprint_options } = this.props
+        const { sprint_options } = this.props
         return (
             <Field name="sprint_id"
                    component={this.renderSingleValueSelector}

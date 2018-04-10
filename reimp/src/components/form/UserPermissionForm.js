@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import includes from 'lodash/includes'
-import filter from 'lodash/filter'
 import classNames from 'classnames'
 import { reduxForm, Field } from 'redux-form';
 import { getUser, ensureUsersLoaded, logged_in_users_permissions } from '../../actions/Users'
@@ -110,7 +109,7 @@ class UserPermissionForm extends Component {
     onChangeAndSubmit(e, fieldOnChange, permission_name) {
         const { user_id, handleSubmit, onRemoveUser } = this.props
 
-        const is_removing_user = permission_name == "is_active_member_of_business"
+        const is_removing_user = permission_name === "is_active_member_of_business"
         if ( is_removing_user ) {
             if (! confirm("Are you sure you want to remove this user from the project?" ) ) {
                 return
@@ -131,7 +130,6 @@ class UserPermissionForm extends Component {
 
     onQuickRoleSelect(event, role_name) {
         const { dispatch, handleSubmit } = this.props
-        const that = this
         event.stopPropagation()
         const permission_names = QUICK_ROLES[role_name]
         map(permission_names, function(permission_name) {
@@ -145,7 +143,6 @@ class UserPermissionForm extends Component {
     onClearPermissions(event) {
         const { dispatch, handleSubmit } = this.props
         event.stopPropagation()
-        const that = this
         const permissions_to_clear = []
         map(keys(QUICK_ROLES), function(role_name) {
             map(QUICK_ROLES[role_name],
@@ -179,7 +176,7 @@ class UserPermissionForm extends Component {
     }
 
     renderPermissionCheckbox(field) {
-        const { input, data, onChange, label, ...rest } = field
+        const { input, label } = field
         return <input type="checkbox"
                       label={label}
                       key={label}
@@ -189,7 +186,7 @@ class UserPermissionForm extends Component {
     }
 
     render() {
-        const { pup_id, pup, is_loading, permission_names, handleSubmit, can_edit, initialValues } = this.props
+        const { pup_id, pup, permission_names, handleSubmit, can_edit, initialValues } = this.props
         const that = this;
 
         return (
@@ -204,8 +201,7 @@ class UserPermissionForm extends Component {
                        return (
                            <div key={index}
                                 className="user-permission__permission_card">
-                             <div className="user-permission__permission_name"
-                                  className={classNames({"user-permission__checkbox__on":initialValues[permission_name]===true,
+                             <div className={classNames({"user-permission__checkbox__on":initialValues[permission_name]===true,
                                                          "user-permission__checkbox__off":initialValues[permission_name]!==true})}
                                   key={index}>
                                {convert_permission_name_to_label(permission_name)}
@@ -237,7 +233,7 @@ class UserPermissionForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, user_id, onClose, onSave, onRemoveUser, permission_names } = props
+    const { project_id, user_id, onSave, onRemoveUser, permission_names } = props
     const user = getUser(state, user_id) || {}
     const project = getProject(state, project_id) || {}
     const pup = getProjectUserPermission(state, project_id, user_id) || {}

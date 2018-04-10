@@ -64,7 +64,7 @@ class SprintTemplateSidebar extends Component {
 
     render() {
 
-        const { sprint_id, sprint, project } = this.props
+        const { sprint_id, sprint } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">

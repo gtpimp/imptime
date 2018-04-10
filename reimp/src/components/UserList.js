@@ -1,19 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 
-import RIEInput from '../widgets/RIEInput'
-import RIEModeToggler from '../widgets/RIEModeToggler'
 import each from 'lodash/each'
 import map from 'lodash/map'
-import union from 'lodash/union'
 import includes from 'lodash/includes'
-import difference from 'lodash/difference'
 import {
-    initList,
-    invalidateList
-} from '../actions/ItemList'
-import {
-    invalidateAllUsers,
     ensureUsersLoaded,
     startInviteUser,
     updateInviteTitle,
@@ -26,12 +17,12 @@ import ListTable from './ListTable'
 class UserList extends Component {
 
     componentDidMount() {
-        const {dispatch, project_id, user_ids} = this.props
+        const {dispatch, user_ids} = this.props
         dispatch(ensureUsersLoaded(user_ids))
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, project_id} = new_props
+        const {dispatch} = new_props
         if ( new_props.user_ids !== this.props.user_ids ) {
             dispatch(ensureUsersLoaded(new_props.user_ids))
         }
@@ -58,13 +49,9 @@ class UserList extends Component {
 
         const {
             users, list_key,
-            selected_ids,
-            is_inviting_user, invite_user,
-            loading_item_ids,
             invited_user_ids,
             user_actions
         } = this.props
-        const that = this
 
         const user_rows = []
         each(users, function (user, index) {
@@ -89,8 +76,8 @@ class UserList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {user, item_list} = state
-    const {list_key, project_id, invited_user_ids, user_ids, user_actions} = props
+    const {user} = state
+    const {project_id, invited_user_ids, user_ids, user_actions} = props
     const all_items_by_id = (user && user.items_by_id) || {}
     const items_by_id = map(user_ids, (user_id) => all_items_by_id[user_id])
 

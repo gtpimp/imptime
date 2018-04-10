@@ -30,12 +30,11 @@ class ChangePasswordPage extends Component {
     }
 
     onChangePassword(values) {
-        const { dispatch, settings } = this.props
+        const { dispatch } = this.props
         return dispatch(change_password(values))
     }
     
     render() {
-        const that = this
         const { handleSubmit, error_msg, submitting, has_usable_password } = this.props
         
         return (

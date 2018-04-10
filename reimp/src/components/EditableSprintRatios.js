@@ -33,7 +33,7 @@ class EditableSprintRatios extends Component {
     }
 
     render() {
-        const { sprint, can_edit, can_view } = this.props
+        const { sprint, can_edit } = this.props
 
         return (
             <EditableProperty property_key={'sprint_ratios_'+sprint.id}

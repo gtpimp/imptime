@@ -3,21 +3,12 @@ import { connect } from 'react-redux'
 import { map } from 'lodash'
 import {
     initList,
-    invalidateList,
-    selectItems,
-    collapse_list,
-    expand_list,
     shouldFetchList,
     getVisibleItemIds,
-    getVisibleItems,
     getNestedObjects,
     ensureNestedObjectsLoaded,
     isLoading,
     getLastUpdated,
-    getLoadingItemIds,
-    getSelectedItemIds,
-    getSelectedItems,
-    getDisplayMode,
     update_list_pagination,
     update_list_ordering,
     update_list_format
@@ -30,10 +21,6 @@ import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
 
 class NudgeList extends Component {
-
-    constructor(props) {
-        super(props)
-    }
     
     componentDidMount() {
 	const { dispatch, list_key, nested_objects } = this.props
@@ -54,9 +41,8 @@ class NudgeList extends Component {
     render() {
 
         const { nudge_ids, is_loading } = this.props
-        const that = this
 
-        if ( is_loading && !nudge_ids && nudge_ids.length == 0 ) {
+        if ( (is_loading && !nudge_ids && nudge_ids.length) === 0 ) {
             return (
                 <div>Loading...</div>
             )
@@ -65,7 +51,7 @@ class NudgeList extends Component {
         return (
             <div className="nudge-list">
               { map(nudge_ids, (nudge_id) =>  <Nudge key={nudge_id} nudge_id={nudge_id} />) }
-              { !nudge_ids || nudge_ids.length == 0 &&
+              { (!nudge_ids || nudge_ids.length) === 0 &&
                 (
                     <div className="nudge-list__empty">
                       { ! is_loading && "No nudges. Go in peace." }

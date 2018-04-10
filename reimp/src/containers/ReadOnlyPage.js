@@ -2,10 +2,6 @@ import React, {Component} from 'react'
 import Websocket from '../components/Websocket'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import {
-    selectItems,
-    invalidateList
-} from '../actions/ItemList'
 import ReadOnlyIssueComment from '../components/readonly/ReadOnlyIssueComment'
 import ReadOnlyHeader from '../components/readonly/ReadOnlyHeader'
 

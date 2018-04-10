@@ -1,8 +1,7 @@
-import React, {Component, PropTypes} from 'react'
+import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import Header from '../components/Header'
-import ModalDialog from '../components/ModalDialog'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { parse } from 'query-string'
@@ -10,10 +9,7 @@ import { DragDropContext } from 'react-dnd';
 import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
-import { ShortcutManager } from 'react-shortcuts'
 import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
-import keymap from '../actions/Keymap'
-const shortcut_manager = new ShortcutManager(keymap)
 var HTML5Backend = require('react-dnd-html5-backend');
 import ReactTooltip from 'react-tooltip'
 import Error from '../components/Error'
@@ -22,14 +18,9 @@ import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
 
 class MainLayout extends Component {
-
-    getChildContext() {
-        return { shortcuts: shortcut_manager }
-    }
     
     componentDidMount() {
         const { dispatch } = this.props
-        const that = this
 
         /* window.onerror = function(msg, url, line, col, error) {
          *     alert("whoops")
@@ -40,7 +31,7 @@ class MainLayout extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id ||
+        if ( (new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id) ||
              new_props.are_settings_loaded !== this.props.are_settings_loaded ) {
             this.refresh(new_props)
         }
@@ -69,12 +60,11 @@ class MainLayout extends Component {
     render() {
         const { is_logged_in, are_settings_loaded } = this.props
 
-        const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') != -1 ||
-                               this.props.location.pathname.indexOf('password/reminded') != -1 ||
-                               this.props.location.pathname.indexOf('account/create') != -1 ||
-                               this.props.location.pathname.indexOf('share/') != -1
+        const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') !== -1 ||
+                               this.props.location.pathname.indexOf('password/reminded') !== -1 ||
+                               this.props.location.pathname.indexOf('account/create') !== -1 ||
+                               this.props.location.pathname.indexOf('share/') !== -1
 
-        const is_share = this.props.location.pathname.indexOf('share/') != -1
         
         if ( ! are_settings_loaded ) {
             return (
@@ -132,7 +122,3 @@ function mapStateToProps(state) {
 }
 
 export default withRouter(connect(mapStateToProps)(DragDropContext(HTML5Backend)(MainLayout)))
-
-MainLayout.childContextTypes = {
-  shortcuts: PropTypes.object.isRequired
-}

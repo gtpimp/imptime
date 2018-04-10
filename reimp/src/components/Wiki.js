@@ -1,18 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map } from 'lodash'
-import {withRouter} from 'react-router-dom'
-import classNames from 'classnames'
 import {
     ensureWikisLoaded,
     getWiki,
     updateWikiMoneySensitive
 } from '../actions/Wikis'
 
-import { isLoadingItems } from '../actions/Item'
-import ProjectName from './ProjectName'
-import Timestamp from './Timestamp'
-import ReactMarkdown from 'react-markdown'
 import EditableWikiContent from './EditableWikiContent'
 import EditableWikiName from './EditableWikiName'
 import ToggleButton from './toolbar/ToggleButton'
@@ -42,8 +35,7 @@ class Wiki extends Component {
     
     render() {
 
-        const { wiki, is_loading, can_edit, can_view_sensitive_wikis } = this.props
-        const that = this
+        const { wiki, can_edit, can_view_sensitive_wikis } = this.props
 
         if ( ! wiki.id ) {
             return null

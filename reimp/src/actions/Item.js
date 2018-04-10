@@ -1,7 +1,7 @@
 import { impfetch } from './lib.js'
 
-import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
-import { get, values, map, difference, intersection, keyBy, compact, find, filter } from 'lodash'
+import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
+import { get, values, map, difference, intersection, keyBy, compact, filter } from 'lodash'
 
 export const ANNOUNCE_ITEMS_SAVING = 'ANNOUNCE_ITEMS_SAVING'
 export const ANNOUNCE_ITEMS_SAVED = 'ANNOUNCE_ITEMS_SAVED'
@@ -98,9 +98,9 @@ function fetchItemsPromise(dispatch, state, entity_key, item_ids, additional_get
 
         let url = 'imp/'+entity_key
         if ( additional_get_args && additional_get_args.url_suffix ) {
-            url = url + additional_get_args.url_suffix
+            url += additional_get_args.url_suffix
         }
-        url = url + "/"
+        url += "/"
         
         return impfetch(state, url, dispatch, {params:params})
             .then(response => response.json())
@@ -413,7 +413,6 @@ export function fetchItemsIfNeeded(entity_key, list_key) {
         function(dispatch, state, unmatching_item_ids) {
             return fetchItemsPromise(dispatch, state, entity_key, unmatching_item_ids)
         }
-    const is_generic_item = true
     return fetchListIfNeeded(list_key, matching_items_key,
                              matching_items_promise_func,
                              { is_generic_item: true })
@@ -443,7 +442,7 @@ export function getLoadingItemIds(state, entity_key, item_ids) {
     }
     const items = getItems(state, entity_key, item_ids)
     return filter(items, function(x) {
-        return x.loaded == false
+        return x.loaded === false
     })
 }
 

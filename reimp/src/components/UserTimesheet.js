@@ -1,15 +1,10 @@
 import React, { Component } from 'react'
-import { map, size } from 'lodash'
-import { DragSource, DropTarget } from 'react-dnd'
 import { connect } from 'react-redux'
-import classNames from 'classnames'
-import { DndTypes } from '../actions/Dnd'
 import '../sass/user-timesheet.scss'
 import {
     getUserTimesheet,
     ensureUserTimesheetsLoaded
 } from '../actions/UserTimesheets'
-import { ensureUsersLoaded } from '../actions/Users'
 import OtherUser from './OtherUser'
 import TimeChart from './TimeChart'
 
@@ -34,7 +29,6 @@ class UserTimesheet extends Component {
         const { user_timesheet, user_id } = this.props
 
         const is_bad = user_timesheet.average_hours_worked < user_timesheet.required_daily_work_hours_warning_threshold
-        const is_good = user_timesheet.average_hours_worked >= user_timesheet.required_daily_work_hours_warning_threshold
         
         return (
             <div className="user_timesheet">

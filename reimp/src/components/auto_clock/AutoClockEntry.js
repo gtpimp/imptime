@@ -1,21 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
 import classNames from 'classnames'
 import '../../sass/auto-clock.scss'
 import moment from 'moment'
 import { getAutoClock, ensureAutoClocksLoaded } from '../../actions/AutoClock'
 import Timestamp from '../Timestamp'
 import Hours from '../Hours'
-import ProjectName from '../ProjectName'
-import SprintName from '../SprintName'
-import IssueName from '../IssueName'
 import AutoClockEntity from './AutoClockEntity'
 
 class AutoClockEntry extends Component {
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         this.refresh()

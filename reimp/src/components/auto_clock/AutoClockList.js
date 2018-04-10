@@ -1,27 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map, values, includes } from 'lodash'
+import { map, values } from 'lodash'
 import classNames from 'classnames'
 import {
     initList,
     invalidateList,
-    selectItems,
-    collapse_list,
-    expand_list,
     shouldFetchList,
     getVisibleItemIds,
-    getVisibleItems,
     getNestedObjects,
     ensureNestedObjectsLoaded,
     isLoading,
     getLastUpdated,
-    getLoadingItemIds,
-    getSelectedItemIds,
-    getSelectedItems,
-    getDisplayMode,
     update_list_pagination,
     update_list_ordering,
-    update_list_format,
     update_list_filter,
     getListFilter
 } from '../../actions/ItemList'
@@ -33,7 +24,6 @@ import DivTable from '../DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
-import AutoClockEntryForm from './AutoClockEntryForm'
 import Pagination from '../Pagination'
 
 class AutoClockList extends Component {
@@ -44,7 +34,7 @@ class AutoClockList extends Component {
     }
     
     componentDidMount() {
-	const { dispatch, list_key, filter, nested_objects } = this.props
+	const { dispatch, list_key } = this.props
 	dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
         dispatch(update_list_pagination(list_key, { page_size: 8 }))
@@ -58,7 +48,7 @@ class AutoClockList extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, list_key, filter, nested_objects, logged_in_user_id } = props
-        if ( filter.user_id != logged_in_user_id ) {
+        if ( filter.user_id !== logged_in_user_id ) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
         }
         dispatch(fetchAutoClocksIfNeeded(list_key))
@@ -87,9 +77,8 @@ class AutoClockList extends Component {
     render() {
 
         const { auto_clocks_by_id, is_loading, list_key } = this.props
-        const that = this
 
-        if ( is_loading && !auto_clocks_by_id && auto_clocks_by_id.length == 0 ) {
+        if ( is_loading && !auto_clocks_by_id && auto_clocks_by_id.length === 0 ) {
             return (
                 <div>Loading...</div>
             )
@@ -101,7 +90,7 @@ class AutoClockList extends Component {
               <DivTable>
                 { map(values(auto_clocks_by_id), (auto_clock) => this.render_row(auto_clock) ) }
               </DivTable>
-              { !auto_clocks_by_id || auto_clocks_by_id.length == 0 &&
+              { (!auto_clocks_by_id || auto_clocks_by_id.length) === 0 &&
                 (
                     <div className="auto-clock-list__empty">
                       { ! is_loading && "No pages." }

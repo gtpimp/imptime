@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { reduxForm, Field } from 'redux-form'
-import Textarea from 'react-expanding-textarea'
+import { reduxForm } from 'redux-form'
 import WikiNameField from './WikiNameField'
 
 class WikiNameForm extends Component {

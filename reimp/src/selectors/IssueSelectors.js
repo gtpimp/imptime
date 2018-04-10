@@ -4,8 +4,8 @@ import {
     ENTITY_KEY__TAG
 } from '../actions/ItemListKeyRegistry'
 import { getIssue } from '../actions/Issues'
-import { getTags } from '../actions/Tags'
-import { groupBy, includes, filter, keyBy, keys, values, uniq, concat } from 'lodash'
+//import { getTags } from '../actions/Tags'
+import { groupBy, includes, filter, keyBy, values } from 'lodash'
 import {
     getAllItems
 } from '../actions/Item'
@@ -24,25 +24,25 @@ const selGetAllIssuesById = (state, props) => {
     return getAllItems(state, ENTITY_KEY__ISSUE)
 }
 
-const selGetIssueTagIds = (state, props) => {
-    const issue = getIssue(state, props.issue_id)
-    if ( !issue ) {
-        return null
-    }
-    return issue.tag_ids
-}
+//const selGetIssueTagIds = (state, props) => {
+//    const issue = getIssue(state, props.issue_id)
+//    if ( !issue ) {
+//        return null
+//    }
+//    return issue.tag_ids
+//}
 
 const selGetAllTagsById = (state, props) => {
     return getAllItems(state, ENTITY_KEY__TAG)
 }
 
-const selGetIssueTags = (state, props) => {
-    const tag_ids = selGetIssueTagIds(state, props)
-    if ( ! tag_ids ) {
-        return null
-    }
-    return getTags(state, tag_ids)
-}
+//const selGetIssueTags = (state, props) => {
+//    const tag_ids = selGetIssueTagIds(state, props)
+//    if ( ! tag_ids ) {
+//        return null
+//    }
+//    return getTags(state, tag_ids)
+//}
 
 const helperGetIssues = (all_issues_by_id, issue_ids) => {
     return filter(values(all_issues_by_id), function(issue) { return includes(issue_ids, issue.id) })

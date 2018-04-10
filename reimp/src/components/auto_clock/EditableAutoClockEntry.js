@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from '../form/EditableProperty'
 import { updateAutoClocks, getAutoClock, ensureAutoClocksLoaded, deleteAutoClocks } from '../../actions/AutoClock'
-import Blank from '../form/Blank'
-import ReactMarkdown from 'react-markdown'
 import AutoClockEntry from './AutoClockEntry'
 import AutoClockEntryForm from './AutoClockEntryForm'
 

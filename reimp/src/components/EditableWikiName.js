@@ -3,9 +3,8 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import WikiNameForm from './form/WikiNameForm'
 import { updateWikiName, getWiki, ensureWikisLoaded } from '../actions/Wikis'
-import { getProject, ensureProjectsLoaded } from '../actions/Projects'
+import { ensureProjectsLoaded } from '../actions/Projects'
 import { has_permission } from '../actions/Users'
-import Blank from './form/Blank'
 import ReactMarkdown from 'react-markdown'
 
 const renderers = {
@@ -76,7 +75,6 @@ function mapStateToProps(state, props) {
     const { wiki_id } = props
     const wiki = getWiki(state, wiki_id) || {}
     const project_id = wiki.project_id
-    const project = getProject(state, project_id) || {}
     const can_edit = has_permission(state, project_id, 'has_edit_business_comments')
     return {
         wiki: wiki,

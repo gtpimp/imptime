@@ -1,20 +1,17 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
-import Timestamp from '../components/Timestamp'
 import { has_permission } from '../actions/Users'
 import { getSprintReviews,
          ensureSprintReviewsLoaded
 } from '../actions/SprintReviews'
 import { getSprint, ensureSprintsLoaded } from '../actions/Sprints'
-import OtherUser from './OtherUser'
-import moment from 'moment'
 import EditableSprintReviewCycle from './EditableSprintReviewCycle'
 
 class SprintReviewPanel extends Component {
 
     componentDidMount() {
-        const { dispatch, sprint_id, sprint, sprint_review_ids } = this.props
+        const { dispatch, sprint_id, sprint_review_ids } = this.props
         if ( sprint_id ) {
             dispatch(ensureSprintsLoaded([sprint_id]))
         }

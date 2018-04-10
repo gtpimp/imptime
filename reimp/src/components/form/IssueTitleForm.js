@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm } from 'redux-form';
 import IssueTitleField from './IssueTitleField';
 
 class IssueTitleForm extends Component {

@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { setProjectBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import ProjectUsers from '../components/ProjectUsers'
 import {
     PAGE_KEY__PROJECT_DASHBOARD_PAGE
 } from '../actions/ItemListKeyRegistry'
@@ -15,12 +14,8 @@ import ProjectDashboard from '../components/ProjectDashboard'
 
 class ProjectDashboardPage extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
-        const {dispatch, project_id} = this.props
+        const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECT_DASHBOARD_PAGE, ['project-dashboard']))
         this.refresh()
     }

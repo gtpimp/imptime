@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { concat, partition, sortBy, keyBy } from 'lodash'
+import { keyBy } from 'lodash'
 import { Field } from 'redux-form'
 import { getIssues, fetchIssuesIfNeeded } from '../../actions/Issues'
 import {
@@ -65,7 +65,7 @@ class SelectIssueParentGroupField extends Component {
     }
     
     render() {
-        const { handleSubmit, issue_options } = this.props
+        const { issue_options } = this.props
         return (
             <Field name="issue_id"
                    component={this.renderSingleValueSelector}

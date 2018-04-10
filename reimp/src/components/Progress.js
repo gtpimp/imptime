@@ -8,7 +8,7 @@ import { format_hours } from '../actions/lib'
 class Progress extends Component {
     
     render() {
-        const {issue, estimate, hours, force_show} = this.props
+        const {estimate, hours, force_show} = this.props
         const current = format_hours(hours)
         const max = format_hours(estimate)
         const max_valid = estimate !== undefined && estimate > 0

@@ -1,9 +1,6 @@
 import React, {Component} from 'react'
-import { compact, uniq, concat, each, indexOf, map, keys, keyBy, merge, values, union, difference, includes } from 'lodash'
-import RIEInput from '../widgets/RIEInput'
-import RIEModeToggler from '../widgets/RIEModeToggler'
+import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
-import { ISSUE_HEADER_LIST_FEATURE } from '../actions/ItemListKeyRegistry.js'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import OtherUser from './OtherUser'
 import { logged_in_user } from '../actions/Auth'
@@ -24,7 +21,6 @@ import {
 import {
     initList,
     invalidateList,
-    isListReadyToDisplay,
     collapse_list,
     expand_list,
     setItemFlag,
@@ -43,21 +39,14 @@ import {
     invalidateAllIssues,
     fetchIssuesIfNeeded,
     reorderIssue,
-    startCandidateIssue,
-    updateCandidateSubject,
     cancelCandidateIssue,
-    saveCandidateIssue,
     updateIssueToggleAsFeature,
     groupUnsortedIssuesIntoFeature,
     ungroupIssuesIntoFeature,
-    getInvalidatedIssueIds,
-    getLoadingIssueIds,
-    getSavingIssueIds,
     getCandidateIssue,
-    getIssuesById,
     ensureIssuesLoaded
 } from '../actions/Issues'
-import { ensureTagsLoaded, getTags } from '../actions/Tags'
+import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
 import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
@@ -98,7 +87,7 @@ class IssueList extends Component {
         const {dispatch, list_key} = this.props
         const { feature_issue_ids, tag_ids, sprint_id } = new_props
         const {onSelectIssues} = this.props
-        if ( this.props.sprint_id != new_props.sprint_id ) {
+        if ( this.props.sprint_id !== new_props.sprint_id ) {
             onSelectIssues([])
         }
         this.expandUnAutoExpandedFeatures(new_props)
@@ -132,11 +121,13 @@ class IssueList extends Component {
             case 'DOWN':
                 //this.moveCursorDown()
                 break
+            default:
+                break
         }
     }
 
     moveCursorDown() {
-        const { dispatch, list_key, issue_ids, selected_ids, cursor_item_id } = this.props
+        const { dispatch, list_key, issue_ids, cursor_item_id } = this.props
         if ( !cursor_item_id || !issue_ids ) {
             this.moveCursorDefault()
         } else {
@@ -153,7 +144,7 @@ class IssueList extends Component {
     }
 
     moveCursorUp() {
-        const { dispatch, list_key, issue_ids, selected_ids, cursor_item_id } = this.props
+        const { dispatch, list_key, issue_ids, cursor_item_id } = this.props
         if ( !cursor_item_id || !issue_ids ) {
             this.moveCursorDefault()
         } else {
@@ -182,7 +173,7 @@ class IssueList extends Component {
     }
 
     onDeleteIssue(issue_id) {
-        const {dispatch, visible_item_ids} = this.props
+        const {visible_item_ids} = this.props
         const {onSelectIssues} = this.props
         const issue_index = indexOf(visible_item_ids, issue_id)
         let next_index = issue_index - 1
@@ -238,7 +229,7 @@ class IssueList extends Component {
         running_issue_index += 1
         while( running_issue_index < visible_item_ids.length ) {
             issue = issues[running_issue_index]
-            if ( issue.parent_group_id == parent_group_id ) {
+            if ( issue.parent_group_id === parent_group_id ) {
                 issue_ids_to_select.push(issue.id)
             } else {
                 break
@@ -263,7 +254,7 @@ class IssueList extends Component {
             }
         }
 
-        if ( issue_ids_to_select.length == 0 ) {
+        if ( issue_ids_to_select.length === 0 ) {
             possible_issue_ids_to_select = []
             running_issue_index = indexOf(visible_item_ids, target_issue_id)
             while(running_issue_index<visible_item_ids.length && !includes(selected_ids, visible_item_ids[running_issue_index])) {
@@ -328,7 +319,7 @@ class IssueList extends Component {
     }
 
     reorderIssue(index_of_row_being_moved, index_of_destination) {
-        const {dispatch, list_key, issue_items, visible_item_ids} = this.props
+        const {dispatch, list_key, issue_items} = this.props
 
         // get issue being moved
         const moving_issue_id = issue_items[index_of_row_being_moved].id
@@ -440,7 +431,7 @@ class IssueList extends Component {
                         is_loading={loading_item_ids.indexOf(issue.id) !== -1}
                         is_selected={selected_ids.indexOf(issue.id) !== -1}
                         is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue.id) !== -1}
-                        is_cursor_item={""+issue.id==""+cursor_item_id}
+                        is_cursor_item={""+issue.id===""+cursor_item_id}
                         issue_id={issue.id}
                         tag_category_names={tag_category_names}
                         onDelete={this.onDeleteIssue} />
@@ -467,10 +458,10 @@ class IssueList extends Component {
 
     renderIssue(issue, index) {
         const {
-            is_visible, list_key,
+            list_key,
             saving_issue_ids,
-            is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
+            invalidated_issue_ids,
+            selected_ids, highlighted_ids, loading_item_ids, expanded_issues,
             header_list, cursor_item_id, tag_category_names
         } = this.props
         const key = issue.id + "_" + index
@@ -486,7 +477,7 @@ class IssueList extends Component {
                    is_loading={loading_item_ids.indexOf(issue_id) !== -1}
                    is_selected={selected_ids.indexOf(issue_id) !== -1}
                    is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue_id) !== -1}
-                   is_cursor_item={""+issue.id==""+cursor_item_id}
+                   is_cursor_item={""+issue.id===""+cursor_item_id}
                    is_invalidated={invalidated_issue_ids.indexOf(issue_id) !== -1}
                    is_saving={saving_issue_ids.indexOf(issue_id) !== -1}
                    issue_id={issue_id}
@@ -500,11 +491,7 @@ class IssueList extends Component {
     render_expanded() {
 
         const {
-            issues, is_visible, list_key, issue_items,
-            saving_issue_ids,
-            is_creating_issue, candidate_issue, invalidated_issue_ids,
-            selected_ids, highlighted_ids, selected_items, loading_item_ids, expanded_issues,
-            header_list, cursor_item_id, feature_issues
+            is_visible, issue_items,
         } = this.props
 
         if (!is_visible) {
@@ -525,11 +512,11 @@ class IssueList extends Component {
         each( issue_items, function(issue_item, index) {
             if ( ! issue_item ) {
                 console.error("Unexpected: issue_item should not be null")
-            } else if ( issue_item.type == "candidate" ) {
+            } else if ( issue_item.type === "candidate" ) {
                 issue_rows.push(that.render_candidate_issue())
-            } else if ( issue_item.type == "feature" ) {
+            } else if ( issue_item.type === "feature" ) {
                 issue_rows.push(that.renderIssue(issue_item.issue, index))
-            } else if ( issue_item.type == "issue" ) {
+            } else if ( issue_item.type === "issue" ) {
                 issue_rows.push(that.renderIssue(issue_item.issue, index))
             }
         })
@@ -578,7 +565,6 @@ const makeMapStateToProps = () => {
     const selIssues = makeSelIssues()
     const selIssueObjectsToRender = makeSelIssueObjectsToRender()
     const mapStateToProps = (state, props) => {
-        const {item_list} = state
         const {list_key, issue_header_list} = props
         const filter = getListFilter(state, list_key)
         const sprint_id = filter.sprint_id || null

@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import classNames from 'classnames'
 import {
@@ -49,17 +48,17 @@ class ProjectRoadmapToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               <button className={classNames("button button--large button--primary",
-                                            {"toolbar-button--enabled": sprint_width_mode=='clock'})}
+                                            {"toolbar-button--enabled": sprint_width_mode==='clock'})}
                       onClick={this.setDisplayModeClockTime}>
                 Clock time
               </button>
               <button className={classNames("button button--large button--primary",
-                                            {"toolbar-button--enabled": sprint_width_mode=='deadline'})}
+                                            {"toolbar-button--enabled": sprint_width_mode==='deadline'})}
                       onClick={this.setDisplayModeDeadline}>
                 Deadline
               </button>
               <button className={classNames("button button--large button--primary",
-                                            {"toolbar-button--enabled": sprint_width_mode=='estimate'})}
+                                            {"toolbar-button--enabled": sprint_width_mode==='estimate'})}
                       onClick={this.setDisplayModeEstimate}>
                 Estimate
               </button>

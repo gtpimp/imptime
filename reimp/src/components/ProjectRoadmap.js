@@ -16,7 +16,6 @@ import {
 } from '../actions/ItemList'
 import {
     getSprintWidthMode,
-    setSprintWidthMode,
     getSprintRoadmapsById,
     getSprintRoadmapIdsFromSprintIds,
     fetchSprintRoadmapsIfNeeded
@@ -29,7 +28,6 @@ import {
     ENTITY_KEY__SPRINT
 } from '../actions/ItemListKeyRegistry'
 import {
-    invalidateAllSprints,
     fetchSprintsIfNeeded
 } from '../actions/Sprints'
 import SprintName from './SprintName'
@@ -37,13 +35,9 @@ import Timestamp from './Timestamp'
 import SprintDeadline from './SprintDeadline'
 
 class ProjectRoadmap extends Component {
-
-    constructor(props) {
-        super(props)
-    }
     
     componentDidMount() {
-	const { dispatch, list_key, deadline_list_key, project_id, sprint_ids, roadmap_list_key } = this.props
+	const { dispatch, list_key, deadline_list_key, project_id, roadmap_list_key } = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(update_list_filter(list_key, {project_id: project_id}))
@@ -60,7 +54,7 @@ class ProjectRoadmap extends Component {
     componentWillReceiveProps(new_props) {
         const {dispatch, list_key, roadmap_list_key} = this.props
         const { project_id } = new_props
-        if ( project_id != this.props.project_id ) {
+        if ( project_id !== this.props.project_id ) {
             dispatch(update_list_filter(list_key, {project_id: project_id}))
             dispatch(update_list_filter(roadmap_list_key, {project_id: project_id}))
             dispatch(invalidateList(list_key))
@@ -94,6 +88,8 @@ class ProjectRoadmap extends Component {
             case 'estimate':
                 const average_estimate_hours = ((sprint_roadmap.slowest_estimated_hours || 0)*1.0 + (sprint_roadmap.fastest_estimated_hours|| 0))/2
                 dimensions.width_days = Math.round(average_estimate_hours / num_business_hours_per_day)
+                break
+            default:
                 break
         }
 
@@ -170,9 +166,9 @@ class ProjectRoadmap extends Component {
                     - { sprint.status_name }
                   </div>
                 </div>
-                { sprint_width_mode=='clock' && this.renderSprintContent__ActualDuration(sprint, dimensions) }
-                { sprint_width_mode=='deadline' && this.renderSprintContent__Deadline(sprint, dimensions) }
-                { sprint_width_mode=='estimate' && this.renderSprintContent__Estimate(sprint, dimensions) }
+                { sprint_width_mode==='clock' && this.renderSprintContent__ActualDuration(sprint, dimensions) }
+                { sprint_width_mode==='deadline' && this.renderSprintContent__Deadline(sprint, dimensions) }
+                { sprint_width_mode==='estimate' && this.renderSprintContent__Estimate(sprint, dimensions) }
               </div>
               <div className="project-roadmap__sprint-variable-content" style={{width:dimensions.width_percentage||0}}>
                 { dimensions.width_days>0 &&
@@ -188,7 +184,6 @@ class ProjectRoadmap extends Component {
     render() {
 
         const { is_loading, sprints } = this.props
-        const that = this
 
         if ( is_loading ) {
             return (
@@ -208,7 +203,6 @@ class ProjectRoadmap extends Component {
 function mapStateToProps(state, props) {
     const { list_key, project_id } = props
     const deadline_list_key = list_key + "_DEADLINES"
-    const roadmap_list_key = list_key + "_ROADMAPS"
     const sprint_ids = getVisibleItemIds(state, list_key)
     const sprints = getVisibleItems(state, list_key, ENTITY_KEY__SPRINT)
     const sprint_roadmap_ids = getSprintRoadmapIdsFromSprintIds(sprint_ids)

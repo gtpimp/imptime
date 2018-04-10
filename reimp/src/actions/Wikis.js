@@ -1,13 +1,8 @@
-import { impfetch } from './lib.js'
-import { compact, map, keys, keyBy, includes, difference, indexOf, identity } from 'lodash'
-import move from 'lodash-move'
-import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
 
 import {
     invalidateAllItems,
     invalidateItems,
-    fetchItemsPromise,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
     getItem,
@@ -19,9 +14,6 @@ import {
     updateCandidateDetails,
     saveCandidateItem,
     deleteItems,
-    announceItemSaveFailed,
-    announceItemsSaved,
-    announceItemsSaving
 } from '../actions/Item'
 
 export function invalidateAllWikis() {

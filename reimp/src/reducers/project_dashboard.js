@@ -24,7 +24,6 @@ const initialState = {
 export default function project_dashboard(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let new_items_by_id = null
 
     switch (action.type) {
 	case INVALIDATE_ALL_PROJECT_DASHBOARDS:

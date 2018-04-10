@@ -2,11 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import SelectSprintForm from './form/SelectSprintForm'
-import SprintLabel from './form/SprintLabel'
 import Blank from './form/Blank'
 import { copyIssuesToSprint, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
-import ReactTooltip from 'react-tooltip'
 
 class EditableCopyIssueToSprint extends Component {
 

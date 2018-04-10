@@ -3,9 +3,7 @@ import {connect} from 'react-redux'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import { map, keys } from 'lodash'
-import {withRouter} from 'react-router-dom'
 import {
-    invalidateMultipleIssueSummary,
     ensureMultipleIssueSummaryLoaded,
     getMultipleIssueSummary
 } from '../actions/MultipleIssueSummary'
@@ -19,10 +17,6 @@ import { doesMienHaveFeature } from '../actions/Mien'
 import Tag from './Tag'
 
 class MultipleIssueSummary extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         this.refresh()
@@ -262,7 +256,7 @@ class MultipleIssueSummary extends Component {
     }
 
     render() {
-        const {issues, project_id, summary} = this.props
+        const {summary} = this.props
         return (
             <div className="multiple-issue-summary">
               <PropertyStack>

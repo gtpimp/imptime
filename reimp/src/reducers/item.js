@@ -85,7 +85,7 @@ export default function item(state = initialState, action) {
             s.saving_item_ids = union(s.saving_item_ids, item_ids)
 
             let new_item_props = {}
-            if ( action.field_name == UPDATE_ENTIRE_ITEM_FIELD_NAME ) {
+            if ( action.field_name === UPDATE_ENTIRE_ITEM_FIELD_NAME ) {
                 new_item_props = Object.assign({}, action.new_value)
             } else {
                 new_item_props[action.field_name] = action.new_value

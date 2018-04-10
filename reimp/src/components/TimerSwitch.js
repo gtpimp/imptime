@@ -36,7 +36,7 @@ class TimerSwitch extends Component {
 
 function mapStateToProps(state, props) {
 
-    const {hours, active} = props
+    const {active} = props
 
     return {
         active: active

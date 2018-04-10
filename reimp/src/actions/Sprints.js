@@ -1,5 +1,4 @@
 import { impfetch } from './lib.js'
-import indexOf from 'lodash/indexOf'
 import keyBy from 'lodash/keyBy'
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
 import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
@@ -112,7 +111,6 @@ export function fetchSprintsIfNeeded(list_key) {
 
 export function startCandidateSprint(project_id, sprint_id_before, default_sprint_args) {
     return (dispatch, getState) => {
-	const state = getState()
 	dispatch({
 	    type: ANNOUNCE_CAPTURING_NEW_SPRINT,
 	    project_id: project_id,

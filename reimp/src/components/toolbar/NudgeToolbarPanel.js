@@ -1,7 +1,5 @@
 import '../../sass/toolbar-panel.css'
 import React, {Component} from 'react'
-import ReactTooltip from 'react-tooltip'
-import ToolbarButton from './ToolbarButton'
 import { connect } from 'react-redux'
 import { recalculateNudges } from '../../actions/Nudges'
 import ToggleButton from './ToggleButton'

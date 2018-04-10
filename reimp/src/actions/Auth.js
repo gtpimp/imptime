@@ -157,12 +157,12 @@ export function logged_in_user() {
 export function is_authenticated() {
     const user = logged_in_user()
     return user.user_id !== undefined && user.user_id !== null && user.user_id.length > 0 &&
-           user.token !== null && user.token != undefined && user.token.length > 0
+           user.token !== null && user.token !== undefined && user.token.length > 0
 }
 
 function is_superuser() {
     const user = logged_in_user()
-    return is_authenticated() && user.is_superuser == "true"
+    return is_authenticated() && user.is_superuser === "true"
 }
 
 export function can_create_release_notes() {

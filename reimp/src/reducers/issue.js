@@ -1,9 +1,4 @@
-import assign from 'lodash/assign'
-import difference from 'lodash/difference'
-import union from 'lodash/union'
-import keys from 'lodash/keys'
 import map from 'lodash/map'
-import { stringifyIds } from '../actions/lib.js'
 
 import {
     SET_ISSUE_STORE_VALUE,

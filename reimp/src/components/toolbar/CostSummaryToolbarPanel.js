@@ -1,6 +1,5 @@
 import '../../sass/toolbar-panel.css'
 import React, {Component} from 'react'
-import ReactTooltip from 'react-tooltip'
 import ToolbarButton from './ToolbarButton'
 import { PAGE_KEY__SPRINTS_PAGE } from '../../actions/ItemListKeyRegistry'
 import { connect } from 'react-redux'

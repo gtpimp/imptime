@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { map, size } from 'lodash'
-import { DragSource, DropTarget } from 'react-dnd'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
-import { DndTypes } from '../actions/Dnd'
 import '../sass/project-dashboard.css'
 import {
     getProjectDashboard,
@@ -112,7 +110,7 @@ class ProjectDashboard extends Component {
     renderOpenSprints() {
         const { project_dashboard } = this.props
 
-        if ( ! project_dashboard.sprint_infos || size(project_dashboard.sprint_infos)==0 ) {
+        if ( ! project_dashboard.sprint_infos || size(project_dashboard.sprint_infos)===0 ) {
             return (
                 <div className="project_dashboard__open_sprints">
                   <div><h3>Open sprints</h3></div>

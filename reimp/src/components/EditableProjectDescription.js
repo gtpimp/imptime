@@ -4,7 +4,6 @@ import EditableProperty from './form/EditableProperty'
 import ProjectDescriptionForm from './form/ProjectDescriptionForm'
 import { updateProjectDescription, getProject } from '../actions/Projects'
 import { has_permission } from '../actions/Users'
-import Blank from './form/Blank'
 import ReactMarkdown from 'react-markdown'
 
 const renderers = {

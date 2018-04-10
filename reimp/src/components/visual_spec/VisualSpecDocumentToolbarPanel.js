@@ -1,12 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from '../toolbar/ToolbarButton'
-import ReactTooltip from 'react-tooltip'
 import { invalidateAllVisualSpecDocuments } from '../../actions/VisualSpecDocuments'
 import { invalidateAllVisualSpecIssueAnnotations } from '../../actions/VisualSpecIssueAnnotations'
-import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
 import {
     cloneIssueForVisualSpec
 } from '../../actions/VisualSpecDocuments'
@@ -67,7 +64,6 @@ class VisualSpecDocumentToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {} = props
 
     const selected_issue_ids = getSelectedItemIds(state, LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST)
     const selected_issue_id = (selected_issue_ids && selected_issue_ids.length > 0 && selected_issue_ids[0]) || null

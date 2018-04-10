@@ -2,7 +2,6 @@ import {
     ASYNC_REFRESH_NOTIFICATION
 } from '../actions/Async'
 
-import moment from 'moment'
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateIssues } from '../actions/Issues'
@@ -17,7 +16,6 @@ import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { invalidateSprintReviews } from '../actions/SprintReviews'
 import { invalidateProjectDashboards } from '../actions/ProjectDashboards'
 import { invalidateNudges } from '../actions/Nudges'
-import { addAsyncMessage } from '../actions/Async'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 import { invalidateAutoClocks } from '../actions/AutoClock'
 import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSummary'
@@ -129,14 +127,14 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
             dispatch(invalidateAllVisualSpecDocuments())
             list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
         }
-    } else if ( d.entity_name == 'releasenote' ) {
+    } else if ( d.entity_name === 'releasenote' ) {
         list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_LIST] = true
         list_keys_to_invalidate[LIST_KEY__RELEASE_NOTES_EDITOR_LIST] = true
 
-    } else if ( d.entity_name == 'projectissueorder' ) {
+    } else if ( d.entity_name === 'projectissueorder' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
         list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
-    } else if ( d.entity_name == 'businessprojectorder' ) {
+    } else if ( d.entity_name === 'businessprojectorder' ) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_LIST] = true
         list_keys_to_invalidate[SELECTOR__SPRINTS] = true
     } else if ( d.entity_name === 'nudge' ) {

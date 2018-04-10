@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import Sidebar from './Sidebar'
 import PropertyStack from './PropertyStack'
@@ -26,7 +25,7 @@ class ProjectSidebar extends Component {
 
     render() {
 
-        const {project_id, project} = this.props
+        const {project_id} = this.props
 
         if (project_id) return (
             <Sidebar>

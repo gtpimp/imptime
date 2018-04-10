@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
-import ReactTooltip from 'react-tooltip'
 import {
     PAGE_KEY__SPRINT_DASHBOARD_PAGE
 } from '../../actions/ItemListKeyRegistry'
@@ -33,7 +32,7 @@ class SprintDashboardToolbarPanel extends Component {
     }
 
     render() {
-        const { sprint_id, has_view_ctc_billable_rates_permission } = this.props
+        const { has_view_ctc_billable_rates_permission } = this.props
         return (
             <div className="toolbar-panel">
                   <button className="button button--large button--primary" onClick={this.navigateToIssuesPage}>

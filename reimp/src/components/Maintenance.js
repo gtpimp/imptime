@@ -34,7 +34,6 @@ class Maintenance extends Component {
 }
 
 function mapStateToProps(state) {
-    const { } = state;
 
     const maintenance_mode_active = isMaintenanceModeActive(state)
     

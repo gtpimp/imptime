@@ -9,7 +9,7 @@ export const DUPLICATE_LOADING_ERROR_MESSAGE = 'DUPLICATE_LOADING_ERROR_MESSAGE'
 export const DUPLICATE_SAVING_ERROR_MESSAGE = 'DUPLICATE_SAVING_ERROR_MESSAGE'
 export const MAINTENANCE_MODE = 'MAINTENANCE_MODE'
 
-const throttles = throttles || {}
+const throttles = {}
 
 export function stringifyIds(ids) {
     const x = map(ids, function(id) { return "" + id })

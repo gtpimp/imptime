@@ -1,5 +1,5 @@
 import assign from 'lodash/assign'
-import { get, keys, keyBy, filter, union, forEach, difference, without } from 'lodash'
+import { get, keys, keyBy, filter, union, forEach, difference } from 'lodash'
 import { setErrorMessage } from '../actions/Error'
 import { stringifyIds } from '../actions/lib.js'
 
@@ -28,7 +28,6 @@ const initialState = {
 export default function sprint_user_rate(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let new_items_by_id = null
     let ids
     
     switch (action.type) {

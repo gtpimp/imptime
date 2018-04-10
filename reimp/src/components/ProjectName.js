@@ -38,7 +38,7 @@ class ProjectName extends Component {
     }
 
     render_inline_small() {
-	      const { project, loading_value } = this.props
+	      const { project } = this.props
 
 	      return (
 	          <div className="project_name--inline-small"

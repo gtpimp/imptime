@@ -3,16 +3,12 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { Field, reduxForm } from 'redux-form'
 import { create_account } from '../actions/Auth'
-import {
-    set_toolbars,
-} from '../actions/Page'
 
 const required = value => value ? undefined : 'Required'
  
 class AccountCreatePage extends Component {
 
     componentDidMount() {
-        const {dispatch} = this.props
         this.onCreateAccount = this.onCreateAccount.bind(this)
         this.renderField = this.renderField.bind(this)
     }
@@ -36,7 +32,7 @@ class AccountCreatePage extends Component {
     }
     
     render() {
-        const { handleSubmit, error, submitting } = this.props
+        const { handleSubmit, submitting } = this.props
         
         return (
             <div className="blank-page">

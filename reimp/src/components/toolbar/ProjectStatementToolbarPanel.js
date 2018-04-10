@@ -1,6 +1,5 @@
 import '../../sass/toolbar-panel.css'
 import React, {Component} from 'react'
-import ReactTooltip from 'react-tooltip'
 import ToolbarButton from './ToolbarButton'
 import { PAGE_KEY__PROJECTS_PAGE } from '../../actions/ItemListKeyRegistry'
 import { connect } from 'react-redux'
@@ -8,7 +7,6 @@ import { getProject } from '../../actions/Projects'
 import { get_selected_project_ids } from '../../actions/Page'
 import { invalidateProjectStatement } from '../../actions/ProjectStatement'
 import { invalidateTimeChart } from '../../actions/TimeChart'
-import { invalidateTimeSummary } from '../../actions/TimeSummary'
 
 class ProjectStatementToolbarPanel extends Component {
 

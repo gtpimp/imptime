@@ -3,7 +3,6 @@ import keys from 'lodash/keys'
 import union from 'lodash/union'
 import forEach from 'lodash/forEach'
 import difference from 'lodash/difference'
-import without from 'lodash/without'
 import { setErrorMessage } from '../actions/Error'
 import { stringifyIds } from '../actions/lib.js'
 
@@ -31,7 +30,6 @@ const initialState = {
 export default function project_user_permission(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
-    let new_items_by_id = null
     let ids
     
     switch (action.type) {

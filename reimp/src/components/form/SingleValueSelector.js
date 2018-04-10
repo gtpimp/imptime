@@ -3,8 +3,6 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
-import {ensureUsersLoaded} from '../../actions/Users'
-import SearchInput from '../SearchInput'
 import '../../sass/single-value-selector.css'
 
 export class SingleValueSelector extends Component {
@@ -36,7 +34,7 @@ export class SingleValueSelector extends Component {
         const { onChange } = this.props
         if (event.keyCode === 13) {
             const options = this.getFilteredOptions()
-            if ( options.length == 1 ) {
+            if ( options.length === 1 ) {
                 onChange(options[0].value)
             } else {
                 onChange(this.selection_filter_el.value)
@@ -75,7 +73,6 @@ export class SingleValueSelector extends Component {
 
     render_suggestions() {
         const {options, value} = this.props
-        const filter_term = (this.state || {}).filter_term || undefined
         const that = this
 
         const filtered_options = this.getFilteredOptions(options)

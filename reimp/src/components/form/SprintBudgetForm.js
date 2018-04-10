@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+//import Textarea from 'react-expanding-textarea'
 import { getSprint } from '../../actions/Sprints'
 import SprintName from '../../components/SprintName'
 import { has_permission } from '../../actions/Users'
@@ -18,7 +18,7 @@ class SprintBudgetForm extends Component {
     }
     
     renderField(field) {
-        const {input, data, ...rest} = field
+        const {input} = field
         return (
             <input
                 maxLength="10"

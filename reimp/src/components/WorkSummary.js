@@ -1,26 +1,20 @@
 import React, { Component } from 'react'
-import { keys, get, isEmpty, map, size } from 'lodash'
-import { DragSource, DropTarget } from 'react-dnd'
+import { keys, get, map } from 'lodash'
+//import { DragSource, DropTarget } from 'react-dnd'
 import { connect } from 'react-redux'
-import classNames from 'classnames'
-import { DndTypes } from '../actions/Dnd'
+//import classNames from 'classnames'
+//import { DndTypes } from '../actions/Dnd'
 import '../sass/project-summary.scss'
 import {
     getSummary,
     ensureSummariesLoaded
 } from '../actions/WorkSummary'
-import { ensureSprintsLoaded, getSprints } from '../actions/Sprints'
+import { ensureSprintsLoaded } from '../actions/Sprints'
 import { ensureUsersLoaded } from '../actions/Users'
-import { ensureIssuesLoaded, getIssues } from '../actions/Issues'
-import { ensureProjectsLoaded, getProjects } from '../actions/Projects'
+import { ensureIssuesLoaded } from '../actions/Issues'
+import { ensureProjectsLoaded } from '../actions/Projects'
 import ProjectName from './ProjectName'
-import SprintName from './SprintName'
-import OtherUser from './OtherUser'
-import UserRate from './UserRate'
-import ProgressBar from './ProgressBar'
-import Hours from './Hours'
 import Timestamp from './Timestamp'
-import TimeChart from './TimeChart'
 import IssueName from './IssueName'
 import IssueStatus from './IssueStatus'
 
@@ -208,7 +202,7 @@ class WorkSummary extends Component {
                     }
                     
                     <div className="work-summary__project-cards">
-                      { summary.length != 0 &&
+                      { summary.length !== 0 &&
                         map(keys(summary.projects), (project_id) => this.render_project_card(project_id))
                       }
                     </div>

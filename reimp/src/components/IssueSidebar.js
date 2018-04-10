@@ -10,14 +10,14 @@ import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
 import TagListFlat from './TagListFlat'
-import EditableIssueAttachment from './EditableIssueAttachment'
+//import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueParent from './EditableIssueParent'
 import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import EditableMoveIssueToSprint from './EditableMoveIssueToSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueType from './EditableIssueType'
-import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
+//import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
 import EditableIssueEstimate from './EditableIssueEstimate'
 import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
@@ -25,7 +25,7 @@ import IssueEstimatesSummary from './IssueEstimatesSummary'
 import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
-import moment from 'moment'
+//import moment from 'moment'
 import {
     ensureIssuesLoaded,
     getIssue,
@@ -36,7 +36,6 @@ import {
 import { doesMienHaveFeature } from '../actions/Mien'
 
 import { ensureUsersLoaded } from '../actions/Users'
-import {format_hours} from '../actions/lib'
 import {getProject} from '../actions/Projects'
 import {getSprint} from '../actions/Sprints'
 
@@ -60,11 +59,6 @@ class IssueSidebar extends Component {
         this.refresh(new_props)
     }
 
-    closeIssueSidebar() {
-        const { dispatch } = this.props
-
-    }
-
     toggleShowEmacsHints() {
         this.setState({emacs_hint_enabled:!this.state.emacs_hint_enabled})
     }
@@ -86,7 +80,7 @@ class IssueSidebar extends Component {
     }
 
     onDelete(event) {
-        const { issue, dispatch, onDelete } = this.props
+        const { issue, dispatch } = this.props
         event.stopPropagation()
         if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return
@@ -137,8 +131,8 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const {issue, comments, testables, attachments, visual_spec_documents,
-               sprint, show_review_section, show_emacs_section, show_estimate_section} = this.props
+        const {issue, comments, testables,
+               show_review_section, show_emacs_section, show_estimate_section} = this.props
 
         if (issue && issue.id) {
 
@@ -254,7 +248,7 @@ class IssueSidebar extends Component {
 
                         <PropertyStackComponent title="Testables">
                           { map(testables, function (testable, index) {
-                                return <EditableIssueTestable key={issue.id, testable.id} issue_id={issue.id} testable_id={testable.id}/>
+                                return <EditableIssueTestable key={issue.id} issue_id={issue.id} testable_id={testable.id}/>
                             })
                           }
                           <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
@@ -262,7 +256,7 @@ class IssueSidebar extends Component {
 
                         <PropertyStackComponent title="Comments">
                           { map(comments, function (comment, index) {
-                                return <EditableIssueComment key={issue.id, comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                                return <EditableIssueComment key={issue.id} issue_id={issue.id} comment_id={comment.id}/>
                             })
                           }
                           <EditableIssueComment issue_id={issue.id} comment_id={null}/>
