@@ -22,6 +22,7 @@ import SprintTimeSummary from '../components/SprintTimeSummary'
 import SprintEstimateSummary from '../components/SprintEstimateSummary'
 import SprintBreakdown from '../components/SprintBreakdown'
 import SprintTimeChartByUser from '../components/SprintTimeChartByUser'
+import MultipleIssueSummary from '../components/MultipleIssueSummary'
 import {
     ensureProjectStatementLoaded,
     getProjectStatement,
@@ -121,6 +122,14 @@ class SprintCostSummaryPage extends Component {
                   </div>
                   <div className="estimate-summary">
                     <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>
+                  </div>
+                  <div className="cost-summary__issue-breakdown">
+                    <h2 className="time-summary__header">
+                      Breakdown by tags and issues
+                    </h2>
+                    <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}}
+                                          project_id={project_id}
+                                          container_class_name="cost-summary__issue-breakdown-container" />
                   </div>
                   <div className="sprint_cost_summary__footer"/>
                 </div>

@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import classNames from 'classnames'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
-import { map, keys } from 'lodash'
+import { map, keys, get } from 'lodash'
 import {
     ensureMultipleIssueSummaryLoaded,
     getMultipleIssueSummary
@@ -10,8 +11,11 @@ import {
 import OtherUser from './OtherUser'
 import Hours from './Hours'
 import CurrencyValue from './CurrencyValue'
+import IssueName from './IssueName'
 import TagCategory from './TagCategory'
 import { ensureTagsLoaded } from '../actions/Tags'
+import { ensureIssuesLoaded } from '../actions/Issues'
+import { ensureUsersLoaded } from '../actions/Users'
 import { has_permission } from '../actions/Users'
 import { doesMienHaveFeature } from '../actions/Mien'
 import Tag from './Tag'
@@ -31,8 +35,90 @@ class MultipleIssueSummary extends Component {
         const {dispatch, filter, summary} = props
         dispatch(ensureMultipleIssueSummaryLoaded(filter))
         dispatch(ensureTagsLoaded(summary.all_tag_ids))
+        dispatch(ensureIssuesLoaded(summary.all_issue_ids))
+        dispatch(ensureUsersLoaded(summary.all_user_ids))
     }
 
+    createActualsForIssue(summary, issue_id) {
+        const { show_costs } = this.props
+        const user_columns = []
+
+        map(keys(get(summary, ["actuals_by_issue_and_user", issue_id], {})), function(user_id) {
+            user_columns.push(
+                <td key={"hours_"+user_id}>
+                  <Hours hours={get(summary, ["actuals_by_issue_and_user", issue_id, user_id, "hours"], 0)} />
+                </td>
+            )
+            if ( show_costs ) {
+                user_columns.push(
+                    <td key={"rate_"+user_id}>
+                      <CurrencyValue value={get(summary, ["actuals_by_issue_and_user", issue_id, user_id, "rate_with_commission"], 0)} />
+                    </td>
+                )
+                user_columns.push(
+                    <td key={"cost_"+user_id}>
+                      <CurrencyValue value={get(summary, ["actuals_by_issue_and_user", issue_id, user_id, "cost_with_commission"], 0)} />
+                    </td>
+                )
+            }
+        })
+        return user_columns
+    }
+
+    renderActualsByIssue(summary) {
+        const { show_costs } = this.props
+        const that = this
+
+        const user_header_columns_row1 = []
+        const user_header_columns_row2 = []
+        map(summary.all_user_ids, function(user_id) {
+            user_header_columns_row1.push(<th key={"header_user_" + user_id}><OtherUser user_id={user_id}/></th>)
+            user_header_columns_row2.push(<th key={"header_hours_" + user_id}>Hours</th>)
+            
+            if ( show_costs ) {
+                user_header_columns_row1.push(<th key={"rate_" + user_id}></th>)
+                user_header_columns_row1.push(<th key={"cost_" + user_id}></th>)
+                
+                user_header_columns_row2.push(<th key={"rate_" + user_id}>Rate</th>)
+                user_header_columns_row2.push(<th key={"cost_" + user_id}>Cost</th>)
+            }
+        })
+        
+        return (
+            <PropertyStackComponent>
+              <h2>Actuals by issue</h2>
+              <table className="table__column_table">
+                <thead>
+                  <tr>
+                    <th>Issue</th>
+                    { map(user_header_columns_row1, col => col)}
+                    <th>Total Issue Cost</th>
+                  </tr>
+                  <tr>
+                    <th></th>
+                    { map(user_header_columns_row2, col => col)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {map(keys(summary.actuals_by_issue_and_user), (issue_id) =>
+                      <tr key={issue_id}>
+                        <td>
+                          <IssueName issue_id={issue_id} />
+                        </td>
+                        { map(that.createActualsForIssue(summary, issue_id), col => col)}
+                        { show_costs && 
+                          <td>
+                            <CurrencyValue value={get(summary, ["actuals_by_issue", issue_id, "cost_with_commission"], 0)} />
+                          </td>
+                        }
+                      </tr>
+                   )}
+                </tbody>
+              </table>
+            </PropertyStackComponent>
+        )
+    }
+    
     renderActualsByUser(summary) {
         const { show_costs } = this.props
         summary.velocities_by_user = summary.velocities_by_user || {}
@@ -256,15 +342,16 @@ class MultipleIssueSummary extends Component {
     }
 
     render() {
-        const {summary} = this.props
+        const {summary, container_class_name} = this.props
         return (
-            <div className="multiple-issue-summary">
+            <div className={classNames("multiple-issue-summary", container_class_name)}>
               <PropertyStack>
                 <PropertyStackComponent>
                   <h1>Estimate summary</h1>
                 </PropertyStackComponent>
                 {this.renderActualsByUser(summary)}
                 {this.renderActualsByTagCategory(summary)}
+                {this.renderActualsByIssue(summary)}
                 {this.renderEstimatesByUser(summary)}
                 {this.renderEstimatesByTagCategory(summary)}
               </PropertyStack>
@@ -274,14 +361,15 @@ class MultipleIssueSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {filter, project_id} = props
+    const {filter, project_id, container_class_name} = props
     
     const summary = getMultipleIssueSummary(state, filter) || {}
     const show_costs = doesMienHaveFeature(state, 'costs') && has_permission(state, project_id, 'has_view_ctc_billable_rates')
     return {
         summary: summary,
         filter,
-        show_costs
+        show_costs,
+        container_class_name
     }
 }
 

@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.db.models import Count, Sum, FloatField
 from base_api import BaseViewSet
-from django.db.models import F
+from django.db.models import F, ExpressionWrapper
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
@@ -43,9 +43,12 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             res['id'] = summary_id
             res['all_user_ids'] = [x for x in qs.order_by("assigned_to_id").values_list("assigned_to_id", flat=True).distinct() if x]
             res['all_tag_ids'] = [x for x in Tag.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
+            res['all_issue_ids'] = qs.values_list('id', flat=True)
             res['estimates_by_user'] = self._get_estimates_by_user(qs)
             res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
             res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
+            res['actuals_by_issue'] = self._get_actuals_by_issue(qs)
+            res['actuals_by_issue_and_user'] = self._get_actuals_by_issue_and_user(qs)
             res['actuals_by_tag_category'] = self._get_actuals_by_tag_category(qs)
             res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
             
@@ -186,6 +189,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
     def _get_actuals_enriched_with_costs(self, entries):
         return entries.annotate(sum_hours=Sum('hours'),
+                                rate_with_commission=ExpressionWrapper(F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')), output_field=FloatField()),
                                 cost=Sum(F('hours')*F('user__rates__billable_amount')),
                                 cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
                                                          output_field=FloatField()))
@@ -231,7 +235,40 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         
         return actuals_by_tag_category
         
-    
+    def _get_actuals_by_issue_and_user(self, issues_qs):
+        entries = Entry.objects.filter(issue__in=issues_qs)
+        entries = entries.order_by("issue_id", "user_id")\
+                         .filter(user__rates__project=F('issue__project'))\
+                         .values("issue_id", "user_id")\
+                         .distinct()
+        hours = self._get_actuals_enriched_with_costs(entries)
+        actuals_by_issue_and_user = {}
+        for x in hours:
+            values = actuals_by_issue_and_user.setdefault(x['issue_id'], {})\
+                                              .setdefault(x['user_id'], {})
+            values['hours'] = x['sum_hours']
+            if self.has_view_ctc_billable_rates:
+                values['cost'] = x['cost']
+                values['cost_with_commission'] = x['cost_with_commission']
+                values['rate_with_commission'] = x['rate_with_commission']
+        return actuals_by_issue_and_user
+
+    def _get_actuals_by_issue(self, issues_qs):
+        entries = Entry.objects.filter(issue__in=issues_qs)
+        entries = entries.order_by("issue_id")\
+                         .filter(user__rates__project=F('issue__project'))\
+                         .values("issue_id")\
+                         .distinct()
+        hours = self._get_actuals_enriched_with_costs(entries)
+        actuals_by_issue = {}
+        for x in hours:
+            values = actuals_by_issue.setdefault(x['issue_id'], {})
+            values['hours'] = x['sum_hours']
+            if self.has_view_ctc_billable_rates:
+                values['cost'] = x['cost']
+                values['cost_with_commission'] = x['cost_with_commission']
+        return actuals_by_issue
+
     def _get_velocities_by_user(self, issues_qs, user_ids):
         velocities = {}
         cached_calcs_by_time_tracking_mode = {}

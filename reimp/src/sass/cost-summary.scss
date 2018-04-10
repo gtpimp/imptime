@@ -98,3 +98,8 @@
     display: flex;
     flex-direction: row;
 }
+
+.cost-summary__issue-breakdown {
+    max-width: 50%;
+    overflow: auto;
+}
