@@ -48,7 +48,7 @@ class SprintName extends Component {
     }
 
     render() {
-        const { sprint_id, sprint, render_mode, loading_value, onClick } = this.props
+        const { sprint_id, sprint, render_mode, loading_value } = this.props
 
         if ( ! sprint_id ) {
             return (

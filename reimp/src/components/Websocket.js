@@ -50,7 +50,6 @@ class Websocket extends Component {
 
     onConnectFromSocket() {
         const { dispatch } = this.props
-        console.log("Websocket connected")
         dispatch(websocketConnected())
     }
 
@@ -66,12 +65,10 @@ class Websocket extends Component {
         let websocket = this.state.ws;
 
         websocket.onopen = () => {
-            this.logging('Websocket connected');
             this.onConnectFromSocket();
         };
 
         websocket.onmessage = (evt) => {
-            console.log("websocket message" + evt.data)
             this.onMessageFromSocket(evt.data);
         };
 

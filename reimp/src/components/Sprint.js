@@ -18,7 +18,7 @@ class Sprint extends Component {
     }
     
     onIssuesClick(event) {
-        const { sprint, history } = this.props
+        const { history } = this.props
         event.stopPropagation()
         history.push();
     }

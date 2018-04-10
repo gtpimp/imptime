@@ -166,9 +166,7 @@ class Project extends Component {
                          <div className="div-table__cell issue__cell__secondary"
                               style={getCellStyle(header_list.delete)}>
                            <div className="reveal-on-hover--block issue__cell--issue-delete">
-                             <DeleteProject
-                                 onDelete= {this.onDeleteProject}
-                             />
+                             <DeleteProject onDelete={this.onDeleteProject} />
                            </div>
                          </div>
                         }

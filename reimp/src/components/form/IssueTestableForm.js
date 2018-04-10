@@ -66,9 +66,7 @@ class IssueTestableForm extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSubmitted, issue_id, testable, onCancel } = props
-    /* const loading_item_id = issue.loading_item_ids || {}*/
-    /* const initial_value = testable.testable;*/
+    const { onSubmitted, testable, onCancel } = props
 
     return {
         testable: testable,
@@ -76,8 +74,6 @@ function mapStateToProps(state, props) {
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel
-        /* initial_value: initial_value,
-         * loading_item_id: loading_item_id*/
     }
 }
 
