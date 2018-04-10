@@ -158,6 +158,7 @@ class Project extends Component {
                               onClick={this.onDeleteProject} />
                        </div>
                      }
+                     </div>
                    }
                       
                         
