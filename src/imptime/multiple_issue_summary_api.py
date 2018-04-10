@@ -14,8 +14,8 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
-from clock_entry_serializer import ClockEntrySerializer, ClockEntryUpdateSerializer
 from timepiece.models import Business as Project
+from imptime.multiple_issue_serializer import MultipleIssueFilterSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -301,3 +301,34 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         if rate_guess is None:
             return 'developer'
         return rate_guess['project__rate__time_tracking_mode']
+
+    def _get_download_filter(self, request):
+        raw_filter = json.loads(request.POST['post_params'])
+        s = MultipleIssueFilterSerializer(data=raw_filter)
+        s.is_valid(raise_exception=True)
+        return s.validated_data
+    
+    # def _prepare_csv(self, request, pk, filename_prefix):
+        
+    #     data = self._get_data(user=request.user,
+    #                           project_id=project_id,
+    #                           sprint_ids=filter.setdefault('sprint_ids', None))
+
+    #     filename_prefix = "{prefix}_for_{sprint_ids}".format(
+    #         prefix=filename_prefix,
+    #         project_name=data['project_name'],
+    #         date_from=filter['date_from_inclusive'].strftime("%d%b%Y") if filter['date_from_inclusive'] else "all",
+    #         date_to=filter['date_to_inclusive'].strftime("%d%b%Y") if filter['date_to_inclusive'] else "all")
+    #     response, writer = file_helper.prepare_csv(request, filename_prefix)
+        
+    #     writer.writerow(["From",filter['date_from_inclusive']])
+    #     writer.writerow(["To",filter['date_to_inclusive']])
+    #     return response, writer, data
+
+    
+    # @detail_route(methods=['GET'])
+    # def download_issue_actuals(self, request, params):
+    #     filter = self._get_download_filter(request)
+        
+    #     response, writer, data = self._prepare_csv(request, pk, "issue_actuals")
+        

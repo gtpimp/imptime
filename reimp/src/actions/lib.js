@@ -136,7 +136,7 @@ export function convert_hours_to_parts(hours) {
     return {hours: hours, minutes:minutes, seconds:seconds}
 }
 
-export function download(state, url, params) {
+export function download(state, url, params, post_params) {
     let form = document.createElement('form');
 
     let absolute_url = url
@@ -155,8 +155,14 @@ export function download(state, url, params) {
     let input = document.createElement('input');
     input.name = 'http_authorization'
     input.value = logged_in_user().token
-    
     form.appendChild(input)
+
+    if ( post_params ) {
+        let post_params_input = document.createElement('input')
+        post_params_input.name = 'post_params'
+        post_params_input.value = post_params
+        form.appendChild(post_params_input)
+    }
     
     document.body.appendChild(form)
     form.submit()

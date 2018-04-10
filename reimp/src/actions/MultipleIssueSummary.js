@@ -1,4 +1,4 @@
-import { hash_flat_object } from './lib.js'
+import { hash_flat_object, download } from './lib.js'
 import { ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY } from '../actions/ItemListKeyRegistry'
 
 import {
@@ -46,4 +46,12 @@ export function isMultipleIssueSummaryInvalidated(state, filter) {
 export function isMultipleIssueSummaryLoading(state, filter) {
     const summary_key = getSummaryKey(filter)
     return getLoadingItemIds(state, ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key])
+}
+
+export function downloadActualsByIssue(filter, project_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/multiple_issue_summary/'+project_id+'/download_issue_actuals/'
+        return download(state, url, null, filter)
+    }    
 }

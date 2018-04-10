@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.core.files.storage import default_storage as storage
 from django.http import HttpResponse
+from datetime import datetime
 import requests
 import os
+import csv
 
 def download_media(request, url, content_type):
     if 's3' in settings.DEFAULT_FILE_STORAGE:
@@ -16,3 +18,9 @@ def download_media(request, url, content_type):
             response = HttpResponse(f.read())
             return response
 
+def prepare_csv(request, filename_prefix):
+    response = HttpResponse(content_type='text/csv')
+    filename = filename_prefix + "_at_{now}.csv".format(now=datetime.now().strftime("%d%b%Y_%H%M"))
+    response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+    writer = csv.writer(response)
+    return response, writer

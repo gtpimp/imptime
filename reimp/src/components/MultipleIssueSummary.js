@@ -6,7 +6,8 @@ import PropertyStackComponent from './PropertyStackComponent'
 import { map, keys, get } from 'lodash'
 import {
     ensureMultipleIssueSummaryLoaded,
-    getMultipleIssueSummary
+    getMultipleIssueSummary,
+    downloadActualsByIssue
 } from '../actions/MultipleIssueSummary'
 import OtherUser from './OtherUser'
 import Hours from './Hours'
@@ -22,6 +23,11 @@ import Tag from './Tag'
 
 class MultipleIssueSummary extends Component {
 
+    constructor(props) {
+        super(props)
+        this.download_actuals_by_issue = this.download_actuals_by_issue.bind(this)
+    }
+    
     componentDidMount() {
         this.refresh()
     }
@@ -37,6 +43,12 @@ class MultipleIssueSummary extends Component {
         dispatch(ensureTagsLoaded(summary.all_tag_ids))
         dispatch(ensureIssuesLoaded(summary.all_issue_ids))
         dispatch(ensureUsersLoaded(summary.all_user_ids))
+    }
+
+    download_actuals_by_issue(event) {
+        const { filter, project_id, dispatch  } = this.props
+        event.preventDefault()
+        dispatch(downloadActualsByIssue(filter, project_id))
     }
 
     createActualsForIssue(summary, issue_id) {
@@ -86,7 +98,11 @@ class MultipleIssueSummary extends Component {
         
         return (
             <PropertyStackComponent>
-              <h2>Actuals by issue</h2>
+              <h2>
+                Actuals by issue
+                <div className="icon--download_as_csv cost-summary__issue-breakdown__download"
+                     onClick={this.download_actuals_by_issue} />
+              </h2>
               <table className="table__column_table">
                 <thead>
                   <tr>
