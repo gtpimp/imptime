@@ -45,7 +45,6 @@ class IssueSidebar extends Component {
         super(props)
         this.toggleShowEmacsHints = this.toggleShowEmacsHints.bind(this)
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
-        this.closeIssueSidebar = this.closeIssueSidebar.bind(this)
         this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
         this.onDelete = this.onDelete.bind(this)
         this.state = {emacs_hint_enabled: false}
@@ -148,8 +147,6 @@ class IssueSidebar extends Component {
                               #{issue.number}
                             </div>
                             <EditableIssueTitle issue_id={issue.id}/>
-                          </div>
-                          <div className="issue_sidebar__close" onClick={this.closeIssueSidebar}>
                           </div>
 
                         </PropertyStackComponent>
