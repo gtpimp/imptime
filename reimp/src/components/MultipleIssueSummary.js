@@ -55,7 +55,7 @@ class MultipleIssueSummary extends Component {
         const { show_costs } = this.props
         const user_columns = []
 
-        map(keys(get(summary, ["actuals_by_issue_and_user", issue_id], {})), function(user_id) {
+        map(summary.all_user_ids, function(user_id) {
             user_columns.push(
                 <td key={"hours_"+user_id}>
                   <Hours hours={get(summary, ["actuals_by_issue_and_user", issue_id, user_id, "hours"], 0)} />
@@ -103,7 +103,7 @@ class MultipleIssueSummary extends Component {
                 <div className="icon--download_as_csv cost-summary__issue-breakdown__download"
                      onClick={this.download_actuals_by_issue} />
               </h2>
-              <table className="table__column_table">
+              <table className="table__column_table table__hover_row_table">
                 <thead>
                   <tr>
                     <th>Issue</th>
