@@ -51,7 +51,7 @@ export function isMultipleIssueSummaryLoading(state, filter) {
 export function downloadActualsByIssue(filter, project_id) {
     return (dispatch, getState) => {
         const state = getState()
-        const url = 'imp/multiple_issue_summary/'+project_id+'/download_issue_actuals/'
+        const url = 'imp/multiple_issue_summary/'+project_id+'/download_summary/'
         return download(state, url, null, filter)
     }    
 }

@@ -135,9 +135,6 @@ class SprintCostSummaryPage extends Component {
                   </div>
                   <div className="cost-summary__section">
                     <div className="cost-summary__issue-breakdown">
-                      <h2 className="time-summary__header">
-                        Breakdown by tags and issues
-                      </h2>
                       <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}}
                                             project_id={project_id}
                                             container_class_name="cost-summary__issue-breakdown-container" />
