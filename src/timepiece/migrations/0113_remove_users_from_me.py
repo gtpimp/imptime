@@ -13,10 +13,13 @@ def forwards(apps, schema_editor):
     regex = "My personal project .*\(and I am (.*)\)"
     
     for b in Business.objects.filter(name='me'):
-        primary_user_email = re.findall(regex, b.description)[0]
-        primary_user = User.objects.get(email=primary_user_email)
-        other_users = BusinessPermissions.objects.filter(business=b).exclude(user=primary_user)
-        other_users.delete()
+        try:
+            primary_user_email = re.findall(regex, b.description)[0]
+            primary_user = User.objects.get(email=primary_user_email)
+            other_users = BusinessPermissions.objects.filter(business=b).exclude(user=primary_user)
+            other_users.delete()
+        except IndexError:
+            pass
 
 
 class Migration(migrations.Migration):
