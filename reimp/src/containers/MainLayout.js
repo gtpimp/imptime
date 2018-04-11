@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom'
 import Header from '../components/Header'
 import Websocket from '../components/Websocket'
@@ -16,8 +17,15 @@ import Error from '../components/Error'
 import Maintenance from '../components/Maintenance'
 import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
+import { ShortcutManager } from 'react-shortcuts'
+import keymap from '../actions/Keymap'
+const shortcut_manager = new ShortcutManager(keymap)
 
 class MainLayout extends Component {
+    
+    getChildContext() {
+        return { shortcuts: shortcut_manager }
+    }
     
     componentDidMount() {
         const { dispatch } = this.props
@@ -122,3 +130,7 @@ function mapStateToProps(state) {
 }
 
 export default withRouter(connect(mapStateToProps)(DragDropContext(HTML5Backend)(MainLayout)))
+
+MainLayout.childContextTypes = {
+    shortcuts: PropTypes.object.isRequired
+}

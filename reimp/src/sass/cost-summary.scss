@@ -98,3 +98,20 @@
     display: flex;
     flex-direction: row;
 }
+
+.cost-summary__issue-breakdown {
+    max-width: 50%;
+    overflow: auto;
+}
+
+.cost-summary__issue-breakdown__download {
+    float: right;
+    cursor: pointer;
+}
+
+.cost-summary__section {
+    margin-top: 100px;
+    margin-bottom: 100px;
+    clear: both;
+    background-color: $color-26;
+}

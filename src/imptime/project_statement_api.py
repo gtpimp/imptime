@@ -4,6 +4,7 @@ from rest_framework.decorators import detail_route
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.http import HttpResponse
+from lib import file_helper
 from base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
 import json
@@ -304,15 +305,13 @@ class ProjectStatementViewSet(BaseViewSet):
                               date_to_inclusive=filter['date_to_inclusive'],
                               sprint_ids=filter.setdefault('sprint_ids', None))
 
-        response = HttpResponse(content_type='text/csv')
-        filename = "{prefix}_for_{project_name}_from_{date_from}_to_{date_to}_at_{now}.csv".format(
+        filename_prefix = "{prefix}_for_{project_name}_from_{date_from}_to_{date_to}".format(
             prefix=filename_prefix,
             project_name=data['project_name'],
             date_from=filter['date_from_inclusive'].strftime("%d%b%Y") if filter['date_from_inclusive'] else "all",
-            date_to=filter['date_to_inclusive'].strftime("%d%b%Y") if filter['date_to_inclusive'] else "all",
-            now=datetime.now().strftime("%d%b%Y_%H%M"))
-        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-        writer = csv.writer(response)
+            date_to=filter['date_to_inclusive'].strftime("%d%b%Y") if filter['date_to_inclusive'] else "all")
+        response, writer = file_helper.prepare_csv(request, filename_prefix)
+        
         writer.writerow(["From",filter['date_from_inclusive']])
         writer.writerow(["To",filter['date_to_inclusive']])
         return response, writer, data

@@ -130,23 +130,46 @@ class Project extends Component {
                       }
 
 
-                       {includes(visible_header_keys, "sort_date") &&
-                        <div className="div-table__cell project__cell__secondary"
-                             style={getCellStyle(header_list.sort_date)}>
-                          <div className="project-cell__sort-date">
-                            <Timestamp value={project.recent_activity.sort_date} format="from_now"/>
-                          </div>
-                        </div>
-                       }
 
-                        
+                {includes(visible_header_keys, "sort_date") &&
+                 <div className="div-table__cell project__cell__secondary"
+                      style={getCellStyle(header_list.sort_date)}>
+                   <div className="project-cell__sort-date">
+                     <Timestamp value={project.recent_activity.sort_date} format="from_now"/>
+                   </div>
+                 </div>
+                }
+
+                 
+                  {includes(visible_header_keys, "delete") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.delete)}>
+                     <div className="reveal-on-hover--block issue__cell--issue-delete">
+                       <DeleteProject
+                           onDelete={this.onDeleteProject}
+                       />
+                     </div>
+                   </div>
+                  }
+
+                   { includes(visible_header_keys, "small_delete") &&
+                     <div className="div-table__cell project__cell__secondary"
+                     style={getCellStyle(header_list.small_delete)}>
+                     { can_show_project_delete &&
+                       <div className={"reveal-on-hover--block"}>
+                         <div className="project__small-delete-image"
+                              onClick={this.onDeleteProject} />
+                       </div>
+                     }
+                     </div>
+                   }
+                      
+              
                         {includes(visible_header_keys, "delete") &&
                          <div className="div-table__cell issue__cell__secondary"
                               style={getCellStyle(header_list.delete)}>
                            <div className="reveal-on-hover--block issue__cell--issue-delete">
-                             <DeleteProject
-                                 onDelete= {this.onDeleteProject}
-                             />
+                             <DeleteProject onDelete={this.onDeleteProject} />
                            </div>
                          </div>
                         }

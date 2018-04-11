@@ -22,6 +22,7 @@ import SprintTimeSummary from '../components/SprintTimeSummary'
 import SprintEstimateSummary from '../components/SprintEstimateSummary'
 import SprintBreakdown from '../components/SprintBreakdown'
 import SprintTimeChartByUser from '../components/SprintTimeChartByUser'
+import MultipleIssueSummary from '../components/MultipleIssueSummary'
 import {
     ensureProjectStatementLoaded,
     getProjectStatement,
@@ -94,33 +95,53 @@ class SprintCostSummaryPage extends Component {
                   <h2 className="header">
                     Cost Summary for {sprint.name}
                   </h2>
-                  <div className="cost-summary">
-                    <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>
+                  <div className="cost-summary__section">
+                    <div className="cost-summary">
+                      <SprintCostSummary sprint_id={sprint_id} project_id={project_id}/>
+                    </div>
                   </div>
-                  <div className="sprint-breakdown-summary">
-                    { project_statement &&
-                      (
-                          <div>
-                            <h2 className="project__statement__times_grid__header">
-                              Sprint breakdown by user
-                              <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
-                            </h2>
-                            <SprintBreakdown project_statement={project_statement} />
-                          </div>
-                      )
-                    }
+                  <div className="cost-summary__section">
+                    <div className="sprint-breakdown-summary">
+                      { project_statement &&
+                        (
+                            <div>
+                              <h2 className="project__statement__times_grid__header">
+                                Sprint breakdown by user
+                                <div className="project__statement__grid_icon icon--download_as_csv" onClick={this.download_sprint_breakdown_by_user} />
+                              </h2>
+                              <SprintBreakdown project_statement={project_statement} />
+                            </div>
+                        )
+                      }
+                    </div>
                   </div>
-                  <div className="time-summary">
-                    <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
+                  <div className="cost-summary__section">
+                    <div className="time-summary">
+                      <SprintTimeSummary sprint_id={sprint_id} project_id={project_id}/>
+                    </div>
                   </div>
-                  <div className="time-summary__time-chart">
-                    <h2 className="time-summary__header">
-                      Sprint graphs
-                    </h2>
-                    <SprintTimeChartByUser project_id={project_id} filter={filter} />
+                  <div className="cost-summary__section">
+                    <div className="time-summary__time-chart">
+                      <h2 className="time-summary__header">
+                        Sprint graphs
+                      </h2>
+                      <SprintTimeChartByUser project_id={project_id} filter={filter} />
+                    </div>
                   </div>
-                  <div className="estimate-summary">
-                    <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>
+                  <div className="cost-summary__section">
+                    <div className="estimate-summary">
+                      <SprintEstimateSummary sprint_id={sprint_id} project_id={project_id}/>
+                    </div>
+                  </div>
+                  <div className="cost-summary__section">
+                    <div className="cost-summary__issue-breakdown">
+                      <h2 className="time-summary__header">
+                        Breakdown by tags and issues
+                      </h2>
+                      <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}}
+                                            project_id={project_id}
+                                            container_class_name="cost-summary__issue-breakdown-container" />
+                    </div>
                   </div>
                   <div className="sprint_cost_summary__footer"/>
                 </div>

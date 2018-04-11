@@ -50,7 +50,10 @@ class Websocket extends Component {
 
     onConnectFromSocket() {
         const { dispatch } = this.props
-        console.log("Websocket connected")
+        if ( this.state.attempts > 1 ) {
+            console.log("Websocket connected")
+        }
+        this.setState({attempts: 1});
         dispatch(websocketConnected())
     }
 
@@ -66,16 +69,15 @@ class Websocket extends Component {
         let websocket = this.state.ws;
 
         websocket.onopen = () => {
-            this.logging('Websocket connected');
             this.onConnectFromSocket();
         };
 
         websocket.onmessage = (evt) => {
-            console.log("websocket message" + evt.data)
             this.onMessageFromSocket(evt.data);
         };
 
         websocket.onclose = () => {
+            const that = this
             this.logging('Websocket disconnected');
             this.onDisconnectFromSocket()
 
@@ -83,7 +85,7 @@ class Websocket extends Component {
                 let time = this.generateInterval(this.state.attempts);
                 this.setState({ws: null})
                 setTimeout(() => {
-                    this.setState({attempts: this.state.attempts++});
+                    this.setState({attempts: that.state.attempts+1});
                     this.setupWebsocket();
                 }, time);
             }

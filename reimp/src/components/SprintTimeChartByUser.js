@@ -60,6 +60,7 @@ class SprintTimeChartByUser extends Component {
                         )
                     })
               }
+              <div className="time_chart__end_charts"/>
             </div>
         )
     }
