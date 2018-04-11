@@ -64,7 +64,7 @@ class TestableViewSet(BaseViewSet):
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
             old_testable_value = testable.steps
             testable.steps = testable_value
-            testable.enriched_steps = MarkdownEnrichment(request.User)\
+            testable.enriched_steps = MarkdownEnrichment(request.user)\
                                                 .enrich(testable.steps,
                                                         project_id=issue.project.business_id) #sic
 
