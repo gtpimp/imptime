@@ -23,7 +23,7 @@ class RenderedWiki extends Component {
 
     render() {
         const { wiki } = this.props
-        const content = (wiki.enriched_content || "").trim() || wiki.content.trim()
+        const content = (wiki.enriched_content || "").trim() || (wiki.content || "").trim()
         return (
             <div className="text-component--readonly text-component--description">
               <RenderedMarkdown content={content} />
