@@ -1,5 +1,6 @@
 import logging
 from django.utils import timezone
+from lib import file_helper
 from impasync.refresh_notifier import RefreshNotifier
 from rest_framework.decorators import detail_route, list_route
 from datetime import datetime, timedelta, time
@@ -30,30 +31,10 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             params = request.GET.get('params', '{}')
             params = json.loads(params)
             pagination = params.get('pagination', {})
-            filter_args = {}
-            summary_id = params.get('filter', {})['ids'][0]
             issue_filter = params['additional_params']['filter']
-
-            qs = self.allowed_issues()
-            qs = self.apply_filter(qs, filter_args, issue_filter)
-
-            self._set_permissions(request, qs)
-            
-            res = {}
-            res['id'] = summary_id
-            res['all_user_ids'] = [x for x in qs.order_by("assigned_to_id").values_list("assigned_to_id", flat=True).distinct() if x]
-            res['all_tag_ids'] = [x for x in Tag.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
-            res['all_issue_ids'] = qs.values_list('id', flat=True)
-            res['estimates_by_user'] = self._get_estimates_by_user(qs)
-            res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
-            res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
-            res['actuals_by_issue'] = self._get_actuals_by_issue(qs)
-            res['actuals_by_issue_and_user'] = self._get_actuals_by_issue_and_user(qs)
-            res['actuals_by_tag_category'] = self._get_actuals_by_tag_category(qs)
-            res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
-            
+            summary_id = params.get('filter', {})['ids'][0]
+            res = self._get_data(request, issue_filter, summary_id)
             context['items'] = [ res ]
-            
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
@@ -61,6 +42,26 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
 
+    def _get_data(self, request, filter, summary_id=None):
+        qs = self.allowed_issues()
+        qs = self.apply_filter(qs, {}, filter)
+
+        self._set_permissions(request, qs)
+
+        res = {}
+        res['id'] = summary_id or 1
+        res['all_user_ids'] = [x for x in qs.order_by("assigned_to_id").values_list("assigned_to_id", flat=True).distinct() if x]
+        res['all_tag_ids'] = [x for x in Tag.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
+        res['all_issue_ids'] = qs.values_list('id', flat=True)
+        res['estimates_by_user'] = self._get_estimates_by_user(qs)
+        res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
+        res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
+        res['actuals_by_issue'] = self._get_actuals_by_issue(qs)
+        res['actuals_by_issue_and_user'] = self._get_actuals_by_issue_and_user(qs)
+        res['actuals_by_tag_category'] = self._get_actuals_by_tag_category(qs)
+        res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
+        return res
+    
     def _set_permissions(self, request, issues_qs):
         self.has_view_ctc_billable_rates = True
         self.has_see_other_user_points = True
@@ -308,27 +309,12 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         s.is_valid(raise_exception=True)
         return s.validated_data
     
-    # def _prepare_csv(self, request, pk, filename_prefix):
-        
-    #     data = self._get_data(user=request.user,
-    #                           project_id=project_id,
-    #                           sprint_ids=filter.setdefault('sprint_ids', None))
+    @detail_route(methods=['POST'])
+    def download_issue_actuals(self, request, pk):
+        filter = self._get_download_filter(request)
+        data = self._get_data(request, filter)
+        response, writer = file_helper.prepare_csv(request, "multiple_issue_summary")
 
-    #     filename_prefix = "{prefix}_for_{sprint_ids}".format(
-    #         prefix=filename_prefix,
-    #         project_name=data['project_name'],
-    #         date_from=filter['date_from_inclusive'].strftime("%d%b%Y") if filter['date_from_inclusive'] else "all",
-    #         date_to=filter['date_to_inclusive'].strftime("%d%b%Y") if filter['date_to_inclusive'] else "all")
-    #     response, writer = file_helper.prepare_csv(request, filename_prefix)
+        writer.writerow(["hi there"])
         
-    #     writer.writerow(["From",filter['date_from_inclusive']])
-    #     writer.writerow(["To",filter['date_to_inclusive']])
-    #     return response, writer, data
-
-    
-    # @detail_route(methods=['GET'])
-    # def download_issue_actuals(self, request, params):
-    #     filter = self._get_download_filter(request)
-        
-    #     response, writer, data = self._prepare_csv(request, pk, "issue_actuals")
-        
+        return response
