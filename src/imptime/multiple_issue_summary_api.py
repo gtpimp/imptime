@@ -51,7 +51,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
         res = {}
         res['id'] = summary_id or 1
-        res['all_user_ids'] = [x for x in qs.order_by("assigned_to_id").values_list("assigned_to_id", flat=True).distinct() if x]
+        res['all_user_ids'] = [x for x in Entry.objects.filter(issue__in=qs).values_list("user_id", flat=True).distinct() if x]
         res['all_tag_ids'] = [x for x in Tag.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
         res['all_issue_ids'] = qs.values_list('id', flat=True)
         res['estimates_by_user'] = self._get_estimates_by_user(qs)
