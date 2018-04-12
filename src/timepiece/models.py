@@ -2651,6 +2651,24 @@ class EntryQuerySet(EntriesQuerySet):
                    .order_by('started_on')\
                    .annotate(daily_hours=Sum('hours'))
 
+    def order_by_project_id(self, project_id, descending=False, supplementary_orders=None):
+        if project_id:
+            direction = ("-" if descending else "") + "order"
+            issue_ids_in_order = ProjectIssueOrder.objects.filter(issue__project_id=project_id)\
+                                                          .order_by(direction)\
+                                                          .values_list("issue_id", flat=True)
+            if issue_ids_in_order.count() == 0:
+                return self
+            preserved = Case(*[When(issue_id=pk, then=pos) for pos, pk in enumerate(issue_ids_in_order)])
+
+            orders = [preserved]
+            if supplementary_orders:
+                orders.extend(supplementary_orders)
+            
+            return self.order_by(*orders)
+        else:
+            return self
+    
     # def timespan(self, from_date, to_date=None, span=None):
     #     """
     #     Takes a beginning date a filters entries. An optional to_date can be

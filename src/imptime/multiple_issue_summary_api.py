@@ -1,6 +1,7 @@
 import logging
 from django.utils import timezone
 from lib import file_helper
+from collections import OrderedDict
 from impasync.refresh_notifier import RefreshNotifier
 from rest_framework.decorators import detail_route, list_route
 from datetime import datetime, timedelta, time
@@ -243,12 +244,20 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         
     def _get_actuals_by_issue_and_user(self, issues_qs):
         entries = Entry.objects.filter(issue__in=issues_qs)
-        entries = entries.order_by("issue_id", "user_id")\
-                         .filter(user__rates__project=F('issue__project'))\
+        entries = entries.filter(user__rates__project=F('issue__project'))\
                          .values("issue_id", "user_id")\
                          .distinct()
+
+        sample_issue = issues_qs.first()
+        if sample_issue:
+            sprint_id = sample_issue.project_id #sick
+            entries = entries.order_by_project_id(sprint_id, supplementary_orders=["user_id"])
+        else:
+            entries = entries.order_by("issue_id", "user_id")
+        
+
         hours = self._get_actuals_enriched_with_costs(entries, include_rates=True)
-        actuals_by_issue_and_user = {}
+        actuals_by_issue_and_user = OrderedDict()
         for x in hours:
             values = actuals_by_issue_and_user.setdefault(x['issue_id'], {})\
                                               .setdefault(x['user_id'], {})
