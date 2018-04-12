@@ -55,7 +55,7 @@ class MultipleIssueSummary extends Component {
         const { show_costs } = this.props
         const user_columns = []
 
-        map(keys(get(summary, ["actuals_by_issue_and_user", issue_id], {})), function(user_id) {
+        map(summary.all_user_ids, function(user_id) {
             user_columns.push(
                 <td key={"hours_"+user_id}>
                   <Hours hours={get(summary, ["actuals_by_issue_and_user", issue_id, user_id, "hours"], 0)} />
@@ -100,10 +100,8 @@ class MultipleIssueSummary extends Component {
             <PropertyStackComponent>
               <h2>
                 Actuals by issue
-                <div className="icon--download_as_csv cost-summary__issue-breakdown__download"
-                     onClick={this.download_actuals_by_issue} />
               </h2>
-              <table className="table__column_table">
+              <table className="table__column_table table__hover_row_table">
                 <thead>
                   <tr>
                     <th>Issue</th>
@@ -303,6 +301,7 @@ class MultipleIssueSummary extends Component {
         const { show_costs } = this.props
         return (
             <div>
+              <h2>Actuals by tag category</h2>
               { map(keys(summary.actuals_by_tag_category), function(tag_category_id) {
                     const actuals_by_user = summary.actuals_by_tag_category[tag_category_id]
                     return (
@@ -315,9 +314,9 @@ class MultipleIssueSummary extends Component {
                                 const actuals_by_user_by_tag = actuals_by_user[user_id]
                                 return (
                                     <PropertyStackComponent key={user_id}>
-                                      <h2>
+                                      <h3>
                                         <OtherUser user_id={user_id} />
-                                      </h2>
+                                      </h3>
                                       <table className="table__column_table">
                                         <thead>
                                           <tr>
@@ -363,7 +362,10 @@ class MultipleIssueSummary extends Component {
             <div className={classNames("multiple-issue-summary", container_class_name)}>
               <PropertyStack>
                 <PropertyStackComponent>
-                  <h1>Estimate summary</h1>
+                  <h1>Breakdown by user, tags and issues
+                    <div className="icon--download_as_csv cost-summary__issue-breakdown__download"
+                         onClick={this.download_actuals_by_issue} />
+                  </h1>
                 </PropertyStackComponent>
                 {this.renderActualsByUser(summary)}
                 {this.renderActualsByTagCategory(summary)}

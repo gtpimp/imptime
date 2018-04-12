@@ -160,7 +160,7 @@ export function download(state, url, params, post_params) {
     if ( post_params ) {
         let post_params_input = document.createElement('input')
         post_params_input.name = 'post_params'
-        post_params_input.value = post_params
+        post_params_input.value = JSON.stringify(post_params)
         form.appendChild(post_params_input)
     }
     

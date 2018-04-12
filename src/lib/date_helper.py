@@ -41,3 +41,5 @@ def format_iso_string(iso_string):
     d = convert_iso_string_to_local_datetime(iso_string)
     return d.strftime("%d %B %Y")
 
+def human_readable_hours(decimal_hours):
+    return "%02d:%02d" % divmod(decimal_hours*60, 60)

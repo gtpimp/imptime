@@ -112,23 +112,25 @@ class ProjectUsersPage extends Component {
 
     render() {
 
-        const {is_inviting_user, invited_user_ids, allowed_user_ids, project} = this.props
+        const {is_inviting_user, invited_user_ids, allowed_user_ids, project, can_invite_user} = this.props
 
         return (
             <div>
-                { is_inviting_user && this.renderInviteUser() }
+              { is_inviting_user && this.renderInviteUser() }
 
-                <h2>Team</h2>
+              <h2>Team</h2>
+              { can_invite_user && 
                 <div className="button button-primary button__default-width" onClick={this.onStartInviteUser}>
                   <i className="material-icons md-18">add_circle_outline</i>
                   Add user
                 </div>
-                <UserList project_id={project.id}
-                          invited_user_ids={invited_user_ids}
-                          user_ids={allowed_user_ids}
-                          onSelectUsers={this.onSelectUsers}
-                          user_actions={this.getActionRenderFunc()}
-                />
+              }
+              <UserList project_id={project.id}
+                        invited_user_ids={invited_user_ids}
+                        user_ids={allowed_user_ids}
+                        onSelectUsers={this.onSelectUsers}
+                        user_actions={this.getActionRenderFunc()}
+              />
 
             </div>
         )
@@ -140,11 +142,13 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id)
     const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
     const can_view_permissions = has_permission(state, project_id, 'has_view_permissions')
+    const can_invite_user = has_permission(state, project_id, 'has_invite_users')
     const is_invalidated = is_project_invalidated(state, project_id)
     return {
         project_id,
         project: project || {},
         can_view_permissions,
+        can_invite_user,
         is_inviting_user,
         onPermissionsAction,
         invited_user_ids: (project || {}).invited_user_ids || [],
