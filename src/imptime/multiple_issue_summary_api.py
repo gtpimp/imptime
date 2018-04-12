@@ -321,12 +321,14 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
         data['issues_by_id'] = dict( [(x['id'], x) for x in Issue.objects.filter(pk__in=data['all_issue_ids']).values('id', 'subject', 'number')] )
         data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=data['all_user_ids']).values('id', "first_name", "last_name")] )
-        data['tags_by_id'] = dict( [(x['id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values('id', "name", "category__name")] )
+        data['tags_by_id'] = dict( [(x['id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values('id', "name", "category__name", "category_id")] )
+        data['tag_categories_by_id'] = dict( [(x['category_id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values("category__name", "category_id").distinct()] )
         
         response, writer = file_helper.prepare_csv(request, "multiple_issue_summary")
         self._write_user_actuals(writer, data)
         self._write_actuals_by_tag_category(writer, data)
         self._write_issue_actuals(writer, data)
+        self._write_issue_list(writer, data)
         return response
 
     def _write_user_actuals(self, writer, data):
@@ -420,3 +422,25 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                             row.append(tag_data['cost_with_commission'])
                         writer.writerow(row)
             
+
+    def _write_issue_list(self, writer, data):
+        issues = Issue.objects.filter(pk__in=data['issues_by_id'].keys()).prefetch_related('tags').select_related('status2')
+        sample_issue = issues.first()
+        if sample_issue:
+            sprint_id = sample_issue.project_id #sic
+            issues = issues.order_by_project_id(sprint_id) #sic
+            
+        writer.writerow([""])
+        writer.writerow(["Issues"])
+        header2 = ["Number", "Subject", "Status"]
+        
+        for tag_category_id, tag_category in data['tag_categories_by_id'].items():
+            header2.append(tag_category['category__name'])
+        writer.writerow(header2)
+            
+        for issue in issues:
+            row = [issue.number, issue.subject, issue.status2.name]
+            issue_tag_names_by_category_id = dict([(x.category_id, x.name) for x in issue.tags.all()])
+            for tag_category_id, tag_category in data['tag_categories_by_id'].items():
+                row.append(issue_tag_names_by_category_id.get(tag_category_id, ""))
+            writer.writerow(row)
