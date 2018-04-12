@@ -189,12 +189,16 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             
         return estimates_by_tag_category
 
-    def _get_actuals_enriched_with_costs(self, entries):
-        return entries.annotate(sum_hours=Sum('hours'),
-                                rate_with_commission=ExpressionWrapper(F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')), output_field=FloatField()),
+    def _get_actuals_enriched_with_costs(self, entries, include_rates=False):
+        enriched = entries.annotate(sum_hours=Sum('hours'),
                                 cost=Sum(F('hours')*F('user__rates__billable_amount')),
                                 cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
                                                          output_field=FloatField()))
+        if include_rates:
+            # Note that this will separate entries by user, so you should only do this for '_by_user' type summaries
+            enriched = enriched.annotate(rate_with_commission=ExpressionWrapper(F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')), output_field=FloatField()))
+                                
+        return enriched
     
     
     def _get_actuals_by_user(self, issues_qs, estimates_by_user):
@@ -243,7 +247,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                          .filter(user__rates__project=F('issue__project'))\
                          .values("issue_id", "user_id")\
                          .distinct()
-        hours = self._get_actuals_enriched_with_costs(entries)
+        hours = self._get_actuals_enriched_with_costs(entries, include_rates=True)
         actuals_by_issue_and_user = {}
         for x in hours:
             values = actuals_by_issue_and_user.setdefault(x['issue_id'], {})\
@@ -366,7 +370,6 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             header3.append("Hours (time)")
             header3.append("Hours (decimal)")
             if show_costs:
-                header3.append("Rate")
                 header3.append("Cost")
         if show_costs:
             header3.append("")
@@ -381,7 +384,6 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                     row.append(human_readable_hours(actuals_for_user['hours']))
                     row.append(actuals_for_user['hours'])
                     if show_costs:
-                        row.append(actuals_for_user['rate_with_commission'])
                         row.append(actuals_for_user['cost_with_commission'])
                 else:
                     row.extend(["",""])
