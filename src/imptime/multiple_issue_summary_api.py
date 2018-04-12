@@ -82,10 +82,10 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
     def apply_filter(self, qs, raw_filter_args, issue_filter):
         issue_ids = issue_filter.pop('issue_ids', None)
         if issue_ids:
-            qs = qs.filter(pk__in=issue_ids)
+            qs = qs.filter(pk__in=[x for x in issue_ids if x])
         sprint_ids = issue_filter.pop('sprint_ids', None)
         if sprint_ids:
-            qs = qs.filter(project_id__in=sprint_ids)
+            qs = qs.filter(project_id__in=[x for x in sprint_ids if x])
         return super(MultipleIssueSummaryViewSet, self).apply_filter(qs, raw_filter_args)
 
     def _get_estimates_by_user(self, issues_qs):
@@ -370,6 +370,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             header3.append("Hours (time)")
             header3.append("Hours (decimal)")
             if show_costs:
+                header3.append("Rate")
                 header3.append("Cost")
         if show_costs:
             header3.append("")
@@ -384,6 +385,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                     row.append(human_readable_hours(actuals_for_user['hours']))
                     row.append(actuals_for_user['hours'])
                     if show_costs:
+                        row.append(actuals_for_user['rate_with_commission'])
                         row.append(actuals_for_user['cost_with_commission'])
                 else:
                     row.extend(["",""])
