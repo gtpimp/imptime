@@ -15,7 +15,7 @@ def forwards(apps, schema_editor):
     for b in Business.objects.filter(name='me'):
         try:
             primary_user_email = re.findall(regex, b.description)[0]
-            primary_user = User.objects.get(email=primary_user_email)
+            primary_user = User.objects.filter(email=primary_user_email).first()
             other_users = BusinessPermissions.objects.filter(business=b).exclude(user=primary_user)
             other_users.delete()
         except IndexError:

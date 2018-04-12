@@ -97,6 +97,11 @@ class IssueSerializer(BaseSerializer):
         if not bp.has_share_issues:
             issue.share_ref = None
 
+        if len(issue.visual_spec_document_ids) > 0:
+            issue.has_attachments = True
+        else:
+            issue.has_attachments = False
+
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):

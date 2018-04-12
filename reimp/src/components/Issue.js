@@ -208,7 +208,7 @@ class Issue extends Component {
                      <div>{issue.number}</div>
                    </div>
                   }
-                 {includes(visible_header_keys, "issue_type") &&
+                  {includes(visible_header_keys, "issue_type") &&
                    <div className="div-table__cell"
                         style={getCellStyle(header_list.issue_type)} >
                      <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
@@ -249,6 +249,12 @@ class Issue extends Component {
                          </span>
                        }
                      </div>
+                   </div>
+                  }
+                  {includes(visible_header_keys, "attachment") &&
+                   <div className="div-table__cell"
+                        style={getCellStyle(header_list.attachment)} >
+                     <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
                    </div>
                   }
                   {includes(visible_header_keys, "assignee") &&
@@ -295,39 +301,39 @@ class Issue extends Component {
                        )
                    })
                   }
-                {includes(visible_header_keys, "estimate_columns") &&
-                 map(sprint.user_ids_who_can_estimate, (user_id) =>
-                     <div key={user_id}
-                          className="div-table__cell issue__cell__secondary"
-                          style={getCellStyle(header_list.estimate_columns)}>
-                       <div className="issue-cell__estimate_column">
-                         {logged_in_user_id === user_id &&
-                          <EditableIssueEstimate issue_id={issue.id}
-                                                 actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].actual_hours) || null}
-                                                 class_name="issue-cell__my-estimate"/> }
+                  {includes(visible_header_keys, "estimate_columns") &&
+                   map(sprint.user_ids_who_can_estimate, (user_id) =>
+                       <div key={user_id}
+                            className="div-table__cell issue__cell__secondary"
+                            style={getCellStyle(header_list.estimate_columns)}>
+                         <div className="issue-cell__estimate_column">
+                           {logged_in_user_id === user_id &&
+                            <EditableIssueEstimate issue_id={issue.id}
+                                                   actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].actual_hours) || null}
+                                                   class_name="issue-cell__my-estimate"/> }
 
-                          {logged_in_user_id !== user_id &&
-                           <Progress issue={issue}
-                                     actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                     estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
-                          }
+                           {logged_in_user_id !== user_id &&
+                            <Progress issue={issue}
+                                      actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                      estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
+                           }
+                         </div>
                        </div>
-                     </div>
-                 )
-                }
+                   )
+                  }
 
-                 {includes(visible_header_keys, "my_estimate") && logged_in_user_can_estimate_user_id &&
-                  <div className="div-table__cell issue__cell__secondary"
-                       style={getCellStyle(header_list.my_estimate)}>
-                    <div className="issue-cell__estimate_column">
-                      {logged_in_user_can_estimate_user_id &&
-                       <EditableIssueEstimate issue_id={issue.id}
-                                              class_name="issue-cell__my-estimate"/>
-                      }
-                    </div>
-                  </div>
-                 }
-                     
+                  {includes(visible_header_keys, "my_estimate") && logged_in_user_can_estimate_user_id &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.my_estimate)}>
+                     <div className="issue-cell__estimate_column">
+                       {logged_in_user_can_estimate_user_id &&
+                        <EditableIssueEstimate issue_id={issue.id}
+                                               class_name="issue-cell__my-estimate"/>
+                       }
+                     </div>
+                   </div>
+                  }
+                  
                   {includes(visible_header_keys, "estimated") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.estimated)}>
