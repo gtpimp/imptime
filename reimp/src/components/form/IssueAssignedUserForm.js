@@ -35,11 +35,13 @@ class IssueAssignedUserForm extends Component {
 
     renderSingleValueSelector(field) {
         const {input, data, ...rest} = field
+        const { project_id } = this.props
         return (
             <SingleValueSelector
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
                 options={data}
+                rememberer_key={"user_"+project_id}
                 {...rest}
             />
         )

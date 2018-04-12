@@ -7,21 +7,16 @@ class PropertyStackComponent extends Component {
         return (
             <div className="property-stack-component">
                 <div className="property-stack-component__inner">
-                    { this.props.title &&
-                    <div className="property-stack-component__title">
-                        {this.props.title}
+                  { this.props.title &&
+                    <div key="title" className="property-stack-component__title">
+                      {this.props.title}
                     </div>
-                    }
-                    { this.props.children &&
-                    <div className="property-stack-component__content">
-                        {this.props.children}
+                  }
+                  { this.props.children &&
+                    <div key="content" className="property-stack-component__content">
+                      {this.props.children}
                     </div>
-                    }
-                    { false &&
-                    <div className="property-stack-component__icons">
-                        <div className="property-stack-component__icon"><i className="material-icons">edit</i></div>
-                    </div>
-                    }
+                  }
                 </div>
             </div>
         )

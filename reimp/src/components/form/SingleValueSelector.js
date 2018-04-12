@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
-import map from 'lodash/map'
-import filter from 'lodash/filter'
+import { map, filter, includes, keys, keyBy, find } from 'lodash'
+import { optionSelected, getBestOptions } from '../../actions/OptionRemember'
 import '../../sass/single-value-selector.css'
 
 export class SingleValueSelector extends Component {
@@ -15,7 +15,8 @@ export class SingleValueSelector extends Component {
     }
 
     onSelected(selected_option) {
-        const {onChange} = this.props
+        const {dispatch, onChange, rememberer_key} = this.props
+        dispatch(optionSelected(rememberer_key, selected_option.value))
         onChange(selected_option.value)
     }
 
@@ -71,16 +72,44 @@ export class SingleValueSelector extends Component {
         })
     }
 
+    render_best_suggestions() {
+        const { options, best_options } = this.props
+        const that = this
+
+        const available_option_values = keys(keyBy(options, "value"))
+        
+        const best_available_options = filter(best_options, best_option => includes(available_option_values, best_option.option))
+        const enriched_best_available_options = map(best_available_options, function(best_option) {
+            const option = find(options, function(option) {
+                return option.value === best_option.option
+            })
+            return option
+        })
+        const suggestions = map(enriched_best_available_options, function(option, index) {
+            return (
+                <div className="single-value-selector__suggestion"
+                     key={index}
+                     onClick={() => that.onSelected(option)}
+                >
+                  <div className="single-value-selector__suggestion-label">
+                    {option.label}
+                  </div>
+                </div>
+            )
+        })
+        return suggestions
+    }
+
     render_suggestions() {
         const {options, value} = this.props
         const that = this
 
         const filtered_options = this.getFilteredOptions(options)
-        const suggestions = map(filtered_options, function(option) {
+        const suggestions = map(filtered_options, function(option, index) {
             return (
                 <div className={classNames("single-value-selector__suggestion",
                                            {"single-value-selector__suggestion--selected":value===option.value})}
-                     key={'suggestion_' + option.index}
+                     key={index}
                      onClick={() => that.onSelected(option)}
                 >
                   <div className="single-value-selector__suggestion-number">
@@ -108,8 +137,11 @@ export class SingleValueSelector extends Component {
                          ref={(ref)=> this.selection_filter_el=ref}
                          onChange={this.onSelectionFilterChanged}/>
                 </div>
+                <div className="single-value-selector__best-suggestions">
+                  {this.render_best_suggestions()}
+                </div>
                 <div className="single-value-selector__suggestions">
-                    {this.render_suggestions()}
+                  {this.render_suggestions()}
                 </div>
             </div>
         )
@@ -119,13 +151,17 @@ export class SingleValueSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { options, value, auto_focus, placeholder } = props
+    const { options, value, auto_focus, placeholder, rememberer_key } = props
 
+    const best_options = getBestOptions(state, rememberer_key)
+    
     return {
         options: options,
         value,
         auto_focus: auto_focus !== false,
-        placeholder: placeholder || ""
+        placeholder: placeholder || "",
+        rememberer_key: rememberer_key || placeholder,
+        best_options
     }
 }
 

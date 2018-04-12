@@ -12,6 +12,7 @@ import item_list from './item_list'
 import loading from './loading'
 import maintenance from './maintenance'
 import notification_bar from './notification_bar.js'
+import option_rememberer from './option_rememberer.js'
 import page from './page'
 import project from './project'
 import project_dashboard from './project_dashboard'
@@ -47,6 +48,7 @@ const rootReducer = combineReducers({
     loading,
     maintenance,
     notification_bar,
+    option_rememberer,
     page,
     project,
     project_dashboard,

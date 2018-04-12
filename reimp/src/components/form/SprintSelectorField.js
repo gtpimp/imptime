@@ -50,7 +50,7 @@ class SprintSelectorField extends Component {
     }
 
     renderSingleValueSelector(field) {
-        const { auto_focus } = this.props
+        const { auto_focus, project_id } = this.props
         const {input, data, ...rest} = field
         return (
             <SingleValueSelector
@@ -58,6 +58,7 @@ class SprintSelectorField extends Component {
                 placeholder={"Type to filter sprint"}
                 value={input.value}
                 options={data}
+                rememberer_key={"sprint_"+project_id}
                 auto_focus={auto_focus}
                 {...rest}
             />
