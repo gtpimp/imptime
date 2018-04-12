@@ -52,6 +52,12 @@ class IssueSerializer(BaseSerializer):
     modified_at = serializers.DateTimeField(source='modified')
     review_ids = serializers.ListField(child=serializers.CharField())
     share_ref = serializers.CharField()
+    has_attachment = serializers.SerializerMethodField()
+
+    def get_has_attachment(self, issue):
+        if len(issue.visual_spec_document_ids) > 0:
+            return True
+        return False
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -96,11 +102,6 @@ class IssueSerializer(BaseSerializer):
 
         if not bp.has_share_issues:
             issue.share_ref = None
-
-        if len(issue.visual_spec_document_ids) > 0:
-            issue.has_attachments = True
-        else:
-            issue.has_attachments = False
 
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 

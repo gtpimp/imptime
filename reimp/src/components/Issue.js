@@ -251,12 +251,14 @@ class Issue extends Component {
                      </div>
                    </div>
                   }
-                  {includes(visible_header_keys, "attachment") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.attachment)} >
-                     <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
-                   </div>
-                  }
+                {includes(visible_header_keys, "attachment") &&
+                 <div className="div-table__cell"
+                    style={getCellStyle(header_list.attachment)} >
+                    {
+                        issue.has_attachment && <div className="icon icon--attachment"></div>
+                    }
+            </div>
+                }
                   {includes(visible_header_keys, "assignee") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.assignee)}>
