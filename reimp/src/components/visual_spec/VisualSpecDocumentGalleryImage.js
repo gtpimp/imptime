@@ -51,8 +51,8 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     render() {
-        const { visual_spec_document_id, image_url, download_url, is_active, isOver, isDragging,
-                connectDragSource, connectDropTarget, onSelected, visual_spec_issue_annotation_ids,
+        const { visual_spec_document_id, image_url, is_active, isOver, isDragging,
+                connectDragSource, connectDropTarget, visual_spec_issue_annotation_ids,
                 img_element_unique_id} = this.props
         const { visual_spec_document_image_loaded } = this.state || {}
 

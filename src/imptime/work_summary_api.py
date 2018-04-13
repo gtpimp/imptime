@@ -1,5 +1,6 @@
 import logging
 from rest_framework.renderers import JSONRenderer
+from collections import OrderedDict
 from rest_framework.decorators import detail_route
 from datetime import datetime
 from itertools import chain
@@ -13,7 +14,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import BusinessPermissions, Entry, Rate, Issue, IssueHistory
+from timepiece.models import Entry, Rate, Issue, IssueHistory
+from timepiece.models import BusinessPermissions as ProjectPermissions
 from django.contrib.auth.models import User
 import csv
 from lib import chart_helper
@@ -110,14 +112,38 @@ class WorkSummaryViewSet(BaseViewSet):
         return self._group_by_project_id(issues,
                                          key_name='modified_issues')
     
+
+    def _get_work_done_by_users(self, logged_in_user, projects, day, all_issue_ids, all_project_ids):
+
+        d = OrderedDict()
+        known_users = ProjectPermissions.viewable_users(logged_in_user)\
+                                        .order_by('username')
+
+        entries = Entry.objects.filter(start_time__date=day,
+                                       user_id__in=known_users,
+                                       issue__project__business__in=projects)
+        
+        hours_by_user_and_issue = entries\
+                                  .order_by("user_id", "start_time")\
+                                  .values("user_id", "issue_id")\
+                                  .annotate(sum_hours=Sum('hours'))
+        for hour_by_user_and_issue in hours_by_user_and_issue:
+            issues = d.setdefault(hour_by_user_and_issue["user_id"], OrderedDict())\
+                      .setdefault("issues", [])
+            issues.append({ 'issue_id': [hour_by_user_and_issue['issue_id']],
+                            'hours': hour_by_user_and_issue['sum_hours'] })
+            
+        all_issue_ids.update(entries.values_list("issue_id", flat=True).distinct())
+        return d
     
-    def populate_summary(self, user, projects, summary, all_issue_ids, all_project_ids):
+    def populate_summary(self, logged_in_user, projects, summary, all_issue_ids, all_project_ids):
         d = {'id': summary['id'], 'day': summary['day']}
 
         d['projects'] = {}
-        d['projects'].update(self._get_issues_with_time_by_project(user, projects, summary['day'], all_issue_ids, all_project_ids))
-        d['projects'].update(self._get_new_issues_by_project(user, projects, summary['day'], all_issue_ids, all_project_ids))
-        d['projects'].update(self._get_modified_issues_by_project(user, projects, summary['day'], all_issue_ids, all_project_ids))
+        d['projects'].update(self._get_issues_with_time_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
+        d['projects'].update(self._get_new_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
+        d['projects'].update(self._get_modified_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
+        d['users'] = self._get_work_done_by_users(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids)
 
         return d
 

@@ -1,43 +1,61 @@
 @import 'variables.scss';
 
-.work-summary__project-cards {
+.work-summary__cards-container {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-between;
     font-size: $font-size-default;
 }
 
-.work-summary__project-card {
+.work-summary__cards-container h2 {
+    text-align: center;
+}
+
+.work-summary__project-cards, .work-summary__user-cards {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: 50px;
+    margin-left: 50px;
+}
+
+.work-summary__user-cards {
+    border-right: 2px solid $color-26;
+}
+
+.work-summary__project-cards {
+    border-left: 2px solid $color-26;
+}
+
+.work-summary__project-card, .work-summary__user-card {
     margin: 20px;
     border: 1px solid $color-26;
     border-radius: 10px;
     padding: 20px;
 }
 
-.work-summary__project-card__title {
+
+.work-summary__project-card__title, .work-summary__user-card__title {
     font: $plain-large;
     margin-bottom: 4px;
     text-align: center;
 }
 
-.work-summary__project-card__content {
-}
-
-.work-summary__project-card__content-title {
+.work-summary__project-card__content-title, .work-summary__user-card__content-title {
     margin-bottom: 10px;
     border-bottom: 1px solid $color-26;
     text-align: center;
 }
 
-.work-summary__project-card__issues_list {
-}
-
-.work-summary__project-card__issue {
+.work-summary__project-card__issue, .work-summary__user-card__issue {
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
 }
 
-.work-summary__project-card__issue:hover {
+.work-summary__user-card__issue .issue-name {
+    margin-right: 50px;
+}
+
+.work-summary__project-card__issue:hover, work-summary__user-card__issue:hover {
     background-color: $row-hover-color;
 }
 
@@ -45,3 +63,4 @@
     opacity: 0.7;
     margin-left: 10px;
 }
+

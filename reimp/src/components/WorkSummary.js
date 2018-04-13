@@ -14,8 +14,10 @@ import { ensureUsersLoaded } from '../actions/Users'
 import { ensureIssuesLoaded } from '../actions/Issues'
 import { ensureProjectsLoaded } from '../actions/Projects'
 import ProjectName from './ProjectName'
+import OtherUser from './OtherUser'
 import Timestamp from './Timestamp'
 import IssueName from './IssueName'
+import Hours from './Hours'
 import IssueStatus from './IssueStatus'
 
 class WorkSummary extends Component {
@@ -179,6 +181,32 @@ class WorkSummary extends Component {
             </div>
         )
     }
+
+    render_user_card(user_id) {
+        const { summary } = this.props
+        const user_items = summary.users[user_id]
+        return (
+            <div key={user_id} className="work-summary__user-card">
+              <div className="work-summary__user-card__title">
+                <OtherUser user_id={user_id} />
+              </div>
+              <div className="work-summary__user-card__content">
+                <div className="work-summary__user-card__content-title">
+                  Issues worked on
+                </div>
+                <div className="work-summary__user-card__issues_list">
+                  { map(user_items.issues, (issue_item) => (
+                        <div key={issue_item.issue_id} className="work-summary__user-card__issue">
+                          <IssueName issue_id={issue_item.issue_id}/>
+                          <Hours hours={issue_item.hours}/>
+                        </div>
+                    )
+                    )}
+                </div>
+              </div>
+            </div>
+        )
+    }
     
     render() {
         const { summary_id, summary, is_empty } = this.props
@@ -200,11 +228,25 @@ class WorkSummary extends Component {
                         On this day, nothing happened
                       </div>
                     }
-                    
-                    <div className="work-summary__project-cards">
-                      { summary.length !== 0 &&
-                        map(keys(summary.projects), (project_id) => this.render_project_card(project_id))
-                      }
+
+                    <div className="work-summary__cards-container">
+                      <div className="works-summary__column">
+                        <h3>User actions</h3>
+                        <div className="work-summary__user-cards">
+                          { summary.length !== 0 &&
+                            map(keys(summary.users), (user_id) => this.render_user_card(user_id))
+                          }
+                        </div>
+                      </div>
+
+                      <div className="works-summary__column">
+                          <h3>Things done</h3>
+                          <div className="work-summary__project-cards">
+                          { summary.length !== 0 &&
+                            map(keys(summary.projects), (project_id) => this.render_project_card(project_id))
+                          }
+                        </div>
+                      </div>
                     </div>
 
                   </div>

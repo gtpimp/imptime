@@ -192,9 +192,9 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
     def _get_actuals_enriched_with_costs(self, entries, include_rates=False):
         enriched = entries.annotate(sum_hours=Sum('hours'),
-                                cost=Sum(F('hours')*F('user__rates__billable_amount')),
-                                cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
-                                                         output_field=FloatField()))
+                                    cost=Sum(F('hours')*F('user__rates__billable_amount')),
+                                    cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
+                                                             output_field=FloatField()))
         if include_rates:
             # Note that this will separate entries by user, so you should only do this for '_by_user' type summaries
             enriched = enriched.annotate(rate_with_commission=ExpressionWrapper(F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')), output_field=FloatField()))
