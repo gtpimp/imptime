@@ -1,6 +1,7 @@
 import logging
 from django.utils import timezone
 from lib import file_helper
+from collections import OrderedDict
 from impasync.refresh_notifier import RefreshNotifier
 from rest_framework.decorators import detail_route, list_route
 from datetime import datetime, timedelta, time
@@ -82,10 +83,10 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
     def apply_filter(self, qs, raw_filter_args, issue_filter):
         issue_ids = issue_filter.pop('issue_ids', None)
         if issue_ids:
-            qs = qs.filter(pk__in=issue_ids)
+            qs = qs.filter(pk__in=[x for x in issue_ids if x])
         sprint_ids = issue_filter.pop('sprint_ids', None)
         if sprint_ids:
-            qs = qs.filter(project_id__in=sprint_ids)
+            qs = qs.filter(project_id__in=[x for x in sprint_ids if x])
         return super(MultipleIssueSummaryViewSet, self).apply_filter(qs, raw_filter_args)
 
     def _get_estimates_by_user(self, issues_qs):
@@ -189,12 +190,16 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             
         return estimates_by_tag_category
 
-    def _get_actuals_enriched_with_costs(self, entries):
-        return entries.annotate(sum_hours=Sum('hours'),
-                                rate_with_commission=ExpressionWrapper(F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')), output_field=FloatField()),
+    def _get_actuals_enriched_with_costs(self, entries, include_rates=False):
+        enriched = entries.annotate(sum_hours=Sum('hours'),
                                 cost=Sum(F('hours')*F('user__rates__billable_amount')),
                                 cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
                                                          output_field=FloatField()))
+        if include_rates:
+            # Note that this will separate entries by user, so you should only do this for '_by_user' type summaries
+            enriched = enriched.annotate(rate_with_commission=ExpressionWrapper(F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')), output_field=FloatField()))
+                                
+        return enriched
     
     
     def _get_actuals_by_user(self, issues_qs, estimates_by_user):
@@ -239,12 +244,20 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         
     def _get_actuals_by_issue_and_user(self, issues_qs):
         entries = Entry.objects.filter(issue__in=issues_qs)
-        entries = entries.order_by("issue_id", "user_id")\
-                         .filter(user__rates__project=F('issue__project'))\
+        entries = entries.filter(user__rates__project=F('issue__project'))\
                          .values("issue_id", "user_id")\
                          .distinct()
-        hours = self._get_actuals_enriched_with_costs(entries)
-        actuals_by_issue_and_user = {}
+
+        sample_issue = issues_qs.first()
+        if sample_issue:
+            sprint_id = sample_issue.project_id #sick
+            entries = entries.order_by_project_id(sprint_id, supplementary_orders=["user_id"])
+        else:
+            entries = entries.order_by("issue_id", "user_id")
+        
+
+        hours = self._get_actuals_enriched_with_costs(entries, include_rates=True)
+        actuals_by_issue_and_user = OrderedDict()
         for x in hours:
             values = actuals_by_issue_and_user.setdefault(x['issue_id'], {})\
                                               .setdefault(x['user_id'], {})
@@ -317,12 +330,14 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
         data['issues_by_id'] = dict( [(x['id'], x) for x in Issue.objects.filter(pk__in=data['all_issue_ids']).values('id', 'subject', 'number')] )
         data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=data['all_user_ids']).values('id', "first_name", "last_name")] )
-        data['tags_by_id'] = dict( [(x['id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values('id', "name", "category__name")] )
+        data['tags_by_id'] = dict( [(x['id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values('id', "name", "category__name", "category_id")] )
+        data['tag_categories_by_id'] = dict( [(x['category_id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values("category__name", "category_id").distinct()] )
         
         response, writer = file_helper.prepare_csv(request, "multiple_issue_summary")
         self._write_user_actuals(writer, data)
         self._write_actuals_by_tag_category(writer, data)
         self._write_issue_actuals(writer, data)
+        self._write_issue_list(writer, data)
         return response
 
     def _write_user_actuals(self, writer, data):
@@ -416,3 +431,25 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                             row.append(tag_data['cost_with_commission'])
                         writer.writerow(row)
             
+
+    def _write_issue_list(self, writer, data):
+        issues = Issue.objects.filter(pk__in=data['issues_by_id'].keys()).prefetch_related('tags').select_related('status2')
+        sample_issue = issues.first()
+        if sample_issue:
+            sprint_id = sample_issue.project_id #sic
+            issues = issues.order_by_project_id(sprint_id) #sic
+            
+        writer.writerow([""])
+        writer.writerow(["Issues"])
+        header2 = ["Number", "Subject", "Status"]
+        
+        for tag_category_id, tag_category in data['tag_categories_by_id'].items():
+            header2.append(tag_category['category__name'])
+        writer.writerow(header2)
+            
+        for issue in issues:
+            row = [issue.number, issue.subject, issue.status2.name]
+            issue_tag_names_by_category_id = dict([(x.category_id, x.name) for x in issue.tags.all()])
+            for tag_category_id, tag_category in data['tag_categories_by_id'].items():
+                row.append(issue_tag_names_by_category_id.get(tag_category_id, ""))
+            writer.writerow(row)

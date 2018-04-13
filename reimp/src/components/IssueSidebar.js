@@ -245,7 +245,7 @@ class IssueSidebar extends Component {
 
                         <PropertyStackComponent title="Testables">
                           { map(testables, function (testable, index) {
-                                return <EditableIssueTestable key={issue.id} issue_id={issue.id} testable_id={testable.id}/>
+                                return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
                             })
                           }
                           <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
@@ -253,7 +253,7 @@ class IssueSidebar extends Component {
 
                         <PropertyStackComponent title="Comments">
                           { map(comments, function (comment, index) {
-                                return <EditableIssueComment key={issue.id} issue_id={issue.id} comment_id={comment.id}/>
+                                return <EditableIssueComment key={issue.id+"_"+comment.id} issue_id={issue.id} comment_id={comment.id}/>
                             })
                           }
                           <EditableIssueComment issue_id={issue.id} comment_id={null}/>

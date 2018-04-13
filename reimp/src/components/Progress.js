@@ -12,6 +12,7 @@ class Progress extends Component {
         const current = format_hours(hours)
         const max = format_hours(estimate)
         const max_valid = estimate !== undefined && estimate > 0
+        const current_valid = hours !== undefined && hours > 0
 
         const show = force_show || hours > 0 || estimate > 0
         
@@ -20,12 +21,14 @@ class Progress extends Component {
               { show && 
                 <div className="progress__component progress__component--progress">
                   <div className="progress__time">
-                    <div className={classNames('progress__time',
-                                               {'progress__time--progress': max_valid && current<=max,
-                                                'progress__time--over': max_valid && current>max,
-                                                'progress__time--no-estimate': !max_valid})}>
-                      <Duration value={current}/>
-                    </div>
+                    { current_valid && 
+                      <div className={classNames('progress__time',
+                                                 {'progress__time--progress': max_valid && current<=max,
+                                                  'progress__time--over': max_valid && current>max,
+                                                  'progress__time--no-estimate': !max_valid})}>
+                        <Duration value={current}/>
+                      </div>
+                    }
                     { max_valid && <div className="progress__time-separator">/</div> }
                     { max_valid && 
                       <div className="progress__time progress__time--max">
@@ -55,7 +58,6 @@ function mapStateToProps(state, props) {
     }
     
     return {
-        issue,
         hours,
         force_show,
         estimate: estimate || 0

@@ -32,12 +32,14 @@ class IssueStatusForm extends Component {
     }
 
     renderSingleValueSelector(field) {
+        const { project_id } = this.props
         const {input, data, ...rest} = field
         return (
             <SingleValueSelector
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
                 options={data}
+                rememberer_key={"issue_status_"+project_id}
                 {...rest}
             />
         )
