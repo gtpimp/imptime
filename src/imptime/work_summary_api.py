@@ -125,12 +125,14 @@ class WorkSummaryViewSet(BaseViewSet):
         
         hours_by_user_and_issue = entries\
                                   .order_by("user_id", "start_time")\
-                                  .values("user_id", "issue_id")\
+                                  .values("user_id", "issue_id", "issue__project_id", "issue__project__business_id")\
                                   .annotate(sum_hours=Sum('hours'))
         for hour_by_user_and_issue in hours_by_user_and_issue:
             issues = d.setdefault(hour_by_user_and_issue["user_id"], OrderedDict())\
                       .setdefault("issues", [])
             issues.append({ 'issue_id': [hour_by_user_and_issue['issue_id']],
+                            'sprint_id': [hour_by_user_and_issue['issue__project_id']], #sic
+                            'project_id': [hour_by_user_and_issue['issue__project__business_id']], #sic
                             'hours': hour_by_user_and_issue['sum_hours'] })
             
         all_issue_ids.update(entries.values_list("issue_id", flat=True).distinct())
@@ -139,6 +141,11 @@ class WorkSummaryViewSet(BaseViewSet):
     def populate_summary(self, logged_in_user, projects, summary, all_issue_ids, all_project_ids):
         d = {'id': summary['id'], 'day': summary['day']}
 
+        # ##
+        from datetime import date
+        summary['day'] = date(2018, 03, 31)
+        # ##
+        
         d['projects'] = {}
         d['projects'].update(self._get_issues_with_time_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
         d['projects'].update(self._get_new_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))

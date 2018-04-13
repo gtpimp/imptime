@@ -45,10 +45,13 @@
     text-align: center;
 }
 
-.work-summary__project-card__issue, .work-summary__user-card__issue {
+.work-summary__project-card__issue {
     display: flex;
     justify-content: space-between;
     margin-bottom: 5px;
+}
+
+.work-summary__user-card__issue {
 }
 
 .work-summary__user-card__issue .issue-name {

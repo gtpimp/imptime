@@ -19,6 +19,7 @@ import Timestamp from './Timestamp'
 import IssueName from './IssueName'
 import Hours from './Hours'
 import IssueStatus from './IssueStatus'
+import SprintName from './SprintName'
 
 class WorkSummary extends Component {
 
@@ -195,13 +196,27 @@ class WorkSummary extends Component {
                   Issues worked on
                 </div>
                 <div className="work-summary__user-card__issues_list">
-                  { map(user_items.issues, (issue_item) => (
-                        <div key={issue_item.issue_id} className="work-summary__user-card__issue">
-                          <IssueName issue_id={issue_item.issue_id}/>
-                          <Hours hours={issue_item.hours}/>
-                        </div>
-                    )
-                    )}
+                  <table className="table__column_table">
+                    <tbody>
+                      { map(user_items.issues, (issue_item) => (
+                            <tr key={issue_item.issue_id}>
+                              <td>
+                                <ProjectName project_id={issue_item.project_id}/>
+                              </td>
+                              <td>
+                                <SprintName sprint_id={issue_item.sprint_id}/>
+                              </td>
+                              <td>
+                                <IssueName issue_id={issue_item.issue_id}/>
+                              </td>
+                              <td>
+                                <Hours hours={issue_item.hours}/>
+                              </td>
+                            </tr>
+                        )
+                        )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
