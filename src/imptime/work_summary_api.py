@@ -141,11 +141,6 @@ class WorkSummaryViewSet(BaseViewSet):
     def populate_summary(self, logged_in_user, projects, summary, all_issue_ids, all_project_ids):
         d = {'id': summary['id'], 'day': summary['day']}
 
-        # ##
-        from datetime import date
-        summary['day'] = date(2018, 03, 31)
-        # ##
-        
         d['projects'] = {}
         d['projects'].update(self._get_issues_with_time_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
         d['projects'].update(self._get_new_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
