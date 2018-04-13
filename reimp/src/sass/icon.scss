@@ -113,6 +113,10 @@
     @include icon(15px, 15px, 'adhoc.png');
 }
 
+.icon--attachment {
+    @include icon(15px, 15px, 'attachment.png');
+}
+
 .icon--correspondence {
     @include icon(15px, 15px, 'correspondence.png');
 }

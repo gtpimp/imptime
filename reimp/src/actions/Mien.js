@@ -86,6 +86,7 @@ export var ISSUE_HEADERS_BY_MIEN = { 'dev': {'number': {label:"#", width:tiny_co
                                               'issue_type': {label:'', width:tiny_col_width},
                                               'expand_feature': {label:'', width:tiny_col_width},
                                               'name': {label:"Name", width:large_col_width},
+                                              'attachment': {label:"Att.", width:tiny_col_width},
                                               'assignee': {label:"Assignee", width:medium_col_width},
                                               'status': {label:"Status", width:small_col_width},
                                               'tag_columns': {label:"Tag Columns", width:medium_col_width},
