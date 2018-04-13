@@ -56,9 +56,10 @@ class WorkSummaryViewSet(BaseViewSet):
                 context['all_sprint_ids'] = []
                 all_project_ids = set()
                 all_issue_ids = set()
-                context['all_user_ids'] = []
+                all_user_ids = set()
                 summaries = [ self.populate_summary(request.user, self.allowed_projects(), summary,
-                                                    all_issue_ids, all_project_ids) for summary in summaries ]
+                                                    all_issue_ids, all_project_ids, all_user_ids) for summary in summaries ]
+                context['all_user_ids'] = list(all_user_ids)
                 context['all_project_ids'] = list(all_project_ids)
                 context['all_issue_ids'] = list(all_issue_ids)
                 context['summaries'] = summaries
@@ -79,7 +80,7 @@ class WorkSummaryViewSet(BaseViewSet):
             d[project_id] = {key_name:list(items)}
         return d
     
-    def _get_issues_with_time_by_project(self, user, projects, day, all_issue_ids, all_project_ids):
+    def _get_issues_with_time_by_project(self, user, projects, day, all_issue_ids, all_project_ids, all_user_ids):
         entries = Entry.objects.all().filter(issue__project__business__in=projects, start_time__date=day)
         issues = entries.order_by("issue__project__business_id", "issue_id")\
                         .values('issue__project__business_id', 'issue_id').distinct()
@@ -90,7 +91,7 @@ class WorkSummaryViewSet(BaseViewSet):
         return self._group_by_project_id(issues,
                                          key_name='issues_with_time')
 
-    def _get_new_issues_by_project(self, user, projects, day, all_issue_ids, all_project_ids):
+    def _get_new_issues_by_project(self, user, projects, day, all_issue_ids, all_project_ids, all_user_ids):
         issues = Issue.objects.all().filter(project__business__in=projects, created__date=day)\
                                     .values("project__business_id", "id")\
                                     .order_by("project__business__id").distinct()
@@ -101,7 +102,7 @@ class WorkSummaryViewSet(BaseViewSet):
         return self._group_by_project_id(issues,
                                          key_name='new_issues')
 
-    def _get_modified_issues_by_project(self, user, projects, day, all_issue_ids, all_project_ids):
+    def _get_modified_issues_by_project(self, user, projects, day, all_issue_ids, all_project_ids, all_user_ids):
         issues = Issue.objects.all().filter(project__business__in=projects, modified__date=day)\
                                     .values("project__business_id", "id")\
                                     .order_by("project__business__id").distinct()
@@ -113,7 +114,7 @@ class WorkSummaryViewSet(BaseViewSet):
                                          key_name='modified_issues')
     
 
-    def _get_work_done_by_users(self, logged_in_user, projects, day, all_issue_ids, all_project_ids):
+    def _get_work_done_by_users(self, logged_in_user, projects, day, all_issue_ids, all_project_ids, all_user_ids):
 
         d = OrderedDict()
         known_users = ProjectPermissions.viewable_users(logged_in_user)\
@@ -136,16 +137,17 @@ class WorkSummaryViewSet(BaseViewSet):
                             'hours': hour_by_user_and_issue['sum_hours'] })
             
         all_issue_ids.update(entries.values_list("issue_id", flat=True).distinct())
+        all_user_ids.update(known_users.values_list("issue_id", flat=True).distinct())
         return d
     
-    def populate_summary(self, logged_in_user, projects, summary, all_issue_ids, all_project_ids):
+    def populate_summary(self, logged_in_user, projects, summary, all_issue_ids, all_project_ids, all_user_ids):
         d = {'id': summary['id'], 'day': summary['day']}
 
         d['projects'] = {}
-        d['projects'].update(self._get_issues_with_time_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
-        d['projects'].update(self._get_new_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
-        d['projects'].update(self._get_modified_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids))
-        d['users'] = self._get_work_done_by_users(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids)
+        d['projects'].update(self._get_issues_with_time_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids, all_user_ids))
+        d['projects'].update(self._get_new_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids, all_user_ids))
+        d['projects'].update(self._get_modified_issues_by_project(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids, all_user_ids))
+        d['users'] = self._get_work_done_by_users(logged_in_user, projects, summary['day'], all_issue_ids, all_project_ids, all_user_ids)
 
         return d
 
