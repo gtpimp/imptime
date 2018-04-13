@@ -137,7 +137,7 @@ class WorkSummaryViewSet(BaseViewSet):
                             'hours': hour_by_user_and_issue['sum_hours'] })
             
         all_issue_ids.update(entries.values_list("issue_id", flat=True).distinct())
-        all_user_ids.update(known_users.values_list("issue_id", flat=True).distinct())
+        all_user_ids.update(known_users.values_list("id", flat=True).distinct())
         return d
     
     def populate_summary(self, logged_in_user, projects, summary, all_issue_ids, all_project_ids, all_user_ids):
