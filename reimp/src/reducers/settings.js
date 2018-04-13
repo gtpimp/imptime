@@ -6,7 +6,8 @@ import {SET_MIEN} from '../actions/Mien'
 const initialState = {
     configured: false,
     WEBSOCKET_BASE_URL: "wss://not/configured",
-    API_BASE_URL: "http://not/configured/"
+    API_BASE_URL: "http://not/configured/",
+    mien: "dev"
 }
 
 export default function settings(state = initialState, action) {
