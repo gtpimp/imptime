@@ -78,11 +78,10 @@ class UserList extends Component {
 function mapStateToProps(state, props) {
     const {user} = state
     const {project_id, invited_user_ids, user_ids, user_actions} = props
-    const all_items_by_id = (user && user.items_by_id) || {}
-    const items_by_id = map(user_ids, (user_id) => all_items_by_id[user_id])
+    const all_items_by_id = (user && user.items_by_id) || {} 
 
-    const items_to_display = (items_by_id && user_ids.map(function (visible_item_id, index) {
-        return items_by_id[visible_item_id] || {
+    const items_to_display = (all_items_by_id && user_ids.map(function (visible_item_id, index) {
+        return all_items_by_id[visible_item_id] || {
             'id': visible_item_id,
             'loaded': false
         }
