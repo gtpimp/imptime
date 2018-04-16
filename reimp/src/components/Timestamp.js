@@ -65,6 +65,13 @@ export class Timestamp extends Component {
                   </div>
                 </div>
               }
+              { format === 'dateshort-time' &&
+                <div className="timestamp timestamp--time">
+                  <div className="timestamp__instant">
+                    {ts.format('DD MMM YYYY HH:mm')}
+                  </div>
+                </div>
+              }
               { format === 'from_now' &&
                 <div className="timestamp timestamp--time">
                   <div className="timestamp__fromnow">
