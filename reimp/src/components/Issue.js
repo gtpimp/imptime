@@ -214,6 +214,14 @@ class Issue extends Component {
                      <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
                    </div>
                   }
+                  {includes(visible_header_keys, "attachment") &&
+                   <div className="div-table__cell"
+                        style={getCellStyle(header_list.attachment)} >
+                     {
+                         issue.has_attachment && <div className="icon icon--attachment"></div>
+                     }
+                   </div>
+                  }
                   {includes(visible_header_keys, "expand_feature") &&
                    <div className="div-table__cell"
                         style={getCellStyle(header_list.expand_feature)}>
@@ -251,15 +259,8 @@ class Issue extends Component {
                      </div>
                    </div>
                   }
-                {includes(visible_header_keys, "attachment") &&
-                 <div className="div-table__cell"
-                    style={getCellStyle(header_list.attachment)} >
-                    {
-                        issue.has_attachment && <div className="icon icon--attachment"></div>
-                    }
-            </div>
-                }
-                  {includes(visible_header_keys, "assignee") &&
+
+                 {includes(visible_header_keys, "assignee") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.assignee)}>
                      <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
