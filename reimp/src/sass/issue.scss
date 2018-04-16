@@ -171,20 +171,3 @@ issue--grouped {
     opacity: 0.5;
     min-width: 75px;
 }
-
-.created_tooltip {
-    display: none;
-    width: auto;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    padding: 5px 5px;
-    border-radius: 6px;
-    position: absolute;
-    z-index: 0;
-    left: 72%;
-}
-
-.issue-cell__created-at:hover > .created_tooltip {
-    display: inline;
-}

@@ -73,7 +73,7 @@ export class Timestamp extends Component {
                 </div>
               }
               { format === 'from_now' &&
-                <div className="timestamp timestamp--time">
+                <div title={tsToolTip} className="timestamp timestamp--time">
                   <div className="timestamp__fromnow">
                     {ts.fromNow()}
                   </div>

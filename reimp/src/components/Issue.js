@@ -270,9 +270,6 @@ class Issue extends Component {
                         style={getCellStyle(header_list.created_at)}>
                      <div className="issue-cell__created-at">
                        <Timestamp value={issue.created_at} format="from_now"/>
-                       <div className="created_tooltip">
-                         <Timestamp value={issue.created_at} format="dateshort-time"/>
-                       </div>
                      </div>
                    </div>
                   }
