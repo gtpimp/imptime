@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {withRouter, Link} from 'react-router-dom'
-import {get, includes, keys, has} from 'lodash'
+import {get, includes, keys} from 'lodash'
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
