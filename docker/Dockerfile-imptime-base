@@ -47,7 +47,7 @@ RUN mkdir -p /opt/imptime/api
 WORKDIR /opt/imptime/
 RUN mkdir -p logs
 
-RUN pip install --upgrade --force-reinstall pip==9.0.1
+RUN pip install --upgrade --force-reinstall pip==9.0.3
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
