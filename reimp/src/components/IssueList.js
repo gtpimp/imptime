@@ -217,7 +217,7 @@ class IssueList extends Component {
         const {visible_item_ids, issues, expanded_issues, issues_by_id } = this.props
         let issue_ids_to_select = [target_issue_id]
         let running_issue_index = indexOf(visible_item_ids, target_issue_id)
-        let issue = issues_by_id[target_issue_id]
+        let issue = issues_by_id[target_issue_id] || {}
         if (issue.can_group_issues !== true) {
             return issue_ids_to_select
         }
