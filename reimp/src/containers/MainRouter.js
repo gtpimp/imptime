@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { Route, Switch } from 'react-router-dom'
-import {withRouter} from 'react-router'
+import { Route, Switch, withRouter } from 'react-router-dom'
+/* import {withRouter} from 'react-router' */
 import AccountCreatePage from './AccountCreatePage'
 import AccountCreatedPage from './AccountCreatedPage'
 import BulkIssueCreatorPage from './BulkIssueCreatorPage'
