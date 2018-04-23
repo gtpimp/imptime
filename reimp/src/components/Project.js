@@ -87,7 +87,7 @@ class Project extends Component {
                                                 {"icon__status--active":get(project, ["recent_activity","is_active"], false),
                                                  "icon__status--inactive":get(project, ["recent_activity", "is_inactive"], false),
                                                  "icon__status--expired":get(project, ["recent_activity", "is_expired"], false),
-                                                 "icon__status--sprints_closed": has(project, "num_open_sprints") && project.num_open_sprints === 0
+                                                 "icon__status--closed":get(project, ["recent_activity", "is_closed"], false)
                                                 })}
                        >
                        

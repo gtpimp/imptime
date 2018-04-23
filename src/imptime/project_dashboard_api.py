@@ -167,7 +167,9 @@ def get_recent_activity(project):
                          .order_by("-created")\
                          .values("id", "project_id", "project__business_id", "created", "number", "subject")\
                          .first()
-
+    num_open_sprints = Sprint.objects.all().filter(business_id=project.id)\
+                                    .filter_open().count()
+    
     if issue is None:
         issue = {'id': None}
     else:
@@ -208,7 +210,8 @@ def get_recent_activity(project):
     is_active = sort_date + relativedelta(days=NUM_DAYS_FOR_ACTIVE) >= timezone.now()
     is_inactive = not is_active and sort_date + relativedelta(days=NUM_DAYS_FOR_EXPIRED) >= timezone.now()
     is_expired = not is_active and not is_inactive
-
+    is_closed = num_open_sprints == 0
+    
     d = {
         'most_recent_clock_entry': entry,
         'most_recent_issue': issue,
@@ -217,8 +220,10 @@ def get_recent_activity(project):
         'is_inactive': is_inactive,
         'is_expired': is_expired,
         'is_active': is_active,
+        'is_closed': is_closed,
         'sort_date': sort_date,
         'sort_reason': sort_reason
     }
+    
     return d
     
