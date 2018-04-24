@@ -71,7 +71,7 @@ html, body {
 .main-layout__footer {
     margin-top: auto;
     flex: 0 0 100px;
-    border-top: 1px solid $color-26;
     padding: 10px;
+    z-index: 100;
 }
 

@@ -2,10 +2,34 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { has_permission } from '../actions/Users'
 import ProjectName from './ProjectName'
-import { isPermissionInspectorActive, getHighlightedObjectForPermissionInspector } from '../actions/Auth'
+import { isPermissionInspectorActive,
+         stopPermissionInspector,
+         getHighlightedObjectForPermissionInspector
+} from '../actions/Auth'
 
 class PermissionInspectorPanel extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onClose = this.onClose.bind(this)
+    }
+
+    onClose() {
+        const { dispatch } = this.props
+        dispatch(stopPermissionInspector())
+    }
+
+    renderPermission() {
+        const { permission_name } = this.props
+        return (
+            <div className="permission-inspector-panel__permission">
+              <div className="permission-inspector-panel__permission-name">
+                {permission_name}
+              </div>
+            </div>
+        )
+    }
+    
     render() {
         const { is_permission_inspector_active, project_id, permission_name, can_view } = this.props
 
@@ -16,7 +40,12 @@ class PermissionInspectorPanel extends Component {
         return (
             <div className="permission-inspector-panel">
 
-              <h2>Permission inspector</h2>
+              <h2>
+                Permission inspector
+                <div className="permission-inspector-panel__close" onClick={this.onClose} >
+                  <div className="icon--small-cross"/>
+                </div>
+              </h2>
               <ProjectName project_id={project_id} />
               
               { !can_view &&
@@ -26,6 +55,8 @@ class PermissionInspectorPanel extends Component {
               { (!project_id || !permission_name) &&
                 <div>Hover over an object to view its permissions</div>
               }
+
+              { can_view && permission_name && this.renderPermission() }
               
             </div>
         )

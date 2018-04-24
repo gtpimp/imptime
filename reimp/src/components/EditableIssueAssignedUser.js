@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import IssueAssignedUserForm from './form/IssueAssignedUserForm'
 import { updateIssueAssignedTo } from '../actions/Issues'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import OtherUser from '../components/OtherUser'
 import { has_permission } from '../actions/Users'
 import { makeSelGetIssues, makeSelGetSampleIssue } from '../selectors/IssueSelectors'
@@ -20,21 +21,24 @@ class EditableIssueAssignedUser extends Component {
     }
 
     render() {
-        const { project_id, issue, can_edit, class_name} = this.props
+        const { project_id, permission_name, issue, can_edit, class_name} = this.props
 
         return (
-            <EditableProperty property_key={'issue_assigned_to'+issue.id}
-                              initial_value={(issue && issue.assigned_to_id) || null}
-                              edit_as_modal={true}
-                              onChange={this.onChange}
-                              class_name={class_name || ""}
-                              actionLabel="Assign to"
-                              can_edit={can_edit}
-            >
-              <IssueAssignedUserForm project_id={project_id}/>
-              <OtherUser />
-              <div className="text-component--empty">Unassigned</div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name={permission_name}>
+              <EditableProperty property_key={'issue_assigned_to'+issue.id}
+                                initial_value={(issue && issue.assigned_to_id) || null}
+                                edit_as_modal={true}
+                                onChange={this.onChange}
+                                class_name={class_name || ""}
+                                actionLabel="Assign to"
+                                can_edit={can_edit}
+              >
+                <IssueAssignedUserForm project_id={project_id}/>
+                <OtherUser />
+                <div className="text-component--empty">Unassigned</div>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 }
@@ -50,7 +54,8 @@ const makeMapStateToProps = () => {
         const issues = selGetIssues(state, props)
         const issue = selGetSampleIssue(state, props)
         const project_id = issue.project_id
-        const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+        const permission_name = "has_assign_user"
+        const can_edit = has_permission(state, issue.project_id, permission_name)
 
         return {
             issues,
@@ -58,7 +63,8 @@ const makeMapStateToProps = () => {
             issue,
             project_id,
             can_edit,
-            class_name
+            class_name,
+            permission_name
         }
     }
     return mapStateToProps
