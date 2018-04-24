@@ -76,10 +76,10 @@ class IssuesToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               <div className="button toolbar-button--small button--large button--default"
-                   onClick={this.onExpandAllFeaturesClick}>Expand all
+                   onClick={this.onExpandAllFeaturesClick} title="Expand All">Expand all
               </div>
               <div className="button toolbar-button--small button--large button--default"
-                   onClick={this.onCollapseAllFeaturesClick}>Collapse all
+                   onClick={this.onCollapseAllFeaturesClick} title="Collapse All">Collapse all
               </div>
               
               <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
