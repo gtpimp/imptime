@@ -7,5 +7,9 @@
 
 
 .multiple-issue-summary__tip {
+    font-size: $font-size-unreadably-small;
+}
+
+.multiple-issue-summary__tip:hover {
     font-size: $font-size-tiny;
 }

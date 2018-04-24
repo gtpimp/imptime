@@ -42,7 +42,7 @@ class InvoiceForm(forms.ModelForm):
             raise forms.ValidationError("Business and project can't both be empty")
         if business is None:
             business = project.business
-        if business != project.business:
+        if project and business != project.business:
             business = project.business
         return cleaned_data
         

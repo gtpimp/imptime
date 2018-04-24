@@ -28,6 +28,7 @@ class ProjectRecentActivity(BaseSerializer):
     is_inactive = serializers.BooleanField()
     is_expired = serializers.BooleanField()
     is_active = serializers.BooleanField()
+    is_closed = serializers.BooleanField()
     sort_date = serializers.DateTimeField()
     sort_reason = serializers.CharField()
 

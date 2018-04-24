@@ -106,7 +106,7 @@ class MultipleIssueSummary extends Component {
                   <tr>
                     <th>Issue</th>
                     { map(user_header_columns_row1, col => col)}
-                    <th>Total Issue Cost</th>
+                    { show_costs && <th>Total Issue Cost</th> }
                   </tr>
                   <tr>
                     <th></th>
