@@ -18,7 +18,6 @@ import {
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import {getVisibleItemIds, setItemFlag} from '../../actions/ItemList'
 import forEach from 'lodash/forEach'
-import ToolbarButton from './ToolbarButton'
 
 class IssuesToolbarPanel extends Component {
 
