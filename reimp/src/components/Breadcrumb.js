@@ -14,6 +14,7 @@ import {
     collapseAllFeatures
 } from '../actions/Issues'
 import { logged_in_users_permissions } from '../actions/Users'
+import { startPermissionInspector } from '../actions/Auth'
 
 const menu_buttons = {
 
@@ -44,6 +45,10 @@ const menu_buttons = {
         { label: (objs) => 'Users',
           nav_url: (objs) => '/projects/' + objs.project.id + '/users'
         },
+        { label: (objs) => 'Permission inspector',
+          dispatch_action: (objs) => startPermissionInspector(objs.project.id),
+          perms: (objs) => ['has_view_permissions']
+        }
     ],
     'sprints': [
         { label: (objs) => '+ New Sprint',

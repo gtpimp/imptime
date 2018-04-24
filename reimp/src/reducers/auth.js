@@ -8,7 +8,10 @@ import {
     ANNOUNCE_CREATING_ACCOUNT,
     ANNOUNCE_CREATE_ACCOUNT_REJECTED,
     ANNOUNCE_ACCOUNT_CREATED,
-    ANNOUNCE_ACCOUNT_CREATION_FAILED
+    ANNOUNCE_ACCOUNT_CREATION_FAILED,
+    START_PERMISSION_INSPECTOR,
+    STOP_PERMISSION_INSPECTOR,
+    HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT,
 
 } from '../actions/Auth'
 import cookie from 'react-cookie';
@@ -17,8 +20,9 @@ const initialState = {
     token: null,
     change_password_error_message: null,
     saving_password: false,
-    creating_account: false
-    
+    creating_account: false,
+    permission_inspector_active: false,
+    permission_inspector_object: { project_id: null, permission_name: null }
 }
 
 export default function auth(state = initialState, action) {
@@ -74,6 +78,20 @@ export default function auth(state = initialState, action) {
             
         case ANNOUNCE_ACCOUNT_CREATION_FAILED:
             return Object.assign({}, state, { creating_account: false})
+
+        case START_PERMISSION_INSPECTOR:
+            return Object.assign({}, state, {
+                permission_inspector_active: true,
+                permission_inspector_object: { project_id: action.initial_project_id,
+                                               permission_name: "can_view_permissions" }})
+
+        case STOP_PERMISSION_INSPECTOR:
+            return Object.assign({}, state, { permission_inspector_active: false})
+
+        case HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT:
+            return Object.assign({}, state, {
+                permission_inspector_object: { project_id: action.project_id,
+                                               permission_name: action.permission_name}})
             
         default:
             return state

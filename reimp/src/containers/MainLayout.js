@@ -17,6 +17,7 @@ import Error from '../components/Error'
 import Maintenance from '../components/Maintenance'
 import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
+import PermissionInspectorPanel from '../components/PermissionInspectorPanel'
 import { ShortcutManager } from 'react-shortcuts'
 import keymap from '../actions/Keymap'
 const shortcut_manager = new ShortcutManager(keymap)
@@ -98,15 +99,20 @@ class MainLayout extends Component {
                 </div>
               }
               { is_logged_in &&
-                <div>
-                  <Websocket/>
-                  <Header/>
-                  <AutoClockPopup/>
-                  <GlobalCommentAnnotation/>
-                  <div className="main">
-                    <MainRouter />
+                <div className="main-layout">
+                  <div className="main-layout__content">
+                    <Websocket/>
+                    <Header/>
+                    <AutoClockPopup/>
+                    <GlobalCommentAnnotation/>
+                    <div className="main">
+                      <MainRouter />
+                    </div>
+                    <ReactTooltip place="bottom" type="info" />
                   </div>
-                  <ReactTooltip place="bottom" type="info" />
+                  <div className="main-layout__footer">
+                    <PermissionInspectorPanel/>
+                  </div>
                 </div>
               }  
             </div>
