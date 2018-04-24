@@ -21,6 +21,14 @@
     border-bottom: 1px solid $header-background-color;
 }
 
+.div-table__issue-header_row {
+    display: block;
+    //flex-direction: row;
+    position: fixed;
+    margin-top: 0px;
+    width: auto;
+    min-width: 1505px;
+}
 
 .div-table__row:hover {
     background-color: $row-hover-color;
