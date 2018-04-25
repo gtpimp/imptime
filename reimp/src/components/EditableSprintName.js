@@ -2,7 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import SprintNameForm from './form/SprintNameForm'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import { updateSprintName, getSprint } from '../actions/Sprints'
+import { has_permission } from '../actions/Users'
 
 class EditableSprintName extends Component {
 
@@ -17,20 +19,23 @@ class EditableSprintName extends Component {
     }
 
     render() {
-        const { sprint } = this.props
+        const { sprint, can_edit } = this.props
 
         return (
-            <EditableProperty property_key={'sprint_name'+sprint.id}
-                              initial_value={sprint.name}
-                              onChange={this.onChange}
-                              can_edit={true}
-                              edit_as_modal={true}
-                              actionLabel="Edit Sprint Name"
-            >
-              <SprintNameForm />
-              <div className="text-component--readonly">{sprint.name}</div>
-              <div className="text-component--empty">Name</div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={sprint.project_id}
+                                            permission_name='has_edit_sprint'>
+              <EditableProperty property_key={'sprint_name'+sprint.id}
+                                initial_value={sprint.name}
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+                                edit_as_modal={true}
+                                actionLabel="Edit Sprint Name"
+              >
+                <SprintNameForm />
+                <div className="text-component--readonly">{sprint.name}</div>
+                <div className="text-component--empty">Name</div>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 }
@@ -39,8 +44,10 @@ function mapStateToProps(state, props) {
     const { sprint_id } = props
     const sprint = getSprint(state, sprint_id) || {}
 
+    const can_edit = has_permission(state, sprint.project_id, 'has_edit_sprint')
     return {
-        sprint: sprint
+        sprint: sprint,
+        can_edit
     }
 }
 

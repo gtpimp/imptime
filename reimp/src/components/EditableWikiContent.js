@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import WikiForm from './form/WikiForm'
 import { updateWikiContent, getWiki, ensureWikisLoaded } from '../actions/Wikis'
@@ -35,22 +36,28 @@ class EditableWikiContent extends Component {
     }
 
     render() {
-        const { wiki, can_edit } = this.props
+        const { wiki, can_edit, project_id } = this.props
 
         const content = (wiki.content || "").trim()
         
         return (
-            <EditableProperty property_key={'wiki_content_'+wiki.id}
-                              initial_value={content}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-            >
-              <WikiForm />
-              <RenderedWiki wiki_id={wiki.id} />
-              <div className="text-component--empty text-component--description">
-                Click to edit
-              </div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_business_comments'>
+              <PermissionInspectorHighlighter project_id={project_id}
+                                              permission_name='has_view_business_comments'>
+                <EditableProperty property_key={'wiki_content_'+wiki.id}
+                                  initial_value={content}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                >
+                  <WikiForm />
+                  <RenderedWiki wiki_id={wiki.id} />
+                  <div className="text-component--empty text-component--description">
+                    Click to edit
+                  </div>
+                </EditableProperty>
+              </PermissionInspectorHighlighter>
+            </PermissionInspectorHighlighter>
         )
     }
 

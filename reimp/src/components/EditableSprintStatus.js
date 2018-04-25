@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import SprintStatusForm from './form/SprintStatusForm'
 import SprintStatusLabel from './form/SprintStatusLabel'
@@ -27,18 +28,21 @@ class EditableSprintStatus extends Component {
         }
         
         return (
-            <EditableProperty property_key={'sprint_status_name'+sprint.id}
-                              initial_value={(sprint && sprint.status_name) || null}
-                              edit_as_modal={true}
-                              class_name={class_name}
-                              can_edit={can_edit}
-                              onChange={this.onChange}
-                              actionLabel="Sprint Status"
-            >
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_sprint_status'>
+              <EditableProperty property_key={'sprint_status_name'+sprint.id}
+                                initial_value={(sprint && sprint.status_name) || null}
+                                edit_as_modal={true}
+                                class_name={class_name}
+                                can_edit={can_edit}
+                                onChange={this.onChange}
+                                actionLabel="Sprint Status"
+              >
                 <SprintStatusForm project_id={project_id}/>
                 <SprintStatusLabel />
                 <Blank />
-            </EditableProperty>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 }

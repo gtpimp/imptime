@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import { map, values, includes } from 'lodash'
 import classNames from 'classnames'
 import { has_permission } from '../actions/Users'
@@ -75,7 +76,10 @@ class WikiList extends Component {
                    onClick={(event) => this.onSelectWiki(event, wiki.id)}>
                 {wiki.name}
                 { wiki.money_sensitive &&
-                  <div className="icon--commercially-sensitive"/>
+                  <PermissionInspectorHighlighter project_id={wiki.project_id}
+                                                  permission_name='has_view_ctc_billable_rates'>
+                    <div className="icon--commercially-sensitive"/>
+                  </PermissionInspectorHighlighter>
                 }
               </div>
               <div className="wiki-list__row_buttons">

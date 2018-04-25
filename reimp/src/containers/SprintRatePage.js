@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import { map } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
-import PermissionInspectorHighlighter from '../components/PermissionInspectorHighlighter'
 //import EditableSprintName from '../components/EditableSprintName'
 import OtherUser from '../components/OtherUser'
 //import PropertyStackComponent from '../components/PropertyStackComponent'
@@ -125,29 +124,20 @@ class SprintRatePage extends Component {
                              </td>
                              { can_view_rates &&
                                <td>
-                                 <PermissionInspectorHighlighter project_id={project_id}
-                                                                 permission_name='has_view_ctc_billable_rates'>
-                                   <EditableUserRate user_id={user_id}
-                                                     sprint_id={sprint_id} />
-                                 </PermissionInspectorHighlighter>
+                                 <EditableUserRate user_id={user_id}
+                                                   sprint_id={sprint_id} />
                                </td>
                              }
                              { can_view_velocity &&
                                <td>
-                                 <PermissionInspectorHighlighter project_id={project_id}
-                                                                 permission_name='has_view_velocity'>
-                                   <EditableUserVelocity user_id={user_id}
-                                                         sprint_id={sprint_id} />
-                                 </PermissionInspectorHighlighter>
+                                 <EditableUserVelocity user_id={user_id}
+                                                       sprint_id={sprint_id} />
                                </td>
                              }
                              { can_view_time_tracking_mode &&
                                <td>
-                                 <PermissionInspectorHighlighter project_id={project_id}
-                                                                 permission_name='has_view_velocity'>
-                                   <EditableUserTimeTrackingMode user_id={user_id}
-                                                                 sprint_id={sprint_id} />
-                                 </PermissionInspectorHighlighter>
+                                 <EditableUserTimeTrackingMode user_id={user_id}
+                                                               sprint_id={sprint_id} />
                                </td>
                              }
                            </tr>

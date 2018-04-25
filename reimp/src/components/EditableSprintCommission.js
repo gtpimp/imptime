@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import SprintCommissionForm from './form/SprintCommissionForm'
 import { ensureSprintsLoaded, updateSprintCommission, getSprint, is_sprint_invalidated } from '../actions/Sprints'
@@ -35,19 +36,25 @@ class EditableSprintCommission extends Component {
         const { sprint, can_edit, can_view } = this.props
 
         return (
-            <EditableProperty property_key={'sprint_commission_'+sprint.id}
-                              initial_value={sprint.commission_percentage}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-                              edit_as_modal={true}
-                              actionLabel="Edit Sprint Commission"
-            >
-              <SprintCommissionForm sprint_id={sprint.id} />
-              <div className="text-component--readonly">
-                { can_view && <div>Commission: {sprint.commission_percentage}%</div> }
-              </div>
-              <div className="text-component--empty"></div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={sprint.project_id}
+                                            permission_name='has_edit_ctc_billable_rates'>
+              <PermissionInspectorHighlighter project_id={sprint.project_id}
+                                              permission_name='has_view_ctc_billable_rates'>
+                <EditableProperty property_key={'sprint_commission_'+sprint.id}
+                                  initial_value={sprint.commission_percentage}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                                  edit_as_modal={true}
+                                  actionLabel="Edit Sprint Commission"
+                >
+                  <SprintCommissionForm sprint_id={sprint.id} />
+                  <div className="text-component--readonly">
+                    { can_view && <div>Commission: {sprint.commission_percentage}%</div> }
+                  </div>
+                  <div className="text-component--empty"></div>
+                </EditableProperty>
+              </PermissionInspectorHighlighter>
+            </PermissionInspectorHighlighter>
         )
     }
 }
