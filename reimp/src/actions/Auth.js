@@ -14,6 +14,9 @@ export const ANNOUNCE_CREATING_ACCOUNT = "ANNOUNCE_CREATING_ACCOUNT"
 export const ANNOUNCE_CREATE_ACCOUNT_REJECTED = "ANNOUNCE_CREATE_ACCOUNT_REJECTED"
 export const ANNOUNCE_ACCOUNT_CREATED = "ANNOUNCE_ACCOUNT_CREATED"
 export const ANNOUNCE_ACCOUNT_CREATION_FAILED = "ANNOUNCE_ACCOUNT_CREATION_FAILED"
+export const START_PERMISSION_INSPECTOR = "START_PERMISSION_INSPECTOR"
+export const STOP_PERMISSION_INSPECTOR = "STOP_PERMISSION_INSPECTOR"
+export const HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT = "HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT"
 
 export function requestingNewUserPassword() {
     return { type: ANNOUNCE_REQUEST_NEW_USER_PASSWORD }
@@ -202,4 +205,27 @@ export function create_account(values) {
                 }
             })
     }
+}
+
+export function startPermissionInspector(initial_project_id) {
+    return { type: START_PERMISSION_INSPECTOR,
+             initial_project_id: initial_project_id}
+}
+
+export function stopPermissionInspector() {
+    return { type: STOP_PERMISSION_INSPECTOR }
+}
+
+export function isPermissionInspectorActive(state) {
+    return get(state, [ "auth", "permission_inspector_active"], false)
+}
+
+export function highlightObjectForPermissionInspector(project_id, permission_name) {
+    return { type: HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT,
+             project_id: project_id,
+             permission_name: permission_name }
+}
+
+export function getHighlightedObjectForPermissionInspector(state) {
+    return get(state, [ "auth", "permission_inspector_object"], null)
 }

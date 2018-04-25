@@ -9,9 +9,12 @@ import {
     startCandidateIssue,
     startCandidateFeature,
     deleteIssues,
-    updateIssueToggleAsFeature
+    updateIssueToggleAsFeature,
+    expandAllFeatures,
+    collapseAllFeatures
 } from '../actions/Issues'
 import { logged_in_users_permissions } from '../actions/Users'
+import { startPermissionInspector } from '../actions/Auth'
 
 const menu_buttons = {
 
@@ -42,6 +45,10 @@ const menu_buttons = {
         { label: (objs) => 'Users',
           nav_url: (objs) => '/projects/' + objs.project.id + '/users'
         },
+        { label: (objs) => 'Permission inspector',
+          dispatch_action: (objs) => startPermissionInspector(objs.project.id),
+          perms: (objs) => ['has_view_permissions']
+        }
     ],
     'sprints': [
         { label: (objs) => '+ New Sprint',
@@ -77,6 +84,12 @@ const menu_buttons = {
         },
         { label: (objs) => 'Bulk Create Issues',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate'
+        },
+        { label: (objs) => 'Expand All',
+          dispatch_action: (objs) => expandAllFeatures(objs.issues)
+        },
+        { label: (objs) => 'Collapse All',
+          dispatch_action: (objs) => collapseAllFeatures(objs.issues)          
         }
     ],
     'issue': [
@@ -109,7 +122,8 @@ class Breadcrumb extends Component {
     }
 
     onClickBreadcrumbActionButton(breadcrumb_button) {
-        const { dispatch, history, breadcrumb } = this.props
+        const { dispatch, history, breadcrumb, issues } = this.props
+        breadcrumb.selected_entities.issues = issues
 
         if ( breadcrumb_button['dispatch_action'] ) {
             const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities)
@@ -183,10 +197,12 @@ function mapStateToProps(state, props) {
     const { breadcrumb } = props
     const project_id = get(breadcrumb, ["selected_entities", "project", "id"], null)
     const permissions = (project_id && logged_in_users_permissions(state, project_id)) || null
-
+    const issues = state.item.issue.items_by_id
+    
     return {
         label: breadcrumb.label,
         to: breadcrumb.to,
+        issues: issues,
         breadcrumb,
         permissions
     }

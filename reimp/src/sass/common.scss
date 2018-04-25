@@ -60,3 +60,18 @@ html, body {
     .Select-menu {
     }
 }
+
+
+.main-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-layout__footer {
+    margin-top: auto;
+    flex: 0 0 100px;
+    padding: 10px;
+    z-index: 100;
+}
+

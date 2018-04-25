@@ -1,6 +1,6 @@
 import { impfetch } from './lib.js'
 
-import { updateVisibleItemIdAbove } from './ItemList'
+import { updateVisibleItemIdAbove, setItemFlag } from './ItemList'
 import { ENTITY_KEY__ISSUE, ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry'
 import { map, compact } from 'lodash'
 import difference from 'lodash/difference'
@@ -28,6 +28,7 @@ import {
     getSavingItemIds,
     getLoadingItemIds
 } from '../actions/Item'
+import forEach from 'lodash/forEach'
 
 export const SET_ISSUE_STORE_VALUE = 'SET_ISSUE_STORE_VALUE'
 export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'
@@ -301,6 +302,30 @@ export function startCandidateFeature(sprint_id, issue_id_before) {
                                     { issue_id_before: issue_id_before,
 	                                    sprint_id: sprint_id,
                                       can_group_issues: true }))
+    }
+}
+
+function getParents(issues) {
+    const parent_issue_ids = []
+    forEach(issues, function(issue) {
+        if((issue.parent_group_id === null) && (issue.group_children.length !== 0)) {
+            parent_issue_ids.push(issue.id)
+        }
+    })
+    return parent_issue_ids
+}
+
+export function collapseAllFeatures(issues) {
+    const parents = getParents(issues)
+    return (dispatch, getState) => {
+        dispatch(setItemFlag('issues', parents, 'expanded_issues', false))
+    }
+}
+
+export function expandAllFeatures(issues) {
+    const parents = getParents(issues)
+    return (dispatch, getState) => {
+        dispatch(setItemFlag('issues', parents, 'expanded_issues', true))
     }
 }
 

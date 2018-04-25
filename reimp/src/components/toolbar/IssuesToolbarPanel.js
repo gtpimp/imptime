@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
+import '../../sass/icon.css'
 import {
     startCandidateIssue,
     ensureIssuesLoaded,
@@ -61,7 +62,7 @@ function mapStateToProps(state, props) {
         selected_issue_ids,
         last_selected_issue_id: issue.id,
         sprint_id: sprint.id || null,
-        project_id: sprint.project_id
+        project_id: sprint.project_id,
     }
 }
 

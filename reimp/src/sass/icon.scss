@@ -69,6 +69,11 @@
     cursor: pointer;
 }
 
+.icon--search--small {
+    @include icon(10px, 10px, 'search.png');
+    cursor: pointer;
+}
+
 .icon--small-delete {
     @include icon(24px, 24px, 'delete.png');
     cursor: pointer;
