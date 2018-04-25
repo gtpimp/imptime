@@ -22,12 +22,12 @@
 }
 
 .div-table__issue-header_row {
-    display: block;
-    //flex-direction: row;
-    position: fixed;
-    margin-top: 0px;
-    width: auto;
-    min-width: 1505px;
+    //position: absolute;
+    //position: relative;
+    //position: -webkit-sticky;
+    //position: sticky;
+    //top: 123;
+    //width: inherit;
 }
 
 .div-table__row:hover {

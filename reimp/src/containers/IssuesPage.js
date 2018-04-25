@@ -165,21 +165,23 @@ class IssuesPage extends Component {
         } = this.props
 
         if ( show_sidebar ) {
-            return (
-                <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50}
-                             defaultSize={splitter_size}
-                             onChange={this.onChangeSplitterSize}
-                  >
-                    <div className="left">
-                      {this.renderLeftPane()}
+            const styles={maxHeight:"calc(100vh - 124px)"}
+                return (
+                    <div className="list-layout">
+                      <SplitPane split="vertical" minSize={50}
+                                 defaultSize={splitter_size}
+                                 onChange={this.onChangeSplitterSize}
+                                 style={styles}
+                      >
+                        <div className="left">
+                          {this.renderLeftPane()}
+                        </div>
+                        <div className="right">
+                          {this.renderRightPane()}
+                        </div>
+                      </SplitPane>
                     </div>
-                    <div className="right">
-                      {this.renderRightPane()}
-                    </div>
-                  </SplitPane>
-                </div>
-            )
+                )
         }
         if ( ! show_sidebar ) {
             return (
