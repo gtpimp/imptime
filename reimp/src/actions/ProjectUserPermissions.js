@@ -1,5 +1,5 @@
 import { impfetch } from './lib.js'
-import { keyBy, get } from 'lodash'
+import { keys, keyBy, get, filter } from 'lodash'
 
 // PUP === ProjectUserPermission
 
@@ -79,8 +79,21 @@ function getPupIdsForProjectUser(state, project_id) {
     return get(state, ["project_user_permission", "pup_ids_by_project_and_user", project_id], [])
 }
 
+function getPup(state, pup_id) {
+    return get(state, ["project_user_permission", "items_by_id", pup_id], [])
+}
+
+function getPupsForProject(state, project_id) {
+    return get(state, ["project_user_permission", "items_by_id"], [])
+}
+
 function arePupsLoading(state, project_id) {
     return get(state, ["project_user_permission", "loading_pups_by_project_and_user", project_id], false) === true
+}
+
+export function getUserIdsWithPermission(state, project_id, permission_name) {
+    const pups = getPupsForProject(state, project_id)
+    return keys(keyBy(filter(pups, pup => pup[permission_name] === true), "user_id"))
 }
 
 export function getLoadingProjectUserPermissionIds(state) {
@@ -109,10 +122,6 @@ export function ensureProjectUserPermissionsLoaded(project_id) {
             dispatch(fetchProjectUserPermissions(project_id))
         }
     }
-}
-
-function getPup(state, pup_id) {
-    return ((state.project_user_permission || {}).items_by_id || {})[pup_id] || null
 }
 
 export function hasPermission(state, project_id, user_id, permission_name) {

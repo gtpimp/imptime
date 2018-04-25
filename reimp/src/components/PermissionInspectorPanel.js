@@ -1,11 +1,16 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map, includes } from 'lodash'
 import { has_permission } from '../actions/Users'
 import ProjectName from './ProjectName'
+import OtherUser from './OtherUser'
 import { isPermissionInspectorActive,
          stopPermissionInspector,
          getHighlightedObjectForPermissionInspector
 } from '../actions/Auth'
+import { ensureProjectUserPermissionsLoaded, getUserIdsWithPermission } from '../actions/ProjectUserPermissions'
+import { getProject, ensureProjectsLoaded } from '../actions/Projects'
+import { ensureUsersLoaded } from '../actions/Users'
 
 class PermissionInspectorPanel extends Component {
 
@@ -14,17 +19,56 @@ class PermissionInspectorPanel extends Component {
         this.onClose = this.onClose.bind(this)
     }
 
+    componentDidMount() {
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, project_id, user_ids } = props
+        if ( project_id ) {
+            dispatch(ensureProjectsLoaded([project_id]))
+            dispatch(ensureProjectUserPermissionsLoaded(project_id))
+        }
+        if ( user_ids ) {
+            dispatch(ensureUsersLoaded(user_ids))
+        }
+    }
+    
+
     onClose() {
         const { dispatch } = this.props
         dispatch(stopPermissionInspector())
     }
 
     renderPermission() {
-        const { permission_name } = this.props
+        const { permission_name, user_ids, user_ids_with_permission } = this.props
         return (
             <div className="permission-inspector-panel__permission">
               <div className="permission-inspector-panel__permission-name">
                 {permission_name}
+              </div>
+
+              <div className="permission-inspector-panel__permission-users">
+                { map(user_ids, function(user_id) {
+                      const has_permission = includes(user_ids_with_permission, user_id)
+                      return (
+                          <div key={user_id}
+                               className="permission-inspector-panel__permission-user">
+                            <OtherUser user_id={user_id}/>
+                            { has_permission &&
+                              <div className="user-permission__permission_value--on">On</div>
+                            }
+                              { !has_permission &&
+                                <div className="user-permission__permission_value--off">Off</div>
+                              }
+                          </div>
+                      )}
+                  )}
               </div>
             </div>
         )
@@ -70,13 +114,21 @@ function mapStateToProps(state, props) {
     const can_view = project_id && has_permission(state, project_id, 'has_view_permissions')
     const can_edit = project_id && has_permission(state, project_id, 'has_edit_permissions')
     const is_permission_inspector_active = isPermissionInspectorActive(state)
+    let user_ids_with_permission = []
+    if ( project_id && permission_name ) {
+        user_ids_with_permission = getUserIdsWithPermission(state, project_id, permission_name)
+    }
+    const project = getProject(state, project_id)
+    const user_ids = (project || {}).allowed_user_ids || []
     
     return {
         is_permission_inspector_active,
         project_id,
         permission_name,
         can_edit,
-        can_view
+        can_view,
+        user_ids,
+        user_ids_with_permission
     }
 }
 
