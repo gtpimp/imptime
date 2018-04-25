@@ -139,32 +139,31 @@ class Breadcrumb extends Component {
     renderBreadcrumbLink(button, breadcrumb, key, button_perms) {
         const { project_id } = this.props
         const label = button.label(breadcrumb.selected_entities)
-
-        const children = []
         if ( button['dispatch_action'] ) {
-                <div key={key}
-                     className="breadcrumb-menu__item"
-                     onClick={() => this.onClickBreadcrumbActionButton(button)}>
-                  {label}
-                </div>
+            return (
+                <PermissionInspectorHighlighter key={key}
+                                                project_id={project_id}
+                                                permission_names={button_perms}>
+                  <div className="breadcrumb-menu__item"
+                       onClick={() => this.onClickBreadcrumbActionButton(button)}>
+                    {label}
+                  </div>
+                </PermissionInspectorHighlighter>
             )
         } else {
-            children.push(
-                <div key={key} className="breadcrumb-menu__item">
-                  <Link to={button['nav_url'](breadcrumb.selected_entities)}>
-                    {label}
-                  </Link>
-                </div>
+            return (
+                <PermissionInspectorHighlighter key={key}
+                                                project_id={project_id}
+                                                permission_names={button_perms}>
+                  <div className="breadcrumb-menu__item">
+                    <Link to={button['nav_url'](breadcrumb.selected_entities)}>
+                      {label}
+                    </Link>
+                  </div>
+                </PermissionInspectorHighlighter>
             )
         }
         
-        return (
-            <PermissionInspectorHighlighter key={key}
-                                            project_id={project_id}
-                                            permission_names={button_perms}>
-              {children}
-            </PermissionInspectorHighlighter>
-        )
     }
     
     render() {
@@ -215,6 +214,7 @@ function mapStateToProps(state, props) {
         label: breadcrumb.label,
         to: breadcrumb.to,
         issues: issues,
+        project_id,
         breadcrumb,
         permissions
     }
