@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map, includes } from 'lodash'
+import classNames from 'classnames'
 import { has_permission } from '../actions/Users'
 import ProjectName from './ProjectName'
 import OtherUser from './OtherUser'
@@ -8,7 +9,9 @@ import { isPermissionInspectorActive,
          stopPermissionInspector,
          getHighlightedObjectForPermissionInspector
 } from '../actions/Auth'
-import { ensureProjectUserPermissionsLoaded, getUserIdsWithPermission } from '../actions/ProjectUserPermissions'
+import { ensureProjectUserPermissionsLoaded,
+         getUserIdsWithPermission,
+         convert_permission_name_to_label } from '../actions/ProjectUserPermissions'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
 import { ensureUsersLoaded } from '../actions/Users'
 
@@ -47,10 +50,11 @@ class PermissionInspectorPanel extends Component {
 
     renderPermission() {
         const { permission_name, user_ids, user_ids_with_permission } = this.props
+        const readable_permission_name = convert_permission_name_to_label(permission_name)
         return (
             <div className="permission-inspector-panel__permission">
               <div className="permission-inspector-panel__permission-name">
-                {permission_name}
+                Selected Permission: {readable_permission_name}
               </div>
 
               <div className="permission-inspector-panel__permission-users">
@@ -58,14 +62,10 @@ class PermissionInspectorPanel extends Component {
                       const has_permission = includes(user_ids_with_permission, user_id)
                       return (
                           <div key={user_id}
-                               className="permission-inspector-panel__permission-user">
+                               className={classNames("permission-inspector-panel__permission-user",
+                                         {"user-permission__permission_value--on":has_permission,
+                                         "user-permission__permission_value--off":!has_permission})} >
                             <OtherUser user_id={user_id}/>
-                            { has_permission &&
-                              <div className="user-permission__permission_value--on">On</div>
-                            }
-                              { !has_permission &&
-                                <div className="user-permission__permission_value--off">Off</div>
-                              }
                           </div>
                       )}
                   )}
@@ -90,7 +90,7 @@ class PermissionInspectorPanel extends Component {
                   <div className="icon--small-cross"/>
                 </div>
               </h2>
-              <ProjectName project_id={project_id} />
+              Project: <ProjectName project_id={project_id} />
               
               { !can_view &&
                 <div>You cannot view permissions for this project</div>

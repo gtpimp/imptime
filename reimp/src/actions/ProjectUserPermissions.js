@@ -197,3 +197,7 @@ export function updateProjectUserPermissions(project_id, user_id, permission_val
 	 })
     }
 }
+
+export function convert_permission_name_to_label(permission_name) {
+    return permission_name.replace(/_/g, " ").replace(/business/g, "project")
+}

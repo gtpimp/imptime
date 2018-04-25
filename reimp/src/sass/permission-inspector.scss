@@ -29,3 +29,15 @@
     float: right;
     background-color: #000000;
 }
+
+.permission-inspector-panel__permission-users {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.permission-inspector-panel__permission-user {
+    min-width: 200px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
