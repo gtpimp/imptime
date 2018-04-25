@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y --force-yes \
   libfontconfig1
   
 # Install node
-RUN curl -sL https://deb.nodesource.com/setup_4.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 RUN npm install -g npm@latest
 
 # Build sassc
