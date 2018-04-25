@@ -97,7 +97,7 @@ class EditableProperty extends Component {
 
     render() {
 
-        const {children, initial_value, is_readonly, is_editing, is_empty,
+        const {children, initial_value, is_readonly, is_editing, is_empty, can_edit,
                edit_as_modal, class_name, wideView, action_label} = this.props
 
         const that = this
@@ -131,7 +131,7 @@ class EditableProperty extends Component {
         }
 
         return (
-            <div className={classNames(class_name, "editable-property")}
+            <div className={classNames(class_name, "editable-property", {"editable-property--editable":can_edit})}
                  onMouseDown={this.onMouseDown}
                  onClick={this.startEditing}>
               <div>
