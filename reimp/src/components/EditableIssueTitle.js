@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import classNames from 'classnames'
 import EditableProperty from './form/EditableProperty'
 import IssueTitleForm from './form/IssueTitleForm'
@@ -19,26 +20,29 @@ class EditableIssueTitle extends Component {
     }
 
     render() {
-        const { issue, can_edit } = this.props
+        const { issue, can_edit, project_id } = this.props
 
         return (
-            <EditableProperty property_key={'issue_title'+issue.id}
-                              initial_value={issue.subject}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-            >
-              <IssueTitleForm />
-              <div className={classNames("text-component--readonly",
-                                         {issue_title__quality_error:issue.subject_quality_error})}>
-                { issue.subject_quality_error && 
-                   <div className="issue_subject__quality_error_reason">
-                     Low quality title: {issue.subject_quality_error}
-                   </div>
-                }
-                {issue.subject}
-              </div>
-              <div className="text-component--empty">Title</div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_subject'>
+              <EditableProperty property_key={'issue_title'+issue.id}
+                                initial_value={issue.subject}
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <IssueTitleForm />
+                <div className={classNames("text-component--readonly",
+                                           {issue_title__quality_error:issue.subject_quality_error})}>
+                  { issue.subject_quality_error && 
+                    <div className="issue_subject__quality_error_reason">
+                      Low quality title: {issue.subject_quality_error}
+                    </div>
+                  }
+                    {issue.subject}
+                </div>
+                <div className="text-component--empty">Title</div>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 
@@ -51,7 +55,8 @@ function mapStateToProps(state, props) {
 
     return {
         issue: issue,
-        can_edit: can_edit
+        can_edit: can_edit,
+        project_id: issue.project_id
     }
 }
 

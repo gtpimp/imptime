@@ -5,6 +5,7 @@ import SelectSprintForm from './form/SelectSprintForm'
 import SprintLabel from './form/SprintLabel'
 import Blank from './form/Blank'
 import { moveIssuesToSprint, getIssues } from '../actions/Issues'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import { has_permission } from '../actions/Users'
 
 class EditableIssueInSprint extends Component {
@@ -23,7 +24,8 @@ class EditableIssueInSprint extends Component {
         const { sprint_id, project_id, can_edit, issue } = this.props
 
         return (
-            <div>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_add_issue'>
                 <EditableProperty property_key={'issue_sprint_id_'+issue.id}
                                   initial_value={sprint_id}
                                   edit_as_modal={true}
@@ -35,7 +37,7 @@ class EditableIssueInSprint extends Component {
                     <SprintLabel />
                     <Blank/>
                 </EditableProperty>
-            </div>
+            </PermissionInspectorHighlighter>
         )
     }
 }

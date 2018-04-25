@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import SelectIssueParentGroupForm from './form/SelectIssueParentGroupForm'
 import IssueLabel from './form/IssueLabel'
 import Blank from './form/Blank'
@@ -23,7 +24,8 @@ class EditableIssueParent extends Component {
         const { parent_group_id, project_id, can_edit, issue } = this.props
 
         return (
-            <div>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_issues'>
                 <EditableProperty property_key={'parent_group_id_'+issue.id}
                                   initial_value={parent_group_id}
                                   edit_as_modal={true}
@@ -36,7 +38,7 @@ class EditableIssueParent extends Component {
                     <IssueLabel />
                     <Blank/>
                 </EditableProperty>
-            </div>
+            </PermissionInspectorHighlighter>
         )
     }
 }
