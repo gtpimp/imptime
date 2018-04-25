@@ -33,7 +33,11 @@ class PermissionInspectorHighlighter extends Component {
         const is_active = active_project_id === project_id && active_permission_name === permission_name
 
         if ( ! is_permission_inspector_active || ! can_view || ! permission_name ) {
-            return this.props.children
+            return (
+                <div className="permission-inspector-highlighter--null">
+                  {this.props.children}
+                </div>
+            )
         }
         
         return (

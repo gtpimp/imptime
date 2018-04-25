@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import EditableProperty from './form/EditableProperty'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     updateIssueComment,
     createIssueComment,
@@ -54,16 +55,17 @@ class EditableIssueComment extends Component {
     }
 
     render() {
-        const {comment, can_edit, issue_id} = this.props
+        const {comment, can_edit, issue_id, project_id} = this.props
         return (
 
-            <div>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_add_issue_comment'>
               { comment.id &&
                 <EditableProperty property_key={'issue_comment_'+issue_id+'_'+comment.id}
                                   initial_value={comment.comment}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
-                    >
+                >
                   <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
                                     issue_id={issue_id} comment={comment}/>
                   <IssueComment issue_id={issue_id}
@@ -79,7 +81,7 @@ class EditableIssueComment extends Component {
                                     initial_value=''
                                     onChange={this.onChange}
                                     can_edit={can_edit}
-                    >
+                  >
                     <IssueCommentForm form={'issue_comment_form_'+issue_id} issue_id={issue_id} />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">
@@ -89,7 +91,7 @@ class EditableIssueComment extends Component {
                 </div>
               }
 
-            </div>
+            </PermissionInspectorHighlighter>
         )
     }
 }
@@ -98,7 +100,7 @@ function mapStateToProps(state, props) {
 
     const { issue_id, comment_id } = props
     const issue = getIssue(state, issue_id) || {}
-    const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+    const can_edit = has_permission(state, issue.project_id, 'has_add_issue_comment')
 
     let comment = { id: null}
     map(issue.comments || [], function(issue_comment, index) {
@@ -109,6 +111,7 @@ function mapStateToProps(state, props) {
 
     return {
         issue_id: issue_id,
+        project_id: issue.project_id,
         comment_id: comment_id,
         comment: comment,
         can_edit: can_edit,

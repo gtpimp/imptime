@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import SelectSprintForm from './form/SelectSprintForm'
 import Blank from './form/Blank'
 import { copyIssuesToSprint, getIssues } from '../actions/Issues'
@@ -22,19 +23,20 @@ class EditableCopyIssueToSprint extends Component {
         const { sprint_id, project_id, can_edit, issue } = this.props
 
         return (
-            <div>
-                <EditableProperty property_key={'issue_copy_sprint_id_'+issue.id}
-                                  initial_value={sprint_id}
-                                  edit_as_modal={true}
-                                  onChange={this.onChange}
-                                  actionLabel="Copy to Sprint"
-                                  can_edit={can_edit}
-                >
-                    <SelectSprintForm project_id={project_id} />
-                    <div data-tip="Copy this issue to a different sprint" className="issue_sidebar__issue_copy_img" />
-                    <Blank/>
-                </EditableProperty>
-            </div>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_add_issue'>
+              <EditableProperty property_key={'issue_copy_sprint_id_'+issue.id}
+                                initial_value={sprint_id}
+                                edit_as_modal={true}
+                                onChange={this.onChange}
+                                actionLabel="Copy to Sprint"
+                                can_edit={can_edit}
+              >
+                <SelectSprintForm project_id={project_id} />
+                <div data-tip="Copy this issue to a different sprint" className="issue_sidebar__issue_copy_img" />
+                <Blank/>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 }
