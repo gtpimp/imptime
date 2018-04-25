@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import ProjectDescriptionForm from './form/ProjectDescriptionForm'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import { updateProjectDescription, getProject } from '../actions/Projects'
 import { has_permission } from '../actions/Users'
 import ReactMarkdown from 'react-markdown'
@@ -37,19 +38,22 @@ class EditableProjectDescription extends Component {
         const description = (project.description || "").trim()
         
         return (
-            <EditableProperty property_key={'project_description'+project.id}
-                              initial_value={description}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-            >
-              <ProjectDescriptionForm />
-              <div className="text-component--readonly text-component--description">
-                <ReactMarkdown source={description} renderers={renderers} />
-              </div>
-              <div className="text-component--empty text-component--description">
-                ...
-              </div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={project.id}
+                                            permission_name='has_edit_project_detail'>
+              <EditableProperty property_key={'project_description'+project.id}
+                                initial_value={description}
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+              >
+                <ProjectDescriptionForm />
+                <div className="text-component--readonly text-component--description">
+                  <ReactMarkdown source={description} renderers={renderers} />
+                </div>
+                <div className="text-component--empty text-component--description">
+                  ...
+                </div>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 
@@ -58,7 +62,7 @@ class EditableProjectDescription extends Component {
 function mapStateToProps(state, props) {
     const { project_id } = props
     const project = getProject(state, project_id) || {}
-    const can_edit = has_permission(state, project.id, 'has_edit_description')
+    const can_edit = has_permission(state, project.id, 'has_edit_project_detail')
     return {
         project: project,
         can_edit: can_edit

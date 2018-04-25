@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import IssueEstimateForm from './form/IssueEstimateForm'
 import { getIssue, updateIssueEstimate } from '../actions/Issues'
@@ -20,23 +21,26 @@ class EditableIssueEstimate extends Component {
     }
 
     render() {
-        const { issue, can_edit, actual, estimate_hours, class_name } = this.props
+        const { issue, can_edit, actual, estimate_hours, class_name, project_id } = this.props
 
         return (
-            <EditableProperty property_key={'issue_estimate' + issue.id}
-                              initial_value={format_hours(estimate_hours)}
-                              onChange={this.onChange}
-                              edit_as_modal={true}
-                              actionLabel="Issue Estimate"
-                              class_name={class_name}
-                              can_edit={can_edit}
-            >
-              <IssueEstimateForm />
-              <div className="text-component--readonly">
-                <Progress issue={issue} actual={actual} estimate={estimate_hours} force_show={true} />
-              </div>
-              <div className="text-component--empty">0</div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_estimate_own_points'>
+              <EditableProperty property_key={'issue_estimate' + issue.id}
+                                initial_value={format_hours(estimate_hours)}
+                                onChange={this.onChange}
+                                edit_as_modal={true}
+                                actionLabel="Issue Estimate"
+                                class_name={class_name}
+                                can_edit={can_edit}
+              >
+                <IssueEstimateForm />
+                <div className="text-component--readonly">
+                  <Progress issue={issue} actual={actual} estimate={estimate_hours} force_show={true} />
+                </div>
+                <div className="text-component--empty">0</div>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 }
@@ -50,6 +54,7 @@ function mapStateToProps(state, props) {
     return {
         issue,
         can_edit,
+        project_id: issue.project_id,
         estimate_hours,
         class_name,
         actual

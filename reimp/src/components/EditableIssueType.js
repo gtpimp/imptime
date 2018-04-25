@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import IssueTypeForm from './form/IssueTypeForm'
 import IssueTypeLabel from './form/IssueTypeLabel'
@@ -22,18 +23,21 @@ class EditableIssueType extends Component {
         const { issue, project_id, can_edit, class_name } = this.props
 
         return (
-            <EditableProperty property_key={'issue_type_name_'+issue.id}
-                              initial_value={(issue && issue.type_name) || null}
-                              edit_as_modal={true}
-                              class_name={class_name}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-                              actionLabel="Issue Type"
-            >
-              <IssueTypeForm project_id={project_id}/>
-              <IssueTypeLabel />
-              <div className="text-component--empty">Regular issue</div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_add_issue'>
+              <EditableProperty property_key={'issue_type_name_'+issue.id}
+                                initial_value={(issue && issue.type_name) || null}
+                                edit_as_modal={true}
+                                class_name={class_name}
+                                onChange={this.onChange}
+                                can_edit={can_edit}
+                                actionLabel="Issue Type"
+              >
+                <IssueTypeForm project_id={project_id}/>
+                <IssueTypeLabel />
+                <div className="text-component--empty">Regular issue</div>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 }

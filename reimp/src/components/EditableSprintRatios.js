@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import SprintRatiosForm from './form/SprintRatiosForm'
 import SprintRatios from './SprintRatios'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import { ensureSprintsLoaded, updateSprintRatios, getSprint, is_sprint_invalidated } from '../actions/Sprints'
 import { has_permission } from '../actions/Users'
 
@@ -36,19 +37,25 @@ class EditableSprintRatios extends Component {
         const { sprint, can_edit } = this.props
 
         return (
-            <EditableProperty property_key={'sprint_ratios_'+sprint.id}
-                              initial_value={{ratio_management: sprint.ratio_management,
-                                              ratio_testing: sprint.ratio_testing,
-                                              ratio_scope_creep: sprint.ratio_scope_creep}}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-                              edit_as_modal={true}
-                              actionLabel="Edit Sprint Ratios"
-            >
-              <SprintRatiosForm sprint_id={sprint.id} />
-              <SprintRatios sprint_id={sprint.id} />
-              <div className="text-component--empty"></div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={sprint.project_id}
+                                            permission_name='has_edit_velocity'>
+              <PermissionInspectorHighlighter project_id={sprint.project_id}
+                                              permission_name='has_view_velocity'>
+                <EditableProperty property_key={'sprint_ratios_'+sprint.id}
+                                  initial_value={{ratio_management: sprint.ratio_management,
+                                                  ratio_testing: sprint.ratio_testing,
+                                                  ratio_scope_creep: sprint.ratio_scope_creep}}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                                  edit_as_modal={true}
+                                  actionLabel="Edit Sprint Ratios"
+                >
+                  <SprintRatiosForm sprint_id={sprint.id} />
+                  <SprintRatios sprint_id={sprint.id} />
+                  <div className="text-component--empty"></div>
+                </EditableProperty>
+              </PermissionInspectorHighlighter>
+            </PermissionInspectorHighlighter>
         )
     }
 }

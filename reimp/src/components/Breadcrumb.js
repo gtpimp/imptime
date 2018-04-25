@@ -15,6 +15,7 @@ import {
 } from '../actions/Issues'
 import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 
 const menu_buttons = {
 
@@ -135,25 +136,34 @@ class Breadcrumb extends Component {
         }
     }
 
-    renderBreadcrumbLink(button, breadcrumb, key) {
+    renderBreadcrumbLink(button, breadcrumb, key, button_perms) {
+        const { project_id } = this.props
         const label = button.label(breadcrumb.selected_entities)
         if ( button['dispatch_action'] ) {
             return (
-                <div key={key}
-                     className="breadcrumb-menu__item"
-                     onClick={() => this.onClickBreadcrumbActionButton(button)}>
-                  {label}
-                </div>
+                <PermissionInspectorHighlighter key={key}
+                                                project_id={project_id}
+                                                permission_names={button_perms}>
+                  <div className="breadcrumb-menu__item"
+                       onClick={() => this.onClickBreadcrumbActionButton(button)}>
+                    {label}
+                  </div>
+                </PermissionInspectorHighlighter>
             )
         } else {
             return (
-                <div key={key} className="breadcrumb-menu__item">
-                  <Link to={button['nav_url'](breadcrumb.selected_entities)}>
-                    {label}
-                  </Link>
-                </div>
+                <PermissionInspectorHighlighter key={key}
+                                                project_id={project_id}
+                                                permission_names={button_perms}>
+                  <div className="breadcrumb-menu__item">
+                    <Link to={button['nav_url'](breadcrumb.selected_entities)}>
+                      {label}
+                    </Link>
+                  </div>
+                </PermissionInspectorHighlighter>
             )
         }
+        
     }
     
     render() {
@@ -175,12 +185,13 @@ class Breadcrumb extends Component {
                     {label}
                   </Link>
                   { map(buttons, function(button, index) {
+                        const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
                         const can_view = button.perms === undefined || permissions === null ||
-                                         filter(button.perms(breadcrumb.selected_entities), (perm) => permissions[perm] === true).length>0
+                                         filter(button_perms, (perm) => permissions[perm] === true).length>0
                         if ( ! can_view ) {
                             return null
                         }
-                        return that.renderBreadcrumbLink(button, breadcrumb, index)
+                        return that.renderBreadcrumbLink(button, breadcrumb, index, button_perms)
                     })
                   }
                 </div>
@@ -203,6 +214,7 @@ function mapStateToProps(state, props) {
         label: breadcrumb.label,
         to: breadcrumb.to,
         issues: issues,
+        project_id,
         breadcrumb,
         permissions
     }

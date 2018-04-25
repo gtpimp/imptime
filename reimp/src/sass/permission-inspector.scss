@@ -4,6 +4,7 @@
     height: 100px;
     overflow: auto;
     background-color: beige;
+    padding: 10px;
 }
 
 .permission-inspector-highlighter {
@@ -23,9 +24,44 @@
     margin-right: 10px;
     cursor: pointer;
     background-color: #000000;
+    height: 10px;
+    margin-left: 10px;
 }
 
 .permission-inspector-highlighter__inspect {
     float: right;
     background-color: #000000;
+}
+
+.permission-inspector-panel__permission-users {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.permission-inspector-panel__permission-user {
+    min-width: 200px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 5px;
+}
+
+.permission-inspector-panel_title {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.permission-inspector-panel_title h3 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.permission-inspector-panel__project-name {
+    display: flex;
+    margin-right: 30px;
+    margin-left: 30px;
+}
+
+.permission-inspector-highlighter--null {
+    display:inline;
 }

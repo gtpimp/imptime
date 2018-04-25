@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     getSprint,
 } from '../actions/Sprints'
@@ -64,55 +65,59 @@ class EditableSprintDeadline extends Component {
 
     render() {
 
-        const {deadline, can_view, can_edit, sprint_id} = this.props
+        const {deadline, can_view, can_edit, sprint_id, project_id} = this.props
         if ( ! can_view ) {
             return (<div>No permission to view deadlines</div>)
         }
 
         return (
 
-            <div>
-              { deadline.id &&
-                <div>
-                  <EditableProperty property_key={'sprint_deadline_'+sprint_id+'_'+deadline.id}
-                                    initial_value={deadline.deadline}
-                                    onChange={this.onChange}
-                                    class_name="sprint-deadline__card"
-                                    actionLabel="Sprint deadline"
-                                    edit_as_modal={true}
-                                    can_edit={can_edit}
-                  >
-                    <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
-                                        sprint_id={sprint_id}
-                                        deadline={deadline}/>
-                    <div className="sprint-deadline__card">
-                      <SprintDeadline deadline_id={deadline.id} />
-                      <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
-                    </div>
-                  </EditableProperty>
-                </div>
-              }
-
-              { ! deadline.id && can_edit &&
-                <div>
-                  <EditableProperty property_key={'sprint_deadline_'+sprint_id}
-                                    initial_value=''
-                                    onChange={this.onChange}
-                                    actionLabel="Sprint deadline"
-                                    edit_as_modal={true}
-                                    can_edit={can_edit}
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_deadlines'>
+              <PermissionInspectorHighlighter project_id={project_id}
+                                              permission_name='has_view_deadlines'>
+                { deadline.id &&
+                  <div>
+                    <EditableProperty property_key={'sprint_deadline_'+sprint_id+'_'+deadline.id}
+                                      initial_value={deadline.deadline}
+                                      onChange={this.onChange}
+                                      class_name="sprint-deadline__card"
+                                      actionLabel="Sprint deadline"
+                                      edit_as_modal={true}
+                                      can_edit={can_edit}
                     >
-                    <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id}
-                                        sprint_id={sprint_id} />
-                    <div className="text-component--readonly"></div>
-                    <div className="text-component--empty">
-                      <button className="button button--primary sprint_sidebar--button">Create deadline</button>
-                    </div>
-                  </EditableProperty>
-                </div>
-              }
+                      <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
+                                          sprint_id={sprint_id}
+                                          deadline={deadline}/>
+                      <div className="sprint-deadline__card">
+                        <SprintDeadline deadline_id={deadline.id} />
+                        <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
+                      </div>
+                    </EditableProperty>
+                  </div>
+                }
 
-            </div>
+                  { ! deadline.id && can_edit &&
+                    <div>
+                      <EditableProperty property_key={'sprint_deadline_'+sprint_id}
+                                        initial_value=''
+                                        onChange={this.onChange}
+                                        actionLabel="Sprint deadline"
+                                        edit_as_modal={true}
+                                        can_edit={can_edit}
+                      >
+                        <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id}
+                                            sprint_id={sprint_id} />
+                        <div className="text-component--readonly"></div>
+                        <div className="text-component--empty">
+                          <button className="button button--primary sprint_sidebar--button">Create deadline</button>
+                        </div>
+                      </EditableProperty>
+                    </div>
+                  }
+
+              </PermissionInspectorHighlighter>
+            </PermissionInspectorHighlighter>
         )
     }
 }
@@ -128,6 +133,7 @@ function mapStateToProps(state, props) {
     
     return {
         sprint_id: sprint_id,
+        project_id: sprint.project_id,
         deadline_id: deadline_id,
         deadline: deadline,
         deadline_modified: deadline.modified,

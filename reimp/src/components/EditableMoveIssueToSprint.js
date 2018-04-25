@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import SelectSprintForm from './form/SelectSprintForm'
 import Blank from './form/Blank'
@@ -22,7 +23,8 @@ class EditableMoveIssueToSprint extends Component {
         const { sprint_id, project_id, can_edit, issue } = this.props
 
         return (
-            <div>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_add_issue'>
               <EditableProperty property_key={'issue_move_sprint_id_'+issue.id}
                                 initial_value={sprint_id}
                                 edit_as_modal={true}
@@ -34,7 +36,7 @@ class EditableMoveIssueToSprint extends Component {
                 <div data-tip="Move this issue to a different sprint" className="issue_sidebar__issue_move_img" />
                 <Blank/>
               </EditableProperty>
-            </div>
+            </PermissionInspectorHighlighter>
         )
     }
 }

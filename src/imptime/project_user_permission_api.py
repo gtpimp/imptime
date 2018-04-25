@@ -27,6 +27,11 @@ class ProjectUserPermissionViewSet(BaseViewSet):
             pups = self.allowed_project_permissions()
             pups = self.apply_filter(qs=pups, raw_filter_args=filter_args)
 
+            if 'project_id' not in filter_args:
+                # this is because of a limitation in the implementation
+                # of allowed_project_permissions, could be fixed.
+                raise Exception("Must filter by project")
+            
             if pups.count() > 0:
                 project = pups[0].business #sic
                 if self.logged_in_permissions(project) is None or not self.logged_in_permissions(project).has_view_permissions:

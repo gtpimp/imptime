@@ -1,8 +1,5 @@
 import { impfetch } from './lib.js'
-//import indexOf from 'lodash/indexOf'
-import keyBy from 'lodash/keyBy'
-import includes from 'lodash/includes'
-import map from 'lodash/map'
+import { keys, keyBy, get, filter } from 'lodash'
 
 // PUP === ProjectUserPermission
 
@@ -29,65 +26,74 @@ export function invalidatePups(pup_ids) {
     }
 }
 
-function announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id) {
+function announceLoadingPupsForProjectAndUser(pup_ids, project_id) {
     return {
         type: ANNOUNCE_LOADING_PUPS,
 	project_id: project_id,
-        user_id: user_id,
-        pup_ids_to_load: [pup_id]
+        pup_ids_to_load: pup_ids
     }
 }
 
-function announcePupsLoadedForProjectAndUser(payload, project_id, user_id) {
+function announcePupsLoadedForProjectAndUser(payload, project_id) {
     return {
         type: ANNOUNCE_PUPS_LOADED,
         items_by_id: keyBy(payload.project_user_permissions, 'id'),
 	received_at: Date.now(),
-        project_id: project_id,
-        user_id: user_id
+        project_id: project_id
     }
 }
 
-function announcePupsLoadFailedForProjectAndUser(error, project_id, user_id) {
+function announcePupsLoadFailedForProjectAndUser(error, project_id) {
     return {
         type: ANNOUNCE_PUPS_LOAD_FAILED,
         error: error,
         received_at: Date.now(),
-        project_id: project_id,
-        user_id: user_id
+        project_id: project_id
     }
 }
 
-function fetchProjectUserPermission(project_id, user_id) {
+function fetchProjectUserPermissions(project_id) {
     return (dispatch, getState) => {
         const state = getState()
-        const pup_id = getPupIdForProjectUser(state, project_id, user_id)
-        dispatch(announceLoadingPupsForProjectAndUser(pup_id, project_id, user_id))
-        const params = { filter: { project_id: project_id,
-                                   user_id: user_id },
-		                     pagination: {'enabled': false} }
+        const pup_ids = getPupIdsForProjectUser(state, project_id)
+        dispatch(announceLoadingPupsForProjectAndUser(pup_ids, project_id))
+        const params = { filter: { project_id: project_id },
+		         pagination: {'enabled': false} }
 
         return impfetch(state, 'imp/permission/project/', dispatch, {params:params})
 	          .then(response => response.json())
 	          .then(json => {
                 if (json.status !== 'success') {
-		                dispatch(announcePupsLoadFailedForProjectAndUser(project_id, user_id))
+		                dispatch(announcePupsLoadFailedForProjectAndUser(project_id))
                 } else {
-		                dispatch(announcePupsLoadedForProjectAndUser(json.payload, project_id, user_id))
+		                dispatch(announcePupsLoadedForProjectAndUser(json.payload, project_id))
                 }
 	          }).catch(function (error) {
-	              dispatch(announcePupsLoadFailedForProjectAndUser("Failed to load pups: " + error, project_id, user_id))
+	              dispatch(announcePupsLoadFailedForProjectAndUser("Failed to load pups: " + error, project_id))
 	          })
 
     }
 }
 
-function getPupIdForProjectUser(state, project_id, user_id) {
-    return (((state.project_user_permission || {}).pup_ids_by_project_and_user || {})[project_id] || {})[user_id] || null
+function getPupIdsForProjectUser(state, project_id) {
+    return get(state, ["project_user_permission", "pup_ids_by_project_and_user", project_id], [])
 }
 
-function isPupLoadingForProjectUser(state, project_id, user_id) {
-    return (((state.project_user_permission || {}).loading_pups_by_project_and_user || {})[project_id] || {})[user_id] === true
+function getPup(state, pup_id) {
+    return get(state, ["project_user_permission", "items_by_id", pup_id], [])
+}
+
+function getPupsForProject(state, project_id) {
+    return get(state, ["project_user_permission", "items_by_id"], [])
+}
+
+function arePupsLoading(state, project_id) {
+    return get(state, ["project_user_permission", "loading_pups_by_project_and_user", project_id], false) === true
+}
+
+export function getUserIdsWithPermission(state, project_id, permission_name) {
+    const pups = getPupsForProject(state, project_id)
+    return keys(keyBy(filter(pups, pup => pup[permission_name] === true), "user_id"))
 }
 
 export function getLoadingProjectUserPermissionIds(state) {
@@ -98,30 +104,24 @@ export function getInvalidatedProjectUserPermissionIds(state) {
     return state.project_user_permission.invalidated_item_ids
 }
 
-export function ensureProjectUserPermissionsLoaded(project_id, user_id) {
+export function ensureProjectUserPermissionsLoaded(project_id) {
     return (dispatch, getState) => {
         const state = getState()
-        if ( isPupLoadingForProjectUser(state, project_id, user_id) ) {
+        if ( arePupsLoading(state, project_id) ) {
             return;
         }
-        let pup_id = getPupIdForProjectUser(state, project_id, user_id)
-
-        if ( pup_id != null || getPup(state, pup_id) != null ) {
-            const matching_items = state.project_user_permission || {}
-            const invalidated_item_refs = map(matching_items.invalidated_item_ids || [], function(item_id, index) { return "" + item_id })
-            if ( includes(invalidated_item_refs, pup_id) ) {
-                pup_id = null
-            }
+        let pup_ids = getPupIdsForProjectUser(state, project_id)
+        let need_to_fetch = false
+        if ( pup_ids.length === 0 ) {
+            need_to_fetch = true
+        } else if ( get(state, ["project_user_permission", "invalidated_item_ids"], []).length > 0 ) {
+            need_to_fetch = true
         }
 
-        if ( pup_id == null || getPup(state, pup_id) == null ) {
-            dispatch(fetchProjectUserPermission(project_id, user_id))
+        if ( need_to_fetch === true ) {
+            dispatch(fetchProjectUserPermissions(project_id))
         }
     }
-}
-
-function getPup(state, pup_id) {
-    return ((state.project_user_permission || {}).items_by_id || {})[pup_id] || null
 }
 
 export function hasPermission(state, project_id, user_id, permission_name) {
@@ -133,7 +133,7 @@ export function hasPermission(state, project_id, user_id, permission_name) {
 }
 
 export function getProjectUserPermission(state, project_id, user_id ) {
-    const pup_id = getPupIdForProjectUser(state, project_id, user_id)
+    const pup_id = getPupIdsForProjectUser(state, project_id)[user_id]
     return getPup(state, pup_id)
 }
 
@@ -196,4 +196,8 @@ export function updateProjectUserPermissions(project_id, user_id, permission_val
 	     dispatch(announcePupSaveFailedForProjectAndUser(project_id, user_id, error))
 	 })
     }
+}
+
+export function convert_permission_name_to_label(permission_name) {
+    return permission_name.replace(/_/g, " ").replace(/business/g, "project")
 }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     ensureWikisLoaded,
     getWiki,
@@ -47,13 +48,16 @@ class Wiki extends Component {
                 <div className="wiki-header__name"> 
                   <EditableWikiName wiki_id={wiki.id} />
                 </div>
-                { can_edit && can_view_sensitive_wikis && 
-                  <div className="wiki-header__commercially_sensitive">
-                    <ToggleButton value={wiki.money_sensitive}
-                                  onChange={this.onCommerciallySensitiveClick}
-                                  on_label={"Sensitive"}
-                                  off_label={"Safe"} />
-                  </div>
+                { can_edit && can_view_sensitive_wikis &&
+                  <PermissionInspectorHighlighter project_id={wiki.project_id}
+                                                  permission_name='has_view_ctc_billable_rates'>
+                    <div className="wiki-header__commercially_sensitive">
+                      <ToggleButton value={wiki.money_sensitive}
+                                    onChange={this.onCommerciallySensitiveClick}
+                                    on_label={"Sensitive"}
+                                    off_label={"Safe"} />
+                    </div>
+                  </PermissionInspectorHighlighter>
                 }
               </div>
               <div className="wiki__content">

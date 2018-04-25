@@ -36,6 +36,9 @@ class TestableViewSet(BaseViewSet):
             if testables:
                 max_order = max(testables)
 
+            if not self.logged_in_permissions(issue.project.business).has_edit_description:
+                raise Exception("Can't edit testables")
+                
             testable = Testable.objects.get_or_create(issue=issue,
                                                       steps=testable_value,
                                                       enriched_steps=MarkdownEnrichment(request.user)\
@@ -61,6 +64,10 @@ class TestableViewSet(BaseViewSet):
             testable_value = params['testable']
 
             issue = self.allowed_issue(issue_pk)
+
+            if not self.logged_in_permissions(issue.project.business).has_edit_description:
+                raise Exception("Can't edit testables")
+            
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
             old_testable_value = testable.steps
             testable.steps = testable_value

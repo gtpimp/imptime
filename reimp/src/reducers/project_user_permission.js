@@ -1,8 +1,4 @@
-import assign from 'lodash/assign'
-import keys from 'lodash/keys'
-import union from 'lodash/union'
-import forEach from 'lodash/forEach'
-import difference from 'lodash/difference'
+import { keys, union, difference, assign, forEach } from 'lodash'
 import { setErrorMessage } from '../actions/Error'
 import { stringifyIds } from '../actions/lib.js'
 
@@ -49,16 +45,16 @@ export default function project_user_permission(state = initialState, action) {
         case ANNOUNCE_LOADING_PUPS:
             const loading_pups = Object.assign({}, state_copy.loading_pups_by_project_and_user)
             ids = stringifyIds(action.pup_ids_to_load)
-            if ( action.project_id && action.user_id ) {
-                loading_pups[""+action.project_id] = Object.assign({}, loading_pups[""+action.project_id] || {})
-                loading_pups[""+action.project_id][""+action.user_id] = true
+            if ( action.project_id ) {
+                loading_pups[""+action.project_id] = true
             }
             
 	    return Object.assign({}, state, {
 		loading_item_ids: union(state.loading_item_ids, action.pup_ids_to_load || []),
                 loading_pups_by_project_and_user: loading_pups,
                 invalidated_item_ids: difference(state.invalidated_item_ids || [], ids)
-	    })            
+	    })
+            
         case ANNOUNCE_PUPS_LOADED:
             state_copy = Object.assign({}, state, {
 		loading_item_ids: Object.assign({},
@@ -68,10 +64,9 @@ export default function project_user_permission(state = initialState, action) {
 					   assign(state.items_by_id, action.items_by_id))
 	    })
 
-            if ( action.project_id && action.user_id ) {
+            if ( action.project_id ) {
                 const loading_pups = Object.assign({}, state_copy.loading_pups_by_project_and_user)
-                loading_pups[""+action.project_id] = Object.assign({}, loading_pups[""+action.project_id] || {})
-                loading_pups[""+action.project_id][""+action.user_id] = false
+                loading_pups[""+action.project_id] = false
                 state_copy.loading_pups_by_project_and_user = loading_pups
             }
             
@@ -86,9 +81,11 @@ export default function project_user_permission(state = initialState, action) {
                                                                    state_copy.pup_ids_by_project_and_user,
                                                                    extra_pup_ids_by_project_and_user)
             return state_copy
+            
         case ANNOUNCE_PUPS_LOAD_FAILED:
             setErrorMessage("Failed to load project user permissions: " + action.error_message)
             return state;
+            
         case ANNOUNCE_PUPS_SAVING:
             const saving_pups = Object.assign({}, state_copy.saving_pups_by_project_and_user)
             if ( action.project_id && action.user_id ) {

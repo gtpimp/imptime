@@ -83,7 +83,7 @@ export default function auth(state = initialState, action) {
             return Object.assign({}, state, {
                 permission_inspector_active: true,
                 permission_inspector_object: { project_id: action.initial_project_id,
-                                               permission_name: "can_view_permissions" }})
+                                               permission_name: "has_view_permissions" }})
 
         case STOP_PERMISSION_INSPECTOR:
             return Object.assign({}, state, { permission_inspector_active: false})
