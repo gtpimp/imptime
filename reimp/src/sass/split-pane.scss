@@ -36,7 +36,7 @@
     border-right: 5px solid rgba(255, 255, 255, 0);
     cursor: col-resize;
     //max-height: calc(100vh - 124px);
-    border: 1px solid red;
+    //border: 1px solid red;
 }
 
 .Resizer.vertical:hover {
@@ -50,6 +50,6 @@
     border-color: transparent;
 }
 
-.splitpane_height_fix {
-    max-height: calc(100vh - 124px);
-}
+//.splitpane_height_fix {
+//    max-height: calc(100vh - 124px);
+//}

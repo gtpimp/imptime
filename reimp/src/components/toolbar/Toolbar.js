@@ -23,7 +23,7 @@ import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 
 class ToolBar extends Component {
-
+        
     renderPanel(id) {
         switch(id) {
             case 'issue':
@@ -73,12 +73,12 @@ class ToolBar extends Component {
         const {panelIds} = this.props
         return (
             <div className="toolbar">
-                <div className="toolbar__container toolbar__container--left">
-                    <Breadcrumbs />
-                </div>
-                <div className="toolbar__container toolbar__container--right">
-                    {panelIds.map((panelId) => this.renderPanel(panelId))}
-                </div>
+              <div className="toolbar__container toolbar__container--left">
+                <Breadcrumbs />
+              </div>
+              <div className="toolbar__container toolbar__container--right">
+                {panelIds.map((panelId) => this.renderPanel(panelId))}
+              </div>
             </div>
         )
     }

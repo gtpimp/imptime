@@ -120,9 +120,11 @@ class IssuesPage extends Component {
     }
 
     renderLeftPane() {
-        const { issue_header_list, sprint_id, filter_sprint_id } = this.props
+        const { issue_header_list, sprint_id, filter_sprint_id, header_height, toolbar_height } = this.props
+        const height_limit = "calc(100vh - " + (header_height + toolbar_height + 1) +"px)"
+        const styles = {maxHeight: height_limit}
         return (
-            <div className="list-layout__list">
+            <div className="list-layout__list" style={styles}>
               { filter_sprint_id === sprint_id &&
                 <IssueList list_key={LIST_KEY__ISSUE_LIST}
                            onSelectIssues={this.onSelectIssues}
@@ -161,26 +163,26 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { show_sidebar, splitter_size
+        const { show_sidebar, splitter_size, header_height, toolbar_height
         } = this.props
-
+        const height_limit = "calc(100vh - " + (header_height + toolbar_height + 1) +"px)"
         if ( show_sidebar ) {
-            const styles={maxHeight:"calc(100vh - 124px)"}
+            const styles={maxHeight: height_limit}
                 return (
                     <div className="list-layout">
-                      <SplitPane split="vertical" minSize={50}
-                                 defaultSize={splitter_size}
-                                 onChange={this.onChangeSplitterSize}
-                                 style={styles}
-                      >
-                        <div className="left">
-                          {this.renderLeftPane()}
-                        </div>
-                        <div className="right">
-                          {this.renderRightPane()}
-                        </div>
-                      </SplitPane>
+                    <SplitPane split="vertical" minSize={50}
+                    defaultSize={splitter_size}
+                    onChange={this.onChangeSplitterSize}
+                    style={styles}
+                    >
+                    <div className="left">
+                    {this.renderLeftPane()}
                     </div>
+                    <div className="right">
+                    {this.renderRightPane()}
+            </div>
+                      </SplitPane>
+            </div>
                 )
         }
         if ( ! show_sidebar ) {
@@ -210,6 +212,8 @@ function mapStateToProps(state, props) {
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")
+    const header_height = state.primary_header.headerHeight
+    const toolbar_height = state.primary_header.toolbarHeight
 
     return {
         filter_sprint_id,
@@ -225,7 +229,9 @@ function mapStateToProps(state, props) {
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue: is_creating_issue,
         issue_header_list: issue_header_list,
-        show_sidebar: (selected_issue && show_sidebar) || is_creating_issue
+        show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
+        header_height,
+        toolbar_height
     }
 }
 

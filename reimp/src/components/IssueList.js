@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
-import OtherUser from './OtherUser'
+//import OtherUser from './OtherUser'
 import { logged_in_user } from '../actions/Auth'
 import {
     makeSelTagCategoryNamesForIssues,
@@ -51,7 +51,7 @@ import Issue from '../components/Issue'
 import StickyHeader from '../components/StickyHeader'
 import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
-import { getCellStyle } from '../actions/ItemListKeyRegistry'
+//import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class IssueList extends Component {
 

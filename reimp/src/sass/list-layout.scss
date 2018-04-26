@@ -11,8 +11,8 @@
 
 .list-layout__list {
     flex-grow: 1;
-    //max-height: calc(100vh - 56px - 64px);
-    max-height: 100vh;
+    //max-height: 100vh;
+    //max-height: calc(100vh - 56px - 64px - 4px);
     overflow-y: auto;
 }
 

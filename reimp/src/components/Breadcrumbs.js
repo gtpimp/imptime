@@ -10,10 +10,12 @@ class Breadcrumbs extends Component {
     render() {
         const {breadcrumbs, is_active} = this.props
         return (
-            <div className="breadcrumbs" style={{ opacity: is_active ? 1 : 0.2 }}>
-                { map(breadcrumbs, (breadcrumb, index) =>
-                    <Breadcrumb key={index} breadcrumb={breadcrumb} is_last={index + 1 === breadcrumbs.length}/>
-                )}
+            <div className="breadcrumbs"
+                 style={{ opacity: is_active ? 1 : 0.2 }}
+            >
+              { map(breadcrumbs, (breadcrumb, index) =>
+                  <Breadcrumb key={index} breadcrumb={breadcrumb} is_last={index + 1 === breadcrumbs.length}/>
+              )}
             </div>
         )
     }
