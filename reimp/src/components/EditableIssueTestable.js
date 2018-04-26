@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import EditableProperty from './form/EditableProperty'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     updateIssueTestable,
     createIssueTestable,
@@ -63,16 +64,17 @@ class EditableIssueTestable extends Component {
     }
 
     render() {
-        const {testable, can_edit, issue_id} = this.props
+        const {testable, can_edit, issue_id, project_id} = this.props
         return (
 
-            <div>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_description'>
               { testable.id &&
                 <EditableProperty property_key={'issue_testable_'+issue_id+'_'+testable.id}
                                   initial_value={testable.steps}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
-                    >
+                >
                   <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
                                      issue_id={issue_id} testable={testable}/>
                   <IssueTestable issue_id={issue_id}
@@ -84,25 +86,25 @@ class EditableIssueTestable extends Component {
                 </EditableProperty>
               }
 
-              <div className="issue-testable__button-bar">
-                { ! testable.id &&
-                  <div>
-                    <EditableProperty property_key={'issue_testable_'+issue_id}
-                                      initial_value=''
-                                      onChange={this.onChange}
-                                      can_edit={can_edit}
+                <div className="issue-testable__button-bar">
+                  { ! testable.id &&
+                    <div>
+                      <EditableProperty property_key={'issue_testable_'+issue_id}
+                                        initial_value=''
+                                        onChange={this.onChange}
+                                        can_edit={can_edit}
                       >
-                      <IssueTestableForm form={'issue_testable_form_'+issue_id} issue_id={issue_id} />
-                      <div className="text-component--readonly"></div>
-                      <div className="text-component--empty">
-                        <div className="icon--add" data-tooltip="Create testable"></div>
-                      </div>
-                    </EditableProperty>
-                  </div>
-                }
+                        <IssueTestableForm form={'issue_testable_form_'+issue_id} issue_id={issue_id} />
+                        <div className="text-component--readonly"></div>
+                        <div className="text-component--empty">
+                          <div className="icon--add" data-tooltip="Create testable"></div>
+                        </div>
+                      </EditableProperty>
+                    </div>
+                  }
 
-              </div>
-            </div>
+                </div>
+            </PermissionInspectorHighlighter>
         )
     }
 }
@@ -111,7 +113,7 @@ function mapStateToProps(state, props) {
 
     const { issue_id, testable_id } = props
     const issue = getIssue(state, issue_id) || {}
-    const can_edit = has_permission(state, issue.project_id, 'has_edit_subject')
+    const can_edit = has_permission(state, issue.project_id, 'has_edit_description')
 
     let testable = { id: null}
     map(issue.testables || [], function(issue_testable, index) {
@@ -127,6 +129,7 @@ function mapStateToProps(state, props) {
         testable_id: testable_id,
         testable: testable,
         can_edit: can_edit,
+        project_id: issue.project_id,
         is_invalidated: is_issue_invalidated(state, issue.id),
     }
 }

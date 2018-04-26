@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import Tag from './Tag'
 import TagForm from './form/TagForm'
 import {
@@ -56,38 +57,39 @@ class EditableIssueTag extends Component {
         const { can_edit, tag_id, project_id } = this.props
 
         return (
-            <div>
-            { tag_id &&
-              <EditableProperty property_key={'issue_tag_'+tag_id}
-                                initial_value={tag_id}
-                                edit_as_modal={true}
-                                action_label="Issue tags"
-                                onChange={this.onChange}
-                                can_edit={can_edit}
-              >
-                <TagForm tag_id={tag_id} can_edit={can_edit} project_id={project_id}/>
-                <Tag tag_id={tag_id} can_edit={can_edit} onDelete={(ev) => this.onDelete(ev)} />
-                <div className="text-component--empty"></div>
-              </EditableProperty>
-            }
-            { ! tag_id &&
-              <EditableProperty property_key={'issue_tag_new'}
-                                edit_as_modal={true}
-                                initial_value=''
-                                action_label="Issue tags" 
-                                onChange={this.onChange}
-                                can_edit={can_edit}
-              >
-                <TagForm tag_id={tag_id} project_id={project_id} />
-                <div className="text-component--readonly"></div>
-                <div className="text-component--empty">
-                  { can_edit && 
-                    <div className="icon--add" data-tooltip="Create tag"></div>
-                  }
-                </div>
-              </EditableProperty>
-            }
-            </div>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_tags'>
+              { tag_id &&
+                <EditableProperty property_key={'issue_tag_'+tag_id}
+                                  initial_value={tag_id}
+                                  edit_as_modal={true}
+                                  action_label="Issue tags"
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                >
+                  <TagForm tag_id={tag_id} can_edit={can_edit} project_id={project_id}/>
+                  <Tag tag_id={tag_id} can_edit={can_edit} onDelete={(ev) => this.onDelete(ev)} />
+                  <div className="text-component--empty"></div>
+                </EditableProperty>
+              }
+                { ! tag_id &&
+                  <EditableProperty property_key={'issue_tag_new'}
+                                    edit_as_modal={true}
+                                    initial_value=''
+                                    action_label="Issue tags" 
+                                    onChange={this.onChange}
+                                    can_edit={can_edit}
+                  >
+                    <TagForm tag_id={tag_id} project_id={project_id} />
+                    <div className="text-component--readonly"></div>
+                    <div className="text-component--empty">
+                      { can_edit && 
+                        <div className="icon--add" data-tooltip="Create tag"></div>
+                      }
+                    </div>
+                  </EditableProperty>
+                }
+            </PermissionInspectorHighlighter>
             
         )
     }

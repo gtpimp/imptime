@@ -32,8 +32,12 @@ class PermissionInspectorHighlighter extends Component {
         const { is_hovered } = this.state
         const is_active = active_project_id === project_id && active_permission_name === permission_name
 
-        if ( ! is_permission_inspector_active || ! can_view ) {
-            return this.props.children
+        if ( ! is_permission_inspector_active || ! can_view || ! permission_name ) {
+            return (
+                <div className="permission-inspector-highlighter--null">
+                  {this.props.children}
+                </div>
+            )
         }
         
         return (
@@ -52,7 +56,12 @@ class PermissionInspectorHighlighter extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { permission_name, project_id } = props
+    const { project_id, permission_names } = props
+    let { permission_name } = props
+    if ( !permission_name && permission_names && permission_names.length > 0 ) {
+        // support for multiple permission_names is limited at the moment
+        permission_name = permission_names[0]
+    }
     const can_view = project_id && has_permission(state, project_id, 'has_view_permissions')
     const is_permission_inspector_active = isPermissionInspectorActive(state)
     const active_permission_object = getHighlightedObjectForPermissionInspector(state) || {}

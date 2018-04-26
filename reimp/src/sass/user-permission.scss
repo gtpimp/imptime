@@ -34,13 +34,13 @@
 .user-permission__permission_value--on {
     float: left;
     padding-left: 8px;
-    color: #33ff33;
+    color: #339933;
 }
 
 .user-permission__permission_value--off {
     float: left;
     padding-left: 8px;
-    color: #ff0033;
+    color: #aa0033;
 }
 
 .user-permission__quick_role_buttons {
@@ -59,4 +59,12 @@
 
 .user-permission__checkbox__off {
     opacity:0.3;
+}
+
+.user-permission__permission_value--toggle {
+    cursor: pointer;
+}
+
+.user-permission__permission_value--toggle:hover {
+    font-weight: bold;
 }

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import { has_permission } from '../actions/Users'
 import { ensureSprintUserVelocityLoaded, getSprintUserVelocity, updateSprintUserVelocities } from '../actions/SprintUserVelocity'
@@ -28,20 +29,26 @@ class EditableUserVelocity extends Component {
     }
     
     render() {
-        const { sprint_id, user_id, suv, can_edit } = this.props
+        const { sprint_id, project_id, user_id, suv, can_edit } = this.props
 
         return (
-            <EditableProperty property_key={'user_velocity_name_'+sprint_id + "_" + user_id}
-                              initial_value={suv}
-                              edit_as_modal={true}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-                              actionLabel="User velocity"
-            >
-              <UserVelocityForm user_id={user_id} sprint_id={sprint_id}/>
-              <UserVelocity sprint_id={sprint_id} user_id={user_id}/>
-              <div className="text-component--empty">No velocity</div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_view_velocity'>
+              <PermissionInspectorHighlighter project_id={project_id}
+                                              permission_name='has_edit_velocity'>
+                <EditableProperty property_key={'user_velocity_name_'+sprint_id + "_" + user_id}
+                                  initial_value={suv}
+                                  edit_as_modal={true}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                                  actionLabel="User velocity"
+                >
+                  <UserVelocityForm user_id={user_id} sprint_id={sprint_id}/>
+                  <UserVelocity sprint_id={sprint_id} user_id={user_id}/>
+                  <div className="text-component--empty">No velocity</div>
+                </EditableProperty>
+              </PermissionInspectorHighlighter>
+            </PermissionInspectorHighlighter>
         )
     }
 }
@@ -57,6 +64,7 @@ function mapStateToProps(state, props) {
     return {
         sprint_id,
         sprint,
+        project_id: sprint.project_id,
         user_id,
         user,
         suv,

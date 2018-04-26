@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import SprintBudgetForm from './form/SprintBudgetForm'
 import { ensureSprintsLoaded, updateSprintBudget, getSprint, is_sprint_invalidated } from '../actions/Sprints'
@@ -36,21 +37,27 @@ class EditableSprintBudget extends Component {
         const { sprint, can_edit, can_view } = this.props
 
         return (
-            <EditableProperty property_key={'sprint_budget_'+sprint.id}
-                              initial_value={sprint.budget}
-                              onChange={this.onChange}
-                              can_edit={can_edit}
-                              edit_as_modal={true}
-                              actionLabel="Edit Sprint Budget"
-            >
-              <SprintBudgetForm sprint_id={sprint.id} />
-              <div className="text-component--readonly">
-                { can_view &&
-                  <div>Budget: <CurrencyValue value={sprint.budget}/></div>
-                }
-              </div>
-              <div className="text-component--empty"></div>
-            </EditableProperty>
+            <PermissionInspectorHighlighter project_id={sprint.project_id}
+                                            permission_name='has_edit_budget'>
+              <PermissionInspectorHighlighter project_id={sprint.project_id}
+                                              permission_name='has_view_budget'>
+                <EditableProperty property_key={'sprint_budget_'+sprint.id}
+                                  initial_value={sprint.budget}
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                                  edit_as_modal={true}
+                                  actionLabel="Edit Sprint Budget"
+                >
+                  <SprintBudgetForm sprint_id={sprint.id} />
+                  <div className="text-component--readonly">
+                    { can_view &&
+                      <div>Budget: <CurrencyValue value={sprint.budget}/></div>
+                    }
+                  </div>
+                  <div className="text-component--empty"></div>
+                </EditableProperty>
+              </PermissionInspectorHighlighter>
+            </PermissionInspectorHighlighter>
         )
     }
 }

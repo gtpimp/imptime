@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import EditableProperty from './form/EditableProperty'
 import SprintTypeForm from './form/SprintTypeForm'
 import Blank from './form/Blank'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import { updateSprintType, getSprints } from '../actions/Sprints'
 import { has_permission } from '../actions/Users'
 
@@ -26,18 +27,21 @@ class EditableSprintType extends Component {
         }
         
         return (
-            <EditableProperty property_key={'sprint_type_name'+sprint.id}
-                              initial_value={(sprint && sprint.type_name) || null}
-                              edit_as_modal={true}
-                              class_name={class_name}
-                              can_edit={can_edit}
-                              onChange={this.onChange}
-                              actionLabel="Sprint Type"
-            >
+            <PermissionInspectorHighlighter project_id={project_id}
+                                            permission_name='has_edit_sprint_type'>
+              <EditableProperty property_key={'sprint_type_name'+sprint.id}
+                                initial_value={(sprint && sprint.type_name) || null}
+                                edit_as_modal={true}
+                                class_name={class_name}
+                                can_edit={can_edit}
+                                onChange={this.onChange}
+                                actionLabel="Sprint Type"
+              >
                 <SprintTypeForm project_id={project_id}/>
                 <div>{sprint.sprint_type}</div>
                 <Blank />
-            </EditableProperty>
+              </EditableProperty>
+            </PermissionInspectorHighlighter>
         )
     }
 }
