@@ -9,6 +9,8 @@
 
 .permission-inspector-highlighter {
     // border: 1px solid yellow-green;
+    position: relative;
+    cursor: help;
 }
 
 .permission-inspector-highlighter--highlighted {
@@ -64,4 +66,15 @@
 
 .permission-inspector-highlighter--null {
     display:inline;
+}
+
+.permission-inspector-highligher--mask {
+    z-index:999;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: aquamarine;
+    opacity: 0.1;
 }

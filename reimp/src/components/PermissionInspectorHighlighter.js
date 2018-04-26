@@ -22,8 +22,10 @@ class PermissionInspectorHighlighter extends Component {
         this.setState({ is_hovered: false })
     }
 
-    onSelect() {
+    onSelect(event) {
         const { dispatch, project_id, permission_name } = this.props
+        event.preventDefault()
+        event.stopPropagation()
         dispatch(highlightObjectForPermissionInspector(project_id, permission_name))
     }
     
@@ -45,10 +47,9 @@ class PermissionInspectorHighlighter extends Component {
                                        {"permission-inspector-highlighter--highlighted":is_hovered,
                                         "permission-inspector-highlighter--active":is_active})}
                  onMouseEnter={this.onHover}
-                 onMouseLeave={this.onUnhover}>
-
-              <div className="permission-inspector-highlighter__inspect icon--search--small"
-                   onClick={this.onSelect} />
+                 onMouseLeave={this.onUnhover}
+                 onClick={this.onSelect}>
+              <div className="permission-inspector-highligher--mask" />
               {this.props.children}
             </div>
         )
