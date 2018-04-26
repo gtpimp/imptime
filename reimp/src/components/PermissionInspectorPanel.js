@@ -74,11 +74,15 @@ class PermissionInspectorPanel extends Component {
                             { can_edit &&
                               <div className="user-permission__permission_value--toggle"
                                    onClick={(event) => that.toggleUserPermission(event, user_id)}>
+                                <input type="checkbox" checked={has_permission} />
                                 <OtherUser user_id={user_id}/>
                               </div>
                             }
                             { ! can_edit &&
-                              <OtherUser user_id={user_id}/>
+                              <div>
+                                <input type="checkbox" checked={has_permission} disabled={true} />
+                                <OtherUser user_id={user_id}/>
+                              </div>
                             }
                           </div>
                       )}
