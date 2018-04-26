@@ -74,6 +74,10 @@
     cursor: pointer;
 }
 
+.icon--drag {
+    @include icon(24px, 24px, 'drag_handle.png');
+}
+
 .icon--small-delete {
     @include icon(24px, 24px, 'delete.png');
     cursor: pointer;

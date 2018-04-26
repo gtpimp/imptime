@@ -490,9 +490,7 @@ class IssueList extends Component {
 
     render_expanded() {
 
-        const {
-            is_visible, issue_items,
-        } = this.props
+        const { is_visible, issue_items, project_id } = this.props
 
         if (!is_visible) {
             return (<div></div>)
@@ -525,7 +523,9 @@ class IssueList extends Component {
 
             <div>
               <DivTable renderHeader={this.renderHeader}
-                        onReorder={this.reorderIssue}>
+                        onReorder={this.reorderIssue}
+                        project_id={project_id}
+                        permission_name_for_dragging={'has_edit_issues'}>
                 {issue_rows}
               </DivTable>
             </div>
@@ -597,6 +597,7 @@ const makeMapStateToProps = () => {
             visible_item_ids,
             sprint_id: sprint_id,
             sprint,
+            project_id: sprint.project_id,
             issues: items,
             issue_items,
             issues_by_id: items_by_id,

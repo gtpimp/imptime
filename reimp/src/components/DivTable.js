@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
+import { has_permission } from '../actions/Users'
 import classNames from 'classnames'
 import { map } from 'lodash'
 import '../sass/div-table.css'
@@ -27,6 +29,8 @@ class DivTable extends Component {
     
     render() {
 
+        const { can_drag, permission_name_for_dragging, project_id } = this.props
+        
         return (
             <div className="div-table">
               { this.props.renderHeader &&
@@ -34,7 +38,16 @@ class DivTable extends Component {
                   {this.props.renderHeader()}
                 </div>
               }
-              <div className="div-table__body">
+                <div className="div-table__body">
+
+                  { permission_name_for_dragging &&
+                    <PermissionInspectorHighlighter project_id={project_id}
+                                                    permission_name={permission_name_for_dragging}
+                                                    only_show_children_if_panel_is_active={true} >
+                      <div className="icon--drag" /> Drag
+                    </PermissionInspectorHighlighter>
+                  }
+                  
                 <DragDropContext onDragEnd={this.onDragEnd}>
                   <Droppable droppableId="droppable">
                     {(provided, snapshot) => (
@@ -42,7 +55,9 @@ class DivTable extends Component {
                               className={classNames({"div-table-wrapper--dragging":snapshot.isDragging})}
                          >
                            {map(this.props.children, child => (
-                                <Draggable key={child.key} draggableId={child.key}>
+                                <Draggable key={child.key}
+                                           draggableId={child.key}
+                                           isDragDisabled={!can_drag} >
                                   {(provided, snapshot) => (
                                        <div>
                                          <div ref={provided.innerRef}
@@ -69,9 +84,12 @@ class DivTable extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onReorder } = props
+    const { onReorder, project_id, permission_name_for_dragging } = props
+    const can_drag = !permission_name_for_dragging || has_permission(state, project_id, permission_name_for_dragging)
     return {
-        onReorder
+        onReorder,
+        can_drag,
+        permission_name_for_dragging
     }
 }
 

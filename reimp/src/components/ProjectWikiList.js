@@ -93,7 +93,7 @@ class WikiList extends Component {
 
     render() {
 
-        const { wikis_by_id, is_loading } = this.props
+        const { wikis_by_id, is_loading, project_id } = this.props
 
         if ( (is_loading && !wikis_by_id && wikis_by_id.length) === 0 ) {
             return (
@@ -103,7 +103,7 @@ class WikiList extends Component {
 
         return (
             <div className="wiki-list">
-              <DivTable>
+              <DivTable project_id={project_id} permission_name_for_dragging={'xxx'}>
                 { map(values(wikis_by_id), (wiki) => this.render_row(wiki) ) }
               </DivTable>
               { (!wikis_by_id || wikis_by_id.length) === 0 &&

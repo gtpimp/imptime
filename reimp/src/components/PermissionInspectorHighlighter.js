@@ -30,11 +30,16 @@ class PermissionInspectorHighlighter extends Component {
     }
     
     render() {
-        const { is_permission_inspector_active, project_id, permission_name, can_view, active_project_id, active_permission_name } = this.props
+        const { is_permission_inspector_active, project_id, permission_name, can_view,
+                active_project_id, active_permission_name, only_show_children_if_panel_is_active } = this.props
         const { is_hovered } = this.state
         const is_active = active_project_id === project_id && active_permission_name === permission_name
 
         if ( ! is_permission_inspector_active || ! can_view || ! permission_name ) {
+            if ( only_show_children_if_panel_is_active ) {
+                return null
+            }
+            
             return (
                 <div className="permission-inspector-highlighter--null">
                   {this.props.children}
@@ -57,7 +62,7 @@ class PermissionInspectorHighlighter extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, permission_names } = props
+    const { project_id, permission_names, only_show_children_if_panel_is_active } = props
     let { permission_name } = props
     if ( !permission_name && permission_names && permission_names.length > 0 ) {
         // support for multiple permission_names is limited at the moment
@@ -75,7 +80,8 @@ function mapStateToProps(state, props) {
         permission_name,
         can_view,
         active_project_id,
-        active_permission_name
+        active_permission_name,
+        only_show_children_if_panel_is_active: only_show_children_if_panel_is_active || false
     }
 }
 

@@ -98,7 +98,7 @@ class SprintRatePage extends Component {
 
     renderUserRates() {
         const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
-                user_ids, sprint_id, project_id } = this.props
+                user_ids, sprint_id } = this.props
 
         return (
             <div className="sprint-rates__card">
