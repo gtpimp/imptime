@@ -16,7 +16,7 @@ import {
     selectItems,
     update_list_filter,
     getListFilter,
-    invalidateList
+    invalidateList,
 } from '../actions/ItemList'
 import {
     set_toolbars,
@@ -48,7 +48,7 @@ class IssuesPage extends Component {
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
-                                                    
+
         this.refresh()
     }
 
@@ -124,14 +124,14 @@ class IssuesPage extends Component {
         const height_limit = "calc(100vh - " + (header_height + toolbar_height + 1) +"px)"
         const styles = {maxHeight: height_limit}
         return (
-            <div className="list-layout__list" style={styles}>
-              { filter_sprint_id === sprint_id &&
-                <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                           onSelectIssues={this.onSelectIssues}
-                           issue_header_list={issue_header_list}
-                />
-              }
-            </div>
+              <div className="list-layout__list" style={styles}>
+                { filter_sprint_id === sprint_id &&
+                  <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                             onSelectIssues={this.onSelectIssues}
+                             issue_header_list={issue_header_list}
+                  />
+                }
+              </div>
         )
     }
 
@@ -231,7 +231,7 @@ function mapStateToProps(state, props) {
         issue_header_list: issue_header_list,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
         header_height,
-        toolbar_height
+        toolbar_height,
     }
 }
 

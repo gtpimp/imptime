@@ -21,7 +21,8 @@ class Navbar extends Component {
     componentDidMount() {
         const { dispatch } = this.props
         const navbarHeight = this.navbarElem.clientHeight
-        //console.log("Y", navbarHeight)
+        const navbarWidth = this.navbarElem.clientWidth
+        console.log("K", navbarWidth)
         dispatch(updateNavbarHeight(navbarHeight))
     }
 

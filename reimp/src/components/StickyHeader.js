@@ -33,7 +33,6 @@ class StickyHeader extends Component {
     }
 
     handleScroll() {
-        console.log("F")
         this.setState({headerPosition: this.getHeaderPosition()})
     }
 
@@ -57,9 +56,9 @@ class StickyHeader extends Component {
 
     getHeaderPosition() {
         const { header_height, toolbar_height } = this.props
-        const position = header_height + toolbar_height;
+        const position = header_height + toolbar_height + 1;
         if (window.pageYOffset > position) {
-            return 0
+            return position
         } else {
             return position
         }
@@ -69,9 +68,10 @@ class StickyHeader extends Component {
         //const {show_primary_button, show_secondary_button, show_tertiary_button } = this.props
         const { header_list, tag_category_names, sprint, logged_in_user_id } = this.props
         const headerPosition = this.getHeaderPosition()
-//        style={{ position: 'fixed', top: headerPosition + 'px'}}
+        //const styles={ position: 'absolute', top: headerPosition + 'px'}
+        const styles={top: headerPosition+'px'}
         return(
-            <div className="div-table__header_row">
+            <div className="div-table__header_row" style={styles}>
               { map(header_list, function(v, k) {
                     if ( k === "tag_columns" ) {
                         return (
@@ -128,14 +128,13 @@ class StickyHeader extends Component {
 
 function mapStateToProps(state, props) {
     const { form_name, altButtons } = props
-    //console.log("Y",state.PrimaryHeader.headerHeight)
+
     let context = {
         show_primary_button: props.primary_button_label,
         show_secondary_button: props.secondary_button_label,
         show_tertiary_button: props.tertiary_button_label,
         header_height: state.primary_header.headerHeight,
         toolbar_height: state.primary_header.toolbarHeight
-        //header_height: 123
     }
     
     if (form_name) {

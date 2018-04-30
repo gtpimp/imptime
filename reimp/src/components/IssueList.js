@@ -51,7 +51,6 @@ import Issue from '../components/Issue'
 import StickyHeader from '../components/StickyHeader'
 import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
-//import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class IssueList extends Component {
 
@@ -496,7 +495,7 @@ class IssueList extends Component {
         }
 
         return (
-            <Shortcuts name='ISSUE_LIST' handler={this.handleShortcuts} >
+            <Shortcuts name='ISSUE_LIST' handler={this.handleShortcuts}>
               <div>
                 { is_collapsed && this.render_collapsed() }
                 { is_expanded && this.render_expanded() }

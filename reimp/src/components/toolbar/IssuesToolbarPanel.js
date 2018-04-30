@@ -28,7 +28,6 @@ class IssuesToolbarPanel extends Component {
         this.refresh()
         const { dispatch } = this.props
         const toolbarHeight = this.toolbarElem.clientHeight
-        //console.log("ZZZ",toolbarHeight)
         dispatch(updateToolbarHeight(toolbarHeight))
     }
 
