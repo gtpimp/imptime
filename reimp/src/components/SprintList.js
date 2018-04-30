@@ -203,7 +203,7 @@ class SprintList extends Component {
 
     render() {
 
-        const { sprints_by_type } = this.props
+        const { sprints_by_type, project_id } = this.props
         const that = this
 
         const sprint_types = union(SPRINT_TYPE_ORDER, keys(sprints_by_type))
@@ -219,7 +219,9 @@ class SprintList extends Component {
                     return (
                         <div key={sprint_type}>
                           <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
-                                    renderHeader={() => that.renderHeader(sprint_type || "")}>
+                                    renderHeader={() => that.renderHeader(sprint_type || "")}
+                                    project_id={project_id}
+                                    permission_name_for_dragging={'has_edit_sprint'} >
                             {sprint_rows}
                           </DivTable>
                         </div>
