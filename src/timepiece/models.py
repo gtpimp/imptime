@@ -986,6 +986,7 @@ class Project(BaseModel):
                          ('closed', 'closed') )
 
     PROJECT_TYPES = ( ('sprint', 'Sprint'),
+                      ('minutes', 'Minutes'),
                       ('template', 'Template'),
                       ('checklist', 'Checklist'),
                       ('sprinkle', 'Sprinkle'),

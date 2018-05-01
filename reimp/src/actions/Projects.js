@@ -329,4 +329,3 @@ export function canShowProjectDelete(project) {
 export function is_project_invalidated(state, project_id) {
     return get(state, ["project", "invalidated_item_ids"], []).indexOf(project_id) !== -1
 }
-
