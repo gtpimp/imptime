@@ -3918,7 +3918,7 @@ class Issue(BaseModel):
                                        'manager': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [x for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
 
-    ISSUE_TYPES = ( ('issue', 'Issue'), ('adhoc', 'Adhoc'), ('correspondence', 'Correspondence') )
+    ISSUE_TYPES = ( ('issue', 'Issue'), ('adhoc', 'Adhoc'), ('correspondence', 'Correspondence'), ('minutes', 'Minutes') )
     
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)

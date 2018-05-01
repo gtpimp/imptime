@@ -253,13 +253,14 @@ class ProjectViewSet(BaseViewSet):
             self.create_inbox_sprint(project)
             SprintIssueOrder.insert_at_the_end(issue)
 
+    @classmethod
     def create_inbox_sprint(self, project):
         inbox_description = """For incoming unprocessed issues. 
 
 You can add issues here normally, or by emailing %s@%s""" % (project.inbox_email_name(), "imptime.com")
         
-        Sprint.objects.get_or_create(name=settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME,
-                                     business=project, #sic
-                                     project_type="inbox", #sic
-                                     status3=SprintStatus.objects.get(business=project, name='pending'),
-                                     description=inbox_description)[0]
+        return Sprint.objects.get_or_create(name=settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME,
+                                            business=project, #sic
+                                            project_type="inbox", #sic
+                                            status3=SprintStatus.objects.get(business=project, name='pending'),
+                                            description=inbox_description)[0]

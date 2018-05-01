@@ -29,7 +29,8 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints'
         },
         { label: (objs) => 'Minutes',
-          dispatch_action: (objs) => startMinutesEditor(objs.project.id),
+          dispatch_action: (objs, props) => startMinutesEditor(objs.project.id,
+                                                               (issue) => props.history.push('/projects/' + issue.project_id + '/sprints/' + issue.sprint_id + "/issues/" + issue.id)),
           perms: (objs) => ['has_add_issue']
         },
         { label: (objs) => 'Dashboard',
@@ -132,7 +133,7 @@ class Breadcrumb extends Component {
         breadcrumb.selected_entities.issues = issues
 
         if ( breadcrumb_button['dispatch_action'] ) {
-            const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities)
+            const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities, this.props)
             if ( action ) {
                 dispatch(action)
             }
