@@ -473,3 +473,19 @@ export function generateReadOnlyIssueCommentLink(issue_id, comment_id) {
     const data = { issue_id: issue_id, comment_id: comment_id }
     return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
 }
+
+export function startMinutesEditor(project_id, on_done) {
+    const url = "imp/" + ENTITY_KEY__ISSUE + "/open_minutes/"
+    const field_name = "project_minutes"
+    const field_value = project_id
+    const method = "POST"
+    const data = { project_id: project_id }
+
+    const on_post_done = function(json) {
+        const issue = json.payload.item
+        on_done(issue)
+    }
+    
+    return itemPost(ENTITY_KEY__ISSUE, ["minutes_for_"+project_id], url,
+                    field_name, field_value, method, data, on_post_done)
+}

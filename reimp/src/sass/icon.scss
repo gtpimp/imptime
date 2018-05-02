@@ -130,6 +130,10 @@
     @include icon(15px, 15px, 'correspondence.png');
 }
 
+.icon--minutes {
+    @include icon(15px, 15px, 'meeting_minutes.png');
+}
+
 .icon--commercially-sensitive {
     @include icon(15px, 15px, 'commercially_sensitive.png');
 }

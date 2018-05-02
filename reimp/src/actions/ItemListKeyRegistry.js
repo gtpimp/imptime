@@ -151,6 +151,7 @@ export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
 
 export var SPRINT_TYPE_ORDER = [ 'inbox',
                                  'sprint',
+                                 'minutes',
                                  'sprinkle',
                                  'spec',
                                  'checklist',
