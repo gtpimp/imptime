@@ -9,3 +9,16 @@
     float: right;
     cursor: pointer;
 }
+
+.sidebar__fullscreen__cols_container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.sidebar__fullscreen__col {
+    width: 50%;
+}
+
+.sidebar__title--wide .issue_side__title {
+    justify-content: center;
+}

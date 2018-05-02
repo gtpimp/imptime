@@ -31,8 +31,7 @@ import {
     ensureIssuesLoaded,
     getIssue,
     populateEstimates,
-    makeFeatureIssuesSuccessive,
-    deleteIssues
+    makeFeatureIssuesSuccessive
 } from '../actions/Issues'
 import { doesMienHaveFeature } from '../actions/Mien'
 
@@ -47,7 +46,6 @@ class IssueSidebar extends Component {
         this.toggleShowEmacsHints = this.toggleShowEmacsHints.bind(this)
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
         this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
-        this.onDelete = this.onDelete.bind(this)
         this.onFullscreen = this.onFullscreen.bind(this)
         this.onExitFullscreen = this.onExitFullscreen.bind(this)
         this.state = {emacs_hint_enabled: false}
@@ -79,15 +77,6 @@ class IssueSidebar extends Component {
         const {dispatch, issue_id, assignable_user_ids} = props
         dispatch(ensureIssuesLoaded([issue_id]))
         dispatch(ensureUsersLoaded(assignable_user_ids))
-    }
-
-    onDelete(event) {
-        const { issue, dispatch } = this.props
-        event.stopPropagation()
-        if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
-            return
-        }
-        dispatch(deleteIssues([issue.id]))
     }
 
     onFullscreen() {
@@ -141,10 +130,224 @@ class IssueSidebar extends Component {
         )
     }
 
-    render() {
+    renderTitleStack() {
+        const { issue, sidebar_view_mode } = this.props
+        return (
+            <PropertyStackComponent>
+              <div className="issue_sidebar__title">
+                <div className="text-component--readonly issue_sidebar__title_number">
+                  #{issue.number}
+                </div>
+                <EditableIssueTitle issue_id={issue.id}/>
 
-        const {issue, comments, testables, header_height, footer_height, toolbar_height,
-               show_review_section, show_emacs_section, show_estimate_section, sidebar_view_mode } = this.props
+                <div className="sidebar__context_menu">
+                  { sidebar_view_mode === 'fullscreen' && 
+                    <div className="icon--fullscreen-exit"
+                         onClick={this.onExitFullscreen}/>
+                  }
+                    { sidebar_view_mode !== 'fullscreen'  && 
+                      <div className="icon--fullscreen"
+                           onClick={this.onFullscreen}/>
+                    }
+                </div>
+                
+              </div>
+
+            </PropertyStackComponent>
+        )
+    }
+
+    renderCreationStack() {
+        const { issue, show_emacs_section } = this.props
+        return (
+            <PropertyStackComponent>
+              <div className="property-row">
+                <div className="property-cell">
+                  Created
+                </div>
+                <div className="property-cell">
+                  <Timestamp value={issue.created_at} format="from_now" />
+                </div>
+                { issue.created_by_id &&
+                  <div className="property-cell">by</div>
+                }
+                  { issue.created_by_id &&
+                    <div className="property-cell"><OtherUser user_id={issue.created_by_id} /></div>
+                  }
+              </div>
+
+              { show_emacs_section && this.renderEmacsHintSection() }
+
+            </PropertyStackComponent>
+        )
+    }
+
+    renderInfoStack() {
+        const { issue } = this.props
+        return (
+            <PropertyStackComponent>
+
+              <div className="property-row">
+                <div className="property-label">
+                  Sprint
+                </div>
+                <div className="property-value">
+                  <div className="property-row">
+                    <div className="property-value">
+                      <EditableIssueInSprint issue_ids={[issue.id]}/>
+                    </div>
+                    <div className="property-col-small">
+                      <EditableMoveIssueToSprint issue_ids={[issue.id]} />
+                    </div>
+                    <div className="property-col-small">
+                      <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <div className="property-label">
+                  Parent feature
+                </div>
+                <div className="property-value">
+                  <EditableIssueParent issue_ids={[issue.id]}/>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <div className="property-label">
+                  Type
+                </div>
+                <div className="property-value">
+                  <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <div className="property-label">
+                  Status
+                </div>
+                <div className="property-value">
+                  <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <div className="property-label">
+                  Assigned user
+                </div>
+                <div className="property-value">
+                  <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <div className="property-label">
+                  Tags
+                </div>
+                <div className="property-value">
+                  <TagListFlat issue_ids={[issue.id]}/>
+                </div>
+              </div>
+
+            </PropertyStackComponent>
+        )
+        
+    }
+
+    renderDescriptionStack() {
+        const { issue } = this.props
+        return (
+            <PropertyStackComponent title="Description">
+              <EditableIssueDescription issue_id={issue.id}/>
+            </PropertyStackComponent>
+        )
+    }
+
+    renderTestablesStack() {
+        const { issue, testables } = this.props
+        return (
+            <PropertyStackComponent title="Testables">
+              { map(testables, function (testable, index) {
+                    return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
+                })
+              }
+              <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
+            </PropertyStackComponent>
+        )
+    }
+
+    renderCommentsStack() {
+        const { issue, comments } = this.props
+        return (
+            <PropertyStackComponent title="Comments">
+              { map(comments, function (comment, index) {
+                    return <EditableIssueComment key={issue.id+"_"+comment.id} issue_id={issue.id} comment_id={comment.id}/>
+                })
+              }
+              <EditableIssueComment issue_id={issue.id} comment_id={null}/>
+            </PropertyStackComponent>
+        )
+    }
+
+    renderEstimatesStack() {
+        const { issue, show_estimate_section } = this.props
+        if ( ! show_estimate_section ) {
+            return null
+        }
+        return (
+            <PropertyStackComponent title="Estimates">
+              <div>
+                <EditableIssueEstimate issue_id={issue.id} />
+              </div>
+              <IssueEstimatesSummary issue_id={issue.id} />
+            </PropertyStackComponent>
+        )
+    }
+
+    renderAttachmentsStack() {
+        const { issue } = this.props
+        return (
+            <PropertyStackComponent title="Attachments">
+              <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+                                         issue_id={issue.id}
+                                         allow_edit={false} />
+              <button className="button button--primary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
+            </PropertyStackComponent>
+        )
+    }
+
+    renderFeatureStack() {
+        const { issue } = this.props
+        if ( ! issue.can_group_issues ) {
+            return null
+        }
+        return (
+            <PropertyStackComponent title="Feature">
+              Bring this feature's issues
+              <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
+                together
+              </button>
+            </PropertyStackComponent>
+        )
+    }
+
+    renderReviewsStack() {
+        const { show_review_section, issue } = this.props
+        if ( ! show_review_section ) {
+            return null
+        }
+        return (
+            <PropertyStackComponent title="Reviews">
+              <IssueReviewPanel issue_id={issue.id} />
+            </PropertyStackComponent>
+        )
+    }
+
+    renderNarrow() {
+
+        const {issue, header_height, footer_height, toolbar_height } = this.props
         const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
         const styles={maxHeight: height_limit}
 
@@ -156,173 +359,15 @@ class IssueSidebar extends Component {
                   <PropertyStack>
                     { issue.id &&
                       <div>
-                        <PropertyStackComponent>
-                          <div className="issue_sidebar__title">
-                            <div className="text-component--readonly issue_sidebar__title_number">
-                              #{issue.number}
-                            </div>
-                            <EditableIssueTitle issue_id={issue.id}/>
-
-                            <div className="sidebar__context_menu">
-                              { sidebar_view_mode === 'fullscreen' && 
-                                <div className="icon--fullscreen-exit"
-                                     onClick={this.onExitFullscreen}/>
-                              }
-                              { sidebar_view_mode !== 'fullscreen'  && 
-                                <div className="icon--fullscreen"
-                                     onClick={this.onFullscreen}/>
-                              }
-                            </div>
-                            
-                          </div>
-
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent>
-                          <div className="property-row">
-                            <div className="property-cell">
-                              Created
-                            </div>
-                            <div className="property-cell">
-                              <Timestamp value={issue.created_at} format="from_now" />
-                            </div>
-                            { issue.created_by_id &&
-                              <div className="property-cell">by</div>
-                            }
-                            { issue.created_by_id &&
-                              <div className="property-cell"><OtherUser user_id={issue.created_by_id} /></div>
-                            }
-                          </div>
-
-                          { show_emacs_section && this.renderEmacsHintSection() }
-
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent>
-
-                          <div className="property-row">
-                            <div className="property-label">
-                              Sprint
-                            </div>
-                            <div className="property-value">
-                              <div className="property-row">
-                                <div className="property-value">
-                                  <EditableIssueInSprint issue_ids={[issue.id]}/>
-                                </div>
-                                <div className="property-col-small">
-                                  <EditableMoveIssueToSprint issue_ids={[issue.id]} />
-                                </div>
-                                <div className="property-col-small">
-                                  <EditableCopyIssueToSprint issue_ids={[issue.id]} />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="property-row">
-                            <div className="property-label">
-                              Parent feature
-                            </div>
-                            <div className="property-value">
-                              <EditableIssueParent issue_ids={[issue.id]}/>
-                            </div>
-                          </div>
-
-                          <div className="property-row">
-                            <div className="property-label">
-                              Type
-                            </div>
-                            <div className="property-value">
-                              <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
-                            </div>
-                          </div>
-
-                          <div className="property-row">
-                            <div className="property-label">
-                              Status
-                            </div>
-                            <div className="property-value">
-                              <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-                            </div>
-                          </div>
-
-                          <div className="property-row">
-                            <div className="property-label">
-                              Assigned user
-                            </div>
-                            <div className="property-value">
-                              <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-                            </div>
-                          </div>
-
-                          <div className="property-row">
-                            <div className="property-label">
-                              Tags
-                            </div>
-                            <div className="property-value">
-                              <TagListFlat issue_ids={[issue.id]}/>
-                            </div>
-                          </div>
-
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Description">
-                          <EditableIssueDescription issue_id={issue.id}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Testables">
-                          { map(testables, function (testable, index) {
-                                return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
-                            })
-                          }
-                          <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
-                        </PropertyStackComponent>
-
-                        <PropertyStackComponent title="Comments">
-                          { map(comments, function (comment, index) {
-                                return <EditableIssueComment key={issue.id+"_"+comment.id} issue_id={issue.id} comment_id={comment.id}/>
-                            })
-                          }
-                          <EditableIssueComment issue_id={issue.id} comment_id={null}/>
-                        </PropertyStackComponent>
-
-                        { show_estimate_section && 
-                          <PropertyStackComponent title="Estimates">
-                            <div>
-                              <EditableIssueEstimate issue_id={issue.id} />
-                            </div>
-                            <IssueEstimatesSummary issue_id={issue.id} />
-                          </PropertyStackComponent>
-                        }
-
-                        <PropertyStackComponent title="Attachments">
-                          <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
-                                                     issue_id={issue.id}
-                                                     allow_edit={false} />
-                          <button className="button button--primary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
-                        </PropertyStackComponent>
-
-                        { issue.can_group_issues &&
-                          <PropertyStackComponent title="Feature">
-                            Bring this feature's issues
-                            <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
-                              together
-                            </button>
-                          </PropertyStackComponent>
-                        }
-
-                        { show_review_section && 
-                          <PropertyStackComponent title="Reviews">
-                            <IssueReviewPanel issue_id={issue.id} />
-                          </PropertyStackComponent>
-                        }
-
-                        { issue.id && <PropertyStackComponent>
-                          <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
-                            delete issue
-                          </button>
-                        </PropertyStackComponent> }
-
+                        { this.renderTitleStack() }
+                        { this.renderCreationStack() }
+                        { this.renderInfoStack() }
+                        { this.renderDescriptionStack() }
+                        { this.renderTestablesStack() }
+                        { this.renderCommentsStack() }
+                        { this.renderEstimatesStack() }
+                        { this.renderAttachmentsStack() }
+                        { this.renderFeatureStack() }
                       </div>
                     }
                   </PropertyStack>
@@ -330,6 +375,55 @@ class IssueSidebar extends Component {
             )
         } else {
             return null
+        }        
+    }
+
+    renderWide() {
+        const {issue, header_height, footer_height, toolbar_height } = this.props
+        const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
+        const styles={maxHeight: height_limit}
+
+        if (issue && issue.id) {
+
+            return (
+
+                <div className="sidebar sidebar--wide issue-sidebar" style={styles}>
+                  <PropertyStack>
+                    { issue.id &&
+                      <div>
+                        <div className="sidebar__title--wide">
+                          { this.renderTitleStack() }
+                        </div>
+                        <div className="sidebar__fullscreen__cols_container">
+                          <div className="sidebar__fullscreen__col">
+                            { this.renderDescriptionStack() }
+                            { this.renderTestablesStack() }
+                            { this.renderCommentsStack() }
+                          </div>
+                          <div>
+                            { this.renderCreationStack() }
+                            { this.renderInfoStack() }
+                            { this.renderEstimatesStack() }
+                            { this.renderAttachmentsStack() }
+                            { this.renderFeatureStack() }
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </PropertyStack>
+                </div>
+            )
+        } else {
+            return null
+        }        
+    }
+
+    render() {
+        const { sidebar_view_mode } = this.props
+        if ( sidebar_view_mode === 'right' ) {
+            return this.renderNarrow()
+        } else if ( sidebar_view_mode === 'fullscreen' ) {
+            return this.renderWide()
         }
     }
 }
