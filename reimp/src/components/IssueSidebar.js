@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
+import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
@@ -130,9 +131,9 @@ class IssueSidebar extends Component {
 
     render() {
 
-        const {issue, comments, testables, header_height, toolbar_height,
+        const {issue, comments, testables, header_height, footer_height, toolbar_height,
                show_review_section, show_emacs_section, show_estimate_section} = this.props
-        const height_limit = "calc(100vh - " + (header_height + toolbar_height + 1) +"px)"
+        const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
         const styles={maxHeight: height_limit}
 
         if (issue && issue.id) {
@@ -318,9 +319,9 @@ function mapStateToProps(state, props) {
     const show_review_section = doesMienHaveFeature(state, 'review_schedule')
     const show_emacs_section = doesMienHaveFeature(state, 'emacs')
     const show_estimate_section = doesMienHaveFeature(state, 'sidebar_issue_estimates')
-    const header_height = state.primary_header.headerHeight
-    const toolbar_height = state.primary_header.toolbarHeight
-
+    const header_height = getHeaderHeight(state)
+    const footer_height = getFooterHeight(state)
+    const toolbar_height = getToolbarHeight(state)
     populateEstimates(state, issue)
 
     return {
@@ -338,8 +339,8 @@ function mapStateToProps(state, props) {
         show_emacs_section,
         show_estimate_section,
         header_height,
+        footer_height,
         toolbar_height
-
     }
 }
 

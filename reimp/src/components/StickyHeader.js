@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map, includes } from 'lodash'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
+import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import OtherUser from './OtherUser'
 import '../sass/sticky-header.css'
 import {
@@ -130,8 +131,9 @@ function mapStateToProps(state, props) {
         show_primary_button: props.primary_button_label,
         show_secondary_button: props.secondary_button_label,
         show_tertiary_button: props.tertiary_button_label,
-        header_height: state.primary_header.headerHeight,
-        toolbar_height: state.primary_header.toolbarHeight
+        header_height: getHeaderHeight(state),
+        footer_height: getFooterHeight(state),
+        toolbar_height: getToolbarHeight(state)
     }
     
     if (form_name) {

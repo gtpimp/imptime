@@ -1,11 +1,13 @@
 import {
     ANNOUNCE_HEADER_HEIGHT,
+    ANNOUNCE_FOOTER_HEIGHT,
     ANNOUNCE_NAVBAR_HEIGHT,
     ANNOUNCE_TOOLBAR_HEIGHT
 } from '../actions/Header'
 
 const initialState = {
     headerHeight: 0,
+    footerHeight: 0,
     navbarHeight: 0,
     toolbarHeight: 0
 }
@@ -14,6 +16,8 @@ export default function primary_header(state = initialState, action) {
     switch (action.type) {
         case ANNOUNCE_HEADER_HEIGHT:
             return Object.assign({}, state, {headerHeight: action.headerHeight})
+        case ANNOUNCE_FOOTER_HEIGHT:
+            return Object.assign({}, state, {footerHeight: action.footerHeight})
         case ANNOUNCE_NAVBAR_HEIGHT:
             return Object.assign({}, state, {navbarHeight: action.navbarHeight})
         case ANNOUNCE_TOOLBAR_HEIGHT:

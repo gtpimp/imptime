@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import Websocket from '../components/Websocket'
 import LoginPage from '../containers/LoginPage'
 import { parse } from 'query-string'
@@ -17,10 +18,8 @@ import Error from '../components/Error'
 import Maintenance from '../components/Maintenance'
 import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
-import PermissionInspectorPanel from '../components/PermissionInspectorPanel'
 import { ShortcutManager } from 'react-shortcuts'
 import keymap from '../actions/Keymap'
-import { isPermissionInspectorActive } from '../actions/Auth'
 const shortcut_manager = new ShortcutManager(keymap)
 
 class MainLayout extends Component {
@@ -31,11 +30,6 @@ class MainLayout extends Component {
     
     componentDidMount() {
         const { dispatch } = this.props
-
-        /* window.onerror = function(msg, url, line, col, error) {
-         *     alert("whoops")
-         * }*/
-
         dispatch(updateSettings(window.LOCAL_SETTINGS))
         this.refresh()
     }
@@ -68,7 +62,7 @@ class MainLayout extends Component {
     }
 
     render() {
-        const { is_logged_in, are_settings_loaded, is_permission_inspector_active } = this.props
+        const { is_logged_in, are_settings_loaded } = this.props
 
         const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') !== -1 ||
                                this.props.location.pathname.indexOf('password/reminded') !== -1 ||
@@ -111,9 +105,7 @@ class MainLayout extends Component {
                     </div>
                     <ReactTooltip place="bottom" type="info" />
                   </div>
-                  <div className="main-layout__footer">
-                    { is_permission_inspector_active && <PermissionInspectorPanel/> }
-                  </div>
+                  <Footer />
                 </div>
               }  
             </div>
@@ -126,7 +118,6 @@ function mapStateToProps(state) {
     const user = logged_in_user()
     const logged_in_user_id = user['user_id'] || null
     const has_usable_password = user['has_usable_password'] || false
-    const is_permission_inspector_active = isPermissionInspectorActive(state)
     
     return {
         is_logged_in: is_authenticated(),
@@ -134,7 +125,6 @@ function mapStateToProps(state) {
         logged_in_user_id: logged_in_user_id,
         has_usable_password: has_usable_password,
         settings: state.settings,
-        is_permission_inspector_active
     }
 }
 

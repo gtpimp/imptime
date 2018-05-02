@@ -5,6 +5,7 @@ import {withRouter} from 'react-router-dom'
 import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
+import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import {setIssueBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
 import SplitPane from 'react-split-pane'
@@ -120,8 +121,8 @@ class IssuesPage extends Component {
     }
 
     renderLeftPane() {
-        const { issue_header_list, sprint_id, filter_sprint_id, header_height, toolbar_height } = this.props
-        const height_limit = "calc(100vh - " + (header_height + toolbar_height + 1) +"px)"
+        const { issue_header_list, sprint_id, filter_sprint_id, header_height, footer_height, toolbar_height } = this.props
+        const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
         const styles = {maxHeight: height_limit}
         
         return (
@@ -164,27 +165,27 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { show_sidebar, splitter_size, header_height, toolbar_height
-        } = this.props
-        const height_limit = "calc(100vh - " + (header_height + toolbar_height + 1) +"px)"
+        const { show_sidebar, splitter_size, header_height,
+                toolbar_height, footer_height } = this.props
+        const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
         if ( show_sidebar ) {
             const styles={maxHeight: height_limit}
-                return (
-                    <div className="list-layout">
-                    <SplitPane split="vertical" minSize={50}
-                    defaultSize={splitter_size}
-                    onChange={this.onChangeSplitterSize}
-                    style={styles}
-                    >
+            return (
+                <div className="list-layout">
+                  <SplitPane split="vertical" minSize={50}
+                             defaultSize={splitter_size}
+                             onChange={this.onChangeSplitterSize}
+                             style={styles}
+                  >
                     <div className="left">
-                    {this.renderLeftPane()}
+                      {this.renderLeftPane()}
                     </div>
                     <div className="right">
-                    {this.renderRightPane()}
-            </div>
-                      </SplitPane>
-            </div>
-                )
+                      {this.renderRightPane()}
+                    </div>
+                  </SplitPane>
+                </div>
+            )
         }
         if ( ! show_sidebar ) {
             return (
@@ -213,8 +214,9 @@ function mapStateToProps(state, props) {
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")
-    const header_height = state.primary_header.headerHeight
-    const toolbar_height = state.primary_header.toolbarHeight
+    const header_height = getHeaderHeight(state)
+    const footer_height = getFooterHeight(state)
+    const toolbar_height = getToolbarHeight(state)
 
     return {
         filter_sprint_id,
@@ -232,6 +234,7 @@ function mapStateToProps(state, props) {
         issue_header_list: issue_header_list,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
         header_height,
+        footer_height,
         toolbar_height,
     }
 }

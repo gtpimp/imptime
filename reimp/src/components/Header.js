@@ -7,7 +7,7 @@ import Toolbar from './toolbar/Toolbar'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
 import Error from './Error'
-import { updateHeaderHeight } from '../actions/Header'
+import { updateHeaderHeight, getHeaderHeight } from '../actions/Header'
 
 class Header extends Component {
     
@@ -39,7 +39,7 @@ function mapStateToProps(state) {
     const has_usable_password = user['has_usable_password'] || false
     return {
         has_usable_password,
-        header_height: state.primary_header.headerHeight
+        header_height: getHeaderHeight(state)
     }
 }
 
