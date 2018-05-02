@@ -31,6 +31,7 @@ import user_timesheet from './user_timesheet'
 import websockets from './websockets'
 import { combineReducers } from 'redux'
 import { reducer as redux_form_reducer } from 'redux-form'
+import primary_header from './header'
 
 const rootReducer = combineReducers({
     auth,
@@ -50,6 +51,7 @@ const rootReducer = combineReducers({
     notification_bar,
     option_rememberer,
     page,
+    primary_header,
     project,
     project_dashboard,
     project_statement,
