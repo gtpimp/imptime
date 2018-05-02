@@ -334,7 +334,7 @@ export function itemPost(entity_key, item_ids, url,
 		 dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {
 		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceItemsSaved(entity_key, item_ids, json.payload.items))
+		 dispatch(announceItemsSaved(entity_key, item_ids, get(json, ["payload", "items"], [])))
                  if ( on_done ) {
 		     on_done(json)
 	         }
