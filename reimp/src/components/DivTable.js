@@ -12,15 +12,6 @@ class DivTable extends Component {
     constructor(props) {
         super(props)
         this.onDragEnd = this.onDragEnd.bind(this)
-        this.handleScroll = this.handleScroll.bind(this)
-    }
-
-    componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll)
-    }
-
-    handleScroll() {
-        console.log("U")
     }
 
     onDragEnd(result) {

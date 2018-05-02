@@ -3,9 +3,7 @@ import { connect } from 'react-redux'
 import { map, includes } from 'lodash'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import OtherUser from './OtherUser'
-//import '../sass/content_footer.css'
 import '../sass/sticky-header.css'
-//import { isMobile } from '../lib/browser'
 import {
     isDirty
 } from 'redux-form'
@@ -65,11 +63,10 @@ class StickyHeader extends Component {
     }
 
     render() {
-        //const {show_primary_button, show_secondary_button, show_tertiary_button } = this.props
         const { header_list, tag_category_names, sprint, logged_in_user_id } = this.props
         const headerPosition = this.getHeaderPosition()
-        //const styles={ position: 'absolute', top: headerPosition + 'px'}
         const styles={top: headerPosition+'px'}
+        
         return(
             <div className="div-table__header_row" style={styles}>
               { map(header_list, function(v, k) {

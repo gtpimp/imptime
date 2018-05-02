@@ -6,13 +6,10 @@
     display: flex;
     height: 100%;
     overflow-x: hidden;
-    //max-height: calc(100vh - 56px - 64px - 4px);
 }
 
 .list-layout__list {
     flex-grow: 1;
-    //max-height: 100vh;
-    //max-height: calc(100vh - 56px - 64px - 4px);
     overflow-y: auto;
 }
 

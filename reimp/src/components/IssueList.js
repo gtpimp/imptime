@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
-//import OtherUser from './OtherUser'
 import { logged_in_user } from '../actions/Auth'
 import {
     makeSelTagCategoryNamesForIssues,

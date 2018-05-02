@@ -123,6 +123,7 @@ class IssuesPage extends Component {
         const { issue_header_list, sprint_id, filter_sprint_id, header_height, toolbar_height } = this.props
         const height_limit = "calc(100vh - " + (header_height + toolbar_height + 1) +"px)"
         const styles = {maxHeight: height_limit}
+        
         return (
               <div className="list-layout__list" style={styles}>
                 { filter_sprint_id === sprint_id &&
