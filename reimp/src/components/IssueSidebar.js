@@ -48,6 +48,8 @@ class IssueSidebar extends Component {
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
         this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
         this.onDelete = this.onDelete.bind(this)
+        this.onFullscreen = this.onFullscreen.bind(this)
+        this.onExitFullscreen = this.onExitFullscreen.bind(this)
         this.state = {emacs_hint_enabled: false}
     }
 
@@ -88,6 +90,16 @@ class IssueSidebar extends Component {
         dispatch(deleteIssues([issue.id]))
     }
 
+    onFullscreen() {
+        const { setSidebarViewMode } = this.props
+        setSidebarViewMode("fullscreen")
+    }
+
+    onExitFullscreen() {
+        const { setSidebarViewMode } = this.props
+        setSidebarViewMode("right")
+    }
+    
     renderEmacsHintSection() {
         const {issue, sprint} = this.props
         const { emacs_hint_enabled } = this.state
@@ -132,7 +144,7 @@ class IssueSidebar extends Component {
     render() {
 
         const {issue, comments, testables, header_height, footer_height, toolbar_height,
-               show_review_section, show_emacs_section, show_estimate_section} = this.props
+               show_review_section, show_emacs_section, show_estimate_section, sidebar_view_mode } = this.props
         const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
         const styles={maxHeight: height_limit}
 
@@ -150,6 +162,18 @@ class IssueSidebar extends Component {
                               #{issue.number}
                             </div>
                             <EditableIssueTitle issue_id={issue.id}/>
+
+                            <div className="sidebar__context_menu">
+                              { sidebar_view_mode === 'fullscreen' && 
+                                <div className="icon--fullscreen-exit"
+                                     onClick={this.onExitFullscreen}/>
+                              }
+                              { sidebar_view_mode !== 'fullscreen'  && 
+                                <div className="icon--fullscreen"
+                                     onClick={this.onFullscreen}/>
+                              }
+                            </div>
+                            
                           </div>
 
                         </PropertyStackComponent>
@@ -311,7 +335,7 @@ class IssueSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {issue_id, sprint_id, project_id} = props
+    const {issue_id, sprint_id, project_id, sidebar_view_mode, setSidebarViewMode} = props
     const issue = getIssue(state, issue_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
@@ -340,7 +364,9 @@ function mapStateToProps(state, props) {
         show_estimate_section,
         header_height,
         footer_height,
-        toolbar_height
+        toolbar_height,
+        setSidebarViewMode,
+        sidebar_view_mode
     }
 }
 

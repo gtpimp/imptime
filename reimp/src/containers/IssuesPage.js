@@ -39,6 +39,7 @@ class IssuesPage extends Component {
         super(props)
         this.onSelectIssues = this.onSelectIssues.bind(this)
         this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
+        this.onSetSidebarViewMode = this.onSetSidebarViewMode.bind(this)
     }
 
     componentDidMount() {
@@ -120,6 +121,11 @@ class IssuesPage extends Component {
         dispatch(setPageFlag(PAGE_KEY__ISSUES_PAGE, 'splitter_size', size))
     }
 
+    onSetSidebarViewMode(view_mode) {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__ISSUES_PAGE, 'sidebar_view_mode', view_mode))
+    }
+
     renderLeftPane() {
         const { issue_header_list, sprint_id, filter_sprint_id, header_height, footer_height, toolbar_height } = this.props
         const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
@@ -138,7 +144,7 @@ class IssuesPage extends Component {
     }
 
     renderRightPane() {
-        const { sprint_id, project_id, selected_issue_ids,
+        const { sprint_id, project_id, selected_issue_ids, sidebar_view_mode,
                 is_single_selection, is_multiple_selection, is_creating_issue, selected_issue
         } = this.props
 
@@ -151,7 +157,12 @@ class IssuesPage extends Component {
         } else if ( is_single_selection && sprint_id && selected_issue ) {
             return (
                 <div className="list-layout__sidebar">
-                  <IssueSidebar issue_id={selected_issue.id} sprint_id={sprint_id} project_id={project_id}/>
+                  <IssueSidebar issue_id={selected_issue.id}
+                                sprint_id={sprint_id}
+                                project_id={project_id}
+                                setSidebarViewMode={this.onSetSidebarViewMode}
+                                sidebar_view_mode={sidebar_view_mode}
+                  />
                 </div>
             )
         } else if ( is_multiple_selection && sprint_id && selected_issue_ids ) {
@@ -212,6 +223,7 @@ function mapStateToProps(state, props) {
     const is_creating_issue = candidate_issue || false
     const issue_header_list = getIssueHeaderListForCurrentMien(state)
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
+    const sidebar_view_mode = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "sidebar_view_mode", "right")
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")
     const header_height = getHeaderHeight(state)
@@ -233,6 +245,7 @@ function mapStateToProps(state, props) {
         is_creating_issue: is_creating_issue,
         issue_header_list: issue_header_list,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
+        sidebar_view_mode,
         header_height,
         footer_height,
         toolbar_height,

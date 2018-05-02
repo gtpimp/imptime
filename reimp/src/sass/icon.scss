@@ -138,6 +138,14 @@
     @include icon(15px, 15px, 'commercially_sensitive.png');
 }
 
+.icon--fullscreen {
+    @include icon(24px, 24px, 'fullscreen.png');
+}
+
+.icon--fullscreen-exit {
+    @include icon(24px, 24px, 'fullscreen_exit.png');
+}
+
 .icon__status--active {
     height: 15px;
     width: 15px;
