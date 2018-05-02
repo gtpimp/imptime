@@ -174,27 +174,49 @@ class IssuesPage extends Component {
         }
     }
 
+    renderSinglePane() {
+        const { sprint_id, is_single_selection, is_creating_issue, selected_issue} = this.props
+
+        return (
+            <div>
+              { !( is_creating_issue || (is_single_selection && sprint_id && selected_issue )) &&
+                this.renderLeftPane()
+              }
+              { ( is_creating_issue || (is_single_selection && sprint_id && selected_issue )) &&
+                this.renderRightPane()
+              }
+            </div>
+        )
+    }
+
     render() {
 
         const { show_sidebar, splitter_size, header_height,
-                toolbar_height, footer_height } = this.props
+                toolbar_height, footer_height, sidebar_view_mode } = this.props
         const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
         if ( show_sidebar ) {
             const styles={maxHeight: height_limit}
             return (
                 <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50}
-                             defaultSize={splitter_size}
-                             onChange={this.onChangeSplitterSize}
-                             style={styles}
-                  >
-                    <div className="left">
-                      {this.renderLeftPane()}
-                    </div>
-                    <div className="right">
-                      {this.renderRightPane()}
-                    </div>
-                  </SplitPane>
+                  { sidebar_view_mode === 'right' &&
+                    <SplitPane split="vertical" minSize={50}
+                               defaultSize={splitter_size}
+                               onChange={this.onChangeSplitterSize}
+                               style={styles}
+                    >
+                      <div className="left">
+                        {this.renderLeftPane()}
+                      </div>
+                      <div className="right">
+                        {this.renderRightPane()}
+                      </div>
+                    </SplitPane>
+                  }
+                    { sidebar_view_mode === 'fullscreen' &&
+                      <div className="list-layout__single_pane">
+                        {this.renderSinglePane()}
+                      </div>
+                  }
                 </div>
             )
         }
