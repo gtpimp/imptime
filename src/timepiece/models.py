@@ -583,6 +583,8 @@ class BusinessPermissions(BaseModel):
         bp.can_view_ctc_rates = True
         bp.can_view_documents = True
         bp.can_edit_calendar = True
+        bp.has_view_velocity = True
+        bp.has_edit_velocity = True
         bp.save()
     
     @classmethod
