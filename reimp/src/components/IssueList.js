@@ -47,7 +47,7 @@ import {
 } from '../actions/Issues'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
-import StickyHeader from '../components/StickyHeader'
+import IssueListHeader from '../components/IssueListHeader'
 import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
 
@@ -354,12 +354,12 @@ class IssueList extends Component {
     renderHeader() {
         const { header_list, tag_category_names, sprint, logged_in_user_id } = this.props
         
-        return <StickyHeader
-        header_list={header_list}
-        tag_category_names={tag_category_names}
-        sprint={sprint}
-        logged_in_user_id={logged_in_user_id}
-        />
+        return <IssueListHeader
+                   header_list={header_list}
+                   tag_category_names={tag_category_names}
+                   sprint={sprint}
+                   logged_in_user_id={logged_in_user_id}
+               />
     }
 
     render_collapsed() {

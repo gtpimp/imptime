@@ -25,6 +25,7 @@ import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getProject} from '../actions/Projects'
 import { ensureUsersLoaded } from '../actions/Users'
 import { ensureTagsLoaded } from '../actions/Tags'
+import OtherUser from './OtherUser'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueEstimate from './EditableIssueEstimate'
@@ -280,6 +281,36 @@ class Issue extends Component {
                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                    </div>
                   }
+                  {includes(visible_header_keys, "estimate_summary") &&
+                   <div className="div-table__cell issue__cell__secondary"
+                        style={getCellStyle(header_list.estimate_summary)}>
+                     <div className="issue-cell__estimate_summary">
+                       {map(sprint.user_ids_who_can_estimate, function(user_id) {
+                           const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
+                           const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
+                           if ( actual || estimate ) {
+                               return (
+                                   <div className="issue-cell__estimate_summary__user" key={user_id}>
+                                     <div className="issue-cell__estimate_summary__user__cell">
+                                       <OtherUser user_id={user_id}/>
+                                     </div>
+                                     <div className="issue-cell__estimate_summary__user__cell">
+                                       {logged_in_user_id === user_id &&
+                                        <EditableIssueEstimate issue_id={issue.id}
+                                                               actual={actual}
+                                                               class_name="issue-cell__my-estimate"/>
+                                       }
+                                       {logged_in_user_id !== user_id &&
+                                        <Progress issue={issue} actual={actual} estimate={estimate} />
+                                       }
+                                     </div>
+                                   </div>
+                               )
+                           }
+                       })}
+                     </div>
+                   </div>
+                  }
                   {includes(visible_header_keys, "tags") &&
                    <div className="div-table__cell issue__cell__secondary"
                         style={getCellStyle(header_list.tags)}>
@@ -312,7 +343,7 @@ class Issue extends Component {
                          <div className="issue-cell__estimate_column">
                            {logged_in_user_id === user_id &&
                             <EditableIssueEstimate issue_id={issue.id}
-                                                   actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].actual_hours) || null}
+                                                   actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
                                                    class_name="issue-cell__my-estimate"/> }
 
                            {logged_in_user_id !== user_id &&

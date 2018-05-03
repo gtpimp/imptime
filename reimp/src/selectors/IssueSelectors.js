@@ -74,7 +74,7 @@ export const makeSelEstimatesByUserId = () => {
             if ( ! issue ) {
                 return null
             }
-            return keyBy(issue.all_estimates, 'user_id')
+            return keyBy(issue.all_estimates, (o) => ""+o.user_id)
         }
     )
 }
@@ -86,7 +86,7 @@ export const makeSelActualsByUserId = () => {
             if ( ! issue ) {
                 return null
             }
-            return keyBy(issue.all_actuals, 'user_id')
+            return keyBy(issue.all_actuals, (o) => ""+o.user_id)
         }
     )
 }

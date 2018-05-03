@@ -177,3 +177,12 @@ issue--grouped {
     opacity: 0.5;
     min-width: 75px;
 }
+
+.issue-cell__estimate_summary__user {
+    display: flex;
+    justify-content: space-between;
+}
+
+.issue-cell__estimate_summary__user__cell {
+    margin-right: 5px;
+}

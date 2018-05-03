@@ -9,7 +9,7 @@ import {
     isDirty
 } from 'redux-form'
 
-class StickyHeader extends Component {
+class IssueListHeader extends Component {
 
     constructor(props) {
         super(props)
@@ -148,4 +148,4 @@ function mapStateToProps(state, props) {
     return context;
 }
 
-export default connect(mapStateToProps)(StickyHeader)
+export default connect(mapStateToProps)(IssueListHeader)
