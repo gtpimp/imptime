@@ -130,7 +130,9 @@ class Breadcrumb extends Component {
 
     onClickBreadcrumbActionButton(breadcrumb_button) {
         const { dispatch, history, breadcrumb, issues } = this.props
-        breadcrumb.selected_entities.issues = issues
+        if ( breadcrumb.selected_entities ) {
+            breadcrumb.selected_entities.issues = issues
+        }
 
         if ( breadcrumb_button['dispatch_action'] ) {
             const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities, this.props)
