@@ -152,6 +152,7 @@ class Issue extends Component {
             logged_in_user_id, logged_in_user_can_estimate_user_id
         } = this.props
 
+        const that = this
         const visible_header_keys = keys(header_list)
 
         if (!issue) {
@@ -182,8 +183,8 @@ class Issue extends Component {
             const isStandalone = !isFeature && !belongsToAFeature
 
             return (
-                <div key={this.key + "." + issue.id}
-                     onClick={this.onClickedIssue}
+                <div key={that.key + "." + issue.id}
+                     onClick={that.onClickedIssue}
                      className={classNames("div-table__row",
                                            'issue',
                                            'list-table__row--compact',
@@ -203,215 +204,241 @@ class Issue extends Component {
                                                'div-table__row--saving': is_saving,
                                            })}
                 >
-                  {includes(visible_header_keys, "number") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.number)}>
-                     <div>{issue.number}</div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "issue_type") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.issue_type)} >
-                     <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "attachment") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.attachment)} >
-                     {
-                         issue.has_attachment && <div className="icon icon--attachment"></div>
-                     }
-                   </div>
-                  }
-                  {includes(visible_header_keys, "expand_feature") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.expand_feature)}>
-                     { issue.can_group_issues &&
-                       <div>
-                         { show_children &&
-                           <div className={classNames("icon--collapse",
-                                                      {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
-                                onClick={this.onCollapseFeaturesClick}></div>
-                         }
-                         { !show_children &&
-                           <div className="icon--expand" onClick={this.onExpandFeaturesClick}></div>
-                         }
-                       </div>
-                     }
-                     { !issue.can_group_issues && issue.parent_group_id &&
-                       <div className={classNames({"icon--child":true,
-                                                   "icon--child--highlight":belongsToSelectedFeature})}></div>
-                     }
-                   </div>
-                  }
-                  {includes(visible_header_keys, "name") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.name)}>
-                     <div className="issue-cell__issue-name">
-                       {subject_prefix}{issue.subject}{subject_suffix}
-                       { issue.group_children && issue.group_children.length > 0 &&
-                         <span>
-                           ({issue.group_children.length}
-                           {issue.group_children.length === 1 && <span>child</span>}
-                           {issue.group_children.length > 1 && <span>children</span>}
-                           )
-                         </span>
-                       }
-                     </div>
-                   </div>
-                  }
 
-                 {includes(visible_header_keys, "assignee") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.assignee)}>
-                     <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "created_at") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.created_at)}>
-                     <div className="issue-cell__created-at">
-                       <Timestamp value={issue.created_at} format="from_now"/>
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "status") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.status)}>
-                     <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "estimate_summary") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.estimate_summary)}>
-                     <div className="issue-cell__estimate_summary">
-                       {map(sprint.user_ids_who_can_estimate, function(user_id) {
-                           const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
-                           const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
-                           if ( actual || estimate ) {
-                               return (
-                                   <div className="issue-cell__estimate_summary__user" key={user_id}>
-                                     <div className="issue-cell__estimate_summary__user__cell">
-                                       <OtherUser user_id={user_id}/>
-                                     </div>
-                                     <div className="issue-cell__estimate_summary__user__cell">
-                                       {logged_in_user_id === user_id &&
-                                        <EditableIssueEstimate issue_id={issue.id}
-                                                               actual={actual}
-                                                               class_name="issue-cell__my-estimate"/>
-                                       }
-                                       {logged_in_user_id !== user_id &&
-                                        <Progress issue={issue} actual={actual} estimate={estimate} />
-                                       }
-                                     </div>
-                                   </div>
-                               )
-                           }
-                       })}
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "tags") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.tags)}>
-                     <div className="issue-cell__tag">
-                       <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "tag_columns") &&
-                   map(tag_category_names, function(tag_category_name) {
-                       const tags = tagsByCategoryName[tag_category_name]
-                       return (
-                           <div key={tag_category_name}
-                                className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
-                                style={getCellStyle(header_list.tag_columns)}>
-                             { map(tags, (tag) =>
-                                 <div key={tag.id} className="issue-cell__tag_column">
-                                   {tag.name}
-                                 </div>
-                             )}
-                           </div>
-                       )
-                   })
-                  }
-                  {includes(visible_header_keys, "estimate_columns") &&
-                   map(sprint.user_ids_who_can_estimate, (user_id) =>
-                       <div key={user_id}
-                            className="div-table__cell issue__cell__secondary"
-                            style={getCellStyle(header_list.estimate_columns)}>
-                         <div className="issue-cell__estimate_column">
-                           {logged_in_user_id === user_id &&
-                            <EditableIssueEstimate issue_id={issue.id}
-                                                   actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                                   class_name="issue-cell__my-estimate"/> }
+                  { map(visible_header_keys, function(header_key) {
+                        switch(header_key) {
+                            case "number":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header_list.number)}>
+                                      <div>{issue.number}</div>
+                                    </div>
+                                )
+                            case "issue_type":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header_list.issue_type)} >
+                                      <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
+                                    </div>
+                                )
+                            case "attachment":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header_list.attachment)} >
+                                      {
+                                          issue.has_attachment && <div className="icon icon--attachment"></div>
+                                      }
+                                    </div>
+                                )
+                            case "expand_feature":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header_list.expand_feature)}>
+                                      { issue.can_group_issues &&
+                                        <div>
+                                          { show_children &&
+                                            <div className={classNames("icon--collapse",
+                                                                       {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
+                                                 onClick={that.onCollapseFeaturesClick}></div>
+                                          }
+                                          { !show_children &&
+                                            <div className="icon--expand" onClick={that.onExpandFeaturesClick}></div>
+                                          }
+                                        </div>
+                                      }
+                                      { !issue.can_group_issues && issue.parent_group_id &&
+                                        <div className={classNames({"icon--child":true,
+                                                                    "icon--child--highlight":belongsToSelectedFeature})}></div>
+                                      }
+                                    </div>
+                                )
+                            case "name":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header_list.name)}>
+                                      <div className="issue-cell__issue-name">
+                                        {subject_prefix}{issue.subject}{subject_suffix}
+                                        { issue.group_children && issue.group_children.length > 0 &&
+                                          <span>
+                                            ({issue.group_children.length}
+                                            {issue.group_children.length === 1 && <span>child</span>}
+                                            {issue.group_children.length > 1 && <span>children</span>}
+                                            )
+                                          </span>
+                                        }
+                                      </div>
+                                    </div>
+                                )
+                            case "assignee":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.assignee)}>
+                                      <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
+                                    </div>
+                                )
+                            case "created_at":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.created_at)}>
+                                      <div className="issue-cell__created-at">
+                                        <Timestamp value={issue.created_at} format="from_now"/>
+                                      </div>
+                                    </div>
+                                )
+                            case "status":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.status)}>
+                                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
+                                    </div>
+                                )
+                            case "estimate_summary":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.estimate_summary)}>
+                                      <div className="issue-cell__estimate_summary">
+                                        {map(sprint.user_ids_who_can_estimate, function(user_id) {
+                                             const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
+                                             const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
+                                             if ( actual || estimate ) {
+                                                 return (
+                                                     <div className="issue-cell__estimate_summary__user" key={user_id}>
+                                                       <div className="issue-cell__estimate_summary__user__cell">
+                                                         <OtherUser user_id={user_id}/>
+                                                       </div>
+                                                       <div className="issue-cell__estimate_summary__user__cell">
+                                                         {logged_in_user_id === user_id &&
+                                                          <EditableIssueEstimate issue_id={issue.id}
+                                                                                 actual={actual}
+                                                                                 class_name="issue-cell__my-estimate"/>
+                                                         }
+                                                         {logged_in_user_id !== user_id &&
+                                                          <Progress issue={issue} actual={actual} estimate={estimate} />
+                                                         }
+                                                       </div>
+                                                     </div>
+                                                 )
+                                             }
+                                         })}
+                                      </div>
+                                    </div>
+                                )
+                            case "tags":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.tags)}>
+                                      <div className="issue-cell__tag">
+                                        <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
+                                      </div>
+                                    </div>
+                                )
+                            case "tag_columns":
+                                return (
+                                    map(tag_category_names, function(tag_category_name) {
+                                        const tags = tagsByCategoryName[tag_category_name]
+                                        return (
+                                            <div key={tag_category_name}
+                                                 className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
+                                                 style={getCellStyle(header_list.tag_columns)}>
+                                              { map(tags, (tag) =>
+                                                  <div key={tag.id} className="issue-cell__tag_column">
+                                                    {tag.name}
+                                                  </div>
+                                              )}
+                                            </div>
+                                        )
+                                    })
 
-                           {logged_in_user_id !== user_id &&
-                            <Progress issue={issue}
-                                      actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                      estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
-                           }
-                         </div>
-                       </div>
-                   )
-                  }
+                                )
+                            case "estimate_columns":
+                                return (
+                                    map(sprint.user_ids_who_can_estimate, (user_id) =>
+                                        <div key={user_id}
+                                             className="div-table__cell issue__cell__secondary"
+                                             style={getCellStyle(header_list.estimate_columns)}>
+                                          <div className="issue-cell__estimate_column">
+                                            {logged_in_user_id === user_id &&
+                                             <EditableIssueEstimate issue_id={issue.id}
+                                                                    actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                                    class_name="issue-cell__my-estimate"/> }
 
-                  {includes(visible_header_keys, "my_estimate") && logged_in_user_can_estimate_user_id &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.my_estimate)}>
-                     <div className="issue-cell__estimate_column">
-                       {logged_in_user_can_estimate_user_id &&
-                        <EditableIssueEstimate issue_id={issue.id}
-                                               class_name="issue-cell__my-estimate"/>
-                       }
-                     </div>
-                   </div>
-                  }
+                                            {logged_in_user_id !== user_id &&
+                                             <Progress issue={issue}
+                                                       actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                       estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
+                                            }
+                                          </div>
+                                        </div>
+                                    )
+                                )
+                            case "my_estimate":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.my_estimate)}>
+                                      <div className="issue-cell__estimate_column">
+                                        {logged_in_user_can_estimate_user_id &&
+                                         <EditableIssueEstimate issue_id={issue.id}
+                                                                class_name="issue-cell__my-estimate"/>
+                                        }
+                                      </div>
+                                    </div>
+                                )
+                            case "estimated":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.estimated)}>
+                                      <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
+                                    </div>
+                                )                                   
+                            case "my_time":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.my_time)}>
+                                      <div className="issue__cell--elapsed-time">
+                                        <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                                      </div>
+                                    </div>
+                                )
+                            case "clock_in":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.clock_in)}>
+                                      <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                                        <TimerSwitch
+                                            active={issue.am_i_clocked_in}
+                                            onStart={that.onClockIn}
+                                            onStop={that.onClockOut}
+                                        />
+                                      </div>
+                                    </div>
+                                )
+                            case "delete":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.delete)}>
+                                      <div className="reveal-on-hover--block issue__cell--issue-delete">
+                                        <DeleteIssue
+                                            onDelete={that.onDeleteIssue}
+                                        />
+                                      </div>
+                                    </div>
+                                )
+                            case "small_delete":
+                                return (
+                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
+                                         style={getCellStyle(header_list.small_delete)}>
+                                      <div className={"reveal-on-hover--block"}>
+                                        <div className="issue__small-delete-image" onClick={that.onDeleteIssue} />
+                                      </div>
+                                    </div>
+                                )
+
+                            default:
+                                console.error("Unknown header: " + header_key)
+                        }
+                    }
+                  )}
                   
-                  {includes(visible_header_keys, "estimated") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.estimated)}>
-                     <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
-                   </div>
-                  }
-                  {includes(visible_header_keys, "my_time") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.my_time)}>
-                     <div className="issue__cell--elapsed-time">
-                       <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "clock_in") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.clock_in)}>
-                     <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
-                       <TimerSwitch
-                           active={issue.am_i_clocked_in}
-                           onStart={this.onClockIn}
-                           onStop={this.onClockOut}
-                       />
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "delete") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.delete)}>
-                     <div className="reveal-on-hover--block issue__cell--issue-delete">
-                       <DeleteIssue
-                           onDelete={this.onDeleteIssue}
-                       />
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "small_delete") &&
-                   <div className="div-table__cell issue__cell__secondary"
-                        style={getCellStyle(header_list.small_delete)}>
-                     <div className={"reveal-on-hover--block"}>
-                       <div className="issue__small-delete-image" onClick={this.onDeleteIssue} />
-                     </div>
-                   </div>
-                  }
                 </div>
             )
         }

@@ -2,7 +2,7 @@ import { impfetch } from './lib.js'
 
 import { updateVisibleItemIdAbove, setItemFlag } from './ItemList'
 import { ENTITY_KEY__ISSUE, ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry'
-import { map, compact } from 'lodash'
+import { map, compact, forEach } from 'lodash'
 import difference from 'lodash/difference'
 import { getUser } from '../actions/Users'
 
@@ -28,7 +28,6 @@ import {
     getSavingItemIds,
     getLoadingItemIds
 } from '../actions/Item'
-import forEach from 'lodash/forEach'
 
 export const SET_ISSUE_STORE_VALUE = 'SET_ISSUE_STORE_VALUE'
 export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'

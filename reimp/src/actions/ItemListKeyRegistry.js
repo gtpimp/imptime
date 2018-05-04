@@ -42,6 +42,7 @@ export const ENTITY_KEY__SPRINT_REVIEW = 'sprint_review'
 export const ENTITY_KEY__SPRINT_ROADMAP = 'sprint_roadmap'
 export const ENTITY_KEY__TAG = 'tag'
 export const ENTITY_KEY__NUDGE = 'nudge'
+export const ENTITY_KEY__MIEN = 'mien'
 export const ENTITY_KEY__WIKI = 'wiki'
 export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
 export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
@@ -54,6 +55,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__VISUAL_SPEC_ISSUE,
                                   ENTITY_KEY__ISSUE,
                                   ENTITY_KEY__INVOICE,
+                                  ENTITY_KEY__MIEN,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE ]
 
