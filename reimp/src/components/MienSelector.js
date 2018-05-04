@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { map } from 'lodash'
 import '../sass/mien-selector.css'
 import { getVisibleItemIds } from '../actions/ItemList'
+import Modal from 'react-modal'
 import { setCurrentMienId,
          getCurrentMienId,
          MIENS,
@@ -91,29 +92,28 @@ class MienSelector extends Component {
     }
 
     hideEditButtons() {
-        this.setState({show_edit_buttons: false})
+        // this.setState({show_edit_buttons: false})
     }
 
     renderButtonBar() {
-        const show_button_bar = this.state.show_button_bar
         const show_edit_buttons = this.state.show_edit_buttons
         
         return (
             <div className="mien-button-bar">
               { ! show_edit_buttons &&
-                <div className="button toolbar-button--small button--primary" 
+                <div className="button toolbar-button--large button--primary" 
                      onClick={this.onCreateCandidateMien}>
                   + New Mien
                 </div>
               }
               { ! show_edit_buttons &&
-                <div className="button toolbar-button--small button--primary" 
+                <div className="button toolbar-button--large button--primary" 
                      onClick={this.showEditButtons}>
-                  Edit
+                  Configure
                 </div>
               }
               { show_edit_buttons &&
-                <div className="button toolbar-button--small button--primary"
+                <div className="button toolbar-button--large button--primary"
                      onClick={this.hideEditButtons}>
                   Stop editing
                 </div>
@@ -137,7 +137,9 @@ class MienSelector extends Component {
                        className={classNames(button_class, {'button--active': current_mien_id === mien.id})}>
                     {mien.title}
                     { show_edit_buttons &&
-                      <div className="icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
+                      <div className="mien-editor-button-bar">
+                        <div className="icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
+                      </div>
                     }
                   </div>
               )}
@@ -151,8 +153,14 @@ class MienSelector extends Component {
             
               { (show_button_bar || show_edit_buttons) && this.renderButtonBar() }
               { is_creating_candidate_mien &&
-                <MienTitleForm onCancel={this.onCancelCreateCandidateMien}
-                               onSubmitted={this.onSaveCandidateMien}/>
+                <Modal isOpen={true}
+                       className="editable-property-modal"
+                       overlayClassName="editable-property-modal__overlay"
+                       onRequestClose={this.onCancelCreateCandidateMien}
+                       contentLabel="New Title">
+                  <MienTitleForm onCancel={this.onCancelCreateCandidateMien}
+                                 onSubmitted={this.onSaveCandidateMien}/>
+                </Modal>
               }
             </div>
         )

@@ -9,6 +9,7 @@
 }
 
 .mien-button {
+    position: relative;
     background-color: #ccc;
     color: #777;
     border: 1px #999 solid;
@@ -23,4 +24,10 @@
 .button--active {
     background-color: #4A90E2;
     color: #fff;
+}
+
+.mien-editor-button-bar {
+    position: absolute;
+    z-index:99;
+    bottom: -15px;
 }
