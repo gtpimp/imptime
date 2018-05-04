@@ -21,15 +21,17 @@ import {
     getSavingItemIds,
     getLoadingItemIds
 } from '../actions/Item'
+import { getAllAvailableIssueHeaders } from './Issues'
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 export const SET_MIEN = 'SET_MIEN'
 export const START_MIEN_CONFIGURER = 'START_MIEN_CONFIGURER'
 export const STOP_MIEN_CONFIGURER = 'STOP_MIEN_CONFIGURER'
 
-import { large_col_width, medium_col_width, small_col_width, tiny_col_width, ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
+import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
 export const MIENS = ['dev', 'reviewer', 'finance', 'client', 'tester', 'spec']
+
 const MIEN_FEATURES = { 'spec':
                         {
                             'multiple_issue_summary': true,
@@ -59,73 +61,10 @@ const MIEN_FEATURES = { 'spec':
                         
 }
 
-export var ISSUE_HEADERS_BY_MIEN = { 'dev': {'number': {label:"#", width:tiny_col_width},
-                                             'issue_type': {label:'', width:tiny_col_width},
-                                             'attachment': {label:'', width:tiny_col_width},
-                                             'expand_feature': {label:'', width:tiny_col_width},
-                                             'name': {label:"Name", width:"auto", flex:1},
-                                             'assignee': {label:"Assignee", width:medium_col_width},
-                                             'created_at': {label:"Created at", width:medium_col_width},
-                                             'status': {label:"Status", width:medium_col_width},
-                                             'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                             'my_estimate': {label:"Estimates", width:small_col_width},
-                                             'small_delete': {label:"", width:tiny_col_width}},
-                                     'reviewer': {'number': {label:"#", width:tiny_col_width},
-                                                  'issue_type': {label:'', width:tiny_col_width},
-                                                  'attachment': {label:'', width:tiny_col_width},
-                                                  'expand_feature': {label:'', width:tiny_col_width},
-                                                  'name': {label:"Name", width:"auto", flex:1},
-                                                  'assignee': {label:"Assignee", width:medium_col_width},
-                                                  'created_at': {label:"Created at", width:medium_col_width},
-                                                  'status': {label:"Status", width:medium_col_width},
-                                                  'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                                  'small_delete': {label:"", width:tiny_col_width}},
-                                     'finance': {'number': {label:"#", width:tiny_col_width},
-                                                 'issue_type': {label:'', width:tiny_col_width},
-                                                 'attachment': {label:'', width:tiny_col_width},
-                                                 'expand_feature': {label:'', width:tiny_col_width},
-                                                 'name': {label:"Name", width:"auto", flex:1},
-                                                 'assignee': {label:"Assignee", width:medium_col_width},
-                                                 'created_at': {label:"Created at", width:medium_col_width},
-                                                 'status': {label:"Status", width:medium_col_width},
-                                                 'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                                 'small_delete': {label:"", width:tiny_col_width}},
-                                     'client': {'number': {label:"#", width:tiny_col_width},
-                                                'issue_type': {label:'', width:tiny_col_width},
-                                                'attachment': {label:'', width:tiny_col_width},
-                                                'expand_feature': {label:'', width:tiny_col_width},
-                                                'name': {label:"Name", width:"auto", flex:1},
-                                                'assignee': {label:"Assignee", width:medium_col_width},
-                                                'created_at': {label:"Created at", width:medium_col_width},
-                                                'status': {label:"Status", width:medium_col_width},
-                                                'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                                'small_delete': {label:"", width:tiny_col_width}},
-                                     'tester': {'number': {label:"#", width:tiny_col_width},
-                                                'issue_type': {label:'', width:tiny_col_width},
-                                                'attachment': {label:'', width:tiny_col_width},
-                                                'expand_feature': {label:'', width:tiny_col_width},
-                                                'name': {label:"Name", width:"auto", flex:1},
-                                                'assignee': {label:"Assignee", width:medium_col_width},
-                                                'created_at': {label:"Created at", width:medium_col_width},
-                                                'status': {label:"Status", width:medium_col_width},
-                                                'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                                'small_delete': {label:"", width:tiny_col_width}},
-                                     'spec': {'number': {label:"#", width:tiny_col_width},
-                                              'issue_type': {label:'', width:tiny_col_width},
-                                              'attachment': {label:'', width:tiny_col_width},
-                                              'expand_feature': {label:'', width:tiny_col_width},
-                                              'name': {label:"Name", width:large_col_width},
-                                              'assignee': {label:"Assignee", width:medium_col_width},
-                                              'status': {label:"Status", width:small_col_width},
-                                              'estimate_summary': {label:"Time", width:medium_col_width},
-                                              'tag_columns': {label:"Tag Columns", width:medium_col_width},
-                                              'estimate_columns': {label:"Estimates", width:medium_col_width}}
+export function getCurrentMien(state) {
+    const mien_id = getCurrentMienId(state)
+    return getMien(state, mien_id)
 }
-
-export function getIssueHeaderListForCurrentMien(state) {
-    return ISSUE_HEADERS_BY_MIEN[getCurrentMienId(state)]
-}
-
 
 export function getCurrentMienId(state) {
     if ( cookie.load("current_mien") ) {
@@ -144,12 +83,15 @@ export function setCurrentMienId(mien_id) {
     }
 }
 
+export function getIssueHeaderListForCurrentMien(state) {
+    const mien = getCurrentMien(state)
+    return get(mien, ["issue_headers"], null) || getAllAvailableIssueHeaders()
+}
+
 export function doesMienHaveFeature(state, feature_name) {
     const mien_id = getCurrentMienId(state)
     return get(MIEN_FEATURES, [mien_id, feature_name], false)
 }
-
-// ////
 
 export function invalidateAllMiens() {
     return (dispatch, getState) => {
@@ -248,7 +190,6 @@ export function getMienBeingConfigured(state) {
     if ( ! isMienConfigurerActive(state) ) {
         return null
     }
-    const mien_id = getCurrentMienId(state)
-    return getMien(state, mien_id)
+    return getCurrentMien(state)
 }
 

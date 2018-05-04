@@ -45,6 +45,7 @@ import {
     getCandidateIssue,
     ensureIssuesLoaded
 } from '../actions/Issues'
+import { isMienConfigurerActive } from '../actions/Mien'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
 import IssueListHeader from '../components/IssueListHeader'
@@ -441,15 +442,26 @@ class IssueList extends Component {
         />
     }
 
+    renderMienConfigurer() {
+        return (
+            <div>
+              Configuring
+            </div>
+        )
+    }
+
     render_expanded() {
 
-        const { is_visible, issue_items, project_id } = this.props
+        const { is_mien_configurer_active, is_visible, issue_items, project_id } = this.props
 
         if (!is_visible) {
             return (<div></div>)
         }
         const that = this
 
+        if ( is_mien_configurer_active ) {
+            return this.renderMienConfigurer()
+        }
 
         if ( issue_items.length === 0 ) {
             return (
@@ -544,6 +556,7 @@ const makeMapStateToProps = () => {
         const tag_category_names = selTagCategoryNamesForIssues(state, props)
         const logged_in_user_id = logged_in_user().user_id
         const issue_ids = selIssueIds(state, props)
+        const is_mien_configurer_active = isMienConfigurerActive(state)
 
         return {
             list_key: list_key,
@@ -577,7 +590,8 @@ const makeMapStateToProps = () => {
             header_list: issue_header_list,
             tag_ids,
             tag_category_names,
-            logged_in_user_id
+            logged_in_user_id,
+            is_mien_configurer_active
         }
     }
     return mapStateToProps

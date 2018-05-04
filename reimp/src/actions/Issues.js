@@ -1,7 +1,14 @@
 import { impfetch } from './lib.js'
 
 import { updateVisibleItemIdAbove, setItemFlag } from './ItemList'
-import { ENTITY_KEY__ISSUE, ENTITY_KEY__TAG } from '../actions/ItemListKeyRegistry'
+import {
+    ENTITY_KEY__ISSUE,
+    ENTITY_KEY__TAG,
+    medium_col_width,
+    small_col_width,
+    tiny_col_width
+} from './ItemListKeyRegistry'
+
 import { map, compact, forEach } from 'lodash'
 import difference from 'lodash/difference'
 import { getUser } from '../actions/Users'
@@ -487,4 +494,21 @@ export function startMinutesEditor(project_id, on_done) {
     
     return itemPost(ENTITY_KEY__ISSUE, ["minutes_for_"+project_id], url,
                     field_name, field_value, method, data, on_post_done)
+}
+
+export function getAllAvailableIssueHeaders() {
+    return { 'number': {label:"#", width:tiny_col_width},
+             'issue_type': {label:'', width:tiny_col_width},
+             'attachment': {label:'', width:tiny_col_width},
+             'expand_feature': {label:'', width:tiny_col_width},
+             'name': {label:"Name", width:"auto", flex:1},
+             'assignee': {label:"Assignee", width:medium_col_width},
+             'created_at': {label:"Created at", width:medium_col_width},
+             'status': {label:"Status", width:medium_col_width},
+             'tag_columns': {label:"Tag Columns", width:medium_col_width},
+             'my_estimate': {label:"Estimates", width:small_col_width},
+             'estimate_summary': {label:"Time", width:medium_col_width},
+             'estimate_columns': {label:"Estimates", width:medium_col_width},
+             'small_delete': {label:"", width:tiny_col_width}
+    }
 }
