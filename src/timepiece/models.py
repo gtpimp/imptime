@@ -3896,7 +3896,7 @@ class Issue(BaseModel):
 
     ISSUE_STATUS_CHOICES = (
            ('new', 'new'),
-           ('devdone', 'dev_done'),
+           ('dev_done', 'dev done'),
            ('in_internal_qa', 'internal qa'),
            ('internal_qa_passed', 'internal qa passed'),
            ('in_client_qa', 'external qa'),
