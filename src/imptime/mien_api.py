@@ -70,8 +70,11 @@ class MienViewSet(BaseViewSet):
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 mien.save()
-            
-            data = {'status': 'success'}
+
+            context = {}
+            context['items'] = MienSerializer(self.allowed_miens().filter(pk__in=mien_pks),
+                                              many=True).data
+            data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)

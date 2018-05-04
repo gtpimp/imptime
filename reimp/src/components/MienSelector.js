@@ -14,7 +14,8 @@ import { setCurrentMienId,
          updateCandidateTitle,
          cancelCandidateMien,
          getCandidateMien,
-         deleteMiens
+         deleteMiens,
+         updateMienTitle
 } from '../actions/Mien'
 import classNames from 'classnames'
 import MienTitleForm from './form/MienTitleForm'
@@ -28,11 +29,16 @@ class MienSelector extends Component {
         this.onCreateCandidateMien = this.onCreateCandidateMien.bind(this)
         this.onCancelCreateCandidateMien = this.onCancelCreateCandidateMien.bind(this)
         this.onSaveCandidateMien = this.onSaveCandidateMien.bind(this)
+        this.onStartEditingMien = this.onStartEditingMien.bind(this)
+        this.onCancelEditingMien = this.onCancelEditingMien.bind(this)
+        this.onSaveMienTitle = this.onSaveMienTitle.bind(this)
         this.hideButtonBar = this.hideButtonBar.bind(this)
         this.showButtonBar = this.showButtonBar.bind(this)
         this.hideEditButtons = this.hideEditButtons.bind(this)
         this.showEditButtons = this.showEditButtons.bind(this)
-        this.state = { show_button_bar: false, show_edit_buttons: false}
+        this.state = { show_button_bar: false,
+                       show_edit_buttons: false,
+                       editing_mien: null }
     }
 
     componentDidMount() {
@@ -68,6 +74,22 @@ class MienSelector extends Component {
         const { dispatch } = this.props
         dispatch(updateCandidateTitle(new_values.title))
         dispatch(saveCandidateMien())
+    }
+
+    onStartEditingMien(event, mien) {
+        event.preventDefault()
+        this.setState({editing_mien: mien})
+    }
+
+    onCancelEditingMien(event) {
+        event.preventDefault()
+        this.setState({editing_mien: null})
+    }
+
+    onSaveMienTitle(new_values) {
+        const { dispatch } = this.props
+        dispatch(updateMienTitle(this.state.editing_mien.id, new_values.title))
+        this.setState({editing_mien: null})
     }
 
     deleteMien(event, mien) {
@@ -126,6 +148,7 @@ class MienSelector extends Component {
         return (
             <div className="mien-editor-button-bar">
               <div className="icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
+              <div className="icon--edit" onClick={(event) => this.onStartEditingMien(event, mien)}/>
             </div>
         )
     }
@@ -158,6 +181,20 @@ class MienSelector extends Component {
         )
     }
 
+    renderMienTitleEditor() {
+        return (
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={this.onCancelCreateCandidateMien}
+                   contentLabel="Edit Title">
+              <MienTitleForm onCancel={this.onCancelEditingMien}
+                             initial_value={this.state.editing_mien.title}
+                             onSubmitted={this.onSaveMienTitle}/>
+            </Modal>
+        )
+    }
+
     renderMiens() {
         const { miens, current_mien_id } = this.props
         const show_edit_buttons = this.state.show_edit_buttons
@@ -178,6 +215,7 @@ class MienSelector extends Component {
     render() {
         const { candidate_mien } = this.props
         const is_creating_candidate_mien = candidate_mien || false
+        const is_editing_mien_title = this.state.editing_mien || false
         const show_button_bar = this.state.show_button_bar
         const show_edit_buttons = this.state.show_edit_buttons
 
@@ -187,6 +225,7 @@ class MienSelector extends Component {
               { this.renderOldMienButtons() }
               { (show_button_bar || show_edit_buttons) && this.renderButtonBar() }
               { is_creating_candidate_mien && this.renderMienCreator() }
+              { is_editing_mien_title && this.renderMienTitleEditor() }
             </div>
         )
     }
