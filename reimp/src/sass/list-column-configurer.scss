@@ -1,0 +1,12 @@
+@import "variables.scss";
+
+.list-column-configurer__row {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    cursor: grab;
+}
+
+.list-column-configurer__row--dragging {
+    background-color: $row-hover-color;
+    cursor: grabbing;
+}
