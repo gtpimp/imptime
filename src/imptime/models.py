@@ -331,3 +331,20 @@ class Nudge(BaseModel):
         super(Nudge, self).delete(*args, **kwargs)
         RefreshNotifier().notify_model_delete(self)
 
+class Mien(BaseModel):
+    user = models.ForeignKey(User, related_name='miens', null=False, blank=False)
+    title = models.CharField(max_length=255, null=True, blank=True)
+    order = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Mien, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    def delete(self, *args, **kwargs):
+        super(Mien, self).delete(*args, **kwargs)
+        RefreshNotifier().notify_model_delete(self)
+            

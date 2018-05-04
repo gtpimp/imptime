@@ -16,6 +16,7 @@ from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 from imptime.models import VisualSpecIssueAnnotation, WikiPage
+from imptime.models import Mien
 from invoicing.models import Invoice
 
 class PermissionHelper():
@@ -230,6 +231,9 @@ class BaseViewSet(viewsets.ViewSet):
                                                   
         return WikiPage.objects.filter(Q(pk__in=non_sensitive_wiki_pages.values_list('id', flat=True))|
                                        Q(pk__in=sensitive_wikis.values_list('id', flat=True)))
+
+    def allowed_miens(self):
+        return Mien.objects.filter(user=self.request.user)
     
     def logged_in_permissions(self, project):
         if project.id in self._logged_in_permissions_by_project:

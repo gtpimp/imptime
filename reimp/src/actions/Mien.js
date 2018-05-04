@@ -121,30 +121,30 @@ export var ISSUE_HEADERS_BY_MIEN = { 'dev': {'number': {label:"#", width:tiny_co
 }
 
 export function getIssueHeaderListForCurrentMien(state) {
-    return ISSUE_HEADERS_BY_MIEN[getCurrentMienName(state)]
+    return ISSUE_HEADERS_BY_MIEN[getCurrentMienId(state)]
 }
 
 
-export function getCurrentMienName(state) {
+export function getCurrentMienId(state) {
     if ( cookie.load("current_mien") ) {
         return cookie.load("current_mien") || "dev_mien"
     } else {
-        return get(state.settings, "mien", "dev_mien")
+        return get(state.settings, ["mien"], "dev_mien")
     }
 }
 
-export function setCurrentMienName(mien) {
+export function setCurrentMienId(mien_id) {
 
-    cookie.save("current_mien", mien, {path: "/"})
+    cookie.save("current_mien", mien_id, {path: "/"})
     return {
         type: SET_MIEN,
-        mien: mien
+        mien: mien_id
     }
 }
 
 export function doesMienHaveFeature(state, feature_name) {
-    const mien_name = getCurrentMienName(state)
-    return (MIEN_FEATURES[mien_name] || {})[feature_name] || false
+    const mien_id = getCurrentMienId(state)
+    return get(MIEN_FEATURES, [mien_id, feature_name], false)
 }
 
 // ////

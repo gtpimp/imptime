@@ -21,6 +21,7 @@ import { invalidateAutoClocks } from '../actions/AutoClock'
 import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSummary'
 import { invalidateSurForSprintAndUser } from '../actions/SprintUserRates'
 import { invalidateWikis } from '../actions/Wikis'
+import { invalidateMiens } from '../actions/Mien'
 
 import {
     invalidateList
@@ -39,6 +40,7 @@ import {
     LIST_KEY__WIKI_LIST,
     LIST_KEY__AUTO_CLOCK,
     LIST_KEY__RECENT_AUTO_CLOCK,
+    LIST_KEY__MIEN_LIST,
     SELECTOR__SPRINTS
 } from '../actions/ItemListKeyRegistry'
 import { each, keys } from 'lodash'
@@ -95,6 +97,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateSurForSprintAndUser(d.params.sprint_id, d.params.user_id))
     } else if ( d.entity_name === 'wikipage' ) {
         dispatch(invalidateWikis([d.entity_ref]))
+    } else if ( d.entity_name === 'mien' ) {
+        dispatch(invalidateMiens([d.entity_ref]))
     }
 }
 
@@ -146,6 +150,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name === "entry" ) {
         list_keys_to_invalidate[LIST_KEY__AUTO_CLOCK] = true
         list_keys_to_invalidate[LIST_KEY__RECENT_AUTO_CLOCK] = true
+    } else if ( d.entity_name === "mien" ) {
+        list_keys_to_invalidate[LIST_KEY__MIEN_LIST] = true
     }
 }
 
