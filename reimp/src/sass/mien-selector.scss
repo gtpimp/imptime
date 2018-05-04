@@ -1,11 +1,15 @@
 @import 'variables.scss';
 
 .mien-select-panel {
-    align-items: center;
     display: flex;
     font: $font-3;
     width: 70%;
     padding-left: 15%;
+}
+
+.mien-buttons {
+    align-items: center;
+    display: flex;
 }
 
 .mien-button {

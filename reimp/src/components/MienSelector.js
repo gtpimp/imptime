@@ -92,7 +92,7 @@ class MienSelector extends Component {
     }
 
     hideEditButtons() {
-        // this.setState({show_edit_buttons: false})
+        this.setState({show_edit_buttons: false})
     }
 
     renderButtonBar() {
@@ -103,7 +103,7 @@ class MienSelector extends Component {
               { ! show_edit_buttons &&
                 <div className="button toolbar-button--large button--primary" 
                      onClick={this.onCreateCandidateMien}>
-                  + New Mien
+                  + New
                 </div>
               }
               { ! show_edit_buttons &&
@@ -115,53 +115,78 @@ class MienSelector extends Component {
               { show_edit_buttons &&
                 <div className="button toolbar-button--large button--primary"
                      onClick={this.hideEditButtons}>
-                  Stop editing
+                  Stop configuring
                 </div>
               }
             </div>
         )
     }
 
-    render() {
+    renderMienEditButtons(mien) {
+        return (
+            <div className="mien-editor-button-bar">
+              <div className="icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
+            </div>
+        )
+    }
+
+    renderOldMienButtons() {
+        const { available_mien_names, current_mien_id } = this.props
         const button_class = "button mien-button"
-        const { miens, current_mien_id, available_miens_names, candidate_mien } = this.props
+        return (
+            <div className="mien-buttons">
+              { map(available_mien_names, (mien_name) =>
+                  <div key={mien_name} onClick={() => this.onChangeMien(mien_name) }
+                       className={classNames(button_class, {'button--active': current_mien_id === mien_name})}>
+                    {mien_name}
+                  </div>
+                )}
+            </div>
+        )
+    }
+
+    renderMienCreator() {
+        return (
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={this.onCancelCreateCandidateMien}
+                   contentLabel="New Title">
+              <MienTitleForm onCancel={this.onCancelCreateCandidateMien}
+                             onSubmitted={this.onSaveCandidateMien}/>
+            </Modal>
+        )
+    }
+
+    renderMiens() {
+        const { miens, current_mien_id } = this.props
+        const show_edit_buttons = this.state.show_edit_buttons
+        const button_class = "button mien-button"
+        return (
+            <div className="mien-buttons">
+              { map(miens, (mien) =>
+                  <div key={mien.id} onClick={() => this.onChangeMien(mien.id) }
+                       className={classNames(button_class, {'button--active': current_mien_id === mien.id})}>
+                    {mien.title}
+                    { show_edit_buttons && this.renderMienEditButtons(mien) }
+                  </div>
+                )}
+            </div>
+        )
+    }
+
+    render() {
+        const { candidate_mien } = this.props
         const is_creating_candidate_mien = candidate_mien || false
         const show_button_bar = this.state.show_button_bar
         const show_edit_buttons = this.state.show_edit_buttons
 
         return (
             <div className="mien-select-panel" onMouseLeave={this.hideButtonBar} onMouseOver={this.showButtonBar}>
-
-              { map(miens, (mien) =>
-                  <div key={mien.id} onClick={() => this.onChangeMien(mien.id) }
-                       className={classNames(button_class, {'button--active': current_mien_id === mien.id})}>
-                    {mien.title}
-                    { show_edit_buttons &&
-                      <div className="mien-editor-button-bar">
-                        <div className="icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
-                      </div>
-                    }
-                  </div>
-              )}
-
-              { map(available_miens_names, (mien_name) =>
-                    <div key={mien_name} onClick={() => this.onChangeMien(mien_name) }
-                         className={classNames(button_class, {'button--active': current_mien_id === mien_name})}>
-                      {mien_name}
-                    </div>
-              )}
-            
+              { this.renderMiens() }
+              { this.renderOldMienButtons() }
               { (show_button_bar || show_edit_buttons) && this.renderButtonBar() }
-              { is_creating_candidate_mien &&
-                <Modal isOpen={true}
-                       className="editable-property-modal"
-                       overlayClassName="editable-property-modal__overlay"
-                       onRequestClose={this.onCancelCreateCandidateMien}
-                       contentLabel="New Title">
-                  <MienTitleForm onCancel={this.onCancelCreateCandidateMien}
-                                 onSubmitted={this.onSaveCandidateMien}/>
-                </Modal>
-              }
+              { is_creating_candidate_mien && this.renderMienCreator() }
             </div>
         )
     }
@@ -170,14 +195,14 @@ class MienSelector extends Component {
 function mapStateToProps(state, props) {
 
     const current_mien_id = getCurrentMienId(state) || 'dev'
-    const available_miens_names = MIENS
+    const available_mien_names = MIENS
     const mien_ids = getVisibleItemIds(state, LIST_KEY__MIEN_LIST)
     const miens = getMiens(state, mien_ids)
     const candidate_mien = getCandidateMien(state) || null
 
     return {
         current_mien_id,
-        available_miens_names,
+        available_mien_names,
         candidate_mien,
         miens
     }
