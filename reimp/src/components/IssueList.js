@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
+import { uniq, concat, keys, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
@@ -43,13 +43,15 @@ import {
     groupUnsortedIssuesIntoFeature,
     ungroupIssuesIntoFeature,
     getCandidateIssue,
-    ensureIssuesLoaded
+    ensureIssuesLoaded,
+    getAllAvailableIssueHeaders
 } from '../actions/Issues'
-import { isMienConfigurerActive } from '../actions/Mien'
+import { isMienConfigurerActive, getMienBeingConfigured, updateMienIssueHeaders } from '../actions/Mien'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
 import IssueListHeader from '../components/IssueListHeader'
 import DivTable from './DivTable'
+import ListColumnConfigurer from './ListColumnConfigurer'
 import { Shortcuts } from 'react-shortcuts'
 
 class IssueList extends Component {
@@ -442,11 +444,12 @@ class IssueList extends Component {
         />
     }
 
-    renderMienConfigurer() {
+    renderListColumnConfigurer() {
+        const { mien_being_configured } = this.props
         return (
-            <div>
-              Configuring
-            </div>
+            <ListColumnConfigurer all_headers={getAllAvailableIssueHeaders()}
+                                  onSave={updateMienIssueHeaders}
+                                  active_headers={mien_being_configured.issue_headers} />
         )
     }
 
@@ -460,7 +463,7 @@ class IssueList extends Component {
         const that = this
 
         if ( is_mien_configurer_active ) {
-            return this.renderMienConfigurer()
+            return this.renderListColumnConfigurer()
         }
 
         if ( issue_items.length === 0 ) {
@@ -557,6 +560,7 @@ const makeMapStateToProps = () => {
         const logged_in_user_id = logged_in_user().user_id
         const issue_ids = selIssueIds(state, props)
         const is_mien_configurer_active = isMienConfigurerActive(state)
+        const mien_being_configured = getMienBeingConfigured(state)
 
         return {
             list_key: list_key,
@@ -591,7 +595,8 @@ const makeMapStateToProps = () => {
             tag_ids,
             tag_category_names,
             logged_in_user_id,
-            is_mien_configurer_active
+            is_mien_configurer_active,
+            mien_being_configured
         }
     }
     return mapStateToProps

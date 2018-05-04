@@ -132,6 +132,10 @@ export function updateMienTitle(mien_id, value) {
     return updateItem(ENTITY_KEY__MIEN, [mien_id], "title", value)
 }
 
+export function updateMienIssueHeaders(mien_id, issue_headers) {
+    return updateItem(ENTITY_KEY__MIEN, [mien_id], "issue_headers", JSON.stringify(issue_headers))
+}
+
 export function startCandidateMien() {
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__MIEN, {}))

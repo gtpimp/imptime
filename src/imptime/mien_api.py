@@ -67,6 +67,8 @@ class MienViewSet(BaseViewSet):
                 mien = self.allowed_miens().get(pk=mien_pk)
                 if field_name == 'title':
                     mien.title = new_value
+                if field_name == 'issue_headers':
+                    mien.issue_headers = new_value
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 mien.save()

@@ -497,18 +497,18 @@ export function startMinutesEditor(project_id, on_done) {
 }
 
 export function getAllAvailableIssueHeaders() {
-    return { 'number': {label:"#", width:tiny_col_width},
-             'issue_type': {label:'', width:tiny_col_width},
-             'attachment': {label:'', width:tiny_col_width},
-             'expand_feature': {label:'', width:tiny_col_width},
-             'name': {label:"Name", width:"auto", flex:1},
-             'assignee': {label:"Assignee", width:medium_col_width},
-             'created_at': {label:"Created at", width:medium_col_width},
-             'status': {label:"Status", width:medium_col_width},
-             'tag_columns': {label:"Tag Columns", width:medium_col_width},
-             'my_estimate': {label:"Estimates", width:small_col_width},
-             'estimate_summary': {label:"Time", width:medium_col_width},
-             'estimate_columns': {label:"Estimates", width:medium_col_width},
-             'small_delete': {label:"", width:tiny_col_width}
+    return { 'number': {label:"#", description:"Issue number", width:tiny_col_width},
+             'issue_type': {label:'', description:"Issue type", width:tiny_col_width},
+             'attachment': {label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width},
+             'expand_feature': {label:'', description:"Icon to allow expanding feature issues", width:tiny_col_width},
+             'name': {label:"Name", description:"Issue subject", width:"auto", flex:1},
+             'assignee': {label:"Assignee", description:"Issue assignee", width:medium_col_width},
+             'created_at': {label:"Created at", description:"Creation date", width:medium_col_width},
+             'status': {label:"Status", description:"Status",  width:medium_col_width},
+             'tag_columns': {label:"Tag Columns", description:"Columns for each tag", width:medium_col_width},
+             'my_estimate': {label:"My Estimate", description:"My time estimate", width:small_col_width},
+             'estimate_summary': {label:"Time", description:"Condensed summary of all times", width:medium_col_width},
+             'estimate_columns': {label:"Estimates", description:"Columns for each user", width:medium_col_width},
+             'small_delete': {label:"", description:"Delete issue", width:tiny_col_width}
     }
 }
