@@ -24,6 +24,8 @@ import {
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 export const SET_MIEN = 'SET_MIEN'
+export const START_MIEN_CONFIGURER = 'START_MIEN_CONFIGURER'
+export const STOP_MIEN_CONFIGURER = 'STOP_MIEN_CONFIGURER'
 
 import { large_col_width, medium_col_width, small_col_width, tiny_col_width, ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
@@ -229,3 +231,24 @@ export function getSavingMienIds(state, mien_ids) {
 export function is_mien_invalidated(state, mien_id) {
     return is_item_invalidated(ENTITY_KEY__MIEN, state, mien_id)
 }
+
+export function startMienConfigurer() {
+    return { type: START_MIEN_CONFIGURER }
+}
+
+export function stopMienConfigurer() {
+    return { type: STOP_MIEN_CONFIGURER }
+}
+
+export function isMienConfigurerActive(state) {
+    return get(state, [ "mien", "mien_configurer_active"], false)
+}
+
+export function getMienBeingConfigured(state) {
+    if ( ! isMienConfigurerActive(state) ) {
+        return null
+    }
+    const mien_id = getCurrentMienId(state)
+    return getMien(state, mien_id)
+}
+
