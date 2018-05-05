@@ -14,7 +14,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.models import Mien
-from imptime.mien_serializer import MienSerializer
+from imptime.mien_serializer import MienSerializer, MienIssueHeaderSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +68,7 @@ class MienViewSet(BaseViewSet):
                 if field_name == 'title':
                     mien.title = new_value
                 if field_name == 'issue_headers':
-                    mien.issue_headers = new_value
+                    mien.issue_headers = json.dumps(MienIssueHeaderSerializer(new_value, many=True).data)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 mien.save()

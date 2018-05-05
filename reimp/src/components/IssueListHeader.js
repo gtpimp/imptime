@@ -70,7 +70,8 @@ class IssueListHeader extends Component {
         
         return(
             <div className="div-table__header_row" style={styles}>
-              { map(header_list, function(v, k) {
+              { map(header_list, function(v) {
+                    const k = v.key
                     if ( k === "tag_columns" ) {
                         return (
                             map(tag_category_names, (tag_category_name) => (
@@ -125,7 +126,7 @@ class IssueListHeader extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { form_name, altButtons } = props
+    const { form_name, altButtons, header_list } = props
 
     let context = {
         show_primary_button: props.primary_button_label,
@@ -133,7 +134,8 @@ function mapStateToProps(state, props) {
         show_tertiary_button: props.tertiary_button_label,
         header_height: getHeaderHeight(state),
         footer_height: getFooterHeight(state),
-        toolbar_height: getToolbarHeight(state)
+        toolbar_height: getToolbarHeight(state),
+        header_list
     }
     
     if (form_name) {

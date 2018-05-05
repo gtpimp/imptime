@@ -153,7 +153,8 @@ class Issue extends Component {
         } = this.props
 
         const that = this
-        const visible_header_keys = keys(header_list)
+        const headers_by_key = keyBy(header_list, "key")
+        const visible_header_keys = keys(headers_by_key)
 
         if (!issue) {
             return (
@@ -206,25 +207,26 @@ class Issue extends Component {
                 >
 
                   { map(visible_header_keys, function(header_key) {
+                        const header = headers_by_key[header_key]
                         switch(header_key) {
                             case "number":
                                 return (
                                     <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header_list.number)}>
+                                         style={getCellStyle(header)}>
                                       <div>{issue.number}</div>
                                     </div>
                                 )
                             case "issue_type":
                                 return (
                                     <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header_list.issue_type)} >
+                                         style={getCellStyle(header)} >
                                       <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
                                     </div>
                                 )
                             case "attachment":
                                 return (
                                     <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header_list.attachment)} >
+                                         style={getCellStyle(header)} >
                                       {
                                           issue.has_attachment && <div className="icon icon--attachment"></div>
                                       }
@@ -233,7 +235,7 @@ class Issue extends Component {
                             case "expand_feature":
                                 return (
                                     <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header_list.expand_feature)}>
+                                         style={getCellStyle(header)}>
                                       { issue.can_group_issues &&
                                         <div>
                                           { show_children &&
@@ -255,7 +257,7 @@ class Issue extends Component {
                             case "name":
                                 return (
                                     <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header_list.name)}>
+                                         style={getCellStyle(header)}>
                                       <div className="issue-cell__issue-name">
                                         {subject_prefix}{issue.subject}{subject_suffix}
                                         { issue.group_children && issue.group_children.length > 0 &&
@@ -272,14 +274,14 @@ class Issue extends Component {
                             case "assignee":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.assignee)}>
+                                         style={getCellStyle(header)}>
                                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                                     </div>
                                 )
                             case "created_at":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.created_at)}>
+                                         style={getCellStyle(header)}>
                                       <div className="issue-cell__created-at">
                                         <Timestamp value={issue.created_at} format="from_now"/>
                                       </div>
@@ -288,14 +290,14 @@ class Issue extends Component {
                             case "status":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.status)}>
+                                         style={getCellStyle(header)}>
                                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                                     </div>
                                 )
                             case "estimate_summary":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.estimate_summary)}>
+                                         style={getCellStyle(header)}>
                                       <div className="issue-cell__estimate_summary">
                                         {map(sprint.user_ids_who_can_estimate, function(user_id) {
                                              const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
@@ -326,7 +328,7 @@ class Issue extends Component {
                             case "tags":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.tags)}>
+                                         style={getCellStyle(header)}>
                                       <div className="issue-cell__tag">
                                         <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
                                       </div>
@@ -339,7 +341,7 @@ class Issue extends Component {
                                         return (
                                             <div key={tag_category_name}
                                                  className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
-                                                 style={getCellStyle(header_list.tag_columns)}>
+                                                 style={getCellStyle(header)}>
                                               { map(tags, (tag) =>
                                                   <div key={tag.id} className="issue-cell__tag_column">
                                                     {tag.name}
@@ -355,7 +357,7 @@ class Issue extends Component {
                                     map(sprint.user_ids_who_can_estimate, (user_id) =>
                                         <div key={user_id}
                                              className="div-table__cell issue__cell__secondary"
-                                             style={getCellStyle(header_list.estimate_columns)}>
+                                             style={getCellStyle(header)}>
                                           <div className="issue-cell__estimate_column">
                                             {logged_in_user_id === user_id &&
                                              <EditableIssueEstimate issue_id={issue.id}
@@ -374,7 +376,7 @@ class Issue extends Component {
                             case "my_estimate":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.my_estimate)}>
+                                         style={getCellStyle(header)}>
                                       <div className="issue-cell__estimate_column">
                                         {logged_in_user_can_estimate_user_id &&
                                          <EditableIssueEstimate issue_id={issue.id}
@@ -386,14 +388,14 @@ class Issue extends Component {
                             case "estimated":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.estimated)}>
+                                         style={getCellStyle(header)}>
                                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                                     </div>
                                 )                                   
                             case "my_time":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.my_time)}>
+                                         style={getCellStyle(header)}>
                                       <div className="issue__cell--elapsed-time">
                                         <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                                       </div>
@@ -402,7 +404,7 @@ class Issue extends Component {
                             case "clock_in":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.clock_in)}>
+                                         style={getCellStyle(header)}>
                                       <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                                         <TimerSwitch
                                             active={issue.am_i_clocked_in}
@@ -415,7 +417,7 @@ class Issue extends Component {
                             case "delete":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.delete)}>
+                                         style={getCellStyle(header)}>
                                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                                         <DeleteIssue
                                             onDelete={that.onDeleteIssue}
@@ -426,7 +428,7 @@ class Issue extends Component {
                             case "small_delete":
                                 return (
                                     <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header_list.small_delete)}>
+                                         style={getCellStyle(header)}>
                                       <div className={"reveal-on-hover--block"}>
                                         <div className="issue__small-delete-image" onClick={that.onDeleteIssue} />
                                       </div>

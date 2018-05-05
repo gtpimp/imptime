@@ -1,11 +1,22 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer
+import json
 logger = logging.getLogger(__name__)
 
+class MienIssueHeaderSerializer(BaseSerializer):
+    key = serializers.CharField()
+    label = serializers.CharField()
+    description = serializers.CharField()
+    width = serializers.CharField()
+
+    
 class MienSerializer(BaseSerializer):
 
     id = serializers.CharField()
     title = serializers.CharField()
-    issue_headers = serializers.JSONField()
-    
+    issue_headers = MienIssueHeaderSerializer(many=True, source='issue_headers_as_obj')
+
+    def to_representation(self, obj):
+        obj.issue_headers_as_obj = json.loads(obj.issue_headers)
+        return super(MienSerializer, self).to_representation(obj)

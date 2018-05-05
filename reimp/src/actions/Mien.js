@@ -88,6 +88,10 @@ export function getIssueHeaderListForCurrentMien(state) {
     return get(mien, ["issue_headers"], null) || getAllAvailableIssueHeaders()
 }
 
+export function getHeaderListForMien(mien) {
+    return mien.issue_headers
+}
+
 export function doesMienHaveFeature(state, feature_name) {
     const mien_id = getCurrentMienId(state)
     return get(MIEN_FEATURES, [mien_id, feature_name], false)
@@ -133,7 +137,7 @@ export function updateMienTitle(mien_id, value) {
 }
 
 export function updateMienIssueHeaders(mien_id, issue_headers) {
-    return updateItem(ENTITY_KEY__MIEN, [mien_id], "issue_headers", JSON.stringify(issue_headers))
+    return updateItem(ENTITY_KEY__MIEN, [mien_id], "issue_headers", issue_headers)
 }
 
 export function startCandidateMien() {

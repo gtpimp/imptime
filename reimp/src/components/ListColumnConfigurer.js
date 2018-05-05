@@ -13,31 +13,53 @@ class ListColumnConfigurer extends Component {
         this.onDragEnd = this.onDragEnd.bind(this)
     }
     
-    updateIssueHeaderConfiguration(event, header_key, enabled) {
-        event.stopPropagation()
-        /* const { mien_being_configured } = this.props
-         * const all_headers = getAllAvailableIssueHeaders()
-         * var issue_headers = mien_being_configured.issue_headers
-         * map(keys(all_headers), function(header_key) {
-         *     
-         * })
-         * dispatch(updateMienIssueHeaders(mien_being_configured.id, issue_headers))*/
+    move(source, destination, droppableSource, droppableDestination) {
+        const sourceClone = Array.from(source);
+        const destClone = Array.from(destination);
+        const [removed] = sourceClone.splice(droppableSource.index, 1);
+        destClone.splice(droppableDestination.index, 0, removed);
+        const result = {};
+        result[droppableSource.droppableId] = sourceClone;
+        result[droppableDestination.droppableId] = destClone;
+        return result;
+    }
+
+    reorder(list, startIndex, endIndex) {
+        const result = Array.from(list);
+        const [removed] = result.splice(startIndex, 1);
+        result.splice(endIndex, 0, removed);
+        return result;
     }
 
     onDragEnd(result) {
-        const { onSave } = this.props
-        const { mien, all_headers } = this.props
+        const { onSave, inactive_headers, active_headers } = this.props
+        const { source, destination } = result
         
-        /* const { onReorder } = this.props
-         * if (!result.destination) {
-         *     return;
-         * }
-         * if ( ! onReorder ) {
-         *     return;
-         * }
-         * const index_of_row_being_moved = result.source.index
-         * const index_of_destination = result.destination.index
-         * onReorder(index_of_row_being_moved, index_of_destination)*/
+        if ( ! destination ) {
+            return
+        }
+
+        if ( source.droppableId === "inactive_headers" ) {
+
+            if ( destination.droppableId === "active_headers" ) {
+                const move_to_active_result = this.move(inactive_headers, active_headers, source, destination)
+                onSave(move_to_active_result.active_headers)
+                
+            } else if ( destination.droppableId === "inactive_headers" ) {
+                // sorting within inactive headers makes no sense
+                return
+            }
+            
+        } else if ( source.droppableId === "active_headers" ) {
+
+            if ( destination.droppableId === "inactive_headers" ) {
+                const move_to_inactive_result = this.move(active_headers, inactive_headers, source, destination)
+                onSave(move_to_inactive_result.active_headers)
+            } else if ( destination.droppableId === "active_headers" ) {
+                const reordered_active_headers = this.reorder("active_headers", source.index, destination.index)
+                onSave(reordered_active_headers)
+            }
+        }
     }
 
     renderDraggableList(droppable_key, headers) {
@@ -73,13 +95,11 @@ class ListColumnConfigurer extends Component {
                )}
             </Droppable>
         )
-    } 
+    }
 
     render() {
-        const { mien, active_headers, all_headers } = this.props
+        const { mien, active_headers, inactive_headers } = this.props
 
-        const inactive_headers = filter(all_headers, (header) => !includes(active_headers, header))
-        
         return (
             <div>
               <h3>Configuring issue list for {mien.title}</h3>
@@ -106,12 +126,14 @@ function mapStateToProps(state, props) {
     
     const { onSave, all_headers, active_headers } = props
     const mien = getMienBeingConfigured(state)
+    const inactive_headers = filter(all_headers, (header) => !includes(active_headers, header))
     
     return {
         mien,
         onSave,
         all_headers,
-        active_headers
+        active_headers: active_headers || [],
+        inactive_headers
     }
 }
 

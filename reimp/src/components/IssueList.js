@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { uniq, concat, keys, each, indexOf, map, union, difference, includes } from 'lodash'
+import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
@@ -46,7 +46,12 @@ import {
     ensureIssuesLoaded,
     getAllAvailableIssueHeaders
 } from '../actions/Issues'
-import { isMienConfigurerActive, getMienBeingConfigured, updateMienIssueHeaders } from '../actions/Mien'
+import {
+    isMienConfigurerActive,
+    getMienBeingConfigured,
+    updateMienIssueHeaders,
+    getHeaderListForMien
+} from '../actions/Mien'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
 import IssueListHeader from '../components/IssueListHeader'
@@ -71,6 +76,7 @@ class IssueList extends Component {
         this.handleShortcuts = this.handleShortcuts.bind(this)
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
         this.renderHeader = this.renderHeader.bind(this)
+        this.onListColumnConfigurerSaved = this.onListColumnConfigurerSaved.bind(this)
     }
 
     componentDidMount() {
@@ -444,12 +450,20 @@ class IssueList extends Component {
         />
     }
 
+    onListColumnConfigurerSaved(new_active_headers) {
+        const { dispatch, mien_being_configured } = this.props
+        dispatch(updateMienIssueHeaders(mien_being_configured.id, new_active_headers))
+    }
+
     renderListColumnConfigurer() {
         const { mien_being_configured } = this.props
+        if ( ! mien_being_configured ) {
+            return null
+        }
         return (
             <ListColumnConfigurer all_headers={getAllAvailableIssueHeaders()}
-                                  onSave={updateMienIssueHeaders}
-                                  active_headers={mien_being_configured.issue_headers} />
+                                  onSave={this.onListColumnConfigurerSaved}
+                                  active_headers={getHeaderListForMien(mien_being_configured)} />
         )
     }
 
