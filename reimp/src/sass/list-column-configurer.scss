@@ -10,3 +10,17 @@
     background-color: $row-hover-color;
     cursor: grabbing;
 }
+
+.list-column-configurer__dragging_over {
+    background-color: $button-active-background;
+}
+
+.list_column_configurer__headers {
+}
+
+
+.list-column-configurer__droppable {
+    min-height: 50px;
+    border: 1px solid $color-12;
+    padding: 5px;
+}
