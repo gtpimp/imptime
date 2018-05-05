@@ -121,6 +121,8 @@ class MienSelector extends Component {
     hideEditButtons() {
         const { dispatch } = this.props
         dispatch(stopMienConfigurer())
+        this.hideButtonBar()
+        this.setState({editing_mien: null})
     }
 
     renderButtonBar() {
