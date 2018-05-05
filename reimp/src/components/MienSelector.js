@@ -68,8 +68,9 @@ class MienSelector extends Component {
         dispatch(startCandidateMien())
     }
 
-    onCancelCreateCandidateMien() {
+    onCancelCreateCandidateMien(event) {
         const { dispatch } = this.props
+        event.preventDefault()
         dispatch(cancelCandidateMien())
     }
 

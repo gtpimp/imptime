@@ -18,5 +18,5 @@ class MienSerializer(BaseSerializer):
     issue_headers = MienIssueHeaderSerializer(many=True, source='issue_headers_as_obj')
 
     def to_representation(self, obj):
-        obj.issue_headers_as_obj = json.loads(obj.issue_headers)
+        obj.issue_headers_as_obj = json.loads(obj.issue_headers or "[]")
         return super(MienSerializer, self).to_representation(obj)
