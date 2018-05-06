@@ -142,14 +142,18 @@ export function updateMienIssueHeaders(mien_id, issue_headers) {
     return updateItem(ENTITY_KEY__MIEN, [mien_id], "issue_headers", issue_headers)
 }
 
-export function startCandidateMien() {
+export function startCandidateMien(initial_candidate_props) {
     return (dispatch, getState) => {
-        dispatch(startCandidateItem(ENTITY_KEY__MIEN, {}))
+        dispatch(startCandidateItem(ENTITY_KEY__MIEN, initial_candidate_props || {}))
     }
 }
 
 export function updateCandidateTitle(title) {
     return updateCandidateDetails(ENTITY_KEY__MIEN, {title:title})
+}
+
+export function updateCandidateCloneOf(clone_of_mien_id) {
+    return updateCandidateDetails(ENTITY_KEY__MIEN, {clone_of_mien_id:clone_of_mien_id})
 }
 
 export function cancelCandidateMien() {

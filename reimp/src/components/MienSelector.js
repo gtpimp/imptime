@@ -84,6 +84,13 @@ class MienSelector extends Component {
         this.setState({editing_mien: mien})
     }
 
+    onStartCopyingMien(event, mien) {
+        const { dispatch } = this.props
+        event.preventDefault()
+        dispatch(startCandidateMien({title: mien.title + " Copy",
+                                     clone_of_mien_id: mien.id}))
+    }
+
     onCancelEditingMien(event) {
         event.preventDefault()
         this.setState({editing_mien: null})
@@ -154,13 +161,15 @@ class MienSelector extends Component {
     renderMienEditButtons(mien) {
         return (
             <div className="mien-editor-button-bar">
-              <div className="icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
-              <div className="icon--edit" onClick={(event) => this.onStartEditingMien(event, mien)}/>
+              <div className="mien-editor-button-bar__button icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
+              <div className="mien-editor-button-bar__button icon--edit" onClick={(event) => this.onStartEditingMien(event, mien)}/>
+              <div className="mien-editor-button-bar__button icon--copy" onClick={(event) => this.onStartCopyingMien(event, mien)}/>
             </div>
         )
     }
 
     renderMienCreator() {
+        const { candidate_mien } = this.props
         return (
             <Modal isOpen={true}
                    className="editable-property-modal"
@@ -168,6 +177,7 @@ class MienSelector extends Component {
                    onRequestClose={this.onCancelCreateCandidateMien}
                    contentLabel="New Title">
               <MienTitleForm onCancel={this.onCancelCreateCandidateMien}
+                             initial_value={candidate_mien.title}
                              onSubmitted={this.onSaveCandidateMien}/>
             </Modal>
         )

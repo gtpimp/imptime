@@ -92,8 +92,15 @@ class MienViewSet(BaseViewSet):
             context = {}
             params = request.data['item']
 
-            mien = Mien.objects.create(user=request.user,
-                                       title=params['title'])
+            clone_of_mien_id = params.get("clone_of_mien_id", None)
+            if clone_of_mien_id:
+                mien = self.allowed_miens().get(pk=clone_of_mien_id)
+                mien.id = None
+                mien.title = params['title']
+                mien.save()
+            else:
+                mien = Mien.objects.create(user=request.user,
+                                        title=params['title'])
 
             context['item'] = MienSerializer(mien).data
             data = {'status': 'success', 'payload': context}

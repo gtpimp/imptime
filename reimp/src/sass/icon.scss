@@ -138,6 +138,11 @@
     @include icon(15px, 15px, 'commercially_sensitive.png');
 }
 
+.icon--copy {
+    @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');
+    background-color: black;
+}
+
 .icon--fullscreen {
     @include icon(24px, 24px, 'fullscreen.png');
 }

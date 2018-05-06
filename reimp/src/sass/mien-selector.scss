@@ -42,6 +42,21 @@
 .mien-editor-button-bar {
     position: absolute;
     z-index:99;
-    top: 100%;
+    top: 110%;
     display: flex;
+    flex-direction: column;
+    background-color: $color-26;
+    box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
+    padding: 3px;
 }
+
+.mien-editor-button-bar__button {
+    border: 1px solid $color-26;
+    width: 100%;
+    padding: 2px;
+}
+
+.mien-editor-button-bar__button:hover {
+    border: 1px solid #000000;
+}
+
