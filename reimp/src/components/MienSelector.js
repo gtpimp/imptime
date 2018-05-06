@@ -130,19 +130,19 @@ class MienSelector extends Component {
         return (
             <div className="mien-button-bar">
               { ! is_mien_configurer_active &&
-                <div className="button toolbar-button--large button--primary" 
+                <div className="mien-button-bar__button button toolbar-button--large" 
                      onClick={this.onCreateCandidateMien}>
                   + New
                 </div>
               }
               { ! is_mien_configurer_active &&
-                <div className="button toolbar-button--large button--primary" 
+                <div className="mien-button-bar__button button toolbar-button--large" 
                      onClick={this.showEditButtons}>
                   Configure
                 </div>
               }
               { is_mien_configurer_active &&
-                <div className="button toolbar-button--large button--primary"
+                <div className="mien-button-bar__button button toolbar-button--large"
                      onClick={this.hideEditButtons}>
                   Stop configuring
                 </div>

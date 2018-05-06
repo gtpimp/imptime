@@ -12,6 +12,15 @@
     display: flex;
 }
 
+.mien-button-bar {
+    margin-left: 50px;
+    opacity: 0.8;
+}
+
+.mien-button-bar__button {
+    padding: 5px;
+}
+
 .mien-button {
     position: relative;
     background-color: #ccc;
