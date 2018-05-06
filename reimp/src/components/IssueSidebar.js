@@ -34,7 +34,6 @@ import {
     populateEstimates,
     makeFeatureIssuesSuccessive
 } from '../actions/Issues'
-import { doesMienHaveFeature } from '../actions/Mien'
 
 import { ensureUsersLoaded } from '../actions/Users'
 import {getProject} from '../actions/Projects'

@@ -16,7 +16,6 @@ import EditableSprintDeadline from '../components/EditableSprintDeadline'
 import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
-import { doesMienHaveFeature } from '../actions/Mien'
 import MultipleIssueSummary from './MultipleIssueSummary'
 
 class SprintSidebar extends Component {
@@ -69,7 +68,7 @@ class SprintSidebar extends Component {
     
     render() {
 
-        const { sprint_id, sprint } = this.props
+        const { sprint_id, sprint, has_view_review_cycle_permission } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -127,11 +126,13 @@ class SprintSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
-                <MienFeature feature_name="review_schedule">
-                  <PropertyStackComponent title="Reviews">
-                    <SprintReviewPanel sprint_id={sprint.id} />
-                  </PropertyStackComponent>
-                </MienFeature>
+                { has_view_review_cycle_permission &&
+                  <MienFeature feature_name="review_schedule">
+                    <PropertyStackComponent title="Reviews">
+                      <SprintReviewPanel sprint_id={sprint.id} />
+                    </PropertyStackComponent>
+                  </MienFeature>
+                }
                 
                 <MienFeature feature_name="multiple_issue_summary">
                   <PropertyStackComponent>
@@ -158,12 +159,14 @@ export function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
+    const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
     
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
-        project: project
+        project: project,
+        has_view_review_cycle_permission
     }
 }
 

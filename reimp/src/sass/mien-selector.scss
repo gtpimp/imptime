@@ -60,3 +60,15 @@
     border: 1px solid #000000;
 }
 
+.mien-selector__default_configurer {
+    box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
+    background-color: $color-26;
+    padding: 3px;
+    min-width: 200px;
+    margin-left: 20px;
+    padding-bottom: 5px;
+}
+
+.mien-selector__default_configurer__feature {
+    margin-top: 10px;
+}

@@ -4,6 +4,7 @@ import { map } from 'lodash'
 import '../sass/mien-selector.css'
 import { getVisibleItemIds } from '../actions/ItemList'
 import Modal from 'react-modal'
+import MienFeature from './MienFeature'
 import { setCurrentMienId,
          getCurrentMienId,
          getMiens,
@@ -213,6 +214,18 @@ class MienSelector extends Component {
         )
     }
 
+    renderDefaultMienConfigurer() {
+        return (
+            <div className="mien-selector__default_configurer">
+              <MienFeature feature_name="costs">
+                <div className="mien-selector__default_configurer__feature">
+                  Show financial values (if allowed on the project)
+                </div>
+              </MienFeature>
+            </div>
+        )
+    }
+
     render() {
         const { candidate_mien, is_mien_configurer_active } = this.props
         const is_creating_candidate_mien = candidate_mien || false
@@ -225,6 +238,7 @@ class MienSelector extends Component {
               { (show_button_bar || is_mien_configurer_active) && this.renderButtonBar() }
               { is_creating_candidate_mien && this.renderMienCreator() }
               { is_editing_mien_title && this.renderMienTitleEditor() }
+              { is_mien_configurer_active && this.renderDefaultMienConfigurer() }
             </div>
         )
     }

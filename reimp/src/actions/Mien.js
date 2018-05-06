@@ -31,35 +31,6 @@ export const STOP_MIEN_CONFIGURER = 'STOP_MIEN_CONFIGURER'
 
 import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
-const MIEN_FEATURES = { 'spec':
-                        {
-                            'multiple_issue_summary': true,
-                        },
-
-                        'dev':
-                        {
-                            'emacs': true,
-                        },
-                        
-                        'reviewer':
-                        {
-                            'review_schedule': true,
-                            'sidebar_issue_estimates': true
-                        },
-
-                        'finance':
-                        {
-                            'multiple_issue_summary': true,
-                            'costs': true
-                        },
-
-                        'client':
-                        {
-                            'deadlines': true
-                        }
-                        
-}
-
 export function getCurrentMien(state) {
     const mien_id = getCurrentMienId(state)
     let mien = getMien(state, mien_id)
