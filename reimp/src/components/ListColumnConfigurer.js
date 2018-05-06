@@ -43,7 +43,7 @@ class ListColumnConfigurer extends Component {
 
             if ( destination.droppableId === "active_headers" ) {
                 const move_to_active_result = this.move(inactive_headers, active_headers, source, destination)
-                onSave(move_to_active_result.active_headers)
+                onSave(this.refreshHeaderDefinitions(move_to_active_result.active_headers))
                 
             } else if ( destination.droppableId === "inactive_headers" ) {
                 // sorting within inactive headers makes no sense
@@ -54,12 +54,20 @@ class ListColumnConfigurer extends Component {
 
             if ( destination.droppableId === "inactive_headers" ) {
                 const move_to_inactive_result = this.move(active_headers, inactive_headers, source, destination)
-                onSave(move_to_inactive_result.active_headers)
+                onSave(this.refreshHeaderDefinitions(move_to_inactive_result.active_headers))
             } else if ( destination.droppableId === "active_headers" ) {
                 const reordered_active_headers = this.reorder(active_headers, source.index, destination.index)
-                onSave(reordered_active_headers)
+                onSave(this.refreshHeaderDefinitions(reordered_active_headers))
             }
         }
+    }
+
+    refreshHeaderDefinitions(headers) {
+        // needed in case a header definition changes in a code release
+        const { all_headers } = this.props
+        const all_headers_by_key = keyBy(all_headers, "key")
+        const refreshed_headers = map(headers, (header) => all_headers_by_key[header.key])
+        return refreshed_headers
     }
 
     renderDraggableList(droppable_key, headers) {

@@ -9,6 +9,7 @@ class MienIssueHeaderSerializer(BaseSerializer):
     label = serializers.CharField()
     description = serializers.CharField()
     width = serializers.CharField()
+    flex = serializers.CharField(required=False)
 
     
 class MienSerializer(BaseSerializer):
