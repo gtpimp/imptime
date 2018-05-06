@@ -69,8 +69,7 @@ class SprintSidebar extends Component {
     
     render() {
 
-        const { sprint_id, sprint,
-                show_review_section, show_deadline_section } = this.props
+        const { sprint_id, sprint } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -88,12 +87,14 @@ class SprintSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
-                <PropertyStackComponent>
-                  <div onClick={this.showEmacsSprint}>
-                    Sprint
-                    <div className="sprint_sidebar__emacs_copy_img" />
-                  </div>
-                </PropertyStackComponent>
+                <MienFeature feature_name="emacs">
+                  <PropertyStackComponent>
+                    <div onClick={this.showEmacsSprint}>
+                      Sprint
+                      <div className="sprint_sidebar__emacs_copy_img" />
+                    </div>
+                  </PropertyStackComponent>
+                </MienFeature>
                 
                 <PropertyStackComponent>
                   <div className="property-text">
@@ -126,19 +127,19 @@ class SprintSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
-                { show_review_section &&
+                <MienFeature feature_name="review_schedule">
                   <PropertyStackComponent title="Reviews">
                     <SprintReviewPanel sprint_id={sprint.id} />
                   </PropertyStackComponent>
-                }
-
+                </MienFeature>
+                
                 <MienFeature feature_name="multiple_issue_summary">
                   <PropertyStackComponent>
                     <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}} project_id={sprint.project_id} />
                   </PropertyStackComponent>
                 </MienFeature>
 
-                { show_deadline_section &&
+                <MienFeature feature_name="deadlines">
                   <PropertyStackComponent title="Deadlines">
                     { map(sprint.deadline_ids, function (deadline_id, index) {
                           return <EditableSprintDeadline key={sprint.id} sprint_id={sprint.id} deadline_id={deadline_id}/>
@@ -146,7 +147,7 @@ class SprintSidebar extends Component {
                     }
                     <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
                   </PropertyStackComponent>
-                }
+                </MienFeature>
               </PropertyStack>
             </div>
         )
@@ -157,17 +158,12 @@ export function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
-    const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
-    const show_review_section = has_view_review_cycle_permission && doesMienHaveFeature(state, 'review_schedule')
-    const show_deadline_section = doesMienHaveFeature(state, 'deadlines')
     
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
-        project: project,
-        show_review_section,
-        show_deadline_section
+        project: project
     }
 }
 

@@ -94,7 +94,7 @@ class IssueSidebar extends Component {
         const {issue, sprint} = this.props
         const { emacs_hint_enabled } = this.state
         return (
-            <div>
+            <MienFeature feature_name="emacs">
               <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
 
               { emacs_hint_enabled &&
@@ -127,7 +127,7 @@ class IssueSidebar extends Component {
                       </div>
                     </div>
                   }
-            </div>
+            </MienFeature>
         )
     }
 
@@ -159,7 +159,7 @@ class IssueSidebar extends Component {
     }
 
     renderCreationStack() {
-        const { issue, show_emacs_section } = this.props
+        const { issue } = this.props
         return (
             <PropertyStackComponent>
               <div className="property-row">
@@ -177,7 +177,7 @@ class IssueSidebar extends Component {
                   }
               </div>
 
-              { show_emacs_section && this.renderEmacsHintSection() }
+              { this.renderEmacsHintSection() }
 
             </PropertyStackComponent>
         )
@@ -433,7 +433,6 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
-    const show_emacs_section = doesMienHaveFeature(state, 'emacs')
     const header_height = getHeaderHeight(state)
     const footer_height = getFooterHeight(state)
     const toolbar_height = getToolbarHeight(state)
@@ -450,7 +449,6 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         sprint,
         assignable_user_ids,
-        show_emacs_section,
         header_height,
         footer_height,
         toolbar_height,
