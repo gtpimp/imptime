@@ -22,7 +22,7 @@ import {
     getSavingItemIds,
     getLoadingItemIds
 } from '../actions/Item'
-import { getAllAvailableIssueHeaders } from './Issues'
+import { getDefaultIssueHeaders } from './Issues'
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 export const SET_MIEN = 'SET_MIEN'
@@ -84,7 +84,9 @@ function getDefaultMien(state) {
         if ( mien_keys.length === 0 ) {
             return null
         }
-        return all_miens[mien_keys[0]]
+        const mien = all_miens[mien_keys[0]]
+        setCurrentMienId(mien.id)
+        return mien
     }
     return null
 }
@@ -100,7 +102,7 @@ export function setCurrentMienId(mien_id) {
 
 export function getIssueHeaderListForCurrentMien(state) {
     const mien = getCurrentMien(state)
-    return get(mien, ["issue_headers"], null) || getAllAvailableIssueHeaders()
+    return get(mien, ["issue_headers"], null) || getDefaultIssueHeaders()
 }
 
 export function getHeaderListForMien(mien) {

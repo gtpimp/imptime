@@ -9,7 +9,7 @@ import {
     tiny_col_width
 } from './ItemListKeyRegistry'
 
-import { map, compact, forEach } from 'lodash'
+import { map, compact, forEach, filter, includes } from 'lodash'
 import difference from 'lodash/difference'
 import { getUser } from '../actions/Users'
 
@@ -494,6 +494,11 @@ export function startMinutesEditor(project_id, on_done) {
     
     return itemPost(ENTITY_KEY__ISSUE, ["minutes_for_"+project_id], url,
                     field_name, field_value, method, data, on_post_done)
+}
+
+export function getDefaultIssueHeaders() {
+    const default_header_keys = ["number", "issue_type", "attachment", "name", "assignee", "status", "estimate_summary", "tag_columns", "small_delete"]
+    return filter(getAllAvailableIssueHeaders(), (header) => includes(default_header_keys, header.key))
 }
 
 export function getAllAvailableIssueHeaders() {

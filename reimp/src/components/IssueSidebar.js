@@ -334,14 +334,13 @@ class IssueSidebar extends Component {
     }
 
     renderReviewsStack() {
-        const { show_review_section, issue } = this.props
-        if ( ! show_review_section ) {
-            return null
-        }
+        const { issue } = this.props
         return (
-            <PropertyStackComponent title="Reviews">
-              <IssueReviewPanel issue_id={issue.id} />
-            </PropertyStackComponent>
+            <MienFeature feature_name="issue_reviews">
+              <PropertyStackComponent title="Reviews">
+                <IssueReviewPanel issue_id={issue.id} />
+              </PropertyStackComponent>
+            </MienFeature>
         )
     }
 
@@ -434,7 +433,6 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
-    const show_review_section = doesMienHaveFeature(state, 'review_schedule')
     const show_emacs_section = doesMienHaveFeature(state, 'emacs')
     const header_height = getHeaderHeight(state)
     const footer_height = getFooterHeight(state)
@@ -452,7 +450,6 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         sprint,
         assignable_user_ids,
-        show_review_section,
         show_emacs_section,
         header_height,
         footer_height,

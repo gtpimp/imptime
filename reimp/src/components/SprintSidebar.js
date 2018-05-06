@@ -4,6 +4,7 @@ import { map } from 'lodash'
 import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
+import MienFeature from './MienFeature'
 import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -69,7 +70,7 @@ class SprintSidebar extends Component {
     render() {
 
         const { sprint_id, sprint,
-                show_review_section, show_summary_section, show_deadline_section } = this.props
+                show_review_section, show_deadline_section } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -131,11 +132,11 @@ class SprintSidebar extends Component {
                   </PropertyStackComponent>
                 }
 
-                { show_summary_section &&
+                <MienFeature feature_name="multiple_issue_summary">
                   <PropertyStackComponent>
                     <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}} project_id={sprint.project_id} />
                   </PropertyStackComponent>
-                }
+                </MienFeature>
 
                 { show_deadline_section &&
                   <PropertyStackComponent title="Deadlines">
@@ -158,7 +159,6 @@ export function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
     const show_review_section = has_view_review_cycle_permission && doesMienHaveFeature(state, 'review_schedule')
-    const show_summary_section = doesMienHaveFeature(state, 'multiple_issue_summary')
     const show_deadline_section = doesMienHaveFeature(state, 'deadlines')
     
     return {
@@ -167,7 +167,6 @@ export function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         show_review_section,
-        show_summary_section,
         show_deadline_section
     }
 }

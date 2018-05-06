@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
+import MienFeature from './MienFeature'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
 import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
@@ -15,7 +16,6 @@ import {
     getIssues,
     deleteIssues
 } from '../actions/Issues'
-import { doesMienHaveFeature } from '../actions/Mien'
 
 class MultipleIssueSidebar extends Component {
 
@@ -45,7 +45,7 @@ class MultipleIssueSidebar extends Component {
 
     render() {
 
-        const {issues, issue_ids, project_id, show_summary} = this.props
+        const {issues, issue_ids, project_id} = this.props
 
         return (
 
@@ -126,11 +126,11 @@ class MultipleIssueSidebar extends Component {
                   </button>
                 </PropertyStackComponent>
 
-                { show_summary &&
+                <MienFeature feature_name="multiple_issue_summary">
                   <PropertyStackComponent>
                     <MultipleIssueSummary filter={{issue_ids:issue_ids}} project_id={project_id} />
                   </PropertyStackComponent>
-                }
+                </MienFeature>
                 
               </PropertyStack>
             </div>
@@ -141,13 +141,11 @@ class MultipleIssueSidebar extends Component {
 function mapStateToProps(state, props) {
     const {issue_ids, sprint_id, project_id} = props
     const issues = getIssues(state, issue_ids) || {}
-    const show_summary = doesMienHaveFeature(state, 'multiple_issue_summary')
     return {
         issues: issues || [],
         issue_ids: issue_ids,
         sprint_id: sprint_id,
-        project_id: project_id,
-        show_summary
+        project_id: project_id
     }
 }
 
