@@ -498,7 +498,7 @@ export function startMinutesEditor(project_id, on_done) {
 
 export function getAllAvailableIssueHeaders() {
     return [ {key:'number', label:"#", description:"Issue number", width:tiny_col_width},
-             {key:'issue_type', label:'', description:"Issue type", width:tiny_col_width},
+             {key:'issue_type', label:'', description:"Icon showing the issue type", width:tiny_col_width},
              {key:'attachment', label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width},
              {key:'expand_feature', label:'', description:"Icon to allow expanding feature issues", width:tiny_col_width},
              {key:'name', label:"Name", description:"Issue subject", width:"auto", flex:1},

@@ -94,11 +94,14 @@ export const tiny_col_width = "20px"
 
 export function getCellStyle(s) { 
     // For use with the header lists below
+
+    const flex_grow = s.flex || 0
+    const flex_shrink = s.flex || 0
+    const flex_basis = s.width
+    
     return {
         "maxWidth":s.width,
-        "flex-grow":s.flex || 0,
-        "flex-shrink": s.flex || 0,
-        "flex-basis":s.width
+        "flex": ""+flex_grow+" "+flex_shrink+" "+flex_basis
     }
 }
 
