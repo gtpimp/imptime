@@ -10,6 +10,7 @@ import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
+import MienFeature from './MienFeature'
 import TagListFlat from './TagListFlat'
 //import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
@@ -292,17 +293,16 @@ class IssueSidebar extends Component {
     }
 
     renderEstimatesStack() {
-        const { issue, show_estimate_section } = this.props
-        if ( ! show_estimate_section ) {
-            return null
-        }
+        const { issue } = this.props
         return (
-            <PropertyStackComponent title="Estimates">
-              <div>
-                <EditableIssueEstimate issue_id={issue.id} />
-              </div>
-              <IssueEstimatesSummary issue_id={issue.id} />
-            </PropertyStackComponent>
+            <MienFeature feature_name="issue_estimates">
+              <PropertyStackComponent title="Estimates">
+                <div>
+                  <EditableIssueEstimate issue_id={issue.id} />
+                </div>
+                <IssueEstimatesSummary issue_id={issue.id} />
+              </PropertyStackComponent>
+            </MienFeature>
         )
     }
 
@@ -436,7 +436,6 @@ function mapStateToProps(state, props) {
     const assignable_user_ids = project.allowed_user_ids || []
     const show_review_section = doesMienHaveFeature(state, 'review_schedule')
     const show_emacs_section = doesMienHaveFeature(state, 'emacs')
-    const show_estimate_section = doesMienHaveFeature(state, 'sidebar_issue_estimates')
     const header_height = getHeaderHeight(state)
     const footer_height = getFooterHeight(state)
     const toolbar_height = getToolbarHeight(state)
@@ -455,7 +454,6 @@ function mapStateToProps(state, props) {
         assignable_user_ids,
         show_review_section,
         show_emacs_section,
-        show_estimate_section,
         header_height,
         footer_height,
         toolbar_height,

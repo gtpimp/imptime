@@ -1,0 +1,38 @@
+@import 'variables.scss';
+
+.mien-feature-highlighter {
+    // border: 1px solid yellow-green;
+    position: relative;
+    cursor: help;
+}
+
+.mien-feature-highlighter--highlighted {
+    border: 1px solid green;
+}
+
+.mien-feature-highlighter--active {
+    border: 1px solid green;
+}
+
+.mien-feature-highlighter--inactive {
+    border: 1px solid red;
+}
+
+.mien-feature-highligher--mask {
+    z-index:8;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    opacity: 0.1;
+}
+
+.mien-feature-highligher--mask-active {
+    background-color: green;
+}
+
+.mien-feature-highligher--mask-inactive {
+    background-color: red;
+}
+

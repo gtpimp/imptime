@@ -1,5 +1,5 @@
 import cookie from 'react-cookie';
-import { get } from 'lodash'
+import { get, keys, includes } from 'lodash'
 
 import {
     invalidateAllItems,
@@ -62,18 +62,31 @@ const MIEN_FEATURES = { 'spec':
 
 export function getCurrentMien(state) {
     const mien_id = getCurrentMienId(state)
-    return getMien(state, mien_id)
+    let mien = getMien(state, mien_id)
+    if ( ! mien ) {
+        return getDefaultMien(state)
+    }
+    return mien
 }
 
 export function getCurrentMienId(state) {
     var mien_id = cookie.load("current_mien")
     if ( ! mien_id ) {
-        const all_miens = getAllItems(state, ENTITY_KEY__MIEN)
-        if ( all_miens.length > 0 ) {
-            mien_id = all_miens[0].id
-        }
+        return get(getDefaultMien(state), ["id"], null)
     }
     return mien_id
+}
+
+function getDefaultMien(state) {
+    const all_miens = getAllItems(state, ENTITY_KEY__MIEN)
+    if ( all_miens ) {
+        const mien_keys = keys(all_miens)
+        if ( mien_keys.length === 0 ) {
+            return null
+        }
+        return all_miens[mien_keys[0]]
+    }
+    return null
 }
 
 export function setCurrentMienId(mien_id) {
@@ -94,9 +107,15 @@ export function getHeaderListForMien(mien) {
     return mien.issue_headers
 }
 
-export function doesMienHaveFeature(state, feature_name) {
-    const mien_id = getCurrentMienId(state)
-    return get(MIEN_FEATURES, [mien_id, feature_name], false)
+export function doesMienHaveFeature(state, feature_name, default_value) {
+    const mien = getCurrentMien(state)
+    if ( !mien ) {
+        return false
+    }
+    if ( ! mien.features ) {
+        return default_value
+    }
+    return includes(mien.features, feature_name)
 }
 
 export function invalidateAllMiens() {
@@ -140,6 +159,12 @@ export function updateMienTitle(mien_id, value) {
 
 export function updateMienIssueHeaders(mien_id, issue_headers) {
     return updateItem(ENTITY_KEY__MIEN, [mien_id], "issue_headers", issue_headers)
+}
+
+export function updateMienFeature(mien_id, feature_name, is_enabled) {
+    const new_value = { feature_name: feature_name,
+                        is_enabled: is_enabled }
+    return updateItem(ENTITY_KEY__MIEN, [mien_id], "feature", new_value)
 }
 
 export function startCandidateMien(initial_candidate_props) {

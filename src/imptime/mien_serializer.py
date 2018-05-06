@@ -11,13 +11,14 @@ class MienIssueHeaderSerializer(BaseSerializer):
     width = serializers.CharField()
     flex = serializers.CharField(required=False)
 
-    
 class MienSerializer(BaseSerializer):
 
     id = serializers.CharField()
     title = serializers.CharField()
     issue_headers = MienIssueHeaderSerializer(many=True, source='issue_headers_as_obj')
+    features = serializers.ListField(child=serializers.CharField(), source="features_as_obj")
 
     def to_representation(self, obj):
         obj.issue_headers_as_obj = json.loads(obj.issue_headers or "null")
+        obj.features_as_obj = json.loads(obj.features or "null")
         return super(MienSerializer, self).to_representation(obj)

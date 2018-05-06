@@ -71,8 +71,17 @@ class MienViewSet(BaseViewSet):
                 mien = self.allowed_miens().get(pk=mien_pk)
                 if field_name == 'title':
                     mien.title = new_value
-                if field_name == 'issue_headers':
+                elif field_name == 'issue_headers':
                     mien.issue_headers = json.dumps(MienIssueHeaderSerializer(new_value, many=True).data)
+                elif field_name == 'feature':
+                    features = json.loads(mien.features or "[]")
+                    feature_name = new_value['feature_name']
+                    is_enabled = new_value['is_enabled']
+                    if not is_enabled and feature_name in features:
+                        features.remove(feature_name)
+                    elif is_enabled and feature_name not in features:
+                        features.append(feature_name)
+                    mien.features = json.dumps(features)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 mien.save()
