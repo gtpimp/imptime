@@ -31,11 +31,15 @@ class MienViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            miens = self.allowed_miens().order_by("order", "id")
-            miens = self.apply_filter(qs=miens, raw_filter_args=filter_args)
+            miens = self.allowed_miens()
 
-            miens = self.apply_pagination(qs=miens,
-                                             pagination=pagination)
+            if miens.count() == 0:
+                Mien.create_default_mien(user=request.user)
+                miens = self.allowed_miens()
+
+            miens = miens.order_by("order", "id")
+            miens = self.apply_filter(qs=miens, raw_filter_args=filter_args)
+            miens = self.apply_pagination(qs=miens, pagination=pagination)
 
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in miens.values_list(

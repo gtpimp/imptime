@@ -6,7 +6,6 @@ import { getVisibleItemIds } from '../actions/ItemList'
 import Modal from 'react-modal'
 import { setCurrentMienId,
          getCurrentMienId,
-         MIENS,
          getMiens,
          fetchMiensIfNeeded,
          startCandidateMien,
@@ -161,21 +160,6 @@ class MienSelector extends Component {
         )
     }
 
-    renderOldMienButtons() {
-        const { available_mien_names, current_mien_id } = this.props
-        const button_class = "button mien-button"
-        return (
-            <div className="mien-buttons">
-              { map(available_mien_names, (mien_name) =>
-                  <div key={mien_name} onClick={() => this.onChangeMien(mien_name) }
-                       className={classNames(button_class, {'button--active': current_mien_id === mien_name})}>
-                    {mien_name}
-                  </div>
-                )}
-            </div>
-        )
-    }
-
     renderMienCreator() {
         return (
             <Modal isOpen={true}
@@ -228,7 +212,6 @@ class MienSelector extends Component {
         return (
             <div className="mien-select-panel" onMouseLeave={this.hideButtonBar} onMouseOver={this.showButtonBar}>
               { this.renderMiens() }
-              { this.renderOldMienButtons() }
               { (show_button_bar || is_mien_configurer_active) && this.renderButtonBar() }
               { is_creating_candidate_mien && this.renderMienCreator() }
               { is_editing_mien_title && this.renderMienTitleEditor() }
@@ -240,7 +223,6 @@ class MienSelector extends Component {
 function mapStateToProps(state, props) {
 
     const current_mien_id = getCurrentMienId(state) || 'dev'
-    const available_mien_names = MIENS
     const mien_ids = getVisibleItemIds(state, LIST_KEY__MIEN_LIST)
     const miens = getMiens(state, mien_ids)
     const candidate_mien = getCandidateMien(state) || null
@@ -249,7 +231,6 @@ function mapStateToProps(state, props) {
 
     return {
         current_mien_id,
-        available_mien_names,
         candidate_mien,
         miens,
         is_mien_configurer_active,

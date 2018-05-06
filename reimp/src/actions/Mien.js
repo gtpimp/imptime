@@ -8,6 +8,7 @@ import {
     ensureItemsLoaded,
     getItem,
     getItems,
+    getAllItems,
     getItemsById,
     updateItem,
     startCandidateItem,
@@ -29,8 +30,6 @@ export const START_MIEN_CONFIGURER = 'START_MIEN_CONFIGURER'
 export const STOP_MIEN_CONFIGURER = 'STOP_MIEN_CONFIGURER'
 
 import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
-
-export const MIENS = ['dev', 'reviewer', 'finance', 'client', 'tester', 'spec']
 
 const MIEN_FEATURES = { 'spec':
                         {
@@ -67,11 +66,14 @@ export function getCurrentMien(state) {
 }
 
 export function getCurrentMienId(state) {
-    if ( cookie.load("current_mien") ) {
-        return cookie.load("current_mien") || "dev_mien"
-    } else {
-        return get(state.settings, ["mien"], "dev_mien")
+    var mien_id = cookie.load("current_mien")
+    if ( ! mien_id ) {
+        const all_miens = getAllItems(state, ENTITY_KEY__MIEN)
+        if ( all_miens.length > 0 ) {
+            mien_id = all_miens[0].id
+        }
     }
+    return mien_id
 }
 
 export function setCurrentMienId(mien_id) {

@@ -348,4 +348,7 @@ class Mien(BaseModel):
     def delete(self, *args, **kwargs):
         super(Mien, self).delete(*args, **kwargs)
         RefreshNotifier().notify_model_delete(self)
-            
+
+    @classmethod
+    def create_default_mien(self, user):
+        return self.objects.get_or_create(user=user, title='Default view')
