@@ -104,7 +104,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         velocity_adjusted_hours_by_user = estimates_with_rates.annotate(velocity_adjusted_points=Sum(F('user__rates__velocity')*F('points')))
 
         for x in velocity_adjusted_hours_by_user:
-            if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+            if self.has_see_other_user_points or x['user_id'] == self.request.user.id:
                 estimates.setdefault(x['user_id'], {})['velocity_estimates'] = x['velocity_adjusted_points']
                 estimates[x['user_id']]['given_velocity'] = \
                               estimates[x['user_id']]['velocity_estimates']/estimates[x['user_id']]['raw_estimates']
@@ -116,7 +116,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                            output_field=FloatField()))
 
             for x in velocity_adjusted_costs:
-                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                if self.has_see_other_user_points or x['user_id'] == self.request.user.id:
                     estimates.setdefault(x['user_id'], {})['velocity_cost'] = x['velocity_adjusted_cost']
 
             cost_with_commission = estimates_with_rates\
@@ -125,7 +125,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                          output_field=FloatField()))
 
             for x in cost_with_commission:
-                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                if self.has_see_other_user_points or x['user_id'] == self.request.user.id:
                     estimates.setdefault(x['user_id'], {})['velocity_commission_cost'] = x['velocity_adjusted_cost']
 
         return estimates

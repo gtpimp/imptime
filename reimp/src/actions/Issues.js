@@ -41,6 +41,24 @@ export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'
 export const ANNOUNCE_BULK_CREATING_ISSUES_FAILED = 'ANNOUNCE_BULK_CREATING_ISSUES_FAILED'
 export const ANNOUNCE_BULK_CREATED_ISSUES = 'ANNOUNCE_BULK_CREATED_ISSUES'
 
+const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", description:"Issue number", width:tiny_col_width},
+                                      {key:'issue_type', label:'', description:"Icon showing the issue type", width:tiny_col_width},
+                                      {key:'attachment', label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width},
+                                      {key:'expand_feature', label:'', description:"Icon to allow expanding feature issues", width:tiny_col_width},
+                                      {key:'name', label:"Name", description:"Issue subject", width:"auto", flex:1},
+                                      {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
+                                      {key:'created_at', label:"Created at", description:"Creation date", width:medium_col_width},
+                                      {key:'status', label:"Status", description:"Status",  width:medium_col_width},
+                                      {key:'tag_columns', label:"Tag Columns", description:"Columns for each tag", width:medium_col_width},
+                                      {key:'my_estimate', label:"My Estimate", description:"My time estimate", width:small_col_width},
+                                      {key:'estimate_summary', label:"Time", description:"Condensed summary of all times", width:medium_col_width},
+                                      {key:'estimate_columns', label:"Estimates", description:"Columns for each user", width:medium_col_width},
+                                      {key:'small_delete', label:"", description:"Delete issue", width:tiny_col_width}
+]
+
+const DEFAULT_ISSUE_HEADERS_KEYS = ["number", "issue_type", "attachment", "name", "assignee", "status", "estimate_summary", "tag_columns", "small_delete"]
+const DEFAULT_ISSUE_HEADERS = filter(ALL_AVAILABLE_ISSUE_HEADERS, (header) => includes(DEFAULT_ISSUE_HEADERS_KEYS, header.key))
+
 export function invalidateAllIssues() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__ISSUE))
@@ -497,23 +515,9 @@ export function startMinutesEditor(project_id, on_done) {
 }
 
 export function getDefaultIssueHeaders() {
-    const default_header_keys = ["number", "issue_type", "attachment", "name", "assignee", "status", "estimate_summary", "tag_columns", "small_delete"]
-    return filter(getAllAvailableIssueHeaders(), (header) => includes(default_header_keys, header.key))
+    return DEFAULT_ISSUE_HEADERS
 }
 
 export function getAllAvailableIssueHeaders() {
-    return [ {key:'number', label:"#", description:"Issue number", width:tiny_col_width},
-             {key:'issue_type', label:'', description:"Icon showing the issue type", width:tiny_col_width},
-             {key:'attachment', label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width},
-             {key:'expand_feature', label:'', description:"Icon to allow expanding feature issues", width:tiny_col_width},
-             {key:'name', label:"Name", description:"Issue subject", width:"auto", flex:1},
-             {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
-             {key:'created_at', label:"Created at", description:"Creation date", width:medium_col_width},
-             {key:'status', label:"Status", description:"Status",  width:medium_col_width},
-             {key:'tag_columns', label:"Tag Columns", description:"Columns for each tag", width:medium_col_width},
-             {key:'my_estimate', label:"My Estimate", description:"My time estimate", width:small_col_width},
-             {key:'estimate_summary', label:"Time", description:"Condensed summary of all times", width:medium_col_width},
-             {key:'estimate_columns', label:"Estimates", description:"Columns for each user", width:medium_col_width},
-             {key:'small_delete', label:"", description:"Delete issue", width:tiny_col_width}
-    ]
+    return ALL_AVAILABLE_ISSUE_HEADERS
 }

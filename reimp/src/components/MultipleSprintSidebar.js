@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
 import PropertyStack from '../components/PropertyStack'
+import MienFeature from './MienFeature'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import EditableSprintStatus from './EditableSprintStatus'
 import MultipleIssueSummary from './MultipleIssueSummary'
@@ -21,7 +22,7 @@ class MultipleSprintSidebar extends Component {
 
     render() {
 
-        const {sprints, sprint_ids, project_id, show_summary_section} = this.props
+        const {sprints, sprint_ids, project_id} = this.props
 
         return (
 
@@ -44,11 +45,11 @@ class MultipleSprintSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
-                { show_summary_section &&
+                <MienFeature feature_name="multiple_issue_summary">
                   <PropertyStackComponent>
                     <MultipleIssueSummary filter={{sprint_ids:sprint_ids}} project_id={project_id} />
                   </PropertyStackComponent>
-                }
+                </MienFeature>
               </PropertyStack>
               
             </div>
@@ -64,14 +65,11 @@ function mapStateToProps(state, props) {
         sprint = sprints[0]
     }
     
-    const show_summary_section = doesMienHaveFeature(state, 'multiple_issue_summary')
-        
     return {
         sprints: sprints || [],
         sprint,
         sprint_ids,
-        project_id,
-        show_summary_section,
+        project_id
     }
 }
 

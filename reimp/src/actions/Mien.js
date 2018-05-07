@@ -29,6 +29,8 @@ export const SET_MIEN = 'SET_MIEN'
 export const START_MIEN_CONFIGURER = 'START_MIEN_CONFIGURER'
 export const STOP_MIEN_CONFIGURER = 'STOP_MIEN_CONFIGURER'
 
+const DEFAULT_MIEN_FEATURES = [ "emacs", "issue_estimates", "issue_reviews", "review_schedule", "deadlines", "costs" ]
+
 import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
 export function getCurrentMien(state) {
@@ -81,19 +83,16 @@ export function getHeaderListForMien(mien) {
 }
 
 export function doesMienHaveFeature(state, feature_name) {
+    console.debug("checking has feature " + feature_name)
     const mien = getCurrentMien(state)
     if ( !mien ) {
         return false
     }
     let features = mien.features
-    if ( ! features ) {
-        features = getDefaultFeatures()
+    if ( features === undefined ) {
+        features = DEFAULT_MIEN_FEATURES
     }
     return includes(features, feature_name)
-}
-
-export function getDefaultFeatures() {
-    return [ "emacs", "issue_estimates", "issue_reviews", "multiple_issue_summary", "review_schedule", "deadlines", "costs" ]
 }
 
 export function invalidateAllMiens() {
