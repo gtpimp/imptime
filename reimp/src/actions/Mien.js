@@ -80,15 +80,20 @@ export function getHeaderListForMien(mien) {
     return mien.issue_headers
 }
 
-export function doesMienHaveFeature(state, feature_name, default_value) {
+export function doesMienHaveFeature(state, feature_name) {
     const mien = getCurrentMien(state)
     if ( !mien ) {
         return false
     }
-    if ( ! mien.features ) {
-        return default_value
+    let features = mien.features
+    if ( ! features ) {
+        features = getDefaultFeatures()
     }
-    return includes(mien.features, feature_name)
+    return includes(features, feature_name)
+}
+
+export function getDefaultFeatures() {
+    return [ "emacs", "issue_estimates", "issue_reviews", "multiple_issue_summary", "review_schedule", "deadlines", "costs" ]
 }
 
 export function invalidateAllMiens() {

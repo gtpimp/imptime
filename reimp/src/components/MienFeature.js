@@ -76,9 +76,7 @@ function mapStateToProps(state, props) {
     const { feature_name } = props
     const is_mien_configurer_active = isMienConfigurerActive(state)
     const mien_being_configured = getMienBeingConfigured(state)
-
-    const feature_is_active__default_value = !is_mien_configurer_active
-    const feature_is_active = doesMienHaveFeature(state, feature_name, feature_is_active__default_value)
+    const feature_is_active = doesMienHaveFeature(state, feature_name)
     
     return {
         is_mien_configurer_active,

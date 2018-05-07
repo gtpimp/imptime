@@ -23,6 +23,7 @@ from imptime.models import VisualSpecIssue
 from timepiece.models import TagCategory, Tag, Entry, IssueStatus, IssuePoints
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueReview
+from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectReview as SprintReview
@@ -448,7 +449,8 @@ class IssueViewSet(BaseViewSet):
     def _find_most_appropriate_minutes_issues(self, request, project):
         Sprint.objects.get_or_create(business_id=project.id,
                                      project_type='minutes',
-                                     defaults={'name':'Meeting minutes'})
+                                     defaults={'name':'Meeting minutes',
+                                               'status3':SprintStatus.objects.get_or_create(name='pending')})
         issue = Issue.objects.filter(project__business_id=project.id,
                                      issue_type="minutes",
                                      status2__name='new')\
