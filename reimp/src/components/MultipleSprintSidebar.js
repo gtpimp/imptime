@@ -6,7 +6,6 @@ import MienFeature from './MienFeature'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import EditableSprintStatus from './EditableSprintStatus'
 import MultipleIssueSummary from './MultipleIssueSummary'
-import { doesMienHaveFeature } from '../actions/Mien'
 
 class MultipleSprintSidebar extends Component {
 

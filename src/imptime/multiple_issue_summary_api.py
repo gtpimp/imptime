@@ -139,7 +139,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                            .distinct()\
                                            .annotate(sum_points=Sum("points"), category_id=F('issue__tags__category_id'))
         for x in raw_estimated_hours_by_tag:
-            if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+            if self.has_see_other_user_points or x['user_id'] == self.request.user.id:
                 estimates_by_tag_category.setdefault(x['category_id'], {})\
                                          .setdefault(x['user_id'], {})\
                                          .setdefault(x['issue__tags__id'], {})\
@@ -154,7 +154,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                   .annotate(velocity_adjusted_points=Sum(F("user__rates__velocity")*F("points")),
                                                             category_id=F('issue__tags__category_id'))
         for x in velocity_adjusted_hours_by_user_and_tag:
-            if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+            if self.has_see_other_user_points or x['user_id'] == self.request.user.id:
                 estimates_by_tag_category.setdefault(x['category_id'], {})\
                                          .setdefault(x['user_id'], {})\
                                          .setdefault(x['issue__tags__id'], {})\
@@ -169,7 +169,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                            output_field=FloatField()),
                                                 category_id=F('issue__tags__category_id'))
             for x in velocity_adjusted_costs:
-                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                if self.has_see_other_user_points or x['user_id'] == self.request.user.id:
                     estimates_by_tag_category.setdefault(x['category_id'], {})\
                                              .setdefault(x['user_id'], {})\
                                              .setdefault(x['issue__tags__id'], {})\
@@ -181,7 +181,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                                                          output_field=FloatField()),
                                               category_id=F('issue__tags__category_id'))
             for x in costs_with_commission:
-                if self.has_see_other_user_points or x['user_id'] == self.request.user_id:
+                if self.has_see_other_user_points or x['user_id'] == self.request.user.id:
                     estimates_by_tag_category.setdefault(x['category_id'], {})\
                                              .setdefault(x['user_id'], {})\
                                              .setdefault(x['issue__tags__id'], {})\

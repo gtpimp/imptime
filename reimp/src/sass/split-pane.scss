@@ -47,3 +47,7 @@
 .Resizer.disabled:hover {
     border-color: transparent;
 }
+
+.Pane.vertical.Pane2 {
+    overflow: auto;
+}
