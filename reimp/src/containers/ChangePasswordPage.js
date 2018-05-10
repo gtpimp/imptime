@@ -30,8 +30,11 @@ class ChangePasswordPage extends Component {
     }
 
     onChangePassword(values) {
-        const { dispatch } = this.props
-        return dispatch(change_password(values))
+        const { dispatch, history } = this.props
+        const on_done = function() {
+            history.push('/password/changed')
+        }
+        return dispatch(change_password(values, on_done))
     }
     
     render() {

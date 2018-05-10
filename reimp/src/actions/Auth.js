@@ -118,7 +118,7 @@ export function forgot_password(username, on_done) {
     }
 }
 
-export function change_password(values) {
+export function change_password(values, on_done) {
 
     return (dispatch, getState) => {
         const state = getState()
@@ -139,7 +139,7 @@ export function change_password(values) {
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PASSWORD})
                     cookie.save('has_usable_password', true, { path: '/' })
-                    window.open('/password/changed')
+                    on_done()
                 }
             })
             .catch(function (error) {
@@ -152,8 +152,8 @@ export function logged_in_user() {
     return { username: cookie.load('username'),
              token: cookie.load('token'),
              user_id: cookie.load('user_id'),
-             has_usable_password: cookie.load('has_usable_password'),
-             is_superuser: cookie.load('is_superuser')
+             has_usable_password: cookie.load('has_usable_password') === "true",
+             is_superuser: cookie.load('is_superuser') // deprecated, still used for the release note creator page
     }
 }
 

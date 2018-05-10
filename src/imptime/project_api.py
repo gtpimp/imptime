@@ -43,12 +43,12 @@ class ProjectViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            self.auto_create_self_project(request.user)
-            
             projects = self.allowed_projects()
             projects = self.apply_filter(qs=projects,
                                          raw_filter_args=filter_args)
 
+            self.auto_accept_invites(projects)
+            
             if format_args.get('ids_only'):
                 projects = self.sort_projects(projects)
             projects = self.apply_pagination(qs=projects,
@@ -71,6 +71,13 @@ class ProjectViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
+    def auto_accept_invites(self, projects):
+        for invite in ProjectInvite.objects.filter(business__in=projects,
+                                                   user=self.request.user):
+            invite.accepted=True
+            invite.accepted_at=timezone.now()
+            invite.save()
+    
     def sort_projects(self, projects):
         sort_keys = []
         for project in projects:
@@ -229,9 +236,18 @@ class ProjectViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    @classmethod
     def auto_create_self_project(self, user):
-        project, is_new = Project.objects.get_or_create(name='me',
-                                                description='My personal project for whatever I want. (and I am %s)' % user.email)
+        project = Project.objects.filter(name='me', created_by=user).first()
+
+        if project is None:
+            is_new = True
+            project = Project.objects.create(name='me',
+                                             created_by=user,
+                                             description='My personal project for whatever I want. (and I am %s)' % user.email)
+        else:
+            is_new = False
+        
         if is_new:
             ProjectPermissions.ensure_user_belongs_to_business(user=user,
                                                                business=project) #sic
