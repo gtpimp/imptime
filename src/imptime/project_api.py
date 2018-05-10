@@ -193,7 +193,8 @@ class ProjectViewSet(BaseViewSet):
                     from_address=settings.FROM_EMAIL,
                     text_content=plain_content,
                     html_content=html_content,
-                    to_addresses=[invite_user.email] + [x[1] for x in settings.ADMINS])
+                    to_addresses=[invite_user.email],
+                    bcc_addresses=[x[1] for x in settings.ADMINS])
 
     def delete(self, request, pk):
         try:
