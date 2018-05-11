@@ -26,7 +26,7 @@ import {
     clearPageFlag
     //    select_sprints
 } from '../actions/Page'
-import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import {ensureProjectsLoaded, getProject, saveInviteUser} from '../actions/Projects'
 import {ensureSprintsLoaded,
         getSprint
 } from '../actions/Sprints'
@@ -46,6 +46,7 @@ class SprintRatePage extends Component {
         super(props)
         this.onStartInviteUser = this.onStartInviteUser.bind(this)
         this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
+        this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
     }
 
     componentDidMount() {
@@ -83,6 +84,13 @@ class SprintRatePage extends Component {
         dispatch(setPageFlag(PAGE_KEY__SPRINT_RATE_PAGE, 'inviting_user'))
     }
 
+    onSaveInviteUser(new_value) {
+        const {dispatch, project_id} = this.props
+        dispatch(saveInviteUser(project_id, new_value.invited_user_email))
+        dispatch(clearPageFlag(PAGE_KEY__SPRINT_RATE_PAGE, 'inviting_user'))
+    }
+
+    
     renderInviteUser() {
         const { project_id } = this.props
         const that = this

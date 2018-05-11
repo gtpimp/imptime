@@ -43,6 +43,7 @@ class OtherUser extends Component {
                   { ! display_user.username && loading_value }
                   { display_mode==="username" && display_user.username && display_user.username }
                   { display_mode==="visible_name" && display_user.username && display_user.visible_name }
+                  { display_mode==="visible_name" && ! display_user.visible_name.trim() && display_user.email }
                 </div>
             )
         } else {
