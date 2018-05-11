@@ -48,7 +48,7 @@ class MainLayout extends Component {
         
         if ( logged_in_user_id ) {
             dispatch(ensureUsersLoaded([logged_in_user_id]))
-            if ( has_usable_password === "false" ) {
+            if ( !has_usable_password ) {
                 history.push('/password/change')
             }
         } else {

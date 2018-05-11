@@ -84,6 +84,10 @@ class AutoLoginViewSet(BaseViewSet):
             else:
                 raise Exception("Can't login, token either invalid, already used or expired")
         token, created = Token.objects.get_or_create(user=user)
+
+        from project_api import ProjectViewSet
+        ProjectViewSet.auto_create_self_project(user)
+        
         return Response({'username': user.username,
                          'token': token.key,
                          'user_id': user.id,

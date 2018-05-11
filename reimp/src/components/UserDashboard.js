@@ -35,12 +35,13 @@ class UserDashboard extends Component {
 
         return (
             <div className="user-dashboard">
-                <div className="user-dashboard-menu-item" onClick={this.onLogout}>Logout</div>
                 <div className="user-dashboard-menu-item" onClick={this.onChangePassword}>Edit profile</div>
 
                 { has_edit_release_notes_permission &&
                   <div className="user-dashboard-menu-item" onClick={this.onShowReleaseNotesEditor}>Release notes</div>
                 }
+                  
+                <div className="user-dashboard-menu-item" onClick={this.onLogout}>Logout</div>
 
             </div>
         )

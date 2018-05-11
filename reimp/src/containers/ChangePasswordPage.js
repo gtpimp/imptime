@@ -30,8 +30,11 @@ class ChangePasswordPage extends Component {
     }
 
     onChangePassword(values) {
-        const { dispatch } = this.props
-        return dispatch(change_password(values))
+        const { dispatch, history } = this.props
+        const on_done = function() {
+            history.push('/password/changed')
+        }
+        return dispatch(change_password(values, on_done))
     }
     
     render() {
@@ -68,7 +71,7 @@ class ChangePasswordPage extends Component {
 function mapStateToProps(state, props) {
 
     let user = logged_in_user()
-    const has_usable_password = user.has_usable_password !== false && user.has_usable_password !== "false"
+    const has_usable_password = user.has_usable_password
     const user_id = user.user_id
     if ( user_id ) {
         user = Object.assign({}, user, getUser(state, user_id))

@@ -38,11 +38,14 @@ class RefreshNotifier(object):
                     params[k.replace("business", "project")] = params.pop(k)
 
         try:
+            created_at = convert_datetime_to_iso_string(obj.created) if hasattr(obj, 'created') else None
+            modified_at = convert_datetime_to_iso_string(obj.modified) if hasattr(obj, 'modified') else None
+            
             post_data = {'entity_name': entity_name,
                          'entity_ref': obj.id,
                          'action_type': action_type,
-                         'created_at': convert_datetime_to_iso_string(obj.created),
-                         'modified_at': convert_datetime_to_iso_string(obj.modified),
+                         'created_at': created_at,
+                         'modified_at': modified_at,
                          'params': params}
 
             add_notification(post_data)

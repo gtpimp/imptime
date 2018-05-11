@@ -19,13 +19,14 @@ class Header extends Component {
     
     render() {
         const { has_usable_password } = this.props
+
         return (
             <div className="header" ref={(header) => { this.headerElem = header }}>
               <Maintenance/>
               <Error/>
               <Navbar/>
               <Toolbar />
-              { has_usable_password && 
+              { has_usable_password &&
                 <ReleaseNotesPopup />
               }
             </div>
