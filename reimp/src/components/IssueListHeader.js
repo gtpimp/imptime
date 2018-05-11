@@ -4,7 +4,7 @@ import { map, includes } from 'lodash'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import OtherUser from './OtherUser'
-import '../sass/sticky-header.css'
+import '../sass/sticky-header.scss'
 import {
     isDirty
 } from 'redux-form'

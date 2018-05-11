@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PermissionInspectorPanel from './PermissionInspectorPanel'
 import { isPermissionInspectorActive } from '../actions/Auth'
-import '../sass/footer.css'
+import '../sass/footer.scss'
 import { logged_in_user } from '../actions/Auth'
 import { updateFooterHeight, getFooterHeight } from '../actions/Header'
 
