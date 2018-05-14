@@ -17,16 +17,21 @@ import { has_permission } from '../actions/Users'
 //import '../sass/sprint-rate.scss'
 import {
     PAGE_KEY__SPRINT_RATE_PAGE,
-//    LIST_KEY__SPRINT_RATES
+    //    LIST_KEY__SPRINT_RATES
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-//    select_sprints
+    setPageFlag,
+    getPageFlag,
+    clearPageFlag
+    //    select_sprints
 } from '../actions/Page'
-import {ensureProjectsLoaded, getProject} from '../actions/Projects'
+import {ensureProjectsLoaded, getProject, saveInviteUser} from '../actions/Projects'
 import {ensureSprintsLoaded,
         getSprint
 } from '../actions/Sprints'
+import ModalDialog from '../components/ModalDialog'
+import InviteUserForm from '../components/form/InviteUserForm'
 //import {
 //    initList,
 //    selectItems,
@@ -37,9 +42,12 @@ import {ensureSprintsLoaded,
 
 class SprintRatePage extends Component {
 
-//    constructor(props) {
-//        super(props)
-//    }
+    constructor(props) {
+        super(props)
+        this.onStartInviteUser = this.onStartInviteUser.bind(this)
+        this.onCancelInviteUser = this.onCancelInviteUser.bind(this)
+        this.onSaveInviteUser = this.onSaveInviteUser.bind(this)
+    }
 
     componentDidMount() {
         const {sprint_id, project_id, sprint, project, dispatch} = this.props
@@ -66,6 +74,39 @@ class SprintRatePage extends Component {
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
     }
 
+    onCancelInviteUser() {
+        const {dispatch} = this.props
+        dispatch(clearPageFlag(PAGE_KEY__SPRINT_RATE_PAGE, 'inviting_user'))
+    }    
+    
+    onStartInviteUser() {
+        const {dispatch} = this.props
+        dispatch(setPageFlag(PAGE_KEY__SPRINT_RATE_PAGE, 'inviting_user'))
+    }
+
+    onSaveInviteUser(new_value) {
+        const {dispatch, project_id} = this.props
+        dispatch(saveInviteUser(project_id, new_value.invited_user_email))
+        dispatch(clearPageFlag(PAGE_KEY__SPRINT_RATE_PAGE, 'inviting_user'))
+    }
+
+    
+    renderInviteUser() {
+        const { project_id } = this.props
+        const that = this
+        return (
+            <ModalDialog isOpen={true}
+                         onClose={that.onCancelInviteUser}
+                         title="Add User to Rates List"
+                         variant="large">
+
+              <div>
+                <InviteUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
+              </div>
+            </ModalDialog>
+        )
+    }
+    
     renderSprintRatios() {
         const { can_view_rates, can_view_time_tracking_mode, can_view_budget,
                 sprint_id } = this.props
@@ -153,11 +194,19 @@ class SprintRatePage extends Component {
     
     render() {
 
-        const { sprint } = this.props
+        const { sprint, can_invite_user, is_inviting_user } = this.props
         
         return (
             <div>
+              { is_inviting_user && this.renderInviteUser() }
+              
               <h2>{sprint.name}</h2>
+              { can_invite_user &&
+                <div className="sprint-rates__button button button-primary button__default-width" onClick={this.onStartInviteUser}>
+                  <i className="material-icons md-18">add_circle_outline</i>
+                  Add user
+                </div>
+              }
               <div className="sprint-rates">
                 {this.renderUserRates()}
                 {this.renderSprintRatios()}
@@ -173,11 +222,13 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const user_ids = project.allowed_user_ids
+    const is_inviting_user = getPageFlag(state, PAGE_KEY__SPRINT_RATE_PAGE, 'inviting_user')
     const can_view_rates = has_permission(state, project_id, 'has_view_ctc_billable_rates')
     const can_view_velocity = has_permission(state, project_id, 'has_view_velocity')
     const can_view_budget = has_permission(state, project_id, 'has_view_budget')
     const can_view_time_tracking_mode = can_view_velocity
-
+    const can_invite_user = has_permission(state, project_id, 'has_invite_users')
+    
     return {
         project_id,
         project,
@@ -187,7 +238,9 @@ function mapStateToProps(state, props) {
         can_view_rates,
         can_view_velocity,
         can_view_time_tracking_mode,
-        can_view_budget
+        can_view_budget,
+        can_invite_user,
+        is_inviting_user
     }
 }
 
