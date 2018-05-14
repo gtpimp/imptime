@@ -5,7 +5,8 @@ import Sidebar from './Sidebar'
 import {
     getCandidateSprint,
     updateCandidateName,
-    saveCandidateSprint
+    saveCandidateSprint,
+    cancelCandidateSprint
 } from '../actions/Sprints'
 import SprintNameForm from './form/SprintNameForm'
 
@@ -14,6 +15,7 @@ class NewSprintSidebar extends Component {
     constructor(props) {
         super(props)
         this.onSaveCandidateSprint = this.onSaveCandidateSprint.bind(this)
+        this.onCancelSprintCreation = this.onCancelSprintCreation.bind(this)
     }
 
     onSaveCandidateSprint(new_value) {
@@ -22,14 +24,22 @@ class NewSprintSidebar extends Component {
         dispatch(saveCandidateSprint())
     }
 
+    onCancelSprintCreation(event) {
+        const {dispatch} = this.props
+        event.preventDefault();
+        dispatch(cancelCandidateSprint())
+    }
+    
     render() {
-
+        
         return (
             <Sidebar>
                 <PropertyStack>
                     <div>
                         <div>
-                            <SprintNameForm onSubmitted={this.onSaveCandidateSprint}/>
+                          <SprintNameForm
+                              onCancel={this.onCancelSprintCreation}
+                              onSubmitted={this.onSaveCandidateSprint}/>
                         </div>
                     </div>
                 </PropertyStack>
