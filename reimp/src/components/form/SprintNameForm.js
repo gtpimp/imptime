@@ -33,14 +33,15 @@ class SprintNameForm extends Component {
     }
 
     render() {
-        const { handleSubmit } = this.props
+        const { handleSubmit, onCancel } = this.props
         return (
             <form onSubmit={handleSubmit}>
-                <div>
-                    <Field name="name"
-                           component={this.renderTextarea} />
-                    <button type="submit">Submit</button>
-                </div>
+              <div>
+                <Field name="name"
+                       component={this.renderTextarea} />
+                <button type="submit">Submit</button>
+                <button onClick={onCancel}>Cancel</button>
+              </div>
             </form>
         )
     }
@@ -48,12 +49,14 @@ class SprintNameForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted } = props
+    const { onSubmitted, onCancel } = props
 
     return {
         initialValues: {name:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onSubmitted
+        onSubmit: onSubmitted,
+        onCancel
+        
     }
 }
 
