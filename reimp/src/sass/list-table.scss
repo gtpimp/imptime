@@ -34,6 +34,11 @@
     background-color: $color-2;
 }
 
+.list-table__row--unselected:hover {
+    background-color: $row-hover-color;
+}
+
+
 .list-table__row--selected {
     background-color: $color-3;
 }
