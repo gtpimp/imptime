@@ -94,18 +94,19 @@ class IssueSidebar extends Component {
         const { emacs_hint_enabled } = this.state
         return (
             <MienFeature feature_name="emacs">
-              <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
+              <div>
+                <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
 
-              { emacs_hint_enabled &&
-                <div className="property-row">
-                  <div className="property-label">
-                    Emacs sprint
+                { emacs_hint_enabled &&
+                  <div className="property-row">
+                    <div className="property-label">
+                      Emacs sprint
+                    </div>
+                    <div className="property-value">
+                      <input value={"** sprint" + sprint.id + " " + sprint.name}/>
+                    </div>
                   </div>
-                  <div className="property-value">
-                    <input value={"** sprint" + sprint.id + " " + sprint.name}/>
-                  </div>
-                </div>
-              }
+                }
                 { emacs_hint_enabled &&
                   <div className="property-row">
                     <div className="property-label">
@@ -116,16 +117,17 @@ class IssueSidebar extends Component {
                     </div>
                   </div>
                 }
-                  { emacs_hint_enabled &&
-                    <div className="property-row">
-                      <div className="property-label">
-                        Git commit
-                      </div>
-                      <div className="property-value">
-                        <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
-                      </div>
+                { emacs_hint_enabled &&
+                  <div className="property-row">
+                    <div className="property-label">
+                      Git commit
                     </div>
-                  }
+                    <div className="property-value">
+                      <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
+                    </div>
+                  </div>
+                }
+              </div>
             </MienFeature>
         )
     }
@@ -324,10 +326,12 @@ class IssueSidebar extends Component {
         }
         return (
             <PropertyStackComponent title="Feature">
-              Bring this feature's issues
-              <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
-                together
-              </button>
+              <div>
+                Bring this feature's issues
+                <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
+                  together
+                </button>
+              </div>
             </PropertyStackComponent>
         )
     }

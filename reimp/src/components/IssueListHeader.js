@@ -70,8 +70,9 @@ class IssueListHeader extends Component {
         
         return(
             <div className="div-table__header_row" style={styles}>
-              { map(header_list, function(v) {
+              { map(header_list, function(v, index) {
                     const k = v.key
+                    const react_key = ""+ k + index
                     if ( k === "tag_columns" ) {
                         return (
                             map(tag_category_names, (tag_category_name) => (
@@ -111,7 +112,7 @@ class IssueListHeader extends Component {
                         }
                     } else {
                         return (
-                            <div key={k}
+                            <div key={react_key}
                                  className="div-table__header_cell"
                                  style={getCellStyle(v)}>
                               {v.label }

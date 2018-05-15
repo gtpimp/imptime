@@ -83,7 +83,6 @@ export function getHeaderListForMien(mien) {
 }
 
 export function doesMienHaveFeature(state, feature_name) {
-    console.debug("checking has feature " + feature_name)
     const mien = getCurrentMien(state)
     if ( !mien ) {
         return false

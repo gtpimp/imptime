@@ -36,6 +36,11 @@ class MienFeature extends Component {
         const { feature_is_active } = this.props
         const { is_hovered } = this.state
 
+        if ( this.props.children.length > 1 ) {
+            console.error("Can only have a single child, consider wrapping in a div")
+            return null
+        }
+        
         return (
             <div className={classNames("mien-feature-highlighter",
                                        {"mien-feature-highlighter--highlighted":is_hovered,
