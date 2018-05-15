@@ -5,7 +5,8 @@ import Sidebar from './Sidebar'
 import {
     getCandidateProject,
     updateCandidateName,
-    saveCandidateProject
+    saveCandidateProject,
+    cancelCandidateProject
 } from '../actions/Projects'
 import ProjectNameForm from './form/ProjectNameForm'
 
@@ -14,6 +15,7 @@ class NewProjectSidebar extends Component {
     constructor(props) {
         super(props)
         this.onSaveCandidateProject = this.onSaveCandidateProject.bind(this)
+        this.onCancelProjectCreation = this.onCancelProjectCreation.bind(this)
     }
 
     onSaveCandidateProject(new_value) {
@@ -22,17 +24,24 @@ class NewProjectSidebar extends Component {
         dispatch(saveCandidateProject())
     }
 
+    onCancelProjectCreation() {
+        const {dispatch} = this.props
+        dispatch(cancelCandidateProject())
+    }
+    
     render() {
 
         return (
             <Sidebar>
-                <PropertyStack>
-                    <div>
-                        <div>
-                            <ProjectNameForm onSubmit={this.onSaveCandidateProject}/>
-                        </div>
-                    </div>
-                </PropertyStack>
+              <PropertyStack>
+                <div>
+                  <div>
+                    <ProjectNameForm
+                        onSubmit={this.onSaveCandidateProject}
+                        onCancel={this.onCancelProjectCreation}/>
+                  </div>
+                </div>
+              </PropertyStack>
             </Sidebar>
         )
     }

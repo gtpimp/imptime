@@ -3,19 +3,21 @@ import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
+import '../../sass/project_sidebar.css'
 
 class ProjectNameForm extends Component {
 
     constructor(props) {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
-        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        /* this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this) */
     }
 
-    onChangeAndSubmit(e, fieldOnChange) {
-        fieldOnChange(e)
-        // setTimeout(() => handleSubmit(), 0)
-    }
+    // If this has not been required by 01/06/18, please delete
+    /* onChangeAndSubmit(e, fieldOnChange) {
+     *     fieldOnChange(e)
+     *     // setTimeout(() => handleSubmit(), 0)
+     * } */
     
     renderTextarea(field) {
         const {input} = field
@@ -23,8 +25,8 @@ class ProjectNameForm extends Component {
             <Textarea
                 rows="1"
                 maxLength="300"
-                className="textarea textarea--text-component"
-                placeholder="Name"
+                className="textarea textarea--text-component textarea--title"
+                placeholder="Project Name"
                 onChange={input.onChange}
                 value={input.value}
             />
@@ -32,14 +34,20 @@ class ProjectNameForm extends Component {
     }
     
     render() {
-        const { handleSubmit } = this.props
+        const { handleSubmit, onCancel } = this.props
         return (
             <form onSubmit={handleSubmit}>
-                <div>
-                    <Field name="name"
-                           component={this.renderTextarea} />
-                    <button type="submit">Submit</button>
+              <div className="project_sidebar--form">
+                <div className="project_sidebar--textarea">
+                  <Field name="name"
+                         component={this.renderTextarea} />
                 </div>
+                <div className="project_sidebar__button_row">
+                  <button className="button project_sidebar--textarea" type="submit">Submit</button>
+                  <button className="button project_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
+                </div>
+
+              </div>
             </form>
         )
     }
@@ -47,12 +55,13 @@ class ProjectNameForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmit } = props
+    const { onSubmitted, onCancel } = props
     
     return {
         initialValues: {name:props.initial_value},
         enableReinitialize: true,
-        onSubmit
+        onSubmit: onSubmitted,
+        onCancel
     }
 }
 

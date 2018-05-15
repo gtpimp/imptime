@@ -3,42 +3,12 @@ import {connect} from 'react-redux'
 import { reduxForm, Field, formValueSelector } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
-import Modal from 'react-modal'
 
 class SprintNameForm extends Component {
 
     constructor(props) {
         super(props)
-
-        this.state = {
-            isModalOpen: false
-        }
-        
         this.renderTextarea = this.renderTextarea.bind(this)
-        this.cancelIfValid = this.cancelIfValid.bind(this)
-        this.toggleModal = this.toggleModal.bind(this)
-    }
-
-    toggleModal() {
-        const { isModalOpen } = this.state
-        this.setState({ isModalOpen: !isModalOpen }) 
-    }
-    
-    cancelIfValid(event) {
-        event.preventDefault()
-        const { onCancel, textAreaValue } = this.props
-        
-        if (textAreaValue === undefined || textAreaValue === "") {
-            onCancel()
-        } else {
-            this.toggleModal()
-        }
-    }
-
-    confirmCancel() {
-        const { onCancel } = this.props
-        this.toggleModal()
-        onCancel()
     }
     
     renderTextarea(field) {
@@ -57,7 +27,6 @@ class SprintNameForm extends Component {
 
     render() {
         const { handleSubmit, onCancel } = this.props
-        const { isModalOpen } = this.state
         
         return (
             
@@ -69,27 +38,9 @@ class SprintNameForm extends Component {
                 </div>
                   <div className="sprint_sidebar__button_row">
                     <button className="button sprint_sidebar--textarea" type="submit">Submit</button>
-                    <button className="button sprint_sidebar--textarea" type="button" onClick={(e) => this.cancelIfValid(e)}>Cancel</button>
+                    <button className="button sprint_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
                   </div>
-                </div>
-
-                <Modal 
-                    isOpen={ isModalOpen }
-                    className="sprint_name-modal"
-                    overlayClassName="sprint_name-modal__overlay"
-                    contentLabel="Test"
-                    onRequestClose={this.toggleModal}>
-                  <div className="sprint_name-modal__row sprint_name-modal__row--header">
-                    <label htmlFor="assigned" className="sprint_name-modal__title">Are you sure you want to cancel?</label>
-                    <div className="sprint_name-modal__close">
-                      <i className="material-icons" onClick={this.toggleModal}>close</i>
-                    </div>
-                  </div>
-                  <div className="sprint_name-modal__content">
-                    <button type="button" onClick={() => this.toggleModal()}>No</button>
-                    <button type="button" onClick={() => this.confirmCancel()}>Yes</button>
-                  </div>
-                </Modal>
+              </div>
             </form>
         )
     }

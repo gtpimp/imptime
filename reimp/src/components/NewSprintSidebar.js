@@ -26,7 +26,6 @@ class NewSprintSidebar extends Component {
 
     onCancelSprintCreation() {
         const {dispatch} = this.props
-
         dispatch(cancelCandidateSprint())
     }
     
@@ -35,15 +34,15 @@ class NewSprintSidebar extends Component {
         return (
             
             <Sidebar>
-                <PropertyStack>
-                    <div>
-                        <div>
-                          <SprintNameForm
-                              onCancel={this.onCancelSprintCreation}
-                              onSubmitted={this.onSaveCandidateSprint}/>
-                        </div>
-                    </div>
-                </PropertyStack>
+              <PropertyStack>
+                <div>
+                  <div>
+                    <SprintNameForm
+                        onSubmitted={this.onSaveCandidateSprint}
+                        onCancel={this.onCancelSprintCreation}/>
+                  </div>
+                </div>
+              </PropertyStack>
             </Sidebar>
         )
     }
