@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, formValueSelector } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 import '../../sass/text-component.scss'
 
@@ -9,23 +9,16 @@ class SprintNameForm extends Component {
     constructor(props) {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
-        /* this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)*/
     }
-
-    /* onChangeAndSubmit(e, fieldOnChange) {
-     *     const {handleSubmit} = this.props
-     *     fieldOnChange(e)
-     *     // setTimeout(() => handleSubmit(), 0)
-     * }*/
-
+    
     renderTextarea(field) {
         const {input} = field
         return (
             <Textarea
                 rows="1"
                 maxLength="300"
-                className="textarea textarea--text-component"
-                placeholder="Name"
+                className="textarea textarea--text-component textarea--title"
+                placeholder="Sprint Name"
                 onChange={input.onChange}
                 value={input.value}
             />
@@ -33,14 +26,21 @@ class SprintNameForm extends Component {
     }
 
     render() {
-        const { handleSubmit } = this.props
+        const { handleSubmit, onCancel } = this.props
+        
         return (
+            
             <form onSubmit={handleSubmit}>
-                <div>
-                    <Field name="name"
-                           component={this.renderTextarea} />
-                    <button type="submit">Submit</button>
+              <div className="sprint_sidebar--form">
+                <div className="sprint_sidebar--textarea">
+                  <Field name="name"
+                         component={this.renderTextarea} />
                 </div>
+                  <div className="sprint_sidebar__button_row">
+                    <button className="button sprint_sidebar--textarea" type="submit">Submit</button>
+                    <button className="button sprint_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
+                  </div>
+              </div>
             </form>
         )
     }
@@ -48,12 +48,16 @@ class SprintNameForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted } = props
+    const { onSubmitted, onCancel } = props
 
+    const selector = formValueSelector('sprint_name_form')
+    
     return {
         initialValues: {name:props.initial_value},
         enableReinitialize: true,
-        onSubmit: onSubmitted
+        onSubmit: onSubmitted,
+        onCancel: onCancel,
+        textAreaValue: selector(state, 'name')
     }
 }
 

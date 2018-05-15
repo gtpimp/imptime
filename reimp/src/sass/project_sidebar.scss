@@ -2,3 +2,17 @@
 .project_sidebar {
     float: right;
 }
+
+.project_sidebar__button_row {
+    display: flex;
+}
+
+.project_sidebar--textarea {
+    padding: 10px;
+    border: solid 1px #dcdcdc;
+    margin-bottom: 5px;
+}
+
+.project_sidebar--form {
+    margin: 20px;
+}

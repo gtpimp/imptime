@@ -45,7 +45,7 @@ class ProjectDescriptionForm extends Component {
 
     render() {
 
-        const { handleSubmit } = this.props
+        const { handleSubmit, onCancel } = this.props
 
         return (
             <form onSubmit={handleSubmit}>
@@ -55,7 +55,10 @@ class ProjectDescriptionForm extends Component {
                          component={this.renderTextarea} />
                 </div>
               </div>
-              <button className="button project_sidebar--textarea" type="submit">Submit</button>
+              <div className="project_sidebar__button_row">
+                <button className="button project_sidebar--textarea" type="submit">Submit</button>
+                <button className="button project_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
+              </div>
             </form>
         )
     }
