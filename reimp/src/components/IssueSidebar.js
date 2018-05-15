@@ -426,6 +426,8 @@ class IssueSidebar extends Component {
             return this.renderNarrow()
         } else if ( sidebar_view_mode === 'fullscreen' ) {
             return this.renderWide()
+        } else {
+            return (<div>Dev error: No view mode specified</div>)
         }
     }
 }

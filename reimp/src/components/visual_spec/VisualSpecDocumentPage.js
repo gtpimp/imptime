@@ -17,6 +17,7 @@ import {
     unassociateVisualSpecDocumentWithIssue,
     unassociateVisualSpecDocumentWithProject
 } from '../../actions/VisualSpecDocuments'
+import { getIssueHeaderListForCurrentMien } from '../../actions/Mien'
 import {
     update_list_filter, setItemFlag, selectItems
 } from '../../actions/ItemList'
@@ -24,8 +25,7 @@ import {
     setPageFlag
 } from '../../actions/Page'
 import { PAGE_KEY__VISUAL_SPEC_DOCUMENT_PAGE,
-         LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
-         ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
+         LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST
 } from '../../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -234,7 +234,9 @@ class VisualSpecDocumentPage extends Component {
                     />
                   </div>
                   <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
-                    <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id} project_id={issue.project_id}/>
+                    <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id}
+                                  sidebar_view_mode="right"
+                                  project_id={issue.project_id}/>
                   </div>
                   <div className="visual_spec_document_page__doc_editor">
                     { this.renderSelectForIssue() }
@@ -262,7 +264,7 @@ function mapStateToProps(state, props) {
     const visual_spec_document_ids_for_project = (project && project.visual_spec_document_ids) || []
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
     const visual_spec_documents_editor_urls = map(visual_spec_documents, (vsd) => { return vsd.lores_url })
-    const issue_header_list = ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE
+    const issue_header_list = getIssueHeaderListForCurrentMien(state)
     const issue_is_invalidated = is_issue_invalidated(state, issue_id)
 
     if (active_visual_spec_document_id === 'undefined') {
