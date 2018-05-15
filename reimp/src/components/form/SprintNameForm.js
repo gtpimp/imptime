@@ -47,8 +47,8 @@ class SprintNameForm extends Component {
             <Textarea
                 rows="1"
                 maxLength="300"
-                className="textarea textarea--text-component"
-                placeholder="Name"
+                className="textarea textarea--text-component textarea--title"
+                placeholder="Sprint Name"
                 onChange={input.onChange}
                 value={input.value}
             />
@@ -62,30 +62,34 @@ class SprintNameForm extends Component {
         return (
             
             <form onSubmit={handleSubmit}>
-              <div>
-                <Field name="name"
-                       component={this.renderTextarea} />
-                <button type="submit">Submit</button>
-                <button type="button" onClick={(e) => this.cancelIfValid(e)}>Cancel</button>
-              </div>
-
-              <Modal 
-                  isOpen={ isModalOpen }
-                  className="sprint_name-modal"
-                  overlayClassName="sprint_name-modal__overlay"
-                  contentLabel="Test"
-                  onRequestClose={this.toggleModal}>
-                <div className="sprint_name-modal__row sprint_name-modal__row--header">
-                  <label htmlFor="assigned" className="sprint_name-modal__title">Are you sure you want to cancel?</label>
-                  <div className="sprint_name-modal__close">
-                    <i className="material-icons" onClick={this.toggleModal}>close</i>
+              <div className="sprint_sidebar--form">
+                <div className="sprint_sidebar--textarea">
+                  <Field name="name"
+                         component={this.renderTextarea} />
+                </div>
+                  <div className="sprint_sidebar__button_row">
+                    <button className="button sprint_sidebar--textarea" type="submit">Submit</button>
+                    <button className="button sprint_sidebar--textarea" type="button" onClick={(e) => this.cancelIfValid(e)}>Cancel</button>
                   </div>
                 </div>
-                <div className="sprint_name-modal__content">
-                  <button type="button" onClick={() => this.toggleModal()}>No</button>
-                  <button type="button" onClick={() => this.confirmCancel()}>Yes</button>
-                </div>
-              </Modal>
+
+                <Modal 
+                    isOpen={ isModalOpen }
+                    className="sprint_name-modal"
+                    overlayClassName="sprint_name-modal__overlay"
+                    contentLabel="Test"
+                    onRequestClose={this.toggleModal}>
+                  <div className="sprint_name-modal__row sprint_name-modal__row--header">
+                    <label htmlFor="assigned" className="sprint_name-modal__title">Are you sure you want to cancel?</label>
+                    <div className="sprint_name-modal__close">
+                      <i className="material-icons" onClick={this.toggleModal}>close</i>
+                    </div>
+                  </div>
+                  <div className="sprint_name-modal__content">
+                    <button type="button" onClick={() => this.toggleModal()}>No</button>
+                    <button type="button" onClick={() => this.confirmCancel()}>Yes</button>
+                  </div>
+                </Modal>
             </form>
         )
     }

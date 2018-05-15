@@ -10,3 +10,17 @@
     background-repeat: no-repeat;
     float: left;
 }
+
+.sprint_sidebar__button_row {
+    display: flex;
+}
+
+.sprint_sidebar--textarea {
+    padding: 10px;
+    border: solid 1px #dcdcdc;
+    margin-bottom: 5px;
+}
+
+.sprint_sidebar--form {
+    margin: 20px;
+}
