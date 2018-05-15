@@ -31,7 +31,6 @@ class SprintNameForm extends Component {
         if (textAreaValue === undefined || textAreaValue === "") {
             onCancel()
         } else {
-            console.log("unsaved changes")
             this.toggleModal()
         }
     }

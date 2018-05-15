@@ -45,7 +45,7 @@ class IssueDescriptionForm extends Component {
     render() {
 
         const { handleSubmit, onCancel } = this.props
-        console.log(this.props)
+
         return (
             <form onSubmit={handleSubmit}>
               <div>
