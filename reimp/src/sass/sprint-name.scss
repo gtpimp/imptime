@@ -3,3 +3,57 @@
     cursor: pointer;
 }
 
+.sprint_name--editable {
+    cursor: pointer;
+}
+
+.sprint_name-modal {
+    background-color: $color-2;
+    border-radius: 2px;
+    box-shadow: 0 6px 12px 0 rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    width: 350px;
+    height: 8vh;
+    position: absolute;
+    top: 30%;
+    bottom: 25%;
+    left: 40%;
+    outline: none;
+    overflow: auto;
+}
+
+.sprint_name-modal--wide {
+    width: 600px;
+}
+
+.sprint_name-modal__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.sprint_name-modal__row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.sprint_name-modal__content {
+  margin-top: 13px;
+}
+
+.sprint_name-modal__content button {
+  margin-right: 5px;
+}
+
+.sprint_name-modal__title {
+  color: $color-1;
+  font: $font-4;
+}
+
+.sprint_name-modal__close {
+    cursor: pointer;
+}

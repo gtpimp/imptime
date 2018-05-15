@@ -24,15 +24,16 @@ class NewSprintSidebar extends Component {
         dispatch(saveCandidateSprint())
     }
 
-    onCancelSprintCreation(event) {
+    onCancelSprintCreation() {
         const {dispatch} = this.props
-        event.preventDefault();
+
         dispatch(cancelCandidateSprint())
     }
     
     render() {
         
         return (
+            
             <Sidebar>
                 <PropertyStack>
                     <div>
