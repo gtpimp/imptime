@@ -12,6 +12,6 @@ export function getBestOptions(state, key, max_num_options) {
     const options = get(state, ["option_rememberer", key], {})
     const options_sorted = sortBy(options, ['most_recent'])
     reverse(options_sorted)
-    return slice(options_sorted, 0, max_num_options || 2)
+    return slice(options_sorted, 0, max_num_options || 4)
 }
     
