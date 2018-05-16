@@ -48,7 +48,7 @@ class EditableIssueTestable extends Component {
     onDelete(event) {
         const { dispatch, issue_id, testable_id } = this.props
         event.stopPropagation()
-        if (! confirm("Are you sure you want to delete this testable?" ) ) {
+        if (! window.confirm("Are you sure you want to delete this testable?" ) ) {
             return false;
         }
         dispatch(deleteIssueTestable(issue_id, testable_id))
@@ -57,7 +57,7 @@ class EditableIssueTestable extends Component {
     onPromoteToIssue(event) {
         const { dispatch, issue_id, testable_id } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Convert this testable to a new issue?" ) ) {
+        if ( ! window.confirm( "Convert this testable to a new issue?" ) ) {
             return
         }
         dispatch(promoteIssueTestableToIssue(issue_id, testable_id))

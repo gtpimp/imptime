@@ -20,9 +20,9 @@ class TimeChartTooltip extends Component {
         
         return (
             <div className="time_chart__tooltip">
-              { map(payload, (series) =>
+              { map(payload, (series, index) =>
                   (
-                      <div key={series.dataKey+"_"+label+"_"+name} className="time_chart__tooltip_series">
+                      <div key={series.dataKey+"_"+index} className="time_chart__tooltip_series">
                         { series.dataKey === 'graph_y' &&
                           <div>{series.value} hours on {moment(label).format('dddd DD-MMM-YYYY')}</div>
                         }

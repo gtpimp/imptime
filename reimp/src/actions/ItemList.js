@@ -1,6 +1,11 @@
 import { impfetch } from './lib.js'
 import { get, indexOf, keys, map, compact, difference, includes } from 'lodash'
 import move from 'lodash-move'
+import { GENERIC_ENTITIES } from './ItemListKeyRegistry'
+
+import { ensureProjectsLoaded } from './Projects'
+import { ensureSprintsLoaded } from './Sprints'
+import { ensureIssuesLoaded } from './Issues'
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
 export const ANNOUNCE_LIST_LOAD_FAILED = 'ANNOUNCE_LIST_LOAD_FAILED'
@@ -20,11 +25,6 @@ export const UPDATE_LIST_ORDERING = 'UPDATE_LIST_ORDERING'
 export const UPDATE_VISIBLE_ITEM_IDS = 'UPDATE_VISIBLE_ITEM_IDS'
 export const HIGHLIGHT_LIST_SELECTION = 'HIGHLIGHT_LIST_SELECTION'
 export const SET_CURSOR_ITEM = 'SET_CURSOR_ITEM'
-import { GENERIC_ENTITIES } from './ItemListKeyRegistry'
-
-import { ensureProjectsLoaded } from './Projects'
-import { ensureSprintsLoaded } from './Sprints'
-import { ensureIssuesLoaded } from './Issues'
 
 export function initList(list_key) {
     return {

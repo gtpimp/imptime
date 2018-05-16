@@ -58,8 +58,8 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE ]
 
-export const PAGE_KEY__DASHBOARD_PATH = 'dashboard_page'
-export const PAGE_KEY__INVOICE_PATH = 'invoice_page'
+export const PAGE_KEY__DASHBOARD_PAGE = 'dashboard_page'
+export const PAGE_KEY__INVOICES_PAGE = 'invoice_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
 export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'
 export const PAGE_KEY__PROJECT_ROADMAP_PAGE = 'project_roadmap_page'

@@ -108,7 +108,7 @@ class UserPermissionForm extends Component {
 
         const is_removing_user = permission_name === "is_active_member_of_business"
         if ( is_removing_user ) {
-            if (! confirm("Are you sure you want to remove this user from the project?" ) ) {
+            if (! window.confirm("Are you sure you want to remove this user from the project?" ) ) {
                 return
             }
         }

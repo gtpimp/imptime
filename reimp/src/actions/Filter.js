@@ -1,14 +1,4 @@
-export const UPDATE_GLOBAL_FILTER = 'UPDATE_GLOBAL_FILTER'
-
 import { impfetch } from '../actions/lib'
-export const INIT_FILTER = 'INIT_FILTER'
-export const CLEAR_FILTER = 'CLEAR_FILTER'
-export const CLEAR_FILTER_RESULTS = 'CLEAR_FILTER_RESULTS'
-export const ANNOUNCE_FILTER_LOADING = 'ANNOUNCE_FILTER_LOADING'
-export const ANNOUNCE_FILTER_LOADED = 'ANNOUNCE_FILTER_LOADED'
-export const ANNOUNCE_FILTER_LOAD_FAILED = 'ANNOUNCE_FILTER_LOAD_FAILED'
-export const CHANGE_FILTER_DISPLAY_STATE = 'CHANGE_FILTER_DISPLAY_STATE'
-
 import {
     PAGE_KEY__PROJECTS_PAGE,
     PAGE_KEY__SPRINTS_PAGE,
@@ -19,6 +9,15 @@ import {
     get_selected_sprint_ids,
     get_selected_issue_ids
 } from './Page'
+
+export const UPDATE_GLOBAL_FILTER = 'UPDATE_GLOBAL_FILTER'
+export const INIT_FILTER = 'INIT_FILTER'
+export const CLEAR_FILTER = 'CLEAR_FILTER'
+export const CLEAR_FILTER_RESULTS = 'CLEAR_FILTER_RESULTS'
+export const ANNOUNCE_FILTER_LOADING = 'ANNOUNCE_FILTER_LOADING'
+export const ANNOUNCE_FILTER_LOADED = 'ANNOUNCE_FILTER_LOADED'
+export const ANNOUNCE_FILTER_LOAD_FAILED = 'ANNOUNCE_FILTER_LOAD_FAILED'
+export const CHANGE_FILTER_DISPLAY_STATE = 'CHANGE_FILTER_DISPLAY_STATE'
 
 export function initFilter(filter_key) {
     const url = 'imp/filter/'

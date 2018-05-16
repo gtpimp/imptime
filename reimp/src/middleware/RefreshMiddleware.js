@@ -155,7 +155,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     }
 }
 
-function refreshMiddleware(_ref) {
+export default function refreshMiddleware(_ref) {
 
     var dispatch = _ref.dispatch;
 
@@ -192,5 +192,3 @@ function refreshMiddleware(_ref) {
         }
     }
 }
-
-module.exports = refreshMiddleware

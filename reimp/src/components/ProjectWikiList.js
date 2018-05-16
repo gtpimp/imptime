@@ -59,7 +59,7 @@ class WikiList extends Component {
 
     onDeleteWiki(event, wiki_id) {
         const { dispatch } = this.props
-        if ( ! confirm("Are you sure you want to delete this wiki?") ) {
+        if ( ! window.confirm("Are you sure you want to delete this wiki?") ) {
             return
         }
         dispatch(deleteWiki(wiki_id))

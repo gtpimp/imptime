@@ -106,7 +106,7 @@ class MienSelector extends Component {
     deleteMien(event, mien) {
         const { dispatch } = this.props
         event.preventDefault()
-        if (! confirm("Delete mien " + mien.title + "?") ) {
+        if (! window.confirm("Delete mien " + mien.title + "?") ) {
             return
         }
         dispatch(deleteMiens([mien.id]))

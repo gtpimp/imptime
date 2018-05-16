@@ -50,7 +50,7 @@ class EditableSprintReviewCycle extends Component {
     onDelete(event) {
         const { dispatch, sprint_review_id } = this.props
         event.stopPropagation()
-        if ( ! confirm("Delete these review criteria?") ) {
+        if ( ! window.confirm("Delete these review criteria?") ) {
             return
         }
         dispatch(deleteSprintReview(sprint_review_id))

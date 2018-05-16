@@ -9,7 +9,7 @@ const ACTIONS_TO_IGNORE = [
     "@@redux-form/SET_SUBMIT_FAILED"
 ]
 
-function error_catcher_middleware(_ref) {
+export default function error_catcher_middleware(_ref) {
     var dispatch = _ref.dispatch;
 
     return function (next) {
@@ -34,6 +34,3 @@ function error_catcher_middleware(_ref) {
 	};
     };
 }
-
-module.exports = error_catcher_middleware
-

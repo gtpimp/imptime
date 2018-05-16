@@ -1,6 +1,5 @@
 import cookie from 'react-cookie';
 import { get, keys, includes } from 'lodash'
-
 import {
     invalidateAllItems,
     invalidateItems,
@@ -23,6 +22,7 @@ import {
     getLoadingItemIds
 } from '../actions/Item'
 import { getDefaultIssueHeaders } from './Issues'
+import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
 export const SET_MIEN = 'SET_MIEN'
@@ -31,7 +31,6 @@ export const STOP_MIEN_CONFIGURER = 'STOP_MIEN_CONFIGURER'
 
 const DEFAULT_MIEN_FEATURES = [ "emacs", "issue_estimates", "issue_reviews", "review_schedule", "deadlines", "costs" ]
 
-import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
 export function getCurrentMien(state) {
     const mien_id = getCurrentMienId(state)

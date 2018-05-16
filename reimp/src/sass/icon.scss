@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
 @mixin icon($height, $width, $filename) {
-  background-image: url('../../public/images2/' + $filename);
+  background-image: url('../images/' + $filename);
   background-repeat: no-repeat;
   background-position: center center;
   background-size: $width $height;

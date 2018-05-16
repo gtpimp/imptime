@@ -10,8 +10,8 @@ import {
     ANNOUNCE_SPRINTS_LOADED,
     ANNOUNCE_LOADING_SPRINTS,
     ANNOUNCE_SPRINTS_SAVED,
-    ANNOUNCE_SPRINTS_SAVE_FAILED,
-    ANNOUNCE_SAVING_SPRINTS,
+    ANNOUNCE_SPRINT_SAVE_FAILED,
+    ANNOUNCE_SPRINTS_SAVING,
     INVALIDATE_SPRINTS,
     INVALIDATE_ALL_SPRINTS,
 
@@ -72,7 +72,7 @@ export default function sprint(state = initialState, action) {
         case ANNOUNCE_SPRINTS_LOAD_FAILED:
             setErrorMessage("Failed to load sprints: " + action.error_message)
             return state;
-        case ANNOUNCE_SAVING_SPRINTS:
+        case ANNOUNCE_SPRINTS_SAVING:
             return Object.assign({}, state, {
                 saving_item_ids: union(state.saving_item_ids, action.sprint_ids_to_save)
             })
@@ -83,7 +83,7 @@ export default function sprint(state = initialState, action) {
                                                           action.sprint_ids))
             })
             return state_copy
-        case ANNOUNCE_SPRINTS_SAVE_FAILED:
+        case ANNOUNCE_SPRINT_SAVE_FAILED:
             setErrorMessage("Failed to save sprints: " + action.error_message)
             return state;
 

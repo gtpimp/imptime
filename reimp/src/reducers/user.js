@@ -9,11 +9,14 @@ import {
     ANNOUNCE_USERS_LOAD_FAILED,
     ANNOUNCE_USERS_LOADED,
     ANNOUNCE_LOADING_USERS,
-    INVALIDATE_USERS,
+    INVALIDATE_USERS
+} from '../actions/Users.js'
+
+import {
     ANNOUNCE_SAVING_INVITE,
     ANNOUNCE_SAVED_INVITE,
     ANNOUNCE_SAVE_INVITE_FAILED
-} from '../actions/Users.js'
+} from '../actions/Projects.js'
 
 const initialState = {
     items_by_id: {},

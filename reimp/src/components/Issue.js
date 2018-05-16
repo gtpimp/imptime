@@ -9,7 +9,6 @@ import {
     updateIssueStatus,
     updateIssueFeature,
     updateIssueAssignedTo,
-    deleteTag,
     getIssue,
     populateEstimates,
     clock,
@@ -42,7 +41,6 @@ class Issue extends Component {
     constructor(props) {
         super(props)
         this.onChangeStatus = this.onChangeStatus.bind(this)
-        this.onDeleteTag = this.onDeleteTag.bind(this)
         this.onClockIn = this.onClockIn.bind(this)
         this.onClockOut = this.onClockOut.bind(this)
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
@@ -87,11 +85,6 @@ class Issue extends Component {
         dispatch(updateIssueFeature([issue_id], new_value))
     }
 
-    onDeleteTag(tag) {
-        const {issue, dispatch} = this.props
-        dispatch(deleteTag([issue.id], tag.category_name, tag.name))
-    }
-
     onClockIn() {
         const {issue, dispatch} = this.props
         dispatch(clock(issue.id, 'clock_in'))
@@ -105,7 +98,7 @@ class Issue extends Component {
     onDeleteIssue(event) {
         const { issue, dispatch, onDelete } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
+        if ( ! window.confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return
         }
         dispatch(deleteIssues([issue.id]))

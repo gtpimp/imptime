@@ -48,7 +48,7 @@ class EditableIssueComment extends Component {
     onDelete(event) {
         const { dispatch, issue_id, comment_id } = this.props
         event.stopPropagation()
-        if ( ! confirm("Are you sure you want to delete this comment?" ) ) {
+        if ( ! window.confirm("Are you sure you want to delete this comment?" ) ) {
             return false;
         }
         dispatch(deleteIssueComment(issue_id, comment_id))

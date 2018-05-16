@@ -16,9 +16,7 @@ import {
     fetchSprintsIfNeeded,
     reorderSprints,
     startCandidateSprint,
-    updateCandidateTitle,
-    cancelCandidateSprint,
-    saveCandidateSprint
+    cancelCandidateSprint
 } from '../actions/Sprints'
 import Sprint from './Sprint'
 import DivTable from './DivTable'
@@ -34,7 +32,6 @@ class SprintList extends Component {
         this.onClickedSprint = this.onClickedSprint.bind(this)
         this.reorderSprints = this.reorderSprints.bind(this)
         this.onStartCandidateSprint = this.onStartCandidateSprint.bind(this)
-        this.onSaveCandidateSprint = this.onSaveCandidateSprint.bind(this)
         this.onCancelCandidateSprint = this.onCancelCandidateSprint.bind(this)
         this.renderHeader = this.renderHeader.bind(this)
     }
@@ -102,12 +99,6 @@ class SprintList extends Component {
         const {dispatch, list_key} = this.props
         event.stopPropagation()
         dispatch(startCandidateSprint(list_key))
-    }
-
-    onSaveCandidateSprint(candidate_sprint_title) {
-        const {dispatch} = this.props
-        dispatch(updateCandidateTitle(candidate_sprint_title))
-        dispatch(saveCandidateSprint())
     }
 
     onCancelCandidateSprint() {

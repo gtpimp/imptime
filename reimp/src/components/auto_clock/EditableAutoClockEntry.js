@@ -36,7 +36,7 @@ class EditableAutoClockEntry extends Component {
 
     onDeleteEntry() {
         const { dispatch, entry_id } = this.props
-        if ( ! confirm( "Are you sure you want to delete this clock entry?" ) ) {
+        if ( ! window.confirm( "Are you sure you want to delete this clock entry?" ) ) {
             return false
         }
         dispatch(deleteAutoClocks([entry_id]))

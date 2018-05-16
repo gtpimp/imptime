@@ -29,7 +29,7 @@ class Project extends Component {
     onDeleteProject(event) {
         const { project, dispatch, onDelete } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Delete project " + project.name + "?") ) {
+        if ( ! window.confirm( "Delete project " + project.name + "?") ) {
             return
         }
         dispatch(deleteProjects([project.id]))

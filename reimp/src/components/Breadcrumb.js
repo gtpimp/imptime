@@ -104,7 +104,7 @@ const menu_buttons = {
           dispatch_action: (objs) => updateIssueToggleAsFeature([objs.issue.id], 'toggle')
         },
         { label: (objs) => 'Delete',
-          dispatch_action: (objs) => (confirm("Delete issue " + objs.issue.number +"?") && deleteIssues([objs.issue.id])) || null
+          dispatch_action: (objs) => (window.confirm("Delete issue " + objs.issue.number +"?") && deleteIssues([objs.issue.id])) || null
         },
     ]
     

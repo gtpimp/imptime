@@ -37,7 +37,7 @@ class MultipleIssueSidebar extends Component {
     onDelete(event) {
         const { issue_ids, dispatch } = this.props
         event.stopPropagation()
-        if ( ! confirm( "Delete these issues?") ) {
+        if ( ! window.confirm( "Delete these issues?") ) {
             return
         }
         dispatch(deleteIssues(issue_ids))

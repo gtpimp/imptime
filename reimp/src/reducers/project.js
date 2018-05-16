@@ -10,8 +10,8 @@ import {
     ANNOUNCE_PROJECTS_LOADED,
     ANNOUNCE_LOADING_PROJECTS,
     ANNOUNCE_PROJECTS_SAVED,
-    ANNOUNCE_PROJECTS_SAVE_FAILED,
-    ANNOUNCE_SAVING_PROJECTS,
+    ANNOUNCE_PROJECT_SAVE_FAILED,
+    ANNOUNCE_PROJECTS_SAVING,
     INVALIDATE_PROJECTS,
     INVALIDATE_ALL_PROJECTS,
     ANNOUNCE_CAPTURING_NEW_PROJECT,
@@ -58,7 +58,7 @@ export default function project(state = initialState, action) {
             setErrorMessage("Failed to load projects: " + action.error_message)
             return state;
 
-        case ANNOUNCE_SAVING_PROJECTS:
+        case ANNOUNCE_PROJECTS_SAVING:
 	          return Object.assign({}, state, {
 		            saving_item_ids: union(state.saving_item_ids, action.project_ids_to_save)
 	          })
@@ -69,48 +69,48 @@ export default function project(state = initialState, action) {
 							                                            action.project_ids))
 	          })
             return state_copy
-        case ANNOUNCE_PROJECTS_SAVE_FAILED:
+        case ANNOUNCE_PROJECT_SAVE_FAILED:
             setErrorMessage("Failed to save projects: " + action.error_message)
             return state;
 
-	      case ANNOUNCE_CAPTURING_NEW_PROJECT:
+	case ANNOUNCE_CAPTURING_NEW_PROJECT:
             return Object.assign({}, state,
-				                         { candidate_project: {
-				                             project_id_before: action.project_id_before,
-				                             project_id: action.project_id}
-				                         })
-	      case UPDATE_NEW_PROJECT_DETAILS:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_project: Object.assign({},
-						                                      state.candidate_project || {},
-						                                      action.candidate_project)
-		            })
-	      case CANCEL_CREATING_NEW_PROJECT:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_project: null})
+				 { candidate_project: {
+				     project_id_before: action.project_id_before,
+				     project_id: action.project_id}
+				 })
+	case UPDATE_NEW_PROJECT_DETAILS:
+	    return Object.assign(
+		{}, state,
+		{candidate_project: Object.assign({},
+						  state.candidate_project || {},
+						  action.candidate_project)
+		})
+	case CANCEL_CREATING_NEW_PROJECT:
+	    return Object.assign(
+		{}, state,
+		{candidate_project: null})
 
-	      case ANNOUNCE_SAVING_NEW_PROJECT:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_project: Object.assign({},
-						                                      state.candidate_project || {},
-						                                      {saving: true})})
-	      case ANNOUNCE_SAVED_NEW_PROJECT:
-	          new_items_by_id = Object.assign({}, state.items_by_id)
-	          new_items_by_id[action.project.id] = action.project
-	          return Object.assign({},
-				                         state,
-				                         {candidate_project: null},
-				                         {items_by_id: new_items_by_id})
+	case ANNOUNCE_SAVING_NEW_PROJECT:
+	    return Object.assign(
+		{}, state,
+		{candidate_project: Object.assign({},
+						  state.candidate_project || {},
+						  {saving: true})})
+	case ANNOUNCE_SAVED_NEW_PROJECT:
+	    new_items_by_id = Object.assign({}, state.items_by_id)
+	    new_items_by_id[action.project.id] = action.project
+	    return Object.assign({},
+				 state,
+				 {candidate_project: null},
+				 {items_by_id: new_items_by_id})
 
-	      case ANNOUNCE_SAVING_NEW_PROJECT_FAILED:
-	          return Object.assign(
-		            {}, state,
-		            {candidate_project: Object.assign({},
-						                                      state.candidate_project || {},
-						                                      {is_saving: false})})
+	case ANNOUNCE_SAVING_NEW_PROJECT_FAILED:
+	    return Object.assign(
+		{}, state,
+		{candidate_project: Object.assign({},
+						  state.candidate_project || {},
+						  {is_saving: false})})
 
         default:
             return state

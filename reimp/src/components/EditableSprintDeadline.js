@@ -57,7 +57,7 @@ class EditableSprintDeadline extends Component {
     onDelete(event) {
         const { dispatch, deadline_id } = this.props
         event.stopPropagation()
-        if ( ! confirm("Delete this deadline?") ) {
+        if ( ! window.confirm("Delete this deadline?") ) {
             return
         }
         dispatch(deleteSprintDeadline(deadline_id))

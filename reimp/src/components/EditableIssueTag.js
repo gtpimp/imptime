@@ -47,7 +47,7 @@ class EditableIssueTag extends Component {
         if ( ev ) {
             ev.stopPropagation()
         }
-        if ( ! confirm("Delete this tag?") ) {
+        if ( ! window.confirm("Delete this tag?") ) {
             return false
         }
         dispatch(deleteTagFromIssues(tag_id, issue_ids))

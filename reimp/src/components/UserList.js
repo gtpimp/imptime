@@ -5,11 +5,7 @@ import each from 'lodash/each'
 import map from 'lodash/map'
 import includes from 'lodash/includes'
 import {
-    ensureUsersLoaded,
-    startInviteUser,
-    updateInviteTitle,
-    cancelInviteUser,
-    saveInviteUser
+    ensureUsersLoaded
 } from '../actions/Users'
 import User from './User'
 import ListTable from './ListTable'
@@ -26,23 +22,6 @@ class UserList extends Component {
         if ( new_props.user_ids !== this.props.user_ids ) {
             dispatch(ensureUsersLoaded(new_props.user_ids))
         }
-    }
-
-    onStartInviteUser(event) {
-        const {dispatch, list_key} = this.props
-        event.stopPropagation()
-        dispatch(startInviteUser(list_key))
-    }
-
-    onSaveInviteUser(invite_user_title) {
-        const {dispatch} = this.props
-        dispatch(updateInviteTitle(invite_user_title))
-        dispatch(saveInviteUser())
-    }
-
-    onCancelInviteUser() {
-        const {dispatch} = this.props
-        dispatch(cancelInviteUser())
     }
 
     render() {

@@ -12,7 +12,6 @@ import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
-var HTML5Backend = require('react-dnd-html5-backend');
 import ReactTooltip from 'react-tooltip'
 import Error from '../components/Error'
 import Maintenance from '../components/Maintenance'
@@ -20,6 +19,7 @@ import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
 import { ShortcutManager } from 'react-shortcuts'
 import keymap from '../actions/Keymap'
+var HTML5Backend = require('react-dnd-html5-backend');
 const shortcut_manager = new ShortcutManager(keymap)
 
 class MainLayout extends Component {

@@ -97,7 +97,7 @@ class IssueToolbarPanel extends Component {
 
     onDeleteClick() {
         const {issue_ids, dispatch} = this.props
-        if ( ! confirm("Delete selected issues?" ) ) {
+        if ( ! window.confirm("Delete selected issues?" ) ) {
             return
         }
         map(issue_ids, (issue_id) => dispatch(deleteIssues([issue_id])))

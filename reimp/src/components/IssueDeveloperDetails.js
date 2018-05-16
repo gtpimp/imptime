@@ -55,7 +55,7 @@ class IssueDeveloperDetails extends Component {
 
     onDelete() {
         const { dispatch, issue } = this.props
-        if ( ! confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
+        if ( ! window.confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return false;
         }
 	dispatch(deleteIssues([issue.id]))
