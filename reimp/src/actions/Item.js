@@ -216,7 +216,6 @@ export function updateItem(entity_key, item_ids, field_name, new_value, on_done,
                  console.log('Request failed with JSON response', json);
                  dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {
-                 console.log('Request succeeded with JSON response', json);
                  dispatch(announceItemsSaved(entity_key, item_ids, json.payload.items))
              }
              if ( on_done ) {
