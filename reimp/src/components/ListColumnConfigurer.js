@@ -86,17 +86,15 @@ class ListColumnConfigurer extends Component {
                                           draggableId={header_key}
                                           index={index}>
                                  {(provided, snapshot) => (
-                                      <div>
                                         <div ref={provided.innerRef}
                                              className={classNames("list-column-configurer__row",
                                                                    {"list-column-configurer__row--dragging":snapshot.isDragging})}
-                                             style={{...provided.draggableStyle}}
+                                             style={{...provided.draggableProps.style}}
                                              {...provided.dragHandleProps}
+                                             {...provided.draggableProps}
                                         >
                                           {label}
                                         </div>
-                                        {provided.placeholder}
-                                      </div>
                                   )}
                                </Draggable>
                            )
