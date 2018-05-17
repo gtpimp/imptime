@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 import { impfetch } from './lib.js'
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 import { SubmissionError } from 'redux-form'
 
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"

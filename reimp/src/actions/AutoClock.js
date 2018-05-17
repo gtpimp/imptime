@@ -1,4 +1,4 @@
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 import { ENTITY_KEY__AUTO_CLOCK, CONTEXT_KEY__AUTO_CLOCK } from '../actions/ItemListKeyRegistry'
 import { compact } from 'lodash'
 

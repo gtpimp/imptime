@@ -14,7 +14,7 @@ import {
     HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT,
 
 } from '../actions/Auth'
-import cookie from 'react-cookie';
+import cookie from 'react-cookies';
 
 const initialState = {
     token: null,
