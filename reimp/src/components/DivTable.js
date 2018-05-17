@@ -38,43 +38,42 @@ class DivTable extends Component {
                   {this.props.renderHeader()}
                 </div>
               }
-                <div className="div-table__body">
+              <div className="div-table__body">
 
-                  { permission_name_for_dragging &&
-                    <PermissionInspectorHighlighter project_id={project_id}
-                                                    permission_name={permission_name_for_dragging}
-                                                    only_show_children_if_panel_is_active={true} >
-                      <div className="icon--drag" /> Drag
-                    </PermissionInspectorHighlighter>
-                  }
-                  
+                { permission_name_for_dragging &&
+                  <PermissionInspectorHighlighter project_id={project_id}
+                                                  permission_name={permission_name_for_dragging}
+                                                  only_show_children_if_panel_is_active={true} >
+                    <div className="icon--drag" /> Drag
+                  </PermissionInspectorHighlighter>
+                }
+                
                 <DragDropContext onDragEnd={this.onDragEnd}>
                   <Droppable droppableId="droppable">
                     {(provided, snapshot) => (
-                         <div ref={provided.innerRef}
-                              className={classNames({"div-table-wrapper--dragging":snapshot.isDragging})}
-                         >
-                           {map(this.props.children, child => (
-                                <Draggable key={child.key}
-                                           draggableId={child.key}
-                                           isDragDisabled={!can_drag} >
-                                  {(provided, snapshot) => (
-                                       <div>
-                                         <div ref={provided.innerRef}
-                                              className={classNames({"div-table__row-wrapper--dragging":snapshot.isDragging})}
-                                              style={{...provided.draggableStyle}}
-                                              {...provided.dragHandleProps}
-                                         >
-                                           {child}
-                                         </div>
-                                         {provided.placeholder}
-                                       </div>
-                                   )}
-                                </Draggable>
-                            ))}
-                                {provided.placeholder}
-                         </div>
-                     )}
+                        <div ref={provided.innerRef}
+                             className={classNames({"div-table-wrapper--dragging":snapshot.isDragging})}
+                            >
+                          {map(this.props.children, (child, index) => (
+                              <Draggable key={child.key}
+                                         index={index}
+                                         draggableId={child.key}
+                                         isDragDisabled={!can_drag} >
+                                {(provided, snapshot) => (
+                                    <div ref={provided.innerRef}
+                                         className={classNames({"div-table__row-wrapper--dragging":snapshot.isDragging})}
+                                         style={{...provided.draggableProps.style}}
+                                         {...provided.dragHandleProps}
+                                         {...provided.draggableProps}
+                                        >
+                                      {child}
+                                    </div>
+                                )}
+                              </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                    )}
                   </Droppable>
                 </DragDropContext>
               </div>
