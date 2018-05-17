@@ -98,6 +98,12 @@ class Issue extends Component {
     onDeleteIssue(event) {
         const { issue, dispatch, onDelete } = this.props
         event.stopPropagation()
+
+        if ( issue.actual_hours > 0 ) {
+            window.alert("This issue has time against it and so can't be deleted")
+            return
+        }
+        
         if ( ! window.confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
             return
         }
