@@ -25,6 +25,8 @@ class MarkdownEnrichment(object):
                 issue_number = int(issue_number)
             except ValueError:
                 continue
+            except TypeError:
+                continue
             start_index, end_index = match.span(0)
             try:
                 issue = PermissionHelper().allowed_issues(self.logged_in_user)\
