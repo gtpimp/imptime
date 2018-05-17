@@ -6,6 +6,7 @@ import {Provider} from 'react-redux'
 import Raven from 'raven-js'
 import { BrowserRouter } from 'react-router-dom'
 import MainLayout from './containers/MainLayout'
+import Modal from 'react-modal';
 
 const store = configureStore({})
 
@@ -14,12 +15,15 @@ if (RAVEN_DSN) {
     Raven.config(RAVEN_DSN).install()
 }
 
-
 ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <MainLayout />
+        <div id="app">
+          <MainLayout />
+        </div>
       </BrowserRouter>
     </Provider>,
     document.getElementById('root')
 )
+
+Modal.setAppElement("#app")

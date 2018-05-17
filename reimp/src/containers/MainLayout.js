@@ -22,6 +22,7 @@ import keymap from '../actions/Keymap'
 var HTML5Backend = require('react-dnd-html5-backend');
 const shortcut_manager = new ShortcutManager(keymap)
 
+
 class MainLayout extends Component {
     
     getChildContext() {
