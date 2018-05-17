@@ -73,6 +73,7 @@ class ProjectViewSet(BaseViewSet):
 
     def auto_accept_invites(self, projects):
         for invite in ProjectInvite.objects.filter(business__in=projects,
+                                                   accepted=False,
                                                    user=self.request.user):
             invite.accepted=True
             invite.accepted_at=timezone.now()
