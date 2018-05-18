@@ -10,7 +10,7 @@ class FileUploader extends Component {
         const { upload_url, onSuccess, onFailure, upload_params, request_headers } = this.props
 
         const componentConfig = {
-            iconFiletypes: ['.jpg', '.png', '.gif', '.mp4'],
+            iconFiletypes: [],
             showFiletypeIcon: true,
             postUrl: upload_url
         }

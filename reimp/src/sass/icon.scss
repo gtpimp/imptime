@@ -123,6 +123,21 @@
 }
 
 .icon--contenttype--generic {
+    @include icon(20px, 20px, 'ic_contenttype_generic.png');
+}
+
+.icon--contenttype--application-msword {
+    @include icon(20px, 20px, 'ic_contenttype_word.png');
+}
+
+.icon--contenttype--application-excel,
+.icon--contenttype--application-vnd-openxmlformats-officedocument-spreadsheetml-sheet,
+.icon--contenttype--application-vnd-oasis-opendocument-spreadsheet {
+    @include icon(20px, 20px, 'ic_contenttype_excel.png');
+}
+
+.icon--contenttype--application-pdf {
+    @include icon(20px, 20px, 'ic_contenttype_pdf.png');
 }
 
 .icon--loading {

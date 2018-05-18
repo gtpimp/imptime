@@ -37,7 +37,13 @@
 }
 
 .visual_spec_document_gallery__image--no-preview {
-    padding: 3px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.visual_spec_document_gallery__image--no-preview--icon {
+    margin: auto;
 }
 
 .visual_spec_document_gallery__image--selected {

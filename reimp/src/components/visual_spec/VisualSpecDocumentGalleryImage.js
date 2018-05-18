@@ -63,7 +63,7 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     resolveThumbnailElement(preview_image_url) {
-        const { visual_spec_document } = this.props
+        const { visual_spec_document, img_element_unique_id } = this.props
         if ( ! preview_image_url ) {
             return (
                 <div id={img_element_unique_id}
@@ -72,19 +72,20 @@ class VisualSpecDocumentGalleryImage extends Component {
                 />
             )
         }
-        const {img_element_unique_id} = this.props
         if ( preview_image_url.startsWith("no_preview_available__") ) {
             const parts = preview_image_url.split("__")
-            const content_type = parts[1].replace("/","-")
+            const content_type = parts[1].replace("/","-").replace(/\./g,"-")
             return (
                 <div id={img_element_unique_id}
                      className={"visual_spec_document_gallery__image " +
-                                "visual_spec_document_gallery__image--no-preview " +
-                                "icon--contenttype--generic " +
-                                "icon--contenttype--"+content_type}
+                                "visual_spec_document_gallery__image--no-preview"}
                      onClick={this.onClickPreview}
                 >
                   {visual_spec_document.name}
+                  <div className="visual_spec_document_gallery__image--no-preview--icon">
+                    <div className={"icon--contenttype--generic " +
+                                    "icon--contenttype--"+content_type}/>
+                  </div>
                 </div>
             )
         } else {
