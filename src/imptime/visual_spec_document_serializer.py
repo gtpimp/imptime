@@ -36,6 +36,8 @@ class VisualSpecDocumentSerializer(BaseSerializer):
 
     @classmethod
     def get_preview_url(self, request, visual_spec_document):
+        if not visual_spec_document.thumbnail.name:
+            return "no_preview_available__%s" % visual_spec_document.content_type
         return self._base_url(request) + '/imp/visual_spec_document/%s/preview?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
 
     @classmethod

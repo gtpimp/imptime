@@ -15,45 +15,55 @@ from lib import file_helper
 from imptime.models import VisualSpecDocument
 
 @permission_classes(())
-class VisualSpecDocumentHiresView(APIView):
+class VisualSpecDocumentBase(APIView):
 
-    def _get_doc_field(self, visual_spec_document):
-        return visual_spec_document.hires
-    
-    def _get(self, request, visual_spec_document_id, download=True):
+    def get_visual_spec_document(self, request, visual_spec_document_id):
         # jump through hoops because we want to download from a url
         # but the login token is normally passed in a custom header.
         user = get_user_by_token(request)
         visual_spec_document = VisualSpecDocument.objects.filter(visual_spec_projects__project__in=PermissionHelper.allowed_projects(user))\
                                                          .get(pk=visual_spec_document_id)
-
         bp = ProjectPermissions.for_user(user, visual_spec_document.visual_spec_projects.all()[0].project)
         if not bp.has_view_issues:
-            return PermissionDenied()
+            return None
+        return visual_spec_document
 
-        url = self._get_doc_field(visual_spec_document).name
-        if not url:
-            url = visual_spec_document.original_doc.name
-            download=True
-        
+    def fetch_file(self, request, url, visual_spec_document, download=True):
         return file_helper.download_media(request, url,
                                           content_type=visual_spec_document.content_type,
                                           filename=visual_spec_document.name,
                                           as_attachment=download)
+
+class VisualSpecDocumentDownloadView(VisualSpecDocumentBase):
+    def get(self, request, visual_spec_document_id):
+        vsd = self.get_visual_spec_document(request, visual_spec_document_id)
+        if vsd is None:
+            return PermissionDenied()
+        url = vsd.original_doc.name
+        return self.fetch_file(request, url, vsd, download=True)
+
+
+class VisualSpecDocumentHiresView(VisualSpecDocumentBase):
+    def get(self, request, visual_spec_document_id):
+        vsd = self.get_visual_spec_document(request, visual_spec_document_id)
+        if vsd is None:
+            return PermissionDenied()
+        download = False
+        url = vsd.hires.name
+        if not url:
+            # If no hires then this isn't an image, so switch to downloading it.
+            url = vsd.original_doc.name
+            download = True
+        return self.fetch_file(request, url, vsd, download=download)
+
     
+class VisualSpecDocumentPreviewView(VisualSpecDocumentBase):
     def get(self, request, visual_spec_document_id):
-        return self._get(request, visual_spec_document_id, download=False)
-
-class VisualSpecDocumentDownloadView(VisualSpecDocumentHiresView):
-    def get(self, request, visual_spec_document_id):
-        return self._get(request, visual_spec_document_id, download=True)
-
-    def _get_doc_field(self, visual_spec_document):
-        return visual_spec_document.original_doc
-    
-class VisualSpecDocumentPreviewView(VisualSpecDocumentHiresView):
-    def get(self, request, visual_spec_document_id):
-        return self._get(request, visual_spec_document_id, download=False)
-
-    def _get_doc_field(self, visual_spec_document):
-        return visual_spec_document.thumbnail
+        vsd = self.get_visual_spec_document(request, visual_spec_document_id)
+        if vsd is None:
+            return PermissionDenied()
+        url = vsd.thumbnail.name
+        if not url:
+            return HttpResponse("no_preview_available")
+            
+        return self.fetch_file(request, url, vsd, download=False)

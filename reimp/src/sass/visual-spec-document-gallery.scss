@@ -36,6 +36,10 @@
     cursor: pointer;
 }
 
+.visual_spec_document_gallery__image--no-preview {
+    padding: 3px;
+}
+
 .visual_spec_document_gallery__image--selected {
     -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);

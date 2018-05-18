@@ -17,6 +17,7 @@ class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
         super(props)
         this.onVisualSpecDocumentImageLoaded = this.onVisualSpecDocumentImageLoaded.bind(this)
+        this.hideVisualSpecDocumentImageLoadingImage = this.hideVisualSpecDocumentImageLoadingImage.bind(this)
         this.onClickDownload = this.onClickDownload.bind(this)
         this.onClickPreview = this.onClickPreview.bind(this)
     }
@@ -42,6 +43,10 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     onVisualSpecDocumentImageLoaded() {
+        this.hideVisualSpecDocumentImageLoadingImage()
+    }
+
+    hideVisualSpecDocumentImageLoadingImage() {
         this.setState({visual_spec_document_image_loaded: true})
     }
 
@@ -57,8 +62,46 @@ class VisualSpecDocumentGalleryImage extends Component {
         window.open(hires_url)
     }
 
+    resolveThumbnailElement(preview_image_url) {
+        const { visual_spec_document } = this.props
+        if ( ! preview_image_url ) {
+            return (
+                <div id={img_element_unique_id}
+                     className={"visual_spec_document_gallery__image " +
+                                "icon--loading "}
+                />
+            )
+        }
+        const {img_element_unique_id} = this.props
+        if ( preview_image_url.startsWith("no_preview_available__") ) {
+            const parts = preview_image_url.split("__")
+            const content_type = parts[1].replace("/","-")
+            return (
+                <div id={img_element_unique_id}
+                     className={"visual_spec_document_gallery__image " +
+                                "visual_spec_document_gallery__image--no-preview " +
+                                "icon--contenttype--generic " +
+                                "icon--contenttype--"+content_type}
+                     onClick={this.onClickPreview}
+                >
+                  {visual_spec_document.name}
+                </div>
+            )
+        } else {
+            return (
+                <img id={img_element_unique_id}
+                     className="visual_spec_document_gallery__image"
+                     src={preview_image_url}
+                     onClick={this.onClickPreview}
+                     onLoad={this.onVisualSpecDocumentImageLoaded}
+                     alt=""
+                />
+            )
+        }
+    }
+
     render() {
-        const { visual_spec_document_id, image_url, is_active, isOver, isDragging,
+        const { visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
                 connectDragSource, connectDropTarget, visual_spec_issue_annotation_ids,
                 img_element_unique_id} = this.props
         const { visual_spec_document_image_loaded } = this.state || {}
@@ -66,6 +109,8 @@ class VisualSpecDocumentGalleryImage extends Component {
         if ( isDragging ) {
             return null
         }
+
+        const thumbnail_element = this.resolveThumbnailElement(preview_image_url)
         
         return connectDragSource(connectDropTarget(
             <div className="visual-spec-document-gallery-image__container" key={visual_spec_document_id}>
@@ -73,13 +118,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                                          {"visual_spec_document_gallery__image--selected": is_active,
                                           "visual_spec_document_gallery__image--dnd-target": isOver
                                          })}>
-                <img id={img_element_unique_id}
-                     className="visual_spec_document_gallery__image"
-                     src={image_url}
-                     onClick={this.onClickPreview}
-                     onLoad={this.onVisualSpecDocumentImageLoaded}
-                     alt=""
-                />
+                {thumbnail_element}
                 { visual_spec_document_image_loaded && map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
                       return (
                           <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
@@ -93,9 +132,9 @@ class VisualSpecDocumentGalleryImage extends Component {
                 }
               </div>
 
-              { image_url && !visual_spec_document_image_loaded &&
+              { false && preview_image_url && !visual_spec_document_image_loaded &&
                 <div className="visual_spec_document_gallery__image_loading"
-                     onClick={this.onVisualSpecDocumentImageLoaded} >
+                     onClick={this.hideVisualSpecDocumentImageLoadingImage} >
                   <h2>Loading Image...</h2>
                 </div>
               }
@@ -115,9 +154,10 @@ function mapStateToProps(state, props) {
     const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + issue_id_for_annotations + "_" + visual_spec_document_id
     
     return {
-        image_url: visual_spec_document.preview_url,
+        preview_image_url: visual_spec_document.preview_url,
         hires_url: visual_spec_document.hires_url,
         download_url: visual_spec_document.download_url,
+        visual_spec_document: visual_spec_document,
         visual_spec_document_id,
         is_active,
         onSelected,

@@ -122,6 +122,13 @@
     opacity: 1.0;
 }
 
+.icon--contenttype--generic {
+}
+
+.icon--loading {
+    @include icon(20px, 20px, 'loading.gif');
+}
+
 .icon--adhoc {
     @include icon(15px, 15px, 'adhoc.png');
 }
