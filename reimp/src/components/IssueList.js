@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
+import { remove, uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
@@ -87,7 +87,8 @@ class IssueList extends Component {
             dispatch(ensureIssuesLoaded(feature_issue_ids))
             dispatch(ensureSprintsLoaded([sprint_id]))
             dispatch(ensureTagsLoaded(tag_ids))
-            this.expandUnAutoExpandedFeatures()
+            this.collapseFeatureIssues(this.props)
+            // this.expandUnAutoExpandedFeatures()
         }
     }
 
@@ -97,21 +98,37 @@ class IssueList extends Component {
         const {onSelectIssues} = this.props
         if ( this.props.sprint_id !== new_props.sprint_id ) {
             onSelectIssues([])
+            this.collapseFeatureIssues(new_props)
         }
-        this.expandUnAutoExpandedFeatures(new_props)
+        // this.expandUnAutoExpandedFeatures(new_props)
         dispatch(fetchIssuesIfNeeded(list_key))
         dispatch(ensureIssuesLoaded(feature_issue_ids))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureTagsLoaded(tag_ids))
     }
 
-    expandUnAutoExpandedFeatures(these_props) {
-        const { dispatch, list_key, feature_issue_ids, autoexpanded_feature_ids } = these_props || this.props
-        const feature_ids_to_auto_expanded = difference(feature_issue_ids, autoexpanded_feature_ids)
-        if ( feature_ids_to_auto_expanded.length > 0 ) {
-            dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'expanded_issues', true))
-            dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'autoexpanded_feature_ids', true))
-        }
+    /* expandUnAutoExpandedFeatures(these_props) {
+     *     const { dispatch, list_key, feature_issue_ids, autoexpanded_feature_ids } = these_props || this.props
+     *     const feature_ids_to_auto_expanded = difference(feature_issue_ids, autoexpanded_feature_ids)
+     *     if ( feature_ids_to_auto_expanded.length > 0 ) {
+     *         dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'expanded_issues', true))
+     *         dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'autoexpanded_feature_ids', true))
+     *     }
+     * }*/
+
+    collapseFeatureIssues(these_props) {
+        const { dispatch, list_key, feature_issue_ids, selected_issue_ids, issues_by_id } = these_props || this.props
+
+        let collapse_these_issues = feature_issue_ids
+        
+        map(selected_issue_ids, function(selected_issue_id) {
+            const issue = issues_by_id[selected_issue_id]
+            if ( issue.parent_group_id ) {
+                remove(collapse_these_issues, issue.parent_group_id)
+            }
+        })
+        
+        dispatch(setItemFlag(list_key, collapse_these_issues, 'expanded_issues', false))
     }
 
     handleShortcuts(action, event) {
