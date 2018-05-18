@@ -18,6 +18,7 @@ class VisualSpecDocumentGalleryImage extends Component {
         super(props)
         this.onVisualSpecDocumentImageLoaded = this.onVisualSpecDocumentImageLoaded.bind(this)
         this.onClickDownload = this.onClickDownload.bind(this)
+        this.onClickPreview = this.onClickPreview.bind(this)
     }
 
     componentDidMount() {
@@ -50,6 +51,12 @@ class VisualSpecDocumentGalleryImage extends Component {
         window.open(download_url)
     }
 
+    onClickPreview(event) {
+        const { hires_url } = this.props
+        event.stopPropagation()
+        window.open(hires_url)
+    }
+
     render() {
         const { visual_spec_document_id, image_url, is_active, isOver, isDragging,
                 connectDragSource, connectDropTarget, visual_spec_issue_annotation_ids,
@@ -69,7 +76,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                 <img id={img_element_unique_id}
                      className="visual_spec_document_gallery__image"
                      src={image_url}
-                     onClick={this.onClickDownload}
+                     onClick={this.onClickPreview}
                      onLoad={this.onVisualSpecDocumentImageLoaded}
                      alt=""
                 />
@@ -109,6 +116,7 @@ function mapStateToProps(state, props) {
     
     return {
         image_url: visual_spec_document.preview_url,
+        hires_url: visual_spec_document.hires_url,
         download_url: visual_spec_document.download_url,
         visual_spec_document_id,
         is_active,

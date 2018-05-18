@@ -9,6 +9,10 @@
   width: $width;
 }
 
+.icon--clickable {
+    cursor: pointer;
+}
+
 .icon--feature {
     @include icon(20px, 20px, 'icon_feature_blue 4@2x.png')
 }

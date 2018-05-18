@@ -23,6 +23,7 @@ import EditableIssueType from './EditableIssueType'
 import EditableIssueEstimate from './EditableIssueEstimate'
 import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
+import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
 import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
@@ -48,7 +49,10 @@ class IssueSidebar extends Component {
         this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
         this.onFullscreen = this.onFullscreen.bind(this)
         this.onExitFullscreen = this.onExitFullscreen.bind(this)
-        this.state = {emacs_hint_enabled: false}
+        this.showAddVisualSpecDoc = this.showAddVisualSpecDoc.bind(this)
+        this.hideAddVisualSpecDoc = this.hideAddVisualSpecDoc.bind(this)
+        this.state = {emacs_hint_enabled: false,
+                      adding_visual_spec_doc: false}
     }
 
     componentDidMount() {
@@ -68,6 +72,14 @@ class IssueSidebar extends Component {
         history.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id+'/gallery/')
     }
 
+    showAddVisualSpecDoc() {
+        this.setState({adding_visual_spec_doc:true})
+    }
+
+    hideAddVisualSpecDoc() {
+        this.setState({adding_visual_spec_doc:false})
+    }
+    
     makeFeatureIssuesSuccessive() {
         const { dispatch, issue_id, sprint_id } = this.props
         dispatch(makeFeatureIssuesSuccessive(issue_id, sprint_id))
@@ -307,14 +319,43 @@ class IssueSidebar extends Component {
         )
     }
 
-    renderAttachmentsStack() {
+    renderAddAttachmentWidget() {
         const { issue } = this.props
         return (
             <PropertyStackComponent title="Attachments">
               <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                          issue_id={issue.id}
                                          allow_edit={false} />
-              <button className="button button--primary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
+              <button className="button button--primary" onClick={this.showAddVisualSpecDoc}>Add</button>
+              <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
+            </PropertyStackComponent>
+        )
+    }
+
+    renderAttachmentsStack() {
+        const { issue, project_id } = this.props
+        const adding_visual_spec_doc = this.state.adding_visual_spec_doc
+        return (
+            <PropertyStackComponent title="Attachments">
+              <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+                                         issue_id={issue.id}
+                                         allow_edit={false} />
+              
+            { ! adding_visual_spec_doc && (
+                <div className="property-row">
+                  <div onClick={this.showAddVisualSpecDoc} className="icon--add icon--clickable" data-tooltip="Upload attachment"></div>
+                  <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
+                </div>
+            )}
+            { adding_visual_spec_doc && (
+                  <div>
+                    <VisualSpecDocumentForm issue_id={issue.id}
+                                            project_id={project_id}
+                                            onChange={this.hideAddVisualSpecDoc}
+                    />
+                    <button className="button button--primary" onClick={this.hideAddVisualSpecDoc}>Cancel</button>
+                  </div>
+            )}
             </PropertyStackComponent>
         )
     }

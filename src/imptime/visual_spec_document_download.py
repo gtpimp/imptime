@@ -31,12 +31,18 @@ class VisualSpecDocumentHiresView(APIView):
         if not bp.has_view_issues:
             return PermissionDenied()
 
-        return file_helper.download_media(request,
-                                          self._get_doc_field(visual_spec_document).name,
-                                          content_type=visual_spec_document.content_type)
+        url = self._get_doc_field(visual_spec_document).name
+        if not url:
+            url = visual_spec_document.original_doc.name
+            download=True
+        
+        return file_helper.download_media(request, url,
+                                          content_type=visual_spec_document.content_type,
+                                          filename=visual_spec_document.name,
+                                          as_attachment=download)
     
     def get(self, request, visual_spec_document_id):
-        return self._get(request, visual_spec_document_id)
+        return self._get(request, visual_spec_document_id, download=False)
 
 class VisualSpecDocumentDownloadView(VisualSpecDocumentHiresView):
     def get(self, request, visual_spec_document_id):

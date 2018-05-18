@@ -6,12 +6,14 @@ import requests
 import os
 import csv
 
-def download_media(request, url, content_type):
+def download_media(request, url, content_type, filename=None, as_attachment=False):
     if 's3' in settings.DEFAULT_FILE_STORAGE:
         storage_url = storage.url(url)
         res = requests.get(storage_url)
         response = HttpResponse(res.content)
         response['content-type'] = res.headers['content-type']
+        if as_attachment and filename:
+            response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         return response
     else:
         with open(os.path.join(settings.MEDIA_ROOT, url)) as f:

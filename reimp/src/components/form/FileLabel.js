@@ -62,7 +62,7 @@ function mapStateToProps(state, props) {
     const { value, extra_buttons } = props
     const filename = (value && value.name) || "<none>"
     const download_url = value && value.download_url
-    const preview_url = value && value.preview_url
+    const preview_url = value && (value.hires_url || value.preview_url)
     const exists = value && value.name
     
     return {

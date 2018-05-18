@@ -27,9 +27,10 @@ class IssueAttachmentDownloadView(APIView):
         if not bp.has_view_issues:
             return PermissionDenied()
 
-        return file_helper.download_media(request,
-                                          attachment.attachment.name,
-                                          content_type=attachment.content_type)
+        response = file_helper.download_media(request,
+                                              attachment.attachment.name,
+                                              content_type=attachment.content_type)
+        return response
     
     def get(self, request, attachment_id):
         return self._get(request, attachment_id)
