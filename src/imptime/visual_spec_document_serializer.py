@@ -9,7 +9,6 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     name = serializers.CharField()
     download_url = serializers.CharField()
     hires_url = serializers.CharField()
-    lores_url = serializers.CharField()
     preview_url = serializers.CharField()
     hires_width = serializers.IntegerField()
     hires_height = serializers.IntegerField()
@@ -35,10 +34,6 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     def get_hires_url(self, request, visual_spec_document):
         return self._base_url(request) + '/imp/visual_spec_document/%s/hires?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
 
-    @classmethod
-    def get_lores_url(self, request, visual_spec_document):
-        return self._base_url(request) + '/imp/visual_spec_document/%s/lores?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)
-    
     @classmethod
     def get_preview_url(self, request, visual_spec_document):
         return self._base_url(request) + '/imp/visual_spec_document/%s/preview?token=%s'%(visual_spec_document.id, request.user.profile.authenticate_token)

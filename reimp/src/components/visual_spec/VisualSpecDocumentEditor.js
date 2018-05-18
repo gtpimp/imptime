@@ -112,12 +112,12 @@ class VisualSpecDocumentEditor extends Component {
               { this.renderAnnotationToolbar() }
               {connectDropTarget(
                    <div className="vsd-editor__doc_image_container">
-                     { visual_spec_document.lores_url &&
+                     { visual_spec_document.preview_url &&
                        <img className="vsd-editor__doc_image"
                             alt="Doc"
                             role="presentation"
                             id={img_element_unique_id}
-                            src={visual_spec_document.lores_url}
+                            src={visual_spec_document.preview_url}
                             onLoad={this.onVisualSpecDocumentImageLoaded}
                        />
                      }

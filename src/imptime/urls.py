@@ -37,7 +37,7 @@ import wiki_api
 from rest_framework.routers import DefaultRouter
 from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
-from visual_spec_document_download import VisualSpecDocumentHiresView, VisualSpecDocumentLoresView
+from visual_spec_document_download import VisualSpecDocumentHiresView
 
 router = DefaultRouter()
 router.register(r'auth', auth_api.AuthViewSet,
@@ -121,7 +121,6 @@ urlpatterns = [
     url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/download', VisualSpecDocumentDownloadView.as_view(), name='download_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/hires', VisualSpecDocumentHiresView.as_view(), name='hires_visual_spec_document'),
-    url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/lores', VisualSpecDocumentLoresView.as_view(), name='lores_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/preview', VisualSpecDocumentPreviewView.as_view(), name='preview_visual_spec_document'),
 
 ] + router.urls

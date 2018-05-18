@@ -263,7 +263,7 @@ function mapStateToProps(state, props) {
     const visual_spec_document_ids = (issue && issue.visual_spec_document_ids) || (project && project.visual_spec_document_ids) || []
     const visual_spec_document_ids_for_project = (project && project.visual_spec_document_ids) || []
     const visual_spec_documents = getVisualSpecDocuments(state, visual_spec_document_ids) || []
-    const visual_spec_documents_editor_urls = map(visual_spec_documents, (vsd) => { return vsd.lores_url })
+    const visual_spec_documents_editor_urls = map(visual_spec_documents, (vsd) => { return vsd.preview_url })
     const issue_header_list = getIssueHeaderListForCurrentMien(state)
     const issue_is_invalidated = is_issue_invalidated(state, issue_id)
 

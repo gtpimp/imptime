@@ -145,7 +145,7 @@ class IssueSidebar extends Component {
     }
 
     renderTitleStack() {
-        const { issue, sidebar_view_mode } = this.props
+        const { issue, full_screen_mode_available, sidebar_view_mode } = this.props
         return (
             <PropertyStackComponent>
               <div className="issue_sidebar__title">
@@ -155,14 +155,14 @@ class IssueSidebar extends Component {
                 <EditableIssueTitle issue_id={issue.id}/>
 
                 <div className="sidebar__context_menu">
-                  { sidebar_view_mode === 'fullscreen' && 
+                  { full_screen_mode_available && sidebar_view_mode === 'fullscreen' && 
                     <div className="icon--fullscreen-exit"
                          onClick={this.onExitFullscreen}/>
                   }
-                    { sidebar_view_mode !== 'fullscreen'  && 
-                      <div className="icon--fullscreen"
-                           onClick={this.onFullscreen}/>
-                    }
+                  { full_screen_mode_available && sidebar_view_mode !== 'fullscreen'  && 
+                    <div className="icon--fullscreen"
+                         onClick={this.onFullscreen}/>
+                  }
                 </div>
                 
               </div>
@@ -485,6 +485,7 @@ function mapStateToProps(state, props) {
     populateEstimates(state, issue)
 
     return {
+        full_screen_mode_available: setSidebarViewMode || false,
         issue: issue || {},
         issue_id: issue_id,
         comments: issue.comments,

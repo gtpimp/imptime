@@ -4,7 +4,7 @@ from django.core.files import File as DjangoFile
 from django.db import models
 from django.db.models import Max
 from impasync.refresh_notifier import RefreshNotifier
-from lib.fields import HiResImageField, LoResImageField, ThumbnailImageField
+from lib.fields import HiResImageField, ThumbnailImageField
 from lib.fields import UploadTo, ProtectedForeignKey
 from lib.models import BaseModel
 from timepiece.models import Business as Project
@@ -23,7 +23,6 @@ upload_to_visual_spec_documents = UploadTo("visual_spec_documents")
 class VisualSpecDocument(BaseModel):
     original_doc = models.FileField(max_length=255, upload_to=upload_to_visual_spec_documents)
     hires = HiResImageField(upload_to=upload_to_visual_spec_documents)
-    lores = LoResImageField(upload_to=upload_to_visual_spec_documents, null=True)
     thumbnail = ThumbnailImageField(upload_to=upload_to_visual_spec_documents, null=True)
     hires_width = models.IntegerField()
     hires_height = models.IntegerField()
@@ -66,7 +65,6 @@ class VisualSpecDocument(BaseModel):
         if vsd is None:
             vsd = VisualSpecDocument.objects.create(original_doc=d_file,
                                                     hires=f_image,
-                                                    lores=f_image,
                                                     hires_width=width,
                                                     hires_height=height,
                                                     thumbnail=f_image,

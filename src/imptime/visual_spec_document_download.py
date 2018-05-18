@@ -57,11 +57,3 @@ class VisualSpecDocumentPreviewView(VisualSpecDocumentHiresView):
 
     def _get_doc_field(self, visual_spec_document):
         return visual_spec_document.thumbnail
-    
-
-class VisualSpecDocumentLoresView(VisualSpecDocumentHiresView):
-    def get(self, request, visual_spec_document_id):
-        return self._get(request, visual_spec_document_id, download=False)
-
-    def _get_doc_field(self, visual_spec_document):
-        return visual_spec_document.lores
