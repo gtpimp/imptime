@@ -109,7 +109,7 @@ class IssueList extends Component {
     }
 
     ensure_issues_are_visible(issue_ids, issues_by_id, list_key) {
-        const { dispatch } = this.props
+        const { dispatch, expanded_issues } = this.props
         let expand_these_issues = []
         map(issue_ids, function(issue_id) {
             const issue = issues_by_id[issue_id]
@@ -117,7 +117,9 @@ class IssueList extends Component {
                 expand_these_issues.push(issue.parent_group_id)
             }
         })
-        dispatch(setItemFlag(list_key, expand_these_issues, 'expanded_issues', true))
+        if ( difference(expand_these_issues, expanded_issues).length > 0 ) {
+            dispatch(setItemFlag(list_key, expand_these_issues, 'expanded_issues', true))
+        }
     }
 
     handleShortcuts(action, event) {

@@ -39,7 +39,9 @@
 .visual_spec_document_gallery__image--no-preview {
     padding: 5px;
     display: flex;
+    max-width: none;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .visual_spec_document_gallery__image--no-preview--icon {
