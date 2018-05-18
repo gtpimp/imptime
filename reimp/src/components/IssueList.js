@@ -88,8 +88,6 @@ class IssueList extends Component {
             dispatch(ensureIssuesLoaded(feature_issue_ids))
             dispatch(ensureSprintsLoaded([sprint_id]))
             dispatch(ensureTagsLoaded(tag_ids))
-            // this.collapseFeatureIssues(this.props)
-            // this.expandUnAutoExpandedFeatures()
         }
         this.ensure_issues_are_visible(selected_ids, issues_by_id, list_key)
     }
@@ -100,26 +98,15 @@ class IssueList extends Component {
         const {onSelectIssues} = this.props
         if ( this.props.sprint_id !== new_props.sprint_id ) {
             onSelectIssues([])
-            // this.collapseFeatureIssues(new_props)
         }
         if ( selected_ids !== new_props.selected_ids || issues_by_id !== new_props.issues_by_id ) {
             this.ensure_issues_are_visible(new_props.selected_ids, new_props.issues_by_id, list_key)
         }
-        // this.expandUnAutoExpandedFeatures(new_props)
         dispatch(fetchIssuesIfNeeded(list_key))
         dispatch(ensureIssuesLoaded(feature_issue_ids))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureTagsLoaded(tag_ids))
     }
-
-    /* expandUnAutoExpandedFeatures(these_props) {
-     *     const { dispatch, list_key, feature_issue_ids, autoexpanded_feature_ids } = these_props || this.props
-     *     const feature_ids_to_auto_expanded = difference(feature_issue_ids, autoexpanded_feature_ids)
-     *     if ( feature_ids_to_auto_expanded.length > 0 ) {
-     *         dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'expanded_issues', true))
-     *         dispatch(setItemFlag(list_key, feature_ids_to_auto_expanded, 'autoexpanded_feature_ids', true))
-     *     }
-     * }*/
 
     ensure_issues_are_visible(issue_ids, issues_by_id, list_key) {
         const { dispatch } = this.props
