@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { remove, uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
+import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
@@ -80,25 +80,30 @@ class IssueList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, sprint_id, feature_issue_ids, tag_ids} = this.props
+        const {dispatch, selected_ids, list_key, sprint_id,
+               feature_issue_ids, tag_ids, issues_by_id} = this.props
         if (sprint_id) {
             dispatch(initList(list_key))
             dispatch(fetchIssuesIfNeeded(list_key))
             dispatch(ensureIssuesLoaded(feature_issue_ids))
             dispatch(ensureSprintsLoaded([sprint_id]))
             dispatch(ensureTagsLoaded(tag_ids))
-            this.collapseFeatureIssues(this.props)
+            // this.collapseFeatureIssues(this.props)
             // this.expandUnAutoExpandedFeatures()
         }
+        this.ensure_issues_are_visible(selected_ids, issues_by_id, list_key)
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, list_key} = this.props
+        const {dispatch, list_key, selected_ids, issues_by_id} = this.props
         const { feature_issue_ids, tag_ids, sprint_id } = new_props
         const {onSelectIssues} = this.props
         if ( this.props.sprint_id !== new_props.sprint_id ) {
             onSelectIssues([])
-            this.collapseFeatureIssues(new_props)
+            // this.collapseFeatureIssues(new_props)
+        }
+        if ( selected_ids !== new_props.selected_ids || issues_by_id !== new_props.issues_by_id ) {
+            this.ensure_issues_are_visible(new_props.selected_ids, new_props.issues_by_id, list_key)
         }
         // this.expandUnAutoExpandedFeatures(new_props)
         dispatch(fetchIssuesIfNeeded(list_key))
@@ -116,19 +121,16 @@ class IssueList extends Component {
      *     }
      * }*/
 
-    collapseFeatureIssues(these_props) {
-        const { dispatch, list_key, feature_issue_ids, selected_issue_ids, issues_by_id } = these_props || this.props
-
-        let collapse_these_issues = feature_issue_ids
-        
-        map(selected_issue_ids, function(selected_issue_id) {
-            const issue = issues_by_id[selected_issue_id]
-            if ( issue.parent_group_id ) {
-                remove(collapse_these_issues, issue.parent_group_id)
+    ensure_issues_are_visible(issue_ids, issues_by_id, list_key) {
+        const { dispatch } = this.props
+        let expand_these_issues = []
+        map(issue_ids, function(issue_id) {
+            const issue = issues_by_id[issue_id]
+            if ( issue && issue.parent_group_id ) {
+                expand_these_issues.push(issue.parent_group_id)
             }
         })
-        
-        dispatch(setItemFlag(list_key, collapse_these_issues, 'expanded_issues', false))
+        dispatch(setItemFlag(list_key, expand_these_issues, 'expanded_issues', true))
     }
 
     handleShortcuts(action, event) {
