@@ -63,6 +63,8 @@ class ToolBar extends Component {
                 return <NudgeToolbarPanel key='nudge' {...this.props} />
             case 'schedule':
                 return <ScheduleToolbarPanel key='schedule' {...this.props} />
+            case 'schedule_item':
+                return <ScheduleToolbarPanel key='schedule_item' {...this.props} />
             case 'project-wiki':
                 return <ProjectWikiToolbarPanel key='project-wiki' {...this.props} />
             case 'work-summary':

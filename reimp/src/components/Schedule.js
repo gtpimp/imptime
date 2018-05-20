@@ -29,7 +29,7 @@ class Schedule extends Component {
 
     onClickSchedule() {
         const { history, schedule } = this.props
-        history.push('/schedules/' + schedule.id);
+        history.push('/schedule/' + schedule.id);
     }
 
     render() {
@@ -51,6 +51,7 @@ class Schedule extends Component {
         } else {
             return (
 		<div key={this.key+"."+schedule.id}
+                     onClick={this.onClickSchedule}
                      className={classNames('schedule',
                                            'div-table__row')}
 		>

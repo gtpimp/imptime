@@ -11,7 +11,7 @@ import {
 } from '../actions/Page'
 import ScheduleList from '../components/ScheduleList'
 
-class SchedulePage extends Component {
+class SchedulesPage extends Component {
 
     componentDidMount() {
         const {dispatch} = this.props
@@ -40,5 +40,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(SchedulePage))
+export default withRouter(connect(mapStateToProps)(SchedulesPage))
 

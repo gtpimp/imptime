@@ -2,7 +2,7 @@ import '../../sass/toolbar-panel.css'
 import {Component} from 'react'
 import { connect } from 'react-redux'
 
-class ScheduleToolbarPanel extends Component {
+class ScheduleItemToolbarPanel extends Component {
 
     render() {
         return null
@@ -15,4 +15,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(ScheduleToolbarPanel)
+export default connect(mapStateToProps)(ScheduleItemToolbarPanel)

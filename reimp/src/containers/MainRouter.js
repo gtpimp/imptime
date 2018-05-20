@@ -22,7 +22,8 @@ import SprintDashboardPage from './SprintDashboardPage'
 import SprintRatePage from './SprintRatePage'
 import UserTimesheetPage from './UserTimesheetPage'
 import NudgePage from './NudgePage'
-import SchedulePage from './SchedulePage'
+import SchedulesPage from './SchedulesPage'
+import ScheduleItemPage from './ScheduleItemPage'
 import WorkSummaryPage from './WorkSummaryPage'
 import ProjectRoadmapPage from './ProjectRoadmapPage'
 import ProjectWikiPage from './ProjectWikiPage'
@@ -41,7 +42,8 @@ class MainRouter extends Component {
               <Route exact path="/account/created" component={AccountCreatedPage}/>
               <Route exact path="/work_summary" component={WorkSummaryPage}/>
               <Route exact path="/nudge" component={NudgePage}/>
-              <Route exact path="/schedule" component={SchedulePage}/>
+              <Route exact path="/schedule" component={SchedulesPage}/>
+              <Route exact path="/schedule/:scheduleId" component={ScheduleItemPage}/>
               <Route exact path="/password/changed" component={PasswordChangedPage}/>
               <Route exact path="/password/change" component={ChangePasswordPage}/>
               <Route exact path="/password/forgot" component={ForgotPasswordPage}/>
