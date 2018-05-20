@@ -12,11 +12,12 @@ class ScheduleSerializer(BaseModelSerializer):
     viewer_user_ids = serializers.ListField(child=serializers.CharField())
     editor_user_ids = serializers.ListField(child=serializers.CharField())
     modified = serializers.DateTimeField()
+    created = serializers.DateTimeField()
 
     class Meta:
         model = Schedule 
         fields = ('id', 'name', 'owner_id', 'viewer_user_ids',
-                  'editor_user_ids', 'modified')
+                  'editor_user_ids', 'modified', 'created')
 
     def to_representation(self, obj, *args, **kwargs):
         obj.viewer_user_ids = obj.viewers.values_list('id', flat=True)

@@ -2,36 +2,13 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import classNames from 'classnames'
+import { map, keys, keyBy } from 'lodash'
 import {
     ensureSchedulesLoaded,
     getSchedule
 } from '../actions/Schedules'
-
-import IssueName from './IssueName'
-import SprintName from './SprintName'
-import ProjectName from './ProjectName'
 import Timestamp from './Timestamp'
-
-// from https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
-function shadeColor2(color, percent) {   
-    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=(f>>8)&0x00FF,B=f&0x0000FF;
-    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
-}
-
-var stringToColour = function(str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  var colour = '#';
-  for (i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
-    colour += ('00' + value.toString(16)).substr(-2);
-  }
-    colour = shadeColor2(colour, 0.7)
-    return colour;
-}
-
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class Schedule extends Component {
 
@@ -52,38 +29,70 @@ class Schedule extends Component {
 
     onClickSchedule() {
         const { history, schedule } = this.props
-        history.push('/projects/' + schedule.project_id + '/sprints/' + schedule.sprint_id + '/issues/' + schedule.issue_id);
+        history.push('/schedules/' + schedule.id);
     }
 
     render() {
 
-        const { schedule } = this.props
+        const { schedule, is_loading, header_list } = this.props
+        const headers_by_key = keyBy(header_list, "key")
+        const visible_header_keys = keys(headers_by_key)
 
-        const reason_class_name = "schedule__reason--" + schedule.reason
+        if ( ! is_loading === false ) {
+	    return (
+		<div key={schedule.id}
+		     onClick={this.onClickSchedule}
+                     className={classNames("div-table__row")}
+		>
+		  <div className="div-table__cell">{schedule && schedule.id}</div>
+		  <div className="div-table__cell">Loading...</div>
+		</div>
+	    )
+        } else {
+            return (
+		<div key={this.key+"."+schedule.id}
+                     className={classNames('schedule',
+                                           'div-table__row')}
+		>
 
-        if ( ! schedule.id ) {
-            return null
-        }
-        
-        return (
-            <div className="schedule" onClick={this.onClickSchedule}>
-              <div className="schedule__content">
-                <div className="schedule__header">
-                  {schedule.name}
+                  { map(visible_header_keys, function(header_key) {
+                        const header = headers_by_key[header_key]
+                        switch(header_key) {
+                            case "name":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div>{schedule.name}</div>
+                                    </div>
+                                )
+                            case "created_at":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div><Timestamp value={schedule.created} format="from_now"/></div>
+                                    </div>
+                                )
+                            default:
+                                console.error("Unknown header: " + header_key)
+                                
+                        }
+                    }
+                    )}
                 </div>
-              </div>
-            </div>
-        )
+            )
+        }
+
     }
 }
 
 function mapStateToProps(state, props) {
-    const { schedule_id } = props
+    const { schedule_id, header_list } = props
     const schedule = getSchedule(state, schedule_id) || {}
 
     return {
         schedule,
-        is_loading: !schedule.id
+        is_loading: !schedule.id,
+        header_list
     }
 }
 

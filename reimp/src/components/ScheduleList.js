@@ -7,19 +7,22 @@ import {
     getVisibleItemIds,
     getNestedObjects,
     ensureNestedObjectsLoaded,
+    getLoadingItemIds,
     isLoading,
     getLastUpdated,
     update_list_pagination
 } from '../actions/ItemList'
 import { ENTITY_KEY__SCHEDULE } from '../actions/ItemListKeyRegistry'
 import {
-    fetchSchedulesIfNeeded
+    fetchSchedulesIfNeeded,
+    getSchedules
 } from '../actions/Schedules'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Schedule from './Schedule'
+import DivTable from './DivTable'
 
 class ScheduleList extends Component {
-    
+
     componentDidMount() {
 	const { dispatch, list_key, nested_objects } = this.props
 	dispatch(initList(list_key))
@@ -34,11 +37,29 @@ class ScheduleList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
+    renderSchedule(schedule, index) {
+        const { list_key, loading_item_ids, header_list } = this.props
+        const that = this
+
+        const is_loading = loading_item_ids.indexOf(schedule.id) !== -1 || schedule.loaded === false
+
+        return (
+            <Schedule key={list_key + "_" + schedule.id + "_" + schedule.name + "_" + index}
+                      is_collapsed={false}
+                      onDelete={that.onDeleteSchedule}
+                      onClickedSchedule={(event) => that.onClickedSchedule(event, schedule.id)}
+                      is_loading={is_loading}
+                      header_list={header_list}
+                      schedule_id={schedule.id}
+            />
+        )
+    }
+
     render() {
 
-        const { schedule_ids, is_loading } = this.props
+        const { schedules, is_loading, header_list } = this.props
 
-        if ( (is_loading && !schedule_ids && schedule_ids.length) === 0 ) {
+        if ( is_loading ) {
             return (
                 <div>Loading...</div>
             )
@@ -46,36 +67,35 @@ class ScheduleList extends Component {
 
         return (
             <div className="schedule-list">
-              { map(schedule_ids, (schedule_id) =>  <Schedule key={schedule_id} schedule_id={schedule_id} />) }
-              { (!schedule_ids || schedule_ids.length) === 0 &&
-                (
-                    <div className="schedule-list__empty">
-                      { ! is_loading && "No schedules" }
-                      { is_loading && "Loading..." }
-                    </div>
-                )
-              }
+              <DivTable header_list={header_list}>
+                { map(schedules, (schedule, index) =>  this.renderSchedule(schedule, index)) }
+              </DivTable>
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { list_key } = props
+    const { list_key, header_list } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__SCHEDULE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
     const nested_objects = getNestedObjects(state, list_key)
     const should_fetch_list = shouldFetchList(state, list_key)
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__SCHEDULE, visible_item_ids)
+    const schedules = getSchedules(state, visible_item_ids)
+    const loading_item_ids = getLoadingItemIds(state, list_key)
 
     return {
         schedule_ids: visible_item_ids,
+        schedules,
         is_loading,
         is_invalidated,
         should_fetch_list,
         last_updated,
-        nested_objects
+        nested_objects,
+        header_list,
+        loading_item_ids,
     }
 }
 
