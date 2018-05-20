@@ -10,7 +10,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from imptime.model import Schedule
+from imptime.models import Schedule
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class ScheduleViewSet(BaseViewSet):
             format_args = params.get('format', {})
             ordering = params.get('ordering', {})
 
-            self._auto_create_default_schedules()
+            self._auto_create_default_schedules(request)
             
             schedules = self.allowed_schedules()
             schedules = self.apply_filter(qs=schedules, raw_filter_args=filter_args)
@@ -44,9 +44,9 @@ class ScheduleViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': context,
                     'nested_objects': {
-                        'project_ids': [x.project_id for x in schedules if x.project_id is not None],
-                        'sprint_ids': [x.sprint_id for x in schedules if x.sprint_id is not None],
-                        'issue_ids': [x.issue_id for x in schedules if x.issue_id is not None]
+                        # 'project_ids': [x.project_id for x in schedules if x.project_id is not None],
+                        # 'sprint_ids': [x.sprint_id for x in schedules if x.sprint_id is not None],
+                        # 'issue_ids': [x.issue_id for x in schedules if x.issue_id is not None]
                     }
             }
             

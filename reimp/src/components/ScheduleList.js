@@ -9,9 +9,7 @@ import {
     ensureNestedObjectsLoaded,
     isLoading,
     getLastUpdated,
-    update_list_pagination,
-    update_list_ordering,
-    update_list_format
+    update_list_pagination
 } from '../actions/ItemList'
 import { ENTITY_KEY__SCHEDULE } from '../actions/ItemListKeyRegistry'
 import {
@@ -26,8 +24,6 @@ class ScheduleList extends Component {
 	const { dispatch, list_key, nested_objects } = this.props
 	dispatch(initList(list_key))
         dispatch(update_list_pagination(list_key, { 'page_size': 50 }))
-        dispatch(update_list_format(list_key, { 'spread': true }))
-        dispatch(update_list_ordering(list_key, { 'due_date': 'asc' }))
         dispatch(fetchSchedulesIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
@@ -54,7 +50,7 @@ class ScheduleList extends Component {
               { (!schedule_ids || schedule_ids.length) === 0 &&
                 (
                     <div className="schedule-list__empty">
-                      { ! is_loading && "No schedules. Go in peace." }
+                      { ! is_loading && "No schedules" }
                       { is_loading && "Loading..." }
                     </div>
                 )

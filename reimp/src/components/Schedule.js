@@ -67,46 +67,9 @@ class Schedule extends Component {
         
         return (
             <div className="schedule" onClick={this.onClickSchedule}>
-              <div className="schedule__title">
-                <div style={{"backgroundColor":stringToColour(schedule.project_id+schedule.sprint_id)}}
-                     className={classNames("schedule__reason", reason_class_name)}>
-
-                  <div className="schedule__project">
-                    <ProjectName project_id={schedule.project_id} />
-                  </div>
-                  <div className="schedule__sprint">
-                    <SprintName sprint_id={schedule.sprint_id} display_mode={["status", "type"]} />
-                  </div>
-                  
-                </div>
-              </div>
               <div className="schedule__content">
                 <div className="schedule__header">
-                  {schedule.reason.replace(/_/g, " ")}
-                </div>
-                <div className="schedule__issue">
-                  <IssueName issue_id={schedule.issue_id} />
-                </div>
-                <div className="schedule__footer">
-                  { schedule.due_date_reason &&
-                    <div className="schedule__due_date">
-                      <div>
-                        {schedule.due_date_reason}
-                      </div>
-                      <div className="schedule__due_date__date">
-                        { schedule.due_date && <Timestamp value={schedule.due_date} format="from_now" /> }
-                        { !schedule.due_date && <div>never</div> }
-                      </div>
-                    </div>
-                  }
-                  <div className="schedule__description">
-                    <div>
-                      {schedule.description}
-                    </div>
-                    <div className="schedule__modified">
-                      as of <Timestamp value={schedule.modified} format="from_now" />
-                    </div>
-                  </div>
+                  {schedule.name}
                 </div>
               </div>
             </div>

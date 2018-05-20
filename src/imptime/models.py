@@ -363,7 +363,7 @@ class Schedule(BaseModel):
         unique_together = ('name', 'owner')
 
     
-class ScheduledItem(BaseModel):
+class ScheduleItem(BaseModel):
     schedule = ProtectedForeignKey(Schedule, related_name='items', null=False, blank=False)
     order = models.IntegerField(default=0, null=False)
     project = ProtectedForeignKey(Project, related_name='schedules', null=True, blank=True)
