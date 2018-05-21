@@ -37,5 +37,5 @@ class CompanyProblemCalculator(object):
                                                  sprint_id=entry_problem['issue__project_id'], #sic
                                                  problem_type='missing_rate',
                                                  money_sensitive=True,
-                                                 defaults={'description':"Time clocked but not rate set",
+                                                 defaults={'description':"Time clocked but no rate set",
                                                            'status':'open'})
