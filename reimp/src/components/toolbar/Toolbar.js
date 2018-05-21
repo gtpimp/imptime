@@ -12,6 +12,7 @@ import SprintRateToolbarPanel from './SprintRateToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import NudgeToolbarPanel from './NudgeToolbarPanel'
 import CompanyProblemToolbarPanel from './CompanyProblemToolbarPanel'
+import ScheduleToolbarPanel from './ScheduleToolbarPanel'
 import WorkSummaryToolbarPanel from './WorkSummaryToolbarPanel'
 import IssueToolbarPanel from './IssueToolbarPanel'
 import IssuesToolbarPanel from './IssuesToolbarPanel'
@@ -63,6 +64,10 @@ class ToolBar extends Component {
                 return <ProjectRoadmapToolbarPanel key='project-roadmap' {...this.props} />
             case 'nudge':
                 return <NudgeToolbarPanel key='nudge' {...this.props} />
+            case 'schedule':
+                return <ScheduleToolbarPanel key='schedule' {...this.props} />
+            case 'schedule_item':
+                return <ScheduleToolbarPanel key='schedule_item' {...this.props} />
             case 'project-wiki':
                 return <ProjectWikiToolbarPanel key='project-wiki' {...this.props} />
             case 'work-summary':

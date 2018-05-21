@@ -14,6 +14,8 @@ export const LIST_KEY__RELEASE_NOTES_LIST = 'release_notes_list'
 export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
 export const LIST_KEY__NUDGE_LIST = 'nudge_list'
 export const LIST_KEY__COMPANY_PROBLEM_LIST = 'company_problem_list'
+export const LIST_KEY__SCHEDULE_LIST = 'schedule_list'
+export const LIST_KEY__SCHEDULE_ITEM_LIST = 'schedule_item_list'
 export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 export const LIST_KEY__MIEN_LIST = 'mien_list'
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
@@ -43,6 +45,8 @@ export const ENTITY_KEY__SPRINT_ROADMAP = 'sprint_roadmap'
 export const ENTITY_KEY__TAG = 'tag'
 export const ENTITY_KEY__NUDGE = 'nudge'
 export const ENTITY_KEY__COMPANY_PROBLEM = 'company_problem'
+export const ENTITY_KEY__SCHEDULE = 'schedule'
+export const ENTITY_KEY__SCHEDULE_ITEM = 'schedule_item'
 export const ENTITY_KEY__MIEN = 'mien'
 export const ENTITY_KEY__WIKI = 'wiki'
 export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
@@ -80,6 +84,8 @@ export const PAGE_KEY__BULK_CREATE_ISSUES_PAGE = 'bulk_create_issues_page'
 export const PAGE_KEY__RELEASE_NOTES_PAGE = 'release_notes_page'
 export const PAGE_KEY__NUDGE_PAGE = 'nudge_page'
 export const PAGE_KEY__COMPANY_PROBLEM_PAGE = 'company_problem_page'
+export const PAGE_KEY__SCHEDULE_PAGE = 'schedules_page'
+export const PAGE_KEY__SCHEDULE_ITEM_PAGE = 'schedule_item_page'
 export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
 export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 
@@ -139,6 +145,10 @@ export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'sort_date': {label:"Recent activity on", width: medium_col_width},
                                   'small_delete': {label:"", width:tiny_col_width}
 }
+
+export var SCHEDULE_HEADER_LIST = [ {key:'name', label:'Name', description:'Schedule Name', width:large_col_width},
+                                    {key:'created_at', label:'Created', description:'Created at', width:medium_col_width}
+]
 
 export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                  'start_time': {label:"First clock", width:small_col_width},

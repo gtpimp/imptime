@@ -376,3 +376,22 @@ class CompanyProblem(BaseModel):
         RefreshNotifier().notify_model_delete(self)
 
     
+class Schedule(BaseModel):
+    name = models.CharField(max_length=255, null=False, blank=False)
+    owner = ProtectedForeignKey(User, related_name='owned_schedules', null=False, blank=False)
+    viewers = models.ManyToManyField(User, related_name='viewable_schedules')
+    editors = models.ManyToManyField(User, related_name='editable_schedules')
+
+    class Meta:
+        unique_together = ('name', 'owner')
+
+    
+class ScheduleItem(BaseModel):
+    schedule = ProtectedForeignKey(Schedule, related_name='items', null=False, blank=False)
+    order = models.IntegerField(default=0, null=False, db_index=True)
+    project = ProtectedForeignKey(Project, related_name='schedules', null=True, blank=True)
+    sprint = ProtectedForeignKey(Sprint, related_name='schedules', null=True, blank=True)
+    issue = ProtectedForeignKey(Issue, related_name='schedules', null=True, blank=True)
+    start_at = models.DateTimeField(null=True, db_index=True)
+    end_at = models.DateTimeField(null=True, db_index=True)
+    duration_hours = models.FloatField(null=True)

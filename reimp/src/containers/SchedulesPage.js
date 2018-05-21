@@ -1,0 +1,59 @@
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
+import {
+    LIST_KEY__SCHEDULE_LIST,
+    PAGE_KEY__SCHEDULE_PAGE,
+    SCHEDULE_HEADER_LIST
+} from '../actions/ItemListKeyRegistry'
+import {
+    set_toolbars,
+} from '../actions/Page'
+import ScheduleList from '../components/ScheduleList'
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
+
+class SchedulesPage extends Component {
+
+    componentDidMount() {
+        const {dispatch} = this.props
+        dispatch(set_toolbars(PAGE_KEY__SCHEDULE_PAGE, ['schedule']))
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch } = props
+        const breadcrumbs = [ {to: '/schedule',
+                               label: 'Schedules',
+                               type: 'schedules'}]
+        dispatch(setBreadcrumbs(breadcrumbs))
+    }
+            
+    render() {
+        const { schedule_header_list } = this.props
+        
+        return (
+            <div className="list-layout">
+              <ScheduleList list_key={LIST_KEY__SCHEDULE_LIST}
+                            header_list={schedule_header_list}
+              />
+            </div>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+
+    const schedule_header_list = SCHEDULE_HEADER_LIST
+    
+    return {
+        schedule_header_list
+    }
+}
+
+export default withRouter(connect(mapStateToProps)(SchedulesPage))
+

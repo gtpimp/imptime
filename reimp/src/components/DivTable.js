@@ -6,6 +6,8 @@ import classNames from 'classnames'
 import { map } from 'lodash'
 import '../sass/div-table.css'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
+
 
 class DivTable extends Component {
 
@@ -26,18 +28,33 @@ class DivTable extends Component {
         const index_of_destination = result.destination.index
         onReorder(index_of_row_being_moved, index_of_destination)
     }
+
+    renderDefaultHeader(header_list) {
+        return (
+            <div className="div-table__header_row">
+              { map(header_list, (v, k) => (
+                    <div key={k}
+                         className="div-table__header_cell"
+                         style={getCellStyle(v)}>
+                      {v.label }
+                    </div>
+                ))}
+            </div>
+        )
+    }
     
     render() {
 
-        const { can_drag, permission_name_for_dragging, project_id } = this.props
+        const { can_drag, permission_name_for_dragging, project_id, renderHeader, header_list } = this.props
         
         return (
             <div className="div-table">
-              { this.props.renderHeader &&
+              { renderHeader &&
                 <div className="div-table__header">
-                  {this.props.renderHeader()}
+                  {renderHeader()}
                 </div>
               }
+              { ! renderHeader && header_list && this.renderDefaultHeader(header_list) }
               <div className="div-table__body">
 
                 { permission_name_for_dragging &&
@@ -83,12 +100,14 @@ class DivTable extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onReorder, project_id, permission_name_for_dragging } = props
+    const { onReorder, project_id, permission_name_for_dragging, header_list, renderHeader } = props
     const can_drag = !permission_name_for_dragging || has_permission(state, project_id, permission_name_for_dragging)
     return {
         onReorder,
         can_drag,
-        permission_name_for_dragging
+        permission_name_for_dragging,
+        header_list,
+        renderHeader
     }
 }
 
