@@ -55,7 +55,7 @@ export function setGlobalEntityFlag(entity_key, field_name, new_value) {
 }
 
 export function getGlobalEntityFlag(entity_key, state, field_name) {
-    return ((state || {})[entity_key] || {})[field_name]
+    return get(state, ["item", entity_key, field_name])
 }
 
 function announceLoadingItems(entity_key, item_ids) {

@@ -33,6 +33,7 @@ import {
     LIST_KEY__SPRINT_LIST,
     LIST_KEY__ISSUE_LIST,
     LIST_KEY__NUDGE_LIST,
+    LIST_KEY__COMPANY_PROBLEM_LIST,
     LIST_KEY__PROJECT_USER_LIST,
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
     LIST_KEY__RELEASE_NOTES_LIST,
@@ -146,6 +147,10 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[SELECTOR__SPRINTS] = true
     } else if ( d.entity_name === 'nudge' ) {
         list_keys_to_invalidate[LIST_KEY__NUDGE_LIST] = true
+    } else if ( d.entity_name === 'companyproblem' ) {
+        if ( d.action_type === "create" ) {
+            list_keys_to_invalidate[LIST_KEY__COMPANY_PROBLEM_LIST] = true
+        }
     } else if ( d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {
         list_keys_to_invalidate[LIST_KEY__FORM_TAG_LIST] = true
     } else if ( d.entity_name === "wikipage" ) {

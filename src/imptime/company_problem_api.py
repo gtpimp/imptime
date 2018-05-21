@@ -27,7 +27,7 @@ class CompanyProblemViewSet(BaseViewSet):
             format_args = params.get('format', {})
             ordering = params.get('ordering', {})
 
-            company_problems = self.allowed_company_problems()
+            company_problems = self.allowed_company_problems().order_by("created")
             company_problems = self.apply_filter(qs=company_problems, raw_filter_args=filter_args)
             company_problems = self.apply_ordering(qs=company_problems, ordering=ordering)
             company_problems = self.apply_pagination(qs=company_problems, pagination=pagination)
@@ -43,7 +43,8 @@ class CompanyProblemViewSet(BaseViewSet):
                     'payload': context,
                     'nested_objects': {
                         'project_ids': [x.sprint.business_id for x in company_problems],
-                        'sprint_ids': [x.sprint_id for x in company_problems if x.sprint_id is not None]
+                        'sprint_ids': [x.sprint_id for x in company_problems if x.sprint_id is not None],
+                        'user_ids': [x.user_id for x in company_problems if x.user_id is not None]
                     }
             }
             
@@ -53,6 +54,36 @@ class CompanyProblemViewSet(BaseViewSet):
         
         return HttpResponse(JSONRenderer().render(data))
 
+    def update(self, request, pk):
+        try:
+            params = request.data
+            field_name = params['field_name']
+            new_value = params['value']
+
+            if 'company_problem_ids' in params:
+                company_problem_pks = params['company_problem_ids']
+            else:
+                company_problem_pks = [pk]
+
+            for company_problem_pk in company_problem_pks:
+                company_problem = self.allowed_company_problems().get(pk=company_problem_pk)
+                if company_problem.money_sensitive and not self.logged_in_permissions(company_problem.project).can_view_ctc_billable_rates:
+                    continue
+                
+                if field_name == 'status':
+                    company_problem.status = new_value
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
+                company_problem.save()
+
+            data = {'status': 'success',
+                    'payload': { 'items': company_problem_pks }}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
+    
     @list_route(methods=['POST'])
     def recalculate(self, request):
         try:

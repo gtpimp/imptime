@@ -16,7 +16,7 @@ class OtherUser extends Component {
 
     refresh() {
         const { dispatch, user_id, user } = this.props
-        if ( user_id && user && user.loaded === false ) {
+        if ( user_id && (!user || user.loaded === false) ) {
             dispatch(ensureUsersLoaded([user_id]))
         }
     }

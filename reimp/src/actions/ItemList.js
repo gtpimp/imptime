@@ -6,6 +6,7 @@ import { GENERIC_ENTITIES } from './ItemListKeyRegistry'
 import { ensureProjectsLoaded } from './Projects'
 import { ensureSprintsLoaded } from './Sprints'
 import { ensureIssuesLoaded } from './Issues'
+import { ensureUsersLoaded } from './Users'
 export const INIT_LIST = 'INIT_LIST'
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
 export const ANNOUNCE_LIST_LOAD_FAILED = 'ANNOUNCE_LIST_LOAD_FAILED'
@@ -421,7 +422,9 @@ export function ensureNestedObjectsLoaded(nested_objects) {
                 dispatch(ensureSprintsLoaded(ids))
             } else if ( id_name === "issue_ids" ) {
                 dispatch(ensureIssuesLoaded(ids))
-            }
+            } else if ( id_name === "user_ids" ) {
+                dispatch(ensureUsersLoaded(ids))
+            } 
         })
     }
 }
@@ -461,7 +464,8 @@ export function getSelectedItems(state, list_key, entity_key) {
 }
 
 export function isLoading(state, list_key) {
-    return !(state.item_list && state.item_list[list_key] && !state.item_list[list_key].is_loading)
+    return get(state, ["item_list", list_key, "is_loading"], true) ||
+           get(state, ["item_list", list_key, "loading_matching_items"], true)
 }
 
 export function isInvalidated(state, list_key) {

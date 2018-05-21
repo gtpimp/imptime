@@ -11,8 +11,9 @@ class CompanyProblemSerializer(BaseModelSerializer):
     sprint_id = serializers.CharField()
     project_id = serializers.CharField(source="sprint.business_id") #sic
     modified = serializers.DateTimeField()
+    created = serializers.DateTimeField()
 
     class Meta:
         model = CompanyProblem 
-        fields = ('id', 'user_id', 'sprint_id', 'problem_type',
-                  'description', 'project_id', 'modified')
+        fields = ('id', 'user_id', 'sprint_id', 'problem_type', 'status',
+                  'description', 'project_id', 'modified', 'created')

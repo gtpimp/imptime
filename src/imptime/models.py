@@ -355,6 +355,10 @@ class Mien(BaseModel):
 class CompanyProblem(BaseModel):
 
     PROBLEM_TYPE_OPTIONS = [ ('missing_rate', 'Missing rate') ]
+    PROBLEM_TYPE_STATUSES = [ ('open', 'Open'),
+                              ('closed', 'Closed'),
+                              ('cant_fix', "Can't fix") ]
+    DELETABLE_STATUSES = ['open', 'closed']
     
     user = models.ForeignKey(User, related_name='company_problems', null=False, blank=False)
     project = models.ForeignKey(Project, related_name='company_problems', null=False)
@@ -362,6 +366,7 @@ class CompanyProblem(BaseModel):
     description = models.TextField(null=True, blank=True)
     problem_type = models.CharField(max_length=100, null=False, choices=PROBLEM_TYPE_OPTIONS)
     money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
+    status = models.CharField(max_length=100, choices=PROBLEM_TYPE_STATUSES, default='open')
     
     def save(self, *args, **kwargs):
         was_created = not self.id

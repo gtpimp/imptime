@@ -150,6 +150,17 @@ export var SCHEDULE_HEADER_LIST = [ {key:'name', label:'Name', description:'Sche
                                     {key:'created_at', label:'Created', description:'Created at', width:medium_col_width}
 ]
 
+export var COMPANY_PROBLEM_HEADER_LIST = [ {key:'status', label:'Status', description:'Status', width:medium_col_width},
+                                           {key:'project', label:'Project', description:'Project', width:medium_col_width},
+                                           {key:'sprint', label:'Sprint', description:'Sprint', width:medium_col_width},
+                                           {key:'user', label:'User', description:'Affected user', width:large_col_width},
+                                           {key:'created_at', label:'Created at', description:'Was a problem at', width:medium_col_width},
+                                           {key:'modified_at', label:'Modified at', description:'Last modified at', width:medium_col_width},
+                                           {key:'problem_type', label:'Type', description:'Type', width:medium_col_width},
+                                           {key:'description', label:'Description', description:'Description', width:medium_col_width},
+                                           {key:'action_buttons', label:'', description:'Action buttons', width:large_col_width}
+]
+
 export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                  'start_time': {label:"First clock", width:small_col_width},
                                  'end_time': {label:"Last clock", width:small_col_width},

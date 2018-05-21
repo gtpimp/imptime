@@ -14,7 +14,9 @@ import {
     deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
-    announceItemsSaving
+    announceItemsSaving,
+    setGlobalEntityFlag,
+    getGlobalEntityFlag
 } from '../actions/Item'
 
 export function invalidateAllCompanyProblems() {
@@ -70,7 +72,8 @@ export function deleteCompanyProblem(company_problem_id) {
 export function recalculateCompanyProblems() {
     return (dispatch, getState) => {
 	const state = getState()
-	dispatch(announceItemsSaving(ENTITY_KEY__COMPANY_PROBLEM, []))
+        dispatch(announceItemsSaving(ENTITY_KEY__COMPANY_PROBLEM, []))
+        dispatch(setGlobalEntityFlag(ENTITY_KEY__COMPANY_PROBLEM, "recalculating", true))
 	let data = {}
 	return impfetch( state, "imp/" + ENTITY_KEY__COMPANY_PROBLEM + "/recalculate/", dispatch,
 			 {method: "POST",
@@ -83,14 +86,21 @@ export function recalculateCompanyProblems() {
              if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
                  dispatch(announceItemSaveFailed(ENTITY_KEY__COMPANY_PROBLEM, json.error))
+                 dispatch(setGlobalEntityFlag(ENTITY_KEY__COMPANY_PROBLEM, "recalculating", false))
              } else {
 		 console.log('Request succeeded with JSON response', json);
 		 dispatch(announceItemsSaved(ENTITY_KEY__COMPANY_PROBLEM, []))
+                 dispatch(setGlobalEntityFlag(ENTITY_KEY__COMPANY_PROBLEM, "recalculating", false))
              }
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
              dispatch(announceItemSaveFailed(ENTITY_KEY__COMPANY_PROBLEM, error))
+             dispatch(setGlobalEntityFlag(ENTITY_KEY__COMPANY_PROBLEM, "recalculating", false))
 	 })
     }
+}
+
+export function isRecalculating(state) {
+    return getGlobalEntityFlag(ENTITY_KEY__COMPANY_PROBLEM, state, "recalculating") === true
 }

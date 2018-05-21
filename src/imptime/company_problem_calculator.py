@@ -12,12 +12,15 @@ from django.db.models import F, ExpressionWrapper
 class CompanyProblemCalculator(object):
 
     def refresh_all(self, projects):
-        company_problems = CompanyProblem.objects.filter(project__in=projects)
-        company_problems.delete()
+        company_problems = CompanyProblem.objects.filter(project__in=projects,
+                                                         status__in=CompanyProblem.DELETABLE_STATUSES)
+        for company_problem in company_problems:
+            company_problem.delete()
         self._create_missing_rates(projects)
 
     def _create_missing_rates(self, projects):
         entries = Entry.objects.filter(issue__project__business_id__in=projects)
+        entries = entries.exclude(issue__project__status3__name__in=Sprint.closed_states()) #sic
         
         enriched = entries.order_by("issue__project__business_id", "issue__project_id", "user_id")\
                           .values("issue__project__business_id", "issue__project_id", "user_id")\
@@ -32,6 +35,7 @@ class CompanyProblemCalculator(object):
             CompanyProblem.objects.get_or_create(user_id=entry_problem['user_id'],
                                                  project_id=entry_problem['issue__project__business_id'], #sic
                                                  sprint_id=entry_problem['issue__project_id'], #sic
-                                                 description="No rate set",
                                                  problem_type='missing_rate',
-                                                 money_sensitive=True)
+                                                 money_sensitive=True,
+                                                 defaults={'description':"Time clocked but not rate set",
+                                                           'status':'open'})

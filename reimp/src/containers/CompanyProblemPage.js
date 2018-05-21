@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {
     LIST_KEY__COMPANY_PROBLEM_LIST,
-    PAGE_KEY__COMPANY_PROBLEM_PAGE
+    PAGE_KEY__COMPANY_PROBLEM_PAGE,
+    COMPANY_PROBLEM_HEADER_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -18,17 +19,23 @@ class CompanyProblemPage extends Component {
     }
             
     render() {
+        const { company_problem_header_list } = this.props
+        
         return (
             <div className="list-layout">
-              <CompanyProblemList list_key={LIST_KEY__COMPANY_PROBLEM_LIST}/>
+              <CompanyProblemList list_key={LIST_KEY__COMPANY_PROBLEM_LIST}
+                                  header_list={company_problem_header_list} />
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
+
+    const company_problem_header_list = COMPANY_PROBLEM_HEADER_LIST
     
     return {
+        company_problem_header_list
     }
 }
 

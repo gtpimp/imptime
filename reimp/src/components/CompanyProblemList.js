@@ -37,37 +37,35 @@ class CompanyProblemList extends Component {
 
     render() {
 
-        const { company_problem_ids, is_loading } = this.props
+        const { company_problem_ids, is_loading, header_list } = this.props
 
-        if ( (is_loading && !company_problem_ids && company_problem_ids.length) === 0 ) {
+        if ( is_loading ) {
             return (
                 <div>Loading...</div>
             )
         }
 
-        return (
+        if ( !company_problem_ids || company_problem_ids.length === 0 ) {
+            return (
+                <div className="company_problem-list__empty">
+                  { ! is_loading && "No company problems" }
+                </div>
+            )
+        }
 
-            <DivTable renderHeader={this.renderHeader}>
-              {projects.map((project, index) => this.renderExpandedProject(project, index))}
+        return (
+            <DivTable header_list={header_list}>
+              {map(company_problem_ids, (company_problem_id, index) =>
+                  <CompanyProblem key={index}
+                                  company_problem_id={company_problem_id}
+                                  header_list={header_list}/>)}
             </DivTable>
-            
-            <div className="company_problem-list">
-              { map(company_problem_ids, (company_problem_id) =>  <CompanyProblem key={company_problem_id} company_problem_id={company_problem_id} />) }
-              { (!company_problem_ids || company_problem_ids.length) === 0 &&
-                (
-                    <div className="company_problem-list__empty">
-                      { ! is_loading && "No company problems" }
-                      { is_loading && "Loading..." }
-                    </div>
-                )
-              }
-            </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { list_key } = props
+    const { list_key, header_list } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__COMPANY_PROBLEM, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -81,7 +79,8 @@ function mapStateToProps(state, props) {
         is_invalidated,
         should_fetch_list,
         last_updated,
-        nested_objects
+        nested_objects,
+        header_list
     }
 }
 

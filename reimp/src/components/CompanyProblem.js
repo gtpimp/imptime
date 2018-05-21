@@ -2,21 +2,26 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import classNames from 'classnames'
+import { map, keys, keyBy } from 'lodash'
 import {
     ensureCompanyProblemsLoaded,
-    getCompanyProblem
+    getCompanyProblem,
+    updateCompanyProblem
 } from '../actions/CompanyProblems'
 
-import IssueName from './IssueName'
 import SprintName from './SprintName'
 import ProjectName from './ProjectName'
+import OtherUser from './OtherUser'
 import Timestamp from './Timestamp'
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class CompanyProblem extends Component {
 
     constructor(props) {
         super(props)
         this.onClickCompanyProblem = this.onClickCompanyProblem.bind(this)
+        this.onFixedCompanyProblem = this.onFixedCompanyProblem.bind(this)
+        this.onCantFixCompanyProblem = this.onCantFixCompanyProblem.bind(this)
     }
     
     componentDidMount() {
@@ -29,76 +34,169 @@ class CompanyProblem extends Component {
 	dispatch(ensureCompanyProblemsLoaded([company_problem_id]))
     }
 
-    onClickCompanyProblem() {
+    onClickCompanyProblem(event) {
         const { history, company_problem } = this.props
-        history.push('/projects/' + company_problem.project_id + '/sprints/' + company_problem.sprint_id + '/issues/' + company_problem.issue_id);
+        if ( event ) {
+            event.preventDefault()
+        }
+
+        if ( company_problem.problem_type === "missing_rate" ) {
+            history.push('/projects/' + company_problem.project_id + '/sprints/' + company_problem.sprint_id + '/rates')
+        } else {
+            history.push('/projects/' + company_problem.project_id + '/sprints/' + company_problem.sprint_id)
+        }
+    }
+
+    onFixedCompanyProblem(event) {
+        const { dispatch, company_problem } = this.props
+        if ( event ) {
+            event.preventDefault()
+        }
+        dispatch(updateCompanyProblem([company_problem.id], 'status', 'closed'))
+    }
+
+    onCantFixCompanyProblem(event) {
+        const { dispatch, company_problem } = this.props
+        if ( event ) {
+            event.preventDefault()
+        }
+        dispatch(updateCompanyProblem([company_problem.id], 'status', 'cant_fix'))
+    }
+
+    renderCompanyProblemType() {
+        const { company_problem } = this.props
+        switch(company_problem.problem_type) {
+            case "missing_rate": return "Missing Rate"
+            default: return company_problem.problem_type
+        }
+    }
+
+    renderCompanyProblemStatus() {
+        const { company_problem } = this.props
+        switch(company_problem.status) {
+            case "open": return "Open"
+            case "closed": return "Fixed"
+            case "cant_fix": return "Can't fix"
+            default: return company_problem.status
+        }
     }
 
     render() {
 
-        const { company_problem } = this.props
+        const { company_problem, is_loading, header_list } = this.props
+        const headers_by_key = keyBy(header_list, "key")
+        const visible_header_keys = keys(headers_by_key)
+        const that = this
 
-        const reason_class_name = "company_problem__reason--" + company_problem.reason
+        if ( ! is_loading === false ) {
+	    return (
+		<div key={company_problem.id}
+		     className={classNames("div-table__row")}
+		>
+		  <div className="div-table__cell">{company_problem && company_problem.id}</div>
+		  <div className="div-table__cell">Loading...</div>
+		</div>
+	    )
+        } else {
+            return (
+		<div key={this.key+"."+company_problem.id}
+                     className={classNames('company_problem',
+                                           'div-table__row')}
+		>
 
-        if ( ! company_problem.id ) {
-            return null
+                  { map(visible_header_keys, function(header_key) {
+                        const header = headers_by_key[header_key]
+                        switch(header_key) {
+                            case "status":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className={classNames({"icon__status--unresolved":company_problem.status === "open",
+                                                                  "icon__status--resolved":company_problem.status === "closed",
+                                                                  "icon__status--cant-resolve":company_problem.status === "cant_fix"})}/>
+                                      {that.renderCompanyProblemStatus()}
+                                    </div>
+                                )
+                            case "user":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div><OtherUser user_id={company_problem.user_id}/></div>
+                                    </div>
+                                )
+                            case "sprint":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div><SprintName sprint_id={company_problem.sprint_id}/></div>
+                                    </div>
+                                )
+                            case "project":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div><ProjectName project_id={company_problem.project_id}/></div>
+                                    </div>
+                                )
+                            case "created_at":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div><Timestamp value={company_problem.created} format="from_now"/></div>
+                                    </div>
+                                )
+                            case "modified_at":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div><Timestamp value={company_problem.modified} format="from_now"/></div>
+                                    </div>
+                                )
+                            case "problem_type":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div>
+                                        { that.renderCompanyProblemType() }
+                                      </div>
+                                    </div>
+                                )
+                            case "description":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div>{company_problem.description}</div>
+                                    </div>
+                                )
+                            case "action_buttons":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <button onClick={that.onClickCompanyProblem}>Show</button>
+                                      <button onClick={that.onFixedCompanyProblem}>Fixed</button>
+                                      <button onClick={that.onCantFixCompanyProblem}>Can't Fix</button>
+                                    </div>
+                                )
+                            default:
+                                console.error("Unknown header: " + header_key)
+                                
+                        }
+                    }
+                    )}
+                </div>
+            )
         }
-        
-        return (
-            <div className="company_problem" onClick={this.onClickCompanyProblem}>
-              <div className="company_problem__title">
-                <div className={classNames("company_problem__reason", reason_class_name)}>
-
-                  <div className="company_problem__project">
-                    <ProjectName project_id={company_problem.project_id} />
-                  </div>
-                  <div className="company_problem__sprint">
-                    <SprintName sprint_id={company_problem.sprint_id} display_mode={["status", "type"]} />
-                  </div>
-                  
-                </div>
-              </div>
-              <div className="company_problem__content">
-                <div className="company_problem__header">
-                  {company_problem.reason.replace(/_/g, " ")}
-                </div>
-                <div className="company_problem__issue">
-                  <IssueName issue_id={company_problem.issue_id} />
-                </div>
-                <div className="company_problem__footer">
-                  { company_problem.due_date_reason &&
-                    <div className="company_problem__due_date">
-                      <div>
-                        {company_problem.due_date_reason}
-                      </div>
-                      <div className="company_problem__due_date__date">
-                        { company_problem.due_date && <Timestamp value={company_problem.due_date} format="from_now" /> }
-                        { !company_problem.due_date && <div>never</div> }
-                      </div>
-                    </div>
-                  }
-                  <div className="company_problem__description">
-                    <div>
-                      {company_problem.description}
-                    </div>
-                    <div className="company_problem__modified">
-                      as of <Timestamp value={company_problem.modified} format="from_now" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-        )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { company_problem_id } = props
+    const { company_problem_id, header_list } = props
     const company_problem = getCompanyProblem(state, company_problem_id) || {}
 
     return {
         company_problem,
-        is_loading: !company_problem.id
+        is_loading: !company_problem.id,
+        header_list
     }
 }
 

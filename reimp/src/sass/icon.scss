@@ -177,6 +177,28 @@
     @include icon(24px, 24px, 'fullscreen_exit.png');
 }
 
+.icon__status--unresolved {
+    height: 15px;
+    width: 15px;
+    background-color:orange;
+    border-radius: 7px;
+}
+
+.icon__status--resolved {
+    height: 15px;
+    width: 15px;
+    background-color:green;
+    border-radius: 7px;
+}
+
+.icon__status--cant-resolve {
+    height: 15px;
+    width: 15px;
+    background-color:gray;
+    border-radius: 7px;
+}
+
+
 .icon__status--active {
     height: 15px;
     width: 15px;
