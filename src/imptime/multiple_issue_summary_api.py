@@ -201,7 +201,6 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                                 
         return enriched
     
-    
     def _get_actuals_by_user(self, issues_qs, estimates_by_user):
         entries = Entry.objects.filter(issue__in=issues_qs)
         entries = entries.order_by("user_id")\

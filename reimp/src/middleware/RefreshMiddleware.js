@@ -16,6 +16,7 @@ import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { invalidateSprintReviews } from '../actions/SprintReviews'
 import { invalidateProjectDashboards } from '../actions/ProjectDashboards'
 import { invalidateNudges } from '../actions/Nudges'
+import { invalidateCompanyProblems } from '../actions/CompanyProblems'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 import { invalidateAutoClocks } from '../actions/AutoClock'
 import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSummary'
@@ -89,6 +90,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateSprintReviews([d.entity_ref]))
     } else if ( d.entity_name === 'nudge' ) {
         dispatch(invalidateNudges([d.entity_ref]))
+    } else if ( d.entity_name === 'companyproblem' ) {
+        dispatch(invalidateCompanyProblems([d.entity_ref]))
     } else if ( d.entity_name === 'entry' ) {
         dispatch(invalidateAutoClocks([d.entity_ref]))
     } else if ( d.entity_name === 'user' ) {

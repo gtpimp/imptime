@@ -11,6 +11,7 @@ import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
 import SprintRateToolbarPanel from './SprintRateToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import NudgeToolbarPanel from './NudgeToolbarPanel'
+import CompanyProblemToolbarPanel from './CompanyProblemToolbarPanel'
 import WorkSummaryToolbarPanel from './WorkSummaryToolbarPanel'
 import IssueToolbarPanel from './IssueToolbarPanel'
 import IssuesToolbarPanel from './IssuesToolbarPanel'
@@ -26,6 +27,8 @@ class ToolBar extends Component {
         
     renderPanel(id) {
         switch(id) {
+            case 'company_problem':
+                return <CompanyProblemToolbarPanel key='company_problem' {...this.props} />
             case 'issue':
                 return <IssueToolbarPanel key="issue-panel"/>
             case 'issues':

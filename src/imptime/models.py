@@ -351,3 +351,28 @@ class Mien(BaseModel):
     @classmethod
     def create_default_mien(self, user):
         return self.objects.get_or_create(user=user, title='Default view')
+
+class CompanyProblem(BaseModel):
+
+    PROBLEM_TYPE_OPTIONS = [ ('missing_rate', 'Missing rate') ]
+    
+    user = models.ForeignKey(User, related_name='company_problems', null=False, blank=False)
+    project = models.ForeignKey(Project, related_name='company_problems', null=False)
+    sprint = models.ForeignKey(Sprint, related_name='company_problems', null=False)
+    description = models.TextField(null=True, blank=True)
+    problem_type = models.CharField(max_length=100, null=False, choices=PROBLEM_TYPE_OPTIONS)
+    money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
+    
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(CompanyProblem, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    def delete(self, *args, **kwargs):
+        super(CompanyProblem, self).delete(*args, **kwargs)
+        RefreshNotifier().notify_model_delete(self)
+
+    

@@ -54,6 +54,38 @@
 }
 
 .navbar__tab {
-  align-items: center;
-  display: inline-flex;
+    align-items: center;
+    display: inline-flex;
+    position: relative;
+}
+
+.navbar__submenu {
+    position: absolute;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 3px;
+    background-color: #fff;
+    z-index: 9;
+    min-width: 145px;
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    right: 0px;
+}
+
+.navbar__submenu_item {
+    color: #999;
+    margin-top: 3px;
+    text-transform: none;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: $font-size-default;
+
+    &:hover {
+        color: #333;
+        background-color: #eee;
+        cursor: pointer;
+    }
 }

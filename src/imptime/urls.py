@@ -6,6 +6,7 @@ import filter_api
 import issue_api
 import issue_attachment_api
 import clock_api
+import company_problem_api
 import invoice_api
 import issue_comment_api
 import issue_estimate_api
@@ -13,6 +14,7 @@ import issue_review_api
 import mien_api
 import multiple_issue_summary_api
 import nudge_api
+import company_problem_api
 import project_api
 import project_dashboard_api
 import project_statement_api
@@ -72,7 +74,10 @@ router.register(r'issue_review', issue_review_api.IssueReviewViewSet,
                 base_name='issue_review')
 router.register(r'clock', clock_api.ClockViewSet,
                 base_name='clock')
-router.register(r'auto_clock', clock_api.ClockViewSet, base_name='auto_clock') #duplicate of /clock, maybe to be resolved, unclear right not if they'll diverge
+router.register(r'company_problem', company_problem_api.CompanyProblemViewSet,
+                base_name='company_problem')
+router.register(r'auto_clock', clock_api.ClockViewSet,
+                base_name='auto_clock') #duplicate of /clock, maybe to be resolved, unclear right not if they'll diverge
 router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
