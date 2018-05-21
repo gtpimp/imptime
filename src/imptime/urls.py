@@ -14,6 +14,7 @@ import mien_api
 import multiple_issue_summary_api
 import nudge_api
 import schedule_api
+import schedule_item_api
 import project_api
 import project_dashboard_api
 import project_statement_api
@@ -94,6 +95,8 @@ router.register(r'nudge', nudge_api.NudgeViewSet,
                 base_name='nudge')
 router.register(r'schedule', schedule_api.ScheduleViewSet,
                 base_name='schedule')
+router.register(r'schedule_item', schedule_item_api.ScheduleItemViewSet,
+                base_name='schedule_item')
 router.register(r'mien', mien_api.MienViewSet,
                 base_name='mien_api')
 router.register(r'multiple_issue_summary', multiple_issue_summary_api.MultipleIssueSummaryViewSet,

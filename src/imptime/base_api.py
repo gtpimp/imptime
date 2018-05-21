@@ -16,7 +16,7 @@ from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 from imptime.models import VisualSpecIssueAnnotation, WikiPage
-from imptime.models import Mien, Schedule
+from imptime.models import Mien, Schedule, ScheduleItem
 from invoicing.models import Invoice
 
 class PermissionHelper():
@@ -72,7 +72,7 @@ class BaseViewSet(viewsets.ViewSet):
                                  (v[0] is None or v[0] == "null")):
                     filter_args['pk'] = None
                 else:
-                    filter_args['pk__in'] = [int(x) for x in v]
+                    filter_args['pk__in'] = [int(x) for x in v if x]
             else:
                 filter_args[k] = v
 
@@ -206,6 +206,10 @@ class BaseViewSet(viewsets.ViewSet):
         return Schedule.objects.filter(Q(owner=self.request.user)|Q(viewers=self.request.user)|Q(editors=self.request.user))\
                                .order_by("name")
 
+    def allowed_schedule_items(self):
+        return ScheduleItem.objects.filter(schedule__in=self.allowed_schedules())
+
+    
     def allowed_tags(self):
         return Tag.objects.filter(issues__in=self.allowed_issues())
 

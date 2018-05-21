@@ -365,10 +365,10 @@ class Schedule(BaseModel):
     
 class ScheduleItem(BaseModel):
     schedule = ProtectedForeignKey(Schedule, related_name='items', null=False, blank=False)
-    order = models.IntegerField(default=0, null=False)
+    order = models.IntegerField(default=0, null=False, db_index=True)
     project = ProtectedForeignKey(Project, related_name='schedules', null=True, blank=True)
     sprint = ProtectedForeignKey(Sprint, related_name='schedules', null=True, blank=True)
     issue = ProtectedForeignKey(Issue, related_name='schedules', null=True, blank=True)
-    start_at = models.DateTimeField(null=True)
-    end_at = models.DateTimeField(null=True)
+    start_at = models.DateTimeField(null=True, db_index=True)
+    end_at = models.DateTimeField(null=True, db_index=True)
     duration_hours = models.FloatField(null=True)

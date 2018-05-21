@@ -18,6 +18,7 @@ import {
 } from '../actions/ItemList'
 import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
 import {getScheduleItems, ensureScheduleItemsLoaded} from '../actions/ScheduleItems'
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
 
 class ScheduleItemPage extends Component {
 
@@ -33,6 +34,7 @@ class ScheduleItemPage extends Component {
         dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:schedule_id || -1}))
         dispatch(ensureSchedulesLoaded([schedule_id]))
         dispatch(ensureScheduleItemsLoaded([visible_item_ids]))
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
@@ -41,7 +43,23 @@ class ScheduleItemPage extends Component {
             dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:new_props.schedule.id || -1}))
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
             dispatch(ensureScheduleItemsLoaded([new_props.visible_item_ids]))
+            this.refresh(new_props)
         }
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, schedule_id, schedule } = props
+        const breadcrumbs = [ {to: '/schedule',
+                               label: 'Schedules',
+                               type: 'schedules'} ]
+        if ( schedule && schedule.id ) {
+            breadcrumbs.push({to: '/schedule/' + schedule_id,
+                              label: schedule.name,
+                              type: 'schedule',
+                              selected_entities: {schedule: schedule}})
+        }
+        dispatch(setBreadcrumbs(breadcrumbs))
     }
 
     onChangeSplitterSize(size) {
@@ -63,17 +81,17 @@ class ScheduleItemPage extends Component {
 
         return (
             <div className="list-layout">
-                <SplitPane split="vertical" minSize={50}
-                           defaultSize={splitter_size}
-                           onChange={this.onChangeSplitterSize}
-                >
-                  <div className="left">
-                    {this.renderLeftPane()}
-                  </div>
-                  <div className="right">
-                    {this.renderRightPane()}
-                  </div>
-                </SplitPane>
+              <SplitPane split="vertical" minSize={50}
+                         defaultSize={splitter_size}
+                         onChange={this.onChangeSplitterSize}
+              >
+                <div className="left">
+                  {this.renderLeftPane()}
+                </div>
+                <div className="right">
+                  {this.renderRightPane()}
+                </div>
+              </SplitPane>
             </div>
         )
     }
