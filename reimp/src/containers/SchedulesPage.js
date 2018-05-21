@@ -10,12 +10,27 @@ import {
     set_toolbars,
 } from '../actions/Page'
 import ScheduleList from '../components/ScheduleList'
+import { setBreadcrumbs } from '../actions/Breadcrumbs'
 
 class SchedulesPage extends Component {
 
     componentDidMount() {
         const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__SCHEDULE_PAGE, ['schedule']))
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch } = props
+        const breadcrumbs = [ {to: '/schedule',
+                               label: 'Schedules',
+                               type: 'schedules'}]
+        dispatch(setBreadcrumbs(breadcrumbs))
     }
             
     render() {
