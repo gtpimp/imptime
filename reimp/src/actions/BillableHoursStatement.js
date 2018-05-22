@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { impfetch } from './lib.js'
+import { impfetch, download } from './lib.js'
 
 export const ANNOUNCE_LOADING_BILLABLE_HOURS_STATEMENT = 'ANNOUNCE_LOADING_BILLABLE_HOURS_STATEMENT'
 export const ANNOUNCE_BILLABLE_HOURS_STATEMENT_LOADED = 'ANNOUNCE_BILLABLE_HOURS_STATEMENT_LOADED'
@@ -93,3 +93,31 @@ export function update_billable_hours_statement_filter(date_from_inclusive, date
 export function get_billable_hours_statement_filter(state) {
     return state.billable_hours_statement.filter
 }
+
+export function downloadBillableHoursStatementByUser(project_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/billable_hours_statement/compand/download_by_user/'
+        const filter = get_billable_hours_statement_filter(state)
+        return download(state, url, filter)
+    }
+}
+
+export function downloadBillableHoursStatementByProject() {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/billable_hours_statement/company/download_by_project/'
+        const filter = get_billable_hours_statement_filter(state)
+        return download(state, url, filter)
+    }
+}
+
+export function downloadBillableHoursStatementByProjectAndUser() {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/billable_hours_statement/company/download_by_project_and_user/'
+        const filter = get_billable_hours_statement_filter(state)
+        return download(state, url, filter)
+    }
+}
+

@@ -10,7 +10,10 @@ import {
     update_billable_hours_statement_filter,
     get_billable_hours_statement_filter,
     invalidateBillableHoursStatement,
-    isBillableHoursStatementInvalidated
+    isBillableHoursStatementInvalidated,
+    downloadBillableHoursStatementByUser,
+    downloadBillableHoursStatementByProject,
+    downloadBillableHoursStatementByProjectAndUser
 } from '../actions/BillableHoursStatement'
 import {
     PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE,
@@ -40,6 +43,9 @@ class BillableHoursStatement extends Component {
         this.updateDateFromInclusive = this.updateDateFromInclusive.bind(this)
         this.updateDateToInclusive = this.updateDateToInclusive.bind(this)
         this.refreshStatement = this.refreshStatement.bind(this)
+        this.downloadByUser = this.downloadByUser.bind(this)
+        this.downloadByProject = this.downloadByProject.bind(this)
+        this.downloadByProjectAndUser = this.downloadByProjectAndUser.bind(this)
     }
 
     componentDidMount() {
@@ -86,6 +92,24 @@ class BillableHoursStatement extends Component {
         dispatch(invalidateBillableHoursStatement())
     }
 
+    downloadByUser(event) {
+        const { dispatch } = this.props
+        event.preventDefault()
+        dispatch(downloadBillableHoursStatementByUser())
+    }
+
+    downloadByProject(event) {
+        const { dispatch } = this.props
+        event.preventDefault()
+        dispatch(downloadBillableHoursStatementByProject())
+    }
+
+    downloadByProjectAndUser(event) {
+        const { dispatch } = this.props
+        event.preventDefault()
+        dispatch(downloadBillableHoursStatementByProjectAndUser())
+    }
+    
     render_filter() {
         const { filter, billable_hours_statement } = this.props
         return (
@@ -230,15 +254,27 @@ class BillableHoursStatement extends Component {
               { ! is_loading &&
                 <div className="billable-hours-statement__results-container">
                   <div className="billable-hours-statement__results-list">
-                    <h2>By User</h2>
+                    <h2>
+                      By User
+                      <div className="billable_hours__statement__grid_icon icon--download_as_csv"
+                           onClick={this.downloadByUser} />
+                    </h2>
                     { this.renderHoursPerUser(billable_hours_statement.by_user) }
                   </div>
                   <div className="billable-hours-statement__results-list">
-                    <h2>By Project</h2>
+                    <h2>
+                      By Project
+                      <div className="billable_hours__statement__grid_icon icon--download_as_csv"
+                           onClick={this.downloadByProject} />
+                    </h2>
                     { this.renderHoursPerProject(billable_hours_statement.by_project) }
                   </div>
                   <div className="billable-hours-statement__results-list">
-                    <h2>By Project, Sprint and User</h2>
+                    <h2>
+                      By Project, Sprint and User
+                      <div className="billable_hours__statement__grid_icon icon--download_as_csv"
+                           onClick={this.downloadByProjectAndUser} />
+                    </h2>
                     { this.renderHoursPerProjectAndUser(billable_hours_statement.by_project_and_user) }
                   </div>
                 </div>

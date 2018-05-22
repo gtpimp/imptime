@@ -3,6 +3,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import detail_route
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from lib.date_helper import human_readable_hours
 from django.http import HttpResponse
 from lib import file_helper
 from base_api import BaseViewSet
@@ -109,3 +110,92 @@ class BillableHoursStatementViewSet(BaseViewSet):
         
 
         return entries
+
+    @detail_route(methods=['POST'])
+    def download_by_user(self, request, pk):
+        response, writer, data = self._prepare_csv(request, pk, "billable_hours_by_user")
+
+        writer.writerow(["Billable hours for users in the selected period"])
+        writer.writerow([])
+        writer.writerow(["User", "Hours (time)", "Hours (decimal)", "Cost"])
+
+        for row in data['by_user']:
+            user = data['users_by_id'][row['user_id']]
+            writer.writerow([
+                "%s %s" % (user['first_name'], user['last_name']),
+                human_readable_hours(row['sum_hours']),
+                row['sum_hours'],
+                row['cost_with_commission']
+            ])
+        
+        return response
+
+    @detail_route(methods=['POST'])
+    def download_by_project(self, request, pk):
+        response, writer, data = self._prepare_csv(request, pk, "billable_hours_by_project")
+
+        writer.writerow(["Billable hours for projects in the selected period"])
+        writer.writerow([])
+        writer.writerow(["Project", "Hours (time)", "Hours (decimal)", "Cost"])
+
+        for row in data['by_project']:
+            project = data['projects_by_id'][row['project_id']]
+            writer.writerow([
+                project['name'],
+                human_readable_hours(row['sum_hours']),
+                row['sum_hours'],
+                row['cost_with_commission']
+            ])
+        
+        return response
+
+    @detail_route(methods=['POST'])
+    def download_by_project_and_user(self, request, pk):
+        response, writer, data = self._prepare_csv(request, pk, "billable_hours_by_project_and_user")
+
+        writer.writerow(["Billable hours for projects and users in the selected period"])
+        writer.writerow([])
+        writer.writerow(["Project", "Sprint", "User", "Hours (time)", "Hours (decimal)", "Cost"])
+
+        for row in data['by_project_and_user']:
+            user = data['users_by_id'][row['user_id']]
+            project = data['projects_by_id'][row['project_id']]
+            sprint = data['sprints_by_id'][row['sprint_id']]
+            writer.writerow([
+                project['name'],
+                sprint['name'],
+                "%s %s" % (user['first_name'], user['last_name']),
+                human_readable_hours(row['sum_hours']),
+                row['sum_hours'],
+                row['cost_with_commission']
+            ])
+        
+        return response
+
+    
+    
+    def _get_download_filter(self, request):
+        raw_filter = json.loads(request.GET.keys()[0])
+        s = BillableHoursStatementFilterSerializer(data=raw_filter)
+        s.is_valid(raise_exception=True)
+        return s.validated_data
+    
+    def _prepare_csv(self, request, pk, filename_prefix):
+        filter = self._get_download_filter(request)
+        data = self._get_data(date_from_inclusive=filter['date_from_inclusive'],
+                              date_to_inclusive=filter['date_to_inclusive'])
+
+        data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=data['all_user_ids']).values('id', "first_name", "last_name")] )
+        data['sprints_by_id'] = dict( [(x['id'], x) for x in Sprint.objects.filter(pk__in=data['all_sprint_ids']).values('id', "name")] )
+        data['projects_by_id'] = dict( [(x['id'], x) for x in Project.objects.filter(pk__in=data['all_project_ids']).values('id', "name")] )
+                
+        filename_prefix = "{prefix}_from_{date_from}_to_{date_to}".format(
+            prefix=filename_prefix,
+            date_from=filter['date_from_inclusive'].strftime("%d%b%Y") if filter['date_from_inclusive'] else "all",
+            date_to=filter['date_to_inclusive'].strftime("%d%b%Y") if filter['date_to_inclusive'] else "all")
+        response, writer = file_helper.prepare_csv(request, filename_prefix)
+        
+        writer.writerow(["From",filter['date_from_inclusive']])
+        writer.writerow(["To",filter['date_to_inclusive']])
+        return response, writer, data
+    
