@@ -1,6 +1,7 @@
 
 from timepiece.models import *
 from invoicing.models import InvoiceItem, InvoicePayment, Invoice, Quote
+from imptime.models import *
 Rate.objects.all().update(amount=5)
 Rate.objects.all().update(billable_amount=6)
 InvoiceItem.objects.all().update(unit_cost=5, total_cost=20)
@@ -10,5 +11,7 @@ Salary.objects.all().update(amount=3, paye=4,bonus=5,expenses=6,uif=7)
 UserProfile.objects.all().update(amount=4, billable_amount=4)
 InvoiceItem.objects.all().update(total_cost=3, unit_cost=1)
 InvoicePayment.objects.all().update(amount=1)
-Project.objects.all().update(budget=20)
+Sprint.objects.all().update(budget=20)
 Quote.objects.all().update(amount=3)
+WikiPage.objects.filter(money_sensitive=True).update(content="blahblahblah", enriched_content="blahblahblah")
+CompanyProblem.objects.filter(money_sensitive=True).update(description="blahblah")
