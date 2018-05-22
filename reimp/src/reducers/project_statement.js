@@ -19,7 +19,7 @@ const initialState = {
 
 export default function project_statement(state = initialState, action) {
 
-    let state_copy = Object.assign({}, state)
+    let state_copy
 
     switch (action.type) {
         case INVALIDATE_PROJECT_STATEMENT:

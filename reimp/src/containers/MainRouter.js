@@ -4,6 +4,7 @@ import { Route, Switch, withRouter } from 'react-router-dom'
 /* import {withRouter} from 'react-router' */
 import AccountCreatePage from './AccountCreatePage'
 import AccountCreatedPage from './AccountCreatedPage'
+import BillableHoursStatementPage from './BillableHoursStatementPage'
 import BulkIssueCreatorPage from './BulkIssueCreatorPage'
 import ChangePasswordPage from './ChangePasswordPage'
 import CompanyProblemPage from './CompanyProblemPage'
@@ -48,6 +49,7 @@ class MainRouter extends Component {
               <Route exact path="/password/changed" component={PasswordChangedPage}/>
               <Route exact path="/password/change" component={ChangePasswordPage}/>
               <Route exact path="/company/problems" component={CompanyProblemPage}/>
+              <Route exact path="/company/billable_hours" component={BillableHoursStatementPage}/>
               <Route exact path="/password/forgot" component={ForgotPasswordPage}/>
               <Route exact path="/password/reminded" component={PasswordReminderSentPage}/>
               <Route exact path="/dev" component={DevPage}/>

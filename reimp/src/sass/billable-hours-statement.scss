@@ -1,0 +1,147 @@
+@import 'variables.scss';
+
+.billable_hours_statement {
+    display: flex;
+    flex-align: center;
+    flex-direction: column;
+    width: 96%;
+    margin-left: 2%;
+    padding: 0px;
+    border-left: 1px solid $color-25;
+    border-right: 1px solid $color-25;
+}
+
+.billable_hours_statement__times_grid__header {
+    text-align: center;
+    border-top: 1px solid $color-25;
+    padding: 5px;
+    margin-bottom: 0px;
+    background-color: $color-12;
+}
+
+.billable_hours_statement__times_grid__header_summary {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.billable_hours_statement__times_grid__header_summary_item {
+    padding-left: 5px;
+}
+
+.billable_hours_statement__filter {
+    font: $settings-font-4;
+    border-bottom: 1px solid $color-6;
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.billable_hours_statement__filter__from {
+    float: left;
+}
+
+.billable_hours_statement__filter__to {
+    float: left;
+    margin-left: 10px;
+}
+
+.billable_hours_statement__filter__submit {
+    float: left;
+    margin-top: 11px;
+    padding-left: 10px;
+}
+
+.billable_hours_statement__times_grid {
+    font: $settings-font-4;
+    clear: both;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.billable_hours_statement__times_grid__table {
+    width: 100%;
+}
+
+.billable_hours_statement__times_grid td {
+    border-bottom: 1px solid $color-6;
+}
+
+.billable_hours_statement__times_grid th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
+}
+
+td.billable_hours_statement__times_grid__inner_cell {
+    border-bottom: none;
+    width: 33%;
+    text-align: left;
+}
+
+th.billable_hours_statement__times_grid__inner_cell {
+    border-bottom: none;
+}
+
+.billable_hours_statement__times_grid__rate_cell {
+    font-size: $font-size-small;
+}
+
+.billable_hours_statement__times_grid__sprint_total {
+    background-color: $color-12;
+}
+
+.billable_hours_statement__timed_grid__user_total {
+    background-color: $color-12;
+}
+
+.billable_hours_statement__times_grid__grand_total {
+    background-color: $color-5;
+}
+
+.billable_hours_statement__date_filter {
+    float: right;
+}
+
+.billable_hours_statement__date_range {
+    float: left;
+}
+
+.billable_hours_statement__date_range__element {
+    float: left;
+    padding: 5px;
+    font: $settings-font-3;
+}
+
+.billable_hours_statement__table {
+    width: 100%;
+}
+
+.billable_hours_statement__table_header {
+    background-color: $color-12;
+}
+
+.billable_hours_statement__table__footer {
+    background-color: $color-12;
+}
+
+.billable_hours_statement__table td {
+    border-bottom: 1px solid $color-6;
+}
+
+.billable_hours_statement__table th {
+    border-bottom: 1px solid $color-6;
+    padding: 3px;
+}
+
+.billable_hours_statement__grid_icon {
+    float: right;
+    cursor: pointer;
+}
+
+.billable_hours_statement__footer {
+    background-color: $color-12;
+    width: 100%;
+    height: 20px;
+    border-bottom: 1px solid $color-25;
+    margin-bottom: 5px;
+    margin-top: 10px;
+}

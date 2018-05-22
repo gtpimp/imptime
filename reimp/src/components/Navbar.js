@@ -77,6 +77,7 @@ class Navbar extends Component {
                   <NavTab variant="dashboard-toggle" label="Company" />
                   { company_menu_visible &&
                     <div className="navbar__submenu">
+                      <Link className="navbar__submenu_item" to='/company/billable_hours'>Billable hours</Link>
                       <Link className="navbar__submenu_item" to='/company/problems'>Problems</Link>
                     </div>
                   }

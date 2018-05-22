@@ -1,4 +1,5 @@
 import auth from './auth'
+import billable_hours_statement from './billable_hours_statement'
 import breadcrumbs from './breadcrumbs'
 import cost_summary from './cost_summary'
 import estimate_summary from './estimate_summary'
@@ -36,6 +37,7 @@ import primary_header from './header'
 
 const rootReducer = combineReducers({
     auth,
+    billable_hours_statement,
     breadcrumbs,
     cost_summary,
     editable_property,
