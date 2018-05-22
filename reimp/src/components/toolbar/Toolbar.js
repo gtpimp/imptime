@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar.css'
 import Breadcrumbs from '../../components/Breadcrumbs'
+import BillableHoursStatementToolbarPanel from './BillableHoursStatementToolbarPanel'
 import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
@@ -52,6 +53,8 @@ class ToolBar extends Component {
                 return <CostSummaryToolbarPanel key="cost-summary-panel" {...this.props}/>
             case 'project-statement':
                 return <ProjectStatementToolbarPanel key="project-summary-panel" {...this.props}/>
+            case 'billable-hours-statement':
+                return <BillableHoursStatementToolbarPanel key="billable-hours-statement-panel" {...this.props}/>
             case 'user-timesheets':
                 return <UserTimesheetsToolbarPanel key="user-timesheet-panel" {...this.props}/>
             case 'visual-spec-document':
