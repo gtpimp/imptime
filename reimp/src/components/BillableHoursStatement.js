@@ -12,7 +12,12 @@ import {
     invalidateBillableHoursStatement,
     isBillableHoursStatementInvalidated
 } from '../actions/BillableHoursStatement'
-import {PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE} from '../actions/ItemListKeyRegistry'
+import {
+    PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE,
+    BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT_AND_USER,
+    BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_USER,
+    BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT,
+} from '../actions/ItemListKeyRegistry'
 import {set_toolbars} from '../actions/Page'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
@@ -122,8 +127,7 @@ class BillableHoursStatement extends Component {
         )
     }
 
-    renderHoursRow(row, index) {
-        const { header_list } = this.props
+    renderHoursRow(header_list, row, index) {
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         
@@ -181,10 +185,28 @@ class BillableHoursStatement extends Component {
     }
 
     renderHoursPerProjectAndUser(by_project_and_user) {
-        const { header_list } = this.props
+        const { header_list_by_project_and_user } = this.props
         return (
-            <DivTable header_list={header_list}>
-              {map(by_project_and_user, (row, index) => this.renderHoursRow(row, index))}
+            <DivTable header_list={header_list_by_project_and_user}>
+              {map(by_project_and_user, (row, index) => this.renderHoursRow(header_list_by_project_and_user, row, index))}
+            </DivTable>
+        )
+    }
+
+    renderHoursPerProject(by_project) {
+        const { header_list_by_project } = this.props
+        return (
+            <DivTable header_list={header_list_by_project}>
+              {map(by_project, (row, index) => this.renderHoursRow(header_list_by_project, row, index))}
+            </DivTable>
+        )
+    }
+
+    renderHoursPerUser(by_user) {
+        const { header_list_by_user } = this.props
+        return (
+            <DivTable header_list={header_list_by_user}>
+              {map(by_user, (row, index) => this.renderHoursRow(header_list_by_user, row, index))}
             </DivTable>
         )
     }
@@ -207,7 +229,18 @@ class BillableHoursStatement extends Component {
 
               { ! is_loading &&
                 <div className="billable-hours-statement__results-container">
-                  { this.renderHoursPerProjectAndUser(billable_hours_statement.by_project_and_user) }
+                  <div className="billable-hours-statement__results-list">
+                    <h2>By User</h2>
+                    { this.renderHoursPerUser(billable_hours_statement.by_user) }
+                  </div>
+                  <div className="billable-hours-statement__results-list">
+                    <h2>By Project</h2>
+                    { this.renderHoursPerProject(billable_hours_statement.by_project) }
+                  </div>
+                  <div className="billable-hours-statement__results-list">
+                    <h2>By Project, Sprint and User</h2>
+                    { this.renderHoursPerProjectAndUser(billable_hours_statement.by_project_and_user) }
+                  </div>
                 </div>
               }
             </div>
@@ -216,7 +249,10 @@ class BillableHoursStatement extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { header_list } = props
+    const header_list_by_project_and_user=BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT_AND_USER
+    const header_list_by_project=BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT
+    const header_list_by_user=BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_USER
+    
     const billable_hours_statement = getBillableHoursStatement(state) || {}
     const is_loading = isLoadingBillableHoursStatement(state)
     const is_invalidated = isBillableHoursStatementInvalidated(state)
@@ -245,7 +281,9 @@ function mapStateToProps(state, props) {
         is_invalidated,
         filter,
         show_invoices_section,
-        header_list
+        header_list_by_project_and_user,
+        header_list_by_project,
+        header_list_by_user
     }
 }
 
