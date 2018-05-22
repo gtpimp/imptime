@@ -162,6 +162,13 @@ export var COMPANY_PROBLEM_HEADER_LIST = [ {key:'status', label:'Status', descri
                                            {key:'action_buttons', label:'', description:'Action buttons', width:large_col_width}
 ]
 
+export var BILLABLE_HOURS_STATEMENT_HEADER_LIST = [ {key:'project', label:'Project', description:'Project', width:medium_col_width},
+                                                    {key:'sprint', label:'Sprint', description:'Sprint', width:medium_col_width},
+                                                    {key:'user', label:'User', description:'User', width:medium_col_width},
+                                                    {key:'hours', label:'Hours', description:'Hours', width:medium_col_width},
+                                                    {key:'cost', label:'Cost', description:'Cost', width:medium_col_width}
+]
+
 export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                  'start_time': {label:"First clock", width:small_col_width},
                                  'end_time': {label:"Last clock", width:small_col_width},

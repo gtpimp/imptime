@@ -14,7 +14,7 @@ export function invalidateBillableHoursStatement() {
 }
 
 export function isBillableHoursStatementInvalidated(state) {
-    return get(state, ['invalidated'], true) === true
+    return get(state, ['billable_hours_statement', 'invalidated'], true) === true
 }
 
 function announceLoadingBillableHoursStatement() {
@@ -47,7 +47,7 @@ export function ensureBillableHoursStatementLoaded(override_filter) {
         if ( isLoadingBillableHoursStatement(state) ) {
             return
         }
-        if ( getBillableHoursStatement(state) === null ) {
+        if ( isBillableHoursStatementInvalidated(state) !== false ) {
             dispatch(fetchBillableHoursStatement(filter))
         }
     }
