@@ -13,6 +13,10 @@ export function invalidateBillableHoursStatement() {
     }
 }
 
+export function isBillableHoursStatementInvalidated(state) {
+    return get(state, ['invalidated'], true) === true
+}
+
 function announceLoadingBillableHoursStatement() {
     return {
         type: ANNOUNCE_LOADING_BILLABLE_HOURS_STATEMENT
@@ -54,7 +58,7 @@ function fetchBillableHoursStatement(filter) {
         const state = getState()
         const params = { filter: filter }
 	dispatch(announceLoadingBillableHoursStatement())
-	return impfetch(state, 'imp/billable_hours_statement/', dispatch, {params:params})
+	return impfetch(state, 'imp/billable_hours_statement/company/', dispatch, {params:params})
             .then(response => response.json())
 	    .then(json => {
                 if (json.status !== 'success') {
@@ -63,13 +67,13 @@ function fetchBillableHoursStatement(filter) {
                     dispatch(announceBillableHoursStatementLoaded(json.payload))
                 }
 	    }).catch(function (error) {
-		dispatch(announceBillableHoursStatementLoadFailed("Failed to load billable hours statment: " + error))
+		dispatch(announceBillableHoursStatementLoadFailed("Failed to load billable hours statement: " + error))
 	    })
     }
 }
 
 export function getBillableHoursStatement(state) {
-    return get(state, ["billable_hours_statement"], null)
+    return get(state, ["billable_hours_statement", "billable_hours_statement"], null)
 }
 
 export function isLoadingBillableHoursStatement(state) {

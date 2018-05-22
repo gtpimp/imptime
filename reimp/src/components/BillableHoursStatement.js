@@ -7,7 +7,8 @@ import {
     isLoadingBillableHoursStatement,
     update_billable_hours_statement_filter,
     get_billable_hours_statement_filter,
-    invalidateBillableHoursStatement
+    invalidateBillableHoursStatement,
+    isBillableHoursStatementInvalidated
 } from '../actions/BillableHoursStatement'
 import {PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE} from '../actions/ItemListKeyRegistry'
 import {set_toolbars} from '../actions/Page'
@@ -31,7 +32,7 @@ class BillableHoursStatement extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, filter } = this.props
+        const { dispatch, filter } = new_props
         dispatch(ensureBillableHoursStatementLoaded(filter))
     }
 
@@ -121,6 +122,7 @@ class BillableHoursStatement extends Component {
 function mapStateToProps(state, props) {
     const billable_hours_statement = getBillableHoursStatement(state) || {}
     const is_loading = isLoadingBillableHoursStatement(state)
+    const is_invalidated = isBillableHoursStatementInvalidated(state)
     const filter = get_billable_hours_statement_filter(state)
     const show_invoices_section = true
 
@@ -143,6 +145,7 @@ function mapStateToProps(state, props) {
     return {
         billable_hours_statement,
         is_loading,
+        is_invalidated,
         filter,
         show_invoices_section
     }

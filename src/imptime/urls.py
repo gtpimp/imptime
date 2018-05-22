@@ -1,12 +1,12 @@
 from django.conf.urls import include, url
 import auth_api
+import billable_hours_statement_api
 import cost_summary_api
 import estimate_summary_api
 import filter_api
 import issue_api
 import issue_attachment_api
 import clock_api
-import company_problem_api
 import invoice_api
 import issue_comment_api
 import issue_estimate_api
@@ -48,6 +48,8 @@ router.register(r'auth', auth_api.AuthViewSet,
                 base_name='auth')
 router.register(r'autologin', auth_api.AutoLoginViewSet,
                 base_name='authlogin')
+router.register(r'billable_hours_statement', billable_hours_statement_api.BillableHoursStatementViewSet,
+                base_name='billable_hours_statement')
 router.register(r'permission/project', project_user_permission_api.ProjectUserPermissionViewSet,
                 base_name='project_permission')
 router.register(r'rate/sprint', sprint_user_rate_api.SprintUserRateViewSet,

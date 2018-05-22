@@ -70,7 +70,7 @@ function fetchProjectStatement(project_id, filter) {
                     dispatch(announceProjectStatementLoaded(json.payload))
                 }
 	    }).catch(function (error) {
-		dispatch(announceProjectStatementLoadFailed("Failed to load project statment: " + error))
+		dispatch(announceProjectStatementLoadFailed("Failed to load project statement: " + error))
 	    })
     }
 }

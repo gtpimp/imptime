@@ -21,7 +21,8 @@ export default function billable_hours_statement(state = initialState, action) {
             return Object.assign({}, state, {invalidated: true})
 
         case ANNOUNCE_LOADING_BILLABLE_HOURS_STATEMENT:
-            return Object.assign({}, state, {loading: true})
+            return Object.assign({}, state, {loading: true,
+                                             invalidated: false})
             
         case ANNOUNCE_BILLABLE_HOURS_STATEMENT_LOADED:
             return Object.assign({}, state, {
