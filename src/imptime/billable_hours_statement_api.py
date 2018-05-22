@@ -33,8 +33,8 @@ class BillableHoursStatementViewSet(BaseViewSet):
                 date_from_inclusive = params['filter']['date_from_inclusive']
                 date_to_inclusive = params['filter']['date_to_inclusive']
             else:
-                date_from_inclusive = datetime.now()-relativedelta(years=50)
-                date_to_inclusive = datetime.now()+relativedelta(years=50)
+                date_from_inclusive = datetime.now()-relativedelta(days=10)
+                date_to_inclusive = datetime.now()+relativedelta(days=10)
 
             billable_hours_statement = self._get_data(date_from_inclusive=date_from_inclusive,
                                                       date_to_inclusive=date_to_inclusive)
@@ -54,23 +54,26 @@ class BillableHoursStatementViewSet(BaseViewSet):
         entries = Entry.objects.filter(issue__project__business__in=projects,
                                        end_time__gte=date_from_inclusive,
                                        end_time__lte=date_to_inclusive)
-        res['by_project'] = self._get_billable_hours(entries)
+        res['by_project_and_user'] = self._get_billable_by_project_and_user(entries)
 
         res['all_user_ids'] = [x for x in entries.values_list("user_id", flat=True).distinct() if x]
         res['all_sprint_ids'] = [x for x in entries.values_list("issue__project_id", flat=True).distinct() if x] #sic
         res['all_project_ids'] = [x for x in entries.values_list("issue__project__business_id", flat=True).distinct() if x] #sic
+
+        res['date_from_inclusive'] = date_from_inclusive
+        res['date_to_inclusive'] = date_to_inclusive
         
         return res
 
-    def _get_billable_hours(self, entries):
+    def _get_billable_by_project_and_user(self, entries):
+        entries = entries.filter(user__rates__project=F('issue__project'))
         entries = entries.order_by("issue__project__business__name", "issue__project__name", "user__username")
         entries = entries.annotate(project_id=F("issue__project__business_id"),
                                    sprint_id=F("issue__project_id"))
-        entries = entries.values("project_id", "sprint_id", "user_id")
         #entries = entries.annotate(business_invoice=F("issue__project__business__invoices"), project_invoice=F("issue__project__invoices"))
 
-        import pdb; pdb.set_trace()
         
+        entries = entries.values("project_id", "sprint_id", "user_id")
         entries = entries.annotate(sum_hours=Sum('hours'),
                                    cost=Sum(F('hours')*F('user__rates__billable_amount')),
                                    cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
@@ -78,4 +81,24 @@ class BillableHoursStatementViewSet(BaseViewSet):
         
 
         return entries
+
+    def _get_billable_hours_by_user(self, entries):
+        entries = entries.filter(user__rates__project=F('issue__project'))
+        entries = entries.order_by("issue__project__business__name", "issue__project__name", "user__username")
+        entries = entries.annotate(project_id=F("issue__project__business_id"),
+                                   sprint_id=F("issue__project_id"))
+        #entries = entries.annotate(business_invoice=F("issue__project__business__invoices"), project_invoice=F("issue__project__invoices"))
+
+        
+        entries = entries.values("project_id", "sprint_id", "user_id")
+        entries = entries.annotate(sum_hours=Sum('hours'),
+                                   cost=Sum(F('hours')*F('user__rates__billable_amount')),
+                                   cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
+                                                            output_field=FloatField()))
+        
+
+        return entries
+    
+    
+
     

@@ -40,6 +40,7 @@ class BillableHoursStatement extends Component {
     componentDidMount() {
         const { dispatch, filter } = this.props
         dispatch(set_toolbars(PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE, ['billable-hours-statement']))
+        dispatch(invalidateBillableHoursStatement())
         dispatch(ensureBillableHoursStatementLoaded(filter))
         this.refresh()
     }
@@ -179,11 +180,11 @@ class BillableHoursStatement extends Component {
         )
     }
 
-    renderHoursPerProject(by_project) {
+    renderHoursPerProjectAndUser(by_project_and_user) {
         const { header_list } = this.props
         return (
             <DivTable header_list={header_list}>
-              {map(by_project, (row, index) => this.renderHoursRow(row, index))}
+              {map(by_project_and_user, (row, index) => this.renderHoursRow(row, index))}
             </DivTable>
         )
     }
@@ -206,7 +207,7 @@ class BillableHoursStatement extends Component {
 
               { ! is_loading &&
                 <div className="billable-hours-statement__results-container">
-                  { this.renderHoursPerProject(billable_hours_statement.by_project) }
+                  { this.renderHoursPerProjectAndUser(billable_hours_statement.by_project_and_user) }
                 </div>
               }
             </div>
