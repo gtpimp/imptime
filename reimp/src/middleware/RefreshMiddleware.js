@@ -148,7 +148,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name === 'nudge' ) {
         list_keys_to_invalidate[LIST_KEY__NUDGE_LIST] = true
     } else if ( d.entity_name === 'companyproblem' ) {
-        if ( d.action_type === "create" ) {
+        if ( d.action_type === "create" || d.action_type === "delete" ) {
             list_keys_to_invalidate[LIST_KEY__COMPANY_PROBLEM_LIST] = true
         }
     } else if ( d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {

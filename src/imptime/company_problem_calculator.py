@@ -16,6 +16,7 @@ class CompanyProblemCalculator(object):
                                                          status__in=CompanyProblem.DELETABLE_STATUSES)
         for company_problem in company_problems:
             company_problem.delete()
+
         self._create_missing_rates(projects)
 
     def _create_missing_rates(self, projects):
@@ -30,6 +31,11 @@ class CompanyProblemCalculator(object):
 
         enriched = enriched.filter(Q(rate=0)|Q(rate__isnull=True),
                                    sum_hours__gt=0)
+
+        existing_rate_problems = CompanyProblem.objects.filter(project__in=projects, problem_type='missing_rate')
+        resolved_rate_problems = existing_rate_problems.exclude(sprint__in=enriched.values_list("issue__project_id", flat=True))
+        for resolved_rate_problem in resolved_rate_problems:
+            resolved_rate_problem.delete()
         
         for entry_problem in enriched:
             CompanyProblem.objects.get_or_create(user_id=entry_problem['user_id'],
