@@ -73,6 +73,8 @@ class MienViewSet(BaseViewSet):
                     mien.title = new_value
                 elif field_name == 'issue_headers':
                     mien.issue_headers = json.dumps(MienIssueHeaderSerializer(new_value, many=True).data)
+                elif field_name == 'nudge_headers':
+                    mien.nudge_headers = json.dumps(MienIssueHeaderSerializer(new_value, many=True).data)
                 elif field_name == 'feature':
                     features = json.loads(mien.features or "[]")
                     feature_name = new_value['feature_name']

@@ -50,7 +50,7 @@ import {
     isMienConfigurerActive,
     getMienBeingConfigured,
     updateMienIssueHeaders,
-    getHeaderListForMien
+    getIssueHeaderListForMien
 } from '../actions/Mien'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
@@ -471,7 +471,8 @@ class IssueList extends Component {
         return (
             <ListColumnConfigurer all_headers={getAllAvailableIssueHeaders()}
                                   onSave={this.onListColumnConfigurerSaved}
-                                  active_headers={getHeaderListForMien(mien_being_configured)} />
+                                  name="issue"
+                                  active_headers={getIssueHeaderListForMien(mien_being_configured)} />
         )
     }
 

@@ -108,11 +108,11 @@ class ListColumnConfigurer extends Component {
     }
 
     render() {
-        const { mien, active_headers, inactive_headers } = this.props
+        const { mien, active_headers, inactive_headers, name } = this.props
 
         return (
             <div className="list_column_configurer">
-              <h3>Configuring issue list for {mien.title}</h3>
+              <h3>Configuring {name} list for {mien.title}</h3>
               <DragDropContext onDragEnd={this.onDragEnd}>
                 <div className="list_column_configurer__columns">
                   <div className="list_column_configurer__headers list_column_configurer__inactive_headers">
@@ -132,7 +132,7 @@ class ListColumnConfigurer extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { onSave, all_headers, active_headers } = props
+    const { onSave, all_headers, active_headers, name } = props
     const mien = getMienBeingConfigured(state)
     const inactive_headers = filter(all_headers, (header) => !includes(keys(keyBy(active_headers, "key")), header.key))
     
@@ -141,7 +141,8 @@ function mapStateToProps(state, props) {
         onSave,
         all_headers,
         active_headers: active_headers || [],
-        inactive_headers
+        inactive_headers,
+        name
     }
 }
 

@@ -31,7 +31,7 @@ import {
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {getCandidateIssue, getIssues} from '../actions/Issues'
-import { getIssueHeaderListForCurrentMien } from '../actions/Mien'
+import {getIssueHeaderListForCurrentMien} from '../actions/Mien'
 
 class IssuesPage extends Component {
 

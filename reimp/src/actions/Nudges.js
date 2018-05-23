@@ -1,6 +1,11 @@
 import { impfetch } from './lib.js'
-import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
-
+import { filter, includes } from 'lodash'
+import {
+    ENTITY_KEY__NUDGE,
+    medium_col_width,
+    small_col_width,
+    large_col_width
+} from './ItemListKeyRegistry'
 import {
     invalidateAllItems,
     invalidateItems,
@@ -18,6 +23,22 @@ import {
     setGlobalEntityFlag,
     getGlobalEntityFlag
 } from '../actions/Item'
+
+export var ALL_AVAILABLE_NUDGE_HEADERS =
+    [ {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
+      {key:'description', label:'Description', description:'Description of the nudge', width:large_col_width},
+      {key:'user', label:'User', description:'User', width:small_col_width},
+      {key:'project', label:'Project', description:'Project', width:small_col_width},
+      {key:'sprint', label:'Sprint', description:'Sprint', width:large_col_width},
+      {key:'issue', label:'Issue', description:'Issue', width:large_col_width},
+      {key:'due_date', label:'Due at', description:'Due date for resolving the issue', width:medium_col_width},
+      {key:'due_date_reason', label:'Due date reason', description:'Why this nudge should be resolved at the due date', width:large_col_width},
+      {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
+    ]
+
+const DEFAULT_NUDGE_HEADERS_KEYS = ["reason", "description", "project", "sprint", "issue", "due_date"]
+const DEFAULT_NUDGE_HEADERS = filter(ALL_AVAILABLE_NUDGE_HEADERS, (header) => includes(DEFAULT_NUDGE_HEADERS_KEYS, header.key))
+
 
 export function invalidateAllNudges() {
     return (dispatch, getState) => {
@@ -103,4 +124,12 @@ export function recalculateNudges() {
 
 export function isRecalculatingNudges(state) {
     return getGlobalEntityFlag(ENTITY_KEY__NUDGE, state, "recalculating") === true
+}
+
+export function getDefaultNudgeHeaders() {
+    return DEFAULT_NUDGE_HEADERS
+}
+
+export function getAllAvailableNudgeHeaders() {
+    return ALL_AVAILABLE_NUDGE_HEADERS
 }

@@ -5,8 +5,7 @@ import SplitPane from 'react-split-pane'
 import {
     LIST_KEY__SCHEDULE_ITEM_LIST,
     PAGE_KEY__SCHEDULE_ITEM_PAGE,
-    LIST_KEY__NUDGE_LIST,
-    NUDGE_HEADER_LIST
+    LIST_KEY__NUDGE_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -22,6 +21,7 @@ import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
 import {getScheduleItems, ensureScheduleItemsLoaded} from '../actions/ScheduleItems'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
+import { getNudgeHeaderListForCurrentMien } from '../actions/Mien'
 
 class ScheduleItemPage extends Component {
 
@@ -71,10 +71,11 @@ class ScheduleItemPage extends Component {
     }
 
     renderLeftPane() {
+        const { nudge_header_list } = this.props
         return (
             <div className="list-layout__pane">
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
-                         header_list={NUDGE_HEADER_LIST} />
+                         header_list={nudge_header_list} />
             </div>
         )
     }
@@ -116,13 +117,15 @@ function mapStateToProps(state, props) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const schedule_items_by_id = getScheduleItems(state, visible_item_ids)
     const splitter_size = getPageFlag(state, PAGE_KEY__SCHEDULE_ITEM_PAGE, 'splitter_size', "80%")
+    const nudge_header_list = getNudgeHeaderListForCurrentMien(state)
 
     return {
         schedule_id,
         schedule,
         visible_item_ids,
         schedule_items_by_id,
-        splitter_size
+        splitter_size,
+        nudge_header_list
     }
 }
 

@@ -13,16 +13,28 @@ import {
     update_list_ordering,
     update_list_format
 } from '../actions/ItemList'
+import {
+    isMienConfigurerActive,
+    getMienBeingConfigured,
+    updateMienNudgeHeaders,
+    getNudgeHeaderListForMien
+} from '../actions/Mien'
 import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
 import {
-    fetchNudgesIfNeeded
+    fetchNudgesIfNeeded,
+    getAllAvailableNudgeHeaders
 } from '../actions/Nudges'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
 import DivTable from './DivTable'
-
+import ListColumnConfigurer from './ListColumnConfigurer'
 
 class NudgeList extends Component {
+
+    constructor(props) {
+        super(props)
+        this.onListColumnConfigurerSaved = this.onListColumnConfigurerSaved.bind(this)
+    }
     
     componentDidMount() {
 	const { dispatch, list_key, nested_objects } = this.props
@@ -40,10 +52,32 @@ class NudgeList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
+    onListColumnConfigurerSaved(new_active_headers) {
+        const { dispatch, mien_being_configured } = this.props
+        dispatch(updateMienNudgeHeaders(mien_being_configured.id, new_active_headers))
+    }
+
+    renderListColumnConfigurer() {
+        const { mien_being_configured } = this.props
+        if ( ! mien_being_configured ) {
+            return null
+        }
+        return (
+            <ListColumnConfigurer all_headers={getAllAvailableNudgeHeaders()}
+                                  onSave={this.onListColumnConfigurerSaved}
+                                  name="nudge"
+                                  active_headers={getNudgeHeaderListForMien(mien_being_configured)} />
+        )
+    }
+
     render() {
 
-        const { nudge_ids, is_loading, header_list } = this.props
+        const { nudge_ids, is_loading, header_list, is_mien_configurer_active } = this.props
 
+        if ( is_mien_configurer_active ) {
+            return this.renderListColumnConfigurer()
+        }
+        
         if ( (is_loading && !nudge_ids && nudge_ids.length) === 0 ) {
             return (
                 <div>Loading...</div>
@@ -76,6 +110,8 @@ function mapStateToProps(state, props) {
     const nested_objects = getNestedObjects(state, list_key)
     const should_fetch_list = shouldFetchList(state, list_key)
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__NUDGE, visible_item_ids)
+    const is_mien_configurer_active = isMienConfigurerActive(state)
+    const mien_being_configured = getMienBeingConfigured(state)
 
     return {
         nudge_ids: visible_item_ids,
@@ -84,7 +120,9 @@ function mapStateToProps(state, props) {
         should_fetch_list,
         last_updated,
         nested_objects,
-        header_list
+        header_list,
+        is_mien_configurer_active,
+        mien_being_configured
     }
 }
 

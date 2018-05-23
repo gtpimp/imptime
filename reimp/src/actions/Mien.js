@@ -22,6 +22,7 @@ import {
     getLoadingItemIds
 } from '../actions/Item'
 import { getDefaultIssueHeaders } from './Issues'
+import { getDefaultNudgeHeaders } from './Nudges'
 import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
@@ -77,8 +78,17 @@ export function getIssueHeaderListForCurrentMien(state) {
     return get(mien, ["issue_headers"], null) || getDefaultIssueHeaders()
 }
 
-export function getHeaderListForMien(mien) {
+export function getNudgeHeaderListForCurrentMien(state) {
+    const mien = getCurrentMien(state)
+    return get(mien, ["nudge_headers"], null) || getDefaultNudgeHeaders()
+}
+
+export function getIssueHeaderListForMien(mien) {
     return mien.issue_headers
+}
+
+export function getNudgeHeaderListForMien(mien) {
+    return mien.nudge_headers
 }
 
 export function doesMienHaveFeature(state, feature_name) {
@@ -134,6 +144,10 @@ export function updateMienTitle(mien_id, value) {
 
 export function updateMienIssueHeaders(mien_id, issue_headers) {
     return updateItem(ENTITY_KEY__MIEN, [mien_id], "issue_headers", issue_headers)
+}
+
+export function updateMienNudgeHeaders(mien_id, nudge_headers) {
+    return updateItem(ENTITY_KEY__MIEN, [mien_id], "nudge_headers", nudge_headers)
 }
 
 export function updateMienFeature(mien_id, feature_name, is_enabled) {

@@ -334,6 +334,7 @@ class Mien(BaseModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     order = models.IntegerField(default=0)
     issue_headers = models.TextField(null=True, blank=True) #json blob
+    nudge_headers = models.TextField(null=True, blank=True) #json blob
     features = models.TextField(null=True, blank=True) #json blob
 
     def save(self, *args, **kwargs):
