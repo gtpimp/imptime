@@ -184,6 +184,11 @@ export var BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT_AND_USER =
       {key:'cost', label:'Cost', description:'Cost', width:medium_col_width}
     ]
 
+export var BILLABLE_HOURS_STATEMENT_HEADER_LIST__TOTALS =
+    [ {key:'hours', label:'Hours', description:'Hours', width:medium_col_width},
+      {key:'cost', label:'Cost', description:'Cost', width:medium_col_width}
+    ]
+
 export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                  'start_time': {label:"First clock", width:small_col_width},
                                  'end_time': {label:"Last clock", width:small_col_width},

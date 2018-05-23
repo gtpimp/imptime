@@ -58,6 +58,7 @@ class BillableHoursStatementViewSet(BaseViewSet):
         res['by_project_and_user'] = self._get_billable_by_project_and_user(entries)
         res['by_user'] = self._get_billable_hours_by_user(entries)
         res['by_project'] = self._get_billable_hours_by_project(entries)
+        res['totals'] = self._get_totals(entries)
 
         res['all_user_ids'] = [x for x in entries.values_list("user_id", flat=True).distinct() if x]
         res['all_sprint_ids'] = [x for x in entries.values_list("issue__project_id", flat=True).distinct() if x] #sic
@@ -68,6 +69,21 @@ class BillableHoursStatementViewSet(BaseViewSet):
         
         return res
 
+    def _get_totals(self, entries):
+        entries = entries.filter(user__rates__project=F('issue__project'))
+        entries = entries.annotate(sum_hours=Sum('hours'),
+                                   cost=Sum(F('hours')*F('user__rates__billable_amount')),
+                                   cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
+                                                            output_field=FloatField()))
+
+        totals = entries.aggregate(total_hours=Sum('sum_hours'),
+                                   total_cost=Sum('cost'),
+                                   total_cost_with_commission=Sum('cost_with_commission'))
+        return [{'name': 'Totals',
+                 'sum_hours': totals['total_hours'],
+                 'cost': totals['total_cost'],
+                 'cost_with_commission': totals['total_cost_with_commission']}]
+    
     def _get_billable_by_project_and_user(self, entries):
         entries = entries.filter(user__rates__project=F('issue__project'))
         entries = entries.order_by("issue__project__business__name", "issue__project__name", "user__username")
@@ -172,6 +188,22 @@ class BillableHoursStatementViewSet(BaseViewSet):
         
         return response
 
+    @detail_route(methods=['POST'])
+    def download_totals(self, request, pk):
+        response, writer, data = self._prepare_csv(request, pk, "billable_hours_totals")
+
+        writer.writerow(["Billable hours totals in the selected period"])
+        writer.writerow([])
+        writer.writerow(["Hours (time)", "Hours (decimal)", "Cost"])
+
+        for row in data['totals']:
+            writer.writerow([
+                human_readable_hours(row['sum_hours']),
+                row['sum_hours'],
+                row['cost_with_commission']
+            ])
+        
+        return response
     
     
     def _get_download_filter(self, request):

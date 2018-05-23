@@ -121,3 +121,13 @@ export function downloadBillableHoursStatementByProjectAndUser() {
     }
 }
 
+export function downloadBillableHoursStatementTotals() {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = 'imp/billable_hours_statement/company/download_totals/'
+        const filter = get_billable_hours_statement_filter(state)
+        return download(state, url, filter)
+    }
+}
+
+

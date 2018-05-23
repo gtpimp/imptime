@@ -13,13 +13,15 @@ import {
     isBillableHoursStatementInvalidated,
     downloadBillableHoursStatementByUser,
     downloadBillableHoursStatementByProject,
-    downloadBillableHoursStatementByProjectAndUser
+    downloadBillableHoursStatementByProjectAndUser,
+    downloadBillableHoursStatementTotals
 } from '../actions/BillableHoursStatement'
 import {
     PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE,
     BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT_AND_USER,
     BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_USER,
     BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT,
+    BILLABLE_HOURS_STATEMENT_HEADER_LIST__TOTALS
 } from '../actions/ItemListKeyRegistry'
 import {set_toolbars} from '../actions/Page'
 import DatePicker from 'react-datepicker';
@@ -46,6 +48,7 @@ class BillableHoursStatement extends Component {
         this.downloadByUser = this.downloadByUser.bind(this)
         this.downloadByProject = this.downloadByProject.bind(this)
         this.downloadByProjectAndUser = this.downloadByProjectAndUser.bind(this)
+        this.downloadTotals = this.downloadTotals.bind(this)
     }
 
     componentDidMount() {
@@ -108,6 +111,12 @@ class BillableHoursStatement extends Component {
         const { dispatch } = this.props
         event.preventDefault()
         dispatch(downloadBillableHoursStatementByProjectAndUser())
+    }
+
+    downloadTotals(event) {
+        const { dispatch } = this.props
+        event.preventDefault()
+        dispatch(downloadBillableHoursStatementTotals())
     }
     
     render_filter() {
@@ -208,6 +217,15 @@ class BillableHoursStatement extends Component {
         )
     }
 
+    renderTotals(totals) {
+        const { header_list_totals } = this.props
+        return (
+            <DivTable header_list={header_list_totals}>
+              {map(totals, (row, index) => this.renderHoursRow(header_list_totals, row, index))}
+            </DivTable>
+        )
+    }
+
     renderHoursPerProjectAndUser(by_project_and_user) {
         const { header_list_by_project_and_user } = this.props
         return (
@@ -255,6 +273,15 @@ class BillableHoursStatement extends Component {
                 <div className="billable-hours-statement__results-container">
                   <div className="billable-hours-statement__results-list">
                     <h2>
+                      Totals
+                      <div className="billable_hours__statement__grid_icon icon--download_as_csv"
+                           onClick={this.downloadTotals
+                           } />
+                    </h2>
+                    { this.renderTotals(billable_hours_statement.totals) }
+                  </div>
+                  <div className="billable-hours-statement__results-list">
+                    <h2>
                       By User
                       <div className="billable_hours__statement__grid_icon icon--download_as_csv"
                            onClick={this.downloadByUser} />
@@ -288,6 +315,7 @@ function mapStateToProps(state, props) {
     const header_list_by_project_and_user=BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT_AND_USER
     const header_list_by_project=BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_PROJECT
     const header_list_by_user=BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_USER
+    const header_list_totals=BILLABLE_HOURS_STATEMENT_HEADER_LIST__TOTALS
     
     const billable_hours_statement = getBillableHoursStatement(state) || {}
     const is_loading = isLoadingBillableHoursStatement(state)
@@ -319,7 +347,8 @@ function mapStateToProps(state, props) {
         show_invoices_section,
         header_list_by_project_and_user,
         header_list_by_project,
-        header_list_by_user
+        header_list_by_user,
+        header_list_totals
     }
 }
 
