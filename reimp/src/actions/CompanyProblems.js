@@ -101,6 +101,6 @@ export function recalculateCompanyProblems() {
     }
 }
 
-export function isRecalculating(state) {
+export function isRecalculatingCompanyProblems(state) {
     return getGlobalEntityFlag(ENTITY_KEY__COMPANY_PROBLEM, state, "recalculating") === true
 }

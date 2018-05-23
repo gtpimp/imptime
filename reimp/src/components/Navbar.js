@@ -71,7 +71,6 @@ class Navbar extends Component {
                 <MienSelector></MienSelector>
               </div>
               <div className="navbar__right">
-                { false && <div className="navbar__tab"><NavTab to="/nudge" label="Nudge" /></div> }
                 <div className="navbar__tab"><NavTab to='/schedule' label="Scheduler"/></div>
                 <div className="navbar__tab" onMouseOver={this.showCompanyMenu} onMouseLeave={this.hideCompanyMenu}>
                   <NavTab variant="dashboard-toggle" label="Company" />

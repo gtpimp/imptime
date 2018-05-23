@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { map, keys, keyBy } from 'lodash'
 import { connect } from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import classNames from 'classnames'
@@ -10,28 +11,9 @@ import {
 import IssueName from './IssueName'
 import SprintName from './SprintName'
 import ProjectName from './ProjectName'
+import OtherUser from './OtherUser'
 import Timestamp from './Timestamp'
-
-// from https://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color-or-rgb-and-blend-colors
-function shadeColor2(color, percent) {   
-    var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=(f>>8)&0x00FF,B=f&0x0000FF;
-    return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
-}
-
-var stringToColour = function(str) {
-  var hash = 0;
-  for (var i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  var colour = '#';
-  for (i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
-    colour += ('00' + value.toString(16)).substr(-2);
-  }
-    colour = shadeColor2(colour, 0.7)
-    return colour;
-}
-
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class Nudge extends Component {
 
@@ -57,70 +39,106 @@ class Nudge extends Component {
 
     render() {
 
-        const { nudge } = this.props
-
+        const { nudge, header_list } = this.props
+        const headers_by_key = keyBy(header_list, "key")
+        const visible_header_keys = keys(headers_by_key)
         const reason_class_name = "nudge__reason--" + nudge.reason
 
         if ( ! nudge.id ) {
             return null
         }
-        
-        return (
-            <div className="nudge" onClick={this.onClickNudge}>
-              <div className="nudge__title">
-                <div style={{"backgroundColor":stringToColour(nudge.project_id+nudge.sprint_id)}}
-                     className={classNames("nudge__reason", reason_class_name)}>
 
-                  <div className="nudge__project">
-                    <ProjectName project_id={nudge.project_id} />
-                  </div>
-                  <div className="nudge__sprint">
-                    <SprintName sprint_id={nudge.sprint_id} display_mode={["status", "type"]} />
-                  </div>
-                  
-                </div>
-              </div>
-              <div className="nudge__content">
-                <div className="nudge__header">
-                  {nudge.reason.replace(/_/g, " ")}
-                </div>
-                <div className="nudge__issue">
-                  <IssueName issue_id={nudge.issue_id} />
-                </div>
-                <div className="nudge__footer">
-                  { nudge.due_date_reason &&
-                    <div className="nudge__due_date">
-                      <div>
-                        {nudge.due_date_reason}
-                      </div>
-                      <div className="nudge__due_date__date">
-                        { nudge.due_date && <Timestamp value={nudge.due_date} format="from_now" /> }
-                        { !nudge.due_date && <div>never</div> }
-                      </div>
-                    </div>
-                  }
-                  <div className="nudge__description">
-                    <div>
-                      {nudge.description}
-                    </div>
-                    <div className="nudge__modified">
-                      as of <Timestamp value={nudge.modified} format="from_now" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+        return (
+	    <div key={this.key+"."+nudge.id}
+                 className={classNames('nudge',
+                                       reason_class_name,
+                                       'div-table__row')}
+	    >
+
+              { map(visible_header_keys, function(header_key) {
+                    const header = headers_by_key[header_key]
+                    switch(header_key) {
+                        case "user":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <OtherUser user_id={nudge.user_id}/>
+                                </div>
+                            )
+                        case "project":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <ProjectName project_id={nudge.project_id}/>
+                                </div>
+                            )
+                        case "sprint":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <SprintName sprint_id={nudge.sprint_id} display_mode={["status", "type"]}/>
+                                </div>
+                            )
+                        case "issue":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <IssueName issue_id={nudge.sprint_id}/>
+                                </div>
+                            )
+                        case "reason":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  {nudge.reason}
+                                </div>
+                            )
+                        case "description":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  {nudge.description}
+                                </div>
+                            )
+                        case "due_date":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  { nudge.due_date && <Timestamp value={nudge.due_date} format="from_now" /> }
+                                </div>
+                            )
+                        case "due_date_reason":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  {nudge.due_date_reason}
+                                </div>
+                            )
+                        case "modified":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <Timestamp value={nudge.modified} format="from_now" />
+                                </div>
+                            )                            
+                        default:
+                            console.error("Unknown header: " + header_key)
+                    }
+                })
+              }
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { nudge_id } = props
+    const { nudge_id, header_list } = props
     const nudge = getNudge(state, nudge_id) || {}
 
     return {
         nudge,
-        is_loading: !nudge.id
+        is_loading: !nudge.id,
+        header_list
     }
 }
 

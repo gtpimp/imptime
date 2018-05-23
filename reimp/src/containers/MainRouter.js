@@ -23,7 +23,6 @@ import SprintCostSummaryPage from './SprintCostSummaryPage'
 import SprintDashboardPage from './SprintDashboardPage'
 import SprintRatePage from './SprintRatePage'
 import UserTimesheetPage from './UserTimesheetPage'
-import NudgePage from './NudgePage'
 import SchedulesPage from './SchedulesPage'
 import ScheduleItemPage from './ScheduleItemPage'
 import WorkSummaryPage from './WorkSummaryPage'
@@ -33,17 +32,17 @@ import ReadOnlyPage from './ReadOnlyPage'
 import ReleaseNotesPage from './ReleaseNotesPage'
 import SprintsPage from './SprintsPage'
 import VisualSpecDocumentPage from '../components/visual_spec/VisualSpecDocumentPage'
+import WelcomePage from './WelcomePage'
 
 class MainRouter extends Component {
 
     render() {
         return (
             <Switch>
-              <Route exact path="/" component={NudgePage}/>
+              <Route exact path="/" component={WelcomePage}/>
               <Route exact path="/account/create" component={AccountCreatePage}/>
               <Route exact path="/account/created" component={AccountCreatedPage}/>
               <Route exact path="/work_summary" component={WorkSummaryPage}/>
-              <Route exact path="/nudge" component={NudgePage}/>
               <Route exact path="/schedule" component={SchedulesPage}/>
               <Route exact path="/schedule/:scheduleId" component={ScheduleItemPage}/>
               <Route exact path="/password/changed" component={PasswordChangedPage}/>

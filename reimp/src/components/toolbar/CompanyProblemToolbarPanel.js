@@ -1,7 +1,7 @@
 import '../../sass/toolbar-panel.css'
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
-import { recalculateCompanyProblems, isRecalculating } from '../../actions/CompanyProblems'
+import { recalculateCompanyProblems, isRecalculatingCompanyProblems } from '../../actions/CompanyProblems'
 
 class CompanyProblemToolbarPanel extends Component {
 
@@ -32,7 +32,7 @@ class CompanyProblemToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const is_recalculating = isRecalculating(state)
+    const is_recalculating = isRecalculatingCompanyProblems(state)
 
     return {
         is_recalculating

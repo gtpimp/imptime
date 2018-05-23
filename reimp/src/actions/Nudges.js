@@ -14,7 +14,9 @@ import {
     deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
-    announceItemsSaving
+    announceItemsSaving,
+    setGlobalEntityFlag,
+    getGlobalEntityFlag
 } from '../actions/Item'
 
 export function invalidateAllNudges() {
@@ -71,6 +73,7 @@ export function recalculateNudges() {
     return (dispatch, getState) => {
 	const state = getState()
 	dispatch(announceItemsSaving(ENTITY_KEY__NUDGE, []))
+        dispatch(setGlobalEntityFlag(ENTITY_KEY__NUDGE, "recalculating", true))
 	let data = {}
 	return impfetch( state, "imp/" + ENTITY_KEY__NUDGE + "/recalculate/", dispatch,
 			 {method: "POST",
@@ -83,14 +86,21 @@ export function recalculateNudges() {
              if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
                  dispatch(announceItemSaveFailed(ENTITY_KEY__NUDGE, json.error))
+                 dispatch(setGlobalEntityFlag(ENTITY_KEY__NUDGE, "recalculating", false))
              } else {
 		 console.log('Request succeeded with JSON response', json);
 		 dispatch(announceItemsSaved(ENTITY_KEY__NUDGE, []))
+                 dispatch(setGlobalEntityFlag(ENTITY_KEY__NUDGE, "recalculating", false))
              }
 	 })
 	 .catch(function (error) {
              console.log('Request failed', error);
              dispatch(announceItemSaveFailed(ENTITY_KEY__NUDGE, error))
+             dispatch(setGlobalEntityFlag(ENTITY_KEY__NUDGE, "recalculating", false))
 	 })
     }
+}
+
+export function isRecalculatingNudges(state) {
+    return getGlobalEntityFlag(ENTITY_KEY__NUDGE, state, "recalculating") === true
 }

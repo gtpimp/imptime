@@ -138,6 +138,19 @@ export var INVOICE_HEADER_LIST = {'invoice_number': {label:"Number", width:"auto
                                   //'client_order_number': {label:'Order number', width:'auto', flex:1}
 }
 
+export var NUDGE_HEADER_LIST =
+    [ {key:'due_date', label:'Due at', description:'Due date for resolving the issue', width:medium_col_width},
+      {key:'user', label:'User', description:'User', width:large_col_width},
+      {key:'project', label:'Project', description:'Project', width:medium_col_width},
+      {key:'sprint', label:'Sprint', description:'Sprint', width:medium_col_width},
+      {key:'issue', label:'Issue', description:'Issue', width:large_col_width},
+      {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
+      {key:'description', label:'Description', description:'Description of the nudge', width:large_col_width},
+      {key:'due_date_reason', label:'Due date reason', description:'Why this nudge should be resolved at the due date', width:large_col_width},
+      {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
+    ]
+
+
 export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'active': {label:"Active", width: small_col_width},
                                   'num_sprints': {label:"Sprints", width: medium_col_width},

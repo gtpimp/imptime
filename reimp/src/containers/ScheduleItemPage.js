@@ -4,7 +4,9 @@ import {withRouter} from 'react-router-dom'
 import SplitPane from 'react-split-pane'
 import {
     LIST_KEY__SCHEDULE_ITEM_LIST,
-    PAGE_KEY__SCHEDULE_ITEM_PAGE
+    PAGE_KEY__SCHEDULE_ITEM_PAGE,
+    LIST_KEY__NUDGE_LIST,
+    NUDGE_HEADER_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -19,6 +21,7 @@ import {
 import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
 import {getScheduleItems, ensureScheduleItemsLoaded} from '../actions/ScheduleItems'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
+import NudgeList from '../components/NudgeList'
 
 class ScheduleItemPage extends Component {
 
@@ -29,7 +32,7 @@ class ScheduleItemPage extends Component {
 
     componentDidMount() {
         const {schedule_id, visible_item_ids, dispatch} = this.props
-        dispatch(set_toolbars(PAGE_KEY__SCHEDULE_ITEM_PAGE, ['schedule_item', 'schedule_item']))
+        dispatch(set_toolbars(PAGE_KEY__SCHEDULE_ITEM_PAGE, ['schedule_item']))
         dispatch(initList(LIST_KEY__SCHEDULE_ITEM_LIST))
         dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:schedule_id || -1}))
         dispatch(ensureSchedulesLoaded([schedule_id]))
@@ -68,7 +71,12 @@ class ScheduleItemPage extends Component {
     }
 
     renderLeftPane() {
-        return ( <div>left</div> )
+        return (
+            <div>
+              <NudgeList list_key={LIST_KEY__NUDGE_LIST}
+                         header_list={NUDGE_HEADER_LIST} />
+            </div>
+        )
     }
 
     renderRightPane() {

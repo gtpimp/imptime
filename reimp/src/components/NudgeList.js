@@ -19,6 +19,8 @@ import {
 } from '../actions/Nudges'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
+import DivTable from './DivTable'
+
 
 class NudgeList extends Component {
     
@@ -40,7 +42,7 @@ class NudgeList extends Component {
 
     render() {
 
-        const { nudge_ids, is_loading } = this.props
+        const { nudge_ids, is_loading, header_list } = this.props
 
         if ( (is_loading && !nudge_ids && nudge_ids.length) === 0 ) {
             return (
@@ -48,24 +50,26 @@ class NudgeList extends Component {
             )
         }
 
+        if ( !nudge_ids || nudge_ids.length === 0 ) {
+            return (
+                <div className="nudge-list__empty">
+                  { ! is_loading && "No nudges. Go in peace." }
+                </div>
+            )
+        }
+
         return (
-            <div className="nudge-list">
-              { map(nudge_ids, (nudge_id) =>  <Nudge key={nudge_id} nudge_id={nudge_id} />) }
-              { (!nudge_ids || nudge_ids.length) === 0 &&
-                (
-                    <div className="nudge-list__empty">
-                      { ! is_loading && "No nudges. Go in peace." }
-                      { is_loading && "Loading..." }
-                    </div>
-                )
-              }
-            </div>
+            <DivTable header_list={header_list}>
+              {map(nudge_ids, (nudge_id) =>
+                  <Nudge key={nudge_id} nudge_id={nudge_id} heaeder_list={header_list}/>
+               )}
+            </DivTable>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { list_key } = props
+    const { list_key, header_list } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__NUDGE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -79,7 +83,8 @@ function mapStateToProps(state, props) {
         is_invalidated,
         should_fetch_list,
         last_updated,
-        nested_objects
+        nested_objects,
+        header_list
     }
 }
 
