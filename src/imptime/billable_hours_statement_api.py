@@ -3,7 +3,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.decorators import detail_route
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from lib.date_helper import human_readable_hours
+from lib import date_helper
 from django.http import HttpResponse
 from lib import file_helper
 from base_api import BaseViewSet
@@ -13,7 +13,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import BusinessPermissions, Entry, Rate
+from timepiece.models import BusinessPermissions, Entry, Rate, Holiday, CalendarEvent
+from timepiece.models import UserProfile
 from django.contrib.auth.models import User
 from imptime.authentication import FormTokenAuthenticated
 from invoicing.models import Invoice
@@ -56,7 +57,7 @@ class BillableHoursStatementViewSet(BaseViewSet):
                                        end_time__gte=date_from_inclusive,
                                        end_time__lte=date_to_inclusive)
         res['by_project_and_user'] = self._get_billable_by_project_and_user(entries)
-        res['by_user'] = self._get_billable_hours_by_user(entries)
+        res['by_user'] = self._get_billable_hours_by_user(date_from_inclusive, date_to_inclusive, entries)
         res['by_project'] = self._get_billable_hours_by_project(entries)
         res['totals'] = self._get_totals(entries)
 
@@ -99,7 +100,7 @@ class BillableHoursStatementViewSet(BaseViewSet):
 
         return entries
 
-    def _get_billable_hours_by_user(self, entries):
+    def _get_billable_hours_by_user(self, date_from_inclusive, date_to_inclusive, entries):
         entries = entries.filter(user__rates__project=F('issue__project'))
         entries = entries.order_by("user__username")
         
@@ -108,7 +109,10 @@ class BillableHoursStatementViewSet(BaseViewSet):
                                    cost=Sum(F('hours')*F('user__rates__billable_amount')),
                                    cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*100/(100-F('user__rates__project__commission_percentage')),
                                                             output_field=FloatField()))
-        
+
+        for entry in entries:
+            entry.update(self._get_available_working_hours_for_user(date_from_inclusive, date_to_inclusive, entry['user_id']))
+            entry['missing_hours'] = entry['adjusted_hours'] - entry['sum_hours']
 
         return entries
     
@@ -133,15 +137,32 @@ class BillableHoursStatementViewSet(BaseViewSet):
 
         writer.writerow(["Billable hours for users in the selected period"])
         writer.writerow([])
-        writer.writerow(["User", "Hours (time)", "Hours (decimal)", "Cost"])
+        writer.writerow(["User",
+                         "Hours (time)",
+                         "Hours (decimal)",
+                         "Cost",
+                         "Available business days",
+                         "Off days",
+                         "Adjusted working days",
+                         "Adjusted working hours (time)",
+                         "Adjusted working hours (decimal)",
+                         "Missing hours (time)",
+                         "Missing hours (decimal)"])
 
         for row in data['by_user']:
             user = data['users_by_id'][row['user_id']]
             writer.writerow([
                 "%s %s" % (user['first_name'], user['last_name']),
-                human_readable_hours(row['sum_hours']),
+                date_helper.human_readable_hours(row['sum_hours']),
                 row['sum_hours'],
-                row['cost_with_commission']
+                row['cost_with_commission'],
+                row['available_business_days'],
+                row['num_off_days'],
+                row['adjusted_days'],
+                date_helper.human_readable_hours(row['adjusted_hours']),
+                row['adjusted_hours'],
+                date_helper.human_readable_hours(row['missing_hours']),
+                row['missing_hours']
             ])
         
         return response
@@ -158,7 +179,7 @@ class BillableHoursStatementViewSet(BaseViewSet):
             project = data['projects_by_id'][row['project_id']]
             writer.writerow([
                 project['name'],
-                human_readable_hours(row['sum_hours']),
+                date_helper.human_readable_hours(row['sum_hours']),
                 row['sum_hours'],
                 row['cost_with_commission']
             ])
@@ -181,7 +202,7 @@ class BillableHoursStatementViewSet(BaseViewSet):
                 project['name'],
                 sprint['name'],
                 "%s %s" % (user['first_name'], user['last_name']),
-                human_readable_hours(row['sum_hours']),
+                date_helper.human_readable_hours(row['sum_hours']),
                 row['sum_hours'],
                 row['cost_with_commission']
             ])
@@ -198,7 +219,7 @@ class BillableHoursStatementViewSet(BaseViewSet):
 
         for row in data['totals']:
             writer.writerow([
-                human_readable_hours(row['sum_hours']),
+                date_helper.human_readable_hours(row['sum_hours']),
                 row['sum_hours'],
                 row['cost_with_commission']
             ])
@@ -231,3 +252,22 @@ class BillableHoursStatementViewSet(BaseViewSet):
         writer.writerow(["To",filter['date_to_inclusive']])
         return response, writer, data
     
+    def _get_available_working_hours_for_user(self, date_from_inclusive, date_to_inclusive, user_id):
+        available_business_days = Holiday.business_days_in_range(date_helper.convert_iso_string_to_local_datetime(date_from_inclusive),
+                                                                 date_helper.convert_iso_string_to_local_datetime(date_to_inclusive))
+        num_available_business_days = len(available_business_days)
+        user_profile = UserProfile.objects.get(user_id=user_id)
+
+        off_days = CalendarEvent.objects.filter(start__gte=date_from_inclusive, start__lte=date_to_inclusive,
+                                                user=user_profile.user,
+                                                status__in=CalendarEvent.event_did_happen_states(),
+                                                event_type__in=CalendarEvent.cant_work_event_types())
+
+        num_off_days = off_days.count()
+
+        adjusted_days = num_available_business_days - num_off_days
+        adjusted_hours = adjusted_days * user_profile.required_daily_work_hours
+        return {'available_business_days': num_available_business_days,
+                'num_off_days': num_off_days,
+                'adjusted_days': adjusted_days,
+                'adjusted_hours': adjusted_hours}

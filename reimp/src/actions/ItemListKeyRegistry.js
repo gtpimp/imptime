@@ -165,8 +165,13 @@ export var COMPANY_PROBLEM_HEADER_LIST = [ {key:'status', label:'Status', descri
 
 export var BILLABLE_HOURS_STATEMENT_HEADER_LIST__BY_USER =
     [ {key:'user', label:'User', description:'User', width:medium_col_width},
-      {key:'hours', label:'Hours', description:'Hours', width:medium_col_width},
-      {key:'cost', label:'Cost', description:'Cost', width:medium_col_width}
+      {key:'hours', label:'Actual hours', description:'Hours', width:medium_col_width},
+      {key:'cost', label:'Cost', description:'Cost', width:medium_col_width},
+      {key:'business_days', label:'Available business days', description:'Total business days excluding public holidays', width:medium_col_width},
+      {key:'num_off_days', label:'Off days', description:'Number of sick and leave days', width:medium_col_width},
+      {key:'adjusted_days', label:'Adjusted working days', description:'Working days excluding public holidays and leave/sick days', width:medium_col_width},
+      {key:'adjusted_hours', label:'Adjusted working hours', description:'Working hours excluding public holidays and leave/sick days', width:medium_col_width},
+      {key:'missing_hours', label:'Missing hours', description:'Unlogged hours that should have been worked', width:medium_col_width},
     ]
     
 

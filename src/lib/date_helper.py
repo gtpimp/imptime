@@ -1,7 +1,7 @@
 from dateutil.parser import parse
 from django.utils import timezone
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from datetime import timedelta
 import pytz
 import logging
 logger = logging.getLogger(__name__)
@@ -9,6 +9,8 @@ logger = logging.getLogger(__name__)
 
 def convert_iso_string_to_utc_datetime(iso_string):
     if iso_string is None:
+        return iso_string
+    if type(iso_string) == datetime:
         return iso_string
     d = parse(iso_string)
     return pytz.UTC.normalize(d)
@@ -20,6 +22,8 @@ def convert_timestamp_to_utc_datetime(timestamp):
 
 def convert_iso_string_to_local_datetime(iso_string):
     if iso_string is None:
+        return iso_string
+    if type(iso_string) == datetime:
         return iso_string
     d = parse(iso_string)
     return timezone.localtime(d)
@@ -43,3 +47,8 @@ def format_iso_string(iso_string):
 
 def human_readable_hours(decimal_hours):
     return "%02d:%02d" % divmod(decimal_hours*60, 60)
+
+def daterange(date_from_inclusive, date_to_inclusive):
+    for n in range(int ((date_to_inclusive - date_from_inclusive).days+1)):
+        yield date_from_inclusive + timedelta(n)
+        

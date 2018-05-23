@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 import os
 from dateutil.relativedelta import relativedelta
 import api
+from lib import date_helper
 import calendar
 from lib.models import model_to_dict_with_date_support
 from impasync.refresh_notifier import RefreshNotifier
@@ -4526,6 +4527,11 @@ class CalendarEvent(BaseModel):
     def cant_work_event_types(self):
         return [ 'leave', 'sickday', 'office_closed' ]
 
+    @classmethod
+    def event_did_happen_states(self):
+        return [ 'ready', 'done', 'CONFIRMED' ]
+        
+    
     def get_colour(self):
         index = self.user_id % len(COLOURS)
         threshold = int("0x999999", 0)
@@ -4744,14 +4750,19 @@ class Holiday(BaseModel):
         return d.weekday() in [5,6] or self.objects.filter(applies_on=d).count() > 0
 
     @classmethod
-    def business_days_in_month(self, d):
-        month_days = range(1, calendar.monthrange(year=d.year, month=d.month)[1]+1)
-        holiday_dates = Holiday.objects.filter(applies_on__gte=datetime.datetime(d.year, d.month, 1),
-                                               applies_on__lt=datetime.datetime(d.year, d.month, 1)+relativedelta(months=1))\
+    def business_days_in_range(self, date_from_inclusive, date_to_inclusive):
+        holiday_dates = Holiday.objects.filter(applies_on__gte=date_from_inclusive,
+                                               applies_on__lte=date_to_inclusive)\
                                                .values('applies_on')
-        holiday_days = [x['applies_on'].day for x in holiday_dates]
-        business_days = [ x for x in month_days if calendar.weekday(year=d.year, month=d.month, day=x)<5 and x not in holiday_days ]
+        holiday_days = [x['applies_on'] for x in holiday_dates]
+        business_days = [ x for x in date_helper.daterange(date_from_inclusive, date_to_inclusive)
+                          if calendar.weekday(year=x.year, month=x.month, day=x.day)<5 and x.date() not in holiday_days ]
         return business_days
+    
+    @classmethod
+    def business_days_in_month(self, d):
+        return self.business_days_in_range(datetime.datetime(d.year, d.month, 1),
+                                           datetime.datetime(d.year, d.month+1, 1)-relativedelta(days=1))
 
 class ScheduleQuerySet(QuerySet):
     def hours_for_user(self, user_id):

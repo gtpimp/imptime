@@ -207,6 +207,42 @@ class BillableHoursStatement extends Component {
                                   <CurrencyValue value={row.cost_with_commission} />
                                 </div>
                             )
+                        case "business_days":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  {row.available_business_days}
+                                </div>
+                            )
+                        case "adjusted_days":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  {row.adjusted_days}
+                                </div>
+                            )
+                        case "adjusted_hours":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <Hours hours={row.adjusted_hours} />
+                                </div>
+                            )
+                        case "missing_hours":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <Hours hours={row.missing_hours} />
+                                </div>
+                            )
+                            
+                        case "num_off_days":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  {row.num_off_days>0 && <div>{row.num_off_days}</div>}
+                                </div>
+                            )
                         default:
                             console.error("Unknown header: " + header_key)
                             
