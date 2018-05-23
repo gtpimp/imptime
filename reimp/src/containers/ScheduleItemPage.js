@@ -72,7 +72,7 @@ class ScheduleItemPage extends Component {
 
     renderLeftPane() {
         return (
-            <div>
+            <div className="list-layout__pane">
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
                          header_list={NUDGE_HEADER_LIST} />
             </div>
@@ -80,7 +80,11 @@ class ScheduleItemPage extends Component {
     }
 
     renderRightPane() {
-        return ( <div>right</div> )
+        return (
+            <div className="list-layout__pane">
+              right
+            </div>
+        )
     }
 
     render() {

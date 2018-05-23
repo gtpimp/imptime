@@ -39,12 +39,12 @@ class Nudge extends Component {
 
     render() {
 
-        const { nudge, header_list } = this.props
+        const { nudge, header_list, is_loading } = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         const reason_class_name = "nudge__reason--" + nudge.reason
 
-        if ( ! nudge.id ) {
+        if ( is_loading ) {
             return null
         }
 
@@ -76,21 +76,21 @@ class Nudge extends Component {
                             return (
                                 <div className="div-table__cell" key={header_key}
                                      style={getCellStyle(header)}>
-                                  <SprintName sprint_id={nudge.sprint_id} display_mode={["status", "type"]}/>
+                                  <SprintName sprint_id={nudge.sprint_id}/>
                                 </div>
                             )
                         case "issue":
                             return (
                                 <div className="div-table__cell" key={header_key}
                                      style={getCellStyle(header)}>
-                                  <IssueName issue_id={nudge.sprint_id}/>
+                                  <IssueName issue_id={nudge.issue_id}/>
                                 </div>
                             )
                         case "reason":
                             return (
                                 <div className="div-table__cell" key={header_key}
                                      style={getCellStyle(header)}>
-                                  {nudge.reason}
+                                  {nudge.reason.replace(/_/g," ")}
                                 </div>
                             )
                         case "description":

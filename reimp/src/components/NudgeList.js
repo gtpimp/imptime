@@ -61,7 +61,7 @@ class NudgeList extends Component {
         return (
             <DivTable header_list={header_list}>
               {map(nudge_ids, (nudge_id) =>
-                  <Nudge key={nudge_id} nudge_id={nudge_id} heaeder_list={header_list}/>
+                  <Nudge key={nudge_id} nudge_id={nudge_id} header_list={header_list}/>
                )}
             </DivTable>
         )

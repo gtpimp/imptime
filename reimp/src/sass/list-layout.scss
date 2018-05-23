@@ -26,3 +26,7 @@
 .list-layout__single_pane {
     width: 100%;
 } 
+
+.list-layout__pane {
+    overflow: auto;
+}
