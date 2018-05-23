@@ -17,7 +17,6 @@ import {
     unassociateVisualSpecDocumentWithIssue,
     unassociateVisualSpecDocumentWithProject
 } from '../../actions/VisualSpecDocuments'
-import { getIssueHeaderListForCurrentMien } from '../../actions/Mien'
 import {
     update_list_filter, setItemFlag, selectItems
 } from '../../actions/ItemList'
@@ -35,7 +34,12 @@ import {
 } from '../../actions/Page'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
-import { ensureIssuesLoaded, getIssue, is_issue_invalidated } from '../../actions/Issues'
+import {
+    ensureIssuesLoaded,
+    getIssue,
+    is_issue_invalidated,
+    getIssueHeaderListForCurrentMien
+} from '../../actions/Issues'
 import {setBreadcrumbsActive, setIssueBreadcrumbsHelper, setProjectBreadcrumbsHelper} from '../../actions/Breadcrumbs'
 import '../../sass/visual-spec-document-page.scss'
 

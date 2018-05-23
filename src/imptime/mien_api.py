@@ -13,8 +13,8 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from imptime.models import Mien
-from imptime.mien_serializer import MienSerializer, MienIssueHeaderSerializer
+from imptime.models import Mien, MienHeader
+from imptime.mien_serializer import MienSerializer, MienHeaderSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -71,10 +71,12 @@ class MienViewSet(BaseViewSet):
                 mien = self.allowed_miens().get(pk=mien_pk)
                 if field_name == 'title':
                     mien.title = new_value
-                elif field_name == 'issue_headers':
-                    mien.issue_headers = json.dumps(MienIssueHeaderSerializer(new_value, many=True).data)
-                elif field_name == 'nudge_headers':
-                    mien.nudge_headers = json.dumps(MienIssueHeaderSerializer(new_value, many=True).data)
+                elif field_name == 'headers':
+                    header_name = new_value['name']
+                    headers = new_value['headers']
+                    mien_header = MienHeader.objects.get_or_create(mien=mien, name=header_name)[0]
+                    mien_header.headers = json.dumps(MienHeaderSerializer(headers, many=True).data)
+                    mien_header.save()
                 elif field_name == 'feature':
                     features = json.loads(mien.features or "[]")
                     feature_name = new_value['feature_name']

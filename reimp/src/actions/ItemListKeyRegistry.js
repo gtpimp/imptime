@@ -90,6 +90,9 @@ export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
 export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 export const PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE = 'billable_hours_statement_page'
 
+export const HEADER_LIST_NAME__ISSUE = "issue"
+export const HEADER_LIST_NAME__NUDGE = "nudge"
+
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
 

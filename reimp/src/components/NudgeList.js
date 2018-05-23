@@ -15,14 +15,14 @@ import {
 } from '../actions/ItemList'
 import {
     isMienConfigurerActive,
-    getMienBeingConfigured,
-    updateMienNudgeHeaders,
-    getNudgeHeaderListForMien
+    getMienBeingConfigured
 } from '../actions/Mien'
 import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
 import {
     fetchNudgesIfNeeded,
-    getAllAvailableNudgeHeaders
+    getAllAvailableNudgeHeaders,
+    getNudgeHeaderListForMien,
+    updateNudgeMienHeaders
 } from '../actions/Nudges'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
@@ -54,7 +54,7 @@ class NudgeList extends Component {
 
     onListColumnConfigurerSaved(new_active_headers) {
         const { dispatch, mien_being_configured } = this.props
-        dispatch(updateMienNudgeHeaders(mien_being_configured.id, new_active_headers))
+        dispatch(updateNudgeMienHeaders(mien_being_configured.id, new_active_headers))
     }
 
     renderListColumnConfigurer() {

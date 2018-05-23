@@ -21,8 +21,6 @@ import {
     getSavingItemIds,
     getLoadingItemIds
 } from '../actions/Item'
-import { getDefaultIssueHeaders } from './Issues'
-import { getDefaultNudgeHeaders } from './Nudges'
 import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
@@ -73,22 +71,13 @@ export function setCurrentMienId(mien_id) {
     }
 }
 
-export function getIssueHeaderListForCurrentMien(state) {
+export function getHeaderListForMien(mien, name) {
+    return get(mien, ["headers", name], null)
+}
+
+export function getHeaderListForCurrentMien(state, name) {
     const mien = getCurrentMien(state)
-    return get(mien, ["issue_headers"], null) || getDefaultIssueHeaders()
-}
-
-export function getNudgeHeaderListForCurrentMien(state) {
-    const mien = getCurrentMien(state)
-    return get(mien, ["nudge_headers"], null) || getDefaultNudgeHeaders()
-}
-
-export function getIssueHeaderListForMien(mien) {
-    return mien.issue_headers
-}
-
-export function getNudgeHeaderListForMien(mien) {
-    return mien.nudge_headers
+    return getHeaderListForMien(mien, name)
 }
 
 export function doesMienHaveFeature(state, feature_name) {
@@ -142,12 +131,8 @@ export function updateMienTitle(mien_id, value) {
     return updateItem(ENTITY_KEY__MIEN, [mien_id], "title", value)
 }
 
-export function updateMienIssueHeaders(mien_id, issue_headers) {
-    return updateItem(ENTITY_KEY__MIEN, [mien_id], "issue_headers", issue_headers)
-}
-
-export function updateMienNudgeHeaders(mien_id, nudge_headers) {
-    return updateItem(ENTITY_KEY__MIEN, [mien_id], "nudge_headers", nudge_headers)
+export function updateMienHeaders(mien_id, name, headers) {
+    return updateItem(ENTITY_KEY__MIEN, [mien_id], "headers", {'name':name, 'headers':headers}) 
 }
 
 export function updateMienFeature(mien_id, feature_name, is_enabled) {

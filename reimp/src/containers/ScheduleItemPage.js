@@ -21,7 +21,7 @@ import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
 import {getScheduleItems, ensureScheduleItemsLoaded} from '../actions/ScheduleItems'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
-import { getNudgeHeaderListForCurrentMien } from '../actions/Mien'
+import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
 

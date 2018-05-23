@@ -2,6 +2,7 @@ import { impfetch } from './lib.js'
 import { filter, includes } from 'lodash'
 import {
     ENTITY_KEY__NUDGE,
+    HEADER_LIST_NAME__NUDGE,
     medium_col_width,
     small_col_width,
     large_col_width
@@ -23,6 +24,11 @@ import {
     setGlobalEntityFlag,
     getGlobalEntityFlag
 } from '../actions/Item'
+import {
+    updateMienHeaders,
+    getHeaderListForCurrentMien,
+    getHeaderListForMien
+} from '../actions/Mien'
 
 export var ALL_AVAILABLE_NUDGE_HEADERS =
     [ {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
@@ -124,6 +130,18 @@ export function recalculateNudges() {
 
 export function isRecalculatingNudges(state) {
     return getGlobalEntityFlag(ENTITY_KEY__NUDGE, state, "recalculating") === true
+}
+
+export function updateNudgeMienHeaders(mien_id, headers) {
+    return updateMienHeaders(mien_id, HEADER_LIST_NAME__NUDGE, headers)
+}
+
+export function getNudgeHeaderListForMien(mien) {
+    return getHeaderListForMien(mien, HEADER_LIST_NAME__NUDGE)
+}
+
+export function getNudgeHeaderListForCurrentMien(state) {
+    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__NUDGE) || getDefaultNudgeHeaders()
 }
 
 export function getDefaultNudgeHeaders() {

@@ -44,13 +44,13 @@ import {
     ungroupIssuesIntoFeature,
     getCandidateIssue,
     ensureIssuesLoaded,
-    getAllAvailableIssueHeaders
+    getAllAvailableIssueHeaders,
+    updateIssueMienHeaders,
+    getIssueHeaderListForMien
 } from '../actions/Issues'
 import {
     isMienConfigurerActive,
     getMienBeingConfigured,
-    updateMienIssueHeaders,
-    getIssueHeaderListForMien
 } from '../actions/Mien'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
@@ -460,7 +460,7 @@ class IssueList extends Component {
 
     onListColumnConfigurerSaved(new_active_headers) {
         const { dispatch, mien_being_configured } = this.props
-        dispatch(updateMienIssueHeaders(mien_being_configured.id, new_active_headers))
+        dispatch(updateIssueMienHeaders(mien_being_configured.id, new_active_headers))
     }
 
     renderListColumnConfigurer() {

@@ -353,6 +353,15 @@ class Mien(BaseModel):
     def create_default_mien(self, user):
         return self.objects.get_or_create(user=user, title='Default view')
 
+class MienHeader(BaseModel):
+    mien = models.ForeignKey(Mien, related_name='headers', null=False, blank=False)
+    name = models.CharField(max_length=50, null=False, blank=False)
+    headers = models.TextField(null=True, blank=True) #json blob
+
+    class Meta:
+        unique_together = ('mien', 'name')
+
+    
 class CompanyProblem(BaseModel):
 
     PROBLEM_TYPE_OPTIONS = [ ('missing_rate', 'Missing rate') ]

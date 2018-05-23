@@ -4,26 +4,21 @@ from base_serializer import BaseSerializer
 import json
 logger = logging.getLogger(__name__)
 
-class MienIssueHeaderSerializer(BaseSerializer):
+class MienHeaderSerializer(BaseSerializer):
     key = serializers.CharField()
     label = serializers.CharField()
     description = serializers.CharField()
     width = serializers.CharField()
     flex = serializers.CharField(required=False)
 
-class MienNudgeHeaderSerializer(MienIssueHeaderSerializer):
-    pass
-    
-class MienSerializer(BaseSerializer):
 
+class MienSerializer(BaseSerializer):
     id = serializers.CharField()
     title = serializers.CharField()
-    issue_headers = MienIssueHeaderSerializer(many=True, source='issue_headers_as_obj')
-    nudge_headers = MienNudgeHeaderSerializer(many=True, source='nudge_headers_as_obj')
+    headers = serializers.DictField(child=serializers.ListField(child=MienHeaderSerializer()), source="headers_by_name")
     features = serializers.ListField(child=serializers.CharField(), source="features_as_obj")
 
     def to_representation(self, obj):
-        obj.issue_headers_as_obj = json.loads(obj.issue_headers or "null")
-        obj.nudge_headers_as_obj = json.loads(obj.nudge_headers or "null")
         obj.features_as_obj = json.loads(obj.features or "null")
+        obj.headers_by_name = dict([k, json.loads(v or "null")] for k,v in obj.headers.all().values_list("name", "headers"))
         return super(MienSerializer, self).to_representation(obj)
