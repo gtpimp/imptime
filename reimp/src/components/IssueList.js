@@ -48,16 +48,12 @@ import {
     updateIssueMienHeaders,
     getIssueHeaderListForMien
 } from '../actions/Issues'
-import {
-    isMienConfigurerActive,
-    getMienBeingConfigured,
-} from '../actions/Mien'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
 import IssueListHeader from '../components/IssueListHeader'
 import DivTable from './DivTable'
-import ListColumnConfigurer from './ListColumnConfigurer'
 import { Shortcuts } from 'react-shortcuts'
+import MienListColumnConfigurable from './MienListColumnConfigurable'
 
 class IssueList extends Component {
 
@@ -76,7 +72,6 @@ class IssueList extends Component {
         this.handleShortcuts = this.handleShortcuts.bind(this)
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
         this.renderHeader = this.renderHeader.bind(this)
-        this.onListColumnConfigurerSaved = this.onListColumnConfigurerSaved.bind(this)
     }
 
     componentDidMount() {
@@ -458,24 +453,6 @@ class IssueList extends Component {
         />
     }
 
-    onListColumnConfigurerSaved(new_active_headers) {
-        const { dispatch, mien_being_configured } = this.props
-        dispatch(updateIssueMienHeaders(mien_being_configured.id, new_active_headers))
-    }
-
-    renderListColumnConfigurer() {
-        const { mien_being_configured } = this.props
-        if ( ! mien_being_configured ) {
-            return null
-        }
-        return (
-            <ListColumnConfigurer all_headers={getAllAvailableIssueHeaders()}
-                                  onSave={this.onListColumnConfigurerSaved}
-                                  name="issue"
-                                  active_headers={getIssueHeaderListForMien(mien_being_configured)} />
-        )
-    }
-
     render_expanded() {
 
         const { is_mien_configurer_active, is_visible, issue_items, project_id } = this.props
@@ -513,12 +490,18 @@ class IssueList extends Component {
         return (
 
             <div>
-              <DivTable renderHeader={this.renderHeader}
-                        onReorder={this.reorderIssue}
-                        project_id={project_id}
-                        permission_name_for_dragging={'has_edit_issues'}>
-                {issue_rows}
-              </DivTable>
+              <MienListColumnConfigurable getAvailableHeaders={getAllAvailableIssueHeaders}
+                                          getHeaderListForMien={getIssueHeaderListForMien}
+                                          updateMienHeaders={updateIssueMienHeaders}
+                                          header_list_name="issue"
+              >
+                <DivTable renderHeader={this.renderHeader}
+                          onReorder={this.reorderIssue}
+                          project_id={project_id}
+                          permission_name_for_dragging={'has_edit_issues'}>
+                  {issue_rows}
+                </DivTable>
+              </MienListColumnConfigurable>
             </div>
         )
     }
@@ -586,8 +569,6 @@ const makeMapStateToProps = () => {
         const tag_category_names = selTagCategoryNamesForIssues(state, props)
         const logged_in_user_id = logged_in_user().user_id
         const issue_ids = selIssueIds(state, props)
-        const is_mien_configurer_active = isMienConfigurerActive(state)
-        const mien_being_configured = getMienBeingConfigured(state)
 
         return {
             list_key: list_key,
@@ -621,9 +602,7 @@ const makeMapStateToProps = () => {
             header_list: issue_header_list,
             tag_ids,
             tag_category_names,
-            logged_in_user_id,
-            is_mien_configurer_active,
-            mien_being_configured
+            logged_in_user_id
         }
     }
     return mapStateToProps
