@@ -9,7 +9,7 @@ class BillableHoursStatementPage extends Component {
         return (
             <div>
               <h2>
-                Statement of billable hours
+                Statement of billable hours across projects you have financial access to
               </h2>
               <BillableHoursStatement />
             </div>

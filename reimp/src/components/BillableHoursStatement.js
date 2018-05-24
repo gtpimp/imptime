@@ -368,11 +368,7 @@ function mapStateToProps(state, props) {
         }
     }
     if ( ! filter.date_to_inclusive ) {
-        if ( moment().date() < num_days_before_month_become_interesting ) {
-            filter.date_to_inclusive = moment().subtract(1, 'months').endOf('month')
-        } else {
-            filter.date_to_inclusive = moment().endOf('month');
-        }
+        filter.date_to_inclusive = moment()
     }
     
     return {
