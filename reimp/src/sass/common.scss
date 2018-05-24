@@ -36,13 +36,12 @@ html, body {
 
 .main-layout__panel {
     width: 100%;
-    padding: 1rem;
-    margin: .5rem 1rem;
     text-align: center;
 }
 
 .main-layout__middle {
     flex: 1 1 auto;
+    overflow: auto;
 }
 
 

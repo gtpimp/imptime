@@ -98,17 +98,77 @@ class MainLayout extends Component {
         return (
             <div id="app" className="app">
               <div className="main-layout__panel main-layout__header">
+                Header
+                { false && <div>
                 <Websocket/>
                 <Header/>
                 <AutoClockPopup/>
                 <GlobalCommentAnnotation/>
+                </div>
+                }
               </div>
               <div className="main-layout__panel main-layout__middle">
-                { false && <MainRouter /> }
-                { false && <ReactTooltip place="bottom" type="info" /> }
+
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                
+                { false && <div>
+                <MainRouter />
+                <ReactTooltip place="bottom" type="info" />
+                </div>
+                }
               </div>
               <div className="main-layout__panel main-layout__footer">
-                <Footer />
+                Footer
+                { false && <Footer />}
               </div>
             </div>
         )
