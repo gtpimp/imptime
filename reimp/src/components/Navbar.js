@@ -7,7 +7,6 @@ import classNames from 'classnames'
 import '../sass/navbar.css'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
-import { updateNavbarHeight } from '../actions/Header'
 import { can_create_release_notes, logout } from '../actions/Auth'
 
 class Navbar extends Component {
@@ -21,12 +20,6 @@ class Navbar extends Component {
         this.onLogout = this.onLogout.bind(this)
         this.state = {user_menu_visible: false,
                       company_menu_visible: false}
-    }
-
-    componentDidMount() {
-        const { dispatch } = this.props
-        const navbarHeight = this.navbarElem.clientHeight
-        dispatch(updateNavbarHeight(navbarHeight))
     }
 
     showUserMenu() {
@@ -60,10 +53,12 @@ class Navbar extends Component {
         const company_menu_visible = this.state.company_menu_visible
 
         return (
-            <div className={classNames('navbar', 'navbar--network-' + ( user_initiated_network_activity ? 'active' : 'inactive' ))} ref={(navbar) => { this.navbarElem = navbar }}>
+            <div className={classNames('navbar',
+                                       'navbar--network-' + ( user_initiated_network_activity ? 'active' : 'inactive' ))}>
               <div className="navbar__left">
                 <NavTab to="/" index={true}>
-                  <div className={classNames('navbar__component', 'navbar__branding', 'navbar__branding--' +(is_websockets_connected ? 'connected' : 'disconnected'))}>
+                  <div className={classNames('navbar__component', 'navbar__branding',
+                                             'navbar__branding--' +(is_websockets_connected ? 'connected' : 'disconnected'))}>
                     &nbsp;
                   </div>
                 </NavTab>

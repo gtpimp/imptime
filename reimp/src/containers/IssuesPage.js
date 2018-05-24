@@ -5,7 +5,6 @@ import {withRouter} from 'react-router-dom'
 import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
-import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import {setIssueBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
 import SplitPane from 'react-split-pane'
@@ -247,9 +246,6 @@ function mapStateToProps(state, props) {
     const sidebar_view_mode = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "sidebar_view_mode", "right")
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")
-    const header_height = getHeaderHeight(state)
-    const footer_height = getFooterHeight(state)
-    const toolbar_height = getToolbarHeight(state)
 
     return {
         filter_sprint_id,
@@ -266,10 +262,7 @@ function mapStateToProps(state, props) {
         is_creating_issue: is_creating_issue,
         issue_header_list: issue_header_list,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
-        sidebar_view_mode,
-        header_height,
-        footer_height,
-        toolbar_height,
+        sidebar_view_mode
     }
 }
 

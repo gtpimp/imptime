@@ -15,7 +15,6 @@ import {
     get_selected_sprint_ids
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
-import { updateToolbarHeight } from '../../actions/Header'
 
 class IssuesToolbarPanel extends Component {
 
@@ -26,9 +25,6 @@ class IssuesToolbarPanel extends Component {
 
     componentDidMount() {
         this.refresh()
-        const { dispatch } = this.props
-        const toolbarHeight = this.toolbarElem.clientHeight
-        dispatch(updateToolbarHeight(toolbarHeight))
     }
 
     componentWillReceiveProps() {
@@ -48,8 +44,11 @@ class IssuesToolbarPanel extends Component {
     
     render() {
         return (
-            <div className="toolbar-panel" ref={(toolbar) => { this.toolbarElem = toolbar}}>
-              <div className="button toolbar-button--small button--large button--primary" onClick={this.onNewIssueClick}>+ New Issue</div>
+            <div className="toolbar-panel">
+              <div className="button toolbar-button--small button--large button--primary"
+                   onClick={this.onNewIssueClick}>
+                + New Issue
+              </div>
             </div>
         )
     }

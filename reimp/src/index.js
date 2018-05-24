@@ -18,9 +18,7 @@ if (RAVEN_DSN) {
 ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <div id="app">
-          <MainLayout />
-        </div>
+        <MainLayout />
       </BrowserRouter>
     </Provider>,
     document.getElementById('root')

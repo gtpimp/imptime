@@ -7,21 +7,14 @@ import Toolbar from './toolbar/Toolbar'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
 import Error from './Error'
-import { updateHeaderHeight, getHeaderHeight } from '../actions/Header'
 
 class Header extends Component {
-    
-    componentDidMount() {
-        const { dispatch } = this.props
-        const headerHeight = this.headerElem.clientHeight
-        dispatch(updateHeaderHeight(headerHeight))
-    }
     
     render() {
         const { has_usable_password } = this.props
 
         return (
-            <div className="header" ref={(header) => { this.headerElem = header }}>
+            <div className="header">
               <Maintenance/>
               <Error/>
               <Navbar/>
@@ -39,8 +32,7 @@ function mapStateToProps(state) {
     const user = logged_in_user()
     const has_usable_password = user['has_usable_password'] || false
     return {
-        has_usable_password,
-        header_height: getHeaderHeight(state)
+        has_usable_password
     }
 }
 
