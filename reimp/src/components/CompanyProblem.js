@@ -67,6 +67,7 @@ class CompanyProblem extends Component {
         const { company_problem } = this.props
         switch(company_problem.problem_type) {
             case "missing_rate": return "Missing Rate"
+            case "missing_budget": return "Missing Budget"
             default: return company_problem.problem_type
         }
     }
@@ -121,7 +122,9 @@ class CompanyProblem extends Component {
                                 return (
                                     <div className="div-table__cell" key={header_key}
                                          style={getCellStyle(header)}>
-                                      <div><OtherUser user_id={company_problem.user_id}/></div>
+                                      <div>
+                                        {company_problem.user_id && <OtherUser user_id={company_problem.user_id}/>}
+                                      </div>
                                     </div>
                                 )
                             case "sprint":

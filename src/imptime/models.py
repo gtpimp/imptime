@@ -364,13 +364,14 @@ class MienHeader(BaseModel):
     
 class CompanyProblem(BaseModel):
 
-    PROBLEM_TYPE_OPTIONS = [ ('missing_rate', 'Missing rate') ]
+    PROBLEM_TYPE_OPTIONS = [ ('missing_rate', 'Missing rate'),
+                             ('missing_budget', 'Missing budget') ]
     PROBLEM_TYPE_STATUSES = [ ('open', 'Open'),
                               ('closed', 'Closed'),
                               ('cant_fix', "Can't fix") ]
     DELETABLE_STATUSES = ['open', 'closed']
     
-    user = models.ForeignKey(User, related_name='company_problems', null=False, blank=False)
+    user = models.ForeignKey(User, related_name='company_problems', null=True, blank=True)
     project = models.ForeignKey(Project, related_name='company_problems', null=False)
     sprint = models.ForeignKey(Sprint, related_name='company_problems', null=False)
     description = models.TextField(null=True, blank=True)
