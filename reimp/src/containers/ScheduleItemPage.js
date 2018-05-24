@@ -21,6 +21,7 @@ import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
 import {getScheduleItems, ensureScheduleItemsLoaded} from '../actions/ScheduleItems'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
+import PlanningCalendar from '../components/PlanningCalendar'
 import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
@@ -74,6 +75,7 @@ class ScheduleItemPage extends Component {
         const { nudge_header_list } = this.props
         return (
             <div className="list-layout__pane">
+              <h3>Nudge list</h3>
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
                          header_list={nudge_header_list} />
             </div>
@@ -81,9 +83,11 @@ class ScheduleItemPage extends Component {
     }
 
     renderRightPane() {
+        const { schedule_id } = this.props
         return (
             <div className="list-layout__pane">
-              right
+              <h3>Calendar</h3>
+              <PlanningCalendar schedule_id={schedule_id} />
             </div>
         )
     }

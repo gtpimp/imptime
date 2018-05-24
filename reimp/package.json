@@ -24,6 +24,7 @@
     "react-addons-perf": "^15.4.2",
     "react-autosize-textarea": "^3.0.3",
     "react-beautiful-dnd": "^7.1.2",
+    "react-big-calendar": "^0.19.1",
     "react-classnames": "^0.1.2",
     "react-cookies": "^0.1.0",
     "react-datepicker": "^1.1.0",
