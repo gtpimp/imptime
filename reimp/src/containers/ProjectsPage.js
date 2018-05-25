@@ -139,7 +139,7 @@ class ProjectsPage extends Component {
 
         if ( ! show_sidebar ) {
             return (
-                <div className="list-layout__list">
+                <div className="main-layout__scroll-panel">
                   {this.renderLeftPane()}
                 </div>
             )

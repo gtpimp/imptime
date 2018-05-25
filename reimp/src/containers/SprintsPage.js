@@ -7,7 +7,7 @@ import SprintSidebar from '../components/SprintSidebar'
 import SprintTemplateSidebar from '../components/SprintTemplateSidebar'
 import NewSprintSidebar from '../components/NewSprintSidebar'
 import MultipleSprintSidebar from '../components/MultipleSprintSidebar'
-import SplitPane from 'react-split-pane'
+import Splitter from '../components/Splitter'
 import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__SPRINT_LIST,
@@ -25,9 +25,7 @@ import {
     set_toolbars,
     select_sprints,
     select_projects,
-    get_selected_sprint_ids,
-    getPageFlag,
-    setPageFlag
+    get_selected_sprint_ids
 } from '../actions/Page'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {getCandidateSprint} from '../actions/Sprints'
@@ -37,7 +35,6 @@ class SprintsPage extends Component {
     constructor(props) {
         super(props)
         this.onSelectSprints = this.onSelectSprints.bind(this)
-        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
     }
 
     componentDidMount() {
@@ -96,11 +93,6 @@ class SprintsPage extends Component {
             dispatch(select_sprints(page_key, [default_sprint_id]))
             dispatch(setActivelyAvailableAutoClockEntity(project.id, default_sprint_id))
         }
-    }
-
-    onChangeSplitterSize(size) {
-        const { dispatch } = this.props
-        dispatch(setPageFlag(PAGE_KEY__SPRINTS_PAGE, 'splitter_size', size))
     }
 
     onSelectSprints(sprint_ids) {
@@ -170,28 +162,20 @@ class SprintsPage extends Component {
 
     render() {
 
-        const {show_sidebar, splitter_size } = this.props
+        const {show_sidebar } = this.props
 
         if ( show_sidebar ) {
             return (
-                <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50}
-                             defaultSize={splitter_size}
-                             onChange={this.onChangeSplitterSize} >
-                    <div className="left">
-                      {this.renderLeftPane()}
-                    </div>
-                    <div className="right">
-                      {this.renderRightPane()}
-                    </div>
-                  </SplitPane>
-                </div>
+                <Splitter name='sprints_page'>
+                  {this.renderLeftPane()}
+                  {this.renderRightPane()}
+                </Splitter>
             )
         }
 
         if ( ! show_sidebar ) {
             return (
-                <div className="list-layout">
+                <div className="main-layout__scroll-panel">
                   {this.renderLeftPane()}
                 </div>
             )
@@ -221,7 +205,6 @@ function mapStateToProps(state, props) {
     const is_creating_sprint = candidate_sprint || false
     const sprint_header_list = SPRINT_HEADER_LIST
     const selected_sprint = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
-    const splitter_size = getPageFlag(state, PAGE_KEY__SPRINTS_PAGE, 'splitter_size', "80%")
     const show_sidebar = (is_creating_sprint || (selected_sprint && selected_sprint.id)) || false
 
     return {
@@ -240,7 +223,6 @@ function mapStateToProps(state, props) {
         is_creating_sprint: is_creating_sprint,
         sprint_header_list,
         show_sidebar,
-        splitter_size,
         project_name
     }
 }
