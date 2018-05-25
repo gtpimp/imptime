@@ -7,6 +7,7 @@ import VisualSpecDocumentEditor from './VisualSpecDocumentEditor'
 import VisualSpecDocumentGallery from './VisualSpecDocumentGallery'
 import IssueList from '../../components/IssueList'
 import IssueSidebar from '../../components/IssueSidebar'
+import Splitter from '../../components/Splitter'
 import {
     ensureVisualSpecDocumentsLoaded,
     getVisualSpecDocument,
@@ -229,25 +230,26 @@ class VisualSpecDocumentPage extends Component {
                 }
               </div>
               { issue.id &&
-                <div className="visual_spec_document_page__content">
-                  <div className="visual_spec_document_page__issue_list">
-                    <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
-                               issue_header_list={issue_header_list}
-                               onSelectIssues={this.onSelectIssues}
-                               onDelete={this.onDeleteIssue}
-                    />
-                  </div>
-                  <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
-                    <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id}
-                                  sidebar_view_mode="right"
-                                  project_id={issue.project_id}/>
-                  </div>
-                  <div className="visual_spec_document_page__doc_editor">
-                    { this.renderSelectForIssue() }
-                    <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id}
-                                              issue_id={issue_id} />
-                  </div>
-                </div>
+
+                <Splitter name="visual_spec_document_page">
+                  <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
+                             issue_header_list={issue_header_list}
+                             onSelectIssues={this.onSelectIssues}
+                             onDelete={this.onDeleteIssue}
+                  />
+                  <Splitter name="visual_spec_document_page_doc">
+                    <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
+                      <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id}
+                                    sidebar_view_mode="right"
+                                    project_id={issue.project_id}/>
+                    </div>
+                    <div className="visual_spec_document_page__doc_editor">
+                      { this.renderSelectForIssue() }
+                      <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id}
+                                                issue_id={issue_id} />
+                    </div>
+                  </Splitter>
+                </Splitter>
               }
             </div>
         )
