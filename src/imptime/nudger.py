@@ -25,7 +25,7 @@ class Nudger(object):
     def refresh_all(self, user=None):
         nudges = Nudge.objects.all()
         if user is not None:
-            nudges.filter(user=user)
+            nudges = nudges.filter(user=user)
         nudges.delete()
         for project_id in get_nonexpired_project_ids():
             self.update_nudges_for_project(project_id, user=user)
