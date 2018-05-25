@@ -70,10 +70,10 @@ class MainLayout extends Component {
                                this.props.location.pathname.indexOf('account/create') !== -1 ||
                                this.props.location.pathname.indexOf('share/') !== -1
 
-        
+
         if ( ! are_settings_loaded ) {
             return (
-                <div>Loading settings...</div>
+                <div className="app">Loading settings...</div>
             )
         }
 
@@ -85,30 +85,91 @@ class MainLayout extends Component {
             )
         }
 
-        return (
-            <div className="app">
-              { ! is_logged_in &&
-                <div>
+        if ( ! is_logged_in ) {
+            return (
+                <div className="app">
                   <Maintenance/>
                   <Error/>
                   <MainRouter />
                 </div>
-              }
-              { is_logged_in &&
-                <div className="main-layout">
-                  <div className="main-layout__content">
-                    <Websocket/>
-                    <Header/>
-                    <AutoClockPopup/>
-                    <GlobalCommentAnnotation/>
-                    <div className="main">
-                      <MainRouter />
-                    </div>
-                    <ReactTooltip place="bottom" type="info" />
-                  </div>
-                  <Footer />
+            )
+        }
+
+        return (
+            <div id="app" className="app">
+              <div className="main-layout__panel main-layout__header">
+                Header
+                { false && <div>
+                <Websocket/>
+                <Header/>
+                <AutoClockPopup/>
+                <GlobalCommentAnnotation/>
                 </div>
-              }  
+                }
+              </div>
+              <div className="main-layout__panel main-layout__middle">
+
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                blah bling bling blah<br/>
+                
+                { false && <div>
+                <MainRouter />
+                <ReactTooltip place="bottom" type="info" />
+                </div>
+                }
+              </div>
+              <div className="main-layout__panel main-layout__footer">
+                Footer
+                { false && <Footer />}
+              </div>
             </div>
         )
     }
