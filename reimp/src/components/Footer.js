@@ -12,6 +12,11 @@ class Footer extends Component {
         return (
             <div className="footer" >
               { is_permission_inspector_active && <PermissionInspectorPanel/> }
+              <div className="brand-footer">
+                <div className="brand-footer__version">
+                  ImpTime v2.5
+                </div>
+              </div>
             </div>
         )
     }
