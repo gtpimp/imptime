@@ -112,8 +112,7 @@ class MainLayout extends Component {
                 </div>
               </div>
               <div className="main-layout__panel main-layout__footer">
-                Footer
-                { false && <Footer />}
+                <Footer />
               </div>
             </div>
         )
