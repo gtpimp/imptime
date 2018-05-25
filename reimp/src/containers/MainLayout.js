@@ -98,20 +98,18 @@ class MainLayout extends Component {
         return (
             <div id="app" className="app">
               <div className="main-layout__panel main-layout__header">
-                Header
-                { false && <div>
-                <Websocket/>
-                <Header/>
-                <AutoClockPopup/>
-                <GlobalCommentAnnotation/>
+                <div>
+                  <Websocket/>
+                  <Header/>
+                  <AutoClockPopup/>
+                  <GlobalCommentAnnotation/>
                 </div>
-                }
               </div>
               <div className="main-layout__panel  main-layout__middle">
 
-                <div className="gtp_container">
+                <div className="main-layout__scroll-container">
                 
-                  <div className="gtp_panel">
+                  <div className="main-layout__scroll-panel">
                     blah bling bling blah<br/>
                     blah bling bling blah<br/>
                     blah bling bling blah<br/>
@@ -194,7 +192,7 @@ class MainLayout extends Component {
                     blah bling bling blah<br/>
                   </div>
 
-                  <div className="gtp_panel">
+                  <div className="main_layout__scroll-panel">
                     PANEL2
                     ==============
                     blah bling bling blah<br/>
