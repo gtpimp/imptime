@@ -139,6 +139,14 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
     return v
 }
 
+export function setGlobalPageFlag(flag_name, value) {
+    return setPageFlag("__GLOBAL_PAGE__", flag_name, value)
+}
+
+export function getGlobalPageFlag(state, flag_name, default_value) {
+    return getPageFlag(state, "__GLOBAL_PAGE__", flag_name, default_value)
+}
+
 export function updateHeaderList(new_header_list, page_key) {
 
     var header_list = new_header_list

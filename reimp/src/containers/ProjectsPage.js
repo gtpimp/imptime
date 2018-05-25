@@ -1,12 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-//import {includes} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
 import NewProjectSidebar from '../components/NewProjectSidebar'
 import MultipleProjectSidebar from '../components/MultipleProjectSidebar'
-import SplitPane from 'react-split-pane'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import {
     LIST_KEY__PROJECT_LIST,
@@ -16,26 +14,22 @@ import {
 import {
     set_toolbars,
     select_projects,
-    get_selected_project_ids,
-    getPageFlag,
-    setPageFlag
+    get_selected_project_ids
 } from '../actions/Page'
 import {
     initList,
     selectItems,
-//    update_list_filter,
     update_list_pagination,
-//    invalidateList
 } from '../actions/ItemList'
 import {getCandidateProject} from '../actions/Projects'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
+import Splitter from '../components/Splitter'
 
 class ProjectsPage extends Component {
 
     constructor(props) {
         super(props)
         this.onSelectProjects = this.onSelectProjects.bind(this)
-        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
     }
 
     componentDidMount() {
@@ -88,11 +82,6 @@ class ProjectsPage extends Component {
         }
     }
 
-    onChangeSplitterSize(size) {
-        const { dispatch } = this.props
-        dispatch(setPageFlag(PAGE_KEY__PROJECTS_PAGE, 'splitter_size', size))
-    }
-
     renderLeftPane() {
         const {project_header_list} = this.props
         
@@ -137,22 +126,14 @@ class ProjectsPage extends Component {
     
     render() {
 
-        const {show_sidebar, splitter_size} = this.props
+        const {show_sidebar} = this.props
 
         if ( show_sidebar ) {
             return (
-                <SplitPane split="vertical" minSize={50}
-                           defaultSize={splitter_size}
-                           onChange={this.onChangeSplitterSize}
-                >
-
-                  <div className="left">
-                    {this.renderLeftPane()}
-                  </div>
-                  <div className="right">
-                    {this.renderRightPane()}
-                  </div>
-                </SplitPane>
+                <Splitter name='projects_page'>
+                  {this.renderLeftPane()}
+                  {this.renderRightPane()}
+                </Splitter>
             )
         }
 
@@ -181,7 +162,6 @@ function mapStateToProps(state, props) {
     const is_creating_project = candidate_project || false
     const project_header_list = PROJECT_HEADER_LIST
     const selected_project = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
-    const splitter_size = getPageFlag(state, PAGE_KEY__PROJECTS_PAGE, 'splitter_size', "80%")
     const show_sidebar = (is_creating_project || (selected_project && selected_project.id)) || false
     
     return {
@@ -193,8 +173,7 @@ function mapStateToProps(state, props) {
         default_project_id,
         project_header_list,
         selected_project,
-        show_sidebar,
-        splitter_size
+        show_sidebar
     }
 }
 
