@@ -141,18 +141,18 @@ class ProjectsPage extends Component {
 
         if ( show_sidebar ) {
             return (
-                <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50}
-                             defaultSize={splitter_size}
-                             onChange={this.onChangeSplitterSize} >
-                    <div className="left">
-                      {this.renderLeftPane()}
-                    </div>
-                    <div className="right">
-                      {this.renderRightPane()}
-                    </div>
-                  </SplitPane>
-                </div> 
+                <SplitPane split="vertical" minSize={50}
+                           defaultSize={splitter_size}
+                           onChange={this.onChangeSplitterSize}
+                >
+
+                  <div className="left">
+                    {this.renderLeftPane()}
+                  </div>
+                  <div className="right">
+                    {this.renderRightPane()}
+                  </div>
+                </SplitPane>
             )
         }
 

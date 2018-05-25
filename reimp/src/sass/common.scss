@@ -57,10 +57,10 @@ html, body {
     display: flex;
     flex-direction: row;
     width: 100%;
+    flex: 1 1 auto;
 }
 
 .main-layout__scroll-panel {
-    width: 40%;
     flex: 1 1 auto;
     overflow: auto;
 }

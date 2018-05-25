@@ -40,7 +40,7 @@ class ProjectStatementPage extends Component {
     render() {
         const { project } = this.props
         return (
-            <div className="project-user__project_statement">
+            <div className="project-user__project_statement  main-layout__scroll-panel">
               <h2>
                 Project statement for {project.name}
               </h2>
