@@ -73,13 +73,13 @@ class MainLayout extends Component {
 
         if ( ! are_settings_loaded ) {
             return (
-                <div className="app">Loading settings...</div>
+                <div id="app" className="app">Loading settings...</div>
             )
         }
 
         if ( ! is_logged_in && ! allow_non_auth  ) {
             return (
-                <div className="app app--login">
+                <div id="app" className="app app--login">
                   <LoginPage />
                 </div>
             )
@@ -87,7 +87,7 @@ class MainLayout extends Component {
 
         if ( ! is_logged_in ) {
             return (
-                <div className="app">
+                <div id="app" className="app">
                   <Maintenance/>
                   <Error/>
                   <MainRouter />
@@ -107,59 +107,176 @@ class MainLayout extends Component {
                 </div>
                 }
               </div>
-              <div className="main-layout__panel main-layout__middle">
+              <div className="main-layout__panel gtp_container main-layout__middle">
 
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                blah bling bling blah<br/>
-                
+                  <div className="gtp_panel">
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                  </div>
+
+                  <div className="gtp_panel">
+                    PANEL2
+                    ==============
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                    blah bling bling blah<br/>
+                  </div>
+            
                 { false && <div>
                 <MainRouter />
                 <ReactTooltip place="bottom" type="info" />
