@@ -1,16 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import SplitPane from 'react-split-pane'
+import Splitter from '../components/Splitter'
 import {
     LIST_KEY__SCHEDULE_ITEM_LIST,
     PAGE_KEY__SCHEDULE_ITEM_PAGE,
     LIST_KEY__NUDGE_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
-    set_toolbars,
-    getPageFlag,
-    setPageFlag
+    set_toolbars
 } from '../actions/Page'
 import {
     initList,
@@ -25,11 +23,6 @@ import PlanningCalendar from '../components/PlanningCalendar'
 import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
-
-    constructor(props) {
-        super(props)
-        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
-    }
 
     componentDidMount() {
         const {schedule_id, visible_item_ids, dispatch} = this.props
@@ -66,11 +59,6 @@ class ScheduleItemPage extends Component {
         dispatch(setBreadcrumbs(breadcrumbs))
     }
 
-    onChangeSplitterSize(size) {
-        const { dispatch } = this.props
-        dispatch(setPageFlag(PAGE_KEY__SCHEDULE_ITEM_PAGE, 'splitter_size', size))
-    }
-
     renderLeftPane() {
         const { nudge_header_list } = this.props
         return (
@@ -93,23 +81,11 @@ class ScheduleItemPage extends Component {
     }
 
     render() {
-
-        const { splitter_size } = this.props
-
         return (
-            <div className="list-layout">
-              <SplitPane split="vertical" minSize={50}
-                         defaultSize={splitter_size}
-                         onChange={this.onChangeSplitterSize}
-              >
-                <div className="left">
-                  {this.renderLeftPane()}
-                </div>
-                <div className="right">
-                  {this.renderRightPane()}
-                </div>
-              </SplitPane>
-            </div>
+            <Splitter name="schedule_item_page">
+              {this.renderLeftPane()}
+              {this.renderRightPane()}
+            </Splitter>
         )
     }
 }
@@ -120,7 +96,6 @@ function mapStateToProps(state, props) {
     const schedule = getSchedule(state, schedule_id)
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const schedule_items_by_id = getScheduleItems(state, visible_item_ids)
-    const splitter_size = getPageFlag(state, PAGE_KEY__SCHEDULE_ITEM_PAGE, 'splitter_size', "80%")
     const nudge_header_list = getNudgeHeaderListForCurrentMien(state)
 
     return {
@@ -128,7 +103,6 @@ function mapStateToProps(state, props) {
         schedule,
         visible_item_ids,
         schedule_items_by_id,
-        splitter_size,
         nudge_header_list
     }
 }
