@@ -107,8 +107,10 @@ class MainLayout extends Component {
                 </div>
                 }
               </div>
-              <div className="main-layout__panel gtp_container main-layout__middle">
+              <div className="main-layout__panel  main-layout__middle">
 
+                <div className="gtp_container">
+                
                   <div className="gtp_panel">
                     blah bling bling blah<br/>
                     blah bling bling blah<br/>
@@ -275,6 +277,8 @@ class MainLayout extends Component {
                     blah bling bling blah<br/>
                     blah bling bling blah<br/>
                     blah bling bling blah<br/>
+                  </div>
+
                   </div>
             
                 { false && <div>

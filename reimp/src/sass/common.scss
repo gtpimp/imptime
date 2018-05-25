@@ -43,6 +43,7 @@ html, body {
     flex: 1 1 auto;
     overflow: auto;
     height: 1px;
+    display: flex;
 }
 
 .main-layout__header {
@@ -77,13 +78,13 @@ html, body {
 .gtp_container {
     display: flex;
     flex-direction: row;
-    //height: 100vh;
+    flex: 1 1 auto;
 }
 
 .gtp_panel {
     width: 40%;
     //height: 1px;
-    //flex: 1 1 auto;
+    flex: 1 1 auto;
     overflow: auto;
 }
 
