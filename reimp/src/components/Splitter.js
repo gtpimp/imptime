@@ -46,8 +46,8 @@ class Splitter extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { name } = props
-    const size = getGlobalPageFlag(state, name, "80%")
+    const { defaultSize, name } = props
+    const size = getGlobalPageFlag(state, name, defaultSize || "80%")
     return {
         name: name || "generic_splitter",
         size
