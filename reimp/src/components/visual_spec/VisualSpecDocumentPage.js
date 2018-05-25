@@ -212,46 +212,51 @@ class VisualSpecDocumentPage extends Component {
                 issue, issue_id, project_id,
                 issue_header_list } = this.props
 
+        if ( ! issue.id ) {
+            return (
+                <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
+                           issue_header_list={issue_header_list}
+                           onSelectIssues={this.onSelectIssues}
+                           onDelete={this.onDeleteIssue}
+                />
+            )
+        }
+        
         return (
-            <div>
-              <div className="visual_spec_document_page__gallery">
-                { visual_spec_document_ids &&
-                  <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids}
-                                             active_visual_spec_document_id={active_visual_spec_document_id}
-                                             reorderDocuments={this.reorderDocuments}
-                                             onDeleteDocument={(issue_id && this.unassociateDocumentWithIssue) || this.unassociateDocumentWithProject}
-                                             project_id={project_id}
-                                             issue_id={issue_id}
-                                             onSelect={this.onSelectDocument}
-                  />
-                }
-                { ! visual_spec_document_ids &&
-                  <div>Loading...</div>
-                }
-              </div>
-              { issue.id &&
-
-                <Splitter name="visual_spec_document_page">
-                  <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
-                             issue_header_list={issue_header_list}
-                             onSelectIssues={this.onSelectIssues}
-                             onDelete={this.onDeleteIssue}
-                  />
-                  <Splitter name="visual_spec_document_page_doc">
-                    <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
-                      <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id}
-                                    sidebar_view_mode="right"
-                                    project_id={issue.project_id}/>
-                    </div>
-                    <div className="visual_spec_document_page__doc_editor">
-                      { this.renderSelectForIssue() }
-                      <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id}
-                                                issue_id={issue_id} />
-                    </div>
-                  </Splitter>
-                </Splitter>
-              }
-            </div>
+            <Splitter name="visual_spec_document_page">
+              <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
+                         issue_header_list={issue_header_list}
+                         onSelectIssues={this.onSelectIssues}
+                         onDelete={this.onDeleteIssue}
+              />
+              <Splitter name="visual_spec_document_page_doc">
+                <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
+                  <div className="visual_spec_document_page__gallery">
+                    { visual_spec_document_ids &&
+                      <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids}
+                                                 active_visual_spec_document_id={active_visual_spec_document_id}
+                                                 reorderDocuments={this.reorderDocuments}
+                                                 onDeleteDocument={(issue_id && this.unassociateDocumentWithIssue) || this.unassociateDocumentWithProject}
+                                                 project_id={project_id}
+                                                 issue_id={issue_id}
+                                                 onSelect={this.onSelectDocument}
+                      />
+                    }
+                      { ! visual_spec_document_ids &&
+                        <div>Loading...</div>
+                      }
+                  </div>
+                  <IssueSidebar issue_id={issue.id} sprint_id={issue.sprint_id}
+                                sidebar_view_mode="right"
+                                project_id={issue.project_id}/>
+                </div>
+                <div className="visual_spec_document_page__doc_editor">
+                  { this.renderSelectForIssue() }
+                  <VisualSpecDocumentEditor visual_spec_document_id={active_visual_spec_document_id}
+                                            issue_id={issue_id} />
+                </div>
+              </Splitter>
+            </Splitter>
         )
     }
 }
