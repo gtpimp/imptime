@@ -124,7 +124,7 @@ class ProjectWikiPage extends Component {
     }
 
     render() {
-        const { show_sidebar, splitter_size } = this.props
+        const { show_sidebar } = this.props
 
         if ( show_sidebar ) {
             return (
