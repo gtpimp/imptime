@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {withRouter, Link} from 'react-router-dom'
 import Timestamp from '../components/Timestamp'
+import Hours from './Hours'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
@@ -144,6 +145,16 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
+                            case "sum_estimated_points":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        <Hours hours={sprint.sum_estimated_hours} />
+                                      </div>
+                                    </div>
+                                )
+
                             default:
                                 console.error("Unknown header: " + header_key)
                                 

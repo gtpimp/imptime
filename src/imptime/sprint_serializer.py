@@ -34,6 +34,7 @@ class SprintSerializer(BaseSerializer):
     ratio_scope_creep = serializers.FloatField()
     commission_percentage = serializers.FloatField()
     budget = serializers.FloatField()
+    sum_estimated_hours = serializers.FloatField() #across all developers
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')

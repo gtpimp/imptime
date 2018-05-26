@@ -40,7 +40,8 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'end_time', label:"Last clock", description:"Last clocked time on this sprint", width:small_col_width},
       {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width},
       {key:'status', label:"Status", description:"Sprint status", width:small_col_width},
-      {key:'type', label:"Type", description:"Sprint type", width:small_col_width}
+      {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
+      {key:'sum_estimated_points', label:"Total estimate", description:"Total estimate across all issues", width:small_col_width}
     ]
 
 const DEFAULT_SPRINT_HEADERS_KEYS = ["name", "status", "num_issues"]

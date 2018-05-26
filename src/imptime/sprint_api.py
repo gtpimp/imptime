@@ -3,7 +3,7 @@ from sprint_serializer import SprintSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
-from django.db.models import Prefetch, Count, Sum
+from django.db.models import Prefetch, Count, Sum, FloatField, F, ExpressionWrapper
 import json
 from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +12,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
-from timepiece.models import Issue
+from timepiece.models import Issue, IssuePoints
 from timepiece.models import BusinessProjectOrder as ProjectSprintOrder
 from imptime.models import SprintTemplate
 from rest_framework.decorators import detail_route
@@ -69,7 +69,22 @@ class SprintViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def _enrich_sprint_qs(self, sprints):
-        sprints = sprints.prefetch_related("reviews")
+        sprints = sprints.prefetch_related("reviews")\
+                         .prefetch_related("issues__entries")
+
+        # entries = Entry.objects.filter(issue__project__in=sprints)
+        # entries = entries.order_by("issue__project_id").values("issue__project_id").distinct() #sic
+        # sprints = sprints.annotate(num_estimates_issues=
+
+        # estimates = IssuePoints.objects\
+        #                        .filter(issue__project__in=sprints)\
+        #                        .order_by("issue__project_id")\
+        #                        .values("issue__project_id")\
+        #                        .distinct()
+
+        #import pdb; pdb.set_trace()
+        sprints = sprints.annotate(sum_estimated_hours=Sum(F('issues__issue_points__points')))
+        
         return sprints
     
     def update(self, request, pk):
