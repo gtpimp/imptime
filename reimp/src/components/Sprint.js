@@ -154,6 +154,38 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
+                            case "num_issues_with_estimates":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {sprint.num_issues_with_estimates}
+                                      </div>
+                                    </div>
+                                )
+                            case "num_issues_without_estimates":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.num_issues || 0) - sprint.num_issues_with_estimates}
+                                      </div>
+                                    </div>
+                                )
+                            case "are_all_issues_estimated":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {((sprint.num_issues || 0) - sprint.num_issues_with_estimates === 0) &&
+                                         <div className="icon__status--ok"/>
+                                        }
+                                        {((sprint.num_issues || 0) - sprint.num_issues_with_estimates !== 0) &&
+                                         <div className="icon__status--not-ok"/>
+                                        }
+                                      </div>
+                                    </div>
+                                )
 
                             default:
                                 console.error("Unknown header: " + header_key)

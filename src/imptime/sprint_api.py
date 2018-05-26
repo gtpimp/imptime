@@ -1,5 +1,6 @@
 import logging
 from sprint_serializer import SprintSerializer
+import itertools
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -55,9 +56,11 @@ class SprintViewSet(BaseViewSet):
             else:
                 sprints = sprints.select_related("status3")
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                sprints = self._enrich_sprint_qs(sprints)
+                sprints, num_issues_with_estimates_by_sprint_id = self._enrich_sprint_qs(sprints)
 
-                s = SprintSerializer(sprints, many=True, logged_in_user=self.request.user)
+                s = SprintSerializer(sprints, many=True,
+                                     num_issues_with_estimates_by_sprint_id=num_issues_with_estimates_by_sprint_id,
+                                     logged_in_user=self.request.user)
                 sprints_data = s.data
                 context['sprints'] = sprints_data
             context['pagination'] = pagination
@@ -76,23 +79,16 @@ class SprintViewSet(BaseViewSet):
         # entries = entries.order_by("issue__project_id").values("issue__project_id").distinct() #sic
         # sprints = sprints.annotate(num_estimates_issues=
 
-        issues_with_estimates = IssuePoints.objects\
-                                           .filter(issue__project__in=sprints)
-        
-
-        #import pdb; pdb.set_trace()
         sprints = sprints.annotate(sum_estimated_hours=Sum(F('issues__issue_points__points')))
 
-        # sprints = sprints.annotate(num_issues_unestimated=Subquery(IssuePoints.objects\
-        #                                                            .filter(issue__project=OuterRef('id'))\
-        #                                                            .order_by('issue_id')\
-        #                                                            .annotate(count=Count('*'))\
-        #                                                            .values('count')[:1]))
-
-        
-        #sprints = sprints.annotate(num_issues_unestimated=Count('issues
-        
-        return sprints
+        issue_points = IssuePoints.objects.filter(issue__project__in=sprints)\
+                                          .order_by('issue__project', 'issue_id')\
+                                          .values('issue__project', 'issue_id')\
+                                          .annotate(points_per_issue=Count('issue_id'))
+        num_issues_with_estimates_by_sprint_id = {}
+        for k, v in itertools.groupby(issue_points, lambda x: x['issue__project']):
+            num_issues_with_estimates_by_sprint_id[k] = len(list(v))
+        return sprints, num_issues_with_estimates_by_sprint_id
     
     def update(self, request, pk):
         try:

@@ -248,6 +248,22 @@
     border-radius: 7px;
 }
 
+.icon__status--ok {
+    height: 15px;
+    width: 15px;
+    background-color:green;
+    border-radius: 7px;
+}
+
+.icon__status--not-ok {
+    height: 15px;
+    width: 15px;
+    background-color:orange;
+    border-radius: 7px;
+}
+
+
+
 .issue_sidebar__issue_copy_img {
     @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');
     background-color: black;

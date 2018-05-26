@@ -23,6 +23,7 @@ class SprintSerializer(BaseSerializer):
     last_entry = ClockEntrySerializer()
     created = serializers.DateTimeField()
     num_issues = serializers.IntegerField()
+    num_issues_with_estimates = serializers.IntegerField()
     sprint_type = serializers.CharField(source="project_type")
     sprint_template_id = serializers.CharField(source="cloned_from_sprint_id")
     sprint_clone_ids = serializers.ListField(child=serializers.CharField())
@@ -38,6 +39,7 @@ class SprintSerializer(BaseSerializer):
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
+        self.num_issues_with_estimates_by_sprint_id = kwargs.pop('num_issues_with_estimates_by_sprint_id')
         return super(SprintSerializer, self).__init__(*args, **kwargs)
     
     def to_representation(self, sprint, *args, **kwargs):
@@ -45,6 +47,8 @@ class SprintSerializer(BaseSerializer):
         sprint.status_name = sprint.status3 and sprint.status3.name
         sprint.first_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('start_time').first()
         sprint.last_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('-end_time').first()
+
+        sprint.num_issues_with_estimates = self.num_issues_with_estimates_by_sprint_id.get(sprint.id, 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
         if sprint_template:
