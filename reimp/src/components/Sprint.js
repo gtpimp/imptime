@@ -188,7 +188,7 @@ class Sprint extends Component {
                                 )
 
                             default:
-                                console.error("Unknown header: " + header_key)
+                                console.error("Unknown header: " + header_key + " (headers are " + visible_header_keys + ")")
                                 
                         }
                     }
