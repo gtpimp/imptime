@@ -16,10 +16,14 @@ import {
     fetchSprintsIfNeeded,
     reorderSprints,
     startCandidateSprint,
-    cancelCandidateSprint
+    cancelCandidateSprint,
+    getAllAvailableSprintHeaders,
+    getSprintHeaderListForMien,
+    updateSprintMienHeaders
 } from '../actions/Sprints'
 import Sprint from './Sprint'
 import DivTable from './DivTable'
+import MienListColumnConfigurable from './MienListColumnConfigurable'
 
 class SprintList extends Component {
 
@@ -201,24 +205,30 @@ class SprintList extends Component {
         
         return (
             <div className="sprint_list__container">
-              { map(sprint_types, function(sprint_type) {
-                    const sprints = sprints_by_type[sprint_type]
-                    if ( !sprints || sprints.length === 0 ) {
-                        return null
-                    }
-                    const sprint_rows = that.create_sprint_rows(sprints)
-                    return (
-                        <div key={sprint_type}>
-                          <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
-                                    renderHeader={() => that.renderHeader(sprint_type || "")}
-                                    project_id={project_id}
-                                    permission_name_for_dragging={'has_edit_sprint'} >
-                            {sprint_rows}
-                          </DivTable>
-                        </div>
-                    )
-                    
-                })}
+              <MienListColumnConfigurable getAvailableHeaders={getAllAvailableSprintHeaders}
+                                          getHeaderListForMien={getSprintHeaderListForMien}
+                                          updateMienHeaders={updateSprintMienHeaders}
+                                          header_list_name="sprint"
+              >
+                { map(sprint_types, function(sprint_type) {
+                      const sprints = sprints_by_type[sprint_type]
+                      if ( !sprints || sprints.length === 0 ) {
+                          return null
+                      }
+                      const sprint_rows = that.create_sprint_rows(sprints)
+                      return (
+                          <div key={sprint_type}>
+                            <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
+                                      renderHeader={() => that.renderHeader(sprint_type || "")}
+                                      project_id={project_id}
+                                      permission_name_for_dragging={'has_edit_sprint'} >
+                              {sprint_rows}
+                            </DivTable>
+                          </div>
+                      )
+
+                  })}
+              </MienListColumnConfigurable>
             </div>
         )
     }

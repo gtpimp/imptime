@@ -232,8 +232,8 @@ function mapStateToProps(state, props) {
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
-        is_creating_issue: is_creating_issue,
-        issue_header_list: issue_header_list,
+        is_creating_issue,
+        issue_header_list,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
         sidebar_view_mode
     }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { includes, keys } from 'lodash';
+import { keys, keyBy, map } from 'lodash';
 import { connect } from 'react-redux'
 import classNames from 'classnames'
 import {withRouter, Link} from 'react-router-dom'
@@ -35,7 +35,10 @@ class Sprint extends Component {
     render_expanded() {
         const { sprint, is_loading, is_selected, isOver,
 		onClickedSprint,
-                header_list, visible_header_keys} = this.props
+                header_list} = this.props
+        const headers_by_key = keyBy(header_list, "key")
+        const visible_header_keys = keys(headers_by_key)
+        const that = this
 
 	if ( ! sprint ) {
 	    return (
@@ -61,74 +64,92 @@ class Sprint extends Component {
 	} else {
             return (
 		<div key={this.key+"."+sprint.id}
-                onClick={onClickedSprint}
-                className={classNames("div-table__row",
-                                      'sprint',
-                                      'sprint__type-'+sprint.sprint_type,
-                                      {
-                                          'div-table__row--drop-target': isOver,
-                                          'sprint__is_clone': sprint.sprint_template_id,
-                                          'div-table__row--selected': is_selected
-                                      })}
+                     onClick={onClickedSprint}
+                     className={classNames("div-table__row",
+                                           'sprint',
+                                           'sprint__type-'+sprint.sprint_type,
+                                           {
+                                               'div-table__row--drop-target': isOver,
+                                               'sprint__is_clone': sprint.sprint_template_id,
+                                               'div-table__row--selected': is_selected
+                                           })}
 		>
-                  {includes(visible_header_keys, "number") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.number)}>
-                     <div className="sprint__cell--number">
-                       {sprint.number}
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "name") &&
-                   <div className="div-table__cell"
-                        style={getCellStyle(header_list.name)}>
-                     <div className="sprint__cell--name">
-                       {sprint.name}
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "start_time") &&
-                   <div className="div-table__cell sprint__cell__secondary"
-                        style={getCellStyle(header_list.start_time)}>
-                     <div className="sprint__cell--start-time">
-                       <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "end_time") &&
-                   <div className="div-table__cell sprint__cell__secondary"
-                        style={getCellStyle(header_list.end_time)}>
-                     <div className="sprint__cell--end-time">
-                       <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "num_issues") &&
-                   <Link to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
-                         className="div-table__cell sprint__cell__secondary"
-                         onClick={this.onIssuesClick}
-                         style={getCellStyle(header_list.num_issues)}>
-                     <div className="sprint__cell--num-issues">
-                       {sprint.num_issues || 0} Issues
-                     </div>
-                   </Link>
-                  }
-                  {includes(visible_header_keys, "status") &&
-                   <div className="div-table__cell sprint__cell__secondary"
-                        style={getCellStyle(header_list.status)}>
-                     <div className="sprint__cell--status">
-                       <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
-                     </div>
-                   </div>
-                  }
-                  {includes(visible_header_keys, "type") &&
-                   <div className="div-table__cell sprint__cell__secondary"
-                        style={getCellStyle(header_list.type)}>
-                     <div className="sprint__cell--type">
-                       <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
-                     </div>
-                   </div>
-                  }
+
+                  { map(visible_header_keys, function(header_key) {
+                        const header = headers_by_key[header_key]
+                        switch(header_key) {
+                            case "number":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--number">
+                                        {sprint.number}
+                                      </div>
+                                    </div>
+                                )
+                            case "name":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--name">
+                                        {sprint.name}
+                                      </div>
+                                    </div>
+                                )
+                            case "start_time":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--start-time">
+                                        <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
+                                      </div>
+                                    </div>
+                                )
+                            case "end_time":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--end-time">
+                                        <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
+                                      </div>
+                                    </div>
+                                )
+                            case "num_issues":
+                                return (
+                                    <Link to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                          className="div-table__cell sprint__cell__secondary"
+                                          onClick={that.onIssuesClick}
+                                          key={header_key}
+                                          style={getCellStyle(header)}>
+                                      <div className="sprint__cell--num-issues">
+                                        {sprint.num_issues || 0} Issues
+                                      </div>
+                                    </Link>
+                                )
+                            case "status":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--status">
+                                        <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                                      </div>
+                                    </div>
+                                )
+                            case "type":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
+                                      </div>
+                                    </div>
+                                )
+                            default:
+                                console.error("Unknown header: " + header_key)
+                                
+                        }
+                    }
+                    )}
                 </div>
             )
 	}
@@ -160,8 +181,7 @@ function mapStateToProps(state, props) {
 	is_loading: is_loading,
 	is_collapsed: is_collapsed,
 	is_expanded: !is_collapsed,
-        header_list,
-        visible_header_keys: keys(header_list),
+        header_list
     }
 }
 

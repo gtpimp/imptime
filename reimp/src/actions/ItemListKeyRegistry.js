@@ -91,6 +91,7 @@ export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 export const PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE = 'billable_hours_statement_page'
 
 export const HEADER_LIST_NAME__ISSUE = "issue"
+export const HEADER_LIST_NAME__SPRINT = "sprint"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
@@ -196,15 +197,6 @@ export var BILLABLE_HOURS_STATEMENT_HEADER_LIST__TOTALS =
     [ {key:'hours', label:'Hours', description:'Hours', width:medium_col_width},
       {key:'cost', label:'Cost', description:'Cost', width:medium_col_width}
     ]
-
-export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
-                                 'start_time': {label:"First clock", width:small_col_width},
-                                 'end_time': {label:"Last clock", width:small_col_width},
-                                 'num_issues': {label:"Issues", width: small_col_width},
-                                 'status': {label:"Status", width:small_col_width},
-                                 'type': {label:"Type", width:small_col_width}
-}
-
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':{label:'#', width:tiny_col_width},

@@ -11,8 +11,7 @@ import Splitter from '../components/Splitter'
 import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__SPRINT_LIST,
-    PAGE_KEY__SPRINTS_PAGE,
-    SPRINT_HEADER_LIST
+    PAGE_KEY__SPRINTS_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     selectItems,
@@ -28,7 +27,7 @@ import {
     get_selected_sprint_ids
 } from '../actions/Page'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
-import {getCandidateSprint} from '../actions/Sprints'
+import {getCandidateSprint, getSprintHeaderListForCurrentMien} from '../actions/Sprints'
 
 class SprintsPage extends Component {
 
@@ -203,7 +202,7 @@ function mapStateToProps(state, props) {
     const project_name = project.name
     const candidate_sprint = getCandidateSprint(state) || null
     const is_creating_sprint = candidate_sprint || false
-    const sprint_header_list = SPRINT_HEADER_LIST
+    const sprint_header_list = getSprintHeaderListForCurrentMien(state)
     const selected_sprint = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const show_sidebar = (is_creating_sprint || (selected_sprint && selected_sprint.id)) || false
 
