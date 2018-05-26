@@ -145,12 +145,12 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
-                            case "sum_estimated_points":
+                            case "hours_by_assignee":
                                 return (
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
-                                        <Hours hours={sprint.sum_estimated_hours} />
+                                        <Hours hours={sprint.hours_by_assignee} />
                                       </div>
                                     </div>
                                 )

@@ -13,7 +13,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
-from timepiece.models import Issue, IssuePoints
+from timepiece.models import Issue, IssuePoints, Entry
 from timepiece.models import BusinessProjectOrder as ProjectSprintOrder
 from imptime.models import SprintTemplate
 from rest_framework.decorators import detail_route
@@ -57,10 +57,11 @@ class SprintViewSet(BaseViewSet):
                 sprints = sprints.select_related("status3")
 
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                sprints, num_issues_with_estimates_by_sprint_id = self._enrich_sprint_qs(sprints)
+                sprints, num_issues_with_estimates_by_sprint_id, hours_per_sprint_by_assignee = self._enrich_sprint_qs(sprints)
 
                 s = SprintSerializer(sprints, many=True,
                                      num_issues_with_estimates_by_sprint_id=num_issues_with_estimates_by_sprint_id,
+                                     hours_per_sprint_by_assignee=hours_per_sprint_by_assignee,
                                      logged_in_user=self.request.user)
                 sprints_data = s.data
                 context['sprints'] = sprints_data
@@ -76,11 +77,13 @@ class SprintViewSet(BaseViewSet):
         sprints = sprints.prefetch_related("reviews")\
                          .prefetch_related("issues__entries")
 
-        # entries = Entry.objects.filter(issue__project__in=sprints)
-        # entries = entries.order_by("issue__project_id").values("issue__project_id").distinct() #sic
-        # sprints = sprints.annotate(num_estimates_issues=
+        entries = Entry.objects.filter(issue__project__in=sprints)\
+                               .filter(issue__assigned_to_id=F('user_id'))\
+                               .order_by("issue__project_id")\
+                               .values("issue__project_id").distinct()\
+                               .annotate(hours_per_sprint=Sum('hours'))
 
-        # sprints = sprints.annotate(sum_estimated_hours=Sum(F('issues__issue_points__points')))
+        hours_per_sprint_by_assignee = dict( [(x['issue__project_id'], x['hours_per_sprint']) for x in entries] )
 
         issue_points = IssuePoints.objects.filter(issue__project__in=sprints)\
                                           .filter(issue__assigned_to_id=F('user_id'))\
@@ -90,7 +93,7 @@ class SprintViewSet(BaseViewSet):
         num_issues_with_estimates_by_sprint_id = {}
         for k, v in itertools.groupby(issue_points, lambda x: x['issue__project']):
             num_issues_with_estimates_by_sprint_id[k] = len(list(v))
-        return sprints, num_issues_with_estimates_by_sprint_id
+        return sprints, num_issues_with_estimates_by_sprint_id, hours_per_sprint_by_assignee
     
     def update(self, request, pk):
         try:

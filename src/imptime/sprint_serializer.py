@@ -35,11 +35,12 @@ class SprintSerializer(BaseSerializer):
     ratio_scope_creep = serializers.FloatField()
     commission_percentage = serializers.FloatField()
     budget = serializers.FloatField()
-    sum_estimated_hours = serializers.FloatField() #across all developers
+    hours_by_assignee = serializers.FloatField()
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
         self.num_issues_with_estimates_by_sprint_id = kwargs.pop('num_issues_with_estimates_by_sprint_id')
+        self.hours_per_sprint_by_assignee = kwargs.pop('hours_per_sprint_by_assignee')
         return super(SprintSerializer, self).__init__(*args, **kwargs)
     
     def to_representation(self, sprint, *args, **kwargs):
@@ -75,5 +76,6 @@ class SprintSerializer(BaseSerializer):
             sprint.budget = None
 
         sprint.sum_estimated_hours = 0
+        sprint.hours_by_assignee = self.hours_per_sprint_by_assignee.get(sprint.id, 0)
             
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)
