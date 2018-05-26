@@ -53,10 +53,17 @@ class SprintSerializer(BaseSerializer):
         sprint.first_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('start_time').first()
         sprint.last_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('-end_time').first()
 
-        sprint.num_issues_with_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_estimated', 0)
-        sprint.estimated_hours_by_assignee = self.estimates_by_sprint_id.get(sprint.id, {}).get('estimated_hours', 0)
-        sprint.num_open_issues_with_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_open_estimated', 0)
-        sprint.estimated_open_hours_by_assignee = self.estimates_by_sprint_id.get(sprint.id, {}).get('estimated_open_hours', 0)
+        if bp.can_see_other_user_points:
+            sprint.num_issues_with_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_estimated', 0)
+            sprint.estimated_hours_by_assignee = self.estimates_by_sprint_id.get(sprint.id, {}).get('estimated_hours', 0)
+            sprint.num_open_issues_with_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_open_estimated', 0)
+            sprint.estimated_open_hours_by_assignee = self.estimates_by_sprint_id.get(sprint.id, {}).get('estimated_open_hours', 0)
+        else:
+            sprint.num_issues_with_estimates = None
+            sprint.estimated_hours_by_assignee = None
+            sprint.num_open_issues_with_estimates = None
+            sprint.estimated_open_hours_by_assignee = None
+            
         sprint.num_issues_unassigned = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_unassigned_issues', 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
@@ -83,6 +90,9 @@ class SprintSerializer(BaseSerializer):
         if not bp.has_view_budget:
             sprint.budget = None
 
-        sprint.hours_by_assignee = self.hours_per_sprint_by_assignee.get(sprint.id, 0)
+        if bp.can_view_actual_hours:
+            sprint.hours_by_assignee = self.hours_per_sprint_by_assignee.get(sprint.id, 0)
+        else:
+            sprint.hours_by_assignee = None
             
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)

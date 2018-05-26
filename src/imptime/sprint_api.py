@@ -87,9 +87,10 @@ class SprintViewSet(BaseViewSet):
 
         issue_points = IssuePoints.objects.filter(issue__project__in=sprints)\
                                           .filter(issue__assigned_to_id=F('user_id'))\
+                                          .filter(issue__assigned_to_id=F('issue__project__rate__user_id'))\
                                           .order_by('issue__project', 'issue_id')\
                                           .values('issue__project', 'issue_id')\
-                                          .annotate(points_per_issue=Sum('points'))
+                                          .annotate(points_per_issue=Sum(F('points')*F('issue__project__rate__velocity')))
         estimates_by_sprint_id = {}
         for k, v in itertools.groupby(issue_points, lambda x: x['issue__project']):
             estimates_by_sprint_id[k] = { 'num_estimated': 0,

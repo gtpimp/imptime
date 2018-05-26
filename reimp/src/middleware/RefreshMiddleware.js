@@ -99,6 +99,9 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateUsers([d.entity_ref]))
     } else if ( d.entity_name === 'rate' ) {
         dispatch(invalidateSurForSprintAndUser(d.params.sprint_id, d.params.user_id))
+
+        // So that the estimate counts within the sprint shows correctly
+        dispatch(invalidateSprints([d.params.sprint_id]))
     } else if ( d.entity_name === 'wikipage' ) {
         dispatch(invalidateWikis([d.entity_ref]))
     } else if ( d.entity_name === 'mien' ) {

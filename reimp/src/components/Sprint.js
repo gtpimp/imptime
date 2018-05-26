@@ -159,7 +159,10 @@ class Sprint extends Component {
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
-                                        <Hours hours={sprint.hours_by_assignee} />
+                                        { sprint.hours_by_assignee && 
+                                          <Hours hours={sprint.hours_by_assignee} />
+                                        }
+                                        { ! sprint.hours_by_assignee && "" }
                                       </div>
                                     </div>
                                 )
