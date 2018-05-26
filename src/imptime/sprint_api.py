@@ -76,14 +76,21 @@ class SprintViewSet(BaseViewSet):
         # entries = entries.order_by("issue__project_id").values("issue__project_id").distinct() #sic
         # sprints = sprints.annotate(num_estimates_issues=
 
-        # estimates = IssuePoints.objects\
-        #                        .filter(issue__project__in=sprints)\
-        #                        .order_by("issue__project_id")\
-        #                        .values("issue__project_id")\
-        #                        .distinct()
+        issues_with_estimates = IssuePoints.objects\
+                                           .filter(issue__project__in=sprints)
+        
 
         #import pdb; pdb.set_trace()
         sprints = sprints.annotate(sum_estimated_hours=Sum(F('issues__issue_points__points')))
+
+        # sprints = sprints.annotate(num_issues_unestimated=Subquery(IssuePoints.objects\
+        #                                                            .filter(issue__project=OuterRef('id'))\
+        #                                                            .order_by('issue_id')\
+        #                                                            .annotate(count=Count('*'))\
+        #                                                            .values('count')[:1]))
+
+        
+        #sprints = sprints.annotate(num_issues_unestimated=Count('issues
         
         return sprints
     
