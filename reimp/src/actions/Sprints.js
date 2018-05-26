@@ -39,6 +39,7 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'start_time', label:"First clock", description:"First clocked time on this sprint", width:small_col_width},
       {key:'end_time', label:"Last clock", description:"Last clocked time on this sprint", width:small_col_width},
       {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width},
+      {key:'num_issues_unassigned', label:"Num unassigned Issues", description:"Number of issues with no assignee", width: small_col_width},
       {key:'status', label:"Status", description:"Sprint status", width:small_col_width},
       {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
       {key:'hours_by_assignee', label:"Total clocked hours by assignee", description:"Total actual hours by the assigned user across all issues", width:small_col_width},

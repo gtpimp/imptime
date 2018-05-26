@@ -145,6 +145,15 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
+                            case "num_issues_unassigned":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {sprint.num_issues_unassigned}
+                                      </div>
+                                    </div>
+                                )
                             case "hours_by_assignee":
                                 return (
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}

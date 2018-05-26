@@ -95,9 +95,11 @@ class SprintViewSet(BaseViewSet):
             estimates_by_sprint_id[k] = { 'num_estimated': 0,
                                           'estimated_hours': 0 }
             for estimated_issue in v:
-                estimates_by_sprint_id[k]['num_estimated'] += 1
-                estimates_by_sprint_id[k]['estimated_hours'] += estimated_issue['points_per_issue'] or 0
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_hours'] += estimated_issue['points_per_issue'] or 0
 
+                
         # For this count we assume that only developer times matter,
         # and other times can be inferred.  This is logical if by
         # developer we mean 'person doing the assigned work' and other
@@ -111,8 +113,16 @@ class SprintViewSet(BaseViewSet):
             estimates_by_sprint_id[k]['num_open_estimated'] = 0
             estimates_by_sprint_id[k]['estimated_open_hours'] = 0
             for estimated_issue in v:
-                estimates_by_sprint_id[k]['num_open_estimated'] += 1
-                estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_open_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
+
+        num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints, assigned_to_id__isnull=True)\
+                                                       .order_by("project_id")\
+                                                       .values("project_id")\
+                                                       .annotate(num_unassigned=Count('id'))
+        for num_assigned_issues in num_unassigned_issues_by_sprint:
+            estimates_by_sprint_id.setdefault(num_assigned_issues['project_id'], {})['num_unassigned_issues'] = num_assigned_issues.get('num_unassigned', 0)
                 
         return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
     
