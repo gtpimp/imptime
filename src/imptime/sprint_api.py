@@ -55,6 +55,7 @@ class SprintViewSet(BaseViewSet):
                     'id', flat=True)]
             else:
                 sprints = sprints.select_related("status3")
+
                 sprints = sprints.annotate(num_issues=Count('issues'))
                 sprints, num_issues_with_estimates_by_sprint_id = self._enrich_sprint_qs(sprints)
 
@@ -79,9 +80,10 @@ class SprintViewSet(BaseViewSet):
         # entries = entries.order_by("issue__project_id").values("issue__project_id").distinct() #sic
         # sprints = sprints.annotate(num_estimates_issues=
 
-        sprints = sprints.annotate(sum_estimated_hours=Sum(F('issues__issue_points__points')))
+        # sprints = sprints.annotate(sum_estimated_hours=Sum(F('issues__issue_points__points')))
 
         issue_points = IssuePoints.objects.filter(issue__project__in=sprints)\
+                                          .filter(issue__assigned_to_id=F('user_id'))\
                                           .order_by('issue__project', 'issue_id')\
                                           .values('issue__project', 'issue_id')\
                                           .annotate(points_per_issue=Count('issue_id'))

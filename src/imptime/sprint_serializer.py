@@ -73,6 +73,7 @@ class SprintSerializer(BaseSerializer):
             sprint.ratio_scope_creep = None
         if not bp.has_view_budget:
             sprint.budget = None
-        
-        
+
+        sprint.sum_estimated_hours = 0
+            
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)
