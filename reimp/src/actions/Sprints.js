@@ -42,6 +42,7 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'status', label:"Status", description:"Sprint status", width:small_col_width},
       {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
       {key:'hours_by_assignee', label:"Total clocked hours by assignee", description:"Total actual hours by the assigned user across all issues", width:small_col_width},
+      {key:'estimates_by_assignee', label:"Total estimated hours by assignee", description:"Total estimated hours by the assigned user across all issues", width:small_col_width},
       {key:'num_issues_with_estimates', label:"Num estimated by assignee", description:"Number of estimated issues by the assigned user", width:small_col_width},
       {key:'num_issues_without_estimates', label:"Num not estimated by assignee", description:"Number of unestimated issues by the assigned user", width:small_col_width},
       {key:'are_all_issues_estimated', label:"All estimated by assignee", description:"Have all issues been estimated by the assigned user", width:small_col_width}

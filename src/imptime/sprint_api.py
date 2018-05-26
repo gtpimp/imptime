@@ -57,10 +57,10 @@ class SprintViewSet(BaseViewSet):
                 sprints = sprints.select_related("status3")
 
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                sprints, num_issues_with_estimates_by_sprint_id, hours_per_sprint_by_assignee = self._enrich_sprint_qs(sprints)
+                sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee = self._enrich_sprint_qs(sprints)
 
                 s = SprintSerializer(sprints, many=True,
-                                     num_issues_with_estimates_by_sprint_id=num_issues_with_estimates_by_sprint_id,
+                                     estimates_by_sprint_id=estimates_by_sprint_id,
                                      hours_per_sprint_by_assignee=hours_per_sprint_by_assignee,
                                      logged_in_user=self.request.user)
                 sprints_data = s.data
@@ -89,11 +89,16 @@ class SprintViewSet(BaseViewSet):
                                           .filter(issue__assigned_to_id=F('user_id'))\
                                           .order_by('issue__project', 'issue_id')\
                                           .values('issue__project', 'issue_id')\
-                                          .annotate(points_per_issue=Count('issue_id'))
-        num_issues_with_estimates_by_sprint_id = {}
+                                          .annotate(points_per_issue=Sum('points'))
+        estimates_by_sprint_id = {}
         for k, v in itertools.groupby(issue_points, lambda x: x['issue__project']):
-            num_issues_with_estimates_by_sprint_id[k] = len(list(v))
-        return sprints, num_issues_with_estimates_by_sprint_id, hours_per_sprint_by_assignee
+            estimates_by_sprint_id[k] = { 'num_estimated': 0,
+                                          'estimated_hours': 0 }
+            for estimated_issue in v:
+                estimates_by_sprint_id[k]['num_estimated'] += 1
+                estimates_by_sprint_id[k]['estimated_hours'] += estimated_issue['points_per_issue'] or 0
+            
+        return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
     
     def update(self, request, pk):
         try:

@@ -24,6 +24,7 @@ class SprintSerializer(BaseSerializer):
     created = serializers.DateTimeField()
     num_issues = serializers.IntegerField()
     num_issues_with_estimates = serializers.IntegerField()
+    estimated_hours_by_assignee = serializers.FloatField()
     sprint_type = serializers.CharField(source="project_type")
     sprint_template_id = serializers.CharField(source="cloned_from_sprint_id")
     sprint_clone_ids = serializers.ListField(child=serializers.CharField())
@@ -39,7 +40,7 @@ class SprintSerializer(BaseSerializer):
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
-        self.num_issues_with_estimates_by_sprint_id = kwargs.pop('num_issues_with_estimates_by_sprint_id')
+        self.estimates_by_sprint_id = kwargs.pop('estimates_by_sprint_id')
         self.hours_per_sprint_by_assignee = kwargs.pop('hours_per_sprint_by_assignee')
         return super(SprintSerializer, self).__init__(*args, **kwargs)
     
@@ -49,7 +50,8 @@ class SprintSerializer(BaseSerializer):
         sprint.first_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('start_time').first()
         sprint.last_entry = Entry.objects.filter(issue__project_id=sprint.id).order_by('-end_time').first()
 
-        sprint.num_issues_with_estimates = self.num_issues_with_estimates_by_sprint_id.get(sprint.id, 0)
+        sprint.num_issues_with_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_estimated', 0)
+        sprint.estimated_hours_by_assignee = self.estimates_by_sprint_id.get(sprint.id, {}).get('estimated_hours', 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
         if sprint_template:
