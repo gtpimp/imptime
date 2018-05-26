@@ -163,6 +163,15 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
+                            case "open_estimates_by_assignee":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        <Hours hours={sprint.estimated_open_hours_by_assignee} />
+                                      </div>
+                                    </div>
+                                )
                             case "num_issues_with_estimates":
                                 return (
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
@@ -178,6 +187,24 @@ class Sprint extends Component {
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_issues || 0) - (sprint.num_issues_with_estimates || 0)}
+                                      </div>
+                                    </div>
+                                )
+                            case "num_open_issues_with_estimates":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {sprint.num_open_issues_with_estimates || ""}
+                                      </div>
+                                    </div>
+                                )
+                            case "num_open_issues_without_estimates":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.num_issues || 0) - (sprint.num_open_issues_with_estimates || 0)}
                                       </div>
                                     </div>
                                 )

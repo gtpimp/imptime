@@ -43,9 +43,11 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
       {key:'hours_by_assignee', label:"Total clocked hours by assignee", description:"Total actual hours by the assigned user across all issues", width:small_col_width},
       {key:'estimates_by_assignee', label:"Total estimated hours by assignee", description:"Total estimated hours by the assigned user across all issues", width:small_col_width},
+      {key:'open_estimates_by_assignee', label:"Total open estimated hours by assignee", description:"Total estimated hours by the assigned user across open issues", width:small_col_width},
       {key:'num_issues_with_estimates', label:"Num estimated by assignee", description:"Number of estimated issues by the assigned user", width:small_col_width},
       {key:'num_issues_without_estimates', label:"Num not estimated by assignee", description:"Number of unestimated issues by the assigned user", width:small_col_width},
-      {key:'are_all_issues_estimated', label:"All estimated by assignee", description:"Have all issues been estimated by the assigned user", width:small_col_width}
+      {key:'are_all_issues_estimated', label:"All estimated by assignee", description:"Have all issues been estimated by the assigned user", width:small_col_width},
+      {key:'num_open_issues_with_estimates', label:"Num open estimated by assignee", description:"Number of open estimated issues by the assigned user", width:small_col_width},
     ]
 
 const DEFAULT_SPRINT_HEADERS_KEYS = ["name", "status", "num_issues", "are_all_issues_estimated"]

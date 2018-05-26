@@ -24,7 +24,9 @@ class SprintSerializer(BaseSerializer):
     created = serializers.DateTimeField()
     num_issues = serializers.IntegerField()
     num_issues_with_estimates = serializers.IntegerField()
+    num_open_issues_with_estimates = serializers.IntegerField()
     estimated_hours_by_assignee = serializers.FloatField()
+    estimated_open_hours_by_assignee = serializers.FloatField()
     sprint_type = serializers.CharField(source="project_type")
     sprint_template_id = serializers.CharField(source="cloned_from_sprint_id")
     sprint_clone_ids = serializers.ListField(child=serializers.CharField())
@@ -52,6 +54,8 @@ class SprintSerializer(BaseSerializer):
 
         sprint.num_issues_with_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_estimated', 0)
         sprint.estimated_hours_by_assignee = self.estimates_by_sprint_id.get(sprint.id, {}).get('estimated_hours', 0)
+        sprint.num_open_issues_with_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_open_estimated', 0)
+        sprint.estimated_open_hours_by_assignee = self.estimates_by_sprint_id.get(sprint.id, {}).get('estimated_open_hours', 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
         if sprint_template:
@@ -77,7 +81,6 @@ class SprintSerializer(BaseSerializer):
         if not bp.has_view_budget:
             sprint.budget = None
 
-        sprint.sum_estimated_hours = 0
         sprint.hours_by_assignee = self.hours_per_sprint_by_assignee.get(sprint.id, 0)
             
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)

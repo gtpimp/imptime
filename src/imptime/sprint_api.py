@@ -97,7 +97,23 @@ class SprintViewSet(BaseViewSet):
             for estimated_issue in v:
                 estimates_by_sprint_id[k]['num_estimated'] += 1
                 estimates_by_sprint_id[k]['estimated_hours'] += estimated_issue['points_per_issue'] or 0
-            
+
+        # For this count we assume that only developer times matter,
+        # and other times can be inferred.  This is logical if by
+        # developer we mean 'person doing the assigned work' and other
+        # time tracking roles are actually supporting that work (eg
+        # management and testing).
+        ASSIGNEE_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[ASSIGNEE_TIME_TRACKING_MODE]
+        open_issue_points = issue_points.filter(issue__status2__name__in=open_statuses)
+        
+        for k, v in itertools.groupby(open_issue_points, lambda x: x['issue__project']):
+            estimates_by_sprint_id[k]['num_open_estimated'] = 0
+            estimates_by_sprint_id[k]['estimated_open_hours'] = 0
+            for estimated_issue in v:
+                estimates_by_sprint_id[k]['num_open_estimated'] += 1
+                estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
+                
         return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
     
     def update(self, request, pk):
