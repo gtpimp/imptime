@@ -11,6 +11,7 @@ import {
     ANNOUNCE_MATCHING_ITEMS_LOAD_FAILED,
     ANNOUNCE_MATCHING_ITEMS_LOADING,
     SET_ITEMS_FLAG,
+    SET_LIST_FLAG,
     INVALIDATE_LIST,
     UPDATE_LIST_PAGINATION,
     UPDATE_LIST_FILTER,
@@ -184,6 +185,14 @@ export default function item_list(state = initialState, action) {
             state_copy[action.list_key][flag_name] = flag_ids
             return state_copy
 
+        case SET_LIST_FLAG:
+            state_copy = Object.assign({}, state)
+            l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})
+            const v = {}
+            v[action.flag_name] = action.flag_value
+            state_copy[action.list_key] = Object.assign({}, l, v)
+            return state_copy
+            
         case UPDATE_VISIBLE_ITEM_IDS:
             state_copy = Object.assign({}, state)
             l = Object.assign({}, item_list_template, state_copy[action.list_key] || {})

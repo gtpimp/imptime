@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
+import moment from 'moment';
 import Splitter from '../components/Splitter'
 import {
     LIST_KEY__SCHEDULE_ITEM_LIST,
@@ -18,6 +19,7 @@ import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
 import PlanningCalendar from '../components/PlanningCalendar'
+import { setCurrentDate } from '../actions/CalendarEvents'
 import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
@@ -27,6 +29,7 @@ class ScheduleItemPage extends Component {
         dispatch(set_toolbars(PAGE_KEY__SCHEDULE_ITEM_PAGE, ['schedule_item']))
         dispatch(initList(LIST_KEY__SCHEDULE_ITEM_LIST))
         dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:schedule_id || -1}))
+        dispatch(setCurrentDate(LIST_KEY__SCHEDULE_ITEM_LIST, moment()))
         dispatch(ensureSchedulesLoaded([schedule_id]))
         this.refresh()
     }

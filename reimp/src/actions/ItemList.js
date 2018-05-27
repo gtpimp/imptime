@@ -8,6 +8,7 @@ import { ensureSprintsLoaded } from './Sprints'
 import { ensureIssuesLoaded } from './Issues'
 import { ensureUsersLoaded } from './Users'
 export const INIT_LIST = 'INIT_LIST'
+export const SET_LIST_FLAG = "SET_LIST_FLAG"
 export const ANNOUNCE_LIST_LOADED = 'ANNOUNCE_LIST_LOADED'
 export const ANNOUNCE_LIST_LOAD_FAILED = 'ANNOUNCE_LIST_LOAD_FAILED'
 export const ANNOUNCE_LIST_LOADING = 'ANNOUNCE_LIST_LOADING'
@@ -166,7 +167,24 @@ export function getHighlightedItemIds(state, list_key) {
     return get(state, ["item_list", list_key, "highlighted_ids"])
 }
 
+export function setListFlag(list_key, flag_name, flag_value) {
+    // sets a single global value on the list
+    return {
+        type: SET_LIST_FLAG,
+        list_key: list_key,
+        flag_name: flag_name,
+        flag_value: flag_value
+    }
+}
+
+export function getListFlag(state, list_key, flag_name, default_value) {
+    return get(state, ["item_list", list_key, flag_name], default_value)
+}
+
 export function setItemFlag(list_key, selected_ids, flag_name, flag_value) {
+    // updates a list of selected_ids to a flag called flag_name. 
+    // if flag_value is true, the selected_ids are added to the flag list, 
+    // if false they are removed
     return {
         type: SET_ITEMS_FLAG,
         list_key: list_key,

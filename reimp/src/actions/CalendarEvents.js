@@ -1,6 +1,7 @@
 import {
     ENTITY_KEY__CALENDAR_EVENT,
 } from './ItemListKeyRegistry'
+import moment from 'moment';
 import {
     invalidateAllItems,
     invalidateItems,
@@ -11,8 +12,20 @@ import {
     updateItem,
     startCandidateItem,
     saveCandidateItem,
-    deleteItems
+    deleteItems,
 } from '../actions/Item'
+import {
+    setListFlag,
+    getListFlag
+} from '../actions/ItemList'
+
+export function setCurrentDate(list_key, date) {
+    return setListFlag(list_key, 'current_date', date)
+}
+
+export function getCurrentDate(state, list_key, default_value) {
+    return getListFlag(state, list_key, 'current_date', default_value || moment())
+}
 
 export function invalidateAllCalendarEvents() {
     return (dispatch, getState) => {
@@ -53,7 +66,7 @@ export function getCalendarEvents(state, calendar_event_ids) {
 export function createCalendarEvent(header, content) {
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__CALENDAR_EVENT, { header: header,
-                                                         content: content }))
+                                                                  content: content }))
         dispatch(saveCandidateItem(ENTITY_KEY__CALENDAR_EVENT))
     }
 }
