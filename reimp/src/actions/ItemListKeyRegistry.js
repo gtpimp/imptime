@@ -25,6 +25,7 @@ export const LIST_KEY__SPRINT_RATES = 'sprint_rates'
 export const LIST_KEY__WORK_SUMMARY_LIST = 'work_summaries'
 
 
+export const ENTITY_KEY__CALENDAR_EVENT = 'calendar_event'
 export const ENTITY_KEY__INVOICE = 'invoice'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
