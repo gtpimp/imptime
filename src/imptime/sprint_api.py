@@ -77,7 +77,9 @@ class SprintViewSet(BaseViewSet):
         sprints = sprints.prefetch_related("reviews")\
                          .prefetch_related("issues__entries")
 
-        entries = Entry.objects.filter(issue__project__in=sprints)\
+        
+        entries = Entry.objects.filter(issue__project__in=sprints,
+                                       issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
                                .filter(issue__assigned_to_id=F('user_id'))\
                                .order_by("issue__project_id")\
                                .values("issue__project_id").distinct()\
@@ -85,8 +87,9 @@ class SprintViewSet(BaseViewSet):
 
         hours_per_sprint_by_assignee = dict( [(x['issue__project_id'], x['hours_per_sprint']) for x in entries] )
 
-        issue_points = IssuePoints.objects.filter(issue__project__in=sprints)\
-                                          .filter(issue__assigned_to_id=F('user_id'))\
+        issue_points = IssuePoints.objects.filter(issue__project__in=sprints,
+                                                  issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES,
+                                                  issue__assigned_to_id=F('user_id'))\
                                           .filter(issue__assigned_to_id=F('issue__project__rate__user_id'))\
                                           .order_by('issue__project', 'issue_id')\
                                           .values('issue__project', 'issue_id')\
@@ -117,19 +120,42 @@ class SprintViewSet(BaseViewSet):
                     estimates_by_sprint_id[k]['num_open_estimated'] += 1
                     estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
 
+        # For this count we want to know if the primary work has been
+        # done, ie by the developer.
+        DEV_CLOSED_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[DEV_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_dev_closed_issues'] = num_closed_issues.get('num_closed', 0)
+                    
         # For this count we assume the tester has the final word on
         # being closed.  Also we don't care about estimates for this count.
         COMPLETELY_CLOSED_TIME_TRACKING_MODE = 'tester'
-        closed_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
-        closed_issues = Issue.objects.filter(project__in=sprints)\
-                                     .exclude(status2__name__in=closed_statuses)\
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
                                      .order_by('project_id')\
                                      .values('project_id')\
                                      .annotate(num_closed=Count('id'))
         for num_closed_issues in closed_issues:
             estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_completely_closed_issues'] = num_closed_issues.get('num_closed', 0)
 
-        num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints, assigned_to_id__isnull=True)\
+        testable_issues = Issue.objects.filter(project__in=sprints,
+                                               issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                       .order_by('project_id')\
+                                       .values('project_id')\
+                                       .annotate(num_testable=Count('id'))
+        for testable_issue_count in testable_issues:
+            estimates_by_sprint_id.setdefault(testable_issue_count['project_id'], {})['num_testable_issues'] = testable_issue_count.get('num_testable', 0)
+            
+        num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                               assigned_to_id__isnull=True)\
                                                        .order_by("project_id")\
                                                        .values("project_id")\
                                                        .annotate(num_unassigned=Count('id'))

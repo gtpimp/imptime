@@ -127,6 +127,18 @@ class Sprint extends Component {
                                       </div>
                                     </Link>
                                 )
+                            case "num_testable_issues":
+                                return (
+                                    <Link to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                          className="div-table__cell sprint__cell__secondary"
+                                          onClick={that.onIssuesClick}
+                                          key={header_key}
+                                          style={getCellStyle(header)}>
+                                      <div className="sprint__cell--num-issues">
+                                        {sprint.num_testable_issues || 0} Issues
+                                      </div>
+                                    </Link>
+                                )
                             case "status":
                                 return (
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
@@ -198,7 +210,7 @@ class Sprint extends Component {
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
-                                        {(sprint.num_issues || 0) - (sprint.num_issues_with_estimates || 0)}
+                                        {(sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0)}
                                       </div>
                                     </div>
                                 )
@@ -216,7 +228,7 @@ class Sprint extends Component {
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
-                                        {(sprint.num_issues || 0) - (sprint.num_open_issues_with_estimates || 0)}
+                                        {(sprint.num_testable_issues || 0) - (sprint.num_open_issues_with_estimates || 0)}
                                       </div>
                                     </div>
                                 )
@@ -234,7 +246,71 @@ class Sprint extends Component {
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
-                                        {(sprint.num_issues || 0) - (sprint.num_completely_closed_issues || 0)}
+                                        {(sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0)}
+                                      </div>
+                                    </div>
+                                )
+                            case "num_dev_closed_issues":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {sprint.num_dev_closed_issues || ""}
+                                      </div>
+                                    </div>
+                                )
+                            case "num_not_dev_closed_issues":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0)}
+                                      </div>
+                                    </div>
+                                )
+                            case "are_all_issues_completely_closed":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.num_testable_issues !== undefined &&
+                                          ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) === 0)) &&
+                                         <div className="icon__status--ok"/>
+                                        }
+                                        {(sprint.num_testable_issues !== undefined &&
+                                          ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) !== 0)) &&
+                                         <div className="icon__status--not-ok"/>
+                                        }
+                                      </div>
+                                    </div>
+                                )
+                            case "are_all_issues_dev_closed":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.num_testable_issues !== undefined &&
+                                          ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) === 0)) &&
+                                         <div className="icon__status--ok"/>
+                                        }
+                                        {(sprint.num_testable_issues !== undefined &&
+                                          ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) !== 0)) &&
+                                         <div className="icon__status--not-ok"/>
+                                        }
+                                      </div>
+                                    </div>
+                                )
+                            case "are_all_issues_assigned":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned === 0) &&
+                                         <div className="icon__status--ok"/>
+                                        }
+                                        {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned !== 0) &&
+                                         <div className="icon__status--not-ok"/>
+                                        }
                                       </div>
                                     </div>
                                 )
@@ -243,10 +319,12 @@ class Sprint extends Component {
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
-                                        {((sprint.num_issues || 0) - (sprint.num_issues_with_estimates || 0) === 0) &&
+                                        {(sprint.num_testable_issues !== undefined &&
+                                          ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) === 0)) &&
                                          <div className="icon__status--ok"/>
                                         }
-                                        {((sprint.num_issues || 0) - (sprint.num_issues_with_estimates || 0) !== 0) &&
+                                         {(sprint.num_testable_issues !== undefined &&
+                                           ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) !== 0)) &&
                                          <div className="icon__status--not-ok"/>
                                         }
                                       </div>

@@ -39,9 +39,15 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'start_time', label:"First clock", description:"First clocked time on this sprint", width:small_col_width},
       {key:'end_time', label:"Last clock", description:"Last clocked time on this sprint", width:small_col_width},
       {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width},
-      {key:'num_issues_unassigned', label:"Num unassigned Issues", description:"Number of issues with no assignee", width: small_col_width},
+      {key:'num_testable_issues', label:"Testable issues", description:"Number of testable issues", width: small_col_width},
+      {key:'num_issues_unassigned', label:"Num unassigned issues", description:"Number of issues with no assignee", width: small_col_width},
       {key:'num_completely_closed_issues', label:"Num completely closed issues", description:"Number of issues completely closed", width: small_col_width},
       {key:'num_not_completely_closed_issues', label:"Num not completely closed issues", description:"Number of issues not completely closed", width: small_col_width},
+      {key:'are_all_issues_completely_closed', label:"All issues tested", description:"Have all issues been completely closed by tester", width:small_col_width},
+      {key:'num_dev_closed_issues', label:"Num dev closed issues", description:"Number of issues dev closed", width: small_col_width},
+      {key:'num_not_dev_closed_issues', label:"Num not dev closed issues", description:"Number of issues not dev closed", width: small_col_width},
+      {key:'are_all_issues_dev_closed', label:"All issues implemented", description:"Have all issues been dev closed by tester", width:small_col_width},
+      {key:'are_all_issues_assigned', label:"All issues assigned", description:"Have all issues been assigned to a user", width:small_col_width},
       {key:'status', label:"Status", description:"Sprint status", width:small_col_width},
       {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
       {key:'hours_by_assignee', label:"Total clocked hours by assignee", description:"Total actual hours by the assigned user across all issues", width:small_col_width},
@@ -53,7 +59,8 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'num_open_issues_with_estimates', label:"Num open estimated by assignee", description:"Number of open estimated issues by the assigned user", width:small_col_width},
     ]
 
-const DEFAULT_SPRINT_HEADERS_KEYS = ["name", "status", "num_issues", "are_all_issues_estimated"]
+const DEFAULT_SPRINT_HEADERS_KEYS = ["name", "status", "num_issues", "are_all_issues_assigned",
+                                     "are_all_issues_estimated", "are_all_issues_dev_closed", "are_all_issues_completely_closed"]
 const DEFAULT_SPRINT_HEADERS = filter(ALL_AVAILABLE_SPRINT_HEADERS, (header) => includes(DEFAULT_SPRINT_HEADERS_KEYS, header.key))
 
 

@@ -23,10 +23,12 @@ class SprintSerializer(BaseSerializer):
     last_entry = ClockEntrySerializer()
     created = serializers.DateTimeField()
     num_issues = serializers.IntegerField()
+    num_testable_issues = serializers.IntegerField()
     num_issues_unassigned = serializers.IntegerField()
     num_issues_with_estimates = serializers.IntegerField()
     num_open_issues_with_estimates = serializers.IntegerField()
     num_completely_closed_issues = serializers.IntegerField()
+    num_dev_closed_issues = serializers.IntegerField()
     estimated_hours_by_assignee = serializers.FloatField()
     estimated_open_hours_by_assignee = serializers.FloatField()
     sprint_type = serializers.CharField(source="project_type")
@@ -67,6 +69,8 @@ class SprintSerializer(BaseSerializer):
             
         sprint.num_issues_unassigned = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_unassigned_issues', 0)
         sprint.num_completely_closed_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_completely_closed_issues', 0)
+        sprint.num_dev_closed_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_dev_closed_issues', 0)
+        sprint.num_testable_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_testable_issues', 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
         if sprint_template:
