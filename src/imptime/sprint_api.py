@@ -109,7 +109,6 @@ class SprintViewSet(BaseViewSet):
         ASSIGNEE_TIME_TRACKING_MODE = 'developer'
         open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[ASSIGNEE_TIME_TRACKING_MODE]
         open_issue_points = issue_points.filter(issue__status2__name__in=open_statuses)
-        
         for k, v in itertools.groupby(open_issue_points, lambda x: x['issue__project']):
             estimates_by_sprint_id[k]['num_open_estimated'] = 0
             estimates_by_sprint_id[k]['estimated_open_hours'] = 0
@@ -117,6 +116,18 @@ class SprintViewSet(BaseViewSet):
                 if estimated_issue['points_per_issue']:
                     estimates_by_sprint_id[k]['num_open_estimated'] += 1
                     estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
+
+        # For this count we assume the tester has the final word on
+        # being closed.  Also we don't care about estimates for this count.
+        COMPLETELY_CLOSED_TIME_TRACKING_MODE = 'tester'
+        closed_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints)\
+                                     .exclude(status2__name__in=closed_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_completely_closed_issues'] = num_closed_issues.get('num_closed', 0)
 
         num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints, assigned_to_id__isnull=True)\
                                                        .order_by("project_id")\

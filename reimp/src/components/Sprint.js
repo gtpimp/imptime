@@ -220,6 +220,24 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
+                            case "num_completely_closed_issues":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {sprint.num_completely_closed_issues || ""}
+                                      </div>
+                                    </div>
+                                )
+                            case "num_not_completely_closed_issues":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.num_issues || 0) - (sprint.num_completely_closed_issues || 0)}
+                                      </div>
+                                    </div>
+                                )
                             case "are_all_issues_estimated":
                                 return (
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
