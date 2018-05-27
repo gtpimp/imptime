@@ -330,7 +330,20 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
-
+                            case "has_dev_started":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--type">
+                                        {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
+                                         <div className="icon__status--ok"/>
+                                        }
+                                        {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee <= 0) &&
+                                         <div className="icon__status--not-ok"/>
+                                        }
+                                      </div>
+                                    </div>
+                                )
                             default:
                                 console.error("Unknown header: " + header_key + " (headers are " + visible_header_keys + ")")
                                 
