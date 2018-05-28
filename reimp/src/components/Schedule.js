@@ -75,7 +75,6 @@ class Schedule extends Component {
                                 )
                             default:
                                 console.error("Unknown header: " + header_key)
-                                
                         }
                     }
                     )}

@@ -37,7 +37,7 @@ class SchedulesPage extends Component {
         const { schedule_header_list } = this.props
         
         return (
-            <div className="list-layout">
+            <div className="main-layout__scroll-panel">
               <ScheduleList list_key={LIST_KEY__SCHEDULE_LIST}
                             header_list={schedule_header_list}
               />

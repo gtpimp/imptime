@@ -36,7 +36,7 @@ class ScheduleItemPage extends Component {
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = new_props
-        if ( new_props.schedule && new_props.schedule.id !== this.props.schedule.id ) {
+        if ( new_props.schedule && (!this.props.schedule || new_props.schedule.id !== this.props.schedule.id) ) {
             dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:new_props.schedule.id || -1}))
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
             this.refresh(new_props)
@@ -62,7 +62,7 @@ class ScheduleItemPage extends Component {
         const { nudge_header_list } = this.props
         return (
             <div className="list-layout__pane">
-              <h3>Nudge list</h3>
+              <h3>Things to do</h3>
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
                          header_list={nudge_header_list} />
             </div>
@@ -92,7 +92,7 @@ class ScheduleItemPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { schedule_id } = props
+    const schedule_id = props.match.params.scheduleId
     const schedule = getSchedule(state, schedule_id)
     const nudge_header_list = getNudgeHeaderListForCurrentMien(state)
 
