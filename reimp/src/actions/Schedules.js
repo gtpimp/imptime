@@ -14,7 +14,8 @@ import {
     deleteItems,
     announceItemSaveFailed,
     announceItemsSaved,
-    announceItemsSaving
+    announceItemsSaving,
+    itemPost
 } from '../actions/Item'
 
 export function invalidateAllSchedules() {
@@ -65,6 +66,42 @@ export function deleteSchedule(schedule_id) {
     return (dispatch, getState) => {
         dispatch(deleteItems(ENTITY_KEY__SCHEDULE, [schedule_id]))
     }
+}
+
+export function addViewableUsersToSchedule(schedule_id, user_emails) {
+    const url = "imp/" + ENTITY_KEY__SCHEDULE + "/" + schedule_id + "/add_viewable_user/"
+    const field_name = "user_emails"
+    const field_value = user_emails
+    const method = "POST"
+    const data = { user_emails: user_emails }
+    return itemPost(ENTITY_KEY__SCHEDULE, user_emails, url, field_name, field_value, method, data)
+}
+
+export function removeViewableUsersToSchedule(schedule_id, user_ids) {
+    const url = "imp/" + ENTITY_KEY__SCHEDULE + "/" + schedule_id + "/remove_viewable_user/"
+    const field_name = "user_ids"
+    const field_value = user_ids
+    const method = "POST"
+    const data = { user_ids: user_ids }
+    return itemPost(ENTITY_KEY__SCHEDULE, user_ids, url, field_name, field_value, method, data)
+}
+
+export function addEditableUsersToSchedule(schedule_id, user_emails) {
+    const url = "imp/" + ENTITY_KEY__SCHEDULE + "/" + schedule_id + "/add_editable_user/"
+    const field_name = "user_emails"
+    const field_value = user_emails
+    const method = "POST"
+    const data = { user_emails: user_emails }
+    return itemPost(ENTITY_KEY__SCHEDULE, user_emails, url, field_name, field_value, method, data)
+}
+
+export function removeEditableUsersToSchedule(schedule_id, user_ids) {
+    const url = "imp/" + ENTITY_KEY__SCHEDULE + "/" + schedule_id + "/remove_editable_user/"
+    const field_name = "user_ids"
+    const field_value = user_ids
+    const method = "POST"
+    const data = { user_ids: user_ids }
+    return itemPost(ENTITY_KEY__SCHEDULE, user_ids, url, field_name, field_value, method, data)
 }
 
 export function recalculateSchedules() {

@@ -1,0 +1,12 @@
+
+.schedule__user-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.schedule__user {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
