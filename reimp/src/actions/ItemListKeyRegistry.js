@@ -155,8 +155,8 @@ export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
 export var SCHEDULE_HEADER_LIST =
     [ {key:'name', label:'Name', description:'Schedule Name', width:large_col_width},
       {key:'created_at', label:'Created', description:'Created at', width:medium_col_width},
-      {key:'viewable_users', label:'Viewable users', description:'Users who can view this schedule', width:medium_col_width}
-      {key:'editable_users', label:'Editable users', description:'Users who can edit this schedule', width:medium_col_width},
+      {key:'viewable_users', label:'Viewable users', description:'Users who can view this schedule', width:medium_col_width},
+      {key:'editable_users', label:'Editable users', description:'Users who can edit this schedule', width:medium_col_width}
     ]
 
 export var COMPANY_PROBLEM_HEADER_LIST = [ {key:'status', label:'Status', description:'Status', width:medium_col_width},
