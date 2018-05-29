@@ -68,12 +68,15 @@ class ScheduleViewSet(BaseViewSet):
             params = json.loads(params)
             user_emails = request.data['user_emails']
             schedule = Schedule.objects.get(pk=schedule_id)
-            for user_email in user_emails:
-                schedule.viewers.add(User.objects.get(email=user_email))
-            schedule.save()
-            s = ScheduleSerializer(schedule)
-            data = {'status': 'success',
-                    'payload': {'items': [s.data]}}
+            if schedule.owner != request.user:
+                data = {'status': 'failed', 'error_message': 'Permission denied to manage users on this schedule'}
+            else:
+                for user_email in user_emails:
+                    schedule.viewers.add(User.objects.get(email=user_email))
+                schedule.save()
+                s = ScheduleSerializer(schedule)
+                data = {'status': 'success',
+                        'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
         except Exception, ex:
@@ -88,12 +91,16 @@ class ScheduleViewSet(BaseViewSet):
             params = json.loads(params)
             user_ids = request.data['user_ids']
             schedule = Schedule.objects.get(pk=schedule_id)
-            for user_id in user_ids:
-                schedule.viewers.remove(user_id)
-            schedule.save()
-            s = ScheduleSerializer(schedule)
-            data = {'status': 'success',
-                    'payload': {'items': [s.data]}}
+
+            if schedule.owner != request.user:
+                data = {'status': 'failed', 'error_message': 'Permission denied to manage users on this schedule'}
+            else:
+                for user_id in user_ids:
+                    schedule.viewers.remove(user_id)
+                schedule.save()
+                s = ScheduleSerializer(schedule)
+                data = {'status': 'success',
+                        'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
         except Exception, ex:
@@ -108,12 +115,15 @@ class ScheduleViewSet(BaseViewSet):
             params = json.loads(params)
             user_emails = request.data['user_emails']
             schedule = Schedule.objects.get(pk=schedule_id)
-            for user_email in user_emails:
-                schedule.editors.add(User.objects.get(email=user_email))
-            schedule.save()
-            s = ScheduleSerializer(schedule)
-            data = {'status': 'success',
-                    'payload': {'items': [s.data]}}
+            if schedule.owner != request.user:
+                data = {'status': 'failed', 'error_message': 'Permission denied to manage users on this schedule'}
+            else:
+                for user_email in user_emails:
+                    schedule.editors.add(User.objects.get(email=user_email))
+                schedule.save()
+                s = ScheduleSerializer(schedule)
+                data = {'status': 'success',
+                        'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
         except Exception, ex:
@@ -128,12 +138,15 @@ class ScheduleViewSet(BaseViewSet):
             params = json.loads(params)
             user_ids = request.data['user_ids']
             schedule = Schedule.objects.get(pk=schedule_id)
-            for user_id in user_ids:
-                schedule.editors.remove(user_id)
-            schedule.save()
-            s = ScheduleSerializer(schedule)
-            data = {'status': 'success',
-                    'payload': {'items': [s.data]}}
+            if schedule.owner != request.user:
+                data = {'status': 'failed', 'error_message': 'Permission denied to manage users on this schedule'}
+            else:
+                for user_id in user_ids:
+                    schedule.editors.remove(user_id)
+                schedule.save()
+                s = ScheduleSerializer(schedule)
+                data = {'status': 'success',
+                        'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
         except Exception, ex:
