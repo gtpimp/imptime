@@ -9,14 +9,14 @@ import {
     addViewableUsersToSchedule,
     removeViewableUsersToSchedule,
     addEditableUsersToSchedule,
-    removeEditableUsersToSchedule
+    removeEditableUsersToSchedule,
+    canEditSchedule
 } from '../actions/Schedules'
 import Timestamp from './Timestamp'
 import OtherUser from './OtherUser'
 import InviteUserForm from '../components/form/InviteUserForm'
 import ModalDialog from '../components/ModalDialog'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
-import { logged_in_user } from '../actions/Auth'
 
 class Schedule extends Component {
 
@@ -202,14 +202,14 @@ class Schedule extends Component {
                                                </div>
                                            )
                                        })}
-                                       {can_edit &&
-                                           <div className="schedule__user">
-                                             <div className="schedule__user-action_button"
-                                                  onClick={that.startAddViewableUser}>
-                                               <div className="icon--add" />
-                                             </div>
-                                           </div>
-                                       }
+                                               {can_edit &&
+                                                <div className="schedule__user">
+                                                  <div className="schedule__user-action_button"
+                                                       onClick={that.startAddViewableUser}>
+                                                    <div className="icon--add" />
+                                                  </div>
+                                                </div>
+                                               }
                                     </div>
                                     
                                 )
@@ -254,7 +254,7 @@ class Schedule extends Component {
 function mapStateToProps(state, props) {
     const { schedule_id, header_list } = props
     const schedule = getSchedule(state, schedule_id) || {}
-    const can_edit = schedule.owner_id === logged_in_user().user_id
+    const can_edit = canEditSchedule(schedule)
 
     return {
         schedule,

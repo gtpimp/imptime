@@ -1,6 +1,6 @@
 import { impfetch } from './lib.js'
 import { ENTITY_KEY__SCHEDULE } from '../actions/ItemListKeyRegistry'
-
+import { includes } from 'lodash'
 import {
     invalidateAllItems,
     invalidateItems,
@@ -17,6 +17,7 @@ import {
     announceItemsSaving,
     itemPost
 } from '../actions/Item'
+import { logged_in_user } from '../actions/Auth'
 
 export function invalidateAllSchedules() {
     return (dispatch, getState) => {
@@ -130,4 +131,14 @@ export function recalculateSchedules() {
              dispatch(announceItemSaveFailed(ENTITY_KEY__SCHEDULE, error))
 	 })
     }
+}
+
+export function canEditSchedule(schedule) {
+    const logged_in_user_id = logged_in_user().user_id
+    return schedule && schedule.owner_id === logged_in_user_id
+}
+
+export function canEditScheduleEvents(schedule) {
+    const logged_in_user_id = logged_in_user().user_id
+    return schedule && (schedule.owner_id === logged_in_user_id || includes(schedule.editor_user_ids, logged_in_user_id))
 }

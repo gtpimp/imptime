@@ -19,6 +19,8 @@ import {
 import {
     ENTITY_KEY__SCHEDULE_ITEM
 } from '../actions/ItemListKeyRegistry'
+import Modal from 'react-modal'
+import Timestamp from './Timestamp'
 
 BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
 
@@ -29,6 +31,10 @@ class PlanningCalendar extends Component {
         super(props)
         this.onNavigate = this.onNavigate.bind(this)
         this.onView = this.onView.bind(this)
+        this.onSelectSlot = this.onSelectSlot.bind(this)
+        this.stopAddingItem = this.stopAddingItem.bind(this)
+        this.state = { adding_item: false,
+                       slotInfo: null }
     }
     
     componentDidMount() {
@@ -68,9 +74,53 @@ class PlanningCalendar extends Component {
                                                start_at__lte: date_to_inclusive}))
         dispatch(invalidateList(list_key))
     }
+
+    onSelectSlot(slot_info) {
+        const { action } = slot_info
+        if ( action === 'click' ) {
+            this.startAddingItem(slot_info)
+        }
+    }
+
+    startAddingItem(slot_info) {
+        this.setState({adding_item: true, slot_info: slot_info})
+    }
+
+    stopAddingItem() {
+        this.setState({adding_item:false})
+    }
+
+    renderAddingItem() {
+        const { start, end } = this.state.slot_info
+        return (
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={this.stopAddingItem}
+                   contentLabel="Add scheduled item">
+              <div className="editable-property-modal__row editable-property-modal__row--header">
+                <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
+                <div className="editable-property-modal__close">
+                  <i className="material-icons" onClick={this.stopAddingItem}>close</i>
+                </div>
+              </div>
+              <div className="editable-property-modal__content">
+                <div className="editable-property-modal__title">
+                  Add new scheduled item
+                </div>
+                <div className="editable-property-modal__row">
+                  Start at <Timestamp value={start} />
+                </div>
+                <div className="editable-property-modal__row">
+                  End at <Timestamp value={end} />
+                </div>
+              </div>
+            </Modal>            
+        )
+    }
     
     render() {
-        const { events, current_date } = this.props
+        const { events, current_date, can_edit } = this.props
         return (
             <div className={'planning-calendar__calendar-container'}>
               <BigCalendar
@@ -81,7 +131,10 @@ class PlanningCalendar extends Component {
                   endAccessor='end_at'
                   onNavigate={this.onNavigate}
                   onView={this.onView}
+                  onSelectSlot={this.onSelectSlot}
+                  selectable={can_edit}
               />
+              { this.state.adding_item && this.renderAddingItem() }
             </div>
         )
     }
@@ -90,7 +143,7 @@ class PlanningCalendar extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { schedule_id, list_key } = props
+    const { schedule_id, list_key, can_edit } = props
     const filter = getListFilter(state, list_key)
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__SCHEDULE_ITEM)
@@ -101,7 +154,8 @@ function mapStateToProps(state, props) {
         filter,
         event_ids: visible_item_ids,
         events: visible_items,
-        current_date
+        current_date,
+        can_edit
     }
 }
 

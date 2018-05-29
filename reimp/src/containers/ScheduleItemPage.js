@@ -15,7 +15,7 @@ import {
     initList,
     update_list_filter
 } from '../actions/ItemList'
-import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
+import {getSchedule, ensureSchedulesLoaded, canEditScheduleEvents} from '../actions/Schedules'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
 import PlanningCalendar from '../components/PlanningCalendar'
@@ -70,11 +70,12 @@ class ScheduleItemPage extends Component {
     }
 
     renderRightPane() {
-        const { schedule_id } = this.props
+        const { schedule_id, can_edit } = this.props
         return (
             <div className="list-layout__pane">
               <h3>Calendar</h3>
               <PlanningCalendar schedule_id={schedule_id}
+                                can_edit={can_edit}
                                 list_key={LIST_KEY__SCHEDULE_ITEM_LIST}/>
             </div>
         )
@@ -95,11 +96,13 @@ function mapStateToProps(state, props) {
     const schedule_id = props.match.params.scheduleId
     const schedule = getSchedule(state, schedule_id)
     const nudge_header_list = getNudgeHeaderListForCurrentMien(state)
+    const can_edit = canEditScheduleEvents(schedule)
 
     return {
         schedule_id,
         schedule,
-        nudge_header_list
+        nudge_header_list,
+        can_edit
     }
 }
 
