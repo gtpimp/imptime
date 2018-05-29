@@ -20,6 +20,7 @@ class Nudge extends Component {
     constructor(props) {
         super(props)
         this.onClickNudge = this.onClickNudge.bind(this)
+        this.onToggleSelection = this.onToggleSelection.bind(this)
     }
     
     componentDidMount() {
@@ -37,12 +38,18 @@ class Nudge extends Component {
         history.push('/projects/' + nudge.project_id + '/sprints/' + nudge.sprint_id + '/issues/' + nudge.issue_id);
     }
 
+    onToggleSelection() {
+        const { nudge, is_selected, onChangeSelection } = this.props
+        onChangeSelection(nudge.id, !is_selected)
+    }
+
     render() {
 
-        const { nudge, header_list, is_loading } = this.props
+        const { nudge, header_list, is_loading, is_selected } = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         const reason_class_name = "nudge__reason--" + nudge.reason
+        const that = this
 
         if ( is_loading ) {
             return null
@@ -54,10 +61,18 @@ class Nudge extends Component {
                                        reason_class_name,
                                        'div-table__row')}
 	    >
-
               { map(visible_header_keys, function(header_key) {
                     const header = headers_by_key[header_key]
                     switch(header_key) {
+                        case "select":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <input type="checkbox"
+                                         checked={is_selected}
+                                         onChange={that.onToggleSelection}/>
+                                </div>
+                            )
                         case "user":
                             return (
                                 <div className="div-table__cell" key={header_key}
@@ -132,13 +147,15 @@ class Nudge extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { nudge_id, header_list } = props
+    const { nudge_id, header_list, is_selected, onChangeSelection } = props
     const nudge = getNudge(state, nudge_id) || {}
 
     return {
         nudge,
         is_loading: !nudge.id,
-        header_list
+        header_list,
+        is_selected,
+        onChangeSelection
     }
 }
 

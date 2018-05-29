@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map } from 'lodash'
+import { map, includes } from 'lodash'
 import {
     initList,
     shouldFetchList,
@@ -11,14 +11,17 @@ import {
     getLastUpdated,
     update_list_pagination,
     update_list_ordering,
-    update_list_format
+    update_list_format,
+    unselectAllItems,
+    selectItems,
+    getSelectedItemIds
 } from '../actions/ItemList'
 import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
 import {
     fetchNudgesIfNeeded,
     getAllAvailableNudgeHeaders,
     getNudgeHeaderListForMien,
-    updateNudgeMienHeaders
+    updateNudgeMienHeaders,
 } from '../actions/Nudges'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
@@ -27,6 +30,11 @@ import MienListColumnConfigurable from './MienListColumnConfigurable'
 
 class NudgeList extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onChangeNudgeSelection = this.onChangeNudgeSelection.bind(this)
+    }
+    
     componentDidMount() {
 	const { dispatch, list_key, nested_objects } = this.props
 	dispatch(initList(list_key))
@@ -43,9 +51,16 @@ class NudgeList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
+    onChangeNudgeSelection(nudge_id, selected) {
+        const { dispatch, list_key } = this.props
+        dispatch(unselectAllItems(list_key))
+        dispatch(selectItems(list_key, [nudge_id]))
+    }
+
     render() {
 
-        const { nudge_ids, is_loading, header_list } = this.props
+        const { nudge_ids, is_loading, header_list, selected_item_ids } = this.props
+        const that = this
 
         if ( (is_loading && !nudge_ids && nudge_ids.length) === 0 ) {
             return (
@@ -69,7 +84,11 @@ class NudgeList extends Component {
             >
               <DivTable header_list={header_list}>
                 {map(nudge_ids, (nudge_id) =>
-                    <Nudge key={nudge_id} nudge_id={nudge_id} header_list={header_list}/>
+                    <Nudge key={nudge_id}
+                           nudge_id={nudge_id}
+                           onChangeSelection={that.onChangeNudgeSelection}
+                           is_selected={includes(selected_item_ids, nudge_id)}
+                           header_list={header_list}/>
                  )}
               </DivTable>
             </MienListColumnConfigurable>
@@ -85,6 +104,7 @@ function mapStateToProps(state, props) {
     const nested_objects = getNestedObjects(state, list_key)
     const should_fetch_list = shouldFetchList(state, list_key)
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__NUDGE, visible_item_ids)
+    const selected_item_ids = getSelectedItemIds(state, list_key)
 
     return {
         nudge_ids: visible_item_ids,
@@ -93,7 +113,8 @@ function mapStateToProps(state, props) {
         should_fetch_list,
         last_updated,
         nested_objects,
-        header_list
+        header_list,
+        selected_item_ids
     }
 }
 

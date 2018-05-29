@@ -31,7 +31,8 @@ import {
 } from '../actions/Mien'
 
 export var ALL_AVAILABLE_NUDGE_HEADERS =
-    [ {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
+    [ {key:'select', label:'', description:'Select', width:small_col_width},
+      {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
       {key:'description', label:'Description', description:'Description of the nudge', width:large_col_width},
       {key:'user', label:'User', description:'User', width:small_col_width},
       {key:'project', label:'Project', description:'Project', width:small_col_width},
@@ -42,7 +43,7 @@ export var ALL_AVAILABLE_NUDGE_HEADERS =
       {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
     ]
 
-const DEFAULT_NUDGE_HEADERS_KEYS = ["reason", "description", "project", "sprint", "issue", "due_date"]
+const DEFAULT_NUDGE_HEADERS_KEYS = ["select", "reason", "description", "project", "sprint", "issue", "due_date"]
 const DEFAULT_NUDGE_HEADERS = filter(ALL_AVAILABLE_NUDGE_HEADERS, (header) => includes(DEFAULT_NUDGE_HEADERS_KEYS, header.key))
 
 
