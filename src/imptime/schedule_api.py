@@ -58,7 +58,7 @@ class ScheduleViewSet(BaseViewSet):
         
 
     def _auto_create_default_schedules(self, request):
-        Schedule.objects.get_or_create(name='my schedule', owner=request.user)
+        Schedule.objects.get_or_create(name="Planning schedule", owner=request.user)
 
     @detail_route(methods=['POST'])
     def add_viewable_user(self, request, pk):

@@ -401,6 +401,14 @@ class Schedule(BaseModel):
     class Meta:
         unique_together = ('name', 'owner')
 
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Schedule, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+        
     
 class ScheduleItem(BaseModel):
     schedule = ProtectedForeignKey(Schedule, related_name='items', null=False, blank=False)
@@ -411,3 +419,12 @@ class ScheduleItem(BaseModel):
     start_at = models.DateTimeField(null=True, db_index=True)
     end_at = models.DateTimeField(null=True, db_index=True)
     duration_hours = models.FloatField(null=True)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ScheduleItem, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+    

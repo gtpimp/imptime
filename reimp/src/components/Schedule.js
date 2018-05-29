@@ -169,7 +169,15 @@ class Schedule extends Component {
                                 return (
                                     <div className="div-table__cell" key={header_key}
                                          style={getCellStyle(header)}>
-                                      <div onClick={that.onClickSchedule}>{schedule.name}</div>
+                                      <div className="div-table__cell--action"
+                                           onClick={that.onClickSchedule}>{schedule.name}</div>
+                                    </div>
+                                )
+                            case "owner":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <OtherUser user_id={schedule.owner_id} />
                                     </div>
                                 )
                             case "created_at":
@@ -187,12 +195,23 @@ class Schedule extends Component {
                                            return (
                                                <div key={user_id} className="schedule__user">
                                                  <OtherUser user_id={user_id} />
-                                                 <div className="icon--small-delete" onClick={(event) => that.onRemoveViewableUser(event, user_id)}/>
+                                                 { can_edit &&
+                                                   <div className="icon--small-delete schedule__user-action_button"
+                                                        onClick={(event) => that.onRemoveViewableUser(event, user_id)}/>
+                                                 }
                                                </div>
                                            )
                                        })}
-                                       {can_edit && <button onClick={that.startAddViewableUser}>+</button>}
+                                       {can_edit &&
+                                           <div className="schedule__user">
+                                             <div className="schedule__user-action_button"
+                                                  onClick={that.startAddViewableUser}>
+                                               <div className="icon--add" />
+                                             </div>
+                                           </div>
+                                       }
                                     </div>
+                                    
                                 )
                             case "editable_users":
                                 return (
@@ -202,11 +221,21 @@ class Schedule extends Component {
                                            return (
                                                <div key={user_id} className="schedule__user">
                                                  <OtherUser user_id={user_id}/>
-                                                 <div className="icon--small-delete" onClick={(event) => that.onRemoveEditableUser(event, user_id)}/> 
+                                                 { can_edit &&
+                                                   <div className="icon--small-delete schedule__user-action_button"
+                                                        onClick={(event) => that.onRemoveEditableUser(event, user_id)}/>
+                                                 }
                                                </div>
                                            )
                                        })}
-                                       {can_edit && <button onClick={that.startAddEditableUser}>+</button>}
+                                       {can_edit &&
+                                        <div className="schedule__user">
+                                          <div className="schedule__user-action_button"
+                                               onClick={that.startAddEditableUser}>
+                                            <div className="icon--add" />
+                                          </div>
+                                        </div>
+                                       }
                                     </div>
                                 )
                             default:
