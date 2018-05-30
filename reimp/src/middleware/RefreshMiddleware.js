@@ -46,7 +46,7 @@ import {
     LIST_KEY__RECENT_AUTO_CLOCK,
     LIST_KEY__MIEN_LIST,
     LIST_KEY__SCHEDULE_LIST,
-    LIST_KEY__SCHEDULE_ITEM_LIST,
+    LIST_KEY__CALENDAR_EVENT_LIST,
     SELECTOR__SPRINTS
 } from '../actions/ItemListKeyRegistry'
 import { each, keys } from 'lodash'
@@ -174,7 +174,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name === "schedule" ) {
         list_keys_to_invalidate[LIST_KEY__SCHEDULE_LIST] = true
     } else if ( d.entity_name === "scheduleitem" ) {
-        list_keys_to_invalidate[LIST_KEY__SCHEDULE_ITEM_LIST] = true
+        list_keys_to_invalidate[LIST_KEY__CALENDAR_EVENT_LIST] = true
     }
 }
 

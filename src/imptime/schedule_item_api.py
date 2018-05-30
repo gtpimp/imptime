@@ -43,7 +43,7 @@ class ScheduleItemViewSet(BaseViewSet):
             else:
                 s = ScheduleItemSerializer(schedule_items, many=True)
                 schedule_items_data = s.data
-                context['schedule_items'] = schedule_items_data
+                context['items'] = schedule_items_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
 
@@ -78,4 +78,14 @@ class ScheduleItemViewSet(BaseViewSet):
             logger.exception(ex)
             return self.error_response(ex)
 
+    def apply_filter(self, qs, raw_filter_args):
+        start_at = raw_filter_args.pop('start_at', None)
+        if start_at:
+            raw_filter_args['end_at__gte'] = start_at #sic
+        end_at = raw_filter_args.pop('end_at', None)
+        if end_at:
+            raw_filter_args['start_at__lte'] = end_at #sic
+        return super(ScheduleItemViewSet, self).apply_filter(qs, raw_filter_args)
     
+            
+        

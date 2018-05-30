@@ -15,7 +15,7 @@ export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
 export const LIST_KEY__NUDGE_LIST = 'nudge_list'
 export const LIST_KEY__COMPANY_PROBLEM_LIST = 'company_problem_list'
 export const LIST_KEY__SCHEDULE_LIST = 'schedule_list'
-export const LIST_KEY__SCHEDULE_ITEM_LIST = 'schedule_item_list'
+export const LIST_KEY__CALENDAR_EVENT_LIST = 'calendar_item_list'
 export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 export const LIST_KEY__MIEN_LIST = 'mien_list'
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
@@ -47,7 +47,6 @@ export const ENTITY_KEY__TAG = 'tag'
 export const ENTITY_KEY__NUDGE = 'nudge'
 export const ENTITY_KEY__COMPANY_PROBLEM = 'company_problem'
 export const ENTITY_KEY__SCHEDULE = 'schedule'
-export const ENTITY_KEY__SCHEDULE_ITEM = 'schedule_item'
 export const ENTITY_KEY__MIEN = 'mien'
 export const ENTITY_KEY__WIKI = 'wiki'
 export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
@@ -63,7 +62,8 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__INVOICE,
                                   ENTITY_KEY__MIEN,
                                   ENTITY_KEY__WIKI,
-                                  ENTITY_KEY__SPRINT_USER_RATE ]
+                                  ENTITY_KEY__SPRINT_USER_RATE,
+                                  ENTITY_KEY__CALENDAR_EVENT ]
 
 export const PAGE_KEY__DASHBOARD_PAGE = 'dashboard_page'
 export const PAGE_KEY__INVOICES_PAGE = 'invoice_page'

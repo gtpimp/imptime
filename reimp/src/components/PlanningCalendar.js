@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { filter } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
@@ -15,11 +16,14 @@ import {
     getListFilter,
     invalidateList,
     getVisibleItemIds,
-    getVisibleItems
+    getVisibleItems,
+    isInvalidated,
+    isLoading
 } from '../actions/ItemList'
+import { isLoadingItems } from '../actions/Item'
 import { getGloballySelectedEntityIds } from '../actions/Page'
 import {
-    ENTITY_KEY__SCHEDULE_ITEM
+    ENTITY_KEY__CALENDAR_EVENT
 } from '../actions/ItemListKeyRegistry'
 import Modal from 'react-modal'
 import Timestamp from './Timestamp'
@@ -40,13 +44,20 @@ class PlanningCalendar extends Component {
         this.stopAddingItem = this.stopAddingItem.bind(this)
         this.addProjectToSchedule = this.addProjectToSchedule.bind(this)
         this.addSprintToSchedule = this.addSprintToSchedule.bind(this)
-        this.addIssueToSchedule = this.addIssueToSchedule.bind(this)        
+        this.addIssueToSchedule = this.addIssueToSchedule.bind(this)
+        this.getCalendarEventStartAt = this.getCalendarEventStartAt.bind(this)
+        this.getCalendarEventEndAt = this.getCalendarEventEndAt.bind(this)
         this.state = { adding_item: false,
                        slotInfo: null }
     }
     
     componentDidMount() {
+        const { dispatch, list_key, filter } = this.props
         this.refresh()
+        if ( ! filter.start_at || ! filter.end_at ) {
+            dispatch(update_list_filter(list_key, {start_at: moment().subtract(1, 'months'),
+                                                   end_at: moment().add(1, 'months')}))
+        }
     }
 
     componentWillReceiveProps(new_props) {
@@ -56,7 +67,7 @@ class PlanningCalendar extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, filter, list_key } = props
-        if ( filter.start_at__lte && filter.end_at__gte ) {
+        if ( filter.start_at && filter.end_at ) {
             dispatch(fetchCalendarEventsIfNeeded(list_key))
         }
     }
@@ -78,8 +89,8 @@ class PlanningCalendar extends Component {
 
     onDateRangeChanged(date_from_inclusive, date_to_inclusive) {
         const { dispatch, list_key } = this.props
-        dispatch(update_list_filter(list_key, {end_at__gte: date_from_inclusive,
-                                               start_at__lte: date_to_inclusive}))
+        dispatch(update_list_filter(list_key, {end_at: date_from_inclusive,
+                                               start_at: date_to_inclusive}))
         dispatch(invalidateList(list_key))
     }
 
@@ -126,6 +137,14 @@ class PlanningCalendar extends Component {
         this.stopAddingItem()
     }
 
+    getCalendarEventStartAt(calendar_event) {
+        return moment(calendar_event.start_at).toDate()
+    }
+    
+    getCalendarEventEndAt(calendar_event) {
+        return moment(calendar_event.end_at).toDate()
+    }
+    
     renderAddingItem() {
         const { entityIdsAvailableForEventCreation } = this.props
         const { project_id, sprint_id, issue_id } = entityIdsAvailableForEventCreation || {}
@@ -180,17 +199,20 @@ class PlanningCalendar extends Component {
             </Modal>            
         )
     }
-    
+
     render() {
         const { events, current_date, can_edit } = this.props
+
+        const loaded_events = filter(events, (event) => event.start_at && event.end_at)
+        
         return (
             <div className={'planning-calendar__calendar-container'}>
               <BigCalendar
-                  events={events}
+                  events={loaded_events}
                   defaultView='day'
                   defaultDate={current_date.toDate()}
-                  startAccessor='start_at'
-                  endAccessor='end_at'
+                  startAccessor={this.getCalendarEventStartAt}
+                  endAccessor={this.getCalendarEventEndAt}
                   onNavigate={this.onNavigate}
                   onView={this.onView}
                   onSelectSlot={this.onSelectSlot}
@@ -207,9 +229,11 @@ function mapStateToProps(state, props) {
     const { schedule_id, list_key, can_edit } = props
     const filter = getListFilter(state, list_key)
     const visible_item_ids = getVisibleItemIds(state, list_key)
-    const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__SCHEDULE_ITEM)
+    const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__CALENDAR_EVENT)
     const current_date = getCurrentDate(state, list_key)
     const entityIdsAvailableForEventCreation = getGloballySelectedEntityIds(state)
+    const is_loading = isLoadingItems(state, ENTITY_KEY__CALENDAR_EVENT, visible_item_ids) || isLoading(state, ENTITY_KEY__CALENDAR_EVENT)
+    const is_invalidated = isInvalidated(state, ENTITY_KEY__CALENDAR_EVENT)
     
     return {
         schedule_id,
@@ -218,7 +242,9 @@ function mapStateToProps(state, props) {
         events: visible_items,
         current_date,
         can_edit,
-        entityIdsAvailableForEventCreation
+        entityIdsAvailableForEventCreation,
+        is_loading,
+        is_invalidated
     }
 }
 

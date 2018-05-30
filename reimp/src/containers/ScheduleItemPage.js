@@ -4,7 +4,7 @@ import {withRouter} from 'react-router-dom'
 import moment from 'moment';
 import Splitter from '../components/Splitter'
 import {
-    LIST_KEY__SCHEDULE_ITEM_LIST,
+    LIST_KEY__CALENDAR_EVENT_LIST,
     PAGE_KEY__SCHEDULE_ITEM_PAGE,
     LIST_KEY__NUDGE_LIST
 } from '../actions/ItemListKeyRegistry'
@@ -33,9 +33,9 @@ class ScheduleItemPage extends Component {
     componentDidMount() {
         const {schedule_id, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__SCHEDULE_ITEM_PAGE, ['schedule_item']))
-        dispatch(initList(LIST_KEY__SCHEDULE_ITEM_LIST))
-        dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:schedule_id || -1}))
-        dispatch(setCurrentDate(LIST_KEY__SCHEDULE_ITEM_LIST, moment()))
+        dispatch(initList(LIST_KEY__CALENDAR_EVENT_LIST))
+        dispatch(update_list_filter(LIST_KEY__CALENDAR_EVENT_LIST, {schedule_id:schedule_id || -1}))
+        dispatch(setCurrentDate(LIST_KEY__CALENDAR_EVENT_LIST, moment()))
         dispatch(ensureSchedulesLoaded([schedule_id]))
         this.refresh()
     }
@@ -43,7 +43,7 @@ class ScheduleItemPage extends Component {
     componentWillReceiveProps(new_props) {
         const { dispatch } = new_props
         if ( new_props.schedule && (!this.props.schedule || new_props.schedule.id !== this.props.schedule.id) ) {
-            dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:new_props.schedule.id || -1}))
+            dispatch(update_list_filter(LIST_KEY__CALENDAR_EVENT_LIST, {schedule_id:new_props.schedule.id || -1}))
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
             this.refresh(new_props)
         }
@@ -90,7 +90,7 @@ class ScheduleItemPage extends Component {
               <h3>Calendar</h3>
               <PlanningCalendar schedule_id={schedule_id}
                                 can_edit={can_edit}
-                                list_key={LIST_KEY__SCHEDULE_ITEM_LIST}
+                                list_key={LIST_KEY__CALENDAR_EVENT_LIST}
               />
             </div>
         )
