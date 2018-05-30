@@ -7,7 +7,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css"
 import {
     fetchCalendarEventsIfNeeded,
     getCurrentDate,
-    setCurrentDate
+    setCurrentDate,
+    createCalendarEvent
 } from '../actions/CalendarEvents'
 import {
     update_list_filter,
@@ -16,11 +17,15 @@ import {
     getVisibleItemIds,
     getVisibleItems
 } from '../actions/ItemList'
+import { getGloballySelectedEntityIds } from '../actions/Page'
 import {
     ENTITY_KEY__SCHEDULE_ITEM
 } from '../actions/ItemListKeyRegistry'
 import Modal from 'react-modal'
 import Timestamp from './Timestamp'
+import ProjectName from './ProjectName'
+import SprintName from './SprintName'
+import IssueName from './IssueName'
 
 BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
 
@@ -33,6 +38,9 @@ class PlanningCalendar extends Component {
         this.onView = this.onView.bind(this)
         this.onSelectSlot = this.onSelectSlot.bind(this)
         this.stopAddingItem = this.stopAddingItem.bind(this)
+        this.addProjectToSchedule = this.addProjectToSchedule.bind(this)
+        this.addSprintToSchedule = this.addSprintToSchedule.bind(this)
+        this.addIssueToSchedule = this.addIssueToSchedule.bind(this)        
         this.state = { adding_item: false,
                        slotInfo: null }
     }
@@ -90,7 +98,37 @@ class PlanningCalendar extends Component {
         this.setState({adding_item:false})
     }
 
+    addProjectToSchedule(event) {
+        const { entityIdsAvailableForEventCreation } = this.props
+        const { project_id } = entityIdsAvailableForEventCreation || {}
+        this.addToSchedule(event, {project_id: project_id})
+    }
+    
+    addSprintToSchedule(event) {
+        const { entityIdsAvailableForEventCreation } = this.props
+        const { project_id, sprint_id } = entityIdsAvailableForEventCreation || {}
+        this.addToSchedule(event, {project_id: project_id, sprint_id: sprint_id})
+    }
+    
+    addIssueToSchedule(event) {
+        const { entityIdsAvailableForEventCreation } = this.props
+        const { project_id, sprint_id, issue_id } = entityIdsAvailableForEventCreation || {}
+        this.addToSchedule(event, {project_id: project_id, sprint_id: sprint_id, issue_id: issue_id})
+    }
+
+    addToSchedule(event, entity_ids) {
+        const { dispatch, schedule_id } = this.props
+        const { start, end } = this.state.slot_info
+        if ( event ) {
+            event.preventDefault()
+        }
+        dispatch(createCalendarEvent(schedule_id, start, end, entity_ids))
+        this.stopAddingItem()
+    }
+
     renderAddingItem() {
+        const { entityIdsAvailableForEventCreation } = this.props
+        const { project_id, sprint_id, issue_id } = entityIdsAvailableForEventCreation || {}
         const { start, end } = this.state.slot_info
         return (
             <Modal isOpen={true}
@@ -114,6 +152,30 @@ class PlanningCalendar extends Component {
                 <div className="editable-property-modal__row">
                   End at <Timestamp value={end} />
                 </div>
+                <div className="editable-property-modal__title">
+                  Choose what to schedule:
+                </div>
+                { project_id && 
+                  <div className="editable-property-modal__row"
+                       onClick={(event) => this.addProjectToSchedule(event, project_id)}>
+                    <div className="icon--add-to-schedule"/>
+                    <ProjectName project_id={project_id} />
+                  </div>
+                }
+                { sprint_id && 
+                  <div className="editable-property-modal__row"
+                       onClick={(event) => this.addSprintToSchedule(event, sprint_id)}>
+                    <div className="icon--add-to-schedule"/>
+                    <SprintName sprint_id={sprint_id} />
+                  </div>
+                }
+                { issue_id && 
+                  <div className="editable-property-modal__row"
+                       onClick={(event) => this.addIssueToSchedule(event, issue_id)}>
+                    <div className="icon--add-to-schedule"/>
+                    <IssueName issue_id={issue_id} />
+                  </div>
+                }
               </div>
             </Modal>            
         )
@@ -138,7 +200,6 @@ class PlanningCalendar extends Component {
             </div>
         )
     }
-    
 }
 
 function mapStateToProps(state, props) {
@@ -148,6 +209,7 @@ function mapStateToProps(state, props) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__SCHEDULE_ITEM)
     const current_date = getCurrentDate(state, list_key)
+    const entityIdsAvailableForEventCreation = getGloballySelectedEntityIds(state)
     
     return {
         schedule_id,
@@ -155,7 +217,8 @@ function mapStateToProps(state, props) {
         event_ids: visible_item_ids,
         events: visible_items,
         current_date,
-        can_edit
+        can_edit,
+        entityIdsAvailableForEventCreation
     }
 }
 

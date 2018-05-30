@@ -9,7 +9,8 @@ import {
     LIST_KEY__NUDGE_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
-    set_toolbars
+    set_toolbars,
+    setGloballySelectedEntityIds
 } from '../actions/Page'
 import {
     initList,
@@ -24,6 +25,11 @@ import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onSelectNudge = this.onSelectNudge.bind(this)
+    } 
+    
     componentDidMount() {
         const {schedule_id, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__SCHEDULE_ITEM_PAGE, ['schedule_item']))
@@ -58,13 +64,21 @@ class ScheduleItemPage extends Component {
         dispatch(setBreadcrumbs(breadcrumbs))
     }
 
+    onSelectNudge(nudge) {
+        const { dispatch } = this.props
+        dispatch(setGloballySelectedEntityIds({issue_id: nudge.issue_id,
+                                               sprint_id: nudge.sprint_id,
+                                               project_id: nudge.project_id}))
+    }
+
     renderLeftPane() {
         const { nudge_header_list } = this.props
         return (
             <div className="list-layout__pane">
               <h3>Things to do</h3>
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
-                         header_list={nudge_header_list} />
+                         header_list={nudge_header_list}
+                         onSelect={this.onSelectNudge}/>
             </div>
         )
     }
@@ -76,7 +90,8 @@ class ScheduleItemPage extends Component {
               <h3>Calendar</h3>
               <PlanningCalendar schedule_id={schedule_id}
                                 can_edit={can_edit}
-                                list_key={LIST_KEY__SCHEDULE_ITEM_LIST}/>
+                                list_key={LIST_KEY__SCHEDULE_ITEM_LIST}
+              />
             </div>
         )
     }

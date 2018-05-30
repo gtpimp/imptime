@@ -51,10 +51,11 @@ class NudgeList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
-    onChangeNudgeSelection(nudge_id, selected) {
-        const { dispatch, list_key } = this.props
+    onChangeNudgeSelection(nudge, selected) {
+        const { dispatch, list_key, onSelect } = this.props
         dispatch(unselectAllItems(list_key))
-        dispatch(selectItems(list_key, [nudge_id]))
+        dispatch(selectItems(list_key, [nudge.id]))
+        onSelect(nudge)
     }
 
     render() {
@@ -97,7 +98,7 @@ class NudgeList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key, header_list } = props
+    const { list_key, header_list, onSelect } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__NUDGE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -114,7 +115,8 @@ function mapStateToProps(state, props) {
         last_updated,
         nested_objects,
         header_list,
-        selected_item_ids
+        selected_item_ids,
+        onSelect
     }
 }
 

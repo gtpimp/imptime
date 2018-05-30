@@ -63,10 +63,15 @@ export function getCalendarEvents(state, calendar_event_ids) {
     return getItems(state, ENTITY_KEY__CALENDAR_EVENT, calendar_event_ids)
 }
 
-export function createCalendarEvent(header, content) {
+export function createCalendarEvent(schedule_id, start_at, end_at, entity_ids) {
     return (dispatch, getState) => {
-        dispatch(startCandidateItem(ENTITY_KEY__CALENDAR_EVENT, { header: header,
-                                                                  content: content }))
+        const data = Object.assign({},
+                                   {schedule_id:schedule_id,
+                                    start_at:start_at,
+                                    end_at:end_at},
+                                   entity_ids)
+        
+        dispatch(startCandidateItem(ENTITY_KEY__CALENDAR_EVENT, data))
         dispatch(saveCandidateItem(ENTITY_KEY__CALENDAR_EVENT))
     }
 }

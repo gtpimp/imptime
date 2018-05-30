@@ -49,6 +49,10 @@
     @include icon(20px, 20px, 'ic_timer_black_24dp_2x.png')
 }
 
+.icon--add-to-schedule {
+    @include icon(20px, 20px, 'ic_timer_black_24dp_2x.png')
+}
+
 .icon--download_as_csv {
     @include icon(20px, 20px, 'material-icons-black-download.png')
 }

@@ -422,6 +422,10 @@ class ScheduleItem(BaseModel):
 
     def save(self, *args, **kwargs):
         was_created = not self.id
+
+        if self.duration_hours is None:
+            self.duration_hours = float((self.end_at - self.start_at).total_seconds())/3600
+        
         super(ScheduleItem, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)

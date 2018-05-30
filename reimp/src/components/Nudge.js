@@ -40,7 +40,7 @@ class Nudge extends Component {
 
     onToggleSelection() {
         const { nudge, is_selected, onChangeSelection } = this.props
-        onChangeSelection(nudge.id, !is_selected)
+        onChangeSelection(nudge, !is_selected)
     }
 
     render() {

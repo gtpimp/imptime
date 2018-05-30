@@ -139,6 +139,14 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
     return v
 }
 
+export function setGloballySelectedEntityIds(entity_ids) {
+    return setGlobalPageFlag("_selected_entity_ids_", entity_ids)
+}
+
+export function getGloballySelectedEntityIds(state) {
+    return getGlobalPageFlag(state, "_selected_entity_ids_", null)
+}
+
 export function setGlobalPageFlag(flag_name, value) {
     return setPageFlag("__GLOBAL_PAGE__", flag_name, value)
 }
