@@ -1,15 +1,19 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { filter } from 'lodash'
-import {withRouter} from 'react-router-dom'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
 import BigCalendar from 'react-big-calendar';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css"
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css'
 import {
     fetchCalendarEventsIfNeeded,
     getCurrentDate,
     setCurrentDate,
-    createCalendarEvent
+    createCalendarEvent,
+    updateCalendarEventDates
 } from '../actions/CalendarEvents'
 import {
     update_list_filter,
@@ -31,7 +35,9 @@ import ProjectName from './ProjectName'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
 
-BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
+BigCalendar.momentLocalizer(moment);
+
+const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 
 const DEFAULT_EVENT_DURATION_HOURS = 2
 
@@ -42,6 +48,8 @@ class PlanningCalendar extends Component {
         this.onNavigate = this.onNavigate.bind(this)
         this.onView = this.onView.bind(this)
         this.onSelectSlot = this.onSelectSlot.bind(this)
+        this.onMovedEvent = this.onMovedEvent.bind(this)
+        this.onResizedEvent = this.onResizedEvent.bind(this)
         this.stopAddingItem = this.stopAddingItem.bind(this)
         this.addProjectToSchedule = this.addProjectToSchedule.bind(this)
         this.addSprintToSchedule = this.addSprintToSchedule.bind(this)
@@ -102,6 +110,16 @@ class PlanningCalendar extends Component {
         }
     }
 
+    onMovedEvent({event, start, end}) {
+        const { dispatch } = this.props
+        dispatch(updateCalendarEventDates(event.id, moment(start), moment(end)))
+    }
+
+    onResizedEvent(resizeType, {event, start, end}) {
+        const { dispatch } = this.props
+        dispatch(updateCalendarEventDates(event.id, moment(start), moment(end)))
+    }
+
     startAddingItem(slot_info) {
         this.setState({adding_item: true, slot_info: slot_info})
     }
@@ -128,12 +146,12 @@ class PlanningCalendar extends Component {
         this.addToSchedule(event, {project_id: project_id, sprint_id: sprint_id, issue_id: issue_id})
     }
 
-    addToSchedule(event, entity_ids) {
+    addToSchedule(evt, entity_ids) {
         const { dispatch, schedule_id } = this.props
         const { start } = this.state.slot_info
         var end = moment(start).add(DEFAULT_EVENT_DURATION_HOURS,'hours')
-        if ( event ) {
-            event.preventDefault()
+        if ( evt ) {
+            evt.preventDefault()
         }
         dispatch(createCalendarEvent(schedule_id, start, end, entity_ids))
         this.stopAddingItem()
@@ -209,7 +227,7 @@ class PlanningCalendar extends Component {
         
         return (
             <div className={'planning-calendar__calendar-container'}>
-              <BigCalendar
+              <DragAndDropCalendar
                   events={loaded_events}
                   defaultView='day'
                   defaultDate={current_date.toDate()}
@@ -219,6 +237,9 @@ class PlanningCalendar extends Component {
                   onView={this.onView}
                   onSelectSlot={this.onSelectSlot}
                   selectable={can_edit}
+                  resizable
+                  onEventDrop={this.onMovedEvent}
+                  onEventResize={this.onResizedEvent}
               />
               { this.state.adding_item && this.renderAddingItem() }
             </div>
@@ -250,5 +271,6 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(PlanningCalendar))
+PlanningCalendar = DragDropContext(HTML5Backend)(PlanningCalendar)
+export default connect(mapStateToProps)(PlanningCalendar)
 

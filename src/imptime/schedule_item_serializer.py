@@ -31,4 +31,6 @@ class ScheduleItemCreateSerializer(BaseSerializer):
     sprint_id = serializers.CharField(required=False)
     project_id = serializers.CharField(required=False)
     
-    
+class ScheduleItemUpdateDatesSerializer(BaseSerializer):
+    start_at = serializers.DateTimeField()
+    end_at = serializers.DateTimeField()

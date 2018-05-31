@@ -10,7 +10,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.models import ScheduleItem
-from schedule_item_serializer import ScheduleItemSerializer, ScheduleItemCreateSerializer
+from schedule_item_serializer import ScheduleItemSerializer, ScheduleItemCreateSerializer, ScheduleItemUpdateDatesSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -42,9 +42,6 @@ class ScheduleItemViewSet(BaseViewSet):
                     'id', flat=True)]
             else:
                 s = ScheduleItemSerializer(schedule_items, many=True)
-
-                import pdb; pdb.set_trace()
-                
                 schedule_items_data = s.data
                 context['items'] = schedule_items_data
             context['pagination'] = pagination
@@ -81,6 +78,38 @@ class ScheduleItemViewSet(BaseViewSet):
             logger.exception(ex)
             return self.error_response(ex)
 
+    def update(self, request, pk):
+        try:
+            params = request.data
+            field_name = params['field_name']
+            new_value = params.get('value', None)
+
+            if 'item_ids' in params:
+                schedule_item_pks = params['item_ids']
+            else:
+                schedule_item_pks = [pk]
+
+            for schedule_item_pk in schedule_item_pks:
+                schedule_item = self.allowed_schedule_items_to_edit().get(pk=schedule_item_pk)
+
+                if field_name == "dates":
+                    s = ScheduleItemUpdateDatesSerializer(data=new_value)
+                    s.is_valid(raise_exception=True)
+                    schedule_item.start_at = s.validated_data['start_at']
+                    schedule_item.end_at = s.validated_data['end_at']
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
+                schedule_item.save()
+
+            data = {'status': 'success', 'payload': schedule_item_pks}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+        
     def apply_filter(self, qs, raw_filter_args):
         start_at = raw_filter_args.pop('start_at', None)
         if start_at:

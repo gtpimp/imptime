@@ -215,6 +215,8 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_schedule_items(self):
         return ScheduleItem.objects.filter(schedule__in=self.allowed_schedules())
 
+    def allowed_schedule_items_to_edit(self):
+        return ScheduleItem.objects.filter(schedule__in=self.allowed_schedules_to_edit())
     
     def allowed_tags(self):
         return Tag.objects.filter(issues__in=self.allowed_issues())

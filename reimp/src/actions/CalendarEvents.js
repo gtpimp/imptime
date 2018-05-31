@@ -41,10 +41,6 @@ export function invalidateCalendarEvents(calendar_event_ids_to_invalidate) {
     }
 }
 
-export function updateCalendarEvent(calendar_event_ids, field_name, new_value, on_done) {
-    return updateItem(ENTITY_KEY__CALENDAR_EVENT, calendar_event_ids, field_name, new_value, on_done)
-}
-
 export function fetchCalendarEventsIfNeeded(list_key) {
     return (dispatch, getState) => {
         dispatch(fetchItemsIfNeeded(ENTITY_KEY__CALENDAR_EVENT, list_key))
@@ -74,6 +70,13 @@ export function createCalendarEvent(schedule_id, start_at, end_at, entity_ids) {
         dispatch(startCandidateItem(ENTITY_KEY__CALENDAR_EVENT, data))
         dispatch(saveCandidateItem(ENTITY_KEY__CALENDAR_EVENT))
     }
+}
+
+export function updateCalendarEventDates(event_id, start_at, end_at) {
+    const field_name="dates"
+    const new_value={start_at:start_at,
+                     end_at:end_at}
+    return updateItem(ENTITY_KEY__CALENDAR_EVENT, [event_id], field_name, new_value)
 }
 
 export function deleteCalendarEvent(calendar_event_id) {
