@@ -3,11 +3,11 @@ import {connect} from 'react-redux'
 import { ensureIssuesLoaded } from '../actions/Issues'
 import { ensureSprintsLoaded } from '../actions/Sprints'
 import { ensureProjectsLoaded } from '../actions/Projects'
-import ProjectNameUnclickable from './ProjectName'
-import SprintNameUnclickable from './SprintNameUnclickable'
-import IssueNameUnclickable from './IssueNameUnclickable'
+import ProjectName from './ProjectName'
+import SprintName from './SprintName'
+import IssueName from './IssueName'
 
-class ScheduleItemTitle extends Component {
+class ScheduleItemBody extends Component {
 
     componentDidMount() {
         this.refresh()
@@ -35,17 +35,10 @@ class ScheduleItemTitle extends Component {
         const { schedule_item } = this.props
 
         return (
-            <div className={'schedule-item-title'}>
-              
-              { schedule_item.project_id &&
-                <div className="schedule-item-title__part"><ProjectNameUnclickable project_id={schedule_item.project_id}/></div>
-              }
-              { schedule_item.sprint_id &&
-                <div className="schedule-item-title__part">&gt; <SprintNameUnclickable sprint_id={schedule_item.sprint_id}/></div>
-              }
-              { schedule_item.issue_id &&
-                <div className="schedule-item-title__part">&gt; <IssueNameUnclickable issue_id={schedule_item.issue_id}/></div>
-              }
+            <div className={'planning-calendar__schedule-item'}>
+              <ProjectName project_id={schedule_item.project_id}/>
+              <SprintName sprint_id={schedule_item.sprint_id}/>
+              <IssueName issue_id={schedule_item.issue_id}/>
             </div>
         )
     }
@@ -56,4 +49,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(ScheduleItemTitle)
+export default connect(mapStateToProps)(ScheduleItemBody)

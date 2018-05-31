@@ -5,6 +5,7 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
 import BigCalendar from 'react-big-calendar'
 import ScheduleItemTitle from './ScheduleItemTitle'
+import ScheduleItemBody from './ScheduleItemBody'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css"
@@ -53,6 +54,8 @@ class PlanningCalendar extends Component {
         this.onView = this.onView.bind(this)
         this.renderTitle = this.renderTitle.bind(this)
         this.onSelectSlot = this.onSelectSlot.bind(this)
+        this.onSelectEvent = this.onSelectEvent.bind(this)
+        this.closeSelectedEventPopup = this.closeSelectedEventPopup.bind(this)
         this.onMovedEvent = this.onMovedEvent.bind(this)
         this.onResizedEvent = this.onResizedEvent.bind(this)
         this.stopAddingItem = this.stopAddingItem.bind(this)
@@ -62,7 +65,8 @@ class PlanningCalendar extends Component {
         this.getCalendarEventStartAt = this.getCalendarEventStartAt.bind(this)
         this.getCalendarEventEndAt = this.getCalendarEventEndAt.bind(this)
         this.state = { adding_item: false,
-                       slotInfo: null }
+                       slotInfo: null,
+                       selectedEvent: null}
     }
     
     componentDidMount() {
@@ -164,6 +168,14 @@ class PlanningCalendar extends Component {
         this.stopAddingItem()
     }
 
+    onSelectEvent(event, evt) {
+        this.setState({selectedEvent:event})
+    }
+
+    closeSelectedEventPopup(event) {
+        this.setState({selectedEvent:null})
+    }
+
     getCalendarEventStartAt(calendar_event) {
         return moment(calendar_event.start_at).toDate()
     }
@@ -175,6 +187,26 @@ class PlanningCalendar extends Component {
     renderTitle(calendar_event) {
         return (
             <ScheduleItemTitle schedule_item={calendar_event} />
+        )
+    }
+
+    renderSelectedEvent(calendar_event) {
+        return (
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={this.closeSelectedEventPopup}
+                   contentLabel="Scheduled Item">
+              <div className="editable-property-modal__row editable-property-modal__row--header">
+                <label htmlFor="assigned" className="editable-property-modal__title">
+                  <Timestamp value={calendar_event.start_at} format="short-time"/>
+                  to 
+                  <Timestamp value={calendar_event.end_at} format="short-time"/>
+                </label>
+                <div className="editable-property-modal__close"><i className="material-icons" onClick={this.closeSelectedEventPopup}>close</i></div>
+              </div>
+              <ScheduleItemBody schedule_item={calendar_event} />
+            </Modal>
         )
     }
     
@@ -250,12 +282,14 @@ class PlanningCalendar extends Component {
                   onNavigate={this.onNavigate}
                   onView={this.onView}
                   onSelectSlot={this.onSelectSlot}
+                  onSelectEvent={this.onSelectEvent}
                   selectable={can_edit}
                   resizable
                   onEventDrop={this.onMovedEvent}
                   onEventResize={this.onResizedEvent}
               />
               { this.state.adding_item && this.renderAddingItem() }
+              { this.state.selectedEvent && this.renderSelectedEvent(this.state.selectedEvent) }
             </div>
         )
     }

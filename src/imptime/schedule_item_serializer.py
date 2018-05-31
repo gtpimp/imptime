@@ -11,7 +11,7 @@ class ScheduleItemSerializer(BaseModelSerializer):
     order = serializers.IntegerField()
     issue_id = serializers.CharField()
     sprint_id = serializers.CharField()
-    project_id = serializers.CharField(source="sprint.business_id") #sic
+    project_id = serializers.CharField()
     start_at = serializers.DateTimeField()
     end_at = serializers.DateTimeField()
     duration_hours = serializers.FloatField()
