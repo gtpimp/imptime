@@ -115,6 +115,28 @@ class ScheduleItemViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    def delete(self, request, pk):
+        try:
+            params = request.data
+            data = None
+
+            if 'item_ids' in params:
+                schedule_item_pks = params['item_ids']
+            else:
+                schedule_item_pks = [pk]
+
+            for schedule_item_pk in schedule_item_pks:
+                schedule_item = self.allowed_schedule_items_to_edit().get(pk=schedule_item_pk)
+                schedule_item.delete()
+
+            if not data:
+                data = {'status': 'success', 'payload': schedule_item_pks}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
         
     def apply_filter(self, qs, raw_filter_args):
         start_at = raw_filter_args.pop('start_at', None)
@@ -124,6 +146,3 @@ class ScheduleItemViewSet(BaseViewSet):
         if end_at:
             raw_filter_args['start_at__lte'] = end_at #sic
         return super(ScheduleItemViewSet, self).apply_filter(qs, raw_filter_args)
-    
-            
-        

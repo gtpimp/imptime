@@ -442,3 +442,6 @@ class ScheduleItem(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
     
+    def delete(self):
+        super(ScheduleItem, self).delete()
+        RefreshNotifier().notify_model_delete(self)

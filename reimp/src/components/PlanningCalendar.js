@@ -191,6 +191,7 @@ class PlanningCalendar extends Component {
     }
 
     renderSelectedEvent(calendar_event) {
+        const { can_edit } = this.props
         return (
             <Modal isOpen={true}
                    className="editable-property-modal"
@@ -205,7 +206,10 @@ class PlanningCalendar extends Component {
                 </label>
                 <div className="editable-property-modal__close"><i className="material-icons" onClick={this.closeSelectedEventPopup}>close</i></div>
               </div>
-              <ScheduleItemBody schedule_item={calendar_event} />
+              <ScheduleItemBody schedule_item={calendar_event}
+                                can_edit={can_edit}
+                                onDeleted={this.closeSelectedEventPopup}
+              />
             </Modal>
         )
     }
