@@ -33,6 +33,7 @@ import IssueName from './IssueName'
 
 BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
 
+const DEFAULT_EVENT_DURATION_HOURS = 2
 
 class PlanningCalendar extends Component {
 
@@ -129,7 +130,8 @@ class PlanningCalendar extends Component {
 
     addToSchedule(event, entity_ids) {
         const { dispatch, schedule_id } = this.props
-        const { start, end } = this.state.slot_info
+        const { start } = this.state.slot_info
+        var end = moment(start).add(DEFAULT_EVENT_DURATION_HOURS,'hours')
         if ( event ) {
             event.preventDefault()
         }
