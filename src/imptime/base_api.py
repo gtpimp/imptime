@@ -210,7 +210,6 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_schedules_to_edit(self):
         return Schedule.objects.filter(Q(owner=self.request.user)|Q(editors=self.request.user))\
                                .order_by("name").distinct()
-
     
     def allowed_schedule_items(self):
         return ScheduleItem.objects.filter(schedule__in=self.allowed_schedules())

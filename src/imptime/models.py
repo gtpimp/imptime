@@ -397,10 +397,20 @@ class Schedule(BaseModel):
     owner = ProtectedForeignKey(User, related_name='owned_schedules', null=False, blank=False)
     viewers = models.ManyToManyField(User, related_name='viewable_schedules')
     editors = models.ManyToManyField(User, related_name='editable_schedules')
+    default = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ('name', 'owner')
 
+    @classmethod
+    def get_default_schedule_for_user(self, user):
+        schedule = Schedule.objects.filter(owner=user, default=True).first()
+        if schedule is None:
+            schedule = Schedule.objects.get_or_create(owner=user,
+                                                      default=True,
+                                                      defaults={'name':"Planning schedule"})[0]
+        return schedule
+        
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(Schedule, self).save(*args, **kwargs)

@@ -65,6 +65,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__SPRINT_USER_RATE,
                                   ENTITY_KEY__CALENDAR_EVENT ]
 
+export const PAGE_KEY__CALENDAR_PAGE = 'calendar_page'
 export const PAGE_KEY__DASHBOARD_PAGE = 'dashboard_page'
 export const PAGE_KEY__INVOICES_PAGE = 'invoice_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'

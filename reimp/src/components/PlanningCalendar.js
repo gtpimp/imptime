@@ -24,6 +24,7 @@ import {
     isInvalidated,
     isLoading
 } from '../actions/ItemList'
+import { ensureSchedulesLoaded } from '../actions/Schedules'
 import { isLoadingItems } from '../actions/Item'
 import { getGloballySelectedEntityIds } from '../actions/Page'
 import {
@@ -62,11 +63,11 @@ class PlanningCalendar extends Component {
     
     componentDidMount() {
         const { dispatch, list_key, filter } = this.props
-        this.refresh()
         if ( ! filter.start_at || ! filter.end_at ) {
             dispatch(update_list_filter(list_key, {start_at: moment().subtract(1, 'months'),
                                                    end_at: moment().add(1, 'months')}))
         }
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
@@ -75,10 +76,11 @@ class PlanningCalendar extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, filter, list_key } = props
+        const { dispatch, filter, list_key, schedule_id } = props
         if ( filter.start_at && filter.end_at ) {
             dispatch(fetchCalendarEventsIfNeeded(list_key))
         }
+        dispatch(ensureSchedulesLoaded([schedule_id]))
     }
 
     onNavigate(new_date, view, action) {

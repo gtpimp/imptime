@@ -29,7 +29,7 @@ class ScheduleViewSet(BaseViewSet):
             format_args = params.get('format', {})
             ordering = params.get('ordering', {})
 
-            self._auto_create_default_schedules(request)
+            self._ensure_default_schedule_exists(request)
             schedules = self.allowed_schedules()
             schedules = self.apply_filter(qs=schedules, raw_filter_args=filter_args)
             schedules = self.apply_ordering(qs=schedules, ordering=ordering)
@@ -57,8 +57,8 @@ class ScheduleViewSet(BaseViewSet):
             return self.error_response(ex)
         
 
-    def _auto_create_default_schedules(self, request):
-        Schedule.objects.get_or_create(name="Planning schedule", owner=request.user)
+    def _ensure_default_schedule_exists(self, request):
+        Schedule.get_default_schedule_for_user(request.user)
 
     @detail_route(methods=['POST'])
     def add_viewable_user(self, request, pk):
