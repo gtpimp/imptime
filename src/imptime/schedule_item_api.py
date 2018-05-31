@@ -42,6 +42,9 @@ class ScheduleItemViewSet(BaseViewSet):
                     'id', flat=True)]
             else:
                 s = ScheduleItemSerializer(schedule_items, many=True)
+
+                import pdb; pdb.set_trace()
+                
                 schedule_items_data = s.data
                 context['items'] = schedule_items_data
             context['pagination'] = pagination
@@ -60,7 +63,7 @@ class ScheduleItemViewSet(BaseViewSet):
             s = ScheduleItemCreateSerializer(data=params)
             s.is_valid(raise_exception=True)
             schedule_data = s.validated_data
-            
+
             schedule = self.allowed_schedules_to_edit().get(pk=schedule_data['schedule_id'])
             schedule_item = ScheduleItem.objects.create(schedule=schedule,
                                                         order=0,

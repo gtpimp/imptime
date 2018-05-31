@@ -1,6 +1,7 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseModelSerializer, BaseSerializer
+from lib.serializer_fields import DateTimeFieldWihTZ
 from imptime.models import ScheduleItem
 logger = logging.getLogger(__name__)
 
@@ -12,8 +13,8 @@ class ScheduleItemSerializer(BaseModelSerializer):
     issue_id = serializers.CharField()
     sprint_id = serializers.CharField()
     project_id = serializers.CharField(source="sprint.business_id") #sic
-    start_at = serializers.DateTimeField()
-    end_at = serializers.DateTimeField()
+    start_at = DateTimeFieldWihTZ()
+    end_at = DateTimeFieldWihTZ
     duration_hours = serializers.FloatField()
     modified = serializers.DateTimeField()
     
