@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import { filter } from 'lodash'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
-import BigCalendar from 'react-big-calendar';
+import BigCalendar from 'react-big-calendar'
+import ScheduleItemTitle from './ScheduleItemTitle'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css"
@@ -19,6 +20,8 @@ import {
     update_list_filter,
     getListFilter,
     invalidateList,
+    getNestedObjects,    
+    ensureNestedObjectsLoaded,
     getVisibleItemIds,
     getVisibleItems,
     isInvalidated,
@@ -48,6 +51,7 @@ class PlanningCalendar extends Component {
         super(props)
         this.onNavigate = this.onNavigate.bind(this)
         this.onView = this.onView.bind(this)
+        this.renderTitle = this.renderTitle.bind(this)
         this.onSelectSlot = this.onSelectSlot.bind(this)
         this.onMovedEvent = this.onMovedEvent.bind(this)
         this.onResizedEvent = this.onResizedEvent.bind(this)
@@ -76,11 +80,12 @@ class PlanningCalendar extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, filter, list_key, schedule_id } = props
+        const { dispatch, filter, list_key, schedule_id, nested_objects } = props
         if ( filter.start_at && filter.end_at ) {
             dispatch(fetchCalendarEventsIfNeeded(list_key))
         }
         dispatch(ensureSchedulesLoaded([schedule_id]))
+        dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
     onNavigate(new_date, view, action) {
@@ -166,6 +171,12 @@ class PlanningCalendar extends Component {
     getCalendarEventEndAt(calendar_event) {
         return moment(calendar_event.end_at).toDate()
     }
+
+    renderTitle(calendar_event) {
+        return (
+            <ScheduleItemTitle schedule_item={calendar_event} />
+        )
+    }
     
     renderAddingItem() {
         const { entityIdsAvailableForEventCreation } = this.props
@@ -235,6 +246,7 @@ class PlanningCalendar extends Component {
                   defaultDate={current_date.toDate()}
                   startAccessor={this.getCalendarEventStartAt}
                   endAccessor={this.getCalendarEventEndAt}
+                  titleAccessor={this.renderTitle}
                   onNavigate={this.onNavigate}
                   onView={this.onView}
                   onSelectSlot={this.onSelectSlot}
@@ -256,6 +268,7 @@ function mapStateToProps(state, props) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__CALENDAR_EVENT)
     const current_date = getCurrentDate(state, list_key)
+    const nested_objects = getNestedObjects(state, list_key)
     const entityIdsAvailableForEventCreation = getGloballySelectedEntityIds(state)
     const is_loading = isLoadingItems(state, ENTITY_KEY__CALENDAR_EVENT, visible_item_ids) || isLoading(state, ENTITY_KEY__CALENDAR_EVENT)
     const is_invalidated = isInvalidated(state, ENTITY_KEY__CALENDAR_EVENT)
@@ -269,7 +282,8 @@ function mapStateToProps(state, props) {
         can_edit,
         entityIdsAvailableForEventCreation,
         is_loading,
-        is_invalidated
+        is_invalidated,
+        nested_objects
     }
 }
 

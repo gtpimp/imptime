@@ -45,7 +45,13 @@ class ScheduleItemViewSet(BaseViewSet):
                 schedule_items_data = s.data
                 context['items'] = schedule_items_data
             context['pagination'] = pagination
-            data = {'status': 'success', 'payload': context}
+            data = {'status': 'success',
+                    'payload': context,
+                    'nested_objects': {
+                        'project_ids': [x.project_id for x in schedule_items if x.project_id is not None],
+                        'sprint_ids': [x.sprint_id for x in schedule_items if x.sprint_id is not None],
+                        'issue_ids': [x.issue_id for x in schedule_items if x.issue_id is not None]
+                    }}
 
         except Exception, ex:
             logger.exception(ex)
