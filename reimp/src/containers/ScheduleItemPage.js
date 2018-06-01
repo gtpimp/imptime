@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import moment from 'moment';
 import Splitter from '../components/Splitter'
 import {
     LIST_KEY__CALENDAR_EVENT_LIST,
@@ -10,17 +9,15 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    setGloballySelectedEntityIds
+    setGloballySelectedIssueId
 } from '../actions/Page'
 import {
-    initList,
-    update_list_filter
+    initList
 } from '../actions/ItemList'
 import {getSchedule, ensureSchedulesLoaded, canEditScheduleEvents} from '../actions/Schedules'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
 import PlanningCalendar from '../components/PlanningCalendar'
-import { setCurrentDate } from '../actions/CalendarEvents'
 import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
@@ -34,8 +31,6 @@ class ScheduleItemPage extends Component {
         const {schedule_id, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__SCHEDULE_ITEM_PAGE, ['schedule_item']))
         dispatch(initList(LIST_KEY__CALENDAR_EVENT_LIST))
-        dispatch(update_list_filter(LIST_KEY__CALENDAR_EVENT_LIST, {schedule_id:schedule_id || -1}))
-        dispatch(setCurrentDate(LIST_KEY__CALENDAR_EVENT_LIST, moment()))
         dispatch(ensureSchedulesLoaded([schedule_id]))
         this.refresh()
     }
@@ -43,7 +38,6 @@ class ScheduleItemPage extends Component {
     componentWillReceiveProps(new_props) {
         const { dispatch } = new_props
         if ( new_props.schedule && (!this.props.schedule || new_props.schedule.id !== this.props.schedule.id) ) {
-            dispatch(update_list_filter(LIST_KEY__CALENDAR_EVENT_LIST, {schedule_id:new_props.schedule.id || -1}))
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
             this.refresh(new_props)
         }
@@ -66,9 +60,9 @@ class ScheduleItemPage extends Component {
 
     onSelectNudge(nudge) {
         const { dispatch } = this.props
-        dispatch(setGloballySelectedEntityIds({issue_id: nudge.issue_id,
-                                               sprint_id: nudge.sprint_id,
-                                               project_id: nudge.project_id}))
+        dispatch(setGloballySelectedIssueId({issue_id: nudge.issue_id,
+                                             sprint_id: nudge.sprint_id,
+                                             project_id: nudge.project_id}))
     }
 
     renderLeftPane() {

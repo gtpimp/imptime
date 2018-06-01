@@ -139,6 +139,18 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
     return v
 }
 
+export function setGloballySelectedIssueId(project_id, sprint_id, issue_id) {
+    return setGloballySelectedEntityIds({project_id: project_id, sprint_id: sprint_id, issue_id: issue_id})
+}
+
+export function setGloballySelectedSprintId(project_id, sprint_id) {
+    return setGloballySelectedEntityIds({project_id: project_id, sprint_id: sprint_id})
+}
+
+export function setGloballySelectedProjectId(project_id) {
+    return setGloballySelectedEntityIds({project_id: project_id})
+}
+
 export function setGloballySelectedEntityIds(entity_ids) {
     return setGlobalPageFlag("_selected_entity_ids_", entity_ids)
 }

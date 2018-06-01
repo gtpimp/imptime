@@ -54,6 +54,7 @@ import IssueListHeader from '../components/IssueListHeader'
 import DivTable from './DivTable'
 import { Shortcuts } from 'react-shortcuts'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
+import { setGloballySelectedIssueId } from '../actions/Page'
 
 class IssueList extends Component {
 
@@ -205,7 +206,7 @@ class IssueList extends Component {
     }
 
     onClickedIssue(event, issue_id) {
-        const {dispatch, onSelectIssues, selected_ids} = this.props
+        const {dispatch, onSelectIssues, selected_ids, sprint_id, project_id} = this.props
         event.stopPropagation()
 
         let selected_issue_ids = []
@@ -220,6 +221,7 @@ class IssueList extends Component {
         } else {
             selected_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(issue_id)
         }
+        dispatch(setGloballySelectedIssueId(project_id, sprint_id, issue_id))
         onSelectIssues(selected_issue_ids)
         dispatch(cancelCandidateIssue())
     }

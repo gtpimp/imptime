@@ -23,6 +23,7 @@ import {
     invalidateAllProjects,
     fetchProjectsIfNeeded
 } from '../actions/Projects'
+import { setGloballySelectedProjectId } from '../actions/Page'
 import Pagination from './Pagination'
 import Project from './Project'
 import DivTable from './DivTable'
@@ -86,7 +87,7 @@ class ProjectList extends Component {
     }
 
     onClickedProject(event, project_id) {
-        const {onSelectProjects, selected_ids} = this.props
+        const {dispatch, onSelectProjects, selected_ids} = this.props
         event.stopPropagation()
 
         let selected_project_ids = []
@@ -99,6 +100,7 @@ class ProjectList extends Component {
         } else {
             selected_project_ids = [project_id]
         }
+        dispatch(setGloballySelectedProjectId(project_id))
         onSelectProjects(selected_project_ids)
     }
 

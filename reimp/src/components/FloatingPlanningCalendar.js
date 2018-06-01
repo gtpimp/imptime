@@ -1,17 +1,15 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import Rnd from 'react-rnd'
-import moment from 'moment'
 import classNames from 'classnames'
 import { isFloatingCalendarVisible } from '../actions/CalendarEvents'
 import {
     LIST_KEY__CALENDAR_EVENT_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
-    initList,
-    update_list_filter
+    initList
 } from '../actions/ItemList'
-import { setCurrentDate, hideFloatingCalendar } from '../actions/CalendarEvents'
+import { hideFloatingCalendar } from '../actions/CalendarEvents'
 import {
     getSchedule,
     ensureSchedulesLoaded,
@@ -31,15 +29,12 @@ class FloatingPlanningCalendar extends Component {
     componentDidMount() {
         const {schedule_id, dispatch} = this.props
         dispatch(initList(LIST_KEY__CALENDAR_EVENT_LIST))
-        dispatch(update_list_filter(LIST_KEY__CALENDAR_EVENT_LIST, {schedule_id:schedule_id || -1}))
-        dispatch(setCurrentDate(LIST_KEY__CALENDAR_EVENT_LIST, moment()))
         dispatch(ensureSchedulesLoaded([schedule_id]))
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = new_props
         if ( new_props.schedule && (!this.props.schedule || new_props.schedule.id !== this.props.schedule.id) ) {
-            dispatch(update_list_filter(LIST_KEY__CALENDAR_EVENT_LIST, {schedule_id:new_props.schedule.id || -1}))
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
         }
     }

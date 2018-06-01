@@ -21,6 +21,7 @@ import {
     getSprintHeaderListForMien,
     updateSprintMienHeaders
 } from '../actions/Sprints'
+import { setGloballySelectedSprintId } from '../actions/Page'
 import Sprint from './Sprint'
 import DivTable from './DivTable'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
@@ -67,7 +68,7 @@ class SprintList extends Component {
     }
 
     onClickedSprint(event, sprint_id) {
-        const {onSelectSprints, selected_ids} = this.props
+        const {dispatch, onSelectSprints, selected_ids, project_id} = this.props
         event.stopPropagation()
 
         let selected_sprint_ids = []
@@ -80,6 +81,7 @@ class SprintList extends Component {
         } else {
             selected_sprint_ids = [sprint_id]
         }
+        dispatch(setGloballySelectedSprintId(project_id, sprint_id))
         onSelectSprints(selected_sprint_ids)
     }
 

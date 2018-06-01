@@ -70,7 +70,9 @@ class PlanningCalendar extends Component {
     }
     
     componentDidMount() {
-        const { dispatch, list_key, filter } = this.props
+        const { dispatch, list_key, filter, schedule_id } = this.props
+        dispatch(update_list_filter(list_key, {schedule_id:schedule_id || -1}))
+        dispatch(setCurrentDate(list_key, moment()))
         if ( ! filter.start_at || ! filter.end_at ) {
             dispatch(update_list_filter(list_key, {start_at: moment().subtract(1, 'months'),
                                                    end_at: moment().add(1, 'months')}))
@@ -79,6 +81,11 @@ class PlanningCalendar extends Component {
     }
 
     componentWillReceiveProps(new_props) {
+        const { dispatch, list_key, filter, schedule_id } = this.props
+        if ( filter.schedule_id !== new_props.schedule_id ) {
+            dispatch(update_list_filter(list_key, {schedule_id:schedule_id || -1}))
+            dispatch(invalidateList(list_key))
+        }
         this.refresh(new_props)
     }
 
@@ -109,8 +116,8 @@ class PlanningCalendar extends Component {
 
     onDateRangeChanged(date_from_inclusive, date_to_inclusive) {
         const { dispatch, list_key } = this.props
-        dispatch(update_list_filter(list_key, {end_at: date_from_inclusive,
-                                               start_at: date_to_inclusive}))
+        dispatch(update_list_filter(list_key, {start_at: date_from_inclusive,
+                                               end_at: date_to_inclusive}))
         dispatch(invalidateList(list_key))
     }
 
