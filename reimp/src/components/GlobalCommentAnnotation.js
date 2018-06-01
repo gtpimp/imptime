@@ -49,22 +49,22 @@ class GlobalCommentAnnotation extends Component {
         const comment = keyBy(issue.comments, "id")[comment_id]
         
         return (
-            <Rnd className="global-comment-annotation"
-                 dragHandleClassName=".global-comment-annotation--header"
+            <Rnd className="rnd"
+                 dragHandleClassName=".rnd--header"
                  onResize={this.onResize}
             >
-              <div className="global-comment-annotation--container"
+              <div className="rnd--container"
                    ref={(ref)=> this.container_el=ref}
               >
-                <div className="global-comment-annotation--header">
+                <div className="rnd--header">
                   <h3 >
                     Annotating for <IssueName issue_id={issue_id}/>
                   </h3>
-                  <div className="global-comment-annotation__close">
+                  <div className="rnd__close">
                     <i className="material-icons" onClick={this.onCancel}>close</i>
                   </div>
                 </div>
-                <div className="global-comment-annotation--body">
+                <div className="rnd--body">
                   <RenderedMarkdown content={comment.comment} />
                 </div>
               </div>

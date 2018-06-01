@@ -12,6 +12,7 @@ import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
+import FloatingPlanningCalendar from '../components/FloatingPlanningCalendar'
 import ReactTooltip from 'react-tooltip'
 import Error from '../components/Error'
 import Maintenance from '../components/Maintenance'
@@ -102,6 +103,7 @@ class MainLayout extends Component {
                   <Websocket/>
                   <Header/>
                   <AutoClockPopup/>
+                  <FloatingPlanningCalendar/>
                   <GlobalCommentAnnotation/>
                 </div>
               </div>

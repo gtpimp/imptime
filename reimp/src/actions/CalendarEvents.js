@@ -13,11 +13,12 @@ import {
     startCandidateItem,
     saveCandidateItem,
     deleteItems,
-} from '../actions/Item'
+} from './Item'
 import {
     setListFlag,
     getListFlag
-} from '../actions/ItemList'
+} from './ItemList'
+import { getGlobalPageFlag, setGlobalPageFlag } from './Page'
 
 export function setCurrentDate(list_key, date) {
     return setListFlag(list_key, 'current_date', date)
@@ -83,4 +84,16 @@ export function deleteCalendarEvent(calendar_event_id) {
     return (dispatch, getState) => {
         dispatch(deleteItems(ENTITY_KEY__CALENDAR_EVENT, [calendar_event_id]))
     }
+}
+
+export function showFloatingCalendar() {
+    return setGlobalPageFlag("display_floating_calendar", true)
+}
+
+export function hideFloatingCalendar() {
+    return setGlobalPageFlag("display_floating_calendar", false)
+}
+
+export function isFloatingCalendarVisible(state) {
+    return getGlobalPageFlag(state, "display_floating_calendar", false)
 }

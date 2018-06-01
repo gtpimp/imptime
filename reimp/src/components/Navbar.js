@@ -8,7 +8,8 @@ import '../sass/navbar.css'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
 import { can_create_release_notes, logout } from '../actions/Auth'
-
+import { showFloatingCalendar } from '../actions/CalendarEvents'
+ 
 class Navbar extends Component {
 
     constructor(props) {
@@ -19,6 +20,7 @@ class Navbar extends Component {
         this.hideCompanyMenu = this.hideCompanyMenu.bind(this)
         this.showCalendarMenu = this.showCalendarMenu.bind(this)
         this.hideCalendarMenu = this.hideCalendarMenu.bind(this)
+        this.onSelectFloatingCalendar = this.onSelectFloatingCalendar.bind(this)
         this.onLogout = this.onLogout.bind(this)
         this.state = {user_menu_visible: false,
                       company_menu_visible: false,
@@ -47,6 +49,14 @@ class Navbar extends Component {
 
     hideCalendarMenu() {
         this.setState({calendar_menu_visible: false})
+    }
+
+    onSelectFloatingCalendar(evt) {
+        const { dispatch } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
+        dispatch(showFloatingCalendar())
     }
 
     onLogout() {
@@ -83,6 +93,7 @@ class Navbar extends Component {
                   { calendar_menu_visible &&
                     <div className="navbar__submenu">
                       <Link className="navbar__submenu_item" to='/calendar'>Calendar</Link>
+                      <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Floating Calendar</div>
                       <Link className="navbar__submenu_item" to='/schedule'>Scheduler</Link>
                     </div>
                   }

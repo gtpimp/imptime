@@ -218,6 +218,7 @@ class PlanningCalendar extends Component {
         const { entityIdsAvailableForEventCreation } = this.props
         const { project_id, sprint_id, issue_id } = entityIdsAvailableForEventCreation || {}
         const { start, end } = this.state.slot_info
+        const something_selected = project_id || sprint_id || issue_id
         return (
             <Modal isOpen={true}
                    className="editable-property-modal"
@@ -241,7 +242,12 @@ class PlanningCalendar extends Component {
                   End at <Timestamp value={end} />
                 </div>
                 <div className="editable-property-modal__title">
-                  Choose what to schedule:
+                  { something_selected &&
+                    <div>Choose one of the items below to schedule:</div>
+                  }
+                  { !something_selected &&
+                    <div>Nothing available to schedule, select an issue, sprint or project from anywhere</div>
+                  }
                 </div>
                 { project_id && 
                   <div className="editable-property-modal__row"
