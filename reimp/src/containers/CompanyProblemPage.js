@@ -22,7 +22,7 @@ class CompanyProblemPage extends Component {
         const { company_problem_header_list } = this.props
         
         return (
-            <div className="list-layout">
+            <div className="main-layout__scroll-panel">
               <CompanyProblemList list_key={LIST_KEY__COMPANY_PROBLEM_LIST}
                                   header_list={company_problem_header_list} />
             </div>
