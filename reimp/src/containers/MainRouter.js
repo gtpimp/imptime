@@ -45,6 +45,9 @@ class MainRouter extends Component {
               <Route exact path="/account/created" component={AccountCreatedPage}/>
               <Route exact path="/work_summary" component={WorkSummaryPage}/>
               <Route exact path="/calendar" component={CalendarPage}/>
+              <Route exact path="/calendar/projects/:projectId" component={CalendarPage}/>
+              <Route exact path="/calendar/projects/:projectId/sprints/:sprintId" component={CalendarPage}/>
+              <Route exact path="/calendar/projects/:projectId/sprints/:sprintId/issues/:issueId" component={CalendarPage}/>
               <Route exact path="/schedule" component={SchedulesPage}/>
               <Route exact path="/schedule/:scheduleId" component={ScheduleItemPage}/>
               <Route exact path="/password/changed" component={PasswordChangedPage}/>

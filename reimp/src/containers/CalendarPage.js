@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import moment from 'moment';
 import { getLoggedInUser } from '../actions/Users'
+import Splitter from '../components/Splitter'
 import {
     LIST_KEY__CALENDAR_EVENT_LIST,
     PAGE_KEY__CALENDAR_PAGE
@@ -18,6 +19,9 @@ import {getSchedule, ensureSchedulesLoaded, canEditScheduleEvents} from '../acti
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import PlanningCalendar from '../components/PlanningCalendar'
 import { setCurrentDate } from '../actions/CalendarEvents'
+import IssueSidebar from '../components/IssueSidebar'
+import SprintSidebar from '../components/SprintSidebar'
+import ProjectSidebar from '../components/ProjectSidebar'
 
 class ScheduleItemPage extends Component {
 
@@ -49,10 +53,21 @@ class ScheduleItemPage extends Component {
         dispatch(setBreadcrumbs(breadcrumbs))
     }
 
-    render() {
+    renderRightPane() {
+        const { issue_id, sprint_id, project_id } = this.props
+        if ( issue_id ) {
+            return <IssueSidebar issue_id={issue_id} sprint_id={sprint_id} project_id={project_id} sidebar_view_mode="right" />
+        } else if ( sprint_id ) {
+            return <SprintSidebar sprint_id={sprint_id} project_id={project_id} />
+        } else if ( project_id ) {
+            return <ProjectSidebar project_id={project_id} />
+        }
+    }
+
+    renderLeftPane() {
         const { schedule_id, schedule, can_edit } = this.props
         return (
-            <div className="main-layout__scroll-panel">
+            <div>
               <h3>{schedule.name}</h3>
               <PlanningCalendar schedule_id={schedule_id}
                                 can_edit={can_edit}
@@ -60,6 +75,25 @@ class ScheduleItemPage extends Component {
               />
             </div>
         )
+    }
+
+    render() {
+        const { render_right_panel } = this.props
+
+        if ( render_right_panel ) {
+            return (
+                <Splitter name="calendar_page">
+                  {this.renderLeftPane()}
+                  {this.renderRightPane()}
+                </Splitter>
+            )
+        } else {
+            return (
+                <div className="main-layout__scroll-panel">
+                  { this.renderLeftPane() }
+                </div>
+            )
+        }
     }
 }
 
@@ -69,11 +103,19 @@ function mapStateToProps(state, props) {
     const schedule_id = logged_in_user.default_schedule_id
     const schedule = getSchedule(state, schedule_id) || {}
     const can_edit = canEditScheduleEvents(schedule)
+    const project_id = props.match.params.projectId
+    const sprint_id = props.match.params.sprintId
+    const issue_id = props.match.params.issueId
+    const render_right_panel = project_id || sprint_id || issue_id
 
     return {
         schedule_id,
         schedule,
-        can_edit
+        can_edit,
+        project_id,
+        sprint_id,
+        issue_id,
+        render_right_panel
     }
 }
 

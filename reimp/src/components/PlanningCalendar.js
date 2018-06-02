@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import { filter } from 'lodash'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
@@ -183,7 +184,16 @@ class PlanningCalendar extends Component {
     }
 
     onSelectEvent(event, evt) {
+        const { history } = this.props
         this.setState({selectedEvent:event})
+        const { issue_id, sprint_id, project_id } = event
+        if ( issue_id ) {
+            history.push('/calendar/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_id)
+        } else if ( sprint_id ) {
+            history.push('/calendar/projects/'+project_id+'/sprints/'+sprint_id)
+        } else if ( project_id ) {
+            history.push('/calendar/projects/'+project_id)
+        }
     }
 
     closeSelectedEventPopup(event) {
@@ -399,5 +409,5 @@ function mapStateToProps(state, props) {
 }
 
 PlanningCalendar = DragDropContext(HTML5Backend)(PlanningCalendar)
-export default connect(mapStateToProps)(PlanningCalendar)
+export default withRouter(connect(mapStateToProps)(PlanningCalendar))
 

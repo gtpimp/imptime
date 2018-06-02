@@ -74,7 +74,7 @@ class ScheduleItemBody extends Component {
                 { can_edit &&
                   <PropertyStackComponent>
                     <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
-                      Delete
+                      Unschedule
                     </button>
                   </PropertyStackComponent>
                 }
