@@ -99,6 +99,7 @@ export const HEADER_LIST_NAME__NUDGE = "nudge"
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
 
+export const SELECTOR__PROJECTS = 'selector_projects'
 export const SELECTOR__SPRINTS = 'selector_sprints'
 export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'
 export const FILTER_KEY__GLOBAL = 'global_filter'

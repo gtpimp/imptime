@@ -48,8 +48,8 @@ class NewIssueSidebar extends Component {
                 <div onKeyDown={this.keyDown}>
                   <div>
                     <NewIssueForm onSubmitted={this.onSaveCandidateIssue}
-                                  project_id={project_id}
-                                  sprint_id={sprint_id} />
+                                  default_project_id={project_id}
+                                  default_sprint_id={sprint_id} />
                   </div>
                 </div>
               </PropertyStack>

@@ -83,7 +83,7 @@ class PlanningCalendar extends Component {
 
     componentWillReceiveProps(new_props) {
         const { dispatch, list_key, filter, schedule_id } = this.props
-        if ( filter.schedule_id !== new_props.schedule_id ) {
+        if ( new_props.schedule_id && filter.schedule_id !== new_props.schedule_id ) {
             dispatch(update_list_filter(list_key, {schedule_id:schedule_id || -1}))
             dispatch(invalidateList(list_key))
         }
