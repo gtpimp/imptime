@@ -92,9 +92,9 @@ class Navbar extends Component {
                   <NavTab variant="dashboard-toggle" label="Calendar" />
                   { calendar_menu_visible &&
                     <div className="navbar__submenu">
-                      <Link className="navbar__submenu_item" to='/calendar'>Calendar</Link>
-                      <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Floating Calendar</div>
-                      <Link className="navbar__submenu_item" to='/schedule'>Scheduler</Link>
+                      <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Popup</div>
+                      <Link className="navbar__submenu_item" to='/calendar'>My calendar</Link>
+                      <Link className="navbar__submenu_item" to='/schedule'>All calendars</Link>
                     </div>
                   }
                 </div>

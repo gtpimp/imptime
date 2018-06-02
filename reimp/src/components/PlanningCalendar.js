@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import { filter } from 'lodash'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
@@ -83,16 +82,12 @@ class PlanningCalendar extends Component {
         if ( ! filter.start_at || ! filter.end_at ) {
             dispatch(update_list_filter(list_key, {start_at: moment().subtract(1, 'months'),
                                                    end_at: moment().add(1, 'months')}))
+            dispatch(invalidateList(list_key))
         }
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, list_key, filter, schedule_id } = this.props
-        if ( new_props.schedule_id && filter.schedule_id !== new_props.schedule_id ) {
-            dispatch(update_list_filter(list_key, {schedule_id:schedule_id || -1}))
-            dispatch(invalidateList(list_key))
-        }
         this.refresh(new_props)
     }
 
@@ -184,15 +179,10 @@ class PlanningCalendar extends Component {
     }
 
     onSelectEvent(event, evt) {
-        const { history } = this.props
+        const { onSelectEvent } = this.props
         this.setState({selectedEvent:event})
-        const { issue_id, sprint_id, project_id } = event
-        if ( issue_id ) {
-            history.push('/calendar/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_id)
-        } else if ( sprint_id ) {
-            history.push('/calendar/projects/'+project_id+'/sprints/'+sprint_id)
-        } else if ( project_id ) {
-            history.push('/calendar/projects/'+project_id)
+        if ( onSelectEvent ) {
+            onSelectEvent(event)
         }
     }
 
@@ -382,7 +372,7 @@ class PlanningCalendar extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { schedule_id, list_key, can_edit } = props
+    const { schedule_id, list_key, can_edit, onSelectEvent } = props
     const filter = getListFilter(state, list_key)
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__CALENDAR_EVENT)
@@ -404,10 +394,11 @@ function mapStateToProps(state, props) {
         entityIdsAvailableForEventCreation,
         is_loading,
         is_invalidated,
-        nested_objects
+        nested_objects,
+        onSelectEvent
     }
 }
 
 PlanningCalendar = DragDropContext(HTML5Backend)(PlanningCalendar)
-export default withRouter(connect(mapStateToProps)(PlanningCalendar))
+export default connect(mapStateToProps)(PlanningCalendar)
 

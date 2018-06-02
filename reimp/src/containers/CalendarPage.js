@@ -25,6 +25,11 @@ import ProjectSidebar from '../components/ProjectSidebar'
 
 class ScheduleItemPage extends Component {
 
+    constructor(props) {
+        super(props)
+        this.onSelectEvent = this.onSelectEvent.bind(this)
+    }
+    
     componentDidMount() {
         const {schedule_id, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__CALENDAR_PAGE, ['calendar']))
@@ -41,6 +46,18 @@ class ScheduleItemPage extends Component {
             dispatch(update_list_filter(LIST_KEY__CALENDAR_EVENT_LIST, {schedule_id:new_props.schedule.id || -1}))
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
             this.refresh(new_props)
+        }
+    }
+
+    onSelectEvent(event) {
+        const { history } = this.props
+        const { schedule_id, issue_id, sprint_id, project_id } = event
+        if ( issue_id ) {
+            history.push('/calendar/'+schedule_id+'/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_id)
+        } else if ( sprint_id ) {
+            history.push('/calendar/'+schedule_id+'/projects/'+project_id+'/sprints/'+sprint_id)
+        } else if ( project_id ) {
+            history.push('/calendar/'+schedule_id+'/projects/'+project_id)
         }
     }
 
@@ -72,6 +89,7 @@ class ScheduleItemPage extends Component {
               <PlanningCalendar schedule_id={schedule_id}
                                 can_edit={can_edit}
                                 list_key={LIST_KEY__CALENDAR_EVENT_LIST}
+                                onSelectEvent={this.onSelectEvent}
               />
             </div>
         )
@@ -100,7 +118,7 @@ class ScheduleItemPage extends Component {
 function mapStateToProps(state, props) {
 
     const logged_in_user = getLoggedInUser(state) || {}
-    const schedule_id = logged_in_user.default_schedule_id
+    const schedule_id = props.match.params.scheduleId || logged_in_user.default_schedule_id
     const schedule = getSchedule(state, schedule_id) || {}
     const can_edit = canEditScheduleEvents(schedule)
     const project_id = props.match.params.projectId

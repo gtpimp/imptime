@@ -23,6 +23,7 @@ class Schedule extends Component {
     constructor(props) {
         super(props)
         this.onClickSchedule = this.onClickSchedule.bind(this)
+        this.onClickCalendar = this.onClickCalendar.bind(this)
         this.startAddViewableUser = this.startAddViewableUser.bind(this)
         this.stopAddViewableUser = this.stopAddViewableUser.bind(this)
         this.onAddViewableUser = this.onAddViewableUser.bind(this)
@@ -46,6 +47,11 @@ class Schedule extends Component {
     onClickSchedule() {
         const { history, schedule } = this.props
         history.push('/schedule/' + schedule.id);
+    }
+
+    onClickCalendar() {
+        const { history, schedule } = this.props
+        history.push('/calendar/' + schedule.id);
     }
 
     startAddViewableUser(event) {
@@ -170,7 +176,13 @@ class Schedule extends Component {
                                     <div className="div-table__cell" key={header_key}
                                          style={getCellStyle(header)}>
                                       <div className="div-table__cell--action"
-                                           onClick={that.onClickSchedule}>{schedule.name}</div>
+                                           onClick={that.onClickCalendar}>
+                                        {schedule.name}
+                                      </div>
+                                      <div className="div-table__cell--action"
+                                           onClick={that.onClickSchedule}>
+                                        (Nudge)
+                                      </div>
                                     </div>
                                 )
                             case "owner":
