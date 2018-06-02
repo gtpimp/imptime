@@ -14,8 +14,10 @@ import {
     fetchCalendarEventsIfNeeded,
     getCurrentDate,
     setCurrentDate,
+    getCurrentView,
+    setCurrentView,
     createCalendarEvent,
-    updateCalendarEventDates
+    updateCalendarEventDates,
 } from '../actions/CalendarEvents'
 import {
     update_list_filter,
@@ -72,7 +74,6 @@ class PlanningCalendar extends Component {
     componentDidMount() {
         const { dispatch, list_key, filter, schedule_id } = this.props
         dispatch(update_list_filter(list_key, {schedule_id:schedule_id || -1}))
-        dispatch(setCurrentDate(list_key, moment()))
         if ( ! filter.start_at || ! filter.end_at ) {
             dispatch(update_list_filter(list_key, {start_at: moment().subtract(1, 'months'),
                                                    end_at: moment().add(1, 'months')}))
@@ -110,8 +111,9 @@ class PlanningCalendar extends Component {
     }
 
     onView(view) {
-        const { current_date } = this.props
+        const { dispatch, list_key, current_date } = this.props
         this.onNavigate(current_date, view, "view")
+        dispatch(setCurrentView(list_key, view))
     }
 
     onDateRangeChanged(date_from_inclusive, date_to_inclusive) {
@@ -283,7 +285,7 @@ class PlanningCalendar extends Component {
     }
 
     render() {
-        const { events, current_date, can_edit } = this.props
+        const { events, current_date, current_view, can_edit } = this.props
 
         const loaded_events = filter(events, (event) => event.start_at && event.end_at)
         
@@ -291,8 +293,8 @@ class PlanningCalendar extends Component {
             <div className={'planning-calendar__calendar-container'}>
               <DragAndDropCalendar
                   events={loaded_events}
-                  defaultView='day'
-                  defaultDate={current_date.toDate()}
+                  defaultView={current_view || 'day'}
+                  defaultDate={(current_date || moment()).toDate()}
                   startAccessor={this.getCalendarEventStartAt}
                   endAccessor={this.getCalendarEventEndAt}
                   titleAccessor={this.renderTitle}
@@ -319,6 +321,7 @@ function mapStateToProps(state, props) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__CALENDAR_EVENT)
     const current_date = getCurrentDate(state, list_key)
+    const current_view = getCurrentView(state, list_key)
     const nested_objects = getNestedObjects(state, list_key)
     const entityIdsAvailableForEventCreation = getGloballySelectedEntityIds(state)
     const is_loading = isLoadingItems(state, ENTITY_KEY__CALENDAR_EVENT, visible_item_ids) || isLoading(state, ENTITY_KEY__CALENDAR_EVENT)
@@ -330,6 +333,7 @@ function mapStateToProps(state, props) {
         event_ids: visible_item_ids,
         events: visible_items,
         current_date,
+        current_view,
         can_edit,
         entityIdsAvailableForEventCreation,
         is_loading,

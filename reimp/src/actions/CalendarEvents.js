@@ -28,6 +28,14 @@ export function getCurrentDate(state, list_key, default_value) {
     return getListFlag(state, list_key, 'current_date', default_value || moment())
 }
 
+export function setCurrentView(list_key, view) {
+    return setListFlag(list_key, 'current_view', view)
+}
+
+export function getCurrentView(state, list_key, default_value) {
+    return getListFlag(state, list_key, 'current_view', default_value || 'day')
+}
+
 export function invalidateAllCalendarEvents() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__CALENDAR_EVENT))
