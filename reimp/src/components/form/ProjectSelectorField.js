@@ -42,7 +42,9 @@ class ProjectSelectorField extends Component {
         if ( filter !== this.props.filter ) {
             dispatch(invalidateList(list_key))
         }
-        dispatch(fetchProjectsIfNeeded(list_key))
+        if ( filter.any_field || filter.project_id ) {
+            dispatch(fetchProjectsIfNeeded(list_key))
+        }
     }
 
     onFieldChange(project_id, fieldOnChange) {

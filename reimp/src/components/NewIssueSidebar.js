@@ -33,7 +33,7 @@ class NewIssueSidebar extends Component {
         dispatch(updateCandidateSprint(new_value.sprint_id))
         
         const onDone = function(issue_id) {
-            onCreatedIssues([issue_id])
+            onCreatedIssues([issue_id], new_value.sprint_id, new_value.project_id)
         }
         dispatch(saveCandidateIssue(onDone))
     }
@@ -59,14 +59,14 @@ class NewIssueSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { onSelectIssues, project_id, sprint_id } = props
+    const { project_id, sprint_id, onCreatedIssues } = props
 
     const candidate_issue = getCandidateIssue(state) || null
     return {
         candidate_issue: candidate_issue,
-        onSelectIssues,
         project_id,
-        sprint_id
+        sprint_id,
+        onCreatedIssues
     }
 }
 
