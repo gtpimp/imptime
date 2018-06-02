@@ -9,7 +9,8 @@ import {
 import {
     initList,
     update_list_filter,
-    getListFilter
+    getListFilter,
+    invalidateList
 } from '../../actions/ItemList'
 import SingleValueSelector from './SingleValueSelector'
 
@@ -36,17 +37,21 @@ class SprintSelectorField extends Component {
     
     componentWillReceiveProps(new_props) {
         if ( new_props.project_id !== this.props.project_id ) {
-            this.refresh()
+            this.refresh(new_props)
         }
     }
     
-    refresh() {
-        const { dispatch, project_id, filter } = this.props
-        dispatch(initList(SELECTOR__SPRINTS))
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, project_id, filter, list_key } = props
+        dispatch(initList(list_key))
         if ( filter.project_id !== project_id ) {
-            dispatch(update_list_filter(SELECTOR__SPRINTS, {project_id: project_id}))
+            dispatch(update_list_filter(list_key, {project_id: project_id}))
         }
-        dispatch(fetchSprintsIfNeeded(SELECTOR__SPRINTS))
+        if ( filter != this.props.filter ) {
+            dispatch(invalidateList(list_key))
+        }
+        dispatch(fetchSprintsIfNeeded(list_key))
     }
 
     renderSingleValueSelector(field) {
@@ -81,7 +86,8 @@ class SprintSelectorField extends Component {
 function mapStateToProps(state, props) {
     const { item_list } = state
     const { onChange, project_id, auto_focus } = props
-    const l = (item_list && item_list[SELECTOR__SPRINTS]) || {}
+    const list_key = SELECTOR__SPRINTS
+    const l = (item_list && item_list[list_key]) || {}
     const sprint_ids = l.visible_item_ids || []
     const sprints = getSprints(state, sprint_ids)
     
@@ -98,7 +104,7 @@ function mapStateToProps(state, props) {
     const partitioned = partition(sprint_options, 'is_open')
     sprint_options = concat(sortBy(partitioned[0], 'label'), sortBy(partitioned[1], 'label'))
 
-    const filter = getListFilter(state, SELECTOR__SPRINTS)
+    const filter = getListFilter(state, list_key)
     
     return {
         onChange: onChange,
@@ -107,9 +113,9 @@ function mapStateToProps(state, props) {
         sprint_options: sprint_options,
         project_id,
         auto_focus,
-        filter
+        filter,
+        list_key
     }
 }
 
 export default connect(mapStateToProps)(SprintSelectorField)
-

@@ -22,7 +22,7 @@
   border-top: 1px solid $color-12;
   margin-top: 14px;
   overflow-y: scroll;
-  height: 33vh;
+  max-height: 33vh;
 }
 
 .single-value-selector__suggestion {
