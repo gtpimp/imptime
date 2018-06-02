@@ -2,13 +2,14 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
-import { ensureIssuesLoaded } from '../actions/Issues'
+import { ensureIssuesLoaded, getIssue } from '../actions/Issues'
 import { ensureSprintsLoaded } from '../actions/Sprints'
 import { ensureProjectsLoaded } from '../actions/Projects'
 import { deleteCalendarEvent } from '../actions/CalendarEvents'
 import ProjectName from './ProjectName'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
+import IssueDescription from './IssueDescription'
 
 class ScheduleItemBody extends Component {
 
@@ -49,7 +50,7 @@ class ScheduleItemBody extends Component {
     }
 
     render() {
-        const { schedule_item, can_edit } = this.props
+        const { schedule_item, can_edit, issue } = this.props
 
         return (
             <div className={'planning-calendar__schedule-item'}>
@@ -65,6 +66,11 @@ class ScheduleItemBody extends Component {
                     <IssueName issue_id={schedule_item.issue_id}/>
                   }
                 </PropertyStackComponent>
+                { issue && 
+                  <PropertyStackComponent>
+                    <IssueDescription issue={issue} mode="view-value" />
+                  </PropertyStackComponent>
+                }
                 { can_edit &&
                   <PropertyStackComponent>
                     <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
@@ -79,10 +85,12 @@ class ScheduleItemBody extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { can_edit, onDeleted } = props
+    const { schedule_item, can_edit, onDeleted } = props
+    const issue = schedule_item.issue_id && getIssue(state, schedule_item.issue_id)
     return {
         can_edit,
-        onDeleted
+        onDeleted,
+        issue
     }
 }
 
