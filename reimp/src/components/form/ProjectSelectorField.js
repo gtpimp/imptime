@@ -28,7 +28,12 @@ class ProjectSelectorField extends Component {
         dispatch(initList(list_key))
         dispatch(clear_list_filter_option(list_key, 'any_field'))
         dispatch(update_list_filter(list_key, {id: default_project_id}))
-        this.refresh()
+
+        // Hackish: initList doesn't properly clear the list, so previous filters remain.
+        // And even though we clear_list_filter_option above this isn't enough to stop the
+        // refresh function from fetching every project. So fake the filter in the props
+        // to the refresh call
+        this.refresh(Object.assign({}, this.props, {filter: {id: default_project_id}}))
     }
 
     componentWillReceiveProps(new_props) {

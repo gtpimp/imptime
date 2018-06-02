@@ -240,7 +240,7 @@ class PlanningCalendar extends Component {
                                   range_format="single-day"
                                   time_format="short-time" />
                 </label>
-                <div className="editable-property-modal__close"><i className="material-icons" onClick={this.closeSelectedEventPopup}>close</i></div>
+                <div className="editable-property-modal__close"><i className="material-icons" onClick={this.onStopCreatingNewIssue}>close</i></div>
               </div>
               <NewIssueSidebar project_id={project_id}
                                sprint_id={sprint_id}
@@ -260,8 +260,8 @@ class PlanningCalendar extends Component {
                    contentLabel="Scheduled Item">
               <div className="editable-property-modal__row editable-property-modal__row--header">
                 <label htmlFor="assigned" className="editable-property-modal__title">
-                  <TimestampRange start={calendar_event.start}
-                                  end={calendar_event.end}
+                  <TimestampRange start={calendar_event.start_at}
+                                  end={calendar_event.end_at}
                                   range_format="single-day"
                                   time_format="short-time" />
                 </label>
