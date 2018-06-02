@@ -26,6 +26,7 @@ class ProjectSelectorField extends Component {
     componentDidMount() {
         const { dispatch, default_project_id, list_key } = this.props
         dispatch(initList(list_key))
+        dispatch(clear_list_filter_option(list_key, 'any_field'))
         dispatch(update_list_filter(list_key, {id: default_project_id}))
         this.refresh()
     }

@@ -142,7 +142,9 @@ class IssuesPage extends Component {
 
         if ( is_creating_issue ) {
             return (
-                <NewIssueSidebar onCreatedIssues={this.onSelectIssues} project_id={project_id} sprint_id={sprint_id} />
+                <NewIssueSidebar onCreatedIssues={this.onSelectIssues}
+                                 project_id={project_id}
+                                 sprint_id={sprint_id} />
             )
         } else if ( is_single_selection && sprint_id && selected_issue ) {
             return (

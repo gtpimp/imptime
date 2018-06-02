@@ -48,7 +48,7 @@ class SprintSelectorField extends Component {
         if ( filter.project_id !== project_id ) {
             dispatch(update_list_filter(list_key, {project_id: project_id}))
         }
-        if ( filter != this.props.filter ) {
+        if ( filter !== this.props.filter ) {
             dispatch(invalidateList(list_key))
         }
         dispatch(fetchSprintsIfNeeded(list_key))
