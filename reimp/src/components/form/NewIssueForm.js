@@ -14,7 +14,6 @@ class NewIssueForm extends Component {
         this.state = { project_id: null,
                        sprint_id: null }
         this.onChangeProject = this.onChangeProject.bind(this)
-        this.onChangeSprint = this.onChangeSprint.bind(this)
     }
 
     componentDidMount() {
@@ -27,13 +26,9 @@ class NewIssueForm extends Component {
         this.setState({project_id:new_project_id})
     }
 
-    onChangeSprint(new_sprint_id) {
-        this.setState({sprint_id:new_sprint_id})
-    }
-    
     render() {
-        const { handleSubmit, onKeyDown } = this.props
-        const { sprint_id, project_id } = this.state
+        const { handleSubmit, onKeyDown, default_project_id } = this.props
+        const { project_id } = this.state
 
         return (
             <form onSubmit={handleSubmit}>
@@ -43,12 +38,14 @@ class NewIssueForm extends Component {
                     <IssueTitleField onKeyDown={onKeyDown} />
                   </PropertyStackComponent>
                   <PropertyStackComponent title="Project (default is the current project)">
-                    <ProjectSelectorField auto_focus={false} onChange={this.onChangeProject} />
+                    <ProjectSelectorField auto_focus={false}
+                                          onChange={this.onChangeProject}
+                                          default_project_id={project_id || default_project_id} />
                   </PropertyStackComponent>
                   
                   { project_id &&
                     <PropertyStackComponent title="Sprint (default is the current sprint)">
-                      <SprintSelectorField project_id={project_id} auto_focus={false} onChange={this.onChangeSprint} />
+                      <SprintSelectorField project_id={project_id} auto_focus={false} />
                     </PropertyStackComponent>
                   }
                 </div>
@@ -62,16 +59,15 @@ class NewIssueForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onSubmitted, onKeyDown, default_project_id, default_sprint_id } = props
-    let { project_id, sprint_id } = state
     
     return {
         initialValues: {title:'',
-                        project_id: project_id || default_project_id,
-                        sprint_id: sprint_id || default_sprint_id},
+                        project_id: default_project_id,
+                        sprint_id: default_sprint_id},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onKeyDown,
-        project_id
+        default_project_id
     }
 }
 

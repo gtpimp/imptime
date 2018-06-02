@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { concat, partition, sortBy, keyBy } from 'lodash'
 import { Field } from 'redux-form'
 import { getProjects, fetchProjectsIfNeeded } from '../../actions/Projects'
 import {
@@ -9,7 +8,9 @@ import {
 import {
     initList,
     update_list_filter,
-    getListFilter
+    clear_list_filter_option,
+    getListFilter,
+    invalidateList
 } from '../../actions/ItemList'
 import SingleValueSelector from './SingleValueSelector'
 
@@ -19,36 +20,51 @@ class ProjectSelectorField extends Component {
         super(props)
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.onFieldChange = this.onFieldChange.bind(this)
+        this.onFilterChanged = this.onFilterChanged.bind(this)
     }
     
     componentDidMount() {
+        const { dispatch, default_project_id, list_key } = this.props
+        dispatch(initList(list_key))
+        dispatch(update_list_filter(list_key, {id: default_project_id}))
         this.refresh()
     }
 
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+    
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, filter, list_key } = props
+
+        if ( filter !== this.props.filter ) {
+            dispatch(invalidateList(list_key))
+        }
+        dispatch(fetchProjectsIfNeeded(list_key))
+    }
+
     onFieldChange(project_id, fieldOnChange) {
-        const {onChange, projects} = this.props
-        const project = keyBy(projects, "id")[project_id]
+        const {onChange} = this.props
         fieldOnChange(project_id)
         if ( onChange ) {
             onChange(project_id)
         }
     }
-    
-    componentWillReceiveProps(new_props) {
-        if ( new_props.project_id !== this.props.project_id ) {
-            this.refresh()
-        }
-    }
-    
-    refresh() {
-        const { dispatch, project_id, filter } = this.props
-        dispatch(initList(SELECTOR__PROJECTS))
-        if ( filter.project_id !== project_id ) {
-            dispatch(update_list_filter(SELECTOR__PROJECTS, {project_id: project_id}))
-        }
-        dispatch(fetchProjectsIfNeeded(SELECTOR__PROJECTS))
-    }
 
+    onFilterChanged(new_filter_value) {
+        const { dispatch, filter, list_key, default_project_id } = this.props
+        if ( new_filter_value.length >= 3 ) {
+            dispatch(clear_list_filter_option(list_key, 'id'))
+            dispatch(update_list_filter(list_key, {any_field: new_filter_value}))
+        } else {
+            if ( filter.id !== default_project_id ) {
+                dispatch(clear_list_filter_option(list_key, 'any_field'))
+                dispatch(update_list_filter(list_key, {id: default_project_id}))
+            }
+        }
+    }
+    
     renderSingleValueSelector(field) {
         const { auto_focus, project_id } = this.props
         const {input, data, ...rest} = field
@@ -60,6 +76,7 @@ class ProjectSelectorField extends Component {
                 options={data}
                 rememberer_key={"project_"+project_id}
                 auto_focus={auto_focus}
+                onFilterChanged={this.onFilterChanged}
                 {...rest}
             />
         )
@@ -80,8 +97,9 @@ class ProjectSelectorField extends Component {
 
 function mapStateToProps(state, props) {
     const { item_list } = state
-    const { onChange, project_id, auto_focus } = props
-    const l = (item_list && item_list[SELECTOR__PROJECTS]) || {}
+    const { onChange, auto_focus, default_project_id } = props
+    const list_key = SELECTOR__PROJECTS
+    const l = (item_list && item_list[list_key]) || {}
     const project_ids = l.visible_item_ids || []
     const projects = getProjects(state, project_ids)
     
@@ -89,14 +107,16 @@ function mapStateToProps(state, props) {
         let label = project.name
 	return { value: project.id, label: label }
     })
-    const filter = getListFilter(state, SELECTOR__PROJECTS)
+    const filter = getListFilter(state, list_key)
     return {
         onChange: onChange,
         projects: projects,
         project_ids: project_ids,
         project_options: project_options,
         auto_focus,
-        filter
+        filter,
+        default_project_id,
+        list_key
     }
 }
 
