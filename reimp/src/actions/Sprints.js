@@ -397,7 +397,7 @@ export function updateSprintMienHeaders(mien_id, headers) {
 }
 
 export function getSprintHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__SPRINT)
+    return getHeaderListForMien(mien, HEADER_LIST_NAME__SPRINT) || getDefaultSprintHeaders()
 }
 
 export function getSprintHeaderListForCurrentMien(state) {

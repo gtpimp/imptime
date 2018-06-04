@@ -138,7 +138,7 @@ export function updateNudgeMienHeaders(mien_id, headers) {
 }
 
 export function getNudgeHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__NUDGE)
+    return getHeaderListForMien(mien, HEADER_LIST_NAME__NUDGE) || getDefaultNudgeHeaders()
 }
 
 export function getNudgeHeaderListForCurrentMien(state) {
