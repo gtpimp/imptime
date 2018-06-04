@@ -60,9 +60,9 @@ class ScheduleItemPage extends Component {
 
     onSelectNudge(nudge) {
         const { dispatch } = this.props
-        dispatch(setGloballySelectedIssueId({issue_id: nudge.issue_id,
-                                             sprint_id: nudge.sprint_id,
-                                             project_id: nudge.project_id}))
+        dispatch(setGloballySelectedIssueId(nudge.project_id,
+                                            nudge.sprint_id,
+                                            nudge.issue_id))
     }
 
     renderLeftPane() {
