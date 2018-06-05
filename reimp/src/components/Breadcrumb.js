@@ -62,7 +62,10 @@ const menu_buttons = {
     ],
     'sprints': [
         { label: (objs) => '+ New Sprint',
-          dispatch_action: (objs) => startCandidateSprint(objs.project.id, objs.sprint.id)
+          generic_action: function(objs, props) {
+              props.dispatch(startCandidateSprint(objs.project.id, (objs.sprint && objs.sprint.id) || null))
+              props.history.push('/projects/' + objs.project.id + '/sprints/')
+          }
         }
     ],
     'sprint': [

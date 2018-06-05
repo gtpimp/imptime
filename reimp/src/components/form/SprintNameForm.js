@@ -21,6 +21,7 @@ class SprintNameForm extends Component {
                 placeholder="Sprint Name"
                 onChange={input.onChange}
                 value={input.value}
+                autoFocus
             />
         )
     }
