@@ -30,6 +30,7 @@ class Schedule extends Component {
         this.startAddEditableUser = this.startAddEditableUser.bind(this)
         this.stopAddEditableUser = this.stopAddEditableUser.bind(this)
         this.onAddEditableUser = this.onAddEditableUser.bind(this)
+        this.onClickRow = this.onClickRow.bind(this)
         this.state = { 'inviting_viewable_user': false,
                        'inviting_editable_user': false }
     }
@@ -131,6 +132,17 @@ class Schedule extends Component {
         dispatch(removeEditableUsersToSchedule(schedule_id, [user_id]))
     }
 
+    onClickRow(evt) {
+        const { onClickedSchedule, schedule_id } = this.props
+        if ( onClickedSchedule ) {
+            if ( evt ) {
+                evt.preventDefault()
+                evt.stopPropagation()
+            }
+            onClickedSchedule(schedule_id)
+        }
+    }
+
     renderAddEditableUser() {
         const { project_id } = this.props
         const that = this
@@ -147,7 +159,7 @@ class Schedule extends Component {
     }
 
     render() {
-        const { schedule, is_loading, header_list, can_edit } = this.props
+        const { schedule, is_loading, header_list, can_edit, is_selected } = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         const that = this
@@ -164,9 +176,10 @@ class Schedule extends Component {
         } else {
             return (
 		<div key={this.key+"."+schedule.id}
-                     className={classNames('schedule',
-                                           'div-table__row')}
-		>
+                     onClick={that.onClickRow}
+                     className={classNames('schedule', 'div-table__row',
+                                           {'div-table__row--selected': is_selected})}
+		> 
 
                   { map(visible_header_keys, function(header_key) {
                         const header = headers_by_key[header_key]
@@ -264,7 +277,7 @@ class Schedule extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { schedule_id, header_list } = props
+    const { schedule_id, header_list, onClickedSchedule, is_selected } = props
     const schedule = getSchedule(state, schedule_id) || {}
     const can_edit = canEditSchedule(schedule)
 
@@ -272,7 +285,9 @@ function mapStateToProps(state, props) {
         schedule,
         is_loading: !schedule.id,
         header_list,
-        can_edit
+        can_edit,
+        onClickedSchedule,
+        is_selected
     }
 }
 

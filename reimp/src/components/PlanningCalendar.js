@@ -94,6 +94,9 @@ class PlanningCalendar extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, filter, list_key, schedule_id, nested_objects } = props
+        if ( schedule_id !== this.props.schedule_id ) {
+            dispatch(invalidateList(list_key))
+        }
         if ( filter.start_at && filter.end_at ) {
             dispatch(fetchCalendarEventsIfNeeded(list_key))
         }

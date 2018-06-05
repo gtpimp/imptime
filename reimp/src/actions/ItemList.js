@@ -466,6 +466,14 @@ export function getVisibleItems(state, list_key, entity_key) {
     })) || []
 }
 
+export function getSelectedItemId(state, list_key) {
+    const item_ids = getSelectedItemIds(state, list_key)
+    if ( item_ids && item_ids.length > 0 ) {
+        return item_ids[0]
+    }
+    return null
+}
+
 export function getSelectedItemIds(state, list_key) {
     const item_list = ((state || {}).item_list || {})[list_key] || {}
     const selected_item_ids = item_list.selected_ids || []

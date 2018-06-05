@@ -162,6 +162,9 @@ export var SCHEDULE_HEADER_LIST =
       {key:'editable_users', label:'Editable users', description:'Users who can edit this schedule', width:medium_col_width}
     ]
 
+export var BRIEF_SCHEDULE_HEADER_LIST = [{key:'owner', label:'Owner', description:'Owner of the schedule', width:small_col_width},
+                                         {key:'name', label:'Name', description:'Schedule Name', width:large_col_width}]
+
 export var COMPANY_PROBLEM_HEADER_LIST = [ {key:'status', label:'Status', description:'Status', width:medium_col_width},
                                            {key:'project', label:'Project', description:'Project', width:medium_col_width},
                                            {key:'sprint', label:'Sprint', description:'Sprint', width:medium_col_width},
