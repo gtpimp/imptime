@@ -88,6 +88,15 @@ class Sprint extends Component {
                                       </div>
                                     </div>
                                 )
+                            case "ref":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <div className="sprint__cell--number">
+                                        {sprint.id}
+                                      </div>
+                                    </div>
+                                )
                             case "name":
                                 return (
                                     <div className="div-table__cell" key={header_key}

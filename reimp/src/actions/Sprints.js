@@ -36,6 +36,8 @@ export const ANNOUNCE_CLONE_SPRINT_FAILED = 'ANNOUNCE_CLONE_SPRINT_FAILED'
 
 export var ALL_AVAILABLE_SPRINT_HEADERS =
     [ {key:'name', label:'name', description:'Name', width:large_col_width},
+      {key:'ref', label:'Ref', description:'Reference', width:small_col_width},
+      {key:'number', label:'number', description:'Number', width:small_col_width},
       {key:'start_time', label:"First clock", description:"First clocked time on this sprint", width:small_col_width},
       {key:'end_time', label:"Last clock", description:"Last clocked time on this sprint", width:small_col_width},
       {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width},
@@ -60,7 +62,7 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'num_open_issues_with_estimates', label:"Num open estimated by assignee", description:"Number of open estimated testable issues by the assigned user", width:small_col_width},
     ]
 
-const DEFAULT_SPRINT_HEADERS_KEYS = ["name", "status", "num_issues",
+const DEFAULT_SPRINT_HEADERS_KEYS = ["ref", "name", "status", "num_issues",
                                      "are_all_issues_assigned",
                                      "are_all_issues_estimated",
                                      "has_dev_started",
