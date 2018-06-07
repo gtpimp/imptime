@@ -38,6 +38,7 @@ class NudgeViewSet(BaseViewSet):
             if format_args.get('ids_only'):
                 context['ids'] = [str(x.id) for x in nudges]
             else:
+                nudges = nudges.prefetch_related('issue__status2')
                 s = NudgeSerializer(nudges, many=True)
                 nudges_data = s.data
                 context['nudges'] = nudges_data

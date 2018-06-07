@@ -39,6 +39,7 @@ export var ALL_AVAILABLE_NUDGE_HEADERS =
       {key:'project', label:'Project', description:'Project', width:small_col_width},
       {key:'sprint', label:'Sprint', description:'Sprint', width:large_col_width},
       {key:'issue', label:'Issue', description:'Issue', width:large_col_width},
+      {key:'issue_status', label:'Issue status', description:'Status', width:medium_col_width},
       {key:'due_date', label:'Due at', description:'Due date for resolving the issue', width:medium_col_width},
       {key:'due_date_reason', label:'Due date reason', description:'Why this nudge should be resolved at the due date', width:large_col_width},
       {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},

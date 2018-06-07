@@ -13,6 +13,7 @@ import SprintName from './SprintName'
 import ProjectName from './ProjectName'
 import OtherUser from './OtherUser'
 import Timestamp from './Timestamp'
+import IssueStatus from './IssueStatus'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class Nudge extends Component {
@@ -113,6 +114,13 @@ class Nudge extends Component {
                                 <div className="div-table__cell" key={header_key}
                                      style={getCellStyle(header)}>
                                   {nudge.description}
+                                </div>
+                            )
+                        case "issue_status":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  <IssueStatus issue_id={nudge.issue_id}/>
                                 </div>
                             )
                         case "due_date":

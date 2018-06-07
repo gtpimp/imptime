@@ -13,9 +13,10 @@ class NudgeSerializer(BaseModelSerializer):
     project_id = serializers.CharField(source="sprint.business_id") #sic
     reason = serializers.CharField()
     modified = serializers.DateTimeField()
+    issue_status = serializers.CharField(source="issue.status2.name")
 
     class Meta:
         model = Nudge 
         fields = ('id', 'user_id', 'sprint_id', 'issue_id',
                   'description', 'due_date', 'due_date_reason',
-                  'reason', 'project_id', 'modified')
+                  'reason', 'project_id', 'modified', 'issue_status')

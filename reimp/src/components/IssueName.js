@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 
 class IssueName extends Component {
 
@@ -21,25 +21,28 @@ class IssueName extends Component {
     }
 
     on_clicked(event) {
-        const { history, issue, onClick, open_on_click } = this.props
+        const { issue, onClick } = this.props
         event.stopPropagation()
         if ( onClick ) {
             onClick(issue.id)
-        } else if ( open_on_click ) {
-            history.push('/projects/' + issue.project_id + "/sprints/" + issue.sprint_id + "/issues/" + issue.id);
         }
     }
     
     render() {
-        const { issue, is_loading } = this.props
+        const { issue, is_loading, open_on_click } = this.props
 
         return (
             <div className="issue-name">
               { is_loading && "..." }
-              { ! is_loading &&
-              <div className="issue-name__link" onClick={this.on_clicked}>
-                {issue.number } {issue.subject}
-              </div>
+              { ! is_loading && open_on_click &&
+                <Link to={'/projects/' + issue.project_id + "/sprints/" + issue.sprint_id + "/issues/" + issue.id}>
+                  {issue.number } {issue.subject}
+                </Link>
+              }
+              { ! is_loading && !open_on_click &&
+                <div className="issue-name__link" onClick={this.on_clicked}>
+                  {issue.number } {issue.subject}
+                </div>
               }
             </div>
         )
@@ -55,7 +58,7 @@ function mapStateToProps(state, props) {
         issue,
         is_loading: !issue || !issue.id,
         onClick: props.onClick,
-        open_on_click: props.open_on_click || true
+        open_on_click: (!props.onClick && props.open_on_click) || true
     }
 }
 
