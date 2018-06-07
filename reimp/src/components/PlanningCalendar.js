@@ -362,6 +362,7 @@ class PlanningCalendar extends Component {
                   onSelectSlot={this.onSelectSlot}
                   onSelectEvent={this.onSelectEvent}
                   selectable={can_edit}
+                  timeslots={4}
                   resizable
                   onEventDrop={this.onMovedEvent}
                   onEventResize={this.onResizedEvent}
