@@ -24,6 +24,7 @@ import {
     setGlobalEntityFlag,
     getGlobalEntityFlag
 } from '../actions/Item'
+import { updateVisibleItemIdAbove } from './ItemList'
 import {
     updateMienHeaders,
     getHeaderListForCurrentMien,
@@ -94,6 +95,13 @@ export function createNudge(header, content) {
 export function deleteNudge(nudge_id) {
     return (dispatch, getState) => {
         dispatch(deleteItems(ENTITY_KEY__NUDGE, [nudge_id]))
+    }
+}
+
+export function reorderNudge(moving_nudge_ids, nudge_id_after, list_key, index_of_destination, on_done) {
+    return (dispatch, getState) => {
+        dispatch(updateVisibleItemIdAbove(list_key, moving_nudge_ids, nudge_id_after, index_of_destination))
+        dispatch(updateItem(ENTITY_KEY__NUDGE, moving_nudge_ids, "nudge_id_after", nudge_id_after, on_done))
     }
 }
 

@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models import Case, When
+from django.db.models.query import QuerySet
 from django.core.files import File as DjangoFile
 from django.db import models
 from django.db.models import Max
@@ -307,6 +309,22 @@ class ReleaseNoteSeen(BaseModel):
     seen_by = models.ForeignKey(User, related_name='release_notes_seen_by', null=False, blank=False)
     seen_at = models.DateTimeField(null=False, auto_now=True)
 
+class NudgeQuerySet(QuerySet):
+    def order_by_user_id(self, user_id, descending=False):
+        if user_id:
+            direction = ("-" if descending else "") + "order"
+            nudge_ids_in_order = UserNudgeOrder.objects.filter(nudge__user_id=user_id)\
+                                                       .order_by(direction)\
+                                                       .values_list("nudge_id", flat=True)
+            if nudge_ids_in_order.count() == 0:
+                return self
+            preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(nudge_ids_in_order)])
+
+            return self.order_by(preserved)
+        else:
+            return self
+    
+    
 class Nudge(BaseModel):
 
     user = models.ForeignKey(User, related_name='nudges', null=False, blank=False)
@@ -317,6 +335,8 @@ class Nudge(BaseModel):
     due_date = models.DateTimeField(null=True)
     due_date_reason = models.CharField(max_length=255, null=True)
 
+    objects = NudgeQuerySet().as_manager()
+    
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(Nudge, self).save(*args, **kwargs)
@@ -329,6 +349,108 @@ class Nudge(BaseModel):
         super(Nudge, self).delete(*args, **kwargs)
         RefreshNotifier().notify_model_delete(self)
 
+class UserNudgeOrder(BaseModel):
+    order = models.FloatField()
+    nudge = models.ForeignKey(Nudge, related_name='nudge_orders', null=False, blank=False, unique=True)
+
+    INCREMENT=10
+    MAX_ORDER=999999
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(UserNudgeOrder, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    @classmethod
+    def renumber(self, user_id):
+        nudge_ids = Nudge.objects.filter(user_id=user_id).order_by_user_id(user_id).values_list('pk', flat=True)
+        order = 0
+        for nudge_id in nudge_ids:
+            uno = UserNudgeOrder.objects.get_or_create(nudge_id=nudge_id,
+                                                       defaults={'order':order})[0]
+            if uno.order != order:
+                uno.order = order
+                uno.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def insert_before(self, nudge, set_before_this_nudge):
+        if nudge.user_id != set_before_this_nudge.user_id:
+            raise Exception("Cannot reorder, must be for the same user")
+        self.renumber(nudge.user_id)
+        uno = self.objects.get_or_create(nudge_id=set_before_this_nudge.id,
+                                         defaults={'order':self.MAX_ORDER})[0]
+        new_order = uno.order-1
+        uno, is_new = self.objects.get_or_create(nudge_id=nudge.id)
+        if not is_new:
+            uno.order = new_order
+            uno.save()
+        self.renumber(nudge.user_id)
+
+    @classmethod
+    def insert_after(self, nudge, set_after_this_nudge):
+        if nudge.user_id != set_after_this_nudge.user_id:
+            raise Exception("Cannot reorder, must be for the same user")
+        self.renumber(nudge.user_id)
+        uno_target = self.objects.get_or_create(nudge_id=set_after_this_nudge.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = uno_target.order+1
+        uno, is_new = self.objects.get_or_create(nudge_id=nudge.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            uno.order = new_order
+            uno.save()
+        self.renumber(nudge.user_id)
+
+    @classmethod
+    def insert_at_the_beginning(self, nudge):
+        new_order = -1
+        uno, is_new = self.objects.get_or_create(nudge_id=nudge.id, defaults={'order':new_order})
+        if not is_new:
+            uno.order = new_order
+            uno.save()
+        self.renumber(nudge.user_id)
+
+    @classmethod
+    def insert_at_the_end(self, nudge):
+        new_order = self.get_next_order(nudge.user_id)
+        uno, is_new = self.objects.get_or_create(nudge_id=nudge.id, defaults={'order':new_order})
+        if not is_new:
+            uno.order = new_order
+            uno.save()
+        self.renumber(nudge.user_id)
+
+    @classmethod
+    def order_like_this(self, user_id, ordered_nudge_ids):
+        order = 0
+        for nudge_id in ordered_nudge_ids:
+            uno = UserNudgeOrder.objects.get_or_create(nudge_id=nudge_id,
+                                                       defaults={'order':order})[0]
+            if uno.order != order:
+                uno.order = order
+                uno.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def sort_these_nudge_ids(self, user_id, unordered_nudge_ids):
+        return UserNudgeOrder.objects.filter(nudge__user_id=user_id)\
+                                     .filter(nudge_id__in=unordered_nudge_ids)\
+                                     .order_by("order")\
+                                     .values_list("nudge_id", flat=True)
+
+    @classmethod
+    def get_next_order(self, user_id, nudge_qs=None):
+        self.renumber(user_id)
+        if nudge_qs is None:
+            nudge_qs = Nudge.objects.filter(user_id=user_id)
+        max_order = self.objects.filter(nudge__in=nudge_qs)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+    
+        
 class Mien(BaseModel):
     user = models.ForeignKey(User, related_name='miens', null=False, blank=False)
     title = models.CharField(max_length=255, null=True, blank=True)

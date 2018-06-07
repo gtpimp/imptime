@@ -203,6 +203,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_nudges(self):
         return Nudge.objects.filter(user=self.request.user)
 
+    def allowed_nudges_to_edit_by_schedule(self):
+        return Nudge.objects.filter(user_id__in=self.allowed_schedules_to_edit().values_list('owner_id', flat=True).distinct())
+    
     def allowed_schedules(self):
         return Schedule.objects.filter(Q(owner=self.request.user)|Q(viewers=self.request.user)|Q(editors=self.request.user))\
                                .order_by("name").distinct()
