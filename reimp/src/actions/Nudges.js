@@ -45,7 +45,7 @@ export var ALL_AVAILABLE_NUDGE_HEADERS =
       {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
     ]
 
-const DEFAULT_NUDGE_HEADERS_KEYS = ["select", "reason", "description", "project", "sprint", "issue", "due_date"]
+const DEFAULT_NUDGE_HEADERS_KEYS = ["select", "reason", "project", "sprint", "issue", "description"]
 const DEFAULT_NUDGE_HEADERS = filter(ALL_AVAILABLE_NUDGE_HEADERS, (header) => includes(DEFAULT_NUDGE_HEADERS_KEYS, header.key))
 
 

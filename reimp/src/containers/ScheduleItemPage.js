@@ -69,7 +69,7 @@ class ScheduleItemPage extends Component {
         const { nudge_header_list } = this.props
         return (
             <div className="list-layout__pane">
-              <h3>Things to do</h3>
+              <h3>Projects and sprints that require attention, showing the most important issue</h3>
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
                          header_list={nudge_header_list}
                          onSelect={this.onSelectNudge}/>
