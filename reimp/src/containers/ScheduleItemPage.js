@@ -161,7 +161,6 @@ class ScheduleItemPage extends Component {
     }
 
     renderRightPane() {
-        const { show_issues_for_nudge } = this.props
         return (
             <div className="list-layout__pane">
               {this.renderPlanningCalendar()}

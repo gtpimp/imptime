@@ -147,3 +147,27 @@ class NudgeViewSet(BaseViewSet):
             user_id_for_nudge = qs.first().user_id
             qs = qs.order_by_user_id(user_id=user_id_for_nudge)
         return super(NudgeViewSet, self).apply_ordering(qs, ordering)
+
+    def delete(self, request, pk):
+        try:
+            params = request.data
+            data = None
+
+            if 'item_ids' in params:
+                nudge_pks = params['item_ids']
+            else:
+                nudge_pks = [pk]
+
+            nudges = self.allowed_nudges_to_edit_by_schedule().filter(pk__in=nudge_pks)
+            for nudge in nudges:
+                nudge.delete()
+
+            if not data:
+                data = {'status': 'success', 'payload': nudge_pks}
+
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+    

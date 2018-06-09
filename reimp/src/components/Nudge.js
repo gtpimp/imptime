@@ -5,7 +5,8 @@ import {withRouter} from 'react-router-dom'
 import classNames from 'classnames'
 import {
     ensureNudgesLoaded,
-    getNudge
+    getNudge,
+    deleteNudge
 } from '../actions/Nudges'
 
 import IssueName from './IssueName'
@@ -23,6 +24,7 @@ class Nudge extends Component {
         this.onClickNudge = this.onClickNudge.bind(this)
         this.onToggleSelection = this.onToggleSelection.bind(this)
         this.showMoreIssues = this.showMoreIssues.bind(this)
+        this.onDeleteNudge = this.onDeleteNudge.bind(this)
     }
     
     componentDidMount() {
@@ -55,8 +57,19 @@ class Nudge extends Component {
         }
     }
 
+    onDeleteNudge(evt) {
+        const { nudge, dispatch } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
+        if (! window.confirm("Remove this issue from the nudge list?") ) {
+            return false
+        }
+        dispatch(deleteNudge(nudge.id))
+    }
+
     renderActionButtons() {
-        const { onShowMoreIssues } = this.props
+        const { nudge, onShowMoreIssues } = this.props
         return (
             <div>
               { onShowMoreIssues && 
@@ -65,6 +78,10 @@ class Nudge extends Component {
                   More issues
                 </button>
               }
+              { nudge.can_delete &&
+                <div className="icon--small-delete"
+                     onClick={this.onDeleteNudge} />
+              }                
             </div>
         )
     }

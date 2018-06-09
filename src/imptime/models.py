@@ -349,6 +349,9 @@ class Nudge(BaseModel):
         super(Nudge, self).delete(*args, **kwargs)
         RefreshNotifier().notify_model_delete(self)
 
+    def is_manual(self):
+        return self.reason == "manual"
+        
 class UserNudgeOrder(BaseModel):
     order = models.FloatField()
     nudge = models.ForeignKey(Nudge, related_name='nudge_orders', null=False, blank=False, unique=True)
