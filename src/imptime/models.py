@@ -11,6 +11,7 @@ from lib.fields import UploadTo, ProtectedForeignKey
 from lib.models import BaseModel
 from timepiece.models import Business as Project
 from timepiece.models import Issue
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueHistory
 from timepiece.models import Project as Sprint
 import PIL
@@ -349,6 +350,29 @@ class Nudge(BaseModel):
         super(Nudge, self).delete(*args, **kwargs)
         RefreshNotifier().notify_model_delete(self)
 
+    def num_unnudged_issues_above(self):
+        """ when adding a nudge manually, it's possible for there to be 
+            un-nudged issues above this one in the nudge list. 
+            This is not recommended, and this property helps to 
+            warn about this case """
+
+        if not self.is_manual:
+            return 0
+
+        try:
+            issue_order = SprintIssueOrder.objects.get(project_id=self.sprint_id,
+                                                        issue_id=self.issue_id)\
+                                                  .order
+        except SprintIssueOrder.DoesNotExist:
+            return 0
+        issues_above = Issue.objects.filter(project_id=self.sprint_id,
+                                            assigned_to_id=self.user_id,
+                                            nudges__isnull=True,
+                                            project_issue_orders__order__lt=issue_order)\
+                                    .filter_open(self.user_id)
+        return issues_above.count()
+        
+    @property
     def is_manual(self):
         return self.reason == "manual"
         

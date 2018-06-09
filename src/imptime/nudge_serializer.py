@@ -15,10 +15,11 @@ class NudgeSerializer(BaseModelSerializer):
     modified = serializers.DateTimeField()
     issue_status = serializers.CharField(source="issue.status2.name")
     can_delete = serializers.BooleanField(source="is_manual")
-    
+    num_unnudged_issues_above = serializers.IntegerField()
+
     class Meta:
         model = Nudge 
         fields = ('id', 'user_id', 'sprint_id', 'issue_id',
                   'description', 'due_date', 'due_date_reason',
                   'reason', 'project_id', 'modified', 'issue_status',
-                  'can_delete')
+                  'can_delete', 'num_unnudged_issues_above')

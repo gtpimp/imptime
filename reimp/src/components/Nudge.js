@@ -3,6 +3,7 @@ import { map, keys, keyBy } from 'lodash'
 import { connect } from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import classNames from 'classnames'
+import Pluralize from 'react-pluralize'
 import {
     ensureNudgesLoaded,
     getNudge,
@@ -114,6 +115,19 @@ class Nudge extends Component {
                                   <input type="checkbox"
                                          checked={is_selected}
                                          onChange={that.onToggleSelection}/>
+                                </div>
+                            )
+                        case "out_of_sequence_warning":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  { nudge.num_unnudged_issues_above > 0 &&
+                                    <div>
+                                      <div className=".icon--warning">
+                                        skipped <Pluralize singular="issue" count={nudge.num_unnudged_issues_above}/>
+                                      </div>
+                                    </div>
+                                  }
                                 </div>
                             )
                         case "user":

@@ -4239,7 +4239,7 @@ class IssueComment(BaseModel):
 
 class ProjectIssueOrder(BaseModel):
     order = models.FloatField()
-    issue = models.ForeignKey(Issue)
+    issue = models.ForeignKey(Issue, related_name='project_issue_orders')
     project = models.ForeignKey(Project)
 
     class Meta:

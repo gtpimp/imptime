@@ -44,6 +44,7 @@ export var ALL_AVAILABLE_NUDGE_HEADERS =
       {key:'due_date', label:'Due at', description:'Due date for resolving the issue', width:medium_col_width},
       {key:'due_date_reason', label:'Due date reason', description:'Why this nudge should be resolved at the due date', width:large_col_width},
       {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
+      {key:'out_of_sequence_warning', label:'Out of sequence', description:'Indicates if there are more important issues in this sprint to be attended to', width:small_col_width},
       {key:'actions', label:'Actions', description:'Action buttons', width:medium_col_width},
     ]
 
