@@ -5,26 +5,38 @@ import Splitter from '../components/Splitter'
 import {
     LIST_KEY__CALENDAR_EVENT_LIST,
     PAGE_KEY__SCHEDULE_ITEM_PAGE,
-    LIST_KEY__NUDGE_LIST
+    LIST_KEY__NUDGE_LIST,
+    LIST_KEY__ISSUE_LIST,
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    setGloballySelectedIssueId
+    setGloballySelectedIssueId,
+    setPageFlag,
+    getPageFlag
 } from '../actions/Page'
+import { getIssueHeaderListForCurrentMien } from '../actions/Issues'
 import {
-    initList
+    initList,
+    update_list_filter,
+    getListFilter,
+    invalidateList
 } from '../actions/ItemList'
 import {getSchedule, ensureSchedulesLoaded, canEditScheduleEvents} from '../actions/Schedules'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
 import PlanningCalendar from '../components/PlanningCalendar'
-import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
+import IssueList from '../components/IssueList'
+import SprintName from '../components/SprintName'
+import { getNudgeHeaderListForCurrentMien, convertIssuesToNudges } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
 
     constructor(props) {
         super(props)
         this.onSelectNudge = this.onSelectNudge.bind(this)
+        this.onShowMoreIssues = this.onShowMoreIssues.bind(this)
+        this.onHideMoreIssues = this.onHideMoreIssues.bind(this)
+        this.onSelectIssuesForNudge = this.onSelectIssuesForNudge.bind(this)
     } 
     
     componentDidMount() {
@@ -37,7 +49,8 @@ class ScheduleItemPage extends Component {
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = new_props
-        if ( new_props.schedule && (!this.props.schedule || new_props.schedule.id !== this.props.schedule.id) ) {
+        if ( (new_props.schedule && (!this.props.schedule || new_props.schedule.id !== this.props.schedule.id)) ||
+             (new_props.show_issues_for_nudge && new_props.show_issues_for_nudge !== this.props.show_issues_for_nudge) ) {
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
             this.refresh(new_props)
         }
@@ -45,7 +58,7 @@ class ScheduleItemPage extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, schedule_id, schedule } = props
+        const { dispatch, schedule_id, schedule, show_issues_for_nudge } = props
         const breadcrumbs = [ {to: '/schedule',
                                label: 'Schedules',
                                type: 'schedules'} ]
@@ -55,7 +68,25 @@ class ScheduleItemPage extends Component {
                               type: 'schedule',
                               selected_entities: {schedule: schedule}})
         }
+        if ( show_issues_for_nudge ) {
+            dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:show_issues_for_nudge.sprint_id}))
+            dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
+        }
+
         dispatch(setBreadcrumbs(breadcrumbs))
+    }
+
+    onShowMoreIssues(nudge) {
+        const { dispatch } = this.props
+        dispatch(setPageFlag(PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge", nudge))
+    }
+
+    onHideMoreIssues(evt) {
+        const { dispatch } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
+        dispatch(setPageFlag(PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge", null))
     }
 
     onSelectNudge(nudge) {
@@ -65,27 +96,75 @@ class ScheduleItemPage extends Component {
                                             nudge.issue_id))
     }
 
-    renderLeftPane() {
+    onSelectIssuesForNudge(issue_ids) {
+        const { schedule_id, dispatch } = this.props
+        if ( ! window.confirm("Add these issues to the nudge list?") ) {
+            return
+        }
+        dispatch(convertIssuesToNudges(schedule_id, issue_ids))
+    }
+
+    renderNudgeList() {
         const { nudge_header_list } = this.props
         return (
-            <div className="list-layout__pane">
+            <div>
               <h3>Projects and sprints that require attention, showing the most important issue</h3>
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
                          header_list={nudge_header_list}
+                         onShowMoreIssues={this.onShowMoreIssues}
                          onSelect={this.onSelectNudge}/>
             </div>
         )
     }
-
-    renderRightPane() {
+    
+    renderPlanningCalendar() {
         const { schedule_id, can_edit } = this.props
         return (
-            <div className="list-layout__pane">
+            <div>
               <h3>Calendar</h3>
               <PlanningCalendar schedule_id={schedule_id}
                                 can_edit={can_edit}
                                 list_key={LIST_KEY__CALENDAR_EVENT_LIST}
               />
+            </div>
+        )
+    }
+
+    renderIssuesForNudge(nudge) {
+        const { issue_header_list, show_issues_for_nudge } = this.props
+        return (
+            <div>
+              <h3>
+                Choose issues to nudge from &nbsp;
+                <SprintName sprint_id={show_issues_for_nudge.sprint_id}/>
+              </h3>
+              <button className="button button--primary"
+                      onClick={this.onHideMoreIssues}>
+                Close
+              </button>
+              <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                         issue_header_list={issue_header_list}
+                         onSelectIssues={this.onSelectIssuesForNudge}
+              />
+            </div>
+        )
+    }
+
+    renderLeftPane() {
+        const { show_issues_for_nudge } = this.props
+        return (
+            <div className="list-layout__pane">
+              { show_issues_for_nudge === null && this.renderNudgeList() }
+              { show_issues_for_nudge !== null && this.renderIssuesForNudge(show_issues_for_nudge) }
+            </div>
+        )
+    }
+
+    renderRightPane() {
+        const { show_issues_for_nudge } = this.props
+        return (
+            <div className="list-layout__pane">
+              {this.renderPlanningCalendar()}
             </div>
         )
     }
@@ -106,12 +185,18 @@ function mapStateToProps(state, props) {
     const schedule = getSchedule(state, schedule_id)
     const nudge_header_list = getNudgeHeaderListForCurrentMien(state)
     const can_edit = canEditScheduleEvents(schedule)
+    const show_issues_for_nudge = getPageFlag(state, PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge") || null
+    const nudge_issues_filter = getListFilter(state, LIST_KEY__CALENDAR_EVENT_LIST)
+    const issue_header_list = getIssueHeaderListForCurrentMien(state)
 
     return {
         schedule_id,
         schedule,
         nudge_header_list,
-        can_edit
+        can_edit,
+        show_issues_for_nudge,
+        issue_header_list,
+        nudge_issues_filter
     }
 }
 

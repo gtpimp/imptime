@@ -11,7 +11,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.nudger import Nudger
-from imptime.models import UserNudgeOrder
+from imptime.models import UserNudgeOrder, Nudge
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +97,31 @@ class NudgeViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
         
+    @list_route(methods=['POST'])
+    def convertIssuesToNudges(self, request):
+        try:
+            params = request.data
+            schedule_id = params['schedule_id']
+            schedule = self.allowed_schedules_to_edit().get(pk=schedule_id)
+            issue_ids = params['issue_ids']
+            issues = self.allowed_issues().filter(pk__in=issue_ids)
+            nudges = []
+            for issue in issues:
+                nudge, is_new = Nudge.objects.get_or_create(user_id=schedule.owner_id,
+                                                            issue=issue,
+                                                            sprint_id=issue.project_id,
+                                                            defaults={'reason':'manual', # hack alert: this reason is referenced by nudger.py
+                                                                      'description': 'Added by %s' % request.user})
+                if is_new:
+                    UserNudgeOrder.insert_at_the_beginning(nudge)
+                nudges.append(NudgeSerializer(nudge).data)
+            data = { 'status': 'success',
+                     'payload': {'items': nudges} }
+            return HttpResponse(JSONRenderer().render(data))
+                
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
     
     @list_route(methods=['POST'])
     def recalculate(self, request):

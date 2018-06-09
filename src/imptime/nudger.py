@@ -44,6 +44,13 @@ class Nudger(object):
         keep_these_nudge_ids.extend(self._nudge_for_full_inboxes(sprint_qs, user))
         Nudge.objects.filter(user=user, sprint__in=sprint_qs)\
                      .exclude(pk__in=keep_these_nudge_ids)\
+                     .exclude(reason='manual')\
+                     .delete()
+
+        open_issues_in_sprint = Issue.objects.all().filter(project__in=sprint_qs)\
+                                                   .filter_open(user)
+        Nudge.objects.filter(user=user, sprint__in=sprint_qs)\
+                     .exclude(issue__in=open_issues_in_sprint)\
                      .delete()
         
     def _nudge_for_assigned_issues(self, sprint_qs, user):

@@ -22,6 +22,7 @@ class Nudge extends Component {
         super(props)
         this.onClickNudge = this.onClickNudge.bind(this)
         this.onToggleSelection = this.onToggleSelection.bind(this)
+        this.showMoreIssues = this.showMoreIssues.bind(this)
     }
     
     componentDidMount() {
@@ -42,6 +43,30 @@ class Nudge extends Component {
     onToggleSelection() {
         const { nudge, is_selected, onChangeSelection } = this.props
         onChangeSelection(nudge, !is_selected)
+    }
+
+    showMoreIssues(evt) {
+        const { nudge, onShowMoreIssues } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
+        if ( onShowMoreIssues ) {
+            onShowMoreIssues(nudge)
+        }
+    }
+
+    renderActionButtons() {
+        const { onShowMoreIssues } = this.props
+        return (
+            <div>
+              { onShowMoreIssues && 
+                <button className="button button--secondary"
+                        onClick={this.showMoreIssues}>
+                  More issues
+                </button>
+              }
+            </div>
+        )
     }
 
     render() {
@@ -143,7 +168,15 @@ class Nudge extends Component {
                                      style={getCellStyle(header)}>
                                   <Timestamp value={nudge.modified} format="from_now" />
                                 </div>
-                            )                            
+                            )
+                        case "actions":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  {that.renderActionButtons()}
+                                </div>
+                            )
+                            
                         default:
                             console.error("Unknown header: " + header_key)
                     }

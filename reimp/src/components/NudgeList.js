@@ -95,7 +95,7 @@ class NudgeList extends Component {
 
     render() {
 
-        const { nudge_ids, is_loading, header_list, selected_item_ids } = this.props
+        const { nudge_ids, is_loading, header_list, selected_item_ids, onShowMoreIssues } = this.props
         const that = this
 
         if ( (is_loading && !nudge_ids && nudge_ids.length) === 0 ) {
@@ -125,6 +125,7 @@ class NudgeList extends Component {
                     <Nudge key={nudge_id}
                            nudge_id={nudge_id}
                            onChangeSelection={that.onChangeNudgeSelection}
+                           onShowMoreIssues={onShowMoreIssues}
                            is_selected={includes(selected_item_ids, nudge_id)}
                            header_list={header_list}/>
                  )}
@@ -135,7 +136,7 @@ class NudgeList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key, header_list, onSelect } = props
+    const { list_key, header_list, onSelect, onShowMoreIssues } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const nudges = getVisibleItems(state, list_key, ENTITY_KEY__NUDGE)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__NUDGE, visible_item_ids)
@@ -155,7 +156,8 @@ function mapStateToProps(state, props) {
         nested_objects,
         header_list,
         selected_item_ids,
-        onSelect
+        onSelect,
+        onShowMoreIssues
     }
 }
 

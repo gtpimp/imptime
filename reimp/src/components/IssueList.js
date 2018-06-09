@@ -222,7 +222,9 @@ class IssueList extends Component {
             selected_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(issue_id)
         }
         dispatch(setGloballySelectedIssueId(project_id, sprint_id, issue_id))
-        onSelectIssues(selected_issue_ids)
+        if ( onSelectIssues ) {
+            onSelectIssues(selected_issue_ids)
+        }
         dispatch(cancelCandidateIssue())
     }
 

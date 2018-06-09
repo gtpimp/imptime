@@ -22,7 +22,8 @@ import {
     announceItemsSaved,
     announceItemsSaving,
     setGlobalEntityFlag,
-    getGlobalEntityFlag
+    getGlobalEntityFlag,
+    itemPost
 } from '../actions/Item'
 import { updateVisibleItemIdAbove } from './ItemList'
 import {
@@ -43,9 +44,10 @@ export var ALL_AVAILABLE_NUDGE_HEADERS =
       {key:'due_date', label:'Due at', description:'Due date for resolving the issue', width:medium_col_width},
       {key:'due_date_reason', label:'Due date reason', description:'Why this nudge should be resolved at the due date', width:large_col_width},
       {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
+      {key:'actions', label:'Actions', description:'Action buttons', width:medium_col_width},
     ]
 
-const DEFAULT_NUDGE_HEADERS_KEYS = ["select", "reason", "project", "sprint", "issue", "description"]
+const DEFAULT_NUDGE_HEADERS_KEYS = ["select", "actions", "reason", "project", "sprint", "issue", "description"]
 const DEFAULT_NUDGE_HEADERS = filter(ALL_AVAILABLE_NUDGE_HEADERS, (header) => includes(DEFAULT_NUDGE_HEADERS_KEYS, header.key))
 
 
@@ -136,6 +138,16 @@ export function recalculateNudges() {
              dispatch(setGlobalEntityFlag(ENTITY_KEY__NUDGE, "recalculating", false))
 	 })
     }
+}
+
+export function convertIssuesToNudges(schedule_id, issue_ids) {
+    const url = "imp/" + ENTITY_KEY__NUDGE + "/convertIssuesToNudges/"
+    const field_name = "issue_ids"
+    const field_value = issue_ids
+    const method = "POST"
+    const data = {issue_ids: issue_ids,
+                  schedule_id: schedule_id}
+    return itemPost(ENTITY_KEY__NUDGE, [issue_ids], url, field_name, field_value, method, data)
 }
 
 export function isRecalculatingNudges(state) {
