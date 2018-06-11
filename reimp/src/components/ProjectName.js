@@ -27,12 +27,12 @@ class ProjectName extends Component {
 	      }
     }
 
-    on_clicked(event) {
+    on_clicked(evt) {
         const { history, project, onClick, open_on_click } = this.props
-        event.stopPropagation()
-        if ( onClick ) {
-            onClick(project.id)
-        } else if ( open_on_click ) {
+        if ( open_on_click ) {
+            if ( evt ) {
+                evt.stopPropagation()
+            }
             history.push('/projects/' + project.id);
         }
     }
@@ -78,7 +78,6 @@ function mapStateToProps(state, props) {
         project_id: project_id,
 	render_mode: render_mode || "inline--small",
 	loading_value: loading_value || "...",
-        onClick: props.onClick,
         open_on_click: props.open_on_click || true,
     }
 }
