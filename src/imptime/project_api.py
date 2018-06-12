@@ -280,8 +280,8 @@ You can add issues here normally, or by emailing %s@%s""" % (project.inbox_email
         return Sprint.objects.get_or_create(name=settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME,
                                             business=project, #sic
                                             project_type="inbox", #sic
-                                            status3=SprintStatus.objects.get(business=project, name='pending'),
-                                            description=inbox_description)[0]
+                                            defaults={'status3':SprintStatus.objects.get(business=project, name='pending'),
+                                                      'description':inbox_description})[0]
     def apply_filter(self, qs, raw_filter_args):
         any_field = raw_filter_args.pop('any_field', None)
         if any_field:
