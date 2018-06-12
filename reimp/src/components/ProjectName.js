@@ -28,7 +28,7 @@ class ProjectName extends Component {
     }
 
     on_clicked(evt) {
-        const { history, project, onClick, open_on_click } = this.props
+        const { history, project, open_on_click } = this.props
         if ( open_on_click ) {
             if ( evt ) {
                 evt.stopPropagation()
