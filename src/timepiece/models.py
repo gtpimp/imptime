@@ -525,9 +525,11 @@ class BusinessPermissions(BaseModel):
 
     @classmethod
     def ensure_user_belongs_to_business(self, user, business):
-        return BusinessPermissions.objects.get_or_create(business=business,
-                                                         user=user,
-                                                         defaults={'is_active_member_of_business':True})[0]
+        bp = BusinessPermissions.objects.get_or_create(business=business,
+                                                       user=user)[0]
+        bp.is_active_member_of_business = True
+        bp.save()
+        return bp
 
     @classmethod
     def give_all_permissions_to_user(self, user, business):
