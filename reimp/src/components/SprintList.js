@@ -162,14 +162,14 @@ class SprintList extends Component {
         const { header_list } = this.props
         return (
             <div className="div-table__header_row sprint_type_header">
-              { map(header_list, (v, k) => (
-                    <div key={k}
+              { map(header_list, (v, index) => (
+                    <div key={index}
                          className="div-table__header_cell"
                          style={getCellStyle(v)}>
-                      { k === "name" &&
+                      { v.key === "name" &&
                         <div className="sprint_header__type">{sprint_type}</div>
                       }
-                      { k !== "name" && v.label }
+                      { v.key !== "name" && v.label }
                     </div>
                 ))}
             </div>

@@ -227,6 +227,7 @@ class Command(BaseCommand):
                                        name=sprint_name,
                                        project_type='inbox')\
                                .filter_open()\
+                               .order_by("-id")\
                                .first()
         if sprint is None:
             sprint = Sprint.objects.get_or_create(business=project,
