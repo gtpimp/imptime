@@ -31,6 +31,10 @@
   filter: grayscale(100%);
 }
 
+.navbar__right {
+    display: flex;
+}
+
 .navbar__left {
   display: flex;
 }
