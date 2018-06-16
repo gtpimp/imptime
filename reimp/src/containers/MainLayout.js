@@ -20,8 +20,20 @@ import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
 import { ShortcutManager } from 'react-shortcuts'
 import keymap from '../actions/Keymap'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
 var HTML5Backend = require('react-dnd-html5-backend');
 const shortcut_manager = new ShortcutManager(keymap)
+
+
+const AppDiv = glamorous.div({'background-color': theme.colours.page_background,
+                              'height': '100%',
+                              'min-height': '100%',
+                              'min-height': '100vh',
+                              'display':'flex',
+                              'flex-direction': 'column',
+                              'justify-content': 'center',
+                              'margin': '0 auto'})
 
 
 class MainLayout extends Component {
@@ -74,30 +86,30 @@ class MainLayout extends Component {
 
         if ( ! are_settings_loaded ) {
             return (
-                <div id="app" className="app">Loading settings...</div>
+                <AppDiv id="app">Loading settings...</AppDiv>
             )
         }
 
         if ( ! is_logged_in && ! allow_non_auth  ) {
             return (
-                <div id="app" className="app app--login">
+                <AppDiv id="app">
                   <LoginPage />
-                </div>
+                </AppDiv>
             )
         }
 
         if ( ! is_logged_in ) {
             return (
-                <div id="app" className="app">
+                <AppDiv id="app">
                   <Maintenance/>
                   <Error/>
                   <MainRouter />
-                </div>
+                </AppDiv>
             )
         }
 
         return (
-            <div id="app" className="app">
+            <AppDiv id="app">
               <div className="main-layout__panel main-layout__header">
                 <div>
                   <Websocket/>
@@ -116,7 +128,7 @@ class MainLayout extends Component {
               <div className="main-layout__panel main-layout__footer">
                 <Footer />
               </div>
-            </div>
+            </AppDiv>
         )
     }
 }

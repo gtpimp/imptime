@@ -7,14 +7,15 @@ const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-seri
                     'semibold-20': "normal normal 500 20px 'Fira Sans', sans-serif"
 }
 
-export const theme = {
+export const default_theme = {
 
     colours: { normal_text: '#393E47',
                strong_text: '#001631',
                link: '#005C86',
-               list_highlight: '0B8BB2',
-               notok: 'E25A50',
-               ok: '85C087'
+               list_highlight: '#0B8BB2',
+               notok: '#E25A50',
+               ok: '#85C087',
+               page_background: '#E6EEF0'
     },
 
     fonts: { list_items: fonts_raw['regular-12'],
