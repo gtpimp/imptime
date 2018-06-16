@@ -12,6 +12,7 @@ import { showFloatingCalendar } from '../actions/CalendarEvents'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
+
 class Navbar extends Component {
 
     constructor(props) {
@@ -83,13 +84,7 @@ class Navbar extends Component {
                            alignItems="center"
                            width="100%">
               <div className="navbar__left">
-                <NavTab to="/" index={true}>
-                  <div className={classNames('navbar__component', 'navbar__branding',
-                                             'navbar__branding--' +(is_websockets_connected ? 'connected' : 'disconnected'))}>
-                    &nbsp;
-                  </div>
-                </NavTab>
-                <div className="navbar__component navbar__search"><SearchBox/></div>
+                <NavTab to="/projects" label="Projects" />
                 <MienSelector></MienSelector>
               </div>
               <div className="navbar__right">
@@ -115,7 +110,6 @@ class Navbar extends Component {
                 <div className="navbar__tab"><NavTab to="/work_summary" label="Work summary" /></div>
                 <div className="navbar__tab"><NavTab to="/dashboard" label="Dashboard" /></div>
                 <div className="navbar__tab"><NavTab to="/usertimesheets" label="Timesheets" /></div>
-                <div className="navbar__tab"><NavTab to="/projects" label="Projects" /></div>
                 <div className="navbar__tab"><NavTab to="/invoices" label="Invoices"/></div>
                 <div className="navbar__tab" onMouseOver={this.showUserMenu} onMouseLeave={this.hideUserMenu} >
                   <NavTab variant="dashboard-toggle" label={username} />
@@ -129,6 +123,7 @@ class Navbar extends Component {
                     </div>                    
                   }
                 </div>
+                <SearchBox/>
               </div>
             </glamorous.Div>
         )

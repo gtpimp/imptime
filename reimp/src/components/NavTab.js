@@ -4,6 +4,16 @@ import {withRouter} from 'react-router-dom'
 import { Link } from 'react-router-dom' 
 import classNames from 'classnames'
 import '../sass/navtab.css'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+const NavMenuItem = glamorous.div({"color":"#ffffff",
+                                   "paddingLeft":"12px",
+                                   "paddingRight":"12px"})
+const NavDropdownMenuItem = glamorous.div({"color":"#ffffff",
+                                           "paddingLeft": "24px",
+                                           "paddingRight": "24px"})
+
 
 class NavTab extends Component {
 
@@ -15,7 +25,7 @@ class NavTab extends Component {
             isActive = match.path === to
 
             return (
-                <div className={classNames('navtab', 'navtab--' + (isActive ? 'active' : 'inactive'))}>
+                <NavMenuItem className={classNames('navtab', 'navtab--' + (isActive ? 'active' : 'inactive'))}>
                   { this.props.label &&
                     <div className="navtab__label-wrapper">
                       <div className={classNames('navtab__label', 'navtab__label--' + (isActive ? 'active' : 'inactive'))}>
@@ -28,16 +38,16 @@ class NavTab extends Component {
                   { !this.props.label &&
                     <Link to={to}>{children}</Link>
                   }
-                </div>
+                </NavMenuItem>
             )
         } else if (variant === 'dashboard-toggle') {
             return (
-                <div className={classNames('navtab', 'navtab--' + (this.props.expanded ? 'expanded' : 'collapsed'))}>
+                <NavDropdownMenuItem className={classNames('navtab', 'navtab--' + (this.props.expanded ? 'expanded' : 'collapsed'))}>
                     <div className="navtab__label-wrapper">
                         <div className={classNames('navtab__label', 'navtab__label--inactive')}>{this.props.label}&nbsp;</div>
                         <div className="navtab__icon"><i className="material-icons">{this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}</i></div>
                     </div>
-                </div>
+                </NavDropdownMenuItem>
             )
         }
     }

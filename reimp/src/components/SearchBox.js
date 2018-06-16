@@ -7,6 +7,13 @@ import {initFilter, runFilter, getFilter, hideResults, showResults, clearResults
 import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
 import SearchInput from './SearchInput'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+const SearchBoxDiv = glamorous.div({"width": "306px",
+                                    "height": "28px",
+                                    "paddingLeft": "12px"})
+
 
 class SearchBox extends Component {
 
@@ -89,19 +96,19 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__issue_results">
-                <h2>{name}</h2>
-                {map(issue_results, function (issue_result, index) {
-                        return (
-                            <div key={index} className="search-box__search-result" onClick={() => that.onClickIssueResult(issue_result) }>
-                                <div>{issue_result.number}</div>
-                                <div>{issue_result.subject}</div>
-                                <div>{issue_result.status_name}</div>
-                                <div>{issue_result.project_name}</div>
-                                <hr/>
-                            </div>
-                        )
-                    }
-                )}
+              <h2>{name}</h2>
+              {map(issue_results, function (issue_result, index) {
+                   return (
+                       <div key={index} className="search-box__search-result" onClick={() => that.onClickIssueResult(issue_result) }>
+                         <div>{issue_result.number}</div>
+                         <div>{issue_result.subject}</div>
+                         <div>{issue_result.status_name}</div>
+                         <div>{issue_result.project_name}</div>
+                         <hr/>
+                       </div>
+                   )
+               }
+               )}
             </div>
         )
     }
@@ -110,19 +117,19 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__sprint_results">
-                <h2>{name}</h2>
-                {map(sprint_results, function (sprint_result, index) {
-                        return (
-                            <div key={index} className="search-box__search-result" onClick={() => that.onClickSprintResult(sprint_result) }>
-                                <div>{sprint_result.number}</div>
-                                <div>{sprint_result.name}</div>
-                                <div>{sprint_result.status_name}</div>
-                                <div>{sprint_result.project_name}</div>
-                                <hr/>
-                            </div>
-                        )
-                    }
-                )}
+              <h2>{name}</h2>
+              {map(sprint_results, function (sprint_result, index) {
+                   return (
+                       <div key={index} className="search-box__search-result" onClick={() => that.onClickSprintResult(sprint_result) }>
+                         <div>{sprint_result.number}</div>
+                         <div>{sprint_result.name}</div>
+                         <div>{sprint_result.status_name}</div>
+                         <div>{sprint_result.project_name}</div>
+                         <hr/>
+                       </div>
+                   )
+               }
+               )}
             </div>
         )
     }
@@ -131,16 +138,16 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__project_results">
-                <h2>{name}</h2>
-                {map(project_results, function (project_result, index) {
-                        return (
-                            <div key={index} className="search-box__search-result" onClick={() => that.onClickProjectResult(project_result) }>
-                                <div>{project_result.name}</div>
-                                <hr/>
-                            </div>
-                        )
-                    }
-                )}
+              <h2>{name}</h2>
+              {map(project_results, function (project_result, index) {
+                   return (
+                       <div key={index} className="search-box__search-result" onClick={() => that.onClickProjectResult(project_result) }>
+                         <div>{project_result.name}</div>
+                         <hr/>
+                       </div>
+                   )
+               }
+               )}
             </div>
         )
     }
@@ -165,9 +172,9 @@ class SearchBox extends Component {
                   No results
                 </div>
               }
-              
-              
-              
+                
+                
+                
             </div>
         )
     }
@@ -177,7 +184,7 @@ class SearchBox extends Component {
         const {is_loading, results, show_results} = this.props
 
         return (
-            <div className="search-box" onKeyDown={this.keyDown}>
+            <SearchBoxDiv onKeyDown={this.keyDown}>
               <SearchInput termRef={(ref) => this.filter_term_el = ref}
                            placeholder="Search Imptime"
                            onOpenDropDown={this.onShowResults}
@@ -195,7 +202,7 @@ class SearchBox extends Component {
                   { this.renderResults(results) }
                 </div>
               }
-            </div>
+            </SearchBoxDiv>
         )
     }
 }
