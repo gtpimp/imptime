@@ -9,7 +9,9 @@ import NavTab from './NavTab'
 import MienSelector from './MienSelector'
 import { can_create_release_notes, logout } from '../actions/Auth'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
- 
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
 class Navbar extends Component {
 
     constructor(props) {
@@ -75,8 +77,11 @@ class Navbar extends Component {
         const calendar_menu_visible = this.state.calendar_menu_visible
 
         return (
-            <div className={classNames('navbar',
-                                       'navbar--network-' + ( user_initiated_network_activity ? 'active' : 'inactive' ))}>
+            <glamorous.Div borderTop={user_initiated_network_activity ? "1px solid #D54859" : "1px solid #FFFFFF"}
+                           display="flex"
+                           justifyContent="space-between"
+                           alignItems="center"
+                           width="100%">
               <div className="navbar__left">
                 <NavTab to="/" index={true}>
                   <div className={classNames('navbar__component', 'navbar__branding',
@@ -125,7 +130,7 @@ class Navbar extends Component {
                   }
                 </div>
               </div>
-            </div>
+            </glamorous.Div>
         )
     }
 }
