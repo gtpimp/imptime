@@ -15,7 +15,8 @@ export const default_theme = {
                list_highlight: '#0B8BB2',
                notok: '#E25A50',
                ok: '#85C087',
-               page_background: '#E6EEF0'
+               page_background: '#E6EEF0',
+               panel_background: '#E9EEF2',
     },
 
     fonts: { list_items: fonts_raw['regular-12'],
@@ -24,7 +25,7 @@ export const default_theme = {
              links: fonts_raw['semibold-12'],
              list_headers: fonts_raw['semibold-12'],
              tags: fonts_raw['semibold-12'],
-             body: fonts_raw['regular-14'],
+             body: fonts_raw['regular-13'],
              button_menu: fonts_raw['regular-15'],
              breadcrumb_selected: fonts_raw['bold-15'],
              button_large: fonts_raw['semibold-25'],

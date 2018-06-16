@@ -8,7 +8,6 @@ import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
 import SearchInput from './SearchInput'
 import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
 
 const SearchBoxDiv = glamorous.div({"width": "306px",
                                     "height": "28px",

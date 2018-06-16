@@ -3,14 +3,11 @@ import {connect} from 'react-redux'
 import {withRouter, Link} from 'react-router-dom'
 import SearchBox from '../components/SearchBox'
 import {logged_in_user} from '../actions/Auth'
-import classNames from 'classnames'
-import '../sass/navbar.css'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
 import { can_create_release_notes, logout } from '../actions/Auth'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
 
 
 class Navbar extends Component {
@@ -78,7 +75,7 @@ class Navbar extends Component {
         const calendar_menu_visible = this.state.calendar_menu_visible
 
         return (
-            <glamorous.Div borderTop={user_initiated_network_activity ? "1px solid #D54859" : "1px solid #FFFFFF"}
+            <glamorous.Div borderTop={(user_initiated_network_activity || !is_websockets_connected) ? "1px solid #D54859" : "1px solid #FFFFFF"}
                            display="flex"
                            justifyContent="space-between"
                            alignItems="center"

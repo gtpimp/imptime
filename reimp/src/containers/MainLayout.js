@@ -29,6 +29,7 @@ const shortcut_manager = new ShortcutManager(keymap)
 const AppDiv = glamorous.div({'background-color': theme.colours.page_background,
                               'height': '100%',
                               'min-height': '100vh',
+                              'font': theme.fonts.body,
                               'display':'flex',
                               'flex-direction': 'column',
                               'justify-content': 'center',

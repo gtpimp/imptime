@@ -9,7 +9,9 @@ import { default_theme as theme } from '../glamorous/theme'
 
 const NavMenuItem = glamorous.div({"color":"#ffffff",
                                    "paddingLeft":"12px",
-                                   "paddingRight":"12px"})
+                                   "paddingRight":"12px"},
+                                  ({isActive=false}) => ( {'backgroundColor': isActive === true ? theme.colours.panel_background : "inherit"}))
+
 const NavDropdownMenuItem = glamorous.div({"color":"#ffffff",
                                            "paddingLeft": "24px",
                                            "paddingRight": "24px"})
@@ -25,15 +27,11 @@ class NavTab extends Component {
             isActive = match.path === to
 
             return (
-                <NavMenuItem className={classNames('navtab', 'navtab--' + (isActive ? 'active' : 'inactive'))}>
+                <NavMenuItem isActive={isActive}>
                   { this.props.label &&
-                    <div className="navtab__label-wrapper">
-                      <div className={classNames('navtab__label', 'navtab__label--' + (isActive ? 'active' : 'inactive'))}>
-                        <Link to={to}>
-                          {this.props.label}
-                        </Link>
-                      </div>
-                    </div>
+                    <Link to={to}>
+                      {this.props.label}
+                    </Link>
                   }
                   { !this.props.label &&
                     <Link to={to}>{children}</Link>
