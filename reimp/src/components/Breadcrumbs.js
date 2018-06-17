@@ -1,22 +1,23 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import '../sass/breadcrumbs.css'
 import Breadcrumb from './Breadcrumb'
 import { areBreadcrumbsActive, getBreadcrumbs } from '../actions/Breadcrumbs'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+const BreadcrumbsDiv = glamorous.div(({is_active=true}) => ({opacity: is_active ? 1: 0.2}))
 
 class Breadcrumbs extends Component {
 
     render() {
         const {breadcrumbs, is_active} = this.props
         return (
-            <div className="breadcrumbs"
-                 style={{ opacity: is_active ? 1 : 0.2 }}
-            >
+            <BreadcrumbsDiv is_active={is_active}>
               { map(breadcrumbs, (breadcrumb, index) =>
                   <Breadcrumb key={index} breadcrumb={breadcrumb} is_last={index + 1 === breadcrumbs.length}/>
               )}
-            </div>
+            </BreadcrumbsDiv>
         )
     }
 }

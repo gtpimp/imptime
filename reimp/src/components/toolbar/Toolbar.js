@@ -26,6 +26,17 @@ import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../../glamorous/theme'
+
+const ToolbarDiv = glamorous.div({display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  height: "36px",
+                                  color: theme.colours.strong_text,
+                                  marginLeft: "12px",
+                                  fontSize: "15px",
+                                  width: "100%"})
 
 class ToolBar extends Component {
         
@@ -87,14 +98,14 @@ class ToolBar extends Component {
     render() {
         const {panelIds} = this.props
         return (
-            <div className="toolbar">
+            <ToolbarDiv>
               <div className="toolbar__container toolbar__container--left">
                 <Breadcrumbs />
               </div>
               <div className="toolbar__container toolbar__container--right">
                 {panelIds.map((panelId) => this.renderPanel(panelId))}
               </div>
-            </div>
+            </ToolbarDiv>
         )
     }
 }

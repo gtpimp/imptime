@@ -17,6 +17,23 @@ import {
 import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+const BreadcrumbDiv = glamorous.div({
+    display: "inline-flex",
+    cursor: "pointer",
+    textDecoration: "none",
+    ':lastChild': {font: 'breadcrumb_selected'}
+})
+
+
+const BreadcrumbSeparatorDiv = glamorous.div({
+    "alignItems": "center",
+    "display": "inline-flex",
+    "paddingLeft": "16px",
+    "paddingRight": "16px"
+})
 
 const menu_buttons = {
 
@@ -192,7 +209,7 @@ class Breadcrumb extends Component {
         const buttons = show_breadcrumb_menu && menu_buttons[breadcrumb.type]
 
         return (
-            <div className="breadcrumb" onMouseLeave={this.hideBreadCrumbMenu}>
+            <BreadcrumbDiv onMouseLeave={this.hideBreadCrumbMenu}>
               <Link to={to}
                     onMouseOver={this.showBreadCrumbMenu}>
                 {label}
@@ -215,9 +232,11 @@ class Breadcrumb extends Component {
                 </div>
               }
               { !is_last &&
-                <div className="breadcrumb__separator"><i className="material-icons">chevron_right</i></div>
+                <BreadcrumbSeparatorDiv>
+                  <i className="material-icons">chevron_right</i>
+                </BreadcrumbSeparatorDiv>
               }
-            </div>
+            </BreadcrumbDiv>
         )
     }
 }

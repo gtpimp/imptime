@@ -10,8 +10,10 @@ import { showFloatingCalendar } from '../actions/CalendarEvents'
 import glamorous from 'glamorous'
 
 const NavbarDiv = glamorous.div({display: "flex",
+                                 background: "linear-gradient(#0b8bb2, #056a86)",
                                  justifyContent: "space-between",
                                  alignItems: "center",
+                                 height: "36px",
                                  width: "100%"},
                                 ({user_initiated_network_activity=false,
                                   is_websockets_connected=false}) =>

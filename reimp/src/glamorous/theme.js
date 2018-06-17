@@ -24,6 +24,7 @@ export const default_theme = {
              button_popup: fonts_raw['semibold-12'],
              links: fonts_raw['semibold-12'],
              list_headers: fonts_raw['semibold-12'],
+             header: fonts_raw['regular-15'],
              tags: fonts_raw['semibold-12'],
              body: fonts_raw['regular-13'],
              button_menu: fonts_raw['regular-15'],

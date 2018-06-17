@@ -8,9 +8,10 @@ import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
 import Error from './Error'
 import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
 
-const HeaderDiv = glamorous.div({'background': "linear-gradient(#0b8bb2, #056a86)",
-                                 'height': '36px'})
+
+const HeaderDiv = glamorous.div({font: theme.fonts.header})
 
 class Header extends Component {
     
