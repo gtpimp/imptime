@@ -26,7 +26,7 @@ class FilterViewSet(BaseViewSet):
 
             params = json.loads(request.GET['params'])
             filter_args = params['filter'] or {}
-            search_term = filter_args['term']
+            search_term = filter_args.get('term', None)
             active_project_ids = filter_args.get('active_project_ids', None)
             active_sprint_ids = filter_args.get('active_sprint_ids', None)
             active_issue_ids = filter_args.get('active_issue_ids', None)
@@ -35,23 +35,28 @@ class FilterViewSet(BaseViewSet):
             allowed_sprints = self.allowed_sprints()
             allowed_issues = self.allowed_issues()
 
-            allowed_issues = allowed_issues.filter(Q(number__icontains=search_term) |
-                                                    Q(subject__icontains=search_term))\
-                                           .order_by("project__business__name",
-                                                     "project__name",
-                                                     "subject")\
-                                           .select_related('project')\
-                                           .select_related('project__business')
-            allowed_sprints = allowed_sprints.filter(Q(name__icontains=search_term) |
-                                                     Q(id__icontains=search_term) |
-                                                     Q(description__icontains=search_term) |
-                                                     Q(short_description__icontains=search_term))\
-                                             .order_by("business__name", "name")\
-                                             .select_related('business') #sic
-            allowed_projects = allowed_projects.filter(Q(name__icontains=search_term) |
-                                                       Q(id__icontains=search_term) |
-                                                       Q(description__icontains=search_term))\
-                                               .order_by("name")
+            if search_term is None:
+                allowed_issues = allowed_issues.none()
+                allowed_sprints = allowed_sprints.none()
+                allowed_projects = allowed_projects.none()
+            else:
+                allowed_issues = allowed_issues.filter(Q(number__icontains=search_term) |
+                                                        Q(subject__icontains=search_term))\
+                                               .order_by("project__business__name",
+                                                         "project__name",
+                                                         "subject")\
+                                               .select_related('project')\
+                                               .select_related('project__business')
+                allowed_sprints = allowed_sprints.filter(Q(name__icontains=search_term) |
+                                                         Q(id__icontains=search_term) |
+                                                         Q(description__icontains=search_term) |
+                                                         Q(short_description__icontains=search_term))\
+                                                 .order_by("business__name", "name")\
+                                                 .select_related('business') #sic
+                allowed_projects = allowed_projects.filter(Q(name__icontains=search_term) |
+                                                           Q(id__icontains=search_term) |
+                                                           Q(description__icontains=search_term))\
+                                                   .order_by("name")
 
             issues_within_active_sprints = None
             sprints_within_active_projects = None

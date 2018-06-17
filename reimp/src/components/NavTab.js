@@ -7,7 +7,7 @@ import { default_theme as theme } from '../glamorous/theme'
 
 const nav_item_css = {color:"#ffffff",
                       paddingLeft:"12px",
-                      paddingRight:"12px",
+                      paddingRight:"3px",
                       display:"flex",
                       alignItems:"center",
                       justifyContent:"center",

@@ -34,9 +34,9 @@ class SearchBox extends Component {
         dispatch(initFilter(filter_key))
     }
 
-    onFilterTermChanged() {
+    onFilterTermChanged(evt) {
         const {dispatch, filter_key, setTimeout} = this.props
-        const value = this.filter_term_el.value
+        const value = evt.target.value
         const that = this
 
         dispatch(clearResults(filter_key))
@@ -184,8 +184,7 @@ class SearchBox extends Component {
 
         return (
             <SearchBoxDiv onKeyDown={this.keyDown}>
-              <SearchInput termRef={(ref) => this.filter_term_el = ref}
-                           placeholder="Search Imptime"
+              <SearchInput placeholder="Search Imptime"
                            onOpenDropDown={this.onShowResults}
                            onChange={this.onFilterTermChanged}/>
 
