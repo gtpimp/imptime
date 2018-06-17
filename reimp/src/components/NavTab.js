@@ -2,24 +2,33 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { Link } from 'react-router-dom' 
-import classNames from 'classnames'
-import '../sass/navtab.css'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
-const NavMenuItem = glamorous.div({"color":"#ffffff",
-                                   "paddingLeft":"12px",
-                                   "paddingRight":"12px"},
-                                  ({isActive=false}) => ( {'backgroundColor': isActive === true ? theme.colours.panel_background : "auto"})
+const nav_item_css = {color:"#ffffff",
+                      paddingLeft:"12px",
+                      paddingRight:"12px",
+                      display:"flex",
+                      alignItems:"center",
+                      justifyContent:"center",
+                      ':hover': { cursor: "pointer" }}
+
+const NavMenuItem = glamorous.div(nav_item_css,
+                                  ({isActive=false}) => ( {backgroundColor: isActive === true ? theme.colours.panel_background : "auto"})
 )
 
-const NavDropdownMenuItem = glamorous.div({"color":"#ffffff",
-                                           "paddingLeft": "24px",
-                                           "paddingRight": "24px"},
-                                          ({expanded=false}) => ({'backgroundColor': expanded === true ? theme.colours.panel_background : "auto"})
+const NavDropdownMenuItem = glamorous.div(nav_item_css,
+                                          {position:"relative"},
+                                          ({expanded=false}) => ({backgroundColor: expanded === true ? theme.colours.panel_background : "auto"})
 )
-                                                                  
 
+const NavDropdownMenuContent = glamorous.div({position:"absolute",
+                                              top:"36px",
+                                              display:"flex",
+                                              width:"100px",
+                                              flexDirection:"column"})
+
+const NavDropdownIcon = glamorous.div({display: "inline-block"})
 
 class NavTab extends Component {
 
@@ -40,7 +49,7 @@ class NavTab extends Component {
     
     render() {
         const {match, to, children, variant, expanded} = this.props
-        const {show_children} = this.state
+        const {sub_menu_visible} = this.state
 
         if (variant === 'link') {
             let isActive
@@ -64,17 +73,17 @@ class NavTab extends Component {
         } else if (variant === 'dashboard-toggle') {
             return (
                 <NavDropdownMenuItem expanded={expanded} onMouseOver={this.showSubMenu} onMouseOut={this.hideSubMenu}>
-                    <div className="navtab__label-wrapper">
-                      <div className={classNames('navtab__label', 'navtab__label--inactive')}>
-                        {this.props.label}&nbsp;
-                      </div>
-                        <div className="navtab__icon">
-                          <i className="material-icons">
-                            {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
-                          </i>
-                        </div>
-                    </div>
-                    { show_children && children }
+                  {this.props.label}
+                  <NavDropdownIcon>
+                    <i className="material-icons">
+                      {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
+                    </i>
+                  </NavDropdownIcon>
+                  { sub_menu_visible &&
+                    <NavDropdownMenuContent>
+                      {children}
+                    </NavDropdownMenuContent>
+                  }
                 </NavDropdownMenuItem>
             )
         }
