@@ -3,6 +3,16 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import SplitPane from 'react-split-pane'
 import { setGlobalPageFlag, getGlobalPageFlag } from '../actions/Page'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+const pane_css = { overflow: "auto",
+                   width: "100%" }
+
+const SplitPaneLeft = glamorous.div(pane_css,
+                                    {backgroundColor: theme.colours.left_panel_background})
+const SplitPaneRight = glamorous.div(pane_css,
+                                     {backgroundColor: theme.colours.right_panel_background})
 
 class Splitter extends Component {
 
@@ -33,12 +43,12 @@ class Splitter extends Component {
                          onChange={this.saveSize}
                          {...this.props}
               >
-                <div className="main-layout__inner_scroll-panel">
+                <SplitPaneLeft>
                   {left}
-                </div>
-                <div className="main-layout__inner_scroll-panel">
+                </SplitPaneLeft>
+                <SplitPaneRight>
                   {right}
-                </div>
+                </SplitPaneRight>
               </SplitPane>
             </div>
         )

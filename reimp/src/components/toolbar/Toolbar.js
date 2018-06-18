@@ -34,12 +34,12 @@ const ToolbarDiv = glamorous.div({display: "flex",
                                   alignItems: "center",
                                   height: "36px",
                                   color: theme.colours.strong_text,
-                                  marginLeft: "12px",
+                                  backgroundColor: theme.colours.left_panel_background,
                                   fontSize: "15px",
                                   width: "100%"})
 
-class ToolBar extends Component {
-        
+class Toolbar extends Component {
+    
     renderPanel(id) {
         switch(id) {
             case 'company_problem':
@@ -99,9 +99,6 @@ class ToolBar extends Component {
         const {panelIds} = this.props
         return (
             <ToolbarDiv>
-              <div className="toolbar__container toolbar__container--left">
-                <Breadcrumbs />
-              </div>
               <div className="toolbar__container toolbar__container--right">
                 {panelIds.map((panelId) => this.renderPanel(panelId))}
               </div>
@@ -119,4 +116,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(ToolBar)
+export default connect(mapStateToProps)(Toolbar)

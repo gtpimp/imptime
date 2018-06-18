@@ -17,6 +17,8 @@ export const default_theme = {
                ok: '#85C087',
                page_background: '#E6EEF0',
                panel_background: '#E9EEF2',
+               left_panel_background: '#fafbfc',
+               right_panel_background: '#ffffff',
     },
 
     fonts: { list_items: fonts_raw['regular-12'],

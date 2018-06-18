@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import '../sass/header.css'
 import { logged_in_user } from '../actions/Auth'
 import Navbar from '../components/Navbar'
+import SubNavBar from './toolbar/SubNavBar'
 import Toolbar from './toolbar/Toolbar'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
@@ -23,6 +24,7 @@ class Header extends Component {
               <Maintenance/>
               <Error/>
               <Navbar/>
+              <SubNavBar />
               <Toolbar />
               { has_usable_password &&
                 <ReleaseNotesPopup />
