@@ -2,10 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Link} from 'react-router-dom'
 import SearchBox from '../components/SearchBox'
-import {logged_in_user} from '../actions/Auth'
+import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
-import { can_create_release_notes, logout } from '../actions/Auth'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import glamorous from 'glamorous'
 
@@ -25,7 +24,6 @@ class Navbar extends Component {
     constructor(props) {
         super(props)
         this.onSelectFloatingCalendar = this.onSelectFloatingCalendar.bind(this)
-        this.onLogout = this.onLogout.bind(this)
     }
 
     onSelectFloatingCalendar(evt) {
@@ -36,16 +34,9 @@ class Navbar extends Component {
         dispatch(showFloatingCalendar())
     }
 
-    onLogout() {
-        const { dispatch, history } = this.props
-        dispatch(logout())
-        history.push('/')
-    }
-
     render() {
 
-        const {is_loading, is_saving, is_websockets_connected,
-               username, has_edit_release_notes_permission} = this.props
+        const {is_loading, is_saving, is_websockets_connected} = this.props
         const user_initiated_network_activity = is_loading || is_saving
 
         return (
@@ -68,15 +59,11 @@ class Navbar extends Component {
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />
+                <NavTab>
+                  <AutoClockPopup/>
+                </NavTab>
                 <NavTab to="/usertimesheets" label="Timesheets" />
                 <NavTab to="/invoices" label="Invoices"/>
-                <NavTab variant="dashboard-toggle" label={username}>
-                  <Link className="navbar__submenu_item" to='/password/change'>Edit profile</Link>
-                  { has_edit_release_notes_permission &&
-                    <Link className="navbar__submenu_item" to='/release_notes_editor'>Release notes</Link>
-                  }
-                    <div className="navbar__submenu_item" onClick={this.onLogout}>Logout</div>
-                </NavTab>
                 <NavTab>
                   <SearchBox/>
                 </NavTab>
@@ -89,14 +76,11 @@ class Navbar extends Component {
 function mapStateToProps(state, props) {
     const loading = state.loading
     const websockets = state.websockets || {}
-    const has_edit_release_notes_permission = can_create_release_notes(state)
     
     return {
         is_loading: loading.is_loading,
         is_saving: loading.is_saving,
-        is_websockets_connected: websockets.isConnected,
-        username: logged_in_user(state).username,
-        has_edit_release_notes_permission
+        is_websockets_connected: websockets.isConnected
     }
 }
 

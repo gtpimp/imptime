@@ -4,7 +4,6 @@ import map from 'lodash/map'
 import Breadcrumb from './Breadcrumb'
 import { areBreadcrumbsActive, getBreadcrumbs } from '../actions/Breadcrumbs'
 import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
 
 const BreadcrumbsDiv = glamorous.div(({is_active=true}) => ({opacity: is_active ? 1: 0.2}))
 

@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar.css'
-import Breadcrumbs from '../../components/Breadcrumbs'
 import BillableHoursStatementToolbarPanel from './BillableHoursStatementToolbarPanel'
 import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'

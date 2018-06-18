@@ -5,8 +5,7 @@ import { Link } from 'react-router-dom'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
-const nav_item_css = {color:"#ffffff",
-                      paddingLeft:"12px",
+const nav_item_css = {paddingLeft:"12px",
                       paddingRight:"3px",
                       display:"flex",
                       alignItems:"center",
@@ -14,12 +13,17 @@ const nav_item_css = {color:"#ffffff",
                       ':hover': { cursor: "pointer" }}
 
 const NavMenuItem = glamorous.div(nav_item_css,
-                                  ({isActive=false}) => ( {backgroundColor: isActive === true ? theme.colours.panel_background : "auto"})
+                                  ({isActive=false, colourName=null}) => (
+                                      {backgroundColor: isActive === true ? theme.colours.panel_background : "auto",
+                                      color:colourName === null ? "#ffffff" : theme.colours[colourName]}
+                                  )
 )
 
 const NavDropdownMenuItem = glamorous.div(nav_item_css,
                                           {position:"relative"},
-                                          ({expanded=false}) => ({backgroundColor: expanded === true ? theme.colours.panel_background : "auto"})
+                                          ({expanded=false, colourName=null}) => (
+                                              {backgroundColor: expanded === true ? theme.colours.panel_background : "auto",
+                                               color:colourName === null ? "#ffffff" : theme.colours[colourName]})
 )
 
 const NavDropdownMenuContent = glamorous.div({position:"absolute",
@@ -48,7 +52,7 @@ class NavTab extends Component {
     }
     
     render() {
-        const {match, to, children, variant, expanded} = this.props
+        const {match, to, children, variant, expanded, colourName} = this.props
         const {sub_menu_visible} = this.state
 
         if (variant === 'link') {
@@ -72,7 +76,10 @@ class NavTab extends Component {
             )
         } else if (variant === 'dashboard-toggle') {
             return (
-                <NavDropdownMenuItem expanded={expanded} onMouseOver={this.showSubMenu} onMouseOut={this.hideSubMenu}>
+                <NavDropdownMenuItem expanded={expanded}
+                                     colourName={colourName || null}
+                                     onMouseOver={this.showSubMenu}
+                                     onMouseOut={this.hideSubMenu}>
                   {this.props.label}
                   <NavDropdownIcon>
                     <i className="material-icons">
@@ -92,8 +99,11 @@ class NavTab extends Component {
 
 function mapStateToProps(state, props) {
 
+    const { colourName } = props
+    
     return {
         variant: props.variant || 'link',
+        colourName
     }
 }
 

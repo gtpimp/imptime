@@ -18,7 +18,6 @@ import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
 
 const BreadcrumbDiv = glamorous.div({
     display: "inline-flex",

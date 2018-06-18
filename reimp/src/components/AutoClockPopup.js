@@ -42,7 +42,7 @@ class AutoClockPopup extends Component {
                 available_sprint_id, available_issue_id } = this.props
 
         return (
-            <div className="auto-clock">
+            <div> 
               <div className="auto-clock__header">Auto clock</div>
               <div className="auto-clock__status">Not clocked in</div>
 
