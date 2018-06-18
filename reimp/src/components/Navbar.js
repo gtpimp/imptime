@@ -44,9 +44,11 @@ class Navbar extends Component {
                        is_websockets_connected={is_websockets_connected}>
               <div className="navbar__left">
                 <NavTab to="/projects" label="Projects" />
-                <MienSelector></MienSelector>
               </div>
               <div className="navbar__right">
+                <NavTab variant="dashboard-toggle" label="Mien">
+                  <MienSelector></MienSelector>
+                </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar">
                     <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Popup</div>
                     <Link className="navbar__submenu_item" to='/calendar'>My calendar</Link>
