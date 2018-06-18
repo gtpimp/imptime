@@ -4,7 +4,6 @@ import '../sass/header.css'
 import { logged_in_user } from '../actions/Auth'
 import Navbar from '../components/Navbar'
 import SubNavBar from './toolbar/SubNavBar'
-import Toolbar from './toolbar/Toolbar'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
 import Error from './Error'
@@ -25,7 +24,6 @@ class Header extends Component {
               <Error/>
               <Navbar/>
               <SubNavBar />
-              <Toolbar />
               { has_usable_password &&
                 <ReleaseNotesPopup />
               }

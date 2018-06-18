@@ -2,11 +2,14 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import SplitPane from 'react-split-pane'
+import Toolbar from './toolbar/Toolbar'
 import { setGlobalPageFlag, getGlobalPageFlag } from '../actions/Page'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
 const pane_css = { overflow: "auto",
+                   display:"flex",
+                   flexDirection:"column",
                    width: "100%" }
 
 const SplitPaneLeft = glamorous.div(pane_css,
@@ -44,6 +47,7 @@ class Splitter extends Component {
                          {...this.props}
               >
                 <SplitPaneLeft>
+                  <Toolbar/>
                   {left}
                 </SplitPaneLeft>
                 <SplitPaneRight>
