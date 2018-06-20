@@ -19,10 +19,12 @@ const NavbarDiv = glamorous.div({display: "flex",
                                       ({borderTop:(user_initiated_network_activity || !is_websockets_connected)? "1px solid #D54859" : "auto"})
 )
 
-const NavbarLeft = glamorous.div({display: "flex"})
+const NavbarLeftDiv = glamorous.div({display: "flex"})
 
-const NavbarRight = glamorous.div({display: "flex",
+const NavbarRightDiv = glamorous.div({display: "flex",
                                   width: "1010px"})
+
+const Link = 
 
 class Navbar extends Component {
 
@@ -47,10 +49,10 @@ class Navbar extends Component {
         return (
             <NavbarDiv user_initiated_network_activity={user_initiated_network_activity}
                        is_websockets_connected={is_websockets_connected}>
-              <NavbarLeft>
+              <NavbarLeftDiv>
                 <NavTab to="/projects" label="Projects" />
-              </NavbarLeft>
-              <NavbarRight>
+              </NavbarLeftDiv>
+              <NavbarRightDiv>
                 <NavTab variant="dashboard-toggle" label="Mien">
                   <MienSelector></MienSelector>
                 </NavTab>
@@ -74,7 +76,7 @@ class Navbar extends Component {
                 <NavTab>
                   <SearchBox/>
                 </NavTab>
-              </NavbarRight>
+              </NavbarRightDiv>
             </NavbarDiv>
         )
     }
