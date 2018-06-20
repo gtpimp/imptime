@@ -19,6 +19,11 @@ const NavbarDiv = glamorous.div({display: "flex",
                                       ({borderTop:(user_initiated_network_activity || !is_websockets_connected)? "1px solid #D54859" : "auto"})
 )
 
+const NavbarLeft = glamorous.div({display: "flex"})
+
+const NavbarRight = glamorous.div({display: "flex",
+                                  width: "1010px"})
+
 class Navbar extends Component {
 
     constructor(props) {
@@ -42,17 +47,17 @@ class Navbar extends Component {
         return (
             <NavbarDiv user_initiated_network_activity={user_initiated_network_activity}
                        is_websockets_connected={is_websockets_connected}>
-              <div className="navbar__left">
+              <NavbarLeft>
                 <NavTab to="/projects" label="Projects" />
-              </div>
-              <div className="navbar__right">
+              </NavbarLeft>
+              <NavbarRight>
                 <NavTab variant="dashboard-toggle" label="Mien">
                   <MienSelector></MienSelector>
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar">
-                    <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Popup</div>
-                    <Link className="navbar__submenu_item" to='/calendar'>My calendar</Link>
-                    <Link className="navbar__submenu_item" to='/schedule'>All calendars</Link>
+                  <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Popup</div>
+                  <Link className="navbar__submenu_item" to='/calendar'>My calendar</Link>
+                  <Link className="navbar__submenu_item" to='/schedule'>All calendars</Link>
                 </NavTab>
                 
                 <NavTab variant="dashboard-toggle" label="Company" >
@@ -69,7 +74,7 @@ class Navbar extends Component {
                 <NavTab>
                   <SearchBox/>
                 </NavTab>
-              </div>
+              </NavbarRight>
             </NavbarDiv>
         )
     }

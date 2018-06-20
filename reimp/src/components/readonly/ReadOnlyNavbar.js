@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import NavTab from '../NavTab'
-// import '../../sass/navbar.css'
+import '../../sass/navbar.css'
 
 class ReadOnlyNavbar extends Component {
 
