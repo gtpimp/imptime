@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-// import '../sass/search-input.css'
 import ReactTimeout from 'react-timeout'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
@@ -38,7 +37,7 @@ class SearchInput extends Component {
                                 onChange={this.props.onChange}/>
               { this.props.onOpenDropDown &&
                 <SearchInputIconDiv onClick={this.props.onOpenDropDown}>
-                  <SearchInputIcon className="material-icons" height="28px">search</SearchInputIcon>
+                  <SearchInputIcon className="material-icons">search</SearchInputIcon>
                 </SearchInputIconDiv>
               }
             </SearchInputDiv>
