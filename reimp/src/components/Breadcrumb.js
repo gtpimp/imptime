@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link, withRouter} from 'react-router-dom'
-import '../sass/breadcrumb.css'
+// import '../sass/breadcrumb.css'
 import { map, get, filter } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
