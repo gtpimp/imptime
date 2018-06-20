@@ -16,9 +16,15 @@ const SearchInputDiv = glamorous.div({color: theme.colours.strong_text,
 const SearchInputInput = glamorous.input({backgroundColor: theme.colours.page_background,
                                           border: "0px",
                                           width: "278px",
+                                          font: theme.fonts.search_bar,
                                           ':focus':{outlineWidth: "0"}})
 
 const SearchInputIconDiv = glamorous.div({height: "28px"})
+
+const SearchInputIcon = glamorous.i({height: "26px",
+                                     width: "28px",
+                                     paddingTop: "2px"
+})
 
 class SearchInput extends Component {
 
@@ -32,7 +38,7 @@ class SearchInput extends Component {
                                 onChange={this.props.onChange}/>
               { this.props.onOpenDropDown &&
                 <SearchInputIconDiv onClick={this.props.onOpenDropDown}>
-                  <glamorous.I className="material-icons" height="28px">search</glamorous.I>
+                  <SearchInputIcon className="material-icons" height="28px">search</SearchInputIcon>
                 </SearchInputIconDiv>
               }
             </SearchInputDiv>
