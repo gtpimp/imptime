@@ -7,7 +7,22 @@ import { map } from 'lodash'
 import '../sass/div-table.css'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
 
+const div_table_row = {
+    display: 'flex',
+    flexDirection: 'row',
+    minHeight: '35px',
+    font: '$plain',
+    paddingLeft: '20px',
+}
+
+const DivTableHeader = glamorous.div(div_table_row,
+                                     {font: '',
+                                      borderBottom: '1px solid $header-background-color',
+                                      height: '40px'},
+)
 
 class DivTable extends Component {
 
@@ -31,15 +46,15 @@ class DivTable extends Component {
 
     renderDefaultHeader(header_list) {
         return (
-            <div className="div-table__header_row">
+            <DivTableHeader>
               { map(header_list, (v, k) => (
-                    <div key={k}
-                         className="div-table__header_cell"
-                         style={getCellStyle(v)}>
-                      {v.label }
-                    </div>
-                ))}
-            </div>
+                  <div key={k}
+                       className="div-table__header_cell"
+                       style={getCellStyle(v)}>
+                    {v.label }
+                  </div>
+              ))}
+            </DivTableHeader>
         )
     }
     
@@ -50,9 +65,9 @@ class DivTable extends Component {
         return (
             <div className="div-table">
               { renderHeader &&
-                <div className="div-table__header">
+                <DivTableHeader>
                   {renderHeader()}
-                </div>
+                </DivTableHeader>
               }
               { ! renderHeader && header_list && this.renderDefaultHeader(header_list) }
               <div className="div-table__body">
@@ -94,7 +109,7 @@ class DivTable extends Component {
                   </Droppable>
                 </DragDropContext>
               </div>
-            </div>
+                  </div>
         )
     }
 }
