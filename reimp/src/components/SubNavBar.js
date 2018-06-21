@@ -8,6 +8,19 @@ import {logged_in_user} from '../actions/Auth'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
+const navbar_submenu_item = {color: theme.colours.link,
+                             font: theme.fonts.links,
+                             marginTop: '12px',
+                             textTransform: 'none',
+                             paddingLeft: '12px',
+                             borderBottom: '1px solid #eee',
+
+                             ':hover': {
+                                 color: '#333',
+                                 backgroundColor: '#eee',
+                                 cursor: 'pointer',
+                             }}
+
 const SubNavBarDiv = glamorous.div({display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
@@ -21,6 +34,13 @@ const ToolbarDiv = glamorous.div({alignItems: "center",
                                   flexGrow: "1"},
                                  ({side}) => ({justifyContent: side === 'left' ?  'flex-start' : 'flex-end'})
 )
+
+const ProfilePictureDiv = glamorous.div({})
+
+const ProfilePictureIcon = glamorous.i({width: "30px",
+                                        length: "30px"})
+
+const GlamLink = glamorous(Link)(navbar_submenu_item)
 
 class SubNavBar extends Component {
 
@@ -44,11 +64,16 @@ class SubNavBar extends Component {
               </ToolbarDiv>
               <ToolbarDiv side="right">
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
-                  <Link className="navbar__submenu_item" to='/password/change'>Edit profile</Link>
+                  <GlamLink to='/password/change'>Edit profile</GlamLink>
                   { has_edit_release_notes_permission &&
                     <Link className="navbar__submenu_item" to='/release_notes_editor'>Release notes</Link>
                   }
                   <div className="navbar__submenu_item" onClick={this.onLogout}>Logout</div>
+                </NavTab>
+                <NavTab>
+                  <ProfilePictureDiv>
+                    <ProfilePictureIcon className="material-icons">account_circle</ProfilePictureIcon>
+                  </ProfilePictureDiv>
                 </NavTab>
               </ToolbarDiv>
               
