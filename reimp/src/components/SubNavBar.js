@@ -35,12 +35,15 @@ const ToolbarDiv = glamorous.div({alignItems: "center",
                                  ({side}) => ({justifyContent: side === 'left' ?  'flex-start' : 'flex-end'})
 )
 
-const ProfilePictureDiv = glamorous.div({})
+const ProfilePictureDiv = glamorous.div({height: "36px",
+    padding: "3px"})
 
 const ProfilePictureIcon = glamorous.i({width: "30px",
-                                        length: "30px"})
+                                        height: "30px"})
 
 const GlamLink = glamorous(Link)(navbar_submenu_item)
+
+const DivLink = glamorous.div(navbar_submenu_item)
 
 class SubNavBar extends Component {
 
@@ -66,9 +69,9 @@ class SubNavBar extends Component {
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
                   <GlamLink to='/password/change'>Edit profile</GlamLink>
                   { has_edit_release_notes_permission &&
-                    <Link className="navbar__submenu_item" to='/release_notes_editor'>Release notes</Link>
+                    <GlamLink to='/release_notes_editor'>Release notes</GlamLink>
                   }
-                  <div className="navbar__submenu_item" onClick={this.onLogout}>Logout</div>
+                  <DivLink onClick={this.onLogout}>Logout</DivLink>
                 </NavTab>
                 <NavTab>
                   <ProfilePictureDiv>

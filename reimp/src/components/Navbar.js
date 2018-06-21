@@ -10,17 +10,18 @@ import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
 const navbar_submenu_item = {color: theme.colours.link,
-                                 font: theme.fonts.links,
-                                 marginTop: '12px',
-                                 textTransform: 'none',
-                                 paddingLeft: '12px',
-                                 borderBottom: '1px solid #eee',
+                             font: theme.fonts.links,
+                             marginTop: '12px',
+                             textTransform: 'none',
+                             paddingLeft: '12px',
+                             borderBottom: '1px solid #eee',
 
-                                 ':hover': {
-                                     color: '#333',
-                                     backgroundColor: '#eee',
-                                     cursor: 'pointer',
-                                 }}
+                             ':hover': {
+                                 color: '#333',
+                                 backgroundColor: '#eee',
+                                 cursor: 'pointer',
+                                 border: '1px solid red',
+                             }}
 
 const NavbarDiv = glamorous.div({display: "flex",
                                  background: "linear-gradient(#0b8bb2, #056a86)",

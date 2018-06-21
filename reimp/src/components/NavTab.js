@@ -10,7 +10,7 @@ const nav_item_css = {paddingLeft:"12px",
                       display:"flex",
                       alignItems:"center",
                       justifyContent:"center",
-                      ':hover': { cursor: "pointer" }}
+                      ':hover': { cursor: "pointer"}}
 
 const NavMenuItem = glamorous.div(nav_item_css,
                                   ({isActive=false, colourName=null}) => (
@@ -56,7 +56,7 @@ class NavTab extends Component {
     render() {
         const {match, to, children, variant, expanded, colourName} = this.props
         const {sub_menu_visible} = this.state
-
+        
         if (variant === 'link') {
             let isActive
             isActive = match.path === to
