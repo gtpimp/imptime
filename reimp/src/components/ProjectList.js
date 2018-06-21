@@ -37,14 +37,14 @@ const div_table_row = {
     display: 'flex',
     flexDirection: 'row',
     minHeight: '35px',
-    font: '$plain',
-    paddingLeft: '20px',
+    font: theme.fonts.list_items,
+    paddingLeft: '24px'
 }
 
-const DivTableHeader = glamorous.div(div_table_row,
-                                     {font: '',
-                                      borderBottom: '1px solid $header-background-color',
-                                      height: '40px'},
+const DivTableHeaderRow = glamorous.div(div_table_row,
+                                        {font: theme.fonts.list_items,
+                                         height: '40px',
+                                        },
 )
 
 class ProjectList extends Component {
@@ -139,32 +139,32 @@ class ProjectList extends Component {
     renderHeader() {
         const { header_list } = this.props
         return (
-            <DivTableHeader>
-              { map(header_list, (v, k) => (
-                  <div key={k}
-                       className="div-table__header_cell"
-                       style={getCellStyle(v)}>
-                    {v.label }
-                  </div>
-              ))}
-            </DivTableHeader>
+            <DivTableHeaderRow>
+            { map(header_list, (v, k) => (
+                <div key={k}
+                     className="div-table__header_cell"
+                     style={getCellStyle(v)}>
+                  {v.label }
+                </div>
+            ))}
+            </DivTableHeaderRow>
         )
     }
     
     renderCollapsedProject(project) {
-	const { list_key, loading_item_ids } = this.props
+	      const { list_key, loading_item_ids } = this.props
         const is_loading=loading_item_ids.indexOf(project.id) !== -1
         
-	return (
-	    <div key={"collapsed_project_"+project.id+"_"+list_key}>
+	      return (
+	          <div key={"collapsed_project_"+project.id+"_"+list_key}>
               { is_loading && "Loading..." }
               { ! is_loading &&
                 <div>
                   Project: {project.name}
                 </div>
               }
-	    </div>
-	)
+	          </div>
+	      )
     }
 
     render_collapsed() {

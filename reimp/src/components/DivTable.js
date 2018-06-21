@@ -14,14 +14,13 @@ const div_table_row = {
     display: 'flex',
     flexDirection: 'row',
     minHeight: '35px',
-    font: '$plain',
-    paddingLeft: '20px',
+    font: theme.fonts.list_items,
+    paddingLeft: '24px'
 }
 
-const DivTableHeader = glamorous.div(div_table_row,
-                                     {font: '',
-                                      borderBottom: '1px solid $header-background-color',
-                                      height: '40px'},
+const DivTableHeaderRow = glamorous.div(div_table_row,
+                                        {font: theme.fonts.list_items,
+                                         height: '40px'},
 )
 
 class DivTable extends Component {
@@ -46,7 +45,7 @@ class DivTable extends Component {
 
     renderDefaultHeader(header_list) {
         return (
-            <DivTableHeader>
+            <DivTableHeaderRow>
               { map(header_list, (v, k) => (
                   <div key={k}
                        className="div-table__header_cell"
@@ -54,7 +53,7 @@ class DivTable extends Component {
                     {v.label }
                   </div>
               ))}
-            </DivTableHeader>
+            </DivTableHeaderRow>
         )
     }
     
@@ -65,9 +64,9 @@ class DivTable extends Component {
         return (
             <div className="div-table">
               { renderHeader &&
-                <DivTableHeader>
+                <div className="div-table__header">
                   {renderHeader()}
-                </DivTableHeader>
+                </div>
               }
               { ! renderHeader && header_list && this.renderDefaultHeader(header_list) }
               <div className="div-table__body">
@@ -109,7 +108,7 @@ class DivTable extends Component {
                   </Droppable>
                 </DragDropContext>
               </div>
-                  </div>
+            </div>
         )
     }
 }
