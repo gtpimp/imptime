@@ -9,6 +9,19 @@ import { showFloatingCalendar } from '../actions/CalendarEvents'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
+const navbar_submenu_item = {color: theme.colours.link,
+                                 font: theme.fonts.links,
+                                 marginTop: '12px',
+                                 textTransform: 'none',
+                                 paddingLeft: '12px',
+                                 borderBottom: '1px solid #eee',
+
+                                 ':hover': {
+                                     color: '#333',
+                                     backgroundColor: '#eee',
+                                     cursor: 'pointer',
+                                 }}
+
 const NavbarDiv = glamorous.div({display: "flex",
                                  background: "linear-gradient(#0b8bb2, #056a86)",
                                  justifyContent: "space-between",
@@ -25,31 +38,9 @@ const NavbarLeftDiv = glamorous.div({display: "flex"})
 const NavbarRightDiv = glamorous.div({display: "flex",
                                       width: "1010px"})
 
-const PopUpLink = glamorous.div({color: theme.colours.link,
-                                 font: theme.fonts.links,
-                                 marginTop: '12px',
-                                 textTransform: 'none',
-                                 paddingLeft: '12px',
-                                 borderBottom: '1px solid #eee',
+const PopUpLink = glamorous.div(navbar_submenu_item)
 
-                                 ':hover': {
-                                     color: '#333',
-                                     backgroundColor: '#eee',
-                                     cursor: 'pointer',
-                                 }})
-
-const GlamLink = glamorous(Link)({color: theme.colours.link,
-                                  font: theme.fonts.links,
-                                  marginTop: '12px',
-                                  textTransform: 'none',
-                                  paddingLeft: '12px',
-                                  borderBottom: '1px solid #eee',
-
-                                  ':hover': {
-                                      color: '#333',
-                                      backgroundColor: '#eee',
-                                      cursor: 'pointer',
-                                  }})
+const GlamLink = glamorous(Link)(navbar_submenu_item)
 
 class Navbar extends Component {
 
