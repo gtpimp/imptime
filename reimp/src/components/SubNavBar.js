@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
-import '../sass/toolbar.css'
+// import '../sass/toolbar.css'
 import NavTab from './NavTab'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { can_create_release_notes, logout } from '../actions/Auth'
@@ -16,6 +16,12 @@ const SubNavBarDiv = glamorous.div({display: "flex",
                                     color: theme.colours.strong_text,
                                     fontSize: "15px",
                                     width: "100%"})
+
+const ToolbarDiv = glamorous.div({alignItems: "center",
+                                  display: "flex",
+                                  flexGrow: "1"},
+                                 ({side}) => ({justifyContent: side === 'left' ?  'flex-start' : 'flex-end'})
+)
 
 class SubNavBar extends Component {
 
@@ -34,16 +40,16 @@ class SubNavBar extends Component {
         const {username, has_edit_release_notes_permission} = this.props
         return (
             <SubNavBarDiv>
-              <div className="toolbar__container toolbar__container--left">
+              <ToolbarDiv side="left">
                 <Breadcrumbs />
-              </div>
+              </ToolbarDiv>
               <div className="toolbar__container toolbar__container--right">
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
                   <Link className="navbar__submenu_item" to='/password/change'>Edit profile</Link>
                   { has_edit_release_notes_permission &&
                     <Link className="navbar__submenu_item" to='/release_notes_editor'>Release notes</Link>
                   }
-                    <div className="navbar__submenu_item" onClick={this.onLogout}>Logout</div>
+                  <div className="navbar__submenu_item" onClick={this.onLogout}>Logout</div>
                 </NavTab>
               </div>
               
