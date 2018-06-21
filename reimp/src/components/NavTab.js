@@ -32,7 +32,9 @@ const NavDropdownMenuContent = glamorous.div({position:"absolute",
                                               width:"100px",
                                               flexDirection:"column"})
 
-const NavDropdownIcon = glamorous.div({display: "inline-block"})
+const NavDropdownIcon = glamorous.div({display: "inline-block",
+                                       textAlign: "center",
+                                       width: "30px"})
 
 class NavTab extends Component {
 
