@@ -24,7 +24,35 @@ const NavbarLeftDiv = glamorous.div({display: "flex"})
 const NavbarRightDiv = glamorous.div({display: "flex",
                                       width: "1010px"})
 
-const GlamLink = glamorous(Link)({})
+const PopUpLink = glamorous.div({color: '#999',
+                                 marginTop: '3px',
+                                 textTransform: 'none',
+                                 height: '40px',
+                                 lineHeight: '40px',
+                                 paddingLeft: '10px',
+                                 borderBottom: '1px solid #eee',
+                                 fontSize: '$font-size-default',
+
+                                 ':hover': {
+                                     color: '#333',
+                                     backgroundColor: '#eee',
+                                     cursor: 'pointer',
+                                 }})
+
+const GlamLink = glamorous(Link)({color: '#999',
+                                  marginTop: '3px',
+                                  textTransform: 'none',
+                                  height: '40px',
+                                  lineHeight: '40px',
+                                  paddingLeft: '10px',
+                                  borderBottom: '1px solid #eee',
+                                  fontSize: '$font-size-default',
+
+                                  ':hover': {
+                                      color: '#333',
+                                      backgroundColor: '#eee',
+                                      cursor: 'pointer',
+                                  }})
 
 class Navbar extends Component {
 
@@ -57,14 +85,14 @@ class Navbar extends Component {
                   <MienSelector></MienSelector>
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar">
-                  <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Popup</div>
-                  <Link className="navbar__submenu_item" to='/calendar'>My calendar</Link>
-                  <Link className="navbar__submenu_item" to='/schedule'>All calendars</Link>
+                  <PopUpLink onClick={this.onSelectFloatingCalendar}>Popup</PopUpLink>
+                  <GlamLink to='/calendar'>My calendar</GlamLink>
+                  <GlamLink to='/schedule'>All calendars</GlamLink>
                 </NavTab>
                 
                 <NavTab variant="dashboard-toggle" label="Company" >
-                  <Link className="navbar__submenu_item" to='/company/billable_hours'>Billable hours</Link>
-                  <Link className="navbar__submenu_item" to='/company/problems'>Problems</Link>
+                  <GlamLink to='/company/billable_hours'>Billable hours</GlamLink>
+                  <GlamLink to='/company/problems'>Problems</GlamLink>
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />
