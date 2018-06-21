@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
-// import '../sass/toolbar.css'
 import NavTab from './NavTab'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { can_create_release_notes, logout } from '../actions/Auth'
@@ -43,7 +42,7 @@ class SubNavBar extends Component {
               <ToolbarDiv side="left">
                 <Breadcrumbs />
               </ToolbarDiv>
-              <div className="toolbar__container toolbar__container--right">
+              <ToolbarDiv side="right">
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
                   <Link className="navbar__submenu_item" to='/password/change'>Edit profile</Link>
                   { has_edit_release_notes_permission &&
@@ -51,7 +50,7 @@ class SubNavBar extends Component {
                   }
                   <div className="navbar__submenu_item" onClick={this.onLogout}>Logout</div>
                 </NavTab>
-              </div>
+              </ToolbarDiv>
               
             </SubNavBarDiv>
         )
