@@ -1,6 +1,7 @@
 
 const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-serif",
                     'semibold-12': "normal normal 500 12px 'Fira Sans', sans-serif",
+                    'semibold-15': "normal normal 500 15px 'Fira Sans', sans-serif",
                     'regular-13': "normal normal 400 13px 'Fira Sans', sans-serif",
                     'regular-15': "normal normal 400 15px 'Fira Sans', sans-serif",
                     'bold-15': "normal normal 600 15px 'Fira Sans', sans-serif",

@@ -7,6 +7,7 @@ import NavTab from './NavTab'
 import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
 
 const NavbarDiv = glamorous.div({display: "flex",
                                  background: "linear-gradient(#0b8bb2, #056a86)",
@@ -24,14 +25,12 @@ const NavbarLeftDiv = glamorous.div({display: "flex"})
 const NavbarRightDiv = glamorous.div({display: "flex",
                                       width: "1010px"})
 
-const PopUpLink = glamorous.div({color: '#999',
-                                 marginTop: '3px',
+const PopUpLink = glamorous.div({color: theme.colours.link,
+                                 font: theme.fonts.links,
+                                 marginTop: '12px',
                                  textTransform: 'none',
-                                 height: '40px',
-                                 lineHeight: '40px',
-                                 paddingLeft: '10px',
+                                 paddingLeft: '12px',
                                  borderBottom: '1px solid #eee',
-                                 fontSize: '$font-size-default',
 
                                  ':hover': {
                                      color: '#333',
@@ -39,14 +38,12 @@ const PopUpLink = glamorous.div({color: '#999',
                                      cursor: 'pointer',
                                  }})
 
-const GlamLink = glamorous(Link)({color: '#999',
-                                  marginTop: '3px',
+const GlamLink = glamorous(Link)({color: theme.colours.link,
+                                  font: theme.fonts.links,
+                                  marginTop: '12px',
                                   textTransform: 'none',
-                                  height: '40px',
-                                  lineHeight: '40px',
-                                  paddingLeft: '10px',
+                                  paddingLeft: '12px',
                                   borderBottom: '1px solid #eee',
-                                  fontSize: '$font-size-default',
 
                                   ':hover': {
                                       color: '#333',
