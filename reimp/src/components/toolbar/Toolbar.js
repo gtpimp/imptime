@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../../sass/toolbar.css'
 import BillableHoursStatementToolbarPanel from './BillableHoursStatementToolbarPanel'
 import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'
@@ -36,6 +35,12 @@ const ToolbarDiv = glamorous.div({display: "flex",
                                   backgroundColor: theme.colours.left_panel_background,
                                   fontSize: "15px",
                                   width: "100%"})
+
+const ToolbarSideDiv = glamorous.div({alignItems: "center",
+                                      display: "flex",
+                                      flexGrow: "1"},
+                                     ({side}) => ({justifyContent: side === 'left' ?  'flex-start' : 'flex-end'})
+)
 
 class Toolbar extends Component {
     
@@ -98,9 +103,9 @@ class Toolbar extends Component {
         const {panelIds} = this.props
         return (
             <ToolbarDiv>
-              <div className="toolbar__container toolbar__container--right">
+              <ToolbarSideDiv side="right">
                 {panelIds.map((panelId) => this.renderPanel(panelId))}
-              </div>
+              </ToolbarSideDiv>
             </ToolbarDiv>
         )
     }
