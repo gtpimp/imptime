@@ -22,9 +22,9 @@ const NavbarDiv = glamorous.div({display: "flex",
 const NavbarLeftDiv = glamorous.div({display: "flex"})
 
 const NavbarRightDiv = glamorous.div({display: "flex",
-                                  width: "1010px"})
+                                      width: "1010px"})
 
-const Link = 
+const GlamLink = glamorous(Link)({})
 
 class Navbar extends Component {
 
