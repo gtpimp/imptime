@@ -30,6 +30,22 @@ import DivTable from './DivTable'
 import '../sass/project-list.scss'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+const div_table_row = {
+    display: 'flex',
+    flexDirection: 'row',
+    minHeight: '35px',
+    font: '$plain',
+    paddingLeft: '20px',
+}
+
+const DivTableHeader = glamorous.div(div_table_row,
+                                     {font: '',
+                                      borderBottom: '1px solid $header-background-color',
+                                      height: '40px'},
+)
 
 class ProjectList extends Component {
 
@@ -77,13 +93,13 @@ class ProjectList extends Component {
     }
     
     onCollapse() {
-	const { dispatch, list_key } = this.props
-	dispatch(collapse_list(list_key))
+	      const { dispatch, list_key } = this.props
+	      dispatch(collapse_list(list_key))
     }
 
     onExpand() {
-	const { dispatch, list_key } = this.props
-	dispatch(expand_list(list_key))
+	      const { dispatch, list_key } = this.props
+	      dispatch(expand_list(list_key))
     }
 
     onClickedProject(event, project_id) {
@@ -106,32 +122,32 @@ class ProjectList extends Component {
 
     onChangePage() {
         const { dispatch, list_key } = this.props
-	dispatch(invalidateList(list_key))
-	dispatch(fetchProjectsIfNeeded(list_key))
+	      dispatch(invalidateList(list_key))
+	      dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     onRefresh(event) {
         const { dispatch, list_key } = this.props
-	dispatch(invalidateList(list_key))
-	dispatch(invalidateAllProjects())
-	dispatch(fetchProjectsIfNeeded(list_key))
-	if ( event ) {
-	    event.stopPropagation()
-	}
+	      dispatch(invalidateList(list_key))
+	      dispatch(invalidateAllProjects())
+	      dispatch(fetchProjectsIfNeeded(list_key))
+	      if ( event ) {
+	          event.stopPropagation()
+	      }
     }
 
     renderHeader() {
         const { header_list } = this.props
         return (
-            <div className="div-table__header_row">
+            <DivTableHeader>
               { map(header_list, (v, k) => (
-                    <div key={k}
-                         className="div-table__header_cell"
-                         style={getCellStyle(v)}>
-                      {v.label }
-                    </div>
-                ))}
-            </div>
+                  <div key={k}
+                       className="div-table__header_cell"
+                       style={getCellStyle(v)}>
+                    {v.label }
+                  </div>
+              ))}
+            </DivTableHeader>
         )
     }
     
