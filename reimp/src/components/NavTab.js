@@ -6,7 +6,7 @@ import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
 const nav_item_css = {paddingLeft:"12px",
-                      paddingRight:"3px",
+                      paddingRight:"12px",
                       display:"flex",
                       alignItems:"center",
                       justifyContent:"center",
