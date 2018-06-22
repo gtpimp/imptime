@@ -4,7 +4,7 @@ import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 
 
-const GlamLink = glamorous(Link)({color: theme.colours.link,
+const GlamLink = glamorous.div({color: theme.colours.link,
                                   font: theme.fonts.links,
                                   marginTop: '12px',
                                   textTransform: 'none',

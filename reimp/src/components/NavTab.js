@@ -21,17 +21,20 @@ const NavMenuItem = glamorous.div(nav_item_css,
 
 const NavDropdownMenuItem = glamorous.div(nav_item_css,
                                           {position:"relative",
-                                          height: "100%",},
+                                           zIndex: "1",
+                                           overflow: 'overlay',
+                                           height: "36px"},
                                           ({expanded=false, colourName=null}) => (
                                               {backgroundColor: expanded === true ? theme.colours.panel_background : "auto",
                                                color:colourName === null ? "#ffffff" : theme.colours[colourName]})
 )
 
-const NavDropdownMenuContent = glamorous.div({position:"absolute",
+const NavDropdownMenuContent = glamorous.div({position:"relative",
                                               top:"36px",
                                               display:"flex",
                                               width:"100px",
-                                              flexDirection:"column"})
+                                              flexDirection:"column",
+                                              border: "1px solid red"})
 
 const NavDropdownIcon = glamorous.div({display: "inline-block",
                                        textAlign: "center",
@@ -43,7 +46,7 @@ class NavTab extends Component {
         super(props)
         this.showSubMenu = this.showSubMenu.bind(this)
         this.hideSubMenu = this.hideSubMenu.bind(this)
-        this.state = {sub_menu_visible: true}
+        this.state = {sub_menu_visible: false}
     }
 
     showSubMenu() {
@@ -78,10 +81,10 @@ class NavTab extends Component {
                 </NavMenuItem>
             )
         } else if (variant === 'dashboard-toggle') {
-            return (
+            return ( 
                 <NavDropdownMenuItem expanded={expanded}
                                      colourName={colourName || null}
-                                     onMouseOver={ this.showSubMenu }
+                                     onMouseOver={this.showSubMenu}
                                      onMouseOut={this.hideSubMenu}>
                   {this.props.label}
                   <NavDropdownIcon>

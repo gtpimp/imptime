@@ -9,6 +9,7 @@ import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
+import SubMenuItemLink from './SubMenuItemLink'
 
 class Project extends Component {
 
@@ -96,17 +97,17 @@ class Project extends Component {
                   }
                   
                   {includes(visible_header_keys, "num_sprints") &&
-                   <Link className="div-table__cell sprint__cell__secondary"
-                         to={'/projects/'+project.id+'/sprints/'}
-                         style={getCellStyle(header_list.num_sprints)}>
-                     <div className="project__cell--num-sprints">
-                       { project && project.num_open_sprints > 0 &&
-                         <div>
-                           {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
-                         </div>
-                       }
-                     </div>
-                   </Link>
+                     <Link className="div-table__cell sprint__cell__secondary"
+                           to={'/projects/'+project.id+'/sprints/'}
+                           style={getCellStyle(header_list.num_sprints)}>
+                       <div className="project__cell--num-sprints">
+                         { project && project.num_open_sprints > 0 &&
+                           <div>
+                             {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
+                           </div>
+                         }
+                       </div>
+                     </Link>
                   }
 
                   {includes(visible_header_keys, "created_at") &&
