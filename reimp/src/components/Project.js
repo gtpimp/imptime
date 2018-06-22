@@ -9,7 +9,6 @@ import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
-import SubMenuItemLink from './SubMenuItemLink'
 
 class Project extends Component {
 

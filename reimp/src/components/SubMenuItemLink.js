@@ -26,3 +26,5 @@ class SubMenuItemLink extends Component {
         )
     }
 }
+
+export default SubMenuItemLink;
