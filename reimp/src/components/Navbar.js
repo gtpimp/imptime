@@ -35,10 +35,10 @@ const NavbarDiv = glamorous.div({display: "flex",
 )
 
 const NavbarLeftDiv = glamorous.div({display: "flex",
-                                     width: '42.5%'})
+                                     width: '41.3%'})
 
 const NavbarRightDiv = glamorous.div({display: "flex",
-                                      width: "57.5%"})
+                                      width: "58.7%"})
 
 const PopUpLink = glamorous.div(navbar_submenu_item)
 

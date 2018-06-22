@@ -22,7 +22,7 @@ const NavMenuItem = glamorous.div(nav_item_css,
 const NavDropdownMenuItem = glamorous.div(nav_item_css,
                                           {position:"relative",
                                            zIndex: "1",
-                                           width: "110px",
+                                           minWidth: "110px",
                                            height: "36px"},
                                           ({expanded=false, colourName=null}) => (
                                               {backgroundColor: expanded === true ? theme.colours.panel_background : "auto",
@@ -32,7 +32,8 @@ const NavDropdownMenuItem = glamorous.div(nav_item_css,
 const NavDropdownMenuContent = glamorous.div({position:"absolute",
                                               top: "36px",
                                               width:"100px",
-                                              flexDirection: "column"},
+                                              flexDirection: "column",
+                                              backgroundColor: theme.colours.panel_background},
                                              ({sub_menu_visible}) => (
                                                  {display: sub_menu_visible ? "flex" : "none"}
                                              )
@@ -48,15 +49,18 @@ class NavTab extends Component {
         super(props)
         this.showSubMenu = this.showSubMenu.bind(this)
         this.hideSubMenu = this.hideSubMenu.bind(this)
-        this.state = {sub_menu_visible: false}
+        this.state = {sub_menu_visible: false,
+                      expanded: false}
     }
 
     showSubMenu() {
-        this.setState({sub_menu_visible: true})
+        this.setState({sub_menu_visible: true,
+                       expanded: true})
     }
 
     hideSubMenu() {
-        this.setState({sub_menu_visible: false})
+        this.setState({sub_menu_visible: false,
+                       expanded: false})
     }
     
     render() {
