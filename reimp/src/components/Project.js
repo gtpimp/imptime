@@ -22,7 +22,7 @@ class Project extends Component {
 	      const { project } = this.props
 	      return (
 	          <div key={this.key+".collapsed_project."+project.id}>
-	              Project: {project.name}
+	            Project: {project.name}
 	          </div>
 	      )
     }
@@ -41,30 +41,30 @@ class Project extends Component {
     
     render_expanded() {
         const { project, is_loading, is_selected,
-		onClickedProject,
+		            onClickedProject,
                 visible_header_keys, header_list, can_show_project_delete } = this.props
-	if ( ! project ) {
-	    return (
+	      if ( ! project ) {
+	          return (
                 <div className="div-table__row">
                   <div className="div-table__cell">
                     Loading...
                   </div>
                 </div>
             )
-	}
-	
-	if ( ! is_loading === false ) {
-	    return (
-		<div key={this.key+"."+project.id}
-		     onClick={onClickedProject}
+	      }
+	      
+	      if ( ! is_loading === false ) {
+	          return (
+		            <div key={this.key+"."+project.id}
+		                 onClick={onClickedProject}
                      className={classNames("div-table__row",
                                            {'div-table__row--selected':is_selected})}
-		>
-		  <div className="div-table__cell">{project && project.id}</div>
-		  <div className="div-table__cell">Loading...</div>
-		</div>
-	    )
-	} else {
+		            >
+		              <div className="div-table__cell">{project && project.id}</div>
+		              <div className="div-table__cell">Loading...</div>
+		            </div>
+	          )
+	      } else {
             return (
 		            <div key={this.key+"."+project.id}
                      className={classNames('project',
@@ -97,17 +97,17 @@ class Project extends Component {
                   }
                   
                   {includes(visible_header_keys, "num_sprints") &&
-                     <Link className="div-table__cell sprint__cell__secondary"
-                           to={'/projects/'+project.id+'/sprints/'}
-                           style={getCellStyle(header_list.num_sprints)}>
-                       <div className="project__cell--num-sprints">
-                         { project && project.num_open_sprints > 0 &&
-                           <div>
-                             {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
-                           </div>
-                         }
-                       </div>
-                     </Link>
+                   <Link className="div-table__cell sprint__cell__secondary"
+                         to={'/projects/'+project.id+'/sprints/'}
+                         style={getCellStyle(header_list.num_sprints)}>
+                     <div className="project__cell--num-sprints">
+                       { project && project.num_open_sprints > 0 &&
+                         <div>
+                           {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
+                         </div>
+                       }
+                     </div>
+                   </Link>
                   }
 
                   {includes(visible_header_keys, "created_at") &&
@@ -190,7 +190,7 @@ class Project extends Component {
                   }
 		            </div>
             )
-	}
+	      }
     }
 
     render() {
