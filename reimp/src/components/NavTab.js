@@ -43,7 +43,7 @@ class NavTab extends Component {
         super(props)
         this.showSubMenu = this.showSubMenu.bind(this)
         this.hideSubMenu = this.hideSubMenu.bind(this)
-        this.state = {sub_menu_visible: false}
+        this.state = {sub_menu_visible: true}
     }
 
     showSubMenu() {
@@ -81,7 +81,7 @@ class NavTab extends Component {
             return (
                 <NavDropdownMenuItem expanded={expanded}
                                      colourName={colourName || null}
-                                     onMouseOver={this.showSubMenu}
+                                     onMouseOver={ this.showSubMenu }
                                      onMouseOut={this.hideSubMenu}>
                   {this.props.label}
                   <NavDropdownIcon>
