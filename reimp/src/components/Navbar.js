@@ -78,13 +78,6 @@ class Navbar extends Component {
                   <PopUpLink onClick={this.onSelectFloatingCalendar}>Popup</PopUpLink>
                   <GlamLink to='/calendar'>My calendar</GlamLink>
                   <GlamLink to='/schedule'>All calendars</GlamLink>
-
-                  <SubMenuItemLink >
-                    <Link to='schedule'>My Schedule</Link>
-                  </SubMenuItemLink>
-                  <SubMenuItemLink onClick="{this.onSelectFloatingCalendar}">
-                    Popup
-                  </SubMenuItemLink>
                 </NavTab>
                 
                 <NavTab variant="dashboard-toggle" label="Company" >

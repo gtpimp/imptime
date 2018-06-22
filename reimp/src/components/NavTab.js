@@ -20,7 +20,8 @@ const NavMenuItem = glamorous.div(nav_item_css,
 )
 
 const NavDropdownMenuItem = glamorous.div(nav_item_css,
-                                          {position:"relative"},
+                                          {position:"relative",
+                                          height: "100%",},
                                           ({expanded=false, colourName=null}) => (
                                               {backgroundColor: expanded === true ? theme.colours.panel_background : "auto",
                                                color:colourName === null ? "#ffffff" : theme.colours[colourName]})
