@@ -8,6 +8,7 @@ import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
+import SubMenuItemLink from './SubMenuItemLink'
 
 const navbar_submenu_item = {color: theme.colours.link,
                              font: theme.fonts.links,
@@ -20,7 +21,6 @@ const navbar_submenu_item = {color: theme.colours.link,
                                  color: '#333',
                                  backgroundColor: '#eee',
                                  cursor: 'pointer',
-                                 border: '1px solid red',
                              }}
 
 const NavbarDiv = glamorous.div({display: "flex",
@@ -78,6 +78,13 @@ class Navbar extends Component {
                   <PopUpLink onClick={this.onSelectFloatingCalendar}>Popup</PopUpLink>
                   <GlamLink to='/calendar'>My calendar</GlamLink>
                   <GlamLink to='/schedule'>All calendars</GlamLink>
+
+                  <SubMenuItemLink >
+                    <Link to='schedule'>My Schedule</Link>
+                  </SubMenuItemLink>
+                  <SubMenuItemLink onClick="{this.onSelectFloatingCalendar}">
+                    Popup
+                  </SubMenuItemLink>
                 </NavTab>
                 
                 <NavTab variant="dashboard-toggle" label="Company" >

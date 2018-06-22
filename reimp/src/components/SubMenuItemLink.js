@@ -15,7 +15,6 @@ const GlamLink = glamorous(Link)({color: theme.colours.link,
                                       color: '#333',
                                       backgroundColor: '#eee',
                                       cursor: 'pointer',
-                                      border: '1px solid red',
                                   }})
 
 class SubMenuItemLink extends Component {
