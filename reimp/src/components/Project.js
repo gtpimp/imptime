@@ -39,6 +39,14 @@ class Project extends Component {
         }
     }    
     
+    getProjectStatus() {
+        const { project } = this.props
+        console.log(get(project, ["recent_activity","is_active"], false))
+        console.log(get(project, ["recent_activity","is_inactive"], false))
+        console.log(get(project, ["recent_activity","is_expired"], false))
+        console.log(get(project, ["recent_activity","is_closed"], false))
+    }
+    
     render_expanded() {
         const { project, is_loading, is_selected,
 		            onClickedProject,
