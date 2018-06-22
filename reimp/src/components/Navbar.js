@@ -49,17 +49,6 @@ class Navbar extends Component {
     constructor(props) {
         super(props)
         this.onSelectFloatingCalendar = this.onSelectFloatingCalendar.bind(this)
-        this.showCalendarMenu = this.showCalendarMenu.bind(this)
-        this.hideCalendarMenu = this.hideCalendarMenu.bind(this)
-        this.state = {calendar_menu_visible: false}
-    }
-
-    showCalendarMenu() {
-        this.setState({calendar_menu_visible: true})
-    }
-
-    hideCalendarMenu() {
-        this.setState({calendar_menu_visible: false})
     }
     
     onSelectFloatingCalendar(evt) {
@@ -74,7 +63,6 @@ class Navbar extends Component {
 
         const {is_loading, is_saving, is_websockets_connected} = this.props
         const user_initiated_network_activity = is_loading || is_saving
-        const calendar_menu_visible = this.state.calendar_menu_visible
         
         return (
             <NavbarDiv user_initiated_network_activity={user_initiated_network_activity}
@@ -86,15 +74,10 @@ class Navbar extends Component {
                 <NavTab variant="dashboard-toggle" label="Mien">
                   <MienSelector></MienSelector>
                 </NavTab>
-
-                <div>
-                  <NavTab variant="dashboard-toggle"
-                          label="Calendar" >
-                    <GlamLink to='/calendar'>My calendar</GlamLink>
-                    <GlamLink to='/schedule'>All calendars</GlamLink>
-                  </NavTab>
-                </div>
-                
+                <NavTab variant="dashboard-toggle" label="Calendar" >
+                  <GlamLink to='/calendar'>My calendar</GlamLink>
+                  <GlamLink to='/schedule'>All calendars</GlamLink>
+                </NavTab>               
                 <NavTab variant="dashboard-toggle" label="Company" >
                   <GlamLink to='/company/billable_hours'>Billable hours</GlamLink>
                   <GlamLink to='/company/problems'>Problems</GlamLink>

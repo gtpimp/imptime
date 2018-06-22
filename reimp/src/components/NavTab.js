@@ -7,6 +7,7 @@ import { default_theme as theme } from '../glamorous/theme'
 
 const nav_item_css = {paddingLeft:"12px",
                       paddingRight:"12px",
+                      display:"flex",
                       alignItems:"center",
                       justifyContent:"center",
                       ':hover': { cursor: "pointer"}}
@@ -28,10 +29,10 @@ const NavDropdownMenuItem = glamorous.div(nav_item_css,
                                                color:colourName === null ? "#ffffff" : theme.colours[colourName]})
 )
 
-const NavDropdownMenuContent = glamorous.div({position:"relative",
+const NavDropdownMenuContent = glamorous.div({position:"absolute",
+                                              top: "36px",
                                               width:"100px",
-                                              flexDirection: "column",
-                                              border: "1px solid red"},
+                                              flexDirection: "column"},
                                              ({sub_menu_visible}) => (
                                                  {display: sub_menu_visible ? "flex" : "none"}
                                              )
@@ -88,6 +89,11 @@ class NavTab extends Component {
                                      onMouseOut={this.hideSubMenu}
                                      colourName={colourName || null}>
                   {this.props.label}
+                  <NavDropdownIcon>
+                    <i className="material-icons">
+                      {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
+                    </i>
+                  </NavDropdownIcon>
                   <NavDropdownMenuContent sub_menu_visible={sub_menu_visible}>
                     {children}
                   </NavDropdownMenuContent>
