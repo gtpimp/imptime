@@ -44,8 +44,22 @@ const div_table_row = {
 const DivTableHeaderRow = glamorous.div(div_table_row,
                                         {font: theme.fonts.list_items,
                                          height: '40px',
+                                         marginTop: '25px',
+                                         paddingLeft: '18px'                                         
                                         },
 )
+
+const DivTableHeaderCell = glamorous.div({color: theme.colours.strong_text,
+                                          paddingLeft: '6px',
+                                          paddingTop: '6px',
+                                          marginLeft: '6px',
+                                          marginRight: '6px',
+                                          display: 'flex',
+
+                                          ':hover': {
+                                              cursor: 'pointer',
+                                              backgroundColor: 'rgba(0,92,134, 0.07)',
+                                          }})
 
 class ProjectList extends Component {
 
@@ -141,11 +155,10 @@ class ProjectList extends Component {
         return (
             <DivTableHeaderRow>
             { map(header_list, (v, k) => (
-                <div key={k}
-                     className="div-table__header_cell"
-                     style={getCellStyle(v)}>
+                <DivTableHeaderCell key={k}
+                                    style={getCellStyle(v)}>
                   {v.label }
-                </div>
+                </DivTableHeaderCell>
             ))}
             </DivTableHeaderRow>
         )
@@ -168,17 +181,17 @@ class ProjectList extends Component {
     }
 
     render_collapsed() {
-	const { selected_items } = this.props
+	      const { selected_items } = this.props
 
-	return (
-	    <div className="panel panel--collapsed">
-		<div className="panel-heading" onClick={this.onExpand}>
-		    <div className="panel__title">
-			{ selected_items.map((project, index) => this.renderCollapsedProject(project)) }
-		    </div>
-		</div>
-	    </div>
-	)
+	      return (
+	          <div className="panel panel--collapsed">
+		          <div className="panel-heading" onClick={this.onExpand}>
+		            <div className="panel__title">
+			            { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
+		            </div>
+		          </div>
+	          </div>
+	      )
     }
 
     renderExpandedProject(project, index) {

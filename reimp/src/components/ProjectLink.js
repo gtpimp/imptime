@@ -23,8 +23,8 @@ class ProjectLink extends Component {
 
         return (
             <div className="project_link" onClick={this.on_clicked}>
-	      {project_name}
-	    </div>
+	            {project_name}
+	          </div>
         )
     }
 }

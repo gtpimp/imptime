@@ -21,8 +21,8 @@ const GlamLink = glamorous(Link)({color: theme.colours.link,
 class SubMenuItemLink extends Component {
 
     render() {
-        const { to, label } = this.props
-        
-        <GlamLink to={to} label={label}>
+        return (
+            <GlamLink { ...this.props } > { this.props.children } </GlamLink>
+        )
     }
 }
