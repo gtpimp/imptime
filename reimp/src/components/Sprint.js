@@ -10,6 +10,7 @@ import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
 import '../sass/sprint.css'
+import { SprintStatusDiv } from './styles'
 
 class Sprint extends Component {
 
@@ -35,36 +36,36 @@ class Sprint extends Component {
 
     render_expanded() {
         const { sprint, is_loading, is_selected, isOver,
-		onClickedSprint,
+		            onClickedSprint,
                 header_list} = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         const that = this
 
-	if ( ! sprint ) {
-	    return (
+	      if ( ! sprint ) {
+	          return (
                 <div className="div-table__row">
                   <div className="div-table__cell">
                     Loading...
                   </div>
                 </div>
             )
-	}
+	      }
 
-	if ( ! is_loading === false ) {
-	    return (
-		<div key={this.key+"."+sprint.id}
+	      if ( ! is_loading === false ) {
+	          return (
+		            <div key={this.key+"."+sprint.id}
                      onClick={onClickedSprint}
                      className={classNames("div-table__row",
                                            {'div-table__row--selected':is_selected})}
-		>
-		  <div className="div-table__cell">{sprint && sprint.id}</div>
-		  <div className="div-table__cell">Loading...</div>
-		</div>
-	    )
-	} else {
+		            >
+		              <div className="div-table__cell">{sprint && sprint.id}</div>
+		              <div className="div-table__cell">Loading...</div>
+		            </div>
+	          )
+	      } else {
             return (
-		<div key={this.key+"."+sprint.id}
+		            <div key={this.key+"."+sprint.id}
                      onClick={onClickedSprint}
                      className={classNames("div-table__row",
                                            'sprint',
@@ -74,7 +75,7 @@ class Sprint extends Component {
                                                'sprint__is_clone': sprint.sprint_template_id,
                                                'div-table__row--selected': is_selected
                                            })}
-		>
+		            >
 
                   { map(visible_header_keys, function(header_key) {
                         const header = headers_by_key[header_key]
@@ -284,11 +285,11 @@ class Sprint extends Component {
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) === 0)) &&
-                                         <div className="icon__status--ok"/>
+                                         <SprintStatusDiv status_ok={true}/>
                                         }
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) !== 0)) &&
-                                         <div className="icon__status--not-ok"/>
+                                         <SprintStatusDiv />
                                         }
                                       </div>
                                     </div>
@@ -300,11 +301,11 @@ class Sprint extends Component {
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) === 0)) &&
-                                         <div className="icon__status--ok"/>
+                                         <SprintStatusDiv status_ok={true}/>
                                         }
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) !== 0)) &&
-                                         <div className="icon__status--not-ok"/>
+                                         <SprintStatusDiv />
                                         }
                                       </div>
                                     </div>
@@ -315,10 +316,10 @@ class Sprint extends Component {
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned === 0) &&
-                                         <div className="icon__status--ok"/>
+                                         <SprintStatusDiv status_ok={true}/>
                                         }
                                         {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned !== 0) &&
-                                         <div className="icon__status--not-ok"/>
+                                         <SprintStatusDiv />
                                         }
                                       </div>
                                     </div>
@@ -330,11 +331,11 @@ class Sprint extends Component {
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) === 0)) &&
-                                         <div className="icon__status--ok"/>
+                                         <SprintStatusDiv status_ok={true}/>
                                         }
-                                         {(sprint.num_testable_issues !== undefined &&
-                                           ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) !== 0)) &&
-                                         <div className="icon__status--not-ok"/>
+                                        {(sprint.num_testable_issues !== undefined &&
+                                          ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) !== 0)) &&
+                                         <SprintStatusDiv />
                                         }
                                       </div>
                                     </div>
@@ -345,10 +346,10 @@ class Sprint extends Component {
                                          style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
-                                         <div className="icon__status--ok"/>
+                                         <SprintStatusDiv status_ok={true}/>
                                         }
                                         {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee <= 0) &&
-                                         <div className="icon__status--not-ok"/>
+                                         <SprintStatusDiv />
                                         }
                                       </div>
                                     </div>
@@ -358,10 +359,10 @@ class Sprint extends Component {
                                 
                         }
                     }
-                    )}
+                  )}
                 </div>
             )
-	}
+	      }
     }
 
     render() {

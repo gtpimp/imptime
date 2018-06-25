@@ -24,7 +24,7 @@ const TableCellStyle = {display: 'flex',
 
 const StatusCircle = {height: '16px',
                       width: '16px',
-                      borderRadius: '7px',
+                      borderRadius: '8px',
                       opacity: '0.5'}
 
 export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
@@ -39,6 +39,12 @@ export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
 export const ProjectStatusDiv = glamorous.div(StatusCircle,
                                               ({colour}) => ({
                                                   backgroundColor: colour
+                                              })
+)
+
+export const SprintStatusDiv = glamorous.div(StatusCircle,
+                                              ({status_ok=false}) => ({
+                                                  backgroundColor: status_ok ? 'green' : 'lightgray'
                                               })
 )
 
