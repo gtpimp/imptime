@@ -14,6 +14,17 @@ import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 import { ProjectRowDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
 
+const ProjectStatusDiv = glamorous.div({height: '15px',
+                                        width: '15px',
+                                        borderRadius: '7px'},
+                                       ({active, inactive, expired, closed}) => {
+                                           active ? {backgroundColor: "green"} : undefined,
+                                           backgroundColor: get(props.project, ["recent_activity","is_inactive"], false) ? "orange" : null,
+                                           backgroundColor: get(props.project, ["recent_activity","is_expired"], false) ? "gray" : null,
+                                           backgroundColor: get(props.project, ["recent_activity","is_closed"], false) ? "red" : null
+                                       }
+)
+
 class Project extends Component {
 
     constructor(props) {
@@ -41,14 +52,6 @@ class Project extends Component {
             onDelete(project.id)
         }
     }    
-    
-    getProjectStatus() {
-        const { project } = this.props
-        console.log(get(project, ["recent_activity","is_active"], false))
-        console.log(get(project, ["recent_activity","is_inactive"], false))
-        console.log(get(project, ["recent_activity","is_expired"], false))
-        console.log(get(project, ["recent_activity","is_closed"], false))
-    }
     
     render_expanded() {
         const { project, is_loading, is_selected,
@@ -78,28 +81,26 @@ class Project extends Component {
 	      } else {
             return (
 		            <ProjectRowDiv key={this.key+"."+project.id} is_selected={is_selected}>
-                  {includes(visible_header_keys, "name") &&
-		               <TableCellDiv
-                       onClick={onClickedProject}
-                       style={getCellStyle(header_list.name)}>
-                       {project.name}
-                   </TableCellDiv>
-                  }
+                {includes(visible_header_keys, "name") &&
+		             <TableCellDiv
+                     onClick={onClickedProject}
+                     style={getCellStyle(header_list.name)}>
+                   {project.name}
+                 </TableCellDiv>
+                }
 
-                  {includes(visible_header_keys, "active") &&
-                   <TableCellDiv className="project__cell__secondary"
-                                 style={getCellStyle(header_list.active)}>
-                     <div className={classNames("project-cell__active_status",
-                                                {"icon__status--active":get(project, ["recent_activity","is_active"], false),
-                                                 "icon__status--inactive":get(project, ["recent_activity", "is_inactive"], false),
-                                                 "icon__status--expired":get(project, ["recent_activity", "is_expired"], false),
-                                                 "icon__status--closed":get(project, ["recent_activity", "is_closed"], false)
-                                                })}
-                       >
-                       
-                     </div>
-                   </TableCellDiv>
-                  }
+                {includes(visible_header_keys, "active") &&
+                 <TableCellDiv style={getCellStyle(header_list.active)}>
+                    <ProjectStatusDiv
+                    active={ get(project, ["recent_activity","is_active"], false) }
+                    inactive={ get(props.project, ["recent_activity","is_inactive"], false) }
+                    expired={ get(props.project, ["recent_activity","is_expired"], false) }
+                    closed={ get(props.project, ["recent_activity","is_closed"], false) }
+                    >
+                    
+                   </ProjectStatusDiv>
+                  </TableCellDiv>
+                }
                 
                 {includes(visible_header_keys, "num_sprints") &&
                  <TableCellDiv>
