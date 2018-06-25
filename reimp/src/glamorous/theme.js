@@ -12,6 +12,7 @@ export const default_theme = {
 
     colours: { normal_text: '#393E47',
                strong_text: '#001631',
+               list_text: '#005C86',
                link: '#005C86',
                list_highlight: '#0B8BB2',
                list_rollover: 'rgba(0,92,134, 0.07)',
