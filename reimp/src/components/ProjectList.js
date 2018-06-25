@@ -45,7 +45,7 @@ const DivTableHeaderRow = glamorous.div(div_table_row,
                                         {font: theme.fonts.list_items,
                                          height: '40px',
                                          marginTop: '25px',
-                                         paddingLeft: '18px'                                         
+                                         paddingLeft: '12px'
                                         },
 )
 

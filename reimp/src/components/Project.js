@@ -12,7 +12,7 @@ import Timestamp from './Timestamp'
 import SubMenuItemLink from './SubMenuItemLink'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
-import { ProjectRowDiv } from './Styles'
+import { ProjectRowDiv, TableCellDiv } from './styles'
 
 class Project extends Component {
 
@@ -79,13 +79,13 @@ class Project extends Component {
             return (
 		            <ProjectRowDiv key={this.key+"."+project.id} is_selected={is_selected}>
                   {includes(visible_header_keys, "name") &&
-		               <div className="div-table__cell"
+		               <TableCellDiv
                         onClick={onClickedProject}
                         style={getCellStyle(header_list.name)}>
                      <div className="project__cell--name">
                        {project.name}
                      </div>
-                   </div>
+                   </TableCellDiv>
                   }
 
                   {includes(visible_header_keys, "active") &&
