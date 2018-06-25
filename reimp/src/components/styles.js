@@ -22,6 +22,11 @@ const TableCellStyle = {display: 'flex',
                         color: theme.colours.list_text
 }
 
+const StatusCircle = {height: '16px',
+                      width: '16px',
+                      borderRadius: '7px',
+                      opacity: '0.5'}
+
 export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
                                            ({is_selected}) => (
                                                {backgroundColor: is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
@@ -31,13 +36,10 @@ export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
                                            )
 )
 
-export const ProjectStatusDiv = glamorous.div({height: '16px',
-                                        width: '16px',
-                                        borderRadius: '7px',
-                                        opacity: '0.5'},
-                                       ({colour}) => ({
-                                           backgroundColor: colour
-                                       })
+export const ProjectStatusDiv = glamorous.div(StatusCircle,
+                                              ({colour}) => ({
+                                                  backgroundColor: colour
+                                              })
 )
 
 
