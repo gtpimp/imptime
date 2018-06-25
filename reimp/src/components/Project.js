@@ -21,10 +21,13 @@ const ProjectRowDiv = glamorous.div({display: 'flex',
                                      backgroundColor: theme.colours.left_panel_background,
                                      
                                      ':hover': {
-                                         backgroundColor: "rgba(0,92,134, 0.07)"
+                                         backgroundColor: theme.colours.list_rollover
                                      }},
                                     ({is_selected}) => (
-                                        {backgroundColor: is_selected ? theme.colours.list_highlight : theme.colours.left_panel_background}
+                                        {backgroundColor: is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+                                         ':hover': {
+                                             backgroundColor: is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
+                                         }}
                                     )
 
 )
