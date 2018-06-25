@@ -34,3 +34,4 @@ export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
 export const TableCellDiv = glamorous.div(TableCellStyle)
 export const TableCellSecondaryDiv = glamorous.div(TableCellStyle,
                                                    {color: theme.colours.normal_text})
+export const TableCellLinkDiv = glamorous.div({':hover': {textDecoration: 'underline'}})

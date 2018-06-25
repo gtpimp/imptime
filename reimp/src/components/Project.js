@@ -12,7 +12,7 @@ import Timestamp from './Timestamp'
 import SubMenuItemLink from './SubMenuItemLink'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
-import { ProjectRowDiv, TableCellDiv, TableCellSecondaryDiv } from './styles'
+import { ProjectRowDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
 
 class Project extends Component {
 
@@ -82,9 +82,7 @@ class Project extends Component {
 		               <TableCellDiv
                        onClick={onClickedProject}
                        style={getCellStyle(header_list.name)}>
-                     <div className="project__cell--name">
                        {project.name}
-                     </div>
                    </TableCellDiv>
                   }
 
@@ -102,21 +100,19 @@ class Project extends Component {
                      </div>
                    </TableCellDiv>
                   }
-                  
-                  {includes(visible_header_keys, "num_sprints") &&
-                   <TableCellDiv>
-                     <Link to={'/projects/'+project.id+'/sprints/'}
-                           style={getCellStyle(header_list.num_sprints)}>
-                       <div className="project__cell--num-sprints">
-                         { project && project.num_open_sprints > 0 &&
-                           <div>
-                             {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
-                           </div>
-                         }
-                       </div>
-                     </Link>
-                   </TableCellDiv>
-                  }
+                
+                {includes(visible_header_keys, "num_sprints") &&
+                 <TableCellDiv>
+                   <Link to={'/projects/'+project.id+'/sprints/'}
+                         style={getCellStyle(header_list.num_sprints)}>
+                     { project && project.num_open_sprints > 0 &&
+                       <TableCellLinkDiv>
+                         {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
+                       </TableCellLinkDiv>
+                     }
+                   </Link>
+                 </TableCellDiv>
+                }
 
                   {includes(visible_header_keys, "created_at") &&
                    <TableCellSecondaryDiv style={getCellStyle(header_list.created_at)}>
