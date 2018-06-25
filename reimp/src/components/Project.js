@@ -10,6 +10,24 @@ import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
 import SubMenuItemLink from './SubMenuItemLink'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+const ProjectRowDiv = glamorous.div({display: 'flex',
+                                     flexDirection: 'row',
+                                     minHeight: '40px',
+                                     font: theme.fonts.list_items,              
+                                     paddingLeft: '24px',
+                                     backgroundColor: theme.colours.left_panel_background,
+                                     
+                                     ':hover': {
+                                         backgroundColor: "rgba(0,92,134, 0.07)"
+                                     }},
+                                    ({is_selected}) => (
+                                        {backgroundColor: is_selected ? theme.colours.list_highlight : theme.colours.left_panel_background}
+                                    )
+
+)
 
 class Project extends Component {
 
@@ -74,11 +92,7 @@ class Project extends Component {
 	          )
 	      } else {
             return (
-		            <div key={this.key+"."+project.id}
-                     className={classNames('project',
-                                           'div-table__row',
-                                           {'div-table__row--selected': is_selected})}
-		            >
+		            <ProjectRowDiv key={this.key+"."+project.id} is_selected={is_selected}>
                   {includes(visible_header_keys, "name") &&
 		               <div className="div-table__cell"
                         onClick={onClickedProject}
@@ -196,7 +210,7 @@ class Project extends Component {
                       }
                     </div>
                   }
-		            </div>
+		            </ProjectRowDiv>
             )
 	      }
     }
