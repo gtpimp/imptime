@@ -23,6 +23,10 @@ export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
 )
 
 export const TableCellDiv = glamorous.div({
+    display: 'flex',
     font: theme.fonts.list_items,
-    paddingLeft: '6px'
+    paddingLeft: '6px',
+    verticalAlign: 'middle',
+    alignItems: 'center',
+    flex: '0 0 190px'
 })
