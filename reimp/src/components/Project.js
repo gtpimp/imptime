@@ -18,12 +18,9 @@ const ProjectStatusDiv = glamorous.div({height: '15px',
                                         width: '15px',
                                         borderRadius: '7px',
                                         opacity: '0.5'},
-                                       ({active, inactive, expired, closed}) => (
-                                           active ? {backgroundColor: "green"} : null,
-                                           inactive ? {backgroundColor: "orange"} : null,
-                                           expired ? {backgroundColor: "gray"} : null,
-                                           closed ? {backgroundColor: "red"} : null
-                                       )
+                                       ({colour}) => ({
+                                           backgroundColor: colour
+                                       })
 )
 
 class Project extends Component {
@@ -56,10 +53,12 @@ class Project extends Component {
     }    
 
     getProjectStatus(project) {
-        active={ get(project, ["recent_activity","is_active"], false) }
-        inactive={ get(project, ["recent_activity","is_inactive"], false) }
-        expired={ get(project, ["recent_activity","is_expired"], false) }
-        closed={ get(project, ["recent_activity","is_closed"], false) }
+        var colour;
+        if (get(project, ["recent_activity","is_active"], false)) colour = "green";
+        if (get(project, ["recent_activity","is_inactive"], false)) colour = "orange";
+        if (get(project, ["recent_activity","is_expired"], false)) colour = "gray";
+        if (get(project, ["recent_activity","is_closed"], false)) colour = "red";
+        return colour
     }
 
     
@@ -101,12 +100,7 @@ class Project extends Component {
 
                 {includes(visible_header_keys, "active") &&
                  <TableCellDiv style={getCellStyle(header_list.active)}>
-                   <ProjectStatusDiv color={ this.getProjectStatus(project) }
-                                     active={ get(project, ["recent_activity","is_active"], false) }
-                                     inactive={ get(project, ["recent_activity","is_inactive"], false) }
-                                     expired={ get(project, ["recent_activity","is_expired"], false) }
-                                     closed={ get(project, ["recent_activity","is_closed"], false) }
-                   >
+                   <ProjectStatusDiv colour={ this.getProjectStatus(project) }>
                    </ProjectStatusDiv>
                  </TableCellDiv>
                 }
