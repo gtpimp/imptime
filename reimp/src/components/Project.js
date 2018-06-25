@@ -12,16 +12,7 @@ import Timestamp from './Timestamp'
 import SubMenuItemLink from './SubMenuItemLink'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
-import { ProjectRowDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
-
-const ProjectStatusDiv = glamorous.div({height: '15px',
-                                        width: '15px',
-                                        borderRadius: '7px',
-                                        opacity: '0.5'},
-                                       ({colour}) => ({
-                                           backgroundColor: colour
-                                       })
-)
+import { ProjectRowDiv, ProjectStatusDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
 
 class Project extends Component {
 

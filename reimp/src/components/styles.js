@@ -31,6 +31,16 @@ export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
                                            )
 )
 
+export const ProjectStatusDiv = glamorous.div({height: '16px',
+                                        width: '16px',
+                                        borderRadius: '7px',
+                                        opacity: '0.5'},
+                                       ({colour}) => ({
+                                           backgroundColor: colour
+                                       })
+)
+
+
 export const TableCellDiv = glamorous.div(TableCellStyle)
 export const TableCellSecondaryDiv = glamorous.div(TableCellStyle,
                                                    {color: theme.colours.normal_text})
