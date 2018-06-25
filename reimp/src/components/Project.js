@@ -19,10 +19,10 @@ const ProjectStatusDiv = glamorous.div({height: '15px',
                                         borderRadius: '7px',
                                         opacity: '0.5'},
                                        ({active, inactive, expired, closed}) => (
-                                           active ? {backgroundColor: "green"} : undefined,
-                                           inactive ? {backgroundColor: "orange"} : undefined,
-                                           expired ? {backgroundColor: "gray"} : undefined,
-                                           closed ? {backgroundColor: "red"} : undefined
+                                           active ? {backgroundColor: "green"} : null,
+                                           inactive ? {backgroundColor: "orange"} : null,
+                                           expired ? {backgroundColor: "gray"} : null,
+                                           closed ? {backgroundColor: "red"} : null
                                        )
 )
 
@@ -31,6 +31,7 @@ class Project extends Component {
     constructor(props) {
         super(props)
         this.onDeleteProject = this.onDeleteProject.bind(this)
+        this.getProjectStatus = this.getProjectStatus.bind(this)
     }
 
     render_collapsed() {
@@ -53,10 +54,18 @@ class Project extends Component {
             onDelete(project.id)
         }
     }    
+
+    getProjectStatus(project) {
+        active={ get(project, ["recent_activity","is_active"], false) }
+        inactive={ get(project, ["recent_activity","is_inactive"], false) }
+        expired={ get(project, ["recent_activity","is_expired"], false) }
+        closed={ get(project, ["recent_activity","is_closed"], false) }
+    }
+
     
     render_expanded() {
         const { project, is_loading, is_selected,
-		            onClickedProject,
+		            onClickedProject, getProjectStatus,
                 visible_header_keys, header_list, can_show_project_delete } = this.props
 	      if ( ! project ) {
 	          return (
@@ -92,15 +101,14 @@ class Project extends Component {
 
                 {includes(visible_header_keys, "active") &&
                  <TableCellDiv style={getCellStyle(header_list.active)}>
-                    <ProjectStatusDiv
-                    active={ get(project, ["recent_activity","is_active"], false) }
-                    inactive={ get(project, ["recent_activity","is_inactive"], false) }
-                    expired={ get(project, ["recent_activity","is_expired"], false) }
-                    closed={ get(project, ["recent_activity","is_closed"], false) }
-                    >
-                    
+                   <ProjectStatusDiv color={ this.getProjectStatus(project) }
+                                     active={ get(project, ["recent_activity","is_active"], false) }
+                                     inactive={ get(project, ["recent_activity","is_inactive"], false) }
+                                     expired={ get(project, ["recent_activity","is_expired"], false) }
+                                     closed={ get(project, ["recent_activity","is_closed"], false) }
+                   >
                    </ProjectStatusDiv>
-                  </TableCellDiv>
+                 </TableCellDiv>
                 }
                 
                 {includes(visible_header_keys, "num_sprints") &&
