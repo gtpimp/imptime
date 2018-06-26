@@ -34,10 +34,11 @@ const NavbarDiv = glamorous.div({display: "flex",
                                       ({borderTop:(user_initiated_network_activity || !is_websockets_connected)? "1px solid #D54859" : "auto"})
 )
 
-const NavbarLeftDiv = glamorous.div({display: "flex",
-                                     width: '41.3%'})
+const NavbarLeftDiv = glamorous.div({display: 'flex',
+                                     width: '41.3%',
+                                     paddingLeft: '12px'})
 
-const NavbarRightDiv = glamorous.div({display: "flex",
+const NavbarRightDiv = glamorous.div({display: 'flex',
                                       width: "58.7%"})
 
 const PopUpLink = glamorous.div(navbar_submenu_item)

@@ -31,7 +31,8 @@ const SubNavBarDiv = glamorous.div({display: "flex",
 
 const ToolbarDiv = glamorous.div({alignItems: "center",
                                   display: "flex",
-                                  flexGrow: "1"},
+                                  flexGrow: "1",
+                                  paddingLeft: "24px"},
                                  ({side}) => ({justifyContent: side === 'left' ?  'flex-start' : 'flex-end'})
 )
 
