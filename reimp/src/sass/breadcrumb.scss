@@ -38,7 +38,7 @@
 
 .breadcrumb-menu {
     position: absolute;
-    top: 110px;
+    top: 65px;
     min-width: 145px;
     z-index: 9;
     background-color: #fff;
@@ -54,3 +54,14 @@
     padding-left: 10px;
     border-bottom: 1px solid #eee;
     font-size: $font-size-default;
+    
+    &:hover {
+        color: #333;
+        background-color: #eee;
+        cursor: pointer;
+    }
+
+    a {
+        width: 100%;
+    }
+}

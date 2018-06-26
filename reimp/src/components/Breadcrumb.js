@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link, withRouter} from 'react-router-dom'
-// import '../sass/breadcrumb.css'
+import '../sass/breadcrumb.css'
 import { map, get, filter } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
@@ -18,9 +18,10 @@ import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import glamorous from 'glamorous'
+import SubMenuItemLink from './SubMenuItemLink'
 
 const BreadcrumbDiv = glamorous.div({
-    display: "flex",
+    display: "inline-flex",
     cursor: "pointer",
     textDecoration: "none",
     ':lastChild': {font: 'breadcrumb_selected'}
@@ -29,9 +30,21 @@ const BreadcrumbDiv = glamorous.div({
 
 const BreadcrumbSeparatorDiv = glamorous.div({
     "alignItems": "center",
-    "display": "flex",
+    "display": "inline-flex",
     "paddingLeft": "16px",
     "paddingRight": "16px"
+})
+
+const
+BreadcrumbMenuDiv = glamorous.div({
+    position: 'absolute',
+    top: '65px',
+    minWidth: '145px',
+    zIndex: '9',
+    backgroundColor: '#fff',
+    border: '1px solid #999',
+    borderRadius: '3px',
+    padding: '3px',
 })
 
 const menu_buttons = {
@@ -214,27 +227,29 @@ class Breadcrumb extends Component {
                 {label}
               </Link>
               { buttons && 
-                <div className="breadcrumb-menu">
-                  <Link className="breadcrumb-menu__item" to={to}>
-                    {label}
-                  </Link>
-                  { map(buttons, function(button, index) {
-                        const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
-                        const can_view = button.perms === undefined || permissions === null ||
-                                         filter(button_perms, (perm) => permissions[perm] === true).length>0
-                        if ( ! can_view ) {
-                            return null
-                        }
-                        return that.renderBreadcrumbLink(button, breadcrumb, index, button_perms)
-                    })
-                  }
-                </div>
+                <BreadcrumbMenuDiv>
+                  <SubMenuItemLink>
+                    <Link to={to}>
+                      {label}
+                    </Link>
+                  </SubMenuItemLink>
+                    { map(buttons, function(button, index) {
+                          const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
+                          const can_view = button.perms === undefined || permissions === null ||
+                                           filter(button_perms, (perm) => permissions[perm] === true).length>0
+                          if ( ! can_view ) {
+                              return null
+                          }
+                          return that.renderBreadcrumbLink(button, breadcrumb, index, button_perms)
+                      })
+                    }
+                </BreadcrumbMenuDiv>
               }
-              { !is_last &&
-                <BreadcrumbSeparatorDiv>
-                  <i className="material-icons">chevron_right</i>
-                </BreadcrumbSeparatorDiv>
-              }
+                { !is_last &&
+                  <BreadcrumbSeparatorDiv>
+                    <i className="material-icons">chevron_right</i>
+                  </BreadcrumbSeparatorDiv>
+                }
             </BreadcrumbDiv>
         )
     }
