@@ -20,7 +20,7 @@ import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import glamorous from 'glamorous'
 
 const BreadcrumbDiv = glamorous.div({
-    display: "inline-flex",
+    display: "flex",
     cursor: "pointer",
     textDecoration: "none",
     ':lastChild': {font: 'breadcrumb_selected'}
@@ -29,7 +29,7 @@ const BreadcrumbDiv = glamorous.div({
 
 const BreadcrumbSeparatorDiv = glamorous.div({
     "alignItems": "center",
-    "display": "inline-flex",
+    "display": "flex",
     "paddingLeft": "16px",
     "paddingRight": "16px"
 })

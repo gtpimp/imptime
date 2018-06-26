@@ -1,0 +1,56 @@
+@import 'variables.scss';
+
+.breadcrumb {
+  display: inline-flex;
+  font: $font-4;
+  line-height: 64px;
+
+  &:last-child {
+    > a,
+    > a:active,
+    > a:focus,
+    > a:visited {
+      color: $color-1;
+      text-decoration: none;
+    }
+  }
+
+  > a,
+  > a:active,
+  > a:focus,
+  > a:visited {
+    color: $color-10;
+    cursor: pointer;
+    text-decoration: none;
+  }
+}
+
+.breadcrumb__separator {
+  align-items: center;
+  display: inline-flex;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  > i.material-icons {
+    line-height: 64px;
+  }
+}
+
+.breadcrumb-menu {
+    position: absolute;
+    top: 110px;
+    min-width: 145px;
+    z-index: 9;
+    background-color: #fff;
+    border: 1px solid #999;
+    border-radius: 3px;
+    padding: 3px;
+}
+.breadcrumb-menu__item {
+    color: #999;
+    display: flex;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: $font-size-default;
