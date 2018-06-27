@@ -11,6 +11,8 @@ import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
 import '../sass/sprint.css'
 import { SprintStatusDiv, SprintRowDiv, TableCellDiv, TableCellSecondaryDiv } from './styles'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
 import SubMenuItemLink from './SubMenuItemLink'
 
 class Sprint extends Component {
