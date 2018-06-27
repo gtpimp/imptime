@@ -5,9 +5,6 @@
     cursor: pointer;
 }
 
-.sprint__cell__secondary {
-    @extend .div-table__cell--secondary;
-} 
 
 .sprint__cell--num-issues {
     @extend .div-table__cell--default;

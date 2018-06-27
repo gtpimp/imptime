@@ -11,6 +11,7 @@ import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
 import '../sass/sprint.css'
 import { SprintStatusDiv, SprintRowDiv, TableCellDiv, TableCellSecondaryDiv } from './styles'
+import SubMenuItemLink from './SubMenuItemLink'
 
 class Sprint extends Component {
 
@@ -101,21 +102,21 @@ class Sprint extends Component {
                                 )
                             case "start_time":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--start-time">
                                         <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "end_time":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--end-time">
                                         <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_issues":
                                 return (
@@ -143,137 +144,137 @@ class Sprint extends Component {
                                 )
                             case "status":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--status">
                                         <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "type":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_issues_unassigned":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {sprint.num_issues_unassigned}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "hours_by_assignee":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         { sprint.hours_by_assignee && 
                                           <Hours hours={sprint.hours_by_assignee} />
                                         }
                                         { ! sprint.hours_by_assignee && "" }
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "estimates_by_assignee":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         <Hours hours={sprint.estimated_hours_by_assignee} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "open_estimates_by_assignee":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         <Hours hours={sprint.estimated_open_hours_by_assignee} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_issues_with_estimates":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {sprint.num_issues_with_estimates || ""}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_issues_without_estimates":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0)}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_open_issues_with_estimates":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {sprint.num_open_issues_with_estimates || ""}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_open_issues_without_estimates":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues || 0) - (sprint.num_open_issues_with_estimates || 0)}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_completely_closed_issues":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {sprint.num_completely_closed_issues || ""}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_not_completely_closed_issues":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0)}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_dev_closed_issues":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {sprint.num_dev_closed_issues || ""}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "num_not_dev_closed_issues":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0)}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_completely_closed":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) === 0)) &&
@@ -284,12 +285,12 @@ class Sprint extends Component {
                                          <SprintStatusDiv />
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_dev_closed":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) === 0)) &&
@@ -300,12 +301,12 @@ class Sprint extends Component {
                                          <SprintStatusDiv />
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_assigned":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned === 0) &&
                                          <SprintStatusDiv status_ok={true}/>
@@ -314,12 +315,12 @@ class Sprint extends Component {
                                          <SprintStatusDiv />
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_estimated":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) === 0)) &&
@@ -330,12 +331,12 @@ class Sprint extends Component {
                                          <SprintStatusDiv />
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "has_dev_started":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="sprint__cell--type">
                                         {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
                                          <SprintStatusDiv status_ok={true}/>
@@ -344,7 +345,7 @@ class Sprint extends Component {
                                          <SprintStatusDiv />
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             default:
                                 console.error("Unknown header: " + header_key + " (headers are " + visible_header_keys + ")")
