@@ -10,10 +10,57 @@ import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
 import '../sass/sprint.css'
-import { SprintStatusDiv, SprintRowDiv, TableCellDiv, TableCellSecondaryDiv } from './styles'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
 import SubMenuItemLink from './SubMenuItemLink'
+
+const StatusCircle = {height: '16px',
+                      width: '16px',
+                      borderRadius: '8px',
+                      opacity: '0.5'}
+
+
+const DefaultListRowStyle = {display: 'flex',
+                             flexDirection: 'row',
+                             minHeight: '40px',
+                             font: theme.fonts.list_items,              
+                             paddingLeft: '18px',
+                             backgroundColor: theme.colours.left_panel_background,
+                             
+                             ':hover': {
+                                 backgroundColor: theme.colours.list_rollover
+                             }
+}
+
+const TableCellStyle = {display: 'flex',
+                        font: theme.fonts.list_items,
+                        paddingLeft: '6px',
+                        verticalAlign: 'middle',
+                        alignItems: 'center',
+                        flex: '0 0 190px',
+                        color: theme.colours.list_text
+}
+
+
+const SprintRowDiv = glamorous.div(DefaultListRowStyle,
+                                   ({is_selected}) => (
+                                       {backgroundColor: is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+                                        ':hover': {
+                                                   backgroundColor: is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
+                                               }}
+                                   )
+)
+
+const TableCellDiv = glamorous.div(TableCellStyle)
+const TableCellSecondaryDiv = glamorous.div(TableCellStyle,
+                                                   {color: theme.colours.normal_text})
+
+const SprintStatusDiv = glamorous.div(StatusCircle,
+                                             ({status_ok=false}) => ({
+                                                 backgroundColor: status_ok ? 'green' : 'lightgray'
+                                             })
+)
+
 
 class Sprint extends Component {
 
