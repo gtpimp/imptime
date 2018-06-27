@@ -313,34 +313,34 @@ class Sprint extends Component {
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {(sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0)}
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             case "num_dev_closed_issues":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {sprint.num_dev_closed_issues || ""}
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             case "num_not_dev_closed_issues":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {(sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0)}
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_completely_closed":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) === 0)) &&
                                          <SprintStatusDiv status_ok={true}/>
@@ -349,14 +349,14 @@ class Sprint extends Component {
                                           ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) !== 0)) &&
                                          <SprintStatusDiv />
                                         }
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_dev_closed":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) === 0)) &&
                                          <SprintStatusDiv status_ok={true}/>
@@ -365,28 +365,28 @@ class Sprint extends Component {
                                           ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) !== 0)) &&
                                          <SprintStatusDiv />
                                         }
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_assigned":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned === 0) &&
                                          <SprintStatusDiv status_ok={true}/>
                                         }
                                         {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned !== 0) &&
                                          <SprintStatusDiv />
                                         }
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             case "are_all_issues_estimated":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {(sprint.num_testable_issues !== undefined &&
                                           ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) === 0)) &&
                                          <SprintStatusDiv status_ok={true}/>
@@ -395,21 +395,21 @@ class Sprint extends Component {
                                           ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) !== 0)) &&
                                          <SprintStatusDiv />
                                         }
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             case "has_dev_started":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="sprint__cell--type">
+                                      <SprintCellDiv>
                                         {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
                                          <SprintStatusDiv status_ok={true}/>
                                         }
                                         {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee <= 0) &&
                                          <SprintStatusDiv />
                                         }
-                                      </div>
+                                      </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
                             default:
