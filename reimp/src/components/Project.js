@@ -59,24 +59,23 @@ class Project extends Component {
                 visible_header_keys, header_list, can_show_project_delete } = this.props
 	      if ( ! project ) {
 	          return (
-                <div className="div-table__row">
+                <ProjectRowDiv>
                   <TableCellDiv>
                     Loading...
                   </TableCellDiv>
-                </div>
+                </ProjectRowDiv>
             )
 	      }
 	      
 	      if ( ! is_loading === false ) {
 	          return (
-		            <div key={this.key+"."+project.id}
-		                 onClick={onClickedProject}
-                     className={classNames("div-table__row",
-                                           {'div-table__row--selected':is_selected})}
+		            <ProjectRowDiv key={this.key+"."+project.id}
+		                           onClick={onClickedProject}
+                               is_selected={is_selected}
 		            >
 		              <div className="div-table__cell">{project && project.id}</div>
 		              <div className="div-table__cell">Loading...</div>
-		            </div>
+		            </ProjectRowDiv>
 	          )
 	      } else {
             return (

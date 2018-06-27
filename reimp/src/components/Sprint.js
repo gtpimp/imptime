@@ -67,12 +67,6 @@ class Sprint extends Component {
 		            <SprintRowDiv key={this.key+"."+sprint.id}
                               onClick={onClickedSprint}
                               is_selected={is_selected}
-                              className={classNames('sprint',
-                                                    'sprint__type-'+sprint.sprint_type,
-                                                    {
-                                                        'div-table__row--drop-target': isOver,
-                                                        'sprint__is_clone': sprint.sprint_template_id,
-                                                    })}
 		            >
 
                   { map(visible_header_keys, function(header_key) {
