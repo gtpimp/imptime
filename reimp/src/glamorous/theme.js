@@ -21,6 +21,7 @@ export const default_theme = {
                notok: '#E25A50',
                ok: '#85C087',
                page_background: '#E6EEF0',
+               sub_nav_bar: '#E6EEF0',
                panel_background: '#E9EEF2',
                left_panel_background: '#fafbfc',
                right_panel_background: '#ffffff',

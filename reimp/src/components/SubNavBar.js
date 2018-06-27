@@ -26,6 +26,7 @@ const SubNavBarDiv = glamorous.div({display: "flex",
                                     alignItems: "center",
                                     height: "36px",
                                     color: theme.colours.strong_text,
+                                    backgroundColor: theme.colours.sub_nav_bar,
                                     fontSize: "15px",
                                     width: "100%"})
 
