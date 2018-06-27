@@ -12,7 +12,6 @@ const GlamLink = glamorous.div({color: theme.colours.link,
                                   borderBottom: '1px solid #eee',
 
                                   ':hover': {
-                                      color: '#333',
                                       backgroundColor: '#eee',
                                       cursor: 'pointer',
                                   }})

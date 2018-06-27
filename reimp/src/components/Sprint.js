@@ -37,7 +37,6 @@ const TableCellStyle = {display: 'flex',
                         paddingLeft: '6px',
                         verticalAlign: 'middle',
                         alignItems: 'center',
-                        flex: '0 0 190px',
                         color: theme.colours.list_text
 }
 
@@ -60,6 +59,18 @@ const SprintStatusDiv = glamorous.div(StatusCircle,
                                                  backgroundColor: status_ok ? 'green' : 'lightgray'
                                              })
 )
+
+const SprintLink = glamorous(Link)({display: 'flex',
+                                    font: theme.fonts.list_items,
+                                    paddingLeft: '6px',
+                                    verticalAlign: 'middle',
+                                    alignItems: 'center',
+                                    color: theme.colours.list_text,
+
+                                    ':hover': {
+                                        cursor: 'pointer',
+                                    }
+})
 
 
 class Sprint extends Component {
@@ -169,27 +180,25 @@ class Sprint extends Component {
                                 )
                             case "num_issues":
                                 return (
-                                    <Link to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
-                                          className="div-table__cell sprint__cell__secondary"
-                                          onClick={that.onIssuesClick}
-                                          key={header_key}
-                                          style={getCellStyle(header)}>
+                                    <SprintLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                                onClick={that.onIssuesClick}
+                                                key={header_key}
+                                                style={getCellStyle(header)}>
                                       <div className="sprint__cell--num-issues">
                                         {sprint.num_issues || 0} Issues
                                       </div>
-                                    </Link>
+                                    </SprintLink>
                                 )
                             case "num_testable_issues":
                                 return (
-                                    <Link to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
-                                          className="div-table__cell sprint__cell__secondary"
-                                          onClick={that.onIssuesClick}
-                                          key={header_key}
-                                          style={getCellStyle(header)}>
+                                    <SprintLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                                onClick={that.onIssuesClick}
+                                                key={header_key}
+                                                style={getCellStyle(header)}>
                                       <div className="sprint__cell--num-issues">
                                         {sprint.num_testable_issues || 0} Issues
                                       </div>
-                                    </Link>
+                                    </SprintLink>
                                 )
                             case "status":
                                 return (
