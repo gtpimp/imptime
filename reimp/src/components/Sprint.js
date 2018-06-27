@@ -10,7 +10,7 @@ import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
 import '../sass/sprint.css'
-import { SprintStatusDiv, SprintRowDiv } from './styles'
+import { SprintStatusDiv, SprintRowDiv, TableCellDiv, TableCellSecondaryDiv } from './styles'
 
 class Sprint extends Component {
 
@@ -45,9 +45,9 @@ class Sprint extends Component {
 	      if ( ! sprint ) {
 	          return (
                 <SprintRowDiv>
-                  <div className="div-table__cell">
+                  <TableCellDiv>
                     Loading...
-                  </div>
+                  </TableCellDiv>
                 </SprintRowDiv>
             )
 	      }
@@ -58,8 +58,8 @@ class Sprint extends Component {
                               onClick={onClickedSprint}
                               is_selected={is_selected}
 		            >
-		              <div className="div-table__cell">{sprint && sprint.id}</div>
-		              <div className="div-table__cell">Loading...</div>
+		              <TableCellDiv>{sprint && sprint.id}</TableCellDiv>
+		              <TableCellDiv>Loading...</TableCellDiv>
 		            </SprintRowDiv>
 	          )
 	      } else {
@@ -74,30 +74,30 @@ class Sprint extends Component {
                         switch(header_key) {
                             case "number":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       <div className="sprint__cell--number">
                                         {sprint.number}
                                       </div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "ref":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       <div className="sprint__cell--number">
                                         {sprint.id}
                                       </div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "name":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       <div className="sprint__cell--name">
                                         {sprint.name}
                                       </div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "start_time":
                                 return (
