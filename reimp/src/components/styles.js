@@ -36,6 +36,15 @@ export const ProjectRowDiv = glamorous.div(DefaultListRowStyle,
                                            )
 )
 
+export const SprintRowDiv = glamorous.div(DefaultListRowStyle,
+                                           ({is_selected}) => (
+                                               {backgroundColor: is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+                                                ':hover': {
+                                                    backgroundColor: is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
+                                                }}
+                                           )
+)
+
 export const ProjectStatusDiv = glamorous.div(StatusCircle,
                                               ({colour}) => ({
                                                   backgroundColor: colour

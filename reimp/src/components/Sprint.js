@@ -10,7 +10,7 @@ import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
 import '../sass/sprint.css'
-import { SprintStatusDiv } from './styles'
+import { SprintStatusDiv, SprintRowDiv } from './styles'
 
 class Sprint extends Component {
 
@@ -44,37 +44,35 @@ class Sprint extends Component {
 
 	      if ( ! sprint ) {
 	          return (
-                <div className="div-table__row">
+                <SprintRowDiv>
                   <div className="div-table__cell">
                     Loading...
                   </div>
-                </div>
+                </SprintRowDiv>
             )
 	      }
 
 	      if ( ! is_loading === false ) {
 	          return (
-		            <div key={this.key+"."+sprint.id}
-                     onClick={onClickedSprint}
-                     className={classNames("div-table__row",
-                                           {'div-table__row--selected':is_selected})}
+		            <SprintRowDiv key={this.key+"."+sprint.id}
+                              onClick={onClickedSprint}
+                              is_selected={is_selected}
 		            >
 		              <div className="div-table__cell">{sprint && sprint.id}</div>
 		              <div className="div-table__cell">Loading...</div>
-		            </div>
+		            </SprintRowDiv>
 	          )
 	      } else {
             return (
-		            <div key={this.key+"."+sprint.id}
-                     onClick={onClickedSprint}
-                     className={classNames("div-table__row",
-                                           'sprint',
-                                           'sprint__type-'+sprint.sprint_type,
-                                           {
-                                               'div-table__row--drop-target': isOver,
-                                               'sprint__is_clone': sprint.sprint_template_id,
-                                               'div-table__row--selected': is_selected
-                                           })}
+		            <SprintRowDiv key={this.key+"."+sprint.id}
+                              onClick={onClickedSprint}
+                              is_selected={is_selected}
+                              className={classNames('sprint',
+                                                    'sprint__type-'+sprint.sprint_type,
+                                                    {
+                                                        'div-table__row--drop-target': isOver,
+                                                        'sprint__is_clone': sprint.sprint_template_id,
+                                                    })}
 		            >
 
                   { map(visible_header_keys, function(header_key) {
@@ -360,7 +358,7 @@ class Sprint extends Component {
                         }
                     }
                   )}
-                </div>
+                </SprintRowDiv>
             )
 	      }
     }
