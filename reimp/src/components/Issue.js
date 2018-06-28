@@ -94,25 +94,16 @@ const IconStyle = {
     width: '24px',
 }
 
+const FeatureExpandIconUrl = require(`../images/ic_expand_more_black_24dp_1x.png`)
 const FeatureExpandIconDiv = glamorous.div(IconStyle,
-                                           {backgroundImage: `url('../images/ic_chevron_right_black_24dp_1x.png')`}
+                                           {backgroundImage: `url(${FeatureExpandIconUrl})`}
 )
 
+const FeatureCollapseIconUrl = require(`../images/ic_chevron_right_black_24dp_1x.png`)
 const FeatureCollapseIconDiv = glamorous.div(IconStyle,
-                                             {backgroundImage: `url('../images/ic_expand_more_black_24dp_1x.png')`}
+                                             {backgroundImage: `url(${FeatureCollapseIconUrl})`}
 )
 
-
-/* .icon--expand {
- *     @include icon(24px, 24px, 'ic_chevron_right_black_24dp_1x.png');
- *     opacity: 0.2;
- * }
-
-   .icon--collapse {
-   @include icon(24px, 24px, 'ic_expand_more_black_24dp_1x.png');
-   opacity: 0.2    ;
-   }
- */
 class Issue extends Component {
 
     constructor(props) {
