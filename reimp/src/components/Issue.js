@@ -95,11 +95,11 @@ const IconStyle = {
 }
 
 const FeatureExpandIconDiv = glamorous.div(IconStyle,
-                                           {backgroundImage: "url('../images/ic_chevron_right_black_24dp_1x.png')"}
+                                           {backgroundImage: `url('../images/ic_chevron_right_black_24dp_1x.png')`}
 )
 
 const FeatureCollapseIconDiv = glamorous.div(IconStyle,
-                                             {backgroundImage: "url('../images/ic_expand_more_black_24dp_1x.png')"}
+                                             {backgroundImage: `url('../images/ic_expand_more_black_24dp_1x.png')`}
 )
 
 
@@ -297,12 +297,13 @@ class Issue extends Component {
                                       { issue.can_group_issues &&
                                         <div>
                                           { show_children &&
-                                            <FeatureCollapseIconDiv className={classNames({"icon--collapse--highlight":isFeatureOfSelectedIssue})}
-                                                                    onClick={that.onCollapseFeaturesClick}>
-                                            </FeatureCollapseIconDiv>
+                                            <FeatureExpandIconDiv onClick={that.onCollapseFeaturesClick}
+                                                                  isFeatureOfSelectedIssue={isFeatureOfSelectedIssue}>
+                                            </FeatureExpandIconDiv>
                                           }
                                           { !show_children &&
-                                            <FeatureExpandIconDiv onClick={that.onExpandFeaturesClick}></FeatureExpandIconDiv>
+                                            <FeatureCollapseIconDiv onClick={that.onExpandFeaturesClick}>
+                                            </FeatureCollapseIconDiv>
                                           }
                                         </div>
                                       }
