@@ -2,32 +2,10 @@
 @import 'div-table.scss';
 @import 'icon.scss';
 
-.list-table__row--unselected.issue--belongs-to-selected-feature {
-}
-
-.list-table__row--unselected.issue--feature-of-selected-issue {
-}
-
-.issue--fake {
-    // box-shadow: inset 0 -1px 0 0 #E0E0E0;
-    // font: $font-1;
-    //font-style: italic;
-}
-
 issue--grouped {
     background-color: $color-4;
     // box-shadow: inset 0 -1px 0 0 #E0E0E0;
     font: $font-1;
-}
-
-/* .issue--cursor-item td {
-   -webkit-box-shadow:inset 0px 0px 0px 2px $color-25;
-   -moz-box-shadow:inset 0px 0px 0px 2px $color-25;
-   box-shadow:inset 0px 0px 0px 2px $color-25;
-   } */
-
-.issue--grouped .div-table__cell:first-child {
-    // padding-left: 50px;
 }
  
 .issue_list__panel-body__right {

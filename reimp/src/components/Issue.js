@@ -51,14 +51,25 @@ const DefaultListRowStyle = {display: 'flex',
                              }
 }
 
+const TableCellStyle = {display: 'flex',
+                        font: theme.fonts.list_items,
+                        verticalAlign: 'middle',
+                        alignItems: 'center',
+                        color: theme.colours.list_text,
+}
+
 const IssueRowDiv = glamorous.div(DefaultListRowStyle,
                                   props => (
                                       {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+
+                                       font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items,
                                        ':hover': {
                                            backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
                                        }}
                                   )
 )
+
+const TableCellDiv = glamorous.div(TableCellStyle)
 
 class Issue extends Component {
 
@@ -181,25 +192,22 @@ class Issue extends Component {
 
         if (!issue) {
             return (
-                <div class="div-table__row">
+                <IssueRowDiv>
                   <div class="div-table__cell">Loading...</div>
-                </div>
+                </IssueRowDiv>
             )
         }
 
         if (issue.loaded === false) {
             return (
-                <div key={this.key + "." + issue.id}
-                     onClick={this.onClickedIssue}
-                     className={classNames("div-table__row", 'issue',
-                                           {'div-table__row--selected': is_selected,
-                                            'div-table__row--drop-target': isOver})}
+                <IssueRowDiv key={this.key + "." + issue.id}
+                             onClick={this.onClickedIssue}
                 >
                   <div className="div-table__cell">
                     <div className="issue_list__issue_number_button">{issue.number}</div>
                   </div>
                   <div className="div-table__cell">Loading...</div>
-                </div>
+                </IssueRowDiv>
             )
         } else {
             const isFeature = issue.can_group_issues
@@ -210,21 +218,8 @@ class Issue extends Component {
                 <IssueRowDiv key={that.key + "." + issue.id}
                              onClick={that.onClickedIssue}
                              is_selected={is_selected}
-                             className={classNames('list-table__row--compact',
-                                                   {
-                                                       'div-table__row--highlighted': is_highlighted,
-                                                       'div-table__row--drop-target': isOver,
-                                                       'issue--standalone': isStandalone,
-                                                       'issue--fake': is_fake===true,
-                                                       'issue--feature': isFeature,
-                                                       'issue--grouped': belongsToAFeature,
-                                                       'issue--cursor-item': is_cursor_item,
-                                                       'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
-                                                       'issue--belongs-to-selected-feature': belongsToSelectedFeature,
-                                                       /*'tr--selected': is_selected,*/
-                                                       'div-table__row--invalidated': is_invalidated,
-                                                       'div-table__row--saving': is_saving,
-                                                   })}
+                             isFeature={isFeature}
+                             belongsToAFeature={belongsToAFeature}
                 >
 
                   { map(visible_header_keys, function(header_key) {

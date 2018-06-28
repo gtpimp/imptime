@@ -4,6 +4,7 @@ const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-seri
                     'semibold-15': "normal normal 500 15px 'Fira Sans', sans-serif",
                     'regular-13': "normal normal 400 13px 'Fira Sans', sans-serif",
                     'regular-15': "normal normal 400 15px 'Fira Sans', sans-serif",
+                    'bold-12': "normal normal 600 12px 'Fira Sans', sans-serif",
                     'bold-15': "normal normal 600 15px 'Fira Sans', sans-serif",
                     'semibold-20': "normal normal 500 20px 'Fira Sans', sans-serif"
 }
@@ -32,6 +33,7 @@ export const default_theme = {
              button_popup: fonts_raw['semibold-12'],
              links: fonts_raw['semibold-12'],
              list_headers: fonts_raw['semibold-12'],
+             feature_issue: fonts_raw['bold-12'],
              header: fonts_raw['regular-15'],
              search_bar: fonts_raw['regular-15'],
              tags: fonts_raw['semibold-12'],
