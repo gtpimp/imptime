@@ -1,19 +1,6 @@
 @import 'variables.scss';
 @import 'div-table.scss';
 @import 'icon.scss';
- 
-.issue {
-    .reveal-on-hover--block {
-        opacity: 0.1;
-    }
-
-    &:hover {
-        .reveal-on-hover--block {
-            /*display: block;*/
-            opacity: 1.0;
-        }
-    }
-}
 
 .list-table__row--unselected.issue--belongs-to-selected-feature {
 }

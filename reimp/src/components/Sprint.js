@@ -9,10 +9,8 @@ import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
-import '../sass/sprint.css'
 import glamorous from 'glamorous'
 import { default_theme as theme } from '../glamorous/theme'
-import SubMenuItemLink from './SubMenuItemLink'
 
 const StatusCircle = {height: '16px',
                       width: '16px',

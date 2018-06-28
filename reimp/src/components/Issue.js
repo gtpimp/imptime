@@ -35,6 +35,30 @@ import DeleteIssue from '../components/DeleteIssue'
 import TagListFlat from '../components/TagListFlat'
 import Timestamp from './Timestamp'
 import { logged_in_user } from '../actions/Auth'
+import glamorous from 'glamorous'
+import { default_theme as theme } from '../glamorous/theme'
+
+
+const DefaultListRowStyle = {display: 'flex',
+                             flexDirection: 'row',
+                             minHeight: '40px',
+                             font: theme.fonts.list_items,              
+                             paddingLeft: '18px',
+                             backgroundColor: theme.colours.left_panel_background,
+                             
+                             ':hover': {
+                                 backgroundColor: theme.colours.list_rollover
+                             }
+}
+
+const IssueRowDiv = glamorous.div(DefaultListRowStyle,
+                                  props => (
+                                      {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+                                       ':hover': {
+                                           backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
+                                       }}
+                                  )
+)
 
 class Issue extends Component {
 
@@ -183,26 +207,24 @@ class Issue extends Component {
             const isStandalone = !isFeature && !belongsToAFeature
 
             return (
-                <div key={that.key + "." + issue.id}
-                     onClick={that.onClickedIssue}
-                     className={classNames("div-table__row",
-                                           'issue',
-                                           'list-table__row--compact',
-                                           {
-                                               'div-table__row--selected': is_selected,
-                                               'div-table__row--highlighted': is_highlighted,
-                                               'div-table__row--drop-target': isOver,
-                                               'issue--standalone': isStandalone,
-                                               'issue--fake': is_fake===true,
-                                               'issue--feature': isFeature,
-                                               'issue--grouped': belongsToAFeature,
-                                               'issue--cursor-item': is_cursor_item,
-                                               'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
-                                               'issue--belongs-to-selected-feature': belongsToSelectedFeature,
-                                               /*'tr--selected': is_selected,*/
-                                               'div-table__row--invalidated': is_invalidated,
-                                               'div-table__row--saving': is_saving,
-                                           })}
+                <IssueRowDiv key={that.key + "." + issue.id}
+                             onClick={that.onClickedIssue}
+                             is_selected={is_selected}
+                             className={classNames('list-table__row--compact',
+                                                   {
+                                                       'div-table__row--highlighted': is_highlighted,
+                                                       'div-table__row--drop-target': isOver,
+                                                       'issue--standalone': isStandalone,
+                                                       'issue--fake': is_fake===true,
+                                                       'issue--feature': isFeature,
+                                                       'issue--grouped': belongsToAFeature,
+                                                       'issue--cursor-item': is_cursor_item,
+                                                       'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
+                                                       'issue--belongs-to-selected-feature': belongsToSelectedFeature,
+                                                       /*'tr--selected': is_selected,*/
+                                                       'div-table__row--invalidated': is_invalidated,
+                                                       'div-table__row--saving': is_saving,
+                                                   })}
                 >
 
                   { map(visible_header_keys, function(header_key) {
@@ -440,7 +462,7 @@ class Issue extends Component {
                     }
                   )}
                   
-                </div>
+                </IssueRowDiv>
             )
         }
     }
