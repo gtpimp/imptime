@@ -350,9 +350,7 @@ class Issue extends Component {
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="issue-cell__created-at">
                                         <Timestamp value={issue.created_at} format="from_now"/>
-                                      </div>
                                     </TableCellSecondaryDiv>
                                 )
                             case "status":
@@ -426,7 +424,6 @@ class Issue extends Component {
                                         <div key={user_id}
                                              className="div-table__cell issue__cell__secondary"
                                              style={getCellStyle(header)}>
-                                          <div className="issue-cell__estimate_column">
                                             {logged_in_user_id === user_id &&
                                              <EditableIssueEstimate issue_id={issue.id}
                                                                     actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
@@ -437,7 +434,6 @@ class Issue extends Component {
                                                        actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
                                                        estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
                                             }
-                                          </div>
                                         </div>
                                     )
                                 )
@@ -445,12 +441,10 @@ class Issue extends Component {
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="issue-cell__estimate_column">
                                         {logged_in_user_can_estimate_user_id &&
                                          <EditableIssueEstimate issue_id={issue.id}
                                                                 class_name="issue-cell__my-estimate"/>
                                         }
-                                      </div>
                                     </TableCellSecondaryDiv>
                                 )
                             case "estimated":
