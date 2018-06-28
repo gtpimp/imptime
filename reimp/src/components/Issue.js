@@ -104,6 +104,16 @@ const FeatureCollapseIconDiv = glamorous.div(IconStyle,
                                              {backgroundImage: `url(${FeatureCollapseIconUrl})`}
 )
 
+const ChildIconUrl = require(`../images/ic_subdirectory_arrow_right_black_24dp_1x.png`)
+const ChildIconDiv = glamorous.div(IconStyle,
+                                   {backgroundImage: `url(${ChildIconUrl})`,
+                                    opacity: '0.2'},
+                                   ({belongsToSelectedFeature}) => ({
+                                       opacity: '1.0'
+                                   })
+)
+
+
 class Issue extends Component {
 
     constructor(props) {
@@ -299,8 +309,7 @@ class Issue extends Component {
                                         </div>
                                       }
                                       { !issue.can_group_issues && issue.parent_group_id &&
-                                        <div className={classNames({"icon--child":true,
-                                                                    "icon--child--highlight":belongsToSelectedFeature})}></div>
+                                        <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
                                       }
                                     </TableCellDiv>
                                 )
