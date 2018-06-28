@@ -35,7 +35,7 @@ const TableCellStyle = {display: 'flex',
                         paddingLeft: '6px',
                         verticalAlign: 'middle',
                         alignItems: 'center',
-                        color: theme.colours.list_text,
+                        color: theme.colours.normal_text,
 }
 
 
@@ -43,8 +43,8 @@ const SprintRowDiv = glamorous.div(DefaultListRowStyle,
                                    ({is_selected}) => (
                                        {backgroundColor: is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
                                         ':hover': {
-                                                   backgroundColor: is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
-                                               }}
+                                            backgroundColor: is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
+                                        }}
                                    )
 )
 
@@ -441,12 +441,12 @@ function mapStateToProps(state, props) {
     const this_sprint = (sprint && sprint.items_by_id && sprint.items_by_id[sprint_id]) || {}
 
     return {
-	sprint: this_sprint,
-	sprint_id: sprint_id,
-	is_selected: is_selected,
-	is_loading: is_loading,
-	is_collapsed: is_collapsed,
-	is_expanded: !is_collapsed,
+	      sprint: this_sprint,
+	      sprint_id: sprint_id,
+	      is_selected: is_selected,
+	      is_loading: is_loading,
+	      is_collapsed: is_collapsed,
+	      is_expanded: !is_collapsed,
         header_list
     }
 }

@@ -55,7 +55,7 @@ const TableCellStyle = {display: 'flex',
                         font: theme.fonts.list_items,
                         verticalAlign: 'middle',
                         alignItems: 'center',
-                        color: theme.colours.list_text,
+                        color: theme.colours.normal_text,
 }
 
 const IssueRowDiv = glamorous.div(DefaultListRowStyle,
@@ -69,10 +69,50 @@ const IssueRowDiv = glamorous.div(DefaultListRowStyle,
                                   )
 )
 
-const TableCellDiv = glamorous.div(TableCellStyle)
+const TableCellDiv = glamorous.div(TableCellStyle,
+                                   props => (
+                                       {
+                                           font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items
+                                       }
+                                   )
+)
 const TableCellSecondaryDiv = glamorous.div(TableCellStyle,
-                                            {color: theme.colours.normal_text})
+                                            {color: theme.colours.normal_text,
+                                             opacity: '0.6',
 
+                                             ':hover': {
+                                                 opacity: '1.0'
+                                             }
+                                            }
+)
+
+const IconStyle = {
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    backgroundSize: '24px 24px',
+    height: '24px',
+    width: '24px',
+}
+
+const FeatureExpandIconDiv = glamorous.div(IconStyle,
+                                           {backgroundImage: "url('../images/ic_chevron_right_black_24dp_1x.png')"}
+)
+
+const FeatureCollapseIconDiv = glamorous.div(IconStyle,
+                                             {backgroundImage: "url('../images/ic_expand_more_black_24dp_1x.png')"}
+)
+
+
+/* .icon--expand {
+ *     @include icon(24px, 24px, 'ic_chevron_right_black_24dp_1x.png');
+ *     opacity: 0.2;
+ * }
+
+   .icon--collapse {
+   @include icon(24px, 24px, 'ic_expand_more_black_24dp_1x.png');
+   opacity: 0.2    ;
+   }
+ */
 class Issue extends Component {
 
     constructor(props) {
@@ -205,10 +245,10 @@ class Issue extends Component {
                 <IssueRowDiv key={this.key + "." + issue.id}
                              onClick={this.onClickedIssue}
                 >
-                  <div className="div-table__cell">
-                    <div className="issue_list__issue_number_button">{issue.number}</div>
-                  </div>
-                  <div className="div-table__cell">Loading...</div>
+                  <TableCellDiv>
+                    <div>{issue.number}</div>
+                  </TableCellDiv>
+                  <TableCellDiv>Loading...</TableCellDiv>
                 </IssueRowDiv>
             )
         } else {
@@ -257,12 +297,12 @@ class Issue extends Component {
                                       { issue.can_group_issues &&
                                         <div>
                                           { show_children &&
-                                            <div className={classNames("icon--collapse",
-                                                                       {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
-                                                 onClick={that.onCollapseFeaturesClick}></div>
+                                            <FeatureCollapseIconDiv className={classNames({"icon--collapse--highlight":isFeatureOfSelectedIssue})}
+                                                                    onClick={that.onCollapseFeaturesClick}>
+                                            </FeatureCollapseIconDiv>
                                           }
                                           { !show_children &&
-                                            <div className="icon--expand" onClick={that.onExpandFeaturesClick}></div>
+                                            <FeatureExpandIconDiv onClick={that.onExpandFeaturesClick}></FeatureExpandIconDiv>
                                           }
                                         </div>
                                       }
@@ -275,7 +315,8 @@ class Issue extends Component {
                             case "name":
                                 return (
                                     <TableCellDiv key={header_key}
-                                                  style={getCellStyle(header)}>
+                                                  style={getCellStyle(header)}
+                                                  isFeature={isFeature}>
                                       <div className="issue-cell__issue-name">
                                         {subject_prefix}{issue.subject}{subject_suffix}
                                         { issue.group_children && issue.group_children.length > 0 &&
@@ -291,31 +332,31 @@ class Issue extends Component {
                                 )
                             case "assignee":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "created_at":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="issue-cell__created-at">
                                         <Timestamp value={issue.created_at} format="from_now"/>
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "status":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "estimate_summary":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="issue-cell__estimate_summary">
                                         {map(sprint.user_ids_who_can_estimate, function(user_id) {
                                              const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
@@ -341,16 +382,16 @@ class Issue extends Component {
                                              }
                                          })}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "tags":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="issue-cell__tag">
                                         <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "tag_columns":
                                 return (
@@ -393,36 +434,36 @@ class Issue extends Component {
                                 )
                             case "my_estimate":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="issue-cell__estimate_column">
                                         {logged_in_user_can_estimate_user_id &&
                                          <EditableIssueEstimate issue_id={issue.id}
                                                                 class_name="issue-cell__my-estimate"/>
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "estimated":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )                                   
                             case "my_time":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="issue__cell--elapsed-time">
                                         <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "clock_in":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                                         <TimerSwitch
                                             active={issue.am_i_clocked_in}
@@ -430,27 +471,27 @@ class Issue extends Component {
                                             onStop={that.onClockOut}
                                         />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "delete":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                                         <DeleteIssue
                                             onDelete={that.onDeleteIssue}
                                         />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "small_delete":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className={"reveal-on-hover--block"}>
                                         <div className="issue__small-delete-image" onClick={that.onDeleteIssue} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
 
                             default:
