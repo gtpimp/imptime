@@ -70,6 +70,8 @@ const IssueRowDiv = glamorous.div(DefaultListRowStyle,
 )
 
 const TableCellDiv = glamorous.div(TableCellStyle)
+const TableCellSecondaryDiv = glamorous.div(TableCellStyle,
+                                            {color: theme.colours.normal_text})
 
 class Issue extends Component {
 
@@ -227,31 +229,31 @@ class Issue extends Component {
                         switch(header_key) {
                             case "number":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       <div>{issue.number}</div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "issue_type":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)} >
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)} >
                                       <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "attachment":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)} >
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)} >
                                       {
                                           issue.has_attachment && <div className="icon icon--attachment"></div>
                                       }
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "expand_feature":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       { issue.can_group_issues &&
                                         <div>
                                           { show_children &&
@@ -268,12 +270,12 @@ class Issue extends Component {
                                         <div className={classNames({"icon--child":true,
                                                                     "icon--child--highlight":belongsToSelectedFeature})}></div>
                                       }
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "name":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       <div className="issue-cell__issue-name">
                                         {subject_prefix}{issue.subject}{subject_suffix}
                                         { issue.group_children && issue.group_children.length > 0 &&
@@ -285,7 +287,7 @@ class Issue extends Component {
                                           </span>
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "assignee":
                                 return (
