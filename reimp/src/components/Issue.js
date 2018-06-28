@@ -108,11 +108,19 @@ const ChildIconUrl = require(`../images/ic_subdirectory_arrow_right_black_24dp_1
 const ChildIconDiv = glamorous.div(IconStyle,
                                    {backgroundImage: `url(${ChildIconUrl})`,
                                     opacity: '0.2'},
-                                   ({belongsToSelectedFeature}) => ({
-                                       opacity: '1.0'
+                                   ({belongsToSelectedFeature=false}) => ({
+                                       opacity: belongsToSelectedFeature ? '1.0' : '0.2'
                                    })
 )
 
+
+const AttachmentIconUrl = require(`../images/attachment.png`)
+const AttachmentIconDiv = glamorous.div(IconStyle,
+                                        {backgroundImage: `url(${AttachmentIconUrl})`,
+                                         backgroundSize: '15px 15px',
+                                         height: '15px',
+                                         width: '15px'}
+)
 
 class Issue extends Component {
 
@@ -287,7 +295,7 @@ class Issue extends Component {
                                     <TableCellDiv key={header_key}
                                                   style={getCellStyle(header)} >
                                       {
-                                          issue.has_attachment && <div className="icon icon--attachment"></div>
+                                          issue.has_attachment && <AttachmentIconDiv></AttachmentIconDiv>
                                       }
                                     </TableCellDiv>
                                 )
@@ -318,7 +326,7 @@ class Issue extends Component {
                                     <TableCellDiv key={header_key}
                                                   style={getCellStyle(header)}
                                                   isFeature={isFeature}>
-                                      <div className="issue-cell__issue-name">
+                                      <div>
                                         {subject_prefix}{issue.subject}{subject_suffix}
                                         { issue.group_children && issue.group_children.length > 0 &&
                                           <span>
