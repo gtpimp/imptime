@@ -244,7 +244,7 @@ class Issue extends Component {
         if (!issue) {
             return (
                 <IssueRowDiv>
-                  <div class="div-table__cell">Loading...</div>
+                  <TableCellDiv>Loading...</TableCellDiv>
                 </IssueRowDiv>
             )
         }
@@ -350,7 +350,7 @@ class Issue extends Component {
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                        <Timestamp value={issue.created_at} format="from_now"/>
+                                      <Timestamp value={issue.created_at} format="from_now"/>
                                     </TableCellSecondaryDiv>
                                 )
                             case "status":
@@ -421,30 +421,29 @@ class Issue extends Component {
                             case "estimate_columns":
                                 return (
                                     map(sprint.user_ids_who_can_estimate, (user_id) =>
-                                        <div key={user_id}
-                                             className="div-table__cell issue__cell__secondary"
-                                             style={getCellStyle(header)}>
-                                            {logged_in_user_id === user_id &&
-                                             <EditableIssueEstimate issue_id={issue.id}
-                                                                    actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                                                    class_name="issue-cell__my-estimate"/> }
+                                        <TableCellSecondaryDiv key={user_id}
+                                                               style={getCellStyle(header)}>
+                                          {logged_in_user_id === user_id &&
+                                           <EditableIssueEstimate issue_id={issue.id}
+                                                                  actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                                  class_name="issue-cell__my-estimate"/> }
 
-                                            {logged_in_user_id !== user_id &&
-                                             <Progress issue={issue}
-                                                       actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                                       estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
-                                            }
-                                        </div>
+                                          {logged_in_user_id !== user_id &&
+                                           <Progress issue={issue}
+                                                     actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                     estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
+                                          }
+                                        </TableCellSecondaryDiv>
                                     )
                                 )
                             case "my_estimate":
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                        {logged_in_user_can_estimate_user_id &&
-                                         <EditableIssueEstimate issue_id={issue.id}
-                                                                class_name="issue-cell__my-estimate"/>
-                                        }
+                                      {logged_in_user_can_estimate_user_id &&
+                                       <EditableIssueEstimate issue_id={issue.id}
+                                                              class_name="issue-cell__my-estimate"/>
+                                      }
                                     </TableCellSecondaryDiv>
                                 )
                             case "estimated":
@@ -458,9 +457,7 @@ class Issue extends Component {
                                 return (
                                     <TableCellSecondaryDiv key={header_key}
                                                            style={getCellStyle(header)}>
-                                      <div className="issue__cell--elapsed-time">
-                                        <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
-                                      </div>
+                                      <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                                     </TableCellSecondaryDiv>
                                 )
                             case "clock_in":
