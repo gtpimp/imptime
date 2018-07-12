@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { map, includes } from 'lodash'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
-import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import OtherUser from './OtherUser'
 import '../sass/sticky-header.scss'
 import {
@@ -16,23 +15,9 @@ class IssueListHeader extends Component {
         this.onPrimaryButtonClick = this.onPrimaryButtonClick.bind(this)
         this.onSecondaryButtonClick = this.onSecondaryButtonClick.bind(this)
         this.onTertiaryButtonClick = this.onTertiaryButtonClick.bind(this)
-        this.handleScroll = this.handleScroll.bind(this)
-        this.getHeaderPosition = this.getHeaderPosition.bind(this)
         this.state = {
             headerPosition: 100
         }
-    }
-
-    componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll)
-    }
-
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
-    }
-
-    handleScroll() {
-        this.setState({headerPosition: this.getHeaderPosition()})
     }
 
     onPrimaryButtonClick() {
@@ -53,23 +38,11 @@ class IssueListHeader extends Component {
         }
     }
 
-    getHeaderPosition() {
-        const { header_height, toolbar_height } = this.props
-        const position = header_height + toolbar_height + 1;
-        if (window.pageYOffset > position) {
-            return position
-        } else {
-            return position
-        }
-    }
-
     render() {
         const { header_list, tag_category_names, sprint, logged_in_user_id } = this.props
-        const headerPosition = this.getHeaderPosition()
-        const styles={top: headerPosition+'px'}
         
         return(
-            <div className="div-table__header_row" style={styles}>
+            <div className="div-table__header_row">
               { map(header_list, function(v, index) {
                     const k = v.key
                     const react_key = ""+ k + index
@@ -133,9 +106,6 @@ function mapStateToProps(state, props) {
         show_primary_button: props.primary_button_label,
         show_secondary_button: props.secondary_button_label,
         show_tertiary_button: props.tertiary_button_label,
-        header_height: getHeaderHeight(state),
-        footer_height: getFooterHeight(state),
-        toolbar_height: getToolbarHeight(state),
         header_list
     }
     

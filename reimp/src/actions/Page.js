@@ -139,6 +139,34 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
     return v
 }
 
+export function setGloballySelectedIssueId(project_id, sprint_id, issue_id) {
+    return setGloballySelectedEntityIds({project_id: project_id, sprint_id: sprint_id, issue_id: issue_id})
+}
+
+export function setGloballySelectedSprintId(project_id, sprint_id) {
+    return setGloballySelectedEntityIds({project_id: project_id, sprint_id: sprint_id})
+}
+
+export function setGloballySelectedProjectId(project_id) {
+    return setGloballySelectedEntityIds({project_id: project_id})
+}
+
+export function setGloballySelectedEntityIds(entity_ids) {
+    return setGlobalPageFlag("_selected_entity_ids_", entity_ids)
+}
+
+export function getGloballySelectedEntityIds(state) {
+    return getGlobalPageFlag(state, "_selected_entity_ids_", null)
+}
+
+export function setGlobalPageFlag(flag_name, value) {
+    return setPageFlag("__GLOBAL_PAGE__", flag_name, value)
+}
+
+export function getGlobalPageFlag(state, flag_name, default_value) {
+    return getPageFlag(state, "__GLOBAL_PAGE__", flag_name, default_value)
+}
+
 export function updateHeaderList(new_header_list, page_key) {
 
     var header_list = new_header_list

@@ -12,7 +12,6 @@ class LoginPage extends Component {
         this.onLogin = this.onLogin.bind(this)
         this.onClickedForgotPassword = this.onClickedForgotPassword.bind(this)
         this.onClickedCreateAccount = this.onClickedCreateAccount.bind(this)
-        this.onClickedOldImpTime = this.onClickedOldImpTime.bind(this)
     }
 
     onLogin(values) {
@@ -20,20 +19,22 @@ class LoginPage extends Component {
         return dispatch(login(values.username, values.password))
     }
 
-    onClickedForgotPassword() {
+    onClickedForgotPassword(evt) {
         const { history } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
         history.push('/password/forgot');
     }
 
-    onClickedCreateAccount() {
+    onClickedCreateAccount(evt) {
         const { history } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
         history.push('/account/create');
     }
 
-    onClickedOldImpTime() {
-        window.open("http://api.imptime.com", "_blank")
-    }
-    
     render() {
 
         const { handleSubmit, error, submitting } = this.props
@@ -62,10 +63,6 @@ class LoginPage extends Component {
                                     <button className="button button--large login__forgot-password-link" onClick={this.onClickedForgotPassword}>forgot password</button>
                                     <button className="button button--large" onClick={this.onClickedCreateAccount}>New account</button>
                                   </div>
-                                  <div className="login__footer">
-                                    <button className="button button--large" onClick={this.onClickedOldImpTime}>Old ImpTime</button>
-                                  </div>
-
                             </form>
                         </div>
                     </div>

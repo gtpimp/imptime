@@ -1,7 +1,17 @@
 import { impfetch } from './lib.js'
-import keyBy from 'lodash/keyBy'
+import { keyBy, filter, includes } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
-import { ENTITY_KEY__SPRINT } from '../actions/ItemListKeyRegistry'
+import {
+    ENTITY_KEY__SPRINT,
+    HEADER_LIST_NAME__SPRINT,
+    small_col_width,
+    large_col_width
+} from './ItemListKeyRegistry'
+import {
+    updateMienHeaders,
+    getHeaderListForCurrentMien,
+    getHeaderListForMien
+} from '../actions/Mien'
 
 export const ANNOUNCE_SPRINTS_SAVING = 'ANNOUNCE_SPRINTS_SAVING'
 export const ANNOUNCE_SPRINTS_SAVED = 'ANNOUNCE_SPRINTS_SAVED'
@@ -23,6 +33,43 @@ export const ANNOUNCE_SAVING_NEW_SPRINT_FAILED = 'ANNOUNCE_SAVING_NEW_SPRINT_FAI
 export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
 export const ANNOUNCE_CLONE_SPRINT_FAILED = 'ANNOUNCE_CLONE_SPRINT_FAILED'
+
+export var ALL_AVAILABLE_SPRINT_HEADERS =
+    [ {key:'name', label:'name', description:'Name', width:large_col_width},
+      {key:'ref', label:'Ref', description:'Reference', width:small_col_width},
+      {key:'number', label:'number', description:'Number', width:small_col_width},
+      {key:'start_time', label:"First clock", description:"First clocked time on this sprint", width:small_col_width},
+      {key:'end_time', label:"Last clock", description:"Last clocked time on this sprint", width:small_col_width},
+      {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width},
+      {key:'num_testable_issues', label:"Testable issues", description:"Number of testable issues", width: small_col_width},
+      {key:'num_issues_unassigned', label:"Num unassigned issues", description:"Number of all issues with no assignee", width: small_col_width},
+      {key:'num_completely_closed_issues', label:"Num completely closed issues", description:"Number of testable issues completely closed", width: small_col_width},
+      {key:'num_not_completely_closed_issues', label:"Num not completely closed issues", description:"Number of testable issues not completely closed", width: small_col_width},
+      {key:'are_all_issues_completely_closed', label:"All issues tested", description:"Have all testable issues been completely closed by tester", width:small_col_width},
+      {key:'num_dev_closed_issues', label:"Num dev closed issues", description:"Number of testable issues dev closed", width: small_col_width},
+      {key:'num_not_dev_closed_issues', label:"Num not dev closed issues", description:"Number of testable issues not dev closed", width: small_col_width},
+      {key:'are_all_issues_dev_closed', label:"All issues implemented", description:"Have all testable issues been dev closed by tester", width:small_col_width},
+      {key:'are_all_issues_assigned', label:"All issues assigned", description:"Have all testable issues been assigned to a user", width:small_col_width},
+      {key:'has_dev_started', label:"Has dev started", description:"Has time been clocked by the assigned user on any testable issue", width:small_col_width},
+      {key:'status', label:"Status", description:"Sprint status", width:small_col_width},
+      {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
+      {key:'hours_by_assignee', label:"Total clocked hours by assignee", description:"Total actual hours by the assigned user across all testable issues", width:small_col_width},
+      {key:'estimates_by_assignee', label:"Total estimated hours by assignee", description:"Total estimated hours by the assigned user across all testable issues", width:small_col_width},
+      {key:'open_estimates_by_assignee', label:"Total open estimated hours by assignee", description:"Total estimated hours by the assigned user across open testable issues", width:small_col_width},
+      {key:'num_issues_with_estimates', label:"Num estimated by assignee", description:"Number of estimated testable issues by the assigned user", width:small_col_width},
+      {key:'num_issues_without_estimates', label:"Num not estimated by assignee", description:"Number of unestimated testable issues by the assigned user", width:small_col_width},
+      {key:'are_all_issues_estimated', label:"All estimated by assignee", description:"Have all testable issues been estimated by the assigned user", width:small_col_width},
+      {key:'num_open_issues_with_estimates', label:"Num open estimated by assignee", description:"Number of open estimated testable issues by the assigned user", width:small_col_width},
+    ]
+
+const DEFAULT_SPRINT_HEADERS_KEYS = ["ref", "name", "status", "num_issues",
+                                     "are_all_issues_assigned",
+                                     "are_all_issues_estimated",
+                                     "has_dev_started",
+                                     "are_all_issues_dev_closed",
+                                     "are_all_issues_completely_closed"]
+const DEFAULT_SPRINT_HEADERS = filter(ALL_AVAILABLE_SPRINT_HEADERS, (header) => includes(DEFAULT_SPRINT_HEADERS_KEYS, header.key))
+
 
 export function invalidateAllSprints() {
     return {
@@ -345,6 +392,26 @@ export function cloneTemplateSprint(sprint_id, onDone) {
 
 export function is_sprint_invalidated(state, sprint_id) {
     return (((state.sprint || {}).invalidated_item_ids) || []).indexOf(sprint_id) !== -1
+}
+
+export function updateSprintMienHeaders(mien_id, headers) {
+    return updateMienHeaders(mien_id, HEADER_LIST_NAME__SPRINT, headers)
+}
+
+export function getSprintHeaderListForMien(mien) {
+    return getHeaderListForMien(mien, HEADER_LIST_NAME__SPRINT) || getDefaultSprintHeaders()
+}
+
+export function getSprintHeaderListForCurrentMien(state) {
+    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__SPRINT) || getDefaultSprintHeaders()
+}
+
+export function getDefaultSprintHeaders() {
+    return DEFAULT_SPRINT_HEADERS
+}
+
+export function getAllAvailableSprintHeaders() {
+    return ALL_AVAILABLE_SPRINT_HEADERS
 }
 
 

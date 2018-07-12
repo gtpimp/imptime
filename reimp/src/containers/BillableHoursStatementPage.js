@@ -7,7 +7,7 @@ class BillableHoursStatementPage extends Component {
 
     render() {
         return (
-            <div>
+            <div className="billable-statement-page">
               <h2>
                 Statement of billable hours across projects you have financial access to
               </h2>

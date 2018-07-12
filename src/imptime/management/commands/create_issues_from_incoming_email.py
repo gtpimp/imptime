@@ -222,12 +222,20 @@ class Command(BaseCommand):
             raise Exception("No project found with name %s" % project_name)
 
         sprint_name = settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME
-        sprint = Sprint.objects.get_or_create(business=project,
-                                              name=sprint_name,
-                                              defaults={'status3': SprintStatus.objects.get_or_create(name='pending',
-                                                                                                      business=project)[0],
-                                                        'project_type': 'inbox',
-                                                        'description': "For incoming unprocessed issues"})[0]
+
+        sprint = Sprint.objects.filter(business=project,
+                                       name=sprint_name,
+                                       project_type='inbox')\
+                               .filter_open()\
+                               .order_by("-id")\
+                               .first()
+        if sprint is None:
+            sprint = Sprint.objects.get_or_create(business=project,
+                                                  name=sprint_name,
+                                                  defaults={'status3': SprintStatus.objects.get_or_create(name='pending',
+                                                                                                          business=project)[0],
+                                                            'project_type': 'inbox',
+                                                            'description': "For incoming unprocessed issues"})[0]
         return user, project, sprint, subject
         
 

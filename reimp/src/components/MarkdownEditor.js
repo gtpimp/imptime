@@ -1,27 +1,43 @@
 import React, { Component } from 'react'
 import 'react-mde/lib/styles/css/react-mde-all.css'
-import { ReactMde } from 'react-mde'
+import ReactMde, {ReactMdeTypes} from 'react-mde'
+import * as Showdown from 'showdown';
 
-class MarkdownEditor extends Component {
+interface MarkdownEditorState {
+  mdeState: ReactMdeTypes.MdeState;
+}
+
+
+class MarkdownEditor extends Component<{}, MarkdownEditorState> {
+    converter: Showdown.Converter;
 
     constructor(props) {
         super(props)
         this.onChange = this.onChange.bind(this)
+        this.state = {mdeState: { markdown: props.value } }
+        this.converter = new Showdown.Converter({
+            tables: true,
+            simplifiedAutoLink: true,
+            strikethrough: true,
+            tasklists: true,
+        });
     }
     
-    onChange(value) {
+    onChange(mdeState: ReactMdeTypes.MdeState) {
         const { onChange } = this.props
-        onChange(value.text)
+        this.setState({ mdeState })
+        onChange(mdeState.markdown)
     }
+
     
     render() {
-        const { value, name } = this.props
+        const { name } = this.props
         return (
             <ReactMde textAreaProps={{id: name, name: name}}
-                      value={{text:value || ""}}
                       onChange={this.onChange}
                       visibility={{preview:false}}
-                      showdownOptions={{ tables: true, simplifiedAutoLink: true }}
+                      editorState={this.state.mdeState}
+                      generateMarkdownPreview={markdown => Promise.resolve(this.converter.makeHtml(markdown))}
             />
         )
     }

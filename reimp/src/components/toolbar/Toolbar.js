@@ -4,6 +4,7 @@ import '../../sass/toolbar.css'
 import Breadcrumbs from '../../components/Breadcrumbs'
 import BillableHoursStatementToolbarPanel from './BillableHoursStatementToolbarPanel'
 import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
+import CalendarToolbarPanel from './CalendarToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
@@ -76,6 +77,8 @@ class ToolBar extends Component {
                 return <ProjectWikiToolbarPanel key='project-wiki' {...this.props} />
             case 'work-summary':
                 return <WorkSummaryToolbarPanel key='summary' {...this.props} />
+            case 'calendar':
+                return <CalendarToolbarPanel key='summary' {...this.props} />
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

@@ -5,10 +5,9 @@ import {withRouter} from 'react-router-dom'
 import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
-import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import {setIssueBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
-import SplitPane from 'react-split-pane'
+import Splitter from '../components/Splitter'
 import {
     LIST_KEY__ISSUE_LIST,
     PAGE_KEY__ISSUES_PAGE
@@ -37,7 +36,6 @@ class IssuesPage extends Component {
     constructor(props) {
         super(props)
         this.onSelectIssues = this.onSelectIssues.bind(this)
-        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
         this.onSetSidebarViewMode = this.onSetSidebarViewMode.bind(this)
     }
 
@@ -115,11 +113,6 @@ class IssuesPage extends Component {
         }
     }
 
-    onChangeSplitterSize(size) {
-        const { dispatch } = this.props
-        dispatch(setPageFlag(PAGE_KEY__ISSUES_PAGE, 'splitter_size', size))
-    }
-
     onSetSidebarViewMode(view_mode) {
         const { dispatch } = this.props
         dispatch(setPageFlag(PAGE_KEY__ISSUES_PAGE, 'sidebar_view_mode', view_mode))
@@ -149,26 +142,22 @@ class IssuesPage extends Component {
 
         if ( is_creating_issue ) {
             return (
-                <div className="list-layout__sidebar">
-                  <NewIssueSidebar onCreatedIssues={this.onSelectIssues} project_id={project_id} sprint_id={sprint_id} />
-                </div>
+                <NewIssueSidebar onCreatedIssues={this.onSelectIssues}
+                                 project_id={project_id}
+                                 sprint_id={sprint_id} />
             )
         } else if ( is_single_selection && sprint_id && selected_issue ) {
             return (
-                <div className="list-layout__sidebar">
-                  <IssueSidebar issue_id={selected_issue.id}
-                                sprint_id={sprint_id}
-                                project_id={project_id}
-                                setSidebarViewMode={this.onSetSidebarViewMode}
-                                sidebar_view_mode={sidebar_view_mode}
-                  />
-                </div>
+                <IssueSidebar issue_id={selected_issue.id}
+                              sprint_id={sprint_id}
+                              project_id={project_id}
+                              setSidebarViewMode={this.onSetSidebarViewMode}
+                              sidebar_view_mode={sidebar_view_mode}
+                />
             )
         } else if ( is_multiple_selection && sprint_id && selected_issue_ids ) {
             return (
-                <div className="list-layout__sidebar">
-                  <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
-                </div>
+                <MultipleIssueSidebar issue_ids={selected_issue_ids} sprint_id={sprint_id} project_id={project_id}/>
             )
         }
     }
@@ -190,38 +179,25 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { show_sidebar, splitter_size, header_height,
-                toolbar_height, footer_height, sidebar_view_mode } = this.props
-        const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
-        if ( show_sidebar ) {
-            const styles={maxHeight: height_limit}
+        const { show_sidebar, sidebar_view_mode } = this.props
+        if ( show_sidebar && sidebar_view_mode === 'right' ) {
             return (
-                <div className="list-layout">
-                  { sidebar_view_mode === 'right' &&
-                    <SplitPane split="vertical" minSize={50}
-                               defaultSize={splitter_size}
-                               onChange={this.onChangeSplitterSize}
-                               style={styles}
-                    >
-                      <div className="left">
-                        {this.renderLeftPane()}
-                      </div>
-                      <div className="right">
-                        {this.renderRightPane()}
-                      </div>
-                    </SplitPane>
-                  }
-                    { sidebar_view_mode === 'fullscreen' &&
-                      <div className="list-layout__single_pane">
-                        {this.renderSinglePane()}
-                      </div>
-                  }
+                <Splitter name="issues_page">
+                  {this.renderLeftPane()}
+                  {this.renderRightPane()}
+                </Splitter>
+            )
+        }
+        if ( show_sidebar && sidebar_view_mode === 'fullscreen' ) {
+            return (
+                <div className="main-layout__scroll-panel">
+                  {this.renderSinglePane()}
                 </div>
             )
         }
         if ( ! show_sidebar ) {
             return (
-                <div className="list-layout">
+                <div className="main-layout__scroll-panel">
                   {this.renderLeftPane()}
                 </div>
             )
@@ -246,10 +222,6 @@ function mapStateToProps(state, props) {
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
     const sidebar_view_mode = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "sidebar_view_mode", "right")
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
-    const splitter_size = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, 'splitter_size', "80%")
-    const header_height = getHeaderHeight(state)
-    const footer_height = getFooterHeight(state)
-    const toolbar_height = getToolbarHeight(state)
 
     return {
         filter_sprint_id,
@@ -258,18 +230,14 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         project: project,
         default_issue_id,
-        splitter_size,
         selected_issue: selected_issue || {},
         selected_issue_ids: selected_issue_ids,
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
-        is_creating_issue: is_creating_issue,
-        issue_header_list: issue_header_list,
+        is_creating_issue,
+        issue_header_list,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
-        sidebar_view_mode,
-        header_height,
-        footer_height,
-        toolbar_height,
+        sidebar_view_mode
     }
 }
 

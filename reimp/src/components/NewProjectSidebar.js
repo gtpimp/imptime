@@ -37,7 +37,7 @@ class NewProjectSidebar extends Component {
                 <div>
                   <div>
                     <ProjectNameForm
-                        onSubmit={this.onSaveCandidateProject}
+                        onSubmitted={this.onSaveCandidateProject}
                         onCancel={this.onCancelProjectCreation}/>
                   </div>
                 </div>

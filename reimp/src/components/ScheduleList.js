@@ -8,6 +8,7 @@ import {
     getNestedObjects,
     ensureNestedObjectsLoaded,
     getLoadingItemIds,
+    getSelectedItemIds,
     isLoading,
     getLastUpdated,
     update_list_pagination
@@ -38,7 +39,7 @@ class ScheduleList extends Component {
     }
 
     renderSchedule(schedule, index) {
-        const { list_key, loading_item_ids, header_list } = this.props
+        const { list_key, loading_item_ids, header_list, onClickedSchedule, selected_ids } = this.props
         const that = this
 
         const is_loading = loading_item_ids.indexOf(schedule.id) !== -1 || schedule.loaded === false
@@ -47,7 +48,8 @@ class ScheduleList extends Component {
             <Schedule key={list_key + "_" + schedule.id + "_" + schedule.name + "_" + index}
                       is_collapsed={false}
                       onDelete={that.onDeleteSchedule}
-                      onClickedSchedule={(event) => that.onClickedSchedule(event, schedule.id)}
+                      onClickedSchedule={onClickedSchedule}
+                      is_selected={selected_ids.indexOf(schedule.id) !== -1}
                       is_loading={is_loading}
                       header_list={header_list}
                       schedule_id={schedule.id}
@@ -76,7 +78,7 @@ class ScheduleList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key, header_list } = props
+    const { list_key, header_list, onClickedSchedule } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__SCHEDULE, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -85,6 +87,7 @@ function mapStateToProps(state, props) {
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__SCHEDULE, visible_item_ids)
     const schedules = getSchedules(state, visible_item_ids)
     const loading_item_ids = getLoadingItemIds(state, list_key)
+    const selected_ids = getSelectedItemIds(state, list_key)
 
     return {
         schedule_ids: visible_item_ids,
@@ -96,6 +99,8 @@ function mapStateToProps(state, props) {
         nested_objects,
         header_list,
         loading_item_ids,
+        selected_ids,
+        onClickedSchedule
     }
 }
 

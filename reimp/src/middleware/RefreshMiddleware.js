@@ -23,6 +23,8 @@ import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSum
 import { invalidateSurForSprintAndUser } from '../actions/SprintUserRates'
 import { invalidateWikis } from '../actions/Wikis'
 import { invalidateMiens } from '../actions/Mien'
+import { invalidateSchedules } from '../actions/Schedules'
+import { invalidateCalendarEvents } from '../actions/CalendarEvents'
 
 import {
     invalidateList
@@ -43,6 +45,8 @@ import {
     LIST_KEY__AUTO_CLOCK,
     LIST_KEY__RECENT_AUTO_CLOCK,
     LIST_KEY__MIEN_LIST,
+    LIST_KEY__SCHEDULE_LIST,
+    LIST_KEY__CALENDAR_EVENT_LIST,
     SELECTOR__SPRINTS
 } from '../actions/ItemListKeyRegistry'
 import { each, keys } from 'lodash'
@@ -99,10 +103,17 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateUsers([d.entity_ref]))
     } else if ( d.entity_name === 'rate' ) {
         dispatch(invalidateSurForSprintAndUser(d.params.sprint_id, d.params.user_id))
+
+        // So that the estimate counts within the sprint shows correctly
+        dispatch(invalidateSprints([d.params.sprint_id]))
     } else if ( d.entity_name === 'wikipage' ) {
         dispatch(invalidateWikis([d.entity_ref]))
     } else if ( d.entity_name === 'mien' ) {
         dispatch(invalidateMiens([d.entity_ref]))
+    } else if ( d.entity_name === 'schedule' ) {
+        dispatch(invalidateSchedules([d.entity_ref]))
+    } else if ( d.entity_name === 'scheduleitem' ) {
+        dispatch(invalidateCalendarEvents([d.entity_ref]))
     }
 }
 
@@ -160,6 +171,10 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__RECENT_AUTO_CLOCK] = true
     } else if ( d.entity_name === "mien" ) {
         list_keys_to_invalidate[LIST_KEY__MIEN_LIST] = true
+    } else if ( d.entity_name === "schedule" ) {
+        list_keys_to_invalidate[LIST_KEY__SCHEDULE_LIST] = true
+    } else if ( d.entity_name === "scheduleitem" ) {
+        list_keys_to_invalidate[LIST_KEY__CALENDAR_EVENT_LIST] = true
     }
 }
 

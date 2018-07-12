@@ -69,9 +69,12 @@ div-table__row--saving {
 .div-table__cell {
     padding-right: 10px;
     vertical-align: middle;
-    cursor: pointer;
     display: flex;
     align-items: center;
+}
+
+.div-table__cell--action {
+    cursor: pointer;
 }
 
 .div-table__header_cell {

@@ -3,6 +3,7 @@ from rest_framework import serializers
 from base_serializer import BaseSerializer
 from django.contrib.auth.models import User
 from timepiece.models import BusinessPermissions
+from imptime.models import Schedule
 logger = logging.getLogger(__name__)
 
 class UserSerializer(BaseSerializer):
@@ -15,6 +16,7 @@ class UserSerializer(BaseSerializer):
     visible_name = serializers.CharField()
     known_user_ids = serializers.ListField(child=serializers.CharField()) # only set for the logged in user
     has_usable_password = serializers.BooleanField(source="logged_in_user_has_usable_password")
+    default_schedule_id = serializers.CharField()
     
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user', None)
@@ -40,4 +42,6 @@ class UserSerializer(BaseSerializer):
         else:
             user.visible_name = user.first_name + " " + user.last_name
 
+        user.default_schedule_id = Schedule.get_default_schedule_for_user(user).id
+            
         return super(UserSerializer, self).to_representation(user, *args, **kwargs)

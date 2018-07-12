@@ -49,6 +49,10 @@
     @include icon(20px, 20px, 'ic_timer_black_24dp_2x.png')
 }
 
+.icon--add-to-schedule {
+    @include icon(20px, 20px, 'ic_timer_black_24dp_2x.png')
+}
+
 .icon--download_as_csv {
     @include icon(20px, 20px, 'material-icons-black-download.png')
 }
@@ -247,6 +251,26 @@
     background-color:orange;
     border-radius: 7px;
 }
+
+.icon__status--ok {
+    height: 15px;
+    width: 15px;
+    background-color:green;
+    border-radius: 7px;
+}
+
+.icon__status--not-ok {
+    height: 15px;
+    width: 15px;
+    background-color:lightgray;
+    border-radius: 7px;
+}
+
+.icon--warning {
+    @include icon(18px, 18px, 'baseline_warning_black_18dp.png');
+    background-color: black;
+}
+
 
 .issue_sidebar__issue_copy_img {
     @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');

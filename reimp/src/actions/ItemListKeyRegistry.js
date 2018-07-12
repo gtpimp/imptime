@@ -15,7 +15,7 @@ export const LIST_KEY__RELEASE_NOTES_EDITOR_LIST = 'release_notes_editor_list'
 export const LIST_KEY__NUDGE_LIST = 'nudge_list'
 export const LIST_KEY__COMPANY_PROBLEM_LIST = 'company_problem_list'
 export const LIST_KEY__SCHEDULE_LIST = 'schedule_list'
-export const LIST_KEY__SCHEDULE_ITEM_LIST = 'schedule_item_list'
+export const LIST_KEY__CALENDAR_EVENT_LIST = 'calendar_item_list'
 export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 export const LIST_KEY__MIEN_LIST = 'mien_list'
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
@@ -25,6 +25,7 @@ export const LIST_KEY__SPRINT_RATES = 'sprint_rates'
 export const LIST_KEY__WORK_SUMMARY_LIST = 'work_summaries'
 
 
+export const ENTITY_KEY__CALENDAR_EVENT = 'calendar_event'
 export const ENTITY_KEY__INVOICE = 'invoice'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
@@ -46,7 +47,6 @@ export const ENTITY_KEY__TAG = 'tag'
 export const ENTITY_KEY__NUDGE = 'nudge'
 export const ENTITY_KEY__COMPANY_PROBLEM = 'company_problem'
 export const ENTITY_KEY__SCHEDULE = 'schedule'
-export const ENTITY_KEY__SCHEDULE_ITEM = 'schedule_item'
 export const ENTITY_KEY__MIEN = 'mien'
 export const ENTITY_KEY__WIKI = 'wiki'
 export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
@@ -62,8 +62,10 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__INVOICE,
                                   ENTITY_KEY__MIEN,
                                   ENTITY_KEY__WIKI,
-                                  ENTITY_KEY__SPRINT_USER_RATE ]
+                                  ENTITY_KEY__SPRINT_USER_RATE,
+                                  ENTITY_KEY__CALENDAR_EVENT ]
 
+export const PAGE_KEY__CALENDAR_PAGE = 'calendar_page'
 export const PAGE_KEY__DASHBOARD_PAGE = 'dashboard_page'
 export const PAGE_KEY__INVOICES_PAGE = 'invoice_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
@@ -91,11 +93,13 @@ export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 export const PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE = 'billable_hours_statement_page'
 
 export const HEADER_LIST_NAME__ISSUE = "issue"
+export const HEADER_LIST_NAME__SPRINT = "sprint"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
 
+export const SELECTOR__PROJECTS = 'selector_projects'
 export const SELECTOR__SPRINTS = 'selector_sprints'
 export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'
 export const FILTER_KEY__GLOBAL = 'global_filter'
@@ -150,9 +154,16 @@ export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'small_delete': {label:"", width:tiny_col_width}
 }
 
-export var SCHEDULE_HEADER_LIST = [ {key:'name', label:'Name', description:'Schedule Name', width:large_col_width},
-                                    {key:'created_at', label:'Created', description:'Created at', width:medium_col_width}
-]
+export var SCHEDULE_HEADER_LIST =
+    [ {key:'name', label:'Name', description:'Schedule Name', width:large_col_width},
+      {key:'owner', label:'Owner', description:'Owner of the schedule', width:medium_col_width},
+      {key:'created_at', label:'Created', description:'Created at', width:medium_col_width},
+      {key:'viewable_users', label:'Viewable users', description:'Users who can view this schedule', width:medium_col_width},
+      {key:'editable_users', label:'Editable users', description:'Users who can edit this schedule', width:medium_col_width}
+    ]
+
+export var BRIEF_SCHEDULE_HEADER_LIST = [{key:'owner', label:'Owner', description:'Owner of the schedule', width:small_col_width},
+                                         {key:'name', label:'Name', description:'Schedule Name', width:large_col_width}]
 
 export var COMPANY_PROBLEM_HEADER_LIST = [ {key:'status', label:'Status', description:'Status', width:medium_col_width},
                                            {key:'project', label:'Project', description:'Project', width:medium_col_width},
@@ -196,15 +207,6 @@ export var BILLABLE_HOURS_STATEMENT_HEADER_LIST__TOTALS =
     [ {key:'hours', label:'Hours', description:'Hours', width:medium_col_width},
       {key:'cost', label:'Cost', description:'Cost', width:medium_col_width}
     ]
-
-export var SPRINT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
-                                 'start_time': {label:"First clock", width:small_col_width},
-                                 'end_time': {label:"Last clock", width:small_col_width},
-                                 'num_issues': {label:"Issues", width: small_col_width},
-                                 'status': {label:"Status", width:small_col_width},
-                                 'type': {label:"Type", width:small_col_width}
-}
-
 
 export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
     'number':{label:'#', width:tiny_col_width},

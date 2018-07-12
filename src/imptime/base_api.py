@@ -203,13 +203,22 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_nudges(self):
         return Nudge.objects.filter(user=self.request.user)
 
+    def allowed_nudges_to_edit_by_schedule(self):
+        return Nudge.objects.filter(user_id__in=self.allowed_schedules_to_edit().values_list('owner_id', flat=True).distinct())
+    
     def allowed_schedules(self):
         return Schedule.objects.filter(Q(owner=self.request.user)|Q(viewers=self.request.user)|Q(editors=self.request.user))\
-                               .order_by("name")
+                               .order_by("name").distinct()
 
+    def allowed_schedules_to_edit(self):
+        return Schedule.objects.filter(Q(owner=self.request.user)|Q(editors=self.request.user))\
+                               .order_by("name").distinct()
+    
     def allowed_schedule_items(self):
         return ScheduleItem.objects.filter(schedule__in=self.allowed_schedules())
 
+    def allowed_schedule_items_to_edit(self):
+        return ScheduleItem.objects.filter(schedule__in=self.allowed_schedules_to_edit())
     
     def allowed_tags(self):
         return Tag.objects.filter(issues__in=self.allowed_issues())

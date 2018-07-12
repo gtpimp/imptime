@@ -36,6 +36,7 @@
     "react-markdown": "^3.0.0",
     "react-mde": "^5.5.1",
     "react-modal": "^3.4.4",
+    "react-pluralize": "^1.4.1",
     "react-portal-tooltip": "^2.4.0",
     "react-precache-img": "^2.0.5",
     "react-redux": "^5.0.7",

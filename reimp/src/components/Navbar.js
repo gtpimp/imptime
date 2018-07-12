@@ -7,9 +7,9 @@ import classNames from 'classnames'
 import '../sass/navbar.css'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
-import { updateNavbarHeight } from '../actions/Header'
 import { can_create_release_notes, logout } from '../actions/Auth'
-
+import { showFloatingCalendar } from '../actions/CalendarEvents'
+ 
 class Navbar extends Component {
 
     constructor(props) {
@@ -18,15 +18,13 @@ class Navbar extends Component {
         this.hideUserMenu = this.hideUserMenu.bind(this)
         this.showCompanyMenu = this.showCompanyMenu.bind(this)
         this.hideCompanyMenu = this.hideCompanyMenu.bind(this)
+        this.showCalendarMenu = this.showCalendarMenu.bind(this)
+        this.hideCalendarMenu = this.hideCalendarMenu.bind(this)
+        this.onSelectFloatingCalendar = this.onSelectFloatingCalendar.bind(this)
         this.onLogout = this.onLogout.bind(this)
         this.state = {user_menu_visible: false,
-                      company_menu_visible: false}
-    }
-
-    componentDidMount() {
-        const { dispatch } = this.props
-        const navbarHeight = this.navbarElem.clientHeight
-        dispatch(updateNavbarHeight(navbarHeight))
+                      company_menu_visible: false,
+                      calendar_menu_visible: false}
     }
 
     showUserMenu() {
@@ -45,6 +43,22 @@ class Navbar extends Component {
         this.setState({company_menu_visible: false})
     }
 
+    showCalendarMenu() {
+        this.setState({calendar_menu_visible: true})
+    }
+
+    hideCalendarMenu() {
+        this.setState({calendar_menu_visible: false})
+    }
+
+    onSelectFloatingCalendar(evt) {
+        const { dispatch } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
+        dispatch(showFloatingCalendar())
+    }
+
     onLogout() {
         const { dispatch, history } = this.props
         dispatch(logout())
@@ -58,12 +72,15 @@ class Navbar extends Component {
         const user_initiated_network_activity = is_loading || is_saving
         const user_menu_visible = this.state.user_menu_visible
         const company_menu_visible = this.state.company_menu_visible
+        const calendar_menu_visible = this.state.calendar_menu_visible
 
         return (
-            <div className={classNames('navbar', 'navbar--network-' + ( user_initiated_network_activity ? 'active' : 'inactive' ))} ref={(navbar) => { this.navbarElem = navbar }}>
+            <div className={classNames('navbar',
+                                       'navbar--network-' + ( user_initiated_network_activity ? 'active' : 'inactive' ))}>
               <div className="navbar__left">
                 <NavTab to="/" index={true}>
-                  <div className={classNames('navbar__component', 'navbar__branding', 'navbar__branding--' +(is_websockets_connected ? 'connected' : 'disconnected'))}>
+                  <div className={classNames('navbar__component', 'navbar__branding',
+                                             'navbar__branding--' +(is_websockets_connected ? 'connected' : 'disconnected'))}>
                     &nbsp;
                   </div>
                 </NavTab>
@@ -71,7 +88,16 @@ class Navbar extends Component {
                 <MienSelector></MienSelector>
               </div>
               <div className="navbar__right">
-                <div className="navbar__tab"><NavTab to='/schedule' label="Scheduler"/></div>
+                <div className="navbar__tab" onMouseOver={this.showCalendarMenu} onMouseLeave={this.hideCalendarMenu}>
+                  <NavTab variant="dashboard-toggle" label="Calendar" />
+                  { calendar_menu_visible &&
+                    <div className="navbar__submenu">
+                      <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Popup</div>
+                      <Link className="navbar__submenu_item" to='/calendar'>My calendar</Link>
+                      <Link className="navbar__submenu_item" to='/schedule'>All calendars</Link>
+                    </div>
+                  }
+                </div>
                 <div className="navbar__tab" onMouseOver={this.showCompanyMenu} onMouseLeave={this.hideCompanyMenu}>
                   <NavTab variant="dashboard-toggle" label="Company" />
                   { company_menu_visible &&

@@ -1,0 +1,19 @@
+
+.schedule__user-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.schedule__user {
+    //display: flex;
+    //flex-direction: row;
+    width: 100%;
+    //justify-content: space-between;
+}
+
+.schedule__user-action_button {
+    float: right;
+    cursor: pointer;
+}

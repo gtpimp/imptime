@@ -16,10 +16,15 @@ import {
     fetchSprintsIfNeeded,
     reorderSprints,
     startCandidateSprint,
-    cancelCandidateSprint
+    cancelCandidateSprint,
+    getAllAvailableSprintHeaders,
+    getSprintHeaderListForMien,
+    updateSprintMienHeaders
 } from '../actions/Sprints'
+import { setGloballySelectedSprintId } from '../actions/Page'
 import Sprint from './Sprint'
 import DivTable from './DivTable'
+import MienListColumnConfigurable from './MienListColumnConfigurable'
 
 class SprintList extends Component {
 
@@ -63,7 +68,7 @@ class SprintList extends Component {
     }
 
     onClickedSprint(event, sprint_id) {
-        const {onSelectSprints, selected_ids} = this.props
+        const {dispatch, onSelectSprints, selected_ids, project_id} = this.props
         event.stopPropagation()
 
         let selected_sprint_ids = []
@@ -76,6 +81,7 @@ class SprintList extends Component {
         } else {
             selected_sprint_ids = [sprint_id]
         }
+        dispatch(setGloballySelectedSprintId(project_id, sprint_id))
         onSelectSprints(selected_sprint_ids)
     }
 
@@ -156,14 +162,14 @@ class SprintList extends Component {
         const { header_list } = this.props
         return (
             <div className="div-table__header_row sprint_type_header">
-              { map(header_list, (v, k) => (
-                    <div key={k}
+              { map(header_list, (v, index) => (
+                    <div key={index}
                          className="div-table__header_cell"
                          style={getCellStyle(v)}>
-                      { k === "name" &&
+                      { v.key === "name" &&
                         <div className="sprint_header__type">{sprint_type}</div>
                       }
-                      { k !== "name" && v.label }
+                      { v.key !== "name" && v.label }
                     </div>
                 ))}
             </div>
@@ -201,24 +207,30 @@ class SprintList extends Component {
         
         return (
             <div className="sprint_list__container">
-              { map(sprint_types, function(sprint_type) {
-                    const sprints = sprints_by_type[sprint_type]
-                    if ( !sprints || sprints.length === 0 ) {
-                        return null
-                    }
-                    const sprint_rows = that.create_sprint_rows(sprints)
-                    return (
-                        <div key={sprint_type}>
-                          <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
-                                    renderHeader={() => that.renderHeader(sprint_type || "")}
-                                    project_id={project_id}
-                                    permission_name_for_dragging={'has_edit_sprint'} >
-                            {sprint_rows}
-                          </DivTable>
-                        </div>
-                    )
-                    
-                })}
+              <MienListColumnConfigurable getAvailableHeaders={getAllAvailableSprintHeaders}
+                                          getHeaderListForMien={getSprintHeaderListForMien}
+                                          updateMienHeaders={updateSprintMienHeaders}
+                                          header_list_name="sprint"
+              >
+                { map(sprint_types, function(sprint_type) {
+                      const sprints = sprints_by_type[sprint_type]
+                      if ( !sprints || sprints.length === 0 ) {
+                          return null
+                      }
+                      const sprint_rows = that.create_sprint_rows(sprints)
+                      return (
+                          <div key={sprint_type}>
+                            <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
+                                      renderHeader={() => that.renderHeader(sprint_type || "")}
+                                      project_id={project_id}
+                                      permission_name_for_dragging={'has_edit_sprint'} >
+                              {sprint_rows}
+                            </DivTable>
+                          </div>
+                      )
+
+                  })}
+              </MienListColumnConfigurable>
             </div>
         )
     }

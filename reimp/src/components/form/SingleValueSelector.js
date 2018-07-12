@@ -28,7 +28,12 @@ export class SingleValueSelector extends Component {
     }
     
     onSelectionFilterChanged() {
-        this.setState({filter_term:this.selection_filter_el.value})
+        const { onFilterChanged } = this.props
+        const new_filter_value = this.selection_filter_el.value
+        this.setState({filter_term:new_filter_value})
+        if ( onFilterChanged ) {
+            onFilterChanged(new_filter_value)
+        }
     }
 
     onKeyDownOnSelectionFilter(event) {
@@ -151,7 +156,7 @@ export class SingleValueSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { options, value, auto_focus, placeholder, rememberer_key } = props
+    const { options, value, auto_focus, placeholder, rememberer_key, onFilterChanged } = props
 
     const best_options = getBestOptions(state, rememberer_key)
     
@@ -161,7 +166,8 @@ function mapStateToProps(state, props) {
         auto_focus: auto_focus !== false,
         placeholder: placeholder || "",
         rememberer_key: rememberer_key || placeholder,
-        best_options
+        best_options,
+        onFilterChanged
     }
 }
 

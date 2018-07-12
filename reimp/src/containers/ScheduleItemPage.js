@@ -1,59 +1,64 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import SplitPane from 'react-split-pane'
+import Splitter from '../components/Splitter'
 import {
-    LIST_KEY__SCHEDULE_ITEM_LIST,
+    LIST_KEY__CALENDAR_EVENT_LIST,
     PAGE_KEY__SCHEDULE_ITEM_PAGE,
-    LIST_KEY__NUDGE_LIST
+    LIST_KEY__NUDGE_LIST,
+    LIST_KEY__ISSUE_LIST,
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    getPageFlag,
-    setPageFlag
+    setGloballySelectedIssueId,
+    setPageFlag,
+    getPageFlag
 } from '../actions/Page'
+import { getIssueHeaderListForCurrentMien } from '../actions/Issues'
 import {
     initList,
-    getVisibleItemIds,
-    update_list_filter
+    update_list_filter,
+    getListFilter,
+    invalidateList
 } from '../actions/ItemList'
-import {getSchedule, ensureSchedulesLoaded} from '../actions/Schedules'
-import {getScheduleItems, ensureScheduleItemsLoaded} from '../actions/ScheduleItems'
+import {getSchedule, ensureSchedulesLoaded, canEditScheduleEvents} from '../actions/Schedules'
 import { setBreadcrumbs } from '../actions/Breadcrumbs'
 import NudgeList from '../components/NudgeList'
 import PlanningCalendar from '../components/PlanningCalendar'
-import { getNudgeHeaderListForCurrentMien } from '../actions/Nudges'
+import IssueList from '../components/IssueList'
+import SprintName from '../components/SprintName'
+import { getNudgeHeaderListForCurrentMien, convertIssuesToNudges } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
 
     constructor(props) {
         super(props)
-        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
-    }
-
+        this.onSelectNudge = this.onSelectNudge.bind(this)
+        this.onShowMoreIssues = this.onShowMoreIssues.bind(this)
+        this.onHideMoreIssues = this.onHideMoreIssues.bind(this)
+        this.onSelectIssuesForNudge = this.onSelectIssuesForNudge.bind(this)
+    } 
+    
     componentDidMount() {
-        const {schedule_id, visible_item_ids, dispatch} = this.props
+        const {schedule_id, dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__SCHEDULE_ITEM_PAGE, ['schedule_item']))
-        dispatch(initList(LIST_KEY__SCHEDULE_ITEM_LIST))
-        dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:schedule_id || -1}))
+        dispatch(initList(LIST_KEY__CALENDAR_EVENT_LIST))
         dispatch(ensureSchedulesLoaded([schedule_id]))
-        dispatch(ensureScheduleItemsLoaded([visible_item_ids]))
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = new_props
-        if ( new_props.schedule && new_props.schedule.id !== this.props.schedule.id ) {
-            dispatch(update_list_filter(LIST_KEY__SCHEDULE_ITEM_LIST, {schedule_id:new_props.schedule.id || -1}))
+        if ( (new_props.schedule && (!this.props.schedule || new_props.schedule.id !== this.props.schedule.id)) ||
+             (new_props.show_issues_for_nudge && new_props.show_issues_for_nudge !== this.props.show_issues_for_nudge) ) {
             dispatch(ensureSchedulesLoaded([new_props.schedule_id]))
-            dispatch(ensureScheduleItemsLoaded([new_props.visible_item_ids]))
             this.refresh(new_props)
         }
     }
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, schedule_id, schedule } = props
+        const { dispatch, schedule_id, schedule, show_issues_for_nudge } = props
         const breadcrumbs = [ {to: '/schedule',
                                label: 'Schedules',
                                type: 'schedules'} ]
@@ -63,73 +68,134 @@ class ScheduleItemPage extends Component {
                               type: 'schedule',
                               selected_entities: {schedule: schedule}})
         }
+        if ( show_issues_for_nudge ) {
+            dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:show_issues_for_nudge.sprint_id}))
+            dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
+        }
+
         dispatch(setBreadcrumbs(breadcrumbs))
     }
 
-    onChangeSplitterSize(size) {
+    onShowMoreIssues(nudge) {
         const { dispatch } = this.props
-        dispatch(setPageFlag(PAGE_KEY__SCHEDULE_ITEM_PAGE, 'splitter_size', size))
+        dispatch(setPageFlag(PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge", nudge))
+    }
+
+    onHideMoreIssues(evt) {
+        const { dispatch } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+        }
+        dispatch(setPageFlag(PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge", null))
+    }
+
+    onSelectNudge(nudge) {
+        const { dispatch } = this.props
+        dispatch(setGloballySelectedIssueId(nudge.project_id,
+                                            nudge.sprint_id,
+                                            nudge.issue_id))
+    }
+
+    onSelectIssuesForNudge(issue_ids) {
+        const { schedule_id, dispatch } = this.props
+        if ( ! window.confirm("Add these issues to the nudge list?") ) {
+            return
+        }
+        dispatch(convertIssuesToNudges(schedule_id, issue_ids))
+    }
+
+    renderNudgeList() {
+        const { nudge_header_list } = this.props
+        return (
+            <div>
+              <h3>Projects and sprints that require attention, showing the most important issue for each sprint</h3>
+              <NudgeList list_key={LIST_KEY__NUDGE_LIST}
+                         header_list={nudge_header_list}
+                         onShowMoreIssues={this.onShowMoreIssues}
+                         onSelect={this.onSelectNudge}/>
+            </div>
+        )
+    }
+    
+    renderPlanningCalendar() {
+        const { schedule_id, can_edit } = this.props
+        return (
+            <div>
+              <h3>Calendar</h3>
+              <PlanningCalendar schedule_id={schedule_id}
+                                can_edit={can_edit}
+                                list_key={LIST_KEY__CALENDAR_EVENT_LIST}
+              />
+            </div>
+        )
+    }
+
+    renderIssuesForNudge(nudge) {
+        const { issue_header_list, show_issues_for_nudge } = this.props
+        return (
+            <div>
+              <h3>
+                Choose issues to nudge from &nbsp;
+                <SprintName sprint_id={show_issues_for_nudge.sprint_id}/>
+              </h3>
+              <button className="button button--primary"
+                      onClick={this.onHideMoreIssues}>
+                Close
+              </button>
+              <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                         issue_header_list={issue_header_list}
+                         onSelectIssues={this.onSelectIssuesForNudge}
+              />
+            </div>
+        )
     }
 
     renderLeftPane() {
-        const { nudge_header_list } = this.props
+        const { show_issues_for_nudge } = this.props
         return (
             <div className="list-layout__pane">
-              <h3>Nudge list</h3>
-              <NudgeList list_key={LIST_KEY__NUDGE_LIST}
-                         header_list={nudge_header_list} />
+              { show_issues_for_nudge === null && this.renderNudgeList() }
+              { show_issues_for_nudge !== null && this.renderIssuesForNudge(show_issues_for_nudge) }
             </div>
         )
     }
 
     renderRightPane() {
-        const { schedule_id } = this.props
         return (
             <div className="list-layout__pane">
-              <h3>Calendar</h3>
-              <PlanningCalendar schedule_id={schedule_id} />
+              {this.renderPlanningCalendar()}
             </div>
         )
     }
 
     render() {
-
-        const { splitter_size } = this.props
-
         return (
-            <div className="list-layout">
-              <SplitPane split="vertical" minSize={50}
-                         defaultSize={splitter_size}
-                         onChange={this.onChangeSplitterSize}
-              >
-                <div className="left">
-                  {this.renderLeftPane()}
-                </div>
-                <div className="right">
-                  {this.renderRightPane()}
-                </div>
-              </SplitPane>
-            </div>
+            <Splitter name="schedule_item_page">
+              {this.renderLeftPane()}
+              {this.renderRightPane()}
+            </Splitter>
         )
     }
 }
 
 function mapStateToProps(state, props) {
 
-    const { list_key, schedule_id } = props
+    const schedule_id = props.match.params.scheduleId
     const schedule = getSchedule(state, schedule_id)
-    const visible_item_ids = getVisibleItemIds(state, list_key)
-    const schedule_items_by_id = getScheduleItems(state, visible_item_ids)
-    const splitter_size = getPageFlag(state, PAGE_KEY__SCHEDULE_ITEM_PAGE, 'splitter_size', "80%")
     const nudge_header_list = getNudgeHeaderListForCurrentMien(state)
+    const can_edit = canEditScheduleEvents(schedule)
+    const show_issues_for_nudge = getPageFlag(state, PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge") || null
+    const nudge_issues_filter = getListFilter(state, LIST_KEY__CALENDAR_EVENT_LIST)
+    const issue_header_list = getIssueHeaderListForCurrentMien(state)
 
     return {
         schedule_id,
         schedule,
-        visible_item_ids,
-        schedule_items_by_id,
-        splitter_size,
-        nudge_header_list
+        nudge_header_list,
+        can_edit,
+        show_issues_for_nudge,
+        issue_header_list,
+        nudge_issues_filter
     }
 }
 

@@ -1,6 +1,6 @@
 import logging
 from project_serializer import ProjectSerializer
-from django.db.models import Case, When
+from django.db.models import Case, When, Q
 from rest_framework.decorators import detail_route
 from django import template
 from django.utils import timezone
@@ -280,5 +280,10 @@ You can add issues here normally, or by emailing %s@%s""" % (project.inbox_email
         return Sprint.objects.get_or_create(name=settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME,
                                             business=project, #sic
                                             project_type="inbox", #sic
-                                            status3=SprintStatus.objects.get(business=project, name='pending'),
-                                            description=inbox_description)[0]
+                                            defaults={'status3':SprintStatus.objects.get(business=project, name='pending'),
+                                                      'description':inbox_description})[0]
+    def apply_filter(self, qs, raw_filter_args):
+        any_field = raw_filter_args.pop('any_field', None)
+        if any_field:
+            qs = qs.filter(Q(name__icontains=any_field)|Q(description__icontains=any_field)|Q(email__icontains=any_field))
+        return super(ProjectViewSet, self).apply_filter(qs, raw_filter_args)

@@ -9,7 +9,8 @@ import {
     ensureNestedObjectsLoaded,
     isLoading,
     getLastUpdated,
-    update_list_pagination
+    update_list_pagination,
+    invalidateList
 } from '../actions/ItemList'
 import { ENTITY_KEY__COMPANY_PROBLEM } from '../actions/ItemListKeyRegistry'
 import {
@@ -18,8 +19,14 @@ import {
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import CompanyProblem from './CompanyProblem'
 import DivTable from './DivTable'
+import Pagination from './Pagination'
 
 class CompanyProblemList extends Component {
+
+    constructor(props) {
+        super(props)
+        this.onChangePage = this.onChangePage.bind(this)
+    }
     
     componentDidMount() {
 	const { dispatch, list_key, nested_objects } = this.props
@@ -35,9 +42,15 @@ class CompanyProblemList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
+    onChangePage() {
+        const { dispatch, list_key } = this.props
+	dispatch(invalidateList(list_key))
+	dispatch(fetchCompanyProblemsIfNeeded(list_key))
+    }
+
     render() {
 
-        const { company_problem_ids, is_loading, header_list } = this.props
+        const { company_problem_ids, is_loading, header_list, list_key } = this.props
 
         if ( is_loading ) {
             return (
@@ -54,12 +67,18 @@ class CompanyProblemList extends Component {
         }
 
         return (
-            <DivTable header_list={header_list}>
-              {map(company_problem_ids, (company_problem_id, index) =>
-                  <CompanyProblem key={index}
-                                  company_problem_id={company_problem_id}
-                                  header_list={header_list}/>)}
-            </DivTable>
+            <div>
+              <Pagination list_key={list_key}
+                          on_changed={this.onChangePage} />
+              <DivTable header_list={header_list}>
+                {map(company_problem_ids, (company_problem_id, index) =>
+                    <CompanyProblem key={index}
+                                    company_problem_id={company_problem_id}
+                                    header_list={header_list}/>)}
+              </DivTable>
+              <Pagination list_key={list_key}
+                          on_changed={this.onChangePage} />
+            </div>
         )
     }
 }

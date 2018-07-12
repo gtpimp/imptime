@@ -3,6 +3,22 @@
 
 
 .footer {
+    border-top: 1px solid #000000;
+    background-color: $footer-background-color;
     margin-top: auto;
     z-index: 100;
+}
+
+.brand-footer {
+    font-size: $font-size-small;
+    width: 100%;
+    color: #000000;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 5px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.brand-footer__version {
 }

@@ -22,8 +22,10 @@ import {
     announceItemsSaved,
     announceItemsSaving,
     setGlobalEntityFlag,
-    getGlobalEntityFlag
+    getGlobalEntityFlag,
+    itemPost
 } from '../actions/Item'
+import { updateVisibleItemIdAbove } from './ItemList'
 import {
     updateMienHeaders,
     getHeaderListForCurrentMien,
@@ -31,18 +33,22 @@ import {
 } from '../actions/Mien'
 
 export var ALL_AVAILABLE_NUDGE_HEADERS =
-    [ {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
+    [ {key:'select', label:'', description:'Select', width:small_col_width},
+      {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
       {key:'description', label:'Description', description:'Description of the nudge', width:large_col_width},
       {key:'user', label:'User', description:'User', width:small_col_width},
       {key:'project', label:'Project', description:'Project', width:small_col_width},
       {key:'sprint', label:'Sprint', description:'Sprint', width:large_col_width},
       {key:'issue', label:'Issue', description:'Issue', width:large_col_width},
+      {key:'issue_status', label:'Issue status', description:'Status', width:medium_col_width},
       {key:'due_date', label:'Due at', description:'Due date for resolving the issue', width:medium_col_width},
       {key:'due_date_reason', label:'Due date reason', description:'Why this nudge should be resolved at the due date', width:large_col_width},
       {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
+      {key:'out_of_sequence_warning', label:'Out of sequence', description:'Indicates if there are more important issues in this sprint to be attended to', width:small_col_width},
+      {key:'actions', label:'Actions', description:'Action buttons', width:medium_col_width},
     ]
 
-const DEFAULT_NUDGE_HEADERS_KEYS = ["reason", "description", "project", "sprint", "issue", "due_date"]
+const DEFAULT_NUDGE_HEADERS_KEYS = ["select", "actions", "reason", "project", "sprint", "issue", "description"]
 const DEFAULT_NUDGE_HEADERS = filter(ALL_AVAILABLE_NUDGE_HEADERS, (header) => includes(DEFAULT_NUDGE_HEADERS_KEYS, header.key))
 
 
@@ -96,6 +102,13 @@ export function deleteNudge(nudge_id) {
     }
 }
 
+export function reorderNudge(moving_nudge_ids, nudge_id_after, list_key, index_of_destination, on_done) {
+    return (dispatch, getState) => {
+        dispatch(updateVisibleItemIdAbove(list_key, moving_nudge_ids, nudge_id_after, index_of_destination))
+        dispatch(updateItem(ENTITY_KEY__NUDGE, moving_nudge_ids, "nudge_id_after", nudge_id_after, on_done))
+    }
+}
+
 export function recalculateNudges() {
     return (dispatch, getState) => {
 	const state = getState()
@@ -128,6 +141,16 @@ export function recalculateNudges() {
     }
 }
 
+export function convertIssuesToNudges(schedule_id, issue_ids) {
+    const url = "imp/" + ENTITY_KEY__NUDGE + "/convertIssuesToNudges/"
+    const field_name = "issue_ids"
+    const field_value = issue_ids
+    const method = "POST"
+    const data = {issue_ids: issue_ids,
+                  schedule_id: schedule_id}
+    return itemPost(ENTITY_KEY__NUDGE, [issue_ids], url, field_name, field_value, method, data)
+}
+
 export function isRecalculatingNudges(state) {
     return getGlobalEntityFlag(ENTITY_KEY__NUDGE, state, "recalculating") === true
 }
@@ -137,7 +160,7 @@ export function updateNudgeMienHeaders(mien_id, headers) {
 }
 
 export function getNudgeHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__NUDGE)
+    return getHeaderListForMien(mien, HEADER_LIST_NAME__NUDGE) || getDefaultNudgeHeaders()
 }
 
 export function getNudgeHeaderListForCurrentMien(state) {

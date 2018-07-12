@@ -525,7 +525,7 @@ export function updateIssueMienHeaders(mien_id, headers) {
 }
 
 export function getIssueHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__ISSUE)
+    return getHeaderListForMien(mien, HEADER_LIST_NAME__ISSUE) || getDefaultIssueHeaders()
 }
 
 export function getIssueHeaderListForCurrentMien(state) {

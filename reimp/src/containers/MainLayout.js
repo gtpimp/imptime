@@ -12,6 +12,7 @@ import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
+import FloatingPlanningCalendar from '../components/FloatingPlanningCalendar'
 import ReactTooltip from 'react-tooltip'
 import Error from '../components/Error'
 import Maintenance from '../components/Maintenance'
@@ -70,45 +71,51 @@ class MainLayout extends Component {
                                this.props.location.pathname.indexOf('account/create') !== -1 ||
                                this.props.location.pathname.indexOf('share/') !== -1
 
-        
+
         if ( ! are_settings_loaded ) {
             return (
-                <div>Loading settings...</div>
+                <div id="app" className="app">Loading settings...</div>
             )
         }
 
         if ( ! is_logged_in && ! allow_non_auth  ) {
             return (
-                <div className="app app--login">
+                <div id="app" className="app app--login">
                   <LoginPage />
                 </div>
             )
         }
 
-        return (
-            <div className="app">
-              { ! is_logged_in &&
-                <div>
+        if ( ! is_logged_in ) {
+            return (
+                <div id="app" className="app">
                   <Maintenance/>
                   <Error/>
                   <MainRouter />
                 </div>
-              }
-              { is_logged_in &&
-                <div className="main-layout">
-                  <div className="main-layout__content">
-                    <Websocket/>
-                    <Header/>
-                    <AutoClockPopup/>
-                    <GlobalCommentAnnotation/>
-                    <div className="main">
-                      <MainRouter />
-                    </div>
-                    <ReactTooltip place="bottom" type="info" />
-                  </div>
-                  <Footer />
+            )
+        }
+
+        return (
+            <div id="app" className="app">
+              <div className="main-layout__panel main-layout__header">
+                <div>
+                  <Websocket/>
+                  <Header/>
+                  <AutoClockPopup/>
+                  <FloatingPlanningCalendar/>
+                  <GlobalCommentAnnotation/>
                 </div>
-              }  
+              </div>
+              <div className="main-layout__panel  main-layout__middle">
+                <div className="main-layout__scroll-container">
+                  <MainRouter />
+                  <ReactTooltip place="bottom" type="info" />
+                </div>
+              </div>
+              <div className="main-layout__panel main-layout__footer">
+                <Footer />
+              </div>
             </div>
         )
     }

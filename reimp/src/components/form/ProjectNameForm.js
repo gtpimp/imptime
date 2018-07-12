@@ -29,6 +29,7 @@ class ProjectNameForm extends Component {
                 placeholder="Project Name"
                 onChange={input.onChange}
                 value={input.value}
+                autoFocus
             />
         )
     }

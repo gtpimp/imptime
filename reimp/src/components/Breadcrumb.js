@@ -22,7 +22,10 @@ const menu_buttons = {
 
     'projects': [
         { label: (objs) => '+ New Project',
-          dispatch_action: (objs) => startCandidateProject() }
+          generic_action: function(objs, props) {
+              props.dispatch(startCandidateProject())
+              props.history.push('/projects/')
+          }}
     ],
     'project': [
         { label: (objs) => 'Sprints',
@@ -59,7 +62,10 @@ const menu_buttons = {
     ],
     'sprints': [
         { label: (objs) => '+ New Sprint',
-          dispatch_action: (objs) => startCandidateSprint(objs.project.id, objs.sprint.id)
+          generic_action: function(objs, props) {
+              props.dispatch(startCandidateSprint(objs.project.id, (objs.sprint && objs.sprint.id) || null))
+              props.history.push('/projects/' + objs.project.id + '/sprints/')
+          }
         }
     ],
     'sprint': [
@@ -134,7 +140,12 @@ class Breadcrumb extends Component {
             breadcrumb.selected_entities.issues = issues
         }
 
-        if ( breadcrumb_button['dispatch_action'] ) {
+        if ( breadcrumb_button['generic_action'] ) {
+            const action = breadcrumb_button['generic_action'](breadcrumb.selected_entities, this.props)
+            if ( action ) {
+                action()
+            }
+        } else if ( breadcrumb_button['dispatch_action'] ) {
             const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities, this.props)
             if ( action ) {
                 dispatch(action)
@@ -147,7 +158,7 @@ class Breadcrumb extends Component {
     renderBreadcrumbLink(button, breadcrumb, key, button_perms) {
         const { project_id } = this.props
         const label = button.label(breadcrumb.selected_entities)
-        if ( button['dispatch_action'] ) {
+        if ( button['dispatch_action'] || button['generic_action'] ) {
             return (
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
@@ -171,7 +182,6 @@ class Breadcrumb extends Component {
                 </PermissionInspectorHighlighter>
             )
         }
-        
     }
     
     render() {

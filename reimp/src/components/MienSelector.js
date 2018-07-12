@@ -77,7 +77,7 @@ class MienSelector extends Component {
     onSaveCandidateMien(new_values) {
         const { dispatch } = this.props
         dispatch(updateCandidateTitle(new_values.title))
-        dispatch(saveCandidateMien())
+        dispatch(saveCandidateMien( (mien_id) => dispatch(setCurrentMienId(mien_id))))
     }
 
     onStartEditingMien(event, mien) {

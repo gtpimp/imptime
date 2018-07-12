@@ -7,7 +7,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureWikisLoaded, getWiki} from '../actions/Wikis'
 import ProjectWikiList from '../components/ProjectWikiList'
 import NewWikiSidebar from '../components/NewWikiSidebar'
-import SplitPane from 'react-split-pane'
+import Splitter from '../components/Splitter'
 import {
     PAGE_KEY__PROJECT_WIKI_PAGE,
     LIST_KEY__WIKI_LIST
@@ -16,7 +16,6 @@ import {
     set_toolbars,
     select_projects,
     select_wikis,
-    setPageFlag,
     getPageFlag,
     get_selected_wiki_ids,
 } from '../actions/Page'
@@ -28,7 +27,6 @@ class ProjectWikiPage extends Component {
 
     constructor(props) {
         super(props)
-        this.onChangeSplitterSize = this.onChangeSplitterSize.bind(this)
         this.onSelectWiki = this.onSelectWiki.bind(this)
     }
 
@@ -36,11 +34,6 @@ class ProjectWikiPage extends Component {
         const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__PROJECT_WIKI_PAGE, ['project-wiki']))
         this.refresh()
-    }
-
-    onChangeSplitterSize(size) {
-        const { dispatch } = this.props
-        dispatch(setPageFlag(PAGE_KEY__PROJECT_WIKI_PAGE, 'splitter_size', size))
     }
 
     componentWillReceiveProps(new_props) {
@@ -131,28 +124,19 @@ class ProjectWikiPage extends Component {
     }
 
     render() {
-        const { show_sidebar, splitter_size } = this.props
+        const { show_sidebar } = this.props
 
         if ( show_sidebar ) {
             return (
-                <div className="list-layout">
-                  <SplitPane split="vertical" minSize={50}
-                             defaultSize={splitter_size}
-                             onChange={this.onChangeSplitterSize}
-                  >
-                    <div className="left">
-                      {this.renderContentsPane()}
-                    </div>
-                    <div className="right">
-                      {this.renderDetailsPane()}
-                    </div>
-                  </SplitPane>
-                </div>
+                <Splitter name="project_wiki_page" defaultSize="20%">
+                  {this.renderContentsPane()}
+                  {this.renderDetailsPane()}
+                </Splitter>
             )
         }
         if ( ! show_sidebar ) {
             return (
-                <div className="list-layout">
+                <div className="main-layout__scroll-panel">
                   {this.renderDetailsPane()}
                 </div>
             )
@@ -168,7 +152,6 @@ function mapStateToProps(state, props) {
     const candidate_wiki = getCandidateWiki(state) || null
     const is_creating_wiki = candidate_wiki || false
     const show_sidebar = getPageFlag(state, PAGE_KEY__PROJECT_WIKI_PAGE, "show_sidebar", true)
-    const splitter_size = getPageFlag(state, PAGE_KEY__PROJECT_WIKI_PAGE, 'splitter_size', "20%")
     const selected_wiki_ids = get_selected_wiki_ids(state, PAGE_KEY__PROJECT_WIKI_PAGE)
     const selected_wiki_id = ( selected_wiki_ids && selected_wiki_ids.length > 0 && selected_wiki_ids[0] ) || default_wiki_id || null
     const selected_wiki = getWiki(state, selected_wiki_id)
@@ -180,7 +163,6 @@ function mapStateToProps(state, props) {
         wiki: selected_wiki || {},
         wiki_name: (selected_wiki || {}).name,
         is_creating_wiki: is_creating_wiki,
-        splitter_size,
         show_sidebar: show_sidebar || is_creating_wiki,
         selected_wiki_ids,
         default_wiki_id

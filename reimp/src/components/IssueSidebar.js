@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import { getHeaderHeight, getFooterHeight, getToolbarHeight } from '../actions/Header'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
@@ -479,9 +478,6 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
-    const header_height = getHeaderHeight(state)
-    const footer_height = getFooterHeight(state)
-    const toolbar_height = getToolbarHeight(state)
     populateEstimates(state, issue)
 
     return {
@@ -496,9 +492,6 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         sprint,
         assignable_user_ids,
-        header_height,
-        footer_height,
-        toolbar_height,
         setSidebarViewMode,
         sidebar_view_mode
     }

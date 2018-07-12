@@ -27,12 +27,12 @@ class ProjectName extends Component {
 	      }
     }
 
-    on_clicked(event) {
-        const { history, project, onClick, open_on_click } = this.props
-        event.stopPropagation()
-        if ( onClick ) {
-            onClick(project.id)
-        } else if ( open_on_click ) {
+    on_clicked(evt) {
+        const { history, project, open_on_click } = this.props
+        if ( open_on_click ) {
+            if ( evt ) {
+                evt.stopPropagation()
+            }
             history.push('/projects/' + project.id);
         }
     }
@@ -42,8 +42,8 @@ class ProjectName extends Component {
 
 	      return (
 	          <div className="project_name--inline-small"
-                 key={this.key+".collapsed_project."+project.id}
-		             onClick={this.on_clicked}
+                       key={this.key+".collapsed_project."+project.id}
+		       onClick={this.on_clicked}
 	          >
 	            {project.name }
 	          </div>
@@ -57,15 +57,15 @@ class ProjectName extends Component {
             return ( <div onClick={onClick}></div> )
         }
 
-	      if ( project.loaded === false ) {
-	          return ( <div onClick={onClick}>{loading_value}</div> )
-	      }
+	if ( project.loaded === false ) {
+	    return ( <div onClick={onClick}>{loading_value}</div> )
+	}
 
-	      if ( render_mode === 'inline--small' ) {
-	          return this.render_inline_small()
-	      } else {
-	          return ( <div>Dev error, unsupported render mode: {render_mode}</div> )
-	      }
+	if ( render_mode === 'inline--small' ) {
+	    return this.render_inline_small()
+	} else {
+	    return ( <div>Dev error, unsupported render mode: {render_mode}</div> )
+	}
     }
 }
 
@@ -78,8 +78,7 @@ function mapStateToProps(state, props) {
         project_id: project_id,
 	render_mode: render_mode || "inline--small",
 	loading_value: loading_value || "...",
-        onClick: props.onClick,
-        open_on_click: props.open_on_click || true
+        open_on_click: props.open_on_click || true,
     }
 }
 
