@@ -243,7 +243,10 @@ class IssueViewSet(BaseViewSet):
                     if self.logged_in_permissions(issue.project.business).has_estimate_own_points:
                         estimate = IssuePoints.objects.get_or_create(user=request.user, issue=issue)[0]
                         old_estimate_hours = estimate.points if estimate.points is not None else "not set"
-                        estimate.points = hours_helper.convert_to_decimal(new_value)
+                        try:
+                            estimate.points = hours_helper.convert_to_decimal(new_value)
+                        except ValueError:
+                            estimate.points = 0
                         estimate.save()
                         IssueHistory.add_history(request.user, issue,
                                                  "changed estimate for %s" % request.user, old_estimate_hours, new_value)
@@ -283,7 +286,7 @@ class IssueViewSet(BaseViewSet):
             issue_id_before = params.get('issue_id_before', None)
 
             sprint = self.allowed_sprint(sprint_id)
-            if not self.logged_in_permissions(sprint.business).has_edit_issues:
+            if not self.logged_in_permissions(sprint.business).has_add_issue:
                 raise Exception('Permission denied to create issues')
 
             def create_issue():
@@ -450,7 +453,7 @@ class IssueViewSet(BaseViewSet):
         Sprint.objects.get_or_create(business_id=project.id,
                                      project_type='minutes',
                                      defaults={'name':'Meeting minutes',
-                                               'status3':SprintStatus.objects.get_or_create(name='pending')})
+                                               'status3':SprintStatus.objects.get_or_create(name='pending', business_id=project.id)[0]})
         issue = Issue.objects.filter(project__business_id=project.id,
                                      issue_type="minutes",
                                      status2__name='new')\
