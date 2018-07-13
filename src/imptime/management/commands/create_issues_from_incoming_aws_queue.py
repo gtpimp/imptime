@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from timepiece.models import Project as Sprint
 import json
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from timepiece.models import Business as Project
 from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
@@ -61,7 +61,7 @@ Received: from gtplap3.mail.impd.co.za (unknown [105.225.71.229])
 User-agent: mu4e 0.9.15; emacs 24.5.1
 From: Gareth Priede <gtp@impd.co.za>
 To: malcolm@imptime.com
-Subject: lucy galloosyt
+Subject: lucy galloosytx
 Date: Sat, 24 Mar 2018 13:21:51 +0200
 Message-ID: <87k1u190s0.fsf@impd.co.za>
 MIME-Version: 1.0
@@ -172,32 +172,32 @@ this is the colour of yukc
             message = self.unpack_email(email_message)
         except Exception, ex:
             logger.exception(ex)
-            send_mail(subject="Problems parsing email: %s" % email_s3_id,
-                      message=raw_email_message,
-                      from_email=settings.FROM_EMAIL,
-                      recipient_list=settings.EMACS_ADMIN_USER_EMAILS,
-                      fail_silently=False)
+            EmailMessage(subject="Problems parsing email: %s" % email_s3_id,
+                         body=raw_email_message,
+                         from_email=settings.FROM_EMAIL,
+                         to=settings.EMACS_ADMIN_USER_EMAILS)\
+                    .send()
             return
 
         user_email = message['from']
 
         try:
             user, project, sprint, default_subject = self.resolve_parts(message)
-            user_email = user.email
+            user_email = user_email
             raw_issues = self.resolve_issue_content(message, default_subject, project)
             for raw_issue in raw_issues:
-                new_issue = self.create_issue(message, user, project, sprint, raw_issue)
+                new_issue = self.create_issue(message, user, project, sprint, raw_issue, from_email=user_email)
                 logger.debug("Created issue %s %s" % (new_issue.id, new_issue.subject))
                 issues_created.append(new_issue)
-            self.notify_issues_created(user, project, issues_created)
+            self.notify_issues_created(user_email, project, issues_created)
         except Exception, ex:
             logger.exception(ex)
-            to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user_email]
-            send_mail(subject="Couldn't create issues from email",
-                      message="Failed to process your email. Please resend it \n\n%s\n\n%s" % (ex, str(email_message)),
-                      from_email=settings.FROM_EMAIL,
-                      recipient_list=to_addresses,
-                      fail_silently=False)
+            EmailMessage(subject="Couldn't create issues from email",
+                         body="Failed to process your email. Please resend it \n\n%s\n\n%s" % (ex, str(email_message)),
+                         from_email=settings.FROM_EMAIL,
+                         to=[user_email],
+                         bcc=settings.EMACS_ADMIN_USER_EMAILS)\
+                    .send()
 
             
     def unpack_email(self, message):
@@ -233,14 +233,22 @@ this is the colour of yukc
         subject = message['subject'].strip()
         
         project_name = project_name.strip().lower()
-        matching_projects = Project.objects.filter(name__iexact=Project.convert_to_email_name(project_name))\
-                                           .filter_by_logged_in_user(user)
-        if matching_projects.count() > 1:
-            raise Exception("There is more than one project matching the name %s, please use an alias" % project_name)
-        project = matching_projects.first()
+
+        all_matching_projects = Project.objects.filter(name__iexact=Project.convert_to_email_name(project_name))
+
+        my_matching_projects = all_matching_projects.filter_by_logged_in_user(user)
+            
+        if my_matching_projects.count() > 1:
+            raise Exception("You belong to more than one project matching the name %s, please use an alias" % project_name)
+        project = my_matching_projects.first()
         
         if project is None:
-            raise Exception("No project found with name %s" % project_name)
+            if all_matching_projects.count() > 1:
+                raise Exception("There is more than one project matching the name %s, please use an alias" % project_name)
+            project = all_matching_projects.first()
+
+            if project is None:
+                raise Exception("No project found with name %s which you have access to" % project_name)
 
         sprint_name = settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME
         sprint = Sprint.objects.get_or_create(business=project,
@@ -277,14 +285,16 @@ this is the colour of yukc
         return raw_issues
     
     def get_user(self, message):
-        user = User.objects.filter(email=message['from']).first()
+        from_email = message['from']
+        user = User.objects.filter(email=from_email).first()
         if user is None:
-            raise Exception("No user found with email %s" % message['from'])
+            logger.warning("During email issue creation, no user found with email %s, auto creating" % message['from'])
+            user = User.objects.create(username=from_email, email=from_email, first_name="", last_name="")
         if not user.is_active:
-            raise Exception("User is not active")
+            logger.warning("During email issue creation, user %s is not active" % user.username)
         return user
 
-    def create_issue(self, message, user, project, sprint, raw_issue):
+    def create_issue(self, message, user, project, sprint, raw_issue, from_email):
         issue = Issue.objects.filter(project=sprint, subject=raw_issue['subject'])\
                              .order_by_project_id(project.id, descending=True)\
                              .first()
@@ -304,11 +314,16 @@ this is the colour of yukc
                                          modified=message['time'])
             SprintIssueOrder.insert_at_the_end(issue)
 
-        comment = """Created by email from {first_name} {last_name} ({username}). 
+        if user is not None:
+            sent_from = "{first_name} {last_name} ({username})".format(first_name=user.first_name,
+                                                                       last_name=user.last_name,
+                                                                       username=user.username)
+        else:
+            sent_from = from_email
+
+        comment = """Created by email from {sent_from}. 
 Sent at {sent_at} using email address {from_email} """.format(
-                        first_name=user.first_name,
-                        last_name=user.last_name,
-                        username=user.username,
+                        sent_from=sent_from,
                         sent_at=message['time'],
                         from_email=message['from'])
             
@@ -333,10 +348,10 @@ Sent at {sent_at} using email address {from_email} """.format(
                                               content_type=attachment_content['content_type'],
                                               issue=issue)
             
-        logger.info("Created issue %s for %s by email" % (issue.id, user.username))
+        logger.info("Created issue %s for %s by email" % (issue.id, sent_from))
         return issue
 
-    def notify_issues_created(self, user, project, issues_created):
+    def notify_issues_created(self, sent_from, project, issues_created):
 
         if len(issues_created) == 1:
             subject = "Issue by email for %s: %s" % (project.name, issues_created[0].subject)
@@ -347,9 +362,9 @@ Sent at {sent_at} using email address {from_email} """.format(
         for issue in issues_created:
             body += "#%s %s\n===============\n%s\n\n" % (issue.number, issue.subject, issue.description)
             
-        to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user.email]
-        send_mail(subject=subject.replace("\n", "").replace("\r", ""),
-                  message=body,
-                  from_email=settings.FROM_EMAIL,
-                  recipient_list=to_addresses,
-                  fail_silently=False)
+        EmailMessage(subject=subject.replace("\n", "").replace("\r", ""),
+                     body=body,
+                     from_email=settings.FROM_EMAIL,
+                     to=[sent_from],
+                     bcc=settings.EMACS_ADMIN_USER_EMAILS)\
+                .send()
