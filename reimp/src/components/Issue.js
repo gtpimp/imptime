@@ -45,7 +45,7 @@ const DefaultListRowStyle = {display: 'flex',
                              font: theme.fonts.list_items,              
                              paddingLeft: '18px',
                              backgroundColor: theme.colours.left_panel_background,
-                             ':hover': {
+                             '&:hover': {
                                  backgroundColor: theme.colours.list_rollover
                              }
 }
@@ -61,7 +61,7 @@ const IssueRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                             {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
 
                                              font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items,
-                                             ':hover': {
+                                             '&:hover': {
                                                  backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
                                              }
                                             }))
@@ -73,7 +73,7 @@ const TableCellSecondaryDiv = styled('div')(props => Object.assign(TableCellStyl
                                                       {color: theme.colours.normal_text,
                                                        opacity: '0.6',
 
-                                                       ':hover': {
+                                                       '&:hover': {
                                                            opacity: '1.0'
                                                        }
                                                       }))

@@ -10,7 +10,7 @@ const GlamLink = styled('div')(props => ({color: theme.colours.link,
                                           paddingLeft: '12px',
                                           borderBottom: '1px solid #eee',
 
-                                          ':hover': {
+                                          '&:hover': {
                                               backgroundColor: '#eee',
                                               cursor: 'pointer',
                                           }}))

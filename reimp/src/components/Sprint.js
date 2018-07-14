@@ -24,7 +24,7 @@ const DefaultListRowStyle = {display: 'flex',
                              paddingLeft: '18px',
                              backgroundColor: theme.colours.left_panel_background,
                              
-                             ':hover': {
+                             '&:hover': {
                                  backgroundColor: theme.colours.list_rollover
                              }
 }
@@ -40,7 +40,7 @@ const TableCellStyle = {display: 'flex',
 
 const SprintRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                              {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
-                                              ':hover': {
+                                              '&:hover': {
                                                   backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
                                               }}
 )
@@ -67,7 +67,7 @@ const SprintLink = styled('Link')(props => ({display: 'flex',
                                              alignItems: 'center',
                                              color: theme.colours.list_text,
 
-                                             ':hover': {
+                                             '&:hover': {
                                                  cursor: 'pointer',
                                                  textDecoration: 'underline'
                                              }

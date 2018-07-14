@@ -8,7 +8,7 @@ const DefaultListRowStyle = {display: 'flex',
                              paddingLeft: '18px',
                              backgroundColor: theme.colours.left_panel_background,
                              
-                             ':hover': {
+                             '&:hover': {
                                  backgroundColor: theme.colours.list_rollover
                              }
 }
@@ -29,7 +29,7 @@ const StatusCircle = {height: '16px',
 
 export const ProjectRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                                      {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
-                                                      ':hover': {
+                                                      '&:hover': {
                                                           backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
                                                       }}
 )
@@ -37,7 +37,7 @@ export const ProjectRowDiv = styled('div')(props => Object.assign(DefaultListRow
 
 export const SprintRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                                     {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
-                                                     ':hover': {
+                                                     '&:hover': {
                                                          backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
                                                      }}
 )
@@ -54,4 +54,4 @@ export const SprintStatusDiv = styled('div')(props => Object.assign(StatusCircle
 export const TableCellDiv = styled('div')(props => Object.assign(TableCellStyle))
     export const TableCellSecondaryDiv = styled('div')(props => Object.assign(TableCellStyle,
                                                                  {color: theme.colours.normal_text}))
-export const TableCellLinkDiv = styled('div')(props => ({':hover': {textDecoration: 'underline'}}))
+export const TableCellLinkDiv = styled('div')(props => ({'&:hover': {textDecoration: 'underline'}}))

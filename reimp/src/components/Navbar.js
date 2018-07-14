@@ -16,7 +16,7 @@ const navbar_submenu_item = {color: theme.colours.link,
                              paddingLeft: '12px',
                              borderBottom: '1px solid #eee',
 
-                             ':hover': {
+                             '&:hover': {
                                  color: '#333',
                                  backgroundColor: '#eee',
                                  cursor: 'pointer',

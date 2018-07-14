@@ -10,7 +10,7 @@ const nav_item_css = {paddingLeft:"12px",
                       display:"flex",
                       alignItems:"center",
                       justifyContent:"center",
-                      ':hover': { cursor: "pointer"}}
+                      '&:hover': { cursor: "pointer"}}
 
 const NavMenuItem = styled('div')(props => Object.assign(nav_item_css,
                                             {backgroundColor: props.isActive === true ? theme.colours.panel_background : "auto",

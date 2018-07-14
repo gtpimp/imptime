@@ -56,7 +56,7 @@ const DivTableHeaderCell = styled('div')(props => ({color: theme.colours.strong_
                                                     marginRight: '6px',
                                                     display: 'flex',
 
-                                                    ':hover': {
+                                                    '&:hover': {
                                                         cursor: 'pointer',
                                                         backgroundColor: 'rgba(0,92,134, 0.07)',
                                                     }}))
