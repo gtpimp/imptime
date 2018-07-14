@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { keys, keyBy, map } from 'lodash';
 import { connect } from 'react-redux'
 import {withRouter} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import Timestamp from '../components/Timestamp'
 import Hours from './Hours'
 import EditableSprintStatus from '../components/EditableSprintStatus'
@@ -60,17 +61,17 @@ const SprintStatusDiv = styled('div')(props => Object.assign(StatusCircle,
                                                 {backgroundColor: props.status_ok ? 'green' : 'lightgray'
                                       }))
 
-const SprintLink = styled('Link')(props => ({display: 'flex',
-                                             font: theme.fonts.list_items,
-                                             paddingLeft: '6px',
-                                             verticalAlign: 'middle',
-                                             alignItems: 'center',
-                                             color: theme.colours.list_text,
+const SprintLink = styled(Link)(props => ({display: 'flex',
+                                           font: theme.fonts.list_items,
+                                           paddingLeft: '6px',
+                                           verticalAlign: 'middle',
+                                           alignItems: 'center',
+                                           color: theme.colours.list_text,
 
-                                             '&:hover': {
-                                                 cursor: 'pointer',
-                                                 textDecoration: 'underline'
-                                             }
+                                           '&:hover': {
+                                               cursor: 'pointer',
+                                               textDecoration: 'underline'
+                                           }
 }))
 
 

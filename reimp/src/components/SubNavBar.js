@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {Link} from 'react-router-dom'
 import NavTab from './NavTab'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { can_create_release_notes, logout } from '../actions/Auth'
@@ -41,7 +42,7 @@ const ProfilePictureDiv = styled('div')(props => ({height: "36px",
 const ProfilePictureIcon = styled('i')(props => ({width: "30px",
                                                   height: "30px"}))
 
-const GlamLink = styled('Link')(props => (navbar_submenu_item))
+const GlamLink = styled(Link)(props => (navbar_submenu_item))
 
 const DivLink = styled('div')(props => (navbar_submenu_item))
 

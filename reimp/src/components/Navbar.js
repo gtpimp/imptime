@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import SearchBox from '../components/SearchBox'
 import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
 import NavTab from './NavTab'
@@ -38,7 +39,7 @@ const NavbarLeftDiv = styled('div')(props => ({display: 'flex',
 const NavbarRightDiv = styled('div')(props => ({display: 'flex',
                                                 width: "58.7%"}))
 
-const GlamLink = styled('Link')(props => (navbar_submenu_item))
+const GlamLink = styled(Link)(props => (navbar_submenu_item))
 
 class Navbar extends Component {
 
