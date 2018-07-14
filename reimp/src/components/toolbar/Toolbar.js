@@ -25,7 +25,7 @@ import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 import styled from 'react-emotion'
-import { default_theme as theme } from '../theme/default'
+import { default_theme as theme } from '../../theme/default'
 
 const ToolbarDiv = styled('div')(props => ({display: "flex",
                                             justifyContent: "space-between",
