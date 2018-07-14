@@ -28,20 +28,30 @@ export const default_theme = {
                right_panel_background: '#ffffff',
     },
 
-    fonts: { list_items: fonts_raw['regular-12'],
-             descriptions: fonts_raw['regular-12'],
-             button_popup: fonts_raw['semibold-12'],
-             links: fonts_raw['semibold-12'],
-             list_headers: fonts_raw['semibold-12'],
-             feature_issue: fonts_raw['bold-12'],
-             header: fonts_raw['regular-15'],
-             search_bar: fonts_raw['regular-15'],
-             tags: fonts_raw['semibold-12'],
-             body: fonts_raw['regular-13'],
-             button_menu: fonts_raw['regular-15'],
-             breadcrumb_selected: fonts_raw['bold-15'],
-             button_large: fonts_raw['semibold-25'],
-             sidebar_title: fonts_raw['semibold-25']
+    fonts: {
+        regular_normal: fonts_raw['regular-12'],
+        semibold_normal: fonts_raw['semibold-12'],
+        bold_normal: fonts_raw['bold-12'],
+        regular_large: fonts_raw['regular-15'],
+        semibold_large: fonts_raw['semibold-15'],
+        bold_large: fonts_raw['bold-15'],
+        regular_larger: fonts_raw['regular-13'],
+        semibold_huge: fonts_raw['semibold-20'],
+        
+        list_items: fonts_raw['regular-12'],
+        descriptions: fonts_raw['regular-12'],
+        button_popup: fonts_raw['semibold-12'],
+        links: fonts_raw['semibold-12'],
+        list_headers: fonts_raw['semibold-12'],
+        feature_issue: fonts_raw['bold-12'],
+        header: fonts_raw['regular-15'],
+        search_bar: fonts_raw['regular-15'],
+        tags: fonts_raw['semibold-12'],
+        body: fonts_raw['regular-13'],
+        button_menu: fonts_raw['regular-15'],
+        breadcrumb_selected: fonts_raw['bold-15'],
+        button_large: fonts_raw['semibold-25'],
+        sidebar_title: fonts_raw['semibold-25']
     }
     
 }

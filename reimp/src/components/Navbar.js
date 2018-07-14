@@ -10,8 +10,8 @@ import { showFloatingCalendar } from '../actions/CalendarEvents'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 
-const navbar_submenu_item = {color: theme.colours.link,
-                             font: theme.fonts.links,
+const navbar_submenu_item = {color: "#ffffff",
+                             font: theme.fonts.regular_large,
                              paddingTop: '12px',
                              textTransform: 'none',
                              paddingLeft: '12px',
@@ -24,6 +24,7 @@ const navbar_submenu_item = {color: theme.colours.link,
                              }}
 
 const NavbarDiv = styled('div')(props => ({display: "flex",
+                                           color: "#ffffff",
                                            background: "linear-gradient(#0b8bb2, #056a86)",
                                            justifyContent: "space-between",
                                            alignItems: "center",
