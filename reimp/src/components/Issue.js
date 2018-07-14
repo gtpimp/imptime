@@ -35,8 +35,8 @@ import DeleteIssue from '../components/DeleteIssue'
 import TagListFlat from '../components/TagListFlat'
 import Timestamp from './Timestamp'
 import { logged_in_user } from '../actions/Auth'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
 
 const DefaultListRowStyle = {display: 'flex',
@@ -45,7 +45,6 @@ const DefaultListRowStyle = {display: 'flex',
                              font: theme.fonts.list_items,              
                              paddingLeft: '18px',
                              backgroundColor: theme.colours.left_panel_background,
-                             
                              ':hover': {
                                  backgroundColor: theme.colours.list_rollover
                              }
@@ -58,33 +57,26 @@ const TableCellStyle = {display: 'flex',
                         color: theme.colours.normal_text,
 }
 
-const IssueRowDiv = glamorous.div(DefaultListRowStyle,
-                                  props => (
-                                      {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+const IssueRowDiv = styled('div')(props => (DefaultListRowStyle,
+                                            {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
 
-                                       font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items,
-                                       ':hover': {
-                                           backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
-                                       }}
-                                  )
-)
-
-const TableCellDiv = glamorous.div(TableCellStyle,
-                                   props => (
-                                       {
-                                           font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items
-                                       }
-                                   )
-)
-const TableCellSecondaryDiv = glamorous.div(TableCellStyle,
-                                            {color: theme.colours.normal_text,
-                                             opacity: '0.6',
-
+                                             font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items,
                                              ':hover': {
-                                                 opacity: '1.0'
+                                                 backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
                                              }
-                                            }
-)
+                                            }))
+
+const TableCellDiv = styled('div')(props => (TableCellStyle,
+                                             {font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items}))
+
+const TableCellSecondaryDiv = styled('div')(props => (TableCellStyle,
+                                                      {color: theme.colours.normal_text,
+                                                       opacity: '0.6',
+
+                                                       ':hover': {
+                                                           opacity: '1.0'
+                                                       }
+                                                      }))
 
 const IconStyle = {
     backgroundRepeat: 'no-repeat',
@@ -95,32 +87,32 @@ const IconStyle = {
 }
 
 const FeatureExpandIconUrl = require(`../images/ic_expand_more_black_24dp_1x.png`)
-const FeatureExpandIconDiv = glamorous.div(IconStyle,
-                                           {backgroundImage: `url(${FeatureExpandIconUrl})`}
-)
+const FeatureExpandIconDiv = styled('div')(props => (IconStyle,
+                                                     {backgroundImage: `url(${FeatureExpandIconUrl})`}
+))
 
 const FeatureCollapseIconUrl = require(`../images/ic_chevron_right_black_24dp_1x.png`)
-const FeatureCollapseIconDiv = glamorous.div(IconStyle,
-                                             {backgroundImage: `url(${FeatureCollapseIconUrl})`}
-)
+const FeatureCollapseIconDiv = styled('div')(props => (IconStyle,
+                                                       {backgroundImage: `url(${FeatureCollapseIconUrl})`}
+))
 
 const ChildIconUrl = require(`../images/ic_subdirectory_arrow_right_black_24dp_1x.png`)
-const ChildIconDiv = glamorous.div(IconStyle,
+const ChildIconDiv = styled('div')(props => (IconStyle,
                                    {backgroundImage: `url(${ChildIconUrl})`,
                                     opacity: '0.2'},
                                    ({belongsToSelectedFeature=false}) => ({
                                        opacity: belongsToSelectedFeature ? '1.0' : '0.2'
                                    })
-)
+))
 
 
 const AttachmentIconUrl = require(`../images/attachment.png`)
-const AttachmentIconDiv = glamorous.div(IconStyle,
+const AttachmentIconDiv = styled('div')(props => (IconStyle,
                                         {backgroundImage: `url(${AttachmentIconUrl})`,
                                          backgroundSize: '15px 15px',
                                          height: '15px',
                                          width: '15px'}
-)
+))
 
 class Issue extends Component {
 

@@ -16,11 +16,11 @@ import {
 import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 import SubMenuItemLink from './SubMenuItemLink'
 
-const BreadcrumbDiv = glamorous.div({
+const BreadcrumbDiv = styled('div')(props => ({
     display: "inline-flex",
     cursor: "pointer",
     textDecoration: "none",
@@ -29,23 +29,23 @@ const BreadcrumbDiv = glamorous.div({
     ':last-child': {
         font: theme.fonts.breadcrumb_selected
     }
-})
+}))
 
 
-const BreadcrumbSeparatorDiv = glamorous.div({
+const BreadcrumbSeparatorDiv = styled('div')(props => ({
     alignItems: "center",
     display: "inline-flex",
     paddingLeft: "16px",
     paddingRight: "16px"
-})
+}))
 
-const BreadcrumbMenuDiv = glamorous.div({
+const BreadcrumbMenuDiv = styled('div')(props => ({
     position: 'absolute',
     top: '65px',
     minWidth: '145px',
     zIndex: '9',
     borderRadius: '3px',
-})
+}))
 
 const menu_buttons = {
 

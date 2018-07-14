@@ -7,11 +7,10 @@ import SubNavBar from './SubNavBar'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
 import Error from './Error'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
-
-const HeaderDiv = glamorous.div({font: theme.fonts.header})
+const HeaderDiv = styled('div')(props => ({font: theme.fonts.header})
 
 class Header extends Component {
     

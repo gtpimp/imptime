@@ -7,8 +7,9 @@ import { map } from 'lodash'
 import '../sass/div-table.css'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
 const div_table_row = {
     display: 'flex',
@@ -18,10 +19,9 @@ const div_table_row = {
     paddingLeft: '24px'
 }
 
-const DivTableHeaderRow = glamorous.div(div_table_row,
-                                        {font: theme.fonts.list_items,
-                                         height: '40px'},
-)
+const DivTableHeaderRow = styled('div')(props => (div_table_row,
+                                                  {font: theme.fonts.list_items,
+                                                   height: '40px'}))
 
 class DivTable extends Component {
 

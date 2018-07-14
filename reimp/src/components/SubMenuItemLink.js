@@ -1,20 +1,20 @@
 import React, {Component} from 'react'
 import {withRouter, Link} from 'react-router-dom'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
 
-const GlamLink = glamorous.div({color: theme.colours.link,
-                                  font: theme.fonts.links,
-                                  marginTop: '12px',
-                                  textTransform: 'none',
-                                  paddingLeft: '12px',
-                                  borderBottom: '1px solid #eee',
+const GlamLink = styled('div')(props => ({color: theme.colours.link,
+                                          font: theme.fonts.links,
+                                          marginTop: '12px',
+                                          textTransform: 'none',
+                                          paddingLeft: '12px',
+                                          borderBottom: '1px solid #eee',
 
-                                  ':hover': {
-                                      backgroundColor: '#eee',
-                                      cursor: 'pointer',
-                                  }})
+                                          ':hover': {
+                                              backgroundColor: '#eee',
+                                              cursor: 'pointer',
+                                          }}))
 
 class SubMenuItemLink extends Component {
 

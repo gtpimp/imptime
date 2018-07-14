@@ -10,8 +10,6 @@ import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
 import SubMenuItemLink from './SubMenuItemLink'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
 import { ProjectRowDiv, ProjectStatusDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
 
 class Project extends Component {

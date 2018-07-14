@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { Link } from 'react-router-dom' 
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import { Link } from 'react-router-dom'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
 const nav_item_css = {paddingLeft:"12px",
                       paddingRight:"12px",
@@ -11,35 +11,27 @@ const nav_item_css = {paddingLeft:"12px",
                       justifyContent:"center",
                       ':hover': { cursor: "pointer"}}
 
-const NavMenuItem = glamorous.div(nav_item_css,
-                                  ({isActive=false, colourName=null}) => (
-                                      {backgroundColor: isActive === true ? theme.colours.panel_background : "auto",
-                                      color:colourName === null ? "#ffffff" : theme.colours[colourName]}
-                                  )
-)
+const NavMenuItem = styled('div')(props => (nav_item_css,
+                                            {backgroundColor: psops.isActive === true ? theme.colours.panel_background : "auto",
+                                             color: props.colourName === null ? "#ffffff" : theme.colours[props.colourName]}))
 
-const NavDropdownMenuItem = glamorous.div(nav_item_css,
-                                          {position:"relative",
-                                           zIndex: "1",
-                                           width: "110px",
-                                           height: "36px"},
-                                          ({expanded=false, colourName=null}) => (
-                                              {backgroundColor: expanded === true ? theme.colours.panel_background : "auto",
-                                               color:colourName === null ? "#ffffff" : theme.colours[colourName]})
-)
+const NavDropdownMenuItem = styled('div')(props => (nav_item_css,
+                                                    {position:"relative",
+                                                     zIndex: "1",
+                                                     width: "110px",
+                                                     height: "36px",
+                                                     backgroundColor: props.expanded === true ? theme.colours.panel_background : "auto",
+                                                     color: props.colourName === null ? "#ffffff" : theme.colours[props.colourName]}))
 
-const NavDropdownMenuContent = glamorous.div({position:"relative",
-                                              width:"100px",
-                                              flexDirection: "column",
-                                              border: "1px solid red"},
-                                             ({sub_menu_visible}) => (
-                                                 {display: sub_menu_visible ? "flex" : "none"}
-                                             )
-)
+const NavDropdownMenuContent = styled('div')(props => ({position:"relative",
+                                                        width:"100px",
+                                                        flexDirection: "column",
+                                                        border: "1px solid red",
+                                                        display: props.sub_menu_visible ? "flex" : "none"}))
 
-const NavDropdownIcon = glamorous.div({display: "inline-block",
-                                       textAlign: "center",
-                                       width: "30px"})
+const NavDropdownIcon = styled('div')(props => ({display: "inline-block",
+                                                 textAlign: "center",
+                                                 width: "30px"}))
 
 class NavTab extends Component {
 
