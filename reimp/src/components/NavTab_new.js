@@ -11,11 +11,11 @@ const nav_item_css = {paddingLeft:"12px",
                       justifyContent:"center",
                       ':hover': { cursor: "pointer"}}
 
-const NavMenuItem = styled('div')(props => (nav_item_css,
+const NavMenuItem = styled('div')(props => Object.assign(nav_item_css,
                                             {backgroundColor: psops.isActive === true ? theme.colours.panel_background : "auto",
                                              color: props.colourName === null ? "#ffffff" : theme.colours[props.colourName]}))
 
-const NavDropdownMenuItem = styled('div')(props => (nav_item_css,
+const NavDropdownMenuItem = styled('div')(props => Object.assign(nav_item_css,
                                                     {position:"relative",
                                                      zIndex: "1",
                                                      width: "110px",

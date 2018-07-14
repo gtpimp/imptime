@@ -41,7 +41,7 @@ const div_table_row = {
     paddingLeft: '24px'
 }
 
-const DivTableHeaderRow = styled('div')(props => (div_table_row,
+const DivTableHeaderRow = styled('div')(props => Object.assign(div_table_row,
                                                   {font: theme.fonts.list_items,
                                                    height: '40px',
                                                    marginTop: '25px',

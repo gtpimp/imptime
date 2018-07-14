@@ -2,14 +2,12 @@ import React, { Component } from 'react'
 import {withRouter, Link} from 'react-router-dom'
 import {get, includes, keys} from 'lodash'
 import { connect } from 'react-redux'
-import classNames from 'classnames'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import '../sass/project.css'
 import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
-import SubMenuItemLink from './SubMenuItemLink'
 import { ProjectRowDiv, ProjectStatusDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
 
 class Project extends Component {
@@ -53,133 +51,133 @@ class Project extends Component {
     
     render_expanded() {
         const { project, is_loading, is_selected,
-		            onClickedProject, getProjectStatus,
+		onClickedProject,
                 visible_header_keys, header_list, can_show_project_delete } = this.props
-	      if ( ! project ) {
-	          return (
+	if ( ! project ) {
+	    return (
                 <ProjectRowDiv>
                   <TableCellDiv>
                     Loading...
                   </TableCellDiv>
                 </ProjectRowDiv>
             )
-	      }
-	      
-	      if ( ! is_loading === false ) {
-	          return (
-		            <ProjectRowDiv key={this.key+"."+project.id}
-		                           onClick={onClickedProject}
+	}
+	
+	if ( ! is_loading === false ) {
+	    return (
+		<ProjectRowDiv key={this.key+"."+project.id}
+		               onClick={onClickedProject}
                                is_selected={is_selected}
-		            >
-		              <div className="div-table__cell">{project && project.id}</div>
-		              <div className="div-table__cell">Loading...</div>
-		            </ProjectRowDiv>
-	          )
-	      } else {
+		>
+		  <div className="div-table__cell">{project && project.id}</div>
+		  <div className="div-table__cell">Loading...</div>
+		</ProjectRowDiv>
+	    )
+	} else {
             return (
-		            <ProjectRowDiv key={this.key+"."+project.id} is_selected={is_selected}>
-                {includes(visible_header_keys, "name") &&
-		             <TableCellDiv
-                     onClick={onClickedProject}
-                     style={getCellStyle(header_list.name)}>
-                   {project.name}
-                 </TableCellDiv>
-                }
+		<ProjectRowDiv key={this.key+"."+project.id} is_selected={is_selected}>
+                  {includes(visible_header_keys, "name") &&
+		   <TableCellDiv
+                       onClick={onClickedProject}
+                       style={getCellStyle(header_list.name)}>
+                     {project.name}
+                   </TableCellDiv>
+                  }
 
-                {includes(visible_header_keys, "active") &&
-                 <TableCellDiv style={getCellStyle(header_list.active)}>
-                   <ProjectStatusDiv colour={ this.getProjectStatus(project) }>
-                   </ProjectStatusDiv>
-                 </TableCellDiv>
-                }
-                
-                {includes(visible_header_keys, "num_sprints") &&
-                 <TableCellDiv>
-                   <Link to={'/projects/'+project.id+'/sprints/'}
-                         style={getCellStyle(header_list.num_sprints)}>
-                     { project && project.num_open_sprints > 0 &&
-                       <TableCellLinkDiv>
-                         {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
-                       </TableCellLinkDiv>
+                   {includes(visible_header_keys, "active") &&
+                    <TableCellDiv style={getCellStyle(header_list.active)}>
+                      <ProjectStatusDiv colour={ this.getProjectStatus(project) }>
+                      </ProjectStatusDiv>
+                    </TableCellDiv>
+                   }
+                    
+                    {includes(visible_header_keys, "num_sprints") &&
+                     <TableCellDiv>
+                       <Link to={'/projects/'+project.id+'/sprints/'}
+                             style={getCellStyle(header_list.num_sprints)}>
+                         { project && project.num_open_sprints > 0 &&
+                           <TableCellLinkDiv>
+                             {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
+                           </TableCellLinkDiv>
+                         }
+                       </Link>
+                     </TableCellDiv>
+                    }
+
+                     {includes(visible_header_keys, "created_at") &&
+                      <TableCellSecondaryDiv style={getCellStyle(header_list.created_at)}>
+                        <div className="project-cell__created-at">
+                          <Timestamp
+                              value={project.recent_activity && project.recent_activity.project_created_at}
+                              format="from_now"/>
+                        </div>
+                      </TableCellSecondaryDiv>
                      }
-                   </Link>
-                 </TableCellDiv>
-                }
 
-                  {includes(visible_header_keys, "created_at") &&
-                   <TableCellSecondaryDiv style={getCellStyle(header_list.created_at)}>
-                     <div className="project-cell__created-at">
-                       <Timestamp
-                           value={project.recent_activity && project.recent_activity.project_created_at}
-                           format="from_now"/>
-                     </div>
-                   </TableCellSecondaryDiv>
-                  }
-
-                  
-                  {includes(visible_header_keys, "sort_reason") &&
-                   <TableCellSecondaryDiv style={getCellStyle(header_list.sort_reason)}>
-                     <div className="project-cell__sort-reason">
-                       {project.recent_activity && project.recent_activity.sort_reason}
-                     </div>
-                   </TableCellSecondaryDiv>
-                  }
-
-
-
-                  {includes(visible_header_keys, "sort_date") &&
-                   <TableCellSecondaryDiv style={getCellStyle(header_list.sort_date)}>
-                     <div className="project-cell__sort-date">
-                       <Timestamp
-                           value={project.recent_activity && project.recent_activity.sort_date}
-                           format="from_now"/>
-                     </div>
-                   </TableCellSecondaryDiv>
-                  }
-
-                  
-                  {includes(visible_header_keys, "delete") &&
-                   <TableCellSecondaryDiv style={getCellStyle(header_list.delete)}>
-                     <div className="reveal-on-hover--block issue__cell--issue-delete">
-                       <DeleteProject
-                           onDelete={this.onDeleteProject}
-                       />
-                     </div>
-                   </TableCellSecondaryDiv>
-                  }
-
-                  { includes(visible_header_keys, "small_delete") &&
-                    <TableCellSecondaryDiv style={getCellStyle(header_list.small_delete)}>
-                      { can_show_project_delete &&
-                        <div className={"reveal-on-hover--block"}>
-                          <div className="project__small-delete-image"
-                               onClick={this.onDeleteProject} />
-                        </div>
+                      
+                      {includes(visible_header_keys, "sort_reason") &&
+                       <TableCellSecondaryDiv style={getCellStyle(header_list.sort_reason)}>
+                         <div className="project-cell__sort-reason">
+                           {project.recent_activity && project.recent_activity.sort_reason}
+                         </div>
+                       </TableCellSecondaryDiv>
                       }
-                    </TableCellSecondaryDiv>
-                  }
-                  
-                  {includes(visible_header_keys, "delete") &&
-                   <TableCellSecondaryDiv style={getCellStyle(header_list.delete)}>
-                     <div className="reveal-on-hover--block issue__cell--issue-delete">
-                       <DeleteProject onDelete={this.onDeleteProject} />
-                     </div>
-                   </TableCellSecondaryDiv>
-                  }
 
-                  { includes(visible_header_keys, "small_delete") &&
-                    <TableCellSecondaryDiv style={getCellStyle(header_list.small_delete)}>
-                      { can_show_project_delete &&
-                        <div className={"reveal-on-hover--block"}>
-                          <div className="project__small-delete-image"
-                               onClick={this.onDeleteProject} />
-                        </div>
-                      }
-                    </TableCellSecondaryDiv>
-                  }
-		            </ProjectRowDiv>
+
+
+                       {includes(visible_header_keys, "sort_date") &&
+                        <TableCellSecondaryDiv style={getCellStyle(header_list.sort_date)}>
+                          <div className="project-cell__sort-date">
+                            <Timestamp
+                                value={project.recent_activity && project.recent_activity.sort_date}
+                                format="from_now"/>
+                          </div>
+                        </TableCellSecondaryDiv>
+                       }
+
+                        
+                        {includes(visible_header_keys, "delete") &&
+                         <TableCellSecondaryDiv style={getCellStyle(header_list.delete)}>
+                           <div className="reveal-on-hover--block issue__cell--issue-delete">
+                             <DeleteProject
+                                 onDelete={this.onDeleteProject}
+                             />
+                           </div>
+                         </TableCellSecondaryDiv>
+                        }
+
+                         { includes(visible_header_keys, "small_delete") &&
+                           <TableCellSecondaryDiv style={getCellStyle(header_list.small_delete)}>
+                             { can_show_project_delete &&
+                               <div className={"reveal-on-hover--block"}>
+                                 <div className="project__small-delete-image"
+                                      onClick={this.onDeleteProject} />
+                               </div>
+                             }
+                           </TableCellSecondaryDiv>
+                         }
+                           
+                           {includes(visible_header_keys, "delete") &&
+                            <TableCellSecondaryDiv style={getCellStyle(header_list.delete)}>
+                              <div className="reveal-on-hover--block issue__cell--issue-delete">
+                                <DeleteProject onDelete={this.onDeleteProject} />
+                              </div>
+                            </TableCellSecondaryDiv>
+                           }
+
+                            { includes(visible_header_keys, "small_delete") &&
+                              <TableCellSecondaryDiv style={getCellStyle(header_list.small_delete)}>
+                                { can_show_project_delete &&
+                                  <div className={"reveal-on-hover--block"}>
+                                    <div className="project__small-delete-image"
+                                         onClick={this.onDeleteProject} />
+                                  </div>
+                                }
+                              </TableCellSecondaryDiv>
+                            }
+		</ProjectRowDiv>
             )
-	      }
+	}
     }
 
     render() {

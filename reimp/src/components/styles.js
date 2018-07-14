@@ -27,7 +27,7 @@ const StatusCircle = {height: '16px',
                       borderRadius: '8px',
                       opacity: '0.5'}
 
-export const ProjectRowDiv = styled('div')(props => (DefaultListRowStyle,
+export const ProjectRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                                      {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
                                                       ':hover': {
                                                           backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
@@ -35,7 +35,7 @@ export const ProjectRowDiv = styled('div')(props => (DefaultListRowStyle,
 )
 )
 
-export const SprintRowDiv = styled('div')(props => (DefaultListRowStyle,
+export const SprintRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                                     {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
                                                      ':hover': {
                                                          backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
@@ -43,15 +43,15 @@ export const SprintRowDiv = styled('div')(props => (DefaultListRowStyle,
 )
 )
 
-export const ProjectStatusDiv = styled('div')(props => (StatusCircle,
+export const ProjectStatusDiv = styled('div')(props => Object.assign(StatusCircle,
                                                         {backgroundColor: props.colour}))
 
-export const SprintStatusDiv = styled('div')(props => (StatusCircle,
+export const SprintStatusDiv = styled('div')(props => Object.assign(StatusCircle,
                                                        {backgroundColor: props.status_ok ? 'green' : 'lightgray'
                                                        }))
 
 
-export const TableCellDiv = styled('div')(props => (TableCellStyle))
-    export const TableCellSecondaryDiv = styled('div')(props => (TableCellStyle,
+export const TableCellDiv = styled('div')(props => Object.assign(TableCellStyle))
+    export const TableCellSecondaryDiv = styled('div')(props => Object.assign(TableCellStyle,
                                                                  {color: theme.colours.normal_text}))
 export const TableCellLinkDiv = styled('div')(props => ({':hover': {textDecoration: 'underline'}}))

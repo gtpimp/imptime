@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import {withRouter, Link} from 'react-router-dom'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 

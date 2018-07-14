@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
 import NavTab from './NavTab'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { can_create_release_notes, logout } from '../actions/Auth'

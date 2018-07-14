@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { keys, keyBy, map } from 'lodash';
 import { connect } from 'react-redux'
-import classNames from 'classnames'
-import {withRouter, Link} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import Timestamp from '../components/Timestamp'
 import Hours from './Hours'
 import EditableSprintStatus from '../components/EditableSprintStatus'
@@ -39,7 +38,7 @@ const TableCellStyle = {display: 'flex',
 }
 
 
-const SprintRowDiv = styled('div')(props => (DefaultListRowStyle,
+const SprintRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                              {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
                                               ':hover': {
                                                   backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
@@ -54,10 +53,10 @@ const SprintCellDiv = styled('div')(props => ({display: 'flex',
                                      height: '100%',
                                      width: '100%',
 }))
-const TableCellSecondaryDiv = styled('div')(props => (TableCellStyle,
+const TableCellSecondaryDiv = styled('div')(props => Object.assign(TableCellStyle,
                                             {color: theme.colours.normal_text}))
 
-const SprintStatusDiv = styled('div')(props => (StatusCircle,
+const SprintStatusDiv = styled('div')(props => Object.assign(StatusCircle,
                                                 {backgroundColor: props.status_ok ? 'green' : 'lightgray'
                                       }))
 
@@ -98,9 +97,7 @@ class Sprint extends Component {
     }
 
     render_expanded() {
-        const { sprint, is_loading, is_selected, isOver,
-		            onClickedSprint,
-                header_list} = this.props
+        const { sprint, is_loading, is_selected, onClickedSprint, header_list} = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         const that = this

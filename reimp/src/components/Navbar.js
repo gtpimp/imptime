@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter, Link} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import SearchBox from '../components/SearchBox'
 import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
 import NavTab from './NavTab'
@@ -8,7 +8,6 @@ import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
-import SubMenuItemLink from './SubMenuItemLink'
 
 const navbar_submenu_item = {color: theme.colours.link,
                              font: theme.fonts.links,
@@ -38,8 +37,6 @@ const NavbarLeftDiv = styled('div')(props => ({display: 'flex',
 
 const NavbarRightDiv = styled('div')(props => ({display: 'flex',
                                                 width: "58.7%"}))
-
-const PopUpLink = styled('div')(props => (navbar_submenu_item))
 
 const GlamLink = styled('Link')(props => (navbar_submenu_item))
 

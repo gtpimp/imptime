@@ -12,9 +12,9 @@ const pane_css = { overflow: "auto",
                    flexDirection:"column",
                    width: "100%" }
 
-const SplitPaneLeft = styled('div')(props => (pane_css,
+const SplitPaneLeft = styled('div')(props => Object.assign(pane_css,
                                     {backgroundColor: theme.colours.left_panel_background}))
-const SplitPaneRight = styled('div')(props => (pane_css,
+const SplitPaneRight = styled('div')(props => Object.assign(pane_css,
                                      {backgroundColor: theme.colours.right_panel_background}))
 
 class Splitter extends Component {

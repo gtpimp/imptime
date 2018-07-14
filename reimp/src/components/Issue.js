@@ -57,7 +57,7 @@ const TableCellStyle = {display: 'flex',
                         color: theme.colours.normal_text,
 }
 
-const IssueRowDiv = styled('div')(props => (DefaultListRowStyle,
+const IssueRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
                                             {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
 
                                              font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items,
@@ -66,10 +66,10 @@ const IssueRowDiv = styled('div')(props => (DefaultListRowStyle,
                                              }
                                             }))
 
-const TableCellDiv = styled('div')(props => (TableCellStyle,
+const TableCellDiv = styled('div')(props => Object.assign(TableCellStyle,
                                              {font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items}))
 
-const TableCellSecondaryDiv = styled('div')(props => (TableCellStyle,
+const TableCellSecondaryDiv = styled('div')(props => Object.assign(TableCellStyle,
                                                       {color: theme.colours.normal_text,
                                                        opacity: '0.6',
 
@@ -87,17 +87,17 @@ const IconStyle = {
 }
 
 const FeatureExpandIconUrl = require(`../images/ic_expand_more_black_24dp_1x.png`)
-const FeatureExpandIconDiv = styled('div')(props => (IconStyle,
+const FeatureExpandIconDiv = styled('div')(props => Object.assign(IconStyle,
                                                      {backgroundImage: `url(${FeatureExpandIconUrl})`}
 ))
 
 const FeatureCollapseIconUrl = require(`../images/ic_chevron_right_black_24dp_1x.png`)
-const FeatureCollapseIconDiv = styled('div')(props => (IconStyle,
+const FeatureCollapseIconDiv = styled('div')(props => Object.assign(IconStyle,
                                                        {backgroundImage: `url(${FeatureCollapseIconUrl})`}
 ))
 
 const ChildIconUrl = require(`../images/ic_subdirectory_arrow_right_black_24dp_1x.png`)
-const ChildIconDiv = styled('div')(props => (IconStyle,
+const ChildIconDiv = styled('div')(props => Object.assign(IconStyle,
                                    {backgroundImage: `url(${ChildIconUrl})`,
                                     opacity: '0.2'},
                                    ({belongsToSelectedFeature=false}) => ({
@@ -107,7 +107,7 @@ const ChildIconDiv = styled('div')(props => (IconStyle,
 
 
 const AttachmentIconUrl = require(`../images/attachment.png`)
-const AttachmentIconDiv = styled('div')(props => (IconStyle,
+const AttachmentIconDiv = styled('div')(props => Object.assign(IconStyle,
                                         {backgroundImage: `url(${AttachmentIconUrl})`,
                                          backgroundSize: '15px 15px',
                                          height: '15px',
@@ -218,12 +218,11 @@ class Issue extends Component {
 
     render_expanded() {
         const {
-            issue, is_selected, is_highlighted,
-            is_invalidated, is_saving, is_fake,
-            isOver, show_children,
+            issue, is_selected,
+            show_children,
             subject_prefix, subject_suffix,
             header_list,
-            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
+            isFeatureOfSelectedIssue, belongsToSelectedFeature, tag_category_names,
             tagsByCategoryName, all_estimates_by_user_id,
             all_actuals_by_user_id, sprint, issue_id_as_list,
             logged_in_user_id, logged_in_user_can_estimate_user_id
@@ -255,7 +254,6 @@ class Issue extends Component {
         } else {
             const isFeature = issue.can_group_issues
             const belongsToAFeature = issue.parent_group_id || false
-            const isStandalone = !isFeature && !belongsToAFeature
 
             return (
                 <IssueRowDiv key={that.key + "." + issue.id}
