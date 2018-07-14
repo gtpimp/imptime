@@ -9,8 +9,8 @@ import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import moment from 'moment'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
 const StatusCircle = {height: '16px',
                       width: '16px',
@@ -39,43 +39,40 @@ const TableCellStyle = {display: 'flex',
 }
 
 
-const SprintRowDiv = glamorous.div(DefaultListRowStyle,
-                                   ({is_selected}) => (
-                                       {backgroundColor: is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
-                                        ':hover': {
-                                            backgroundColor: is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
-                                        }}
-                                   )
+const SprintRowDiv = styled('div')(props => (DefaultListRowStyle,
+                                             {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+                                              ':hover': {
+                                                  backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
+                                              }}
+)
 )
 
-const TableCellDiv = glamorous.div(TableCellStyle)
-const SprintCellDiv = glamorous.div({display: 'flex',
+const TableCellDiv = styled('div')(props => (TableCellStyle))
+const SprintCellDiv = styled('div')(props => ({display: 'flex',
                                      verticalAlign: 'middle',
                                      alignItems: 'center',
                                      height: '100%',
                                      width: '100%',
-})
-const TableCellSecondaryDiv = glamorous.div(TableCellStyle,
-                                            {color: theme.colours.normal_text})
+}))
+const TableCellSecondaryDiv = styled('div')(props => (TableCellStyle,
+                                            {color: theme.colours.normal_text}))
 
-const SprintStatusDiv = glamorous.div(StatusCircle,
-                                      ({status_ok=false}) => ({
-                                          backgroundColor: status_ok ? 'green' : 'lightgray'
-                                      })
-)
+const SprintStatusDiv = styled('div')(props => (StatusCircle,
+                                                {backgroundColor: props.status_ok ? 'green' : 'lightgray'
+                                      }))
 
-const SprintLink = glamorous(Link)({display: 'flex',
-                                    font: theme.fonts.list_items,
-                                    paddingLeft: '6px',
-                                    verticalAlign: 'middle',
-                                    alignItems: 'center',
-                                    color: theme.colours.list_text,
+const SprintLink = styled('Link')(props => ({display: 'flex',
+                                             font: theme.fonts.list_items,
+                                             paddingLeft: '6px',
+                                             verticalAlign: 'middle',
+                                             alignItems: 'center',
+                                             color: theme.colours.list_text,
 
-                                    ':hover': {
-                                        cursor: 'pointer',
-                                        textDecoration: 'underline'
-                                    }
-})
+                                             ':hover': {
+                                                 cursor: 'pointer',
+                                                 textDecoration: 'underline'
+                                             }
+}))
 
 
 class Sprint extends Component {

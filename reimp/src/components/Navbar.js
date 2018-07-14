@@ -6,8 +6,8 @@ import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 import SubMenuItemLink from './SubMenuItemLink'
 
 const navbar_submenu_item = {color: theme.colours.link,
@@ -23,27 +23,25 @@ const navbar_submenu_item = {color: theme.colours.link,
                                  cursor: 'pointer',
                              }}
 
-const NavbarDiv = glamorous.div({display: "flex",
-                                 background: "linear-gradient(#0b8bb2, #056a86)",
-                                 justifyContent: "space-between",
-                                 alignItems: "center",
-                                 height: "36px",
-                                 width: "100%"},
-                                ({user_initiated_network_activity=false,
-                                  is_websockets_connected=false}) =>
-                                      ({borderTop:(user_initiated_network_activity || !is_websockets_connected)? "1px solid #D54859" : "auto"})
-)
+const NavbarDiv = styled('div')(props => ({display: "flex",
+                                           background: "linear-gradient(#0b8bb2, #056a86)",
+                                           justifyContent: "space-between",
+                                           alignItems: "center",
+                                           height: "36px",
+                                           width: "100%",
+                                           borderTop:(props.user_initiated_network_activity || !props.is_websockets_connected)? "1px solid #D54859" : "auto"}
+))
 
-const NavbarLeftDiv = glamorous.div({display: 'flex',
-                                     width: '41.3%',
-                                     paddingLeft: '12px'})
+const NavbarLeftDiv = styled('div')(props => ({display: 'flex',
+                                               width: '41.3%',
+                                               paddingLeft: '12px'}))
 
-const NavbarRightDiv = glamorous.div({display: 'flex',
-                                      width: "58.7%"})
+const NavbarRightDiv = styled('div')(props => ({display: 'flex',
+                                                width: "58.7%"}))
 
-const PopUpLink = glamorous.div(navbar_submenu_item)
+const PopUpLink = styled('div')(props => (navbar_submenu_item))
 
-const GlamLink = glamorous(Link)(navbar_submenu_item)
+const GlamLink = styled('Link')(props => (navbar_submenu_item))
 
 class Navbar extends Component {
 

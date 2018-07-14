@@ -24,23 +24,22 @@ import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
-const ToolbarDiv = glamorous.div({display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  height: "36px",
-                                  color: theme.colours.strong_text,
-                                  backgroundColor: theme.colours.left_panel_background,
-                                  fontSize: "15px",
-                                  width: "100%"})
+const ToolbarDiv = styled('div')(props => ({display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            height: "36px",
+                                            color: theme.colours.strong_text,
+                                            backgroundColor: theme.colours.left_panel_background,
+                                            fontSize: "15px",
+                                            width: "100%"}))
 
-const ToolbarSideDiv = glamorous.div({alignItems: "center",
-                                      display: "flex",
-                                      flexGrow: "1"},
-                                     ({side}) => ({justifyContent: side === 'left' ?  'flex-start' : 'flex-end'})
-)
+const ToolbarSideDiv = styled('div')(props => ({alignItems: "center",
+                                                display: "flex",
+                                                flexGrow: "1",
+                                                justifyContent: props.side === 'left' ?  'flex-start' : 'flex-end'}))
 
 class Toolbar extends Component {
     

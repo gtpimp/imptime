@@ -4,18 +4,18 @@ import {withRouter} from 'react-router-dom'
 import SplitPane from 'react-split-pane'
 import Toolbar from './toolbar/Toolbar'
 import { setGlobalPageFlag, getGlobalPageFlag } from '../actions/Page'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
 const pane_css = { overflow: "auto",
                    display:"flex",
                    flexDirection:"column",
                    width: "100%" }
 
-const SplitPaneLeft = glamorous.div(pane_css,
-                                    {backgroundColor: theme.colours.left_panel_background})
-const SplitPaneRight = glamorous.div(pane_css,
-                                     {backgroundColor: theme.colours.right_panel_background})
+const SplitPaneLeft = styled('div')(props => (pane_css,
+                                    {backgroundColor: theme.colours.left_panel_background}))
+const SplitPaneRight = styled('div')(props => (pane_css,
+                                     {backgroundColor: theme.colours.right_panel_background}))
 
 class Splitter extends Component {
 

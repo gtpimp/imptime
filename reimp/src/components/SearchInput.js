@@ -1,29 +1,29 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import ReactTimeout from 'react-timeout'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
-const SearchInputDiv = glamorous.div({color: theme.colours.strong_text,
-                                      backgroundColor: theme.colours.page_background,
-                                      display: "flex",
-                                      borderRadius: "3px",
-                                      paddingLeft: "12px",
-                                      height: "28px",
-                                      width: "306px"})
+const SearchInputDiv = styled('div')(props => ({color: theme.colours.strong_text,
+                                                backgroundColor: theme.colours.page_background,
+                                                display: "flex",
+                                                borderRadius: "3px",
+                                                paddingLeft: "12px",
+                                                height: "28px",
+                                                width: "306px"}))
 
-const SearchInputInput = glamorous.input({backgroundColor: theme.colours.page_background,
-                                          border: "0px",
-                                          width: "278px",
-                                          font: theme.fonts.search_bar,
-                                          ':focus':{outlineWidth: "0"}})
+const SearchInputInput = styled('input')(props => ({backgroundColor: theme.colours.page_background,
+                                                    border: "0px",
+                                                    width: "278px",
+                                                    font: theme.fonts.search_bar,
+                                                    ':focus':{outlineWidth: "0"}}))
 
-const SearchInputIconDiv = glamorous.div({height: "28px"})
+const SearchInputIconDiv = styled('div')(props => ({height: "28px"}))
 
-const SearchInputIcon = glamorous.i({height: "26px",
-                                     width: "28px",
-                                     paddingTop: "2px"
-})
+const SearchInputIcon = styled('i')(props => ({height: "26px",
+                                               width: "28px",
+                                               paddingTop: "2px"
+}))
 
 class SearchInput extends Component {
 
