@@ -13,8 +13,9 @@ const nav_item_css = {paddingLeft:"12px",
                       '&:hover': { cursor: "pointer"}}
 
 const NavMenuItem = styled('div')(props => Object.assign(nav_item_css,
-                                            {backgroundColor: props.isActive === true ? theme.colours.panel_background : "auto",
-                                             color: props.colourName === null ? "#ffffff" : theme.colours[props.colourName]}))
+                                                         {cursor: "pointer",
+                                                          backgroundColor: props.isActive === true ? theme.colours.panel_background : "auto",
+                                                          color: props.colourName === null ? "#ffffff" : theme.colours[props.colourName]}))
 
 const NavDropdownMenuItem = styled('div')(props => Object.assign(nav_item_css,
                                           {position:"relative",
