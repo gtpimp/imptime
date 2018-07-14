@@ -19,20 +19,22 @@ import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
 import { ShortcutManager } from 'react-shortcuts'
 import keymap from '../actions/Keymap'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
+
 var HTML5Backend = require('react-dnd-html5-backend');
 const shortcut_manager = new ShortcutManager(keymap)
 
-
-const AppDiv = glamorous.div({'backgroundColor': theme.colours.page_background,
-                              'height': '100%',
-                              'minHeight': '100vh',
-                              'font': theme.fonts.body,
-                              'display':'flex',
-                              'flexDirection': 'column',
-                              'justifyContent': 'center',
-                              'margin': '0 auto'})
+const AppDiv = styled('div')(props => ({
+    'backgroundColor': theme.colours.page_background,
+    'height': '100%',
+    'minHeight': '100vh',
+    'font': theme.fonts.body,
+    'display':'flex',
+    'flexDirection': 'column',
+    'justifyContent': 'center',
+    'margin': '0 auto'}))
 
 
 class MainLayout extends Component {
