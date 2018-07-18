@@ -153,7 +153,16 @@ class SprintViewSet(BaseViewSet):
                                        .annotate(num_testable=Count('id'))
         for testable_issue_count in testable_issues:
             estimates_by_sprint_id.setdefault(testable_issue_count['project_id'], {})['num_testable_issues'] = testable_issue_count.get('num_testable', 0)
-            
+
+        num_issues_missing_testables_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                                      testables__isnull=True,
+                                                                      issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                                              .order_by("project_id")\
+                                                              .values("project_id")\
+                                                              .annotate(num_missing_testables=Count("id"))
+        for issues_missing_testable_count in num_issues_missing_testables_by_sprint:
+            estimates_by_sprint_id.setdefault(issues_missing_testable_count['project_id'], {})['num_missing_testable_issues'] = issues_missing_testable_count.get('num_missing_testables', 0)
+                                                              
         num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints,
                                                                assigned_to_id__isnull=True)\
                                                        .order_by("project_id")\
