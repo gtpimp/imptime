@@ -61,6 +61,14 @@ class SprintStateSummary extends Component {
         )
     }
 
+    renderOverBudget() {
+        return (
+            <div>
+              <div>Budget exceeded</div>
+            </div>
+        )
+    }
+
     renderBudgetProgress() {
         const { cost_summary, can_view_budget, can_view_costs  } = this.props
 
@@ -97,7 +105,7 @@ class SprintStateSummary extends Component {
     }
 
     renderUnhandledProblems() {
-        const { sprint, can_view_budget } = this.props
+        const { sprint, cost_summary, can_view_budget } = this.props
         if ( sprint.num_missing_testable_issues > 0 ) {
             return this.renderMissingTestablesAction()
         } else if ( sprint.num_issues_unassigned > 0 ) {
@@ -106,6 +114,8 @@ class SprintStateSummary extends Component {
             return this.renderMissingEstimates()
         } else if ( can_view_budget && ! sprint.budget > 0 ) {
             return this.renderMissingBudget()
+        } else if ( sprint.budget > 0 && cost_summary && !cost_summary.under_budget ) {
+            return this.renderOverBudget()
         }
     }
     
