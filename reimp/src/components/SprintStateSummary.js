@@ -66,13 +66,25 @@ class SprintStateSummary extends Component {
 
         if ( can_view_budget && can_view_costs ) {
             return (
-                <ProgressBar current={ cost_summary.progress_against_budget } max={ 1.0 } />
+                <ProgressBar current={ cost_summary.spent } max={ cost_summary.budget } />
             )
         } else {
             return (
-                <ProgressBar current={ cost_summary.spent } max={ cost_summary.budget } />
+                <ProgressBar current={ cost_summary.progress_against_budget } max={ 1.0 } />
             )
         }
+    }
+
+    renderActual() {
+        const { cost_summary, can_view_costs  } = this.props
+        if ( ! can_view_costs ) {
+            return null
+        }
+        return (
+            <div className="sprint-state-summary__actual">
+              Spent: <CurrencyValue value={cost_summary.spent} />
+            </div>
+        )
     }
 
     renderBudget() {
@@ -110,6 +122,7 @@ class SprintStateSummary extends Component {
                 { this.renderProblems() }
               </div>
               { this.renderBudgetProgress() }
+              { this.renderActual() }
               { this.renderBudget() }
               
             </div>
