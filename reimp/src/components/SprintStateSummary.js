@@ -96,7 +96,7 @@ class SprintStateSummary extends Component {
         )
     }
 
-    renderProblems() {
+    renderUnhandledProblems() {
         const { sprint, can_view_budget } = this.props
         if ( sprint.num_missing_testable_issues > 0 ) {
             return this.renderMissingTestablesAction()
@@ -118,13 +118,12 @@ class SprintStateSummary extends Component {
 
         return (
             <div className="sprint-state-summary">
-              <div className="sprint-state-summary__problems">
-                { this.renderProblems() }
-              </div>
               { this.renderBudgetProgress() }
               { this.renderActual() }
               { this.renderBudget() }
-              
+              <div className="sprint-state-summary__problems--unhandled">
+                { this.renderUnhandledProblems() }
+              </div>
             </div>
         )
         
