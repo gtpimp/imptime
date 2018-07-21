@@ -4,6 +4,7 @@ import classNames from 'classnames'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import { map, keys, get } from 'lodash'
+import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import {
     ensureMultipleIssueSummaryLoaded,
     getMultipleIssueSummary,
@@ -39,8 +40,13 @@ class MultipleIssueSummary extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, filter, summary} = props
-        dispatch(ensureMultipleIssueSummaryLoaded(filter))
+        const {dispatch, filter, sprint_id, summary} = props
+
+        if ( ! filter && sprint_id ) {
+            dispatch(ensureCostSummaryLoaded(sprint_id))
+        } else {
+            dispatch(ensureMultipleIssueSummaryLoaded(filter))
+        }
         dispatch(ensureTagsLoaded(summary.all_tag_ids))
         dispatch(ensureIssuesLoaded(summary.all_issue_ids))
         dispatch(ensureUsersLoaded(summary.all_user_ids))
@@ -427,13 +433,27 @@ class MultipleIssueSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {filter, project_id, container_class_name} = props
+    const {filter, sprint_id, project_id, container_class_name} = props
+
+    let summary
     
-    const summary = getMultipleIssueSummary(state, filter) || {}
+    if ( !filter && sprint_id ) {
+        // It's more efficient to use the cost summary embedded in the
+        // sprint cost summary if we're fetching for a single sprint,
+        // because it saves an api call and caches better.
+        const cost_summary = getCostSummary(state, sprint_id)
+        if ( cost_summary ) {
+            summary = cost_summary.breakdown
+        }
+    } else {
+        summary = getMultipleIssueSummary(state, filter)
+    }
+    
     const show_costs = doesMienHaveFeature(state, 'costs') && has_permission(state, project_id, 'has_view_ctc_billable_rates')
     return {
-        summary: summary,
+        summary: summary || {},
         filter,
+        sprint_id,
         show_costs,
         container_class_name
     }

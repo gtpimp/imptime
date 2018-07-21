@@ -136,7 +136,7 @@ class SprintSidebar extends Component {
                 
                 <MienFeature feature_name="multiple_issue_summary">
                   <PropertyStackComponent>
-                    <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}} project_id={sprint.project_id} />
+                    <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} />
                   </PropertyStackComponent>
                 </MienFeature>
 

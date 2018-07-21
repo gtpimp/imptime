@@ -9,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions
+from timepiece.models import Issue
+from multiple_issue_summary_api import MultipleIssueSummaryCalculator
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,9 @@ class CostSummaryViewSet(BaseViewSet):
                 context = {}
                 bp = BusinessPermissions.for_user(request.user, sprint.business)  # sic
                 cost_summary = sprint.prepare_stats_for_json(request.user)
+
+                issue_qs = Issue.objects.filter(project_id=sprint.id)
+                cost_summary['breakdown'] = MultipleIssueSummaryCalculator(request, issue_qs=issue_qs, summary_id=sprint.id).get_data()
                 cost_summary['id'] = sprint.id
 
                 if not bp.has_view_ctc_billable_rates:

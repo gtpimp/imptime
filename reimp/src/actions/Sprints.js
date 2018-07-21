@@ -5,7 +5,6 @@ import {
     ENTITY_KEY__SPRINT,
     HEADER_LIST_NAME__SPRINT,
     small_col_width,
-    medium_col_width,
     large_col_width
 } from './ItemListKeyRegistry'
 import {
@@ -39,7 +38,7 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
     [ {key:'name', label:'name', description:'Name', width:large_col_width},
       {key:'ref', label:'Ref', description:'Reference', width:small_col_width},
       {key:'number', label:'number', description:'Number', width:small_col_width},
-      {key:'state_summary', label:'State Summary', description:'State summary indicating problems', width:medium_col_width},
+      {key:'state_summary', label:'State Summary', description:'State summary indicating problems', width:large_col_width},
       {key:'start_time', label:"First clock", description:"First clocked time on this sprint", width:small_col_width},
       {key:'end_time', label:"Last clock", description:"Last clocked time on this sprint", width:small_col_width},
       {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width},

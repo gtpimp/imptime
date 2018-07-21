@@ -97,9 +97,24 @@ class SprintStateSummary extends Component {
 
     renderBudget() {
         const { sprint, can_view_budget } = this.props
+        if ( ! can_view_budget ) {
+            return null
+        }
         return (
             <div className="sprint-state-summary__budget">
-                Budget: { can_view_budget && <CurrencyValue value={sprint.budget} />}
+                Budget to customer: {<CurrencyValue value={sprint.budget} />}
+            </div>
+        )
+    }
+
+    renderEstimatedBudget() {
+        const { cost_summary, can_view_budget } = this.props
+        if ( ! can_view_budget ) {
+            return null
+        }
+        return (
+            <div className="sprint-state-summary__budget">
+              Estimate using original velocity: { <CurrencyValue value={cost_summary.estimated_cost} />}
             </div>
         )
     }
@@ -114,7 +129,7 @@ class SprintStateSummary extends Component {
             return this.renderMissingEstimates()
         } else if ( can_view_budget && ! sprint.budget > 0 ) {
             return this.renderMissingBudget()
-        } else if ( sprint.budget > 0 && cost_summary && !cost_summary.under_budget ) {
+        } else if ( can_view_budget && sprint.budget > 0 && cost_summary && !cost_summary.under_budget ) {
             return this.renderOverBudget()
         }
     }
@@ -131,6 +146,7 @@ class SprintStateSummary extends Component {
               { this.renderBudgetProgress() }
               { this.renderActual() }
               { this.renderBudget() }
+              { this.renderEstimatedBudget() }
               <div className="sprint-state-summary__problems--unhandled">
                 { this.renderUnhandledProblems() }
               </div>
