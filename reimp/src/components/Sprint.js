@@ -35,7 +35,7 @@ class Sprint extends Component {
     }
 
     render_expanded() {
-        const { sprint, is_loading, is_selected, isOver,
+        const { sprint, sprint_id, is_loading, is_selected, isOver,
 		onClickedSprint,
                 header_list} = this.props
         const headers_by_key = keyBy(header_list, "key")
@@ -358,7 +358,7 @@ class Sprint extends Component {
                                 return (
                                     <div className="div-table__cell sprint__cell__secondary" key={header_key}
                                          style={getCellStyle(header)}>
-                                      <SprintStateSummary sprint_id={sprint.id} />
+                                      <SprintStateSummary sprint_id={sprint_id} />
                                     </div>
                                 )
 

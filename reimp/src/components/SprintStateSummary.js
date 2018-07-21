@@ -3,8 +3,25 @@ import { connect } from 'react-redux'
 import { getSprint } from '../actions/Sprints'
 import Pluralize from 'react-pluralize'
 import { has_permission } from '../actions/Users'
+import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
+import CurrencyValue from './CurrencyValue'
+import ProgressBar from './ProgressBar'
 
 class SprintStateSummary extends Component {
+
+    componentDidMount() {
+        const { dispatch, sprint, sprint_id } = this.props
+        if ( sprint && sprint.sprint_type_is_clockable ) {
+            dispatch(ensureCostSummaryLoaded(sprint_id))
+        }
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { dispatch, sprint_id, sprint } = new_props
+        if ( sprint && sprint.sprint_type_is_clockable ) {
+            dispatch(ensureCostSummaryLoaded(sprint_id))
+        }
+    }
 
     renderMissingTestablesAction() {
         const { sprint } = this.props
@@ -43,14 +60,32 @@ class SprintStateSummary extends Component {
             </div>
         )
     }
-    
-    renderAction() {
-        const { sprint, can_view_budget } = this.props
 
-        if ( ! sprint ) {
-            return null
+    renderBudgetProgress() {
+        const { cost_summary, can_view_budget, can_view_costs  } = this.props
+
+        if ( can_view_budget && can_view_costs ) {
+            return (
+                <ProgressBar current={ cost_summary.progress_against_budget } max={ 1.0 } />
+            )
+        } else {
+            return (
+                <ProgressBar current={ cost_summary.spent } max={ cost_summary.budget } />
+            )
         }
-        
+    }
+
+    renderBudget() {
+        const { sprint, can_view_budget } = this.props
+        return (
+            <div className="sprint-state-summary__budget">
+                Budget: { can_view_budget && <CurrencyValue value={sprint.budget} />}
+            </div>
+        )
+    }
+
+    renderProblems() {
+        const { sprint, can_view_budget } = this.props
         if ( sprint.num_missing_testable_issues > 0 ) {
             return this.renderMissingTestablesAction()
         } else if ( sprint.num_issues_unassigned > 0 ) {
@@ -59,13 +94,27 @@ class SprintStateSummary extends Component {
             return this.renderMissingEstimates()
         } else if ( can_view_budget && ! sprint.budget > 0 ) {
             return this.renderMissingBudget()
-        } else {
-            if ( sprint.sprint_type === "sprint" || sprint.sprint_type === "spec" ) {
-                return (
-                    <div className="icon__status--ok"/>
-                )
-            }
         }
+    }
+    
+    renderAction() {
+        const { sprint, cost_summary } = this.props
+
+        if ( ! sprint || ! cost_summary ) {
+            return null
+        }
+
+        return (
+            <div className="sprint-state-summary">
+              <div className="sprint-state-summary__problems">
+                { this.renderProblems() }
+              </div>
+              { this.renderBudgetProgress() }
+              { this.renderBudget() }
+              
+            </div>
+        )
+        
     }
     
     render() {
@@ -82,13 +131,17 @@ class SprintStateSummary extends Component {
 function mapStateToProps(state, props) {
     const { sprint_id } = props
     const sprint = getSprint(state, sprint_id)
+    const cost_summary = getCostSummary(state, sprint_id)
 
     const can_view_budget = sprint && has_permission(state, sprint.project_id, 'has_view_budget')
+    const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
 
     return {
 	sprint,
 	sprint_id,
-        can_view_budget
+        cost_summary,
+        can_view_budget,
+        can_view_costs
     }
 }
 

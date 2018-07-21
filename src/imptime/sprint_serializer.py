@@ -34,6 +34,7 @@ class SprintSerializer(BaseSerializer):
     estimated_hours_by_assignee = serializers.FloatField()
     estimated_open_hours_by_assignee = serializers.FloatField()
     sprint_type = serializers.CharField(source="project_type")
+    sprint_type_is_clockable = serializers.BooleanField()
     sprint_template_id = serializers.CharField(source="cloned_from_sprint_id")
     sprint_clone_ids = serializers.ListField(child=serializers.CharField())
     deadline_ids = serializers.ListField(child=serializers.CharField(), source="ordered_deadline_ids")
@@ -84,6 +85,8 @@ class SprintSerializer(BaseSerializer):
         else:
             sprint.cloned_from_sprint_id = None
 
+        sprint.sprint_type_is_clockable = sprint.project_type in [ "sprint", "spec", "minutes" ]
+            
         sprint.sprint_clone_ids = SprintTemplate.objects.filter(sprint=sprint).values_list('clones__id', flat=True)
         sprint.ordered_deadline_ids = sprint.deadlines.order_by("deadline").values_list('id', flat=True)
         sprint.review_ids = [x.id for x in sprint.reviews.all()]

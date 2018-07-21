@@ -1867,6 +1867,7 @@ class Project(BaseModel):
             json_stats['spendable_budget_msg'] = 'This is more than the spendable budget'
 
         json_stats['spent'] = int(round(total['hours_billable_core_rate'] or 0))
+        json_stats['progress_against_budget'] = (float(total['hours_billable_core_rate'] or 0) / float(self.budget)) if self.budget else 0
 
         if self.has_budget and self.stats['amount_under_budget'] > 0:
             json_stats['budget_status'] = 'R%s under budget' %(round(self.stats['amount_under_budget'] or 0, 2))
@@ -2992,9 +2993,9 @@ class Entry(BaseModel):
 
         if self.source != 'emacs':
             if was_created:
-                RefreshNotifier().notify_model_create(self)
+                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.sprint_id]})
             else:
-                RefreshNotifier().notify_model_update(self)
+                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.sprint_id]})
 
     def delete(self, *args, **kwargs):
         if self.source != 'emacs':

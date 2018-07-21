@@ -15,18 +15,34 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated,))
 class CostSummaryViewSet(BaseViewSet):
 
-    def retrieve(self, request, pk):
+    def list(self, request):
         try:
-            sprint_id = pk
             context = {}
-            sprint = Sprint.objects.get(pk=sprint_id)
-            bp = BusinessPermissions.for_user(request.user, sprint.business)  # sic
-            if not bp.has_view_ctc_billable_rates:
-                return self.error_response("No permission to view cost summary")
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
 
-            cost_summary = sprint.prepare_stats_for_json(request.user)
-            context['cost_summary'] = cost_summary
+            sprints = self.allowed_sprints()
+            sprints = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
+            sprints = self.apply_pagination(qs=sprints, pagination=pagination)
 
+            res = []
+
+            for sprint in sprints:
+                context = {}
+                bp = BusinessPermissions.for_user(request.user, sprint.business)  # sic
+                cost_summary = sprint.prepare_stats_for_json(request.user)
+                cost_summary['id'] = sprint.id
+
+                if not bp.has_view_ctc_billable_rates:
+                    clean_cost_summary = { 'sprint_id': cost_summary['sprint_id'],
+                                           'progress_against_budget': cost_summary['progress_against_budget'] }
+                    cost_summary = clean_cost_summary
+                    
+                res.append(cost_summary)
+
+            context['items'] = res
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
