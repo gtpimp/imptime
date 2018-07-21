@@ -18,6 +18,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
 from timepiece.models import Business as Project
+from timepiece.models import Project as Sprint
 from imptime.multiple_issue_serializer import MultipleIssueFilterSerializer
 
 logger = logging.getLogger(__name__)
@@ -55,12 +56,14 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         res['all_user_ids'] = [x for x in Entry.objects.filter(issue__in=qs).values_list("user_id", flat=True).distinct() if x]
         res['all_tag_ids'] = [x for x in Tag.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
         res['all_issue_ids'] = qs.values_list('id', flat=True)
+        res['all_sprint_ids'] = [x for x in Sprint.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
         res['estimates_by_user'] = self._get_estimates_by_user(qs)
         res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
         res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
         res['actuals_by_issue'] = self._get_actuals_by_issue(qs)
         res['actuals_by_issue_and_user'] = self._get_actuals_by_issue_and_user(qs)
         res['actuals_by_tag_category'] = self._get_actuals_by_tag_category(qs)
+        res['actuals_by_sprint'] = self._get_actuals_by_sprint(qs)
         res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
         return res
     
@@ -240,7 +243,24 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
                 values['cost_with_commission'] = x['cost_with_commission']
         
         return actuals_by_tag_category
-        
+
+    def _get_actuals_by_sprint(self, issues_qs):
+        entries = Entry.objects.filter(issue__in=issues_qs)
+        entries = entries.filter(user__rates__project=F('issue__project'))\
+                  .order_by("issue__project_id")\
+                  .values("issue__project_id")\
+                  .distinct()
+
+        hours = self._get_actuals_enriched_with_costs(entries, include_rates=True)
+        actuals_by_sprint = OrderedDict()
+        for x in hours:
+            values = actuals_by_sprint.setdefault(x['issue__project_id'], {})
+            values['hours'] = x['sum_hours']
+            if self.has_view_ctc_billable_rates:
+                values['cost'] = x['cost']
+                values['cost_with_commission'] = x['cost_with_commission']
+        return actuals_by_sprint
+    
     def _get_actuals_by_issue_and_user(self, issues_qs):
         entries = Entry.objects.filter(issue__in=issues_qs)
         entries = entries.filter(user__rates__project=F('issue__project'))\
@@ -329,16 +349,35 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
 
         data['issues_by_id'] = dict( [(x['id'], x) for x in Issue.objects.filter(pk__in=data['all_issue_ids']).values('id', 'subject', 'number')] )
         data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=data['all_user_ids']).values('id', "first_name", "last_name")] )
+        data['sprints_by_id'] = dict( [(x['id'], x) for x in Sprint.objects.filter(pk__in=data['all_sprint_ids']).values('code', "name")] )
         data['tags_by_id'] = dict( [(x['id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values('id', "name", "category__name", "category_id")] )
         data['tag_categories_by_id'] = dict( [(x['category_id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values("category__name", "category_id").distinct()] )
         
         response, writer = file_helper.prepare_csv(request, "multiple_issue_summary")
+        self._write_actuals_by_sprint(writer, data)
         self._write_user_actuals(writer, data)
         self._write_actuals_by_tag_category(writer, data)
         self._write_issue_actuals(writer, data)
         self._write_issue_list(writer, data)
         return response
 
+    def _write_actuals_by_sprint(self, writer, data):
+        show_costs = self.has_view_ctc_billable_rates
+        writer.writerow([""])
+        writer.writerow(["Actuals by sprint"])
+
+        header2 = ["Sprint", "Hours (time)", "Hours (decimal)"]
+        if show_costs:
+            header2.append("Cost")
+        writer.writerow(header2)
+        for sprint_id, sprint_data in data['actuals_by_sprint'].items():
+            row = [sprint_data.name]
+            row.append(human_readable_hours(sprint_data['hours']))
+            row.append(sprint_data['hours'])
+            if show_costs:
+                row.append(sprint_data['commission_cost'])
+            writer.writerow(row)
+        
     def _write_user_actuals(self, writer, data):
         show_costs = self.has_view_ctc_billable_rates
         writer.writerow([""])

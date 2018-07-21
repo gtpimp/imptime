@@ -12,6 +12,7 @@ import {
 import OtherUser from './OtherUser'
 import Hours from './Hours'
 import CurrencyValue from './CurrencyValue'
+import SprintName from './SprintName'
 import IssueName from './IssueName'
 import TagCategory from './TagCategory'
 import { ensureTagsLoaded } from '../actions/Tags'
@@ -75,6 +76,52 @@ class MultipleIssueSummary extends Component {
             }
         })
         return user_columns
+    }
+
+    renderActualsBySprint(summary) {
+        const { show_costs } = this.props
+
+        const sprint_header_columns_row1 = []
+        map(summary.all_sprint_ids, function(sprint_id) {
+            sprint_header_columns_row1.push(<th key={"header_sprint_" + sprint_id}>Sprint</th>)
+            sprint_header_columns_row1.push(<th key={"header_hours_" + sprint_id}>Hours</th>)
+            
+            if ( show_costs ) {
+                sprint_header_columns_row1.push(<th key={"actual_" + sprint_id}>Actual</th>)
+            }
+        })
+        
+        return (
+            <PropertyStackComponent>
+              <h2>
+                Actuals by sprint
+              </h2>
+              <table className="table__column_table table__hover_row_table">
+                <thead>
+                  <tr>
+                    { map(sprint_header_columns_row1, col => col)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {map(keys(summary.actuals_by_sprint), (sprint_id) =>
+                      <tr key={sprint_id}>
+                        <td>
+                          <SprintName sprint_id={sprint_id} />
+                        </td>
+                        <td>
+                          <Hours hours={summary.actuals_by_sprint[sprint_id].hours}/>
+                        </td>
+                        { show_costs && 
+                          <td>
+                            <CurrencyValue value={get(summary, ["actuals_by_sprint", sprint_id, "cost_with_commission"], 0)} />
+                          </td>
+                        }
+                      </tr>
+                   )}
+                </tbody>
+              </table>
+            </PropertyStackComponent>
+        )
     }
 
     renderActualsByIssue(summary) {
@@ -367,6 +414,7 @@ class MultipleIssueSummary extends Component {
                          onClick={this.download_actuals_by_issue} />
                   </h1>
                 </PropertyStackComponent>
+                {this.renderActualsBySprint(summary)}
                 {this.renderActualsByUser(summary)}
                 {this.renderActualsByTagCategory(summary)}
                 {this.renderActualsByIssue(summary)}
