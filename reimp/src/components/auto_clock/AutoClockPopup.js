@@ -185,13 +185,16 @@ class AutoClockPopup extends Component {
                 <div>Select a project to start clocking</div>
               }
 
-              <div className="auto-clock__toggle_autoclocking">
-                <ToggleButton value={auto_clocking_enabled}
-                              onChange={this.onAutoClockingEnabledToggleClick}
-                              on_label={"Auto clocking enabled"}
-                              off_label={"Auto clocking disabled"}
-                />
-              </div>
+              { false &&
+                // Disabled because this isn't 100% tested yet.
+                <div className="auto-clock__toggle_autoclocking">
+                  <ToggleButton value={auto_clocking_enabled}
+                                onChange={this.onAutoClockingEnabledToggleClick}
+                                on_label={"Auto clocking enabled"}
+                                off_label={"Auto clocking disabled"}
+                  />
+                </div>
+              }
               
               { available_project_id &&
                 <AutoClockNewEntryForm project_id={available_project_id}

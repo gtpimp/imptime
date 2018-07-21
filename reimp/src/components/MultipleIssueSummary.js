@@ -254,7 +254,10 @@ class MultipleIssueSummary extends Component {
                     <th>Raw</th>
                     <th>Given velocity</th>
                     <th>With given velocity</th>
-                    {show_costs && <th>Cost</th>}
+                    {show_costs && <th>Cost with given velocity</th>}
+                    <th>Calculated velocity</th>
+                    <th>With calculated velocity</th>
+                    {show_costs && <th>Cost with calculated velocity</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -266,6 +269,7 @@ class MultipleIssueSummary extends Component {
                         <td>
                           <Hours hours={summary.estimates_by_user[user_id].raw_estimates} />
                         </td>
+                        
                         <td>
                           {Math.round(summary.estimates_by_user[user_id].given_velocity*100)/100}
                         </td>
@@ -277,6 +281,21 @@ class MultipleIssueSummary extends Component {
                             <CurrencyValue value={summary.estimates_by_user[user_id].velocity_commission_cost} />
                           </td>
                         }
+
+                        <td>
+                          {summary.velocities_by_user[user_id] && Math.round(summary.velocities_by_user[user_id].closed_velocity*100)/100}
+                        </td>
+                        <td>
+                          { summary.revised_estimates_by_user[user_id] && 
+                            <Hours hours={summary.revised_estimates_by_user[user_id].velocity_estimates} />
+                          }
+                        </td>
+                        { show_costs && summary.revised_estimates_by_user[user_id] && 
+                          <td>
+                            <CurrencyValue value={summary.revised_estimates_by_user[user_id].velocity_commission_cost} />
+                          </td>
+                        }
+                          
                       </tr>
                    )}
                 </tbody>

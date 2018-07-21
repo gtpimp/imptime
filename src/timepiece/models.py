@@ -1903,6 +1903,11 @@ class Project(BaseModel):
                 json_stats['per_role'][role_name]['per_user'][user.pk]\
                     = int(round(user_data['hours_billable_core_rate'] or 0))
 
+        json_stats['per_user'] = dict( [(user.id, d) for user, d in stats['per_user'].items()] )
+        for u in json_stats['per_user'].values():
+            u['time_tracking_mode'] = u['rate'].time_tracking_mode
+            del u['rate']
+        
         return json_stats
 
     def cache_stats(self, start=None, end=None, issues=None):
@@ -2993,9 +2998,9 @@ class Entry(BaseModel):
 
         if self.source != 'emacs':
             if was_created:
-                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.sprint_id]})
+                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.project_id]})
             else:
-                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.sprint_id]})
+                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.project_id]})
 
     def delete(self, *args, **kwargs):
         if self.source != 'emacs':

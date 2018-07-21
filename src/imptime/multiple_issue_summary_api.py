@@ -243,6 +243,8 @@ class MultipleIssueSummaryCalculator(object):
         res['actuals_by_tag_category'] = self._get_actuals_by_tag_category(qs)
         res['actuals_by_sprint'] = self._get_actuals_by_sprint(qs)
         res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
+        res['revised_estimates_by_user'] = self._get_revised_estimates_by_user(qs, estimates_by_user=res['estimates_by_user'],
+                                                                               velocities_by_user=res['velocities_by_user'])
         return res
     
     def _set_permissions(self, issues_qs):
@@ -497,7 +499,19 @@ class MultipleIssueSummaryCalculator(object):
                                     'ignoring_issues_in_status': open_status_options,
                                     'time_tracking_mode': time_tracking_mode }
         return velocities
-            
+
+    def _get_revised_estimates_by_user(self, qs, estimates_by_user, velocities_by_user):
+        revised_estimates_by_user = {}
+        for user_id, user_data in estimates_by_user.items():
+            velocity_data = velocities_by_user.get(user_id)
+            if velocity_data is None:
+                continue
+            actual_velocity = velocity_data['closed_velocity']
+            revised_estimates_by_user[user_id] = { 'velocity_estimates': user_data['raw_estimates'] * actual_velocity,
+                                                   'velocity_cost': (user_data['velocity_cost'] * actual_velocity) / (user_data['given_velocity'] or 1),
+                                                   'velocity_commission_cost': (user_data['velocity_commission_cost'] * actual_velocity) / (user_data['given_velocity'] or 1) }
+        return revised_estimates_by_user
+    
     def _get_likely_time_tracking_mode(self, issues_qs, user_id):
         rate_guess = issues_qs.filter(project__rate__user_id=user_id)\
                               .values('project__rate__time_tracking_mode').first()

@@ -109,6 +109,7 @@ function triggerInvalidateEntity(d, dispatch) {
 
         // So that the estimate counts within the sprint shows correctly
         dispatch(invalidateSprints([d.params.sprint_id]))
+        dispatch(invalidateCostSummary(d.params.sprint_id))
     } else if ( d.entity_name === 'wikipage' ) {
         dispatch(invalidateWikis([d.entity_ref]))
     } else if ( d.entity_name === 'mien' ) {
