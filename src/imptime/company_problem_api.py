@@ -56,7 +56,7 @@ class CompanyProblemViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def _filter_important_problems(self, company_problems):
-        return company_problems.filter(problem_type__in=['missing_rate'])
+        return company_problems
     
     def update(self, request, pk):
         try:

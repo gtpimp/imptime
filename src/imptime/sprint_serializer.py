@@ -75,9 +75,7 @@ class SprintSerializer(BaseSerializer):
         sprint.num_dev_closed_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_dev_closed_issues', 0)
         sprint.num_testable_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_testable_issues', 0)
         sprint.num_missing_testable_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_missing_testable_issues', 0)
-
-        sprint.num_issues_missing_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_testable_issues', 0) - \
-                                              self.estimates_by_sprint_id.get(sprint.id, {}).get('num_estimated', 0)
+        sprint.num_issues_missing_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_missing_estimates', 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
         if sprint_template:
@@ -85,7 +83,7 @@ class SprintSerializer(BaseSerializer):
         else:
             sprint.cloned_from_sprint_id = None
 
-        sprint.sprint_type_is_clockable = sprint.project_type in [ "sprint", "spec", "minutes" ]
+        sprint.sprint_type_is_clockable = sprint.project_type in sprint.CLOCKABLE_PROJECT_TYPES
             
         sprint.sprint_clone_ids = SprintTemplate.objects.filter(sprint=sprint).values_list('clones__id', flat=True)
         sprint.ordered_deadline_ids = sprint.deadlines.order_by("deadline").values_list('id', flat=True)

@@ -1,5 +1,6 @@
 import datetime
 import timings
+import itertools
 from django.db.models import Case, When
 from lib.quality_helper import Quality
 from django.core.urlresolvers import reverse
@@ -929,6 +930,111 @@ class ProjectQuerySet(QuerySet):
         else:
             return self
 
+    def get_meta_info(self):
+        sprints = self.prefetch_related("reviews")\
+                      .prefetch_related("issues__entries")
+        
+        entries = Entry.objects.filter(issue__project__in=sprints,
+                                       issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                               .filter(issue__assigned_to_id=F('user_id'))\
+                               .order_by("issue__project_id")\
+                               .values("issue__project_id").distinct()\
+                               .annotate(hours_per_sprint=Sum('hours'))
+
+        hours_per_sprint_by_assignee = dict( [(x['issue__project_id'], x['hours_per_sprint']) for x in entries] )
+
+        issue_points = IssuePoints.objects.filter(issue__project__in=sprints,
+                                                  issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES,
+                                                  issue__assigned_to_id=F('user_id'))\
+                                          .filter(issue__assigned_to_id=F('issue__project__rate__user_id'))\
+                                          .order_by('issue__project', 'issue_id')\
+                                          .values('issue__project', 'issue_id')\
+                                          .annotate(points_per_issue=Sum(F('points')*F('issue__project__rate__velocity')))
+        estimates_by_sprint_id = {}
+        for k, v in itertools.groupby(issue_points, lambda x: x['issue__project']):
+            estimates_by_sprint_id[k] = { 'num_estimated': 0,
+                                          'estimated_hours': 0 }
+            for estimated_issue in v:
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_hours'] += estimated_issue['points_per_issue'] or 0
+
+
+                
+        # For this count we assume that only developer times matter,
+        # and other times can be inferred.  This is logical if by
+        # developer we mean 'person doing the assigned work' and other
+        # time tracking roles are actually supporting that work (eg
+        # management and testing).
+        ASSIGNEE_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[ASSIGNEE_TIME_TRACKING_MODE]
+        open_issue_points = issue_points.filter(issue__status2__name__in=open_statuses)
+        for k, v in itertools.groupby(open_issue_points, lambda x: x['issue__project']):
+            estimates_by_sprint_id[k]['num_open_estimated'] = 0
+            estimates_by_sprint_id[k]['estimated_open_hours'] = 0
+            for estimated_issue in v:
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_open_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
+
+        # For this count we want to know if the primary work has been
+        # done, ie by the developer.
+        DEV_CLOSED_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[DEV_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_dev_closed_issues'] = num_closed_issues.get('num_closed', 0)
+                    
+        # For this count we assume the tester has the final word on
+        # being closed.  Also we don't care about estimates for this count.
+        COMPLETELY_CLOSED_TIME_TRACKING_MODE = 'tester'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_completely_closed_issues'] = num_closed_issues.get('num_closed', 0)
+
+        testable_issues = Issue.objects.filter(project__in=sprints,
+                                               issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                       .order_by('project_id')\
+                                       .values('project_id')\
+                                       .annotate(num_testable=Count('id'))
+        for testable_issue_count in testable_issues:
+            estimates_by_sprint_id.setdefault(testable_issue_count['project_id'], {})['num_testable_issues'] = testable_issue_count.get('num_testable', 0)
+
+        num_issues_missing_testables_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                                      testables__isnull=True,
+                                                                      issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                                              .order_by("project_id")\
+                                                              .values("project_id")\
+                                                              .annotate(num_missing_testables=Count("id"))
+        for issues_missing_testable_count in num_issues_missing_testables_by_sprint:
+            estimates_by_sprint_id.setdefault(issues_missing_testable_count['project_id'], {})['num_missing_testable_issues'] = issues_missing_testable_count.get('num_missing_testables', 0)
+
+        num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                               assigned_to_id__isnull=True)\
+                                                       .order_by("project_id")\
+                                                       .values("project_id")\
+                                                       .annotate(num_unassigned=Count('id'))
+        for num_assigned_issues in num_unassigned_issues_by_sprint:
+            estimates_by_sprint_id.setdefault(num_assigned_issues['project_id'], {})['num_unassigned_issues'] = num_assigned_issues.get('num_unassigned', 0)
+
+
+        for d in estimates_by_sprint_id.values():
+            d["num_missing_estimates"] = d.get('num_testable_issues', 0) - d.get('num_estimates', 0)
+            
+        return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
+        
+        
     def filter_assigned_tasks_are_active(self):
         return self.filter(status3__name__in=['in dev', 'pending'],
                            project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
@@ -1001,6 +1107,8 @@ class Project(BaseModel):
                       ('spec', 'Spec'),
                       ('inbox', 'Inbox') )
 
+    CLOCKABLE_PROJECT_TYPES = [ "sprint", "spec", "minutes" ]
+    
     code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)
     budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -1677,12 +1785,12 @@ class Project(BaseModel):
             issue_points_comparative = IssuePoints.objects.filter(issue__project=self, user=user).distinct()
 
             open_status_options = Issue.STATUSES_INDICATING_INCOMPLETE[rate.time_tracking_mode]
-            if rate.time_tracking_mode == 'developer':
-                exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
-            elif rate.time_tracking_mode == 'manager':
-                exclude_features_for_role = []
-            elif rate.time_tracking_mode == 'tester':
-                exclude_features_for_role = []
+            # if rate.time_tracking_mode == 'developer':
+            #     exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
+            # elif rate.time_tracking_mode == 'manager':
+            #     exclude_features_for_role = []
+            # elif rate.time_tracking_mode == 'tester':
+            #     exclude_features_for_role = []
 
             stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)

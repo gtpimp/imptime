@@ -19,6 +19,7 @@ class CompanyProblemCalculator(object):
 
         self._create_missing_rates(projects)
         self._create_missing_budgets(projects)
+        self._create_missing_meta_info(projects)
 
     def _create_missing_rates(self, projects):
         entries = Entry.objects.filter(issue__project__business_id__in=projects)
@@ -62,3 +63,36 @@ class CompanyProblemCalculator(object):
                                                  money_sensitive=True,
                                                  defaults={'description':"Time clocked but no budget set",
                                                            'status':'open'})
+
+    def _create_missing_meta_info(self, projects):
+        sprints = Sprint.objects.filter(project_type__in=Sprint.CLOCKABLE_PROJECT_TYPES)\
+                                .filter_open()
+        sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee = sprints.get_meta_info()
+        for sprint in sprints:
+            if sprint.id not in estimates_by_sprint_id:
+                continue
+            d = estimates_by_sprint_id[sprint.id]
+            if d.get('num_missing_testable_issues', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='missing_testables',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are missing testables" % d['num_missing_testable_issues'],
+                                                               'status':'open'})
+            elif d.get('num_issues_unassigned', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='missing_assignee',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are not assigned" % d['num_missing_unassigned'],
+                                                               'status':'open'})
+            elif d.get('num_missing_estimates', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='missing_estimate',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are not estimated" % d['num_missing_estimates'],
+                                                               'status':'open'})
