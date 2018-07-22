@@ -4462,6 +4462,19 @@ class ProjectIssueOrder(BaseModel):
                                 .aggregate(max_order=Max('order'))['max_order'] or 0
         return max_order + self.INCREMENT
 
+    @classmethod
+    def get_previous_issue(self, issue):
+        issue_order = ProjectIssueOrder.objects.filter(issue=issue).values("order").first()
+        if issue_order is None:
+            return None
+        previous = ProjectIssueOrder.objects.filter(project=issue.project_id,
+                                                    order__lt=issue_order['order'])\
+                                            .values("issue")\
+                                            .order_by("-order").first()
+        if previous is None:
+            return None
+        return previous['issue']
+        
 
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')

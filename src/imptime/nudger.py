@@ -1,11 +1,12 @@
 from django.db.models import Count, Q
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
-from imptime.models import Nudge
+from imptime.models import Nudge, UserNudgeOrder
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import Issue, BusinessPermissions
+from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from project_dashboard_api import get_nonexpired_project_ids
 
 class Nudger(object):
@@ -63,26 +64,35 @@ class Nudger(object):
                                       assigned_to=user)\
                               .exclude(issue_type='adhoc')\
                               .filter_open(user)
-        sprints_requiring_nudging = issues.order_by("project_id")\
-                                          .values("project_id")\
-                                          .annotate(num_issues=Count("project_id"))
 
         nudge_ids = []
-        for to_nudge in sprints_requiring_nudging:
+        for issue in issues:
             reason = "assigned_issues"
-            nudge = Nudge.objects.get_or_create(user=user,
-                                                sprint_id=to_nudge['project_id'],
-                                                reason=reason)[0]
+            nudge, is_new = Nudge.objects.get_or_create(user=user,
+                                                        issue_id=issue.id,
+                                                        sprint_id=issue.project_id,
+                                                        reason=reason)
             nudge_ids.append(nudge.id)
-            nudge.description = "%s open issues assigned to you" % to_nudge['num_issues']
-            nudge.issue_id = issues.filter(project_id=to_nudge['project_id'])\
-                                   .order_by_project_id(to_nudge['project_id']).values('pk')[0]['pk']
-            nudge.due_date = issues.filter(project_id=to_nudge['project_id'])\
-                                   .order_by("modified").values('modified')[0]['modified']
-            nudge.due_date_reason = "oldest issue was modified"
+            nudge.description = "Issue assigned to you"
+            nudge.issue_id = issue.id
+            nudge.due_date = issue.modified
+            nudge.due_date_reason = "issue was modified"
             nudge.save()
+
+            nudge_ids.append(nudge.id)
+
+            if is_new:
+                self.order_new_issue_nudge(issue, nudge, user)
+            
         return nudge_ids
 
+    def order_new_issue_nudge(self, issue, nudge, user):
+        previous_issue = SprintIssueOrder.get_previous_issue(issue)
+        if previous_issue is not None:
+            previous_issue_nudge = Nudge.objects.filter(issue=previous_issue, user=user).first()
+            if previous_issue_nudge is not None:
+                UserNudgeOrder.insert_after(nudge, set_after_this_nudge=previous_issue_nudge)
+    
     def _nudge_for_full_inboxes(self, sprint_qs, user):
         sprint_ids = sprint_qs.filter(project_type='inbox')\
                               .values_list("pk", flat=True)

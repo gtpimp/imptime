@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {withRouter, Link} from 'react-router-dom'
 import SearchBox from '../components/SearchBox'
 import {logged_in_user} from '../actions/Auth'
+import { getLoggedInUser } from '../actions/Users'
 import classNames from 'classnames'
 import '../sass/navbar.css'
 import NavTab from './NavTab'
@@ -68,7 +69,7 @@ class Navbar extends Component {
     render() {
 
         const {  is_loading, is_saving, is_websockets_connected,
-                 username, has_edit_release_notes_permission  } = this.props
+                 username, has_edit_release_notes_permission, default_schedule_id  } = this.props
         const user_initiated_network_activity = is_loading || is_saving
         const user_menu_visible = this.state.user_menu_visible
         const company_menu_visible = this.state.company_menu_visible
@@ -93,6 +94,7 @@ class Navbar extends Component {
                   { calendar_menu_visible &&
                     <div className="navbar__submenu">
                       <div className="navbar__submenu_item" onClick={this.onSelectFloatingCalendar}>Popup</div>
+                      <Link className="navbar__submenu_item" to={'/schedule/'+default_schedule_id}>Nudge</Link>
                       <Link className="navbar__submenu_item" to='/calendar'>My calendar</Link>
                       <Link className="navbar__submenu_item" to='/schedule'>All calendars</Link>
                     </div>
@@ -134,13 +136,15 @@ function mapStateToProps(state, props) {
     const loading = state.loading
     const websockets = state.websockets || {}
     const has_edit_release_notes_permission = can_create_release_notes(state)
+    const default_schedule_id = (getLoggedInUser(state) || {}).default_schedule_id
     
     return {
         is_loading: loading.is_loading,
         is_saving: loading.is_saving,
         is_websockets_connected: websockets.isConnected,
         username: logged_in_user(state).username,
-        has_edit_release_notes_permission
+        has_edit_release_notes_permission,
+        default_schedule_id
     }
 }
 
