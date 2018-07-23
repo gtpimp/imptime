@@ -6,6 +6,7 @@ import { has_permission } from '../actions/Users'
 import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import CurrencyValue from './CurrencyValue'
 import ProgressBar from './ProgressBar'
+import { showMoney } from '../actions/Mien'
 
 class SprintStateSummary extends Component {
 
@@ -78,9 +79,9 @@ class SprintStateSummary extends Component {
     }
 
     renderBudgetProgress() {
-        const { cost_summary, can_view_budget, can_view_costs  } = this.props
+        const { cost_summary, can_view_budget  } = this.props
 
-        if ( can_view_budget && can_view_costs ) {
+        if ( can_view_budget ) {
             return (
                 <ProgressBar current={ cost_summary.spent } max={ cost_summary.budget } />
             )
@@ -92,8 +93,8 @@ class SprintStateSummary extends Component {
     }
 
     renderActual() {
-        const { cost_summary, can_view_costs  } = this.props
-        if ( ! can_view_costs ) {
+        const { cost_summary, show_money  } = this.props
+        if ( ! show_money ) {
             return null
         }
         return (
@@ -168,15 +169,15 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id)
     const cost_summary = getCostSummary(state, sprint_id)
 
-    const can_view_budget = sprint && has_permission(state, sprint.project_id, 'has_view_budget')
-    const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
+    const show_money = sprint && showMoney(state, sprint.project_id)
+    const can_view_budget = show_money && sprint && has_permission(state, sprint.project_id, 'has_view_budget')
 
     return {
 	sprint,
 	sprint_id,
         cost_summary,
         can_view_budget,
-        can_view_costs
+        show_money
     }
 }
 

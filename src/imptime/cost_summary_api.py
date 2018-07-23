@@ -42,7 +42,8 @@ class CostSummaryViewSet(BaseViewSet):
                 cost_summary['projections'] = self._calculate_projections(cost_summary, bp)
 
                 if not bp.has_view_ctc_billable_rates:
-                    clean_cost_summary = { 'sprint_id': cost_summary['sprint_id'],
+                    clean_cost_summary = { 'id': cost_summary['id'],
+                                           'sprint_id': cost_summary['sprint_id'],
                                            'projections': cost_summary['projections'],
                                            'progress_against_budget': cost_summary['progress_against_budget'] }
                     cost_summary = clean_cost_summary

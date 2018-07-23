@@ -19,9 +19,8 @@ import TagCategory from './TagCategory'
 import { ensureTagsLoaded } from '../actions/Tags'
 import { ensureIssuesLoaded } from '../actions/Issues'
 import { ensureUsersLoaded } from '../actions/Users'
-import { has_permission } from '../actions/Users'
-import { doesMienHaveFeature } from '../actions/Mien'
 import Tag from './Tag'
+import { showMoney } from '../actions/Mien'
 
 class MultipleIssueSummary extends Component {
 
@@ -59,7 +58,7 @@ class MultipleIssueSummary extends Component {
     }
 
     createActualsForIssue(summary, issue_id) {
-        const { show_costs } = this.props
+        const { show_money } = this.props
         const user_columns = []
 
         map(summary.all_user_ids, function(user_id) {
@@ -68,7 +67,7 @@ class MultipleIssueSummary extends Component {
                   <Hours hours={get(summary, ["actuals_by_issue_and_user", issue_id, user_id, "hours"], 0)} />
                 </td>
             )
-            if ( show_costs ) {
+            if ( show_money ) {
                 user_columns.push(
                     <td key={"rate_"+user_id}>
                       <CurrencyValue value={get(summary, ["actuals_by_issue_and_user", issue_id, user_id, "rate_with_commission"], 0)} />
@@ -85,14 +84,14 @@ class MultipleIssueSummary extends Component {
     }
 
     renderActualsBySprint(summary) {
-        const { show_costs } = this.props
+        const { show_money } = this.props
 
         const sprint_header_columns_row1 = []
         map(summary.all_sprint_ids, function(sprint_id) {
             sprint_header_columns_row1.push(<th key={"header_sprint_" + sprint_id}>Sprint</th>)
             sprint_header_columns_row1.push(<th key={"header_hours_" + sprint_id}>Hours</th>)
             
-            if ( show_costs ) {
+            if ( show_money ) {
                 sprint_header_columns_row1.push(<th key={"actual_" + sprint_id}>Actual</th>)
             }
         })
@@ -117,7 +116,7 @@ class MultipleIssueSummary extends Component {
                         <td>
                           <Hours hours={summary.actuals_by_sprint[sprint_id].hours}/>
                         </td>
-                        { show_costs && 
+                        { show_money && 
                           <td>
                             <CurrencyValue value={get(summary, ["actuals_by_sprint", sprint_id, "cost_with_commission"], 0)} />
                           </td>
@@ -131,7 +130,7 @@ class MultipleIssueSummary extends Component {
     }
 
     renderActualsByIssue(summary) {
-        const { show_costs } = this.props
+        const { show_money } = this.props
         const that = this
 
         const user_header_columns_row1 = []
@@ -140,7 +139,7 @@ class MultipleIssueSummary extends Component {
             user_header_columns_row1.push(<th key={"header_user_" + user_id}><OtherUser user_id={user_id}/></th>)
             user_header_columns_row2.push(<th key={"header_hours_" + user_id}>Hours</th>)
             
-            if ( show_costs ) {
+            if ( show_money ) {
                 user_header_columns_row1.push(<th key={"rate_" + user_id}></th>)
                 user_header_columns_row1.push(<th key={"cost_" + user_id}></th>)
                 
@@ -159,7 +158,7 @@ class MultipleIssueSummary extends Component {
                   <tr>
                     <th>Issue</th>
                     { map(user_header_columns_row1, col => col)}
-                    { show_costs && <th>Total Issue Cost</th> }
+                    { show_money && <th>Total Issue Cost</th> }
                   </tr>
                   <tr>
                     <th></th>
@@ -173,7 +172,7 @@ class MultipleIssueSummary extends Component {
                           <IssueName issue_id={issue_id} />
                         </td>
                         { map(that.createActualsForIssue(summary, issue_id), col => col)}
-                        { show_costs && 
+                        { show_money && 
                           <td>
                             <CurrencyValue value={get(summary, ["actuals_by_issue", issue_id, "cost_with_commission"], 0)} />
                           </td>
@@ -187,7 +186,7 @@ class MultipleIssueSummary extends Component {
     }
     
     renderActualsByUser(summary) {
-        const { show_costs } = this.props
+        const { show_money } = this.props
         summary.velocities_by_user = summary.velocities_by_user || {}
         return (
             <PropertyStackComponent>
@@ -200,7 +199,7 @@ class MultipleIssueSummary extends Component {
                     <th>Naive velocity</th>
                     <th>Real velocity</th>
                     <th>Role</th>
-                    {show_costs && <th>Cost</th>}
+                    {show_money && <th>Cost</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -229,7 +228,7 @@ class MultipleIssueSummary extends Component {
                         <td>
                           {(summary.velocities_by_user[user_id] ||  {}).time_tracking_mode}
                         </td>
-                        { show_costs && 
+                        { show_money && 
                           <td>
                             <CurrencyValue value={summary.actuals_by_user[user_id].commission_cost} />
                           </td>
@@ -243,7 +242,7 @@ class MultipleIssueSummary extends Component {
     }
     
     renderEstimatesByUser(summary) {
-        const { show_costs } = this.props
+        const { show_money } = this.props
         return (
             <PropertyStackComponent>
               <h2>Estimates by user</h2>
@@ -254,10 +253,10 @@ class MultipleIssueSummary extends Component {
                     <th>Raw</th>
                     <th>Given velocity</th>
                     <th>With given velocity</th>
-                    {show_costs && <th>Cost with given velocity</th>}
+                    {show_money && <th>Cost with given velocity</th>}
                     <th>Calculated velocity</th>
                     <th>With calculated velocity</th>
-                    {show_costs && <th>Cost with calculated velocity</th>}
+                    {show_money && <th>Cost with calculated velocity</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -276,7 +275,7 @@ class MultipleIssueSummary extends Component {
                         <td>
                           <Hours hours={summary.estimates_by_user[user_id].velocity_estimates} />
                         </td>
-                        { show_costs && 
+                        { show_money && 
                           <td>
                             <CurrencyValue value={summary.estimates_by_user[user_id].velocity_commission_cost} />
                           </td>
@@ -290,7 +289,7 @@ class MultipleIssueSummary extends Component {
                             <Hours hours={summary.revised_estimates_by_user[user_id].velocity_estimates} />
                           }
                         </td>
-                        { show_costs && summary.revised_estimates_by_user[user_id] && 
+                        { show_money && summary.revised_estimates_by_user[user_id] && 
                           <td>
                             <CurrencyValue value={summary.revised_estimates_by_user[user_id].velocity_commission_cost} />
                           </td>
@@ -305,7 +304,7 @@ class MultipleIssueSummary extends Component {
     }
 
     renderEstimatesByTagCategory(summary) {
-        const { show_costs } = this.props
+        const { show_money } = this.props
         return (
             <div>
               { map(keys(summary.estimates_by_tag_category), function(tag_category_id) {
@@ -330,7 +329,7 @@ class MultipleIssueSummary extends Component {
                                             <th>Raw</th>
                                             <th>Given velocity</th>
                                             <th>With given velocity</th>
-                                            {show_costs && <th>Cost</th>}
+                                            {show_money && <th>Cost</th>}
                                           </tr>
                                         </thead>
                                         <tbody>
@@ -348,7 +347,7 @@ class MultipleIssueSummary extends Component {
                                                 <td>
                                                   <Hours hours={estimates_by_user_by_tag[tag_id].velocity_estimates} />
                                                 </td>
-                                                { show_costs && 
+                                                { show_money && 
                                                   <td>
                                                     <CurrencyValue value={estimates_by_user_by_tag[tag_id].velocity_commission_cost} />
                                                   </td>
@@ -370,7 +369,7 @@ class MultipleIssueSummary extends Component {
     }
 
     renderActualsByTagCategory(summary) {
-        const { show_costs } = this.props
+        const { show_money } = this.props
         return (
             <div>
               <h2>Actuals by tag category</h2>
@@ -394,7 +393,7 @@ class MultipleIssueSummary extends Component {
                                           <tr>
                                             <th>Tag</th>
                                             <th>Hours</th>
-                                            {show_costs && <th>Cost</th>}
+                                            {show_money && <th>Cost</th>}
                                           </tr>
                                         </thead>
                                         <tbody>
@@ -406,7 +405,7 @@ class MultipleIssueSummary extends Component {
                                                 <td>
                                                   <Hours hours={actuals_by_user_by_tag[tag_id].hours} />
                                                 </td>
-                                                { show_costs && 
+                                                { show_money && 
                                                   <td>
                                                     <CurrencyValue value={actuals_by_user_by_tag[tag_id].cost_with_commission} />
                                                   </td>
@@ -468,12 +467,12 @@ function mapStateToProps(state, props) {
         summary = getMultipleIssueSummary(state, filter)
     }
     
-    const show_costs = doesMienHaveFeature(state, 'costs') && has_permission(state, project_id, 'has_view_ctc_billable_rates')
+    const show_money = showMoney(state, project_id)
     return {
         summary: summary || {},
         filter,
         sprint_id,
-        show_costs,
+        show_money,
         container_class_name
     }
 }
