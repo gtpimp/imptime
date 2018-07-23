@@ -16,6 +16,7 @@ import ProjectName from './ProjectName'
 import OtherUser from './OtherUser'
 import Timestamp from './Timestamp'
 import IssueStatus from './IssueStatus'
+import Hours from './Hours'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
 class Nudge extends Component {
@@ -177,6 +178,27 @@ class Nudge extends Component {
                                 <div className="div-table__cell" key={header_key}
                                      style={getCellStyle(header)}>
                                   <IssueStatus issue_id={nudge.issue_id}/>
+                                </div>
+                            )
+                        case "estimated_start_at":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  { nudge.estimated_start_at && <Timestamp value={nudge.estimated_start_at} format="short-date" /> }
+                                </div>
+                            )
+                        case "estimated_end_at":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  { nudge.estimated_end_at && <Timestamp value={nudge.estimated_end_at} format="short-date" /> }
+                                </div>
+                            )
+                        case "estimated_hours":
+                            return (
+                                <div className="div-table__cell" key={header_key}
+                                     style={getCellStyle(header)}>
+                                  { nudge.estimated_hours && <Hours hours={nudge.estimated_hours} /> }
                                 </div>
                             )
                         case "due_date":

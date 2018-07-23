@@ -1,11 +1,13 @@
 from django.db.models import Count, Q
 from django.utils import timezone
+import math
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from imptime.models import Nudge, UserNudgeOrder
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectReview as SprintReview
-from timepiece.models import Issue, BusinessPermissions
+from timepiece.models import Issue, BusinessPermissions, IssuePoints, Rate, CalendarEvent
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from project_dashboard_api import get_nonexpired_project_ids
 
@@ -24,12 +26,65 @@ class Nudger(object):
     #     self._nudge_for_inactive_projects()
  
     def refresh_all(self, user=None):
+
         nudges = Nudge.objects.all()
         if user is not None:
             nudges = nudges.filter(user=user)
         for project_id in get_nonexpired_project_ids():
             self.update_nudges_for_project(project_id, user=user)
-    
+
+        if user is not None:
+            self.estimate_delivery_times(user)
+
+    def estimate_delivery_times(self, user):
+        nudges = Nudge.objects.filter(user=user).order_by_user_id(user.id)
+
+        issue_points = IssuePoints.objects.filter(user=user,
+                                                  issue__in=nudges.values_list('issue_id', flat=True))\
+                                          .values('points', 'issue_id')
+        estimates_by_issue_id = dict( [(x['issue_id'], x['points']) for x in issue_points] )
+
+        rates = Rate.objects.filter(user=user,
+                                    project_id__in=nudges.values_list('sprint_id', flat=True))\
+                                    .order_by("project_id")\
+                                    .values('project_id', 'velocity')\
+                                    .distinct()
+        velocities_by_sprint = dict( [(x['project_id'], x['velocity']) for x in rates] )
+
+        now = timezone.now()
+        start_time_each_day = 8 #nominal
+        running_date = now.replace(hour=start_time_each_day, minute=0, second=0)
+        running_work_hours_today = 0
+        num_work_hours_per_day = user.profile.required_daily_work_hours
+        for nudge in nudges:
+            estimated_hours = float(estimates_by_issue_id.get(nudge.issue_id, 0) or 0) * float(velocities_by_sprint.get(nudge.sprint_id, 1) or 1)
+            nudge.estimated_hours = estimated_hours
+
+            nudge.estimated_start_at = running_date
+            
+            end_hours = running_work_hours_today+estimated_hours
+            running_days = int(end_hours) / num_work_hours_per_day
+            running_hours = end_hours - (running_days*num_work_hours_per_day)
+
+            if running_days > 0:
+                running_date += relativedelta(days=running_days)
+                num_non_working_days_in_range = CalendarEvent.num_non_working_days_in_range(user, nudge.estimated_start_at, running_date)
+                if num_non_working_days_in_range > 0:
+                    running_date += relativedelta(days=num_non_working_days_in_range)
+
+                new_start_time = start_time_each_day+running_hours
+                running_date = running_date.replace(hour=int(new_start_time),
+                                                    minute=int(math.modf(new_start_time)[0]*60))
+                running_work_hours_today = running_hours
+            else:
+                running_date += relativedelta(hours=int(estimated_hours),
+                                              minutes=int(math.modf(estimated_hours)[0]*60))
+                running_work_hours_today = running_hours
+            
+            nudge.estimated_end_at = running_date
+            nudge.save()
+            
+            
     def update_nudges_for_project(self, project_id, user=None):
         sprint_qs = Sprint.objects.all().filter(business_id=project_id)
         users = BusinessPermissions.active_users_for_business(project_id) #sic

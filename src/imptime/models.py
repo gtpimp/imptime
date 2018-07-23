@@ -335,6 +335,9 @@ class Nudge(BaseModel):
     description = models.TextField(null=True, blank=True)
     due_date = models.DateTimeField(null=True)
     due_date_reason = models.CharField(max_length=255, null=True)
+    estimated_start_at = models.DateTimeField(null=True)
+    estimated_end_at = models.DateTimeField(null=True)
+    estimated_hours = models.FloatField(null=True)
 
     objects = NudgeQuerySet().as_manager()
     

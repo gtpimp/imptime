@@ -21,5 +21,6 @@ class NudgeSerializer(BaseModelSerializer):
         model = Nudge 
         fields = ('id', 'user_id', 'sprint_id', 'issue_id',
                   'description', 'due_date', 'due_date_reason',
+                  'estimated_start_at', 'estimated_end_at', 'estimated_hours',
                   'reason', 'project_id', 'modified', 'issue_status',
                   'can_delete', 'num_unnudged_issues_above')

@@ -4598,6 +4598,8 @@ class CalendarEvent(BaseModel):
                     ('deadline', 'Deadline') )
     EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled'), ("CONFIRMED", "Confirmed"), ("UNKNOWN", "UNKNOWN") )
 
+    NON_WORKING_EVENT_TYPES = ["sickday", "leave", "office_closed"]
+
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
@@ -4645,6 +4647,27 @@ class CalendarEvent(BaseModel):
                     users.add(user)
         return users
 
+    @classmethod
+    def num_non_working_days_in_range(self, user, date_from_inclusive, date_to_inclusive):
+
+        weekends = [ x.date() for x in date_helper.daterange(date_from_inclusive, date_to_inclusive)
+                          if calendar.weekday(year=x.year, month=x.month, day=x.day)>=5 ]
+        
+        holidays_in_range = Holiday.holidays_in_range(date_from_inclusive, date_to_inclusive)\
+                            .exclude(applies_on__in=weekends)
+        events = self.objects.filter(user=user,
+                                     start__gte=date_from_inclusive,
+                                     start__lte=date_to_inclusive,
+                                     event_type__in=self.NON_WORKING_EVENT_TYPES)\
+                             .exclude(start__in=holidays_in_range.values_list("applies_on", flat=True))\
+                             .exclude(start__date__in=weekends)
+
+        num_events = events.count()
+        num_holidays = holidays_in_range.count()
+
+        return num_events + num_holidays + len(weekends)
+                             
+    
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))
@@ -4883,6 +4906,11 @@ class Holiday(BaseModel):
     def is_a_holiday(self, d):
         return d.weekday() in [5,6] or self.objects.filter(applies_on=d).count() > 0
 
+    @classmethod
+    def holidays_in_range(self, date_from_inclusive, date_to_inclusive):
+        return Holiday.objects.filter(applies_on__gte=date_from_inclusive,
+                                      applies_on__lte=date_to_inclusive)
+    
     @classmethod
     def business_days_in_range(self, date_from_inclusive, date_to_inclusive):
         holiday_dates = Holiday.objects.filter(applies_on__gte=date_from_inclusive,
