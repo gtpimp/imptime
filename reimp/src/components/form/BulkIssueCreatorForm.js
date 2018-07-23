@@ -53,6 +53,17 @@ class BulkIssueCreatorForm extends Component {
                   
                   *** my new issue2
                   This is another description
+
+                  *** my new issue3 with testables
+                  This is my description
+
+                  Testable:
+                  - do something
+                  - confirm it worked
+
+                  Testable:
+                  - do something else
+                  - confirm it also worked
                   
                 `}</pre>
               </div>
