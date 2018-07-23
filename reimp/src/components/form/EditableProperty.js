@@ -77,7 +77,7 @@ class EditableProperty extends Component {
     }
 
     cancelEditing(event) {
-        const {dispatch, property_key, is_editing} = this.props
+        const {is_editing} = this.props
         if ( ! is_editing ) {
             return
         }

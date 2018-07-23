@@ -9,11 +9,6 @@ import EditableUserRate from './EditableUserRate'
 
 class SprintBreakdown extends Component {
 
-    componentDidMount() {
-        const { dispatch } = this.props
-        EditableUserRate
-    }
-    
     render() {
         const { project_statement } = this.props
         const { sprint_infos } = project_statement
