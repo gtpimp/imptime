@@ -20,6 +20,7 @@ class EditableProperty extends Component {
         this.keyDown = this.keyDown.bind(this)
         this.onEdited = this.onEdited.bind(this)
         this.onMouseDown = this.onMouseDown.bind(this)
+        this.stopEditing = this.stopEditing.bind(this)
         this.state = { mouse_pos_x: null,
                        mouse_pos_y: null }
     }
@@ -63,6 +64,18 @@ class EditableProperty extends Component {
         }
     }
 
+    stopEditing(event) {
+        const { dispatch, property_key, is_editing } = this.props
+        if ( ! is_editing ) {
+            return
+        }
+        if ( event ) {
+            event.preventDefault()
+            event.stopPropagation()
+        }
+        dispatch(setReadonly(property_key))
+    }
+
     cancelEditing(event) {
         const {dispatch, property_key, is_editing} = this.props
         if ( ! is_editing ) {
@@ -72,7 +85,10 @@ class EditableProperty extends Component {
             event.preventDefault()
             event.stopPropagation()
         }
-        dispatch(setReadonly(property_key))
+        if ( ! window.confirm("Are you sure you want to cancel?") ) {
+            return false;
+        }
+        this.stopEditing()
     }
 
     keyDown(event) {
@@ -89,7 +105,7 @@ class EditableProperty extends Component {
 
     onEdited(new_value) {
         const {onChange, can_edit} = this.props
-        this.cancelEditing()
+        this.stopEditing()
         if (can_edit) {
             onChange(new_value)
         }
@@ -140,11 +156,11 @@ class EditableProperty extends Component {
                          className={classNames("editable-property-modal",
                                                {"editable-property-modal--wide": wideView}) }
                          overlayClassName="editable-property-modal__overlay"
-                         onRequestClose={this.cancelEditing}
+                         onRequestClose={this.stopEditing}
                          contentLabel={action_label || ""}>
                     <div className="editable-property-modal__row editable-property-modal__row--header">
                       <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
-                      <div className="editable-property-modal__close"><i className="material-icons" onClick={this.cancelEditing}>close</i></div>
+                      <div className="editable-property-modal__close"><i className="material-icons" onClick={this.stopEditing}>close</i></div>
                     </div>
                     <div className="editable-property-modal__content">
                       {editing_child}
