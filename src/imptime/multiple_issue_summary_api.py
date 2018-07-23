@@ -507,9 +507,9 @@ class MultipleIssueSummaryCalculator(object):
             if velocity_data is None:
                 continue
             actual_velocity = velocity_data['closed_velocity']
-            revised_estimates_by_user[user_id] = { 'velocity_estimates': user_data['raw_estimates'] * actual_velocity,
-                                                   'velocity_cost': (user_data['velocity_cost'] * actual_velocity) / (user_data['given_velocity'] or 1),
-                                                   'velocity_commission_cost': (user_data['velocity_commission_cost'] * actual_velocity) / (user_data['given_velocity'] or 1) }
+            revised_estimates_by_user[user_id] = { 'velocity_estimates': user_data.get('raw_estimates', 0) * actual_velocity,
+                                                   'velocity_cost': (user_data.get('velocity_cost', 0) * actual_velocity) / (user_data.get('given_velocity', 1)),
+                                                   'velocity_commission_cost': (user_data.get('velocity_commission_cost', 0) * actual_velocity) / (user_data.get('given_velocity', 1)) }
         return revised_estimates_by_user
     
     def _get_likely_time_tracking_mode(self, issues_qs, user_id):
