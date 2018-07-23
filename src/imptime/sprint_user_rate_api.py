@@ -123,5 +123,13 @@ class SprintUserRateViewSet(BaseViewSet):
             filter_args['sprint_id__in'] = sprint_ids
             filter_args['user_id__in'] = user_ids
             
+        sprint_ids = filter_args.pop('sprint_ids', [])
+        if len(sprint_ids)>0:
+            filter_args['sprint_id__in'] = sprint_ids
+
+        user_ids = filter_args.pop('user_ids', [])
+        if len(user_ids)>0:
+            filter_args['user_id__in'] = user_ids
+            
         return super(SprintUserRateViewSet, self).apply_filter(qs, filter_args)
         

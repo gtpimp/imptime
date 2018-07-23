@@ -5,9 +5,15 @@ import { map, keys } from 'lodash'
 import Hours from './Hours'
 import CurrencyValue from './CurrencyValue'
 import SprintLink from './SprintLink'
+import EditableUserRate from './EditableUserRate'
 
 class SprintBreakdown extends Component {
 
+    componentDidMount() {
+        const { dispatch } = this.props
+        EditableUserRate
+    }
+    
     render() {
         const { project_statement } = this.props
         const { sprint_infos } = project_statement
@@ -82,7 +88,7 @@ class SprintBreakdown extends Component {
                                                         <Hours hours={time_for_user.total_hours} show_seconds={true}/>
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell project__statement__times_grid__rate_cell">
-                                                        <CurrencyValue value={time_for_user.rate} prefix="@"/>
+                                                        <EditableUserRate sprint_id={sprint_id} user_id={user_id} />
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell">
                                                         <CurrencyValue value={time_for_user.billable_cost}/>
