@@ -1108,6 +1108,8 @@ class Project(BaseModel):
                       ('inbox', 'Inbox') )
 
     CLOCKABLE_PROJECT_TYPES = [ "sprint", "spec", "minutes" ]
+
+    REVIEW_SCHEDULE_PROJECT_TYPES = ["inbox"]
     
     code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)

@@ -20,6 +20,7 @@ class CompanyProblemCalculator(object):
         self._create_missing_rates(projects)
         self._create_missing_budgets(projects)
         self._create_missing_meta_info(projects)
+        self._create_missing_review_schedules(projects)
 
     def _create_missing_rates(self, projects):
         entries = Entry.objects.filter(issue__project__business_id__in=projects)
@@ -96,3 +97,16 @@ class CompanyProblemCalculator(object):
                                                      money_sensitive=False,
                                                      defaults={'description':"%d issues are not estimated" % d['num_missing_estimates'],
                                                                'status':'open'})
+                
+    def _create_missing_review_schedules(self, projects):
+        sprints = Sprint.objects.filter(project_type__in=Sprint.REVIEW_SCHEDULE_PROJECT_TYPES)\
+                                .filter_open()\
+                                .filter(reviews__isnull=True)
+        for sprint in sprints:
+            CompanyProblem.objects.get_or_create(user_id=None,
+                                                 project_id=sprint.business_id, #sic
+                                                 sprint_id=sprint.id,
+                                                 problem_type='missing_review_schedule',
+                                                 money_sensitive=False,
+                                                 defaults={'description':"Sprint requires a review schedule",
+                                                           'status':'open'})
