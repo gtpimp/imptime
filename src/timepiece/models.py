@@ -1221,9 +1221,9 @@ class Project(BaseModel):
 
         elif role_name in ["developer", "manager", "tester"]:
             if include_scope_creep:
-                return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate']
+                return self.new_stats['per_role'][role_name]['adjusted_points_non_management_core_rate']
             else:
-                return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
+                return self.new_stats['per_role'][role_name]['adjusted_points_non_management_core_rate_no_scope_creep']
 
         return None
 
@@ -1761,15 +1761,15 @@ class Project(BaseModel):
 
         stats_per_role = {}
         for mode in TIME_TRACKING_MODES:
-            stats_per_role[mode] = { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
-                                     'points_calculated_open_non_adhoc_billable_core_rate': 0,
+            stats_per_role[mode] = { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_management_billable': 0,
+                                     'points_calculated_open_non_management_billable_core_rate': 0,
                                      'per_user': {},
                                      'average_rate': {},
                                      'hours_billable_core_rate': 0,
-                                     'adjusted_points_non_adhoc_core_rate': 0,
-                                     'adjusted_points_non_adhoc_core_rate_no_scope_creep': 0,
+                                     'adjusted_points_non_management_core_rate': 0,
+                                     'adjusted_points_non_management_core_rate_no_scope_creep': 0,
                                      'users_in_role': [],
-                                     'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
+                                     'projected_billable': 0, 'points_estimated_open_non_management_billable':0,
                                      'projected_estimated_billable':0,
                                      'adjusted_points_billable':0 }
 
@@ -1802,48 +1802,48 @@ class Project(BaseModel):
             # elif rate.time_tracking_mode == 'tester':
             #     exclude_features_for_role = []
 
-            stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_non_management'] = _get_total(issue_points.exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
 
-            stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
+            stats_per_user[user]['points_closed_non_management'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
                                                                          .exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_closed'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
                                                                .values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status2__name__in=open_status_options)\
+            stats_per_user[user]['points_open_non_management'] = _get_total(issue_points.filter(issue__status2__name__in=open_status_options)\
                                                                        .exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
 
-            stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
-            stats_per_user[user]['adjusted_points_non_adhoc_no_scope_creep'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
+            stats_per_user[user]['adjusted_points_non_management'] = (stats_per_user[user]['points_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
+            stats_per_user[user]['adjusted_points_non_management_no_scope_creep'] = (stats_per_user[user]['points_non_management'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
 
-            stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
-            stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
+            stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_management'] * float(stats_per_user[user]['rate'].amount)
+            stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_management'] * float(stats_per_user[user]['rate'].full_rate)
 
             stats_per_user[user]['unadjusted_points_billable_core_rate_no_scope_creep'] = \
-              (stats_per_user[user]['points_non_adhoc'] or 0) * \
+              (stats_per_user[user]['points_non_management'] or 0) * \
               (stats_per_user[user]['rate'].velocity or 0) * \
               float(stats_per_user[user]['rate'].billable_amount or 0)
 
             stats_per_user[user]['unadjusted_points_billable_core_rate'] = \
-              (stats_per_user[user]['points_non_adhoc'] or 0) * \
+              (stats_per_user[user]['points_non_management'] or 0) * \
               (stats_per_user[user]['rate'].full_velocity or 0) * \
               float(stats_per_user[user]['rate'].billable_amount or 0)
 
 
-            stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative\
+            stats_per_user[user]['points_comparative_non_management'] = _get_total(issue_points_comparative\
                                                                               .exclude(issue__issue_type='adhoc').values('user')\
                                                                               .annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status2__name__in=open_status_options)\
+            stats_per_user[user]['points_comparative_closed_non_management'] = _get_total(issue_points_comparative.exclude(issue__status2__name__in=open_status_options)\
                                                                                      .exclude(issue__issue_type='adhoc')\
                                                                                      .values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative\
+            stats_per_user[user]['points_comparative_open_non_management'] = _get_total(issue_points_comparative\
                                                                                    .filter(issue__status2__name__in=open_status_options)\
                                                                                    .exclude(issue__issue_type='adhoc')\
                                                                                    .values('user').annotate(total=Sum('points')))
 
-            stats_per_user[user]['adjusted_points_comparative_non_adhoc'] = (stats_per_user[user]['points_comparative_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
+            stats_per_user[user]['adjusted_points_comparative_non_management'] = (stats_per_user[user]['points_comparative_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
 
-            stats_per_user[user]['adjusted_points_comparative_ctc'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
-            stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
+            stats_per_user[user]['adjusted_points_comparative_ctc'] = stats_per_user[user]['adjusted_points_comparative_non_management'] * float(stats_per_user[user]['rate'].amount)
+            stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_management'] * float(stats_per_user[user]['rate'].full_rate)
 
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
 
@@ -1867,28 +1867,28 @@ class Project(BaseModel):
             else:
                 stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_for_role']) or 0) / float((stats_per_user[user]['points_closed'] or 1))
             # if stats_per_user[user]['hours_closed_real']:
-            #     #stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
+            #     #stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_management'] or 1))
 
             # else:
             #     stats_per_user[user]['calculated_velocity'] = 1
             stats_per_user[user]['calculated_work_ratio'] = 1 # to be fixed (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
 
-            stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
-            stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
-            stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
+            stats_per_user[user]['points_calculated_open_non_management'] = (stats_per_user[user]['points_open_non_management'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
+            stats_per_user[user]['points_calculated_open_non_management_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_management'] or 0)
+            stats_per_user[user]['points_calculated_open_non_management_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_calculated_open_non_management'] or 0)
 
-            stats_per_user[user]['adjusted_points_non_adhoc_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_adhoc'] or 0)
-            stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_adhoc_no_scope_creep'] or 0)
-            stats_per_user[user]['points_calculated_open_non_adhoc_billable_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
+            stats_per_user[user]['adjusted_points_non_management_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_management'] or 0)
+            stats_per_user[user]['adjusted_points_non_management_core_rate_no_scope_creep'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_management_no_scope_creep'] or 0)
+            stats_per_user[user]['points_calculated_open_non_management_billable_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_management'] or 0)
 
-            stats_per_user[user]['points_estimated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 1)
-            stats_per_user[user]['points_estimated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
-            stats_per_user[user]['points_estimated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
+            stats_per_user[user]['points_estimated_open_non_management'] = (stats_per_user[user]['points_open_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 1)
+            stats_per_user[user]['points_estimated_open_non_management_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_estimated_open_non_management'] or 0)
+            stats_per_user[user]['points_estimated_open_non_management_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_estimated_open_non_management'] or 0)
 
-            stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
+            stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_management'] or 0) / float(stats_per_user[user]['points_non_management'] or 1) * 100
 
-            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate']
-            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
+            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_management_core_rate'] += stats_per_user[user]['adjusted_points_non_management_core_rate']
+            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_management_core_rate_no_scope_creep'] += stats_per_user[user]['adjusted_points_non_management_core_rate_no_scope_creep']
             stats_per_role[rate.time_tracking_mode]['users_in_role'].append(user)
 
         for user in users:
@@ -1912,8 +1912,8 @@ class Project(BaseModel):
 
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] or 0 for x in users)
         total_stats['points_comparative_billable'] = sum(stats_per_user[x]['adjusted_points_comparative_billable'] or 0 for x in users)
-        total_stats['points_non_adhoc'] = sum(stats_per_user[x]['points_non_adhoc'] or 0 for x in users)
-        total_stats['points_closed_non_adhoc'] = sum(stats_per_user[x]['points_closed_non_adhoc'] or 0 for x in users)
+        total_stats['points_non_management'] = sum(stats_per_user[x]['points_non_management'] or 0 for x in users)
+        total_stats['points_closed_non_management'] = sum(stats_per_user[x]['points_closed_non_management'] or 0 for x in users)
         total_stats['hours'] = sum(stats_per_user[x]['hours'] or 0 for x in users)
         total_stats['hours_real'] = sum(stats_per_user[x]['hours_real'] or 0 for x in users)
         total_stats['hours_closed_real'] = sum(stats_per_user[x]['hours_closed_real'] or 0 for x in users)
@@ -1929,29 +1929,29 @@ class Project(BaseModel):
         total_stats['hours_billable_with_scope_creep'] = float(total_stats['points_billable'])
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
         total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] or 0 for x in users)
-        total_stats['points_calculated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_ctc'] or 0 for x in users)
-        total_stats['points_calculated_open_non_adhoc_billable'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_billable'] or 0 for x in users)
-        total_stats['points_estimated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_estimated_open_non_adhoc_ctc'] or 0 for x in users)
-        total_stats['points_estimated_open_non_adhoc_billable'] = sum(stats_per_user[x]['points_estimated_open_non_adhoc_billable'] or 0 for x in users)
+        total_stats['points_calculated_open_non_management_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_management_ctc'] or 0 for x in users)
+        total_stats['points_calculated_open_non_management_billable'] = sum(stats_per_user[x]['points_calculated_open_non_management_billable'] or 0 for x in users)
+        total_stats['points_estimated_open_non_management_ctc'] = sum(stats_per_user[x]['points_estimated_open_non_management_ctc'] or 0 for x in users)
+        total_stats['points_estimated_open_non_management_billable'] = sum(stats_per_user[x]['points_estimated_open_non_management_billable'] or 0 for x in users)
         total_stats['unadjusted_points_billable_core_rate'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate'] or 0 for x in users)
         total_stats['unadjusted_points_billable_core_rate_no_scope_creep'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate_no_scope_creep'] or 0 for x in users)
 
 
-        total_stats['percentage_points_complete'] = (total_stats['points_closed_non_adhoc'] or 0) / (total_stats['points_non_adhoc'] or 1) * 100
+        total_stats['percentage_points_complete'] = (total_stats['points_closed_non_management'] or 0) / (total_stats['points_non_management'] or 1) * 100
 
 
-        total_stats['projected_total_billable_no_more_adhoc'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_total_billable_no_more_adhoc'] = float(total_stats['points_calculated_open_non_management_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_total_billable_no_more_adhoc_with_scope_creep'] = float(total_stats['projected_total_billable_no_more_adhoc'])
 
         total_stats['projected_adhoc_billable'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_adhoc_billable'] or 0)) - (float(total_stats['hours_adhoc_billable'] or 0))
-        total_stats['projected_total_billable'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_total_billable'] = float(total_stats['points_calculated_open_non_management_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_total_billable_with_scope_creep'] = total_stats['projected_total_billable']
 
-        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
-        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_management_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_management_billable']) + float(total_stats['hours_billable'])
 
-        total_stats['management_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_management
-        total_stats['testing_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_testing
+        total_stats['management_points_non_management'] = total_stats['points_non_management'] * self.ratio_management
+        total_stats['testing_points_non_management'] = total_stats['points_non_management'] * self.ratio_testing
 
         total_stats['total_quote_cost'] = float(total_stats['hours_billable_with_scope_creep'])
 

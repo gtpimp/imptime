@@ -13,18 +13,6 @@ from project_dashboard_api import get_nonexpired_project_ids
 
 class Nudger(object):
 
-    # def update_nudges_for_user(self, user):
-    #     self.user = user
-    #     self._nudge_for_assigned_issues()
-    #     self._nudge_for_pending_reviews()
-    #     self._nudge_for_deadlines()
-    #     self._nudge_for_invalid_rates()
-    #     self._nudge_for_invalid_budgets()
-    #     self._nudge_for_missing_estimates()
-    #     self._nudge_for_invalid_timesheets()
-    #     self._nudge_for_appointments()
-    #     self._nudge_for_inactive_projects()
- 
     def refresh_all(self, user=None):
 
         nudges = Nudge.objects.all()
@@ -119,16 +107,16 @@ class Nudger(object):
                               .filter_open(user)
         sprints_by_id = dict( [(x.id, x) for x in sprints] )
 
-        # only these sprints get nudges for non-adhoc issues. all
-        # other sprints are in a management status and so only adhoc
+        # only these sprints get nudges for non-management issues. all
+        # other sprints are in a management status and so only management
         # issues matter.
-        sprint_types_for_non_adhoc_issues = [ "sprint", "checklist" ]
+        sprint_types_for_non_management_issues = [ "sprint", "checklist" ]
 
         nudge_ids = []
         for issue in issues:
 
-            if sprints_by_id[issue.project_id].project_type not in sprint_types_for_non_adhoc_issues and \
-               issue.issue_type != "adhoc":
+            if sprints_by_id[issue.project_id].project_type not in sprint_types_for_non_management_issues and \
+               issue.issue_type in Issue.TESTABLE_ISSUE_TYPES:
                 continue
             
             reason = "assigned_issues"
@@ -196,26 +184,3 @@ class Nudger(object):
                 nudge.issue_id = issue_to_review.id
                 nudge.save()
         return nudge_ids
-
-    # def _nudge_for_deadlines(self):
-    #     pass
-
-    # def _nudge_for_invalid_rates(self):
-    #     pass
-
-    # def _nudge_for_invalid_budgets(self):
-    #     pass
-
-    # def _nudge_for_missing_estimates(self):
-    #     pass
-
-    # def _nudge_for_invalid_timesheets(self):
-    #     pass
-
-    # def _nudge_for_appointments(self):
-    #     pass
-
-    # def _nudge_for_inactive_projects(self):
-    #     pass
-
-    

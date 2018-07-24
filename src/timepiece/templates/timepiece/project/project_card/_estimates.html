@@ -40,9 +40,9 @@
                 {% for user, values in project.new_stats.per_user.items %}
                 <tr>
 	            <td>{{ user.username }} ({{ values.rate.time_tracking_mode|slice:"0:1" }})</td>
-                    <td>{{ values.points_non_adhoc|default:""|intcomma }}</td>
-	            <td>{% if values.rate.velocity and values.points_non_adhoc %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
-                    <td>{{ values.adjusted_points_non_adhoc|default:""|floatformat:"2"|intcomma }}</td>
+                    <td>{{ values.points_non_management|default:""|intcomma }}</td>
+	            <td>{% if values.rate.velocity and values.points_non_management %}{{ values.rate.velocity|default:""|floatformat:"2"|intcomma }}{% endif %}</td>
+                    <td>{{ values.adjusted_points_non_management|default:""|floatformat:"2"|intcomma }}</td>
 
                     {% has_permission has_view_ctc_rates project.business %}
                     <td class="money_cell money_ctc">{% if values.rate.amount and values.adjusted_points_ctc %}R{{ values.rate.amount|default:""|floatformat:"0"|intcomma }}{% endif %}</td>

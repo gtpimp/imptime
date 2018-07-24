@@ -70,7 +70,7 @@ class CostSummaryViewSet(BaseViewSet):
         for dev_user_id, dev_user_data in cost_summary['per_user'].items():
             if dev_user_data['time_tracking_mode'] != 'developer':
                 continue
-            projections['original_dev_hours'] += dev_user_data['adjusted_points_non_adhoc_no_scope_creep']
+            projections['original_dev_hours'] += dev_user_data['adjusted_points_non_management_no_scope_creep']
             if bp.has_view_ctc_billable_rates:
                 projections['original_dev_commission_cost'] += dev_user_data['adjusted_points_comparative_billable']
             
