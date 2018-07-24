@@ -4015,32 +4015,41 @@ class IssueQuerySet(QuerySet):
 class Issue(BaseModel):
 
     ISSUE_STATUS_CHOICES = (
-           ('new', 'new'),
-           ('dev_done', 'dev done'),
-           ('in_internal_qa', 'internal qa'),
-           ('internal_qa_passed', 'internal qa passed'),
-           ('in_client_qa', 'external qa'),
-           ('client_qa_passed', 'external qa passed'),
-           ('reopened', 'reopened'),
-           ('onhold', 'on hold'),
-           ('bug', 'bug'),
-           ('to be estimated', 'to be estimated'),
-           ('needscodereview', 'needs code review'),
-           ("cannot reproduce", "cannot reproduce"),
-           ("discuss with client", "discuss with client"),
-           ('dev unclear', 'dev unclear'),
-           ('duplicate', 'duplicate'),
-           ('to be designed', 'to be designed'),
-           ('imported', 'imported'),
-           ('management', 'management'),
-           ('quick_clocker', 'quick clocker')
-        )
+        ('new', 'new'),
+        ('dev_done', 'dev done'),
+        ('in_internal_qa', 'internal qa'),
+        ('internal_qa_passed', 'internal qa passed'),
+        ('in_client_qa', 'external qa'),
+        ('client_qa_passed', 'external qa passed'),
+        ('reopened', 'reopened'),
+        ('onhold', 'on hold'),
+        ('bug', 'bug'),
+        ('to be estimated', 'to be estimated'),
+        ('needscodereview', 'needs code review'),
+        ("cannot reproduce", "cannot reproduce"),
+        ("discuss with client", "discuss with client"),
+        ('dev unclear', 'dev unclear'),
+        ('duplicate', 'duplicate'),
+        ('to be designed', 'to be designed'),
+        ('imported', 'imported'),
+        ('management', 'management'),
+        ('quick_clocker', 'quick clocker'),
+    )
  
     STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear', 'discuss_with_client', 'needscodereview'],
                                        'manager': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
 
-    ISSUE_TYPES = ( ('issue', 'Issue'), ('adhoc', 'Adhoc'), ('correspondence', 'Correspondence'), ('minutes', 'Minutes') )
+    ISSUE_TYPES = ( ('issue', 'Issue'),
+                    ('adhoc', 'Adhoc'),
+                    ('correspondence', 'Correspondence'),
+                    ('minutes', 'Minutes'),
+                    ('management-assign', 'Assign issues'),
+                    ('management-estimate', 'Estimate issues'),
+                    ('management-testables', 'Create testables'),
+                    ('management-scope', 'Create issues for scoping'),
+                    ('management-general', 'General management')
+    )
     TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
 
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
