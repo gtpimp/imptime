@@ -286,7 +286,7 @@ class IssueViewSet(BaseViewSet):
             issue_id_before = params.get('issue_id_before', None)
 
             sprint = self.allowed_sprint(sprint_id)
-            if not self.logged_in_permissions(sprint.business).has_edit_issues:
+            if not self.logged_in_permissions(sprint.business).has_add_issue:
                 raise Exception('Permission denied to create issues')
 
             def create_issue():

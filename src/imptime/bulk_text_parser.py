@@ -3,7 +3,9 @@ from timepiece.models import Activity, Entry, Location, Attribute, Issue, Featur
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from django.utils import timezone
 from django.conf import settings
+from testable.models import Testable
 import logging
+import re
 logger = logging.getLogger(__name__)
 
 class BulkTextParser(object):
@@ -25,9 +27,27 @@ class BulkTextParser(object):
                     feature = None
                 description = orgnode.CleanBody()
 
-                issues.append(self.create_issue(sprint, subject, description, feature))
+                description, testables = self._parse_testables(description)
+                issue = self.create_issue(sprint, subject, description, feature)
+                issues.append(issue)
+                for testable in testables:
+                    testable.issue = issue
+                    testable.save()
         return issues
 
+    def _parse_testables(self, description):
+        groups = re.split("testable:", description, flags=re.IGNORECASE)
+        if len(groups) <= 1:
+            return description, []
+        step_groups = groups[1:]
+        description = groups[0]
+        order_count = 1
+        testables = []
+        for step_group in step_groups:
+            testables.append(Testable(steps=step_group, order=order_count))
+            order_count += 1
+        return description, testables
+    
     def create_issue(self, sprint, subject, description, feature):
         issue, is_new = Issue.objects.get_or_create(project=sprint,
                                                     subject=subject,

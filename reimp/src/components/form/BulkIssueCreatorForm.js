@@ -44,25 +44,38 @@ class BulkIssueCreatorForm extends Component {
         return (
             <form onSubmit={handleSubmit}>
               <h2>Bulk Issue Creator</h2>
-              <div>
-                Sample of a single issue section, include as many as you want:
-                <pre>{`
+              <div className="bulk-issue-creator-form__content">
+                <div className="bulk-issue-creator-form__help">
+                  Sample of creating issues, include as many as you want:
+                  <pre>{`
 
                   *** my new issue1
                   This is some description
                   
                   *** my new issue2
                   This is another description
+
+                  *** my new issue3 with testables
+                  This is my description
+
+                  Testable:
+                  - do something
+                  - confirm it worked
+
+                  Testable:
+                  - do something else
+                  - confirm it also worked
                   
                 `}</pre>
-              </div>
-              <div>
-                <div className="issue_sidebar--textarea">
+                </div>
+                <div className="bulk-issue-creator-form__textarea issue_sidebar--textarea">
                   <Field name="bulk_issue_text"
                          component={this.renderTextarea} />
                 </div>
               </div>
-              <button className="button issue_sidebar--textarea" type="submit">Create</button>
+              <div className="bulk-issue-creator-form__actions">
+                <button className="button issue_sidebar--textarea" type="submit">Create</button>
+              </div>
             </form>
         )        
     }

@@ -53,6 +53,7 @@ export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
 export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
 export const ENTITY_KEY__SPRINT_USER_RATE = 'sprint_user_rate'
 export const ENTITY_KEY__WORK_SUMMARY = 'work_summary'
+export const ENTITY_KEY__SPRINT_COST_SUMMARY = 'sprint_cost_summary'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
@@ -63,7 +64,8 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__MIEN,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE,
-                                  ENTITY_KEY__CALENDAR_EVENT ]
+                                  ENTITY_KEY__CALENDAR_EVENT,
+                                  ENTITY_KEY__SPRINT_COST_SUMMARY ]
 
 export const PAGE_KEY__CALENDAR_PAGE = 'calendar_page'
 export const PAGE_KEY__DASHBOARD_PAGE = 'dashboard_page'

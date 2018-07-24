@@ -110,8 +110,8 @@ router.register(r'multiple_issue_summary', multiple_issue_summary_api.MultipleIs
                 base_name='multiple_issue_summary_api')
 router.register(r'filter', filter_api.FilterViewSet,
                 base_name='filter')
-router.register(r'cost_summary', cost_summary_api.CostSummaryViewSet,
-                base_name='cost_summary')
+router.register(r'sprint_cost_summary', cost_summary_api.CostSummaryViewSet,
+                base_name='sprint_cost_summary')
 router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
                 base_name='time_summary')
 router.register(r'estimate_summary', estimate_summary_api.EstimateSummaryViewSet,
@@ -121,7 +121,7 @@ router.register(r'project_dashboard', project_dashboard_api.ProjectDashboardView
 router.register(r'project_statement', project_statement_api.ProjectStatementViewSet,
                 base_name='project_statement')
 router.register(r'release_note', release_note_api.ReleaseNoteViewSet,
-                base_name='release_note')
+                base_name='release_note') 
 router.register(r'wiki', wiki_api.WikiViewSet,
                 base_name='wiki')
 router.register(r'work_summary', work_summary_api.WorkSummaryViewSet,

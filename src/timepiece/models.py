@@ -1,5 +1,6 @@
 import datetime
 import timings
+import itertools
 from django.db.models import Case, When
 from lib.quality_helper import Quality
 from django.core.urlresolvers import reverse
@@ -929,6 +930,111 @@ class ProjectQuerySet(QuerySet):
         else:
             return self
 
+    def get_meta_info(self):
+        sprints = self.prefetch_related("reviews")\
+                      .prefetch_related("issues__entries")
+        
+        entries = Entry.objects.filter(issue__project__in=sprints,
+                                       issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                               .filter(issue__assigned_to_id=F('user_id'))\
+                               .order_by("issue__project_id")\
+                               .values("issue__project_id").distinct()\
+                               .annotate(hours_per_sprint=Sum('hours'))
+
+        hours_per_sprint_by_assignee = dict( [(x['issue__project_id'], x['hours_per_sprint']) for x in entries] )
+
+        issue_points = IssuePoints.objects.filter(issue__project__in=sprints,
+                                                  issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES,
+                                                  issue__assigned_to_id=F('user_id'))\
+                                          .filter(issue__assigned_to_id=F('issue__project__rate__user_id'))\
+                                          .order_by('issue__project', 'issue_id')\
+                                          .values('issue__project', 'issue_id')\
+                                          .annotate(points_per_issue=Sum(F('points')*F('issue__project__rate__velocity')))
+        estimates_by_sprint_id = {}
+        for k, v in itertools.groupby(issue_points, lambda x: x['issue__project']):
+            estimates_by_sprint_id[k] = { 'num_estimated': 0,
+                                          'estimated_hours': 0 }
+            for estimated_issue in v:
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_hours'] += estimated_issue['points_per_issue'] or 0
+
+
+                
+        # For this count we assume that only developer times matter,
+        # and other times can be inferred.  This is logical if by
+        # developer we mean 'person doing the assigned work' and other
+        # time tracking roles are actually supporting that work (eg
+        # management and testing).
+        ASSIGNEE_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[ASSIGNEE_TIME_TRACKING_MODE]
+        open_issue_points = issue_points.filter(issue__status2__name__in=open_statuses)
+        for k, v in itertools.groupby(open_issue_points, lambda x: x['issue__project']):
+            estimates_by_sprint_id[k]['num_open_estimated'] = 0
+            estimates_by_sprint_id[k]['estimated_open_hours'] = 0
+            for estimated_issue in v:
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_open_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
+
+        # For this count we want to know if the primary work has been
+        # done, ie by the developer.
+        DEV_CLOSED_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[DEV_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_dev_closed_issues'] = num_closed_issues.get('num_closed', 0)
+                    
+        # For this count we assume the tester has the final word on
+        # being closed.  Also we don't care about estimates for this count.
+        COMPLETELY_CLOSED_TIME_TRACKING_MODE = 'tester'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_completely_closed_issues'] = num_closed_issues.get('num_closed', 0)
+
+        testable_issues = Issue.objects.filter(project__in=sprints,
+                                               issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                       .order_by('project_id')\
+                                       .values('project_id')\
+                                       .annotate(num_testable=Count('id'))
+        for testable_issue_count in testable_issues:
+            estimates_by_sprint_id.setdefault(testable_issue_count['project_id'], {})['num_testable_issues'] = testable_issue_count.get('num_testable', 0)
+
+        num_issues_missing_testables_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                                      testables__isnull=True,
+                                                                      issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                                              .order_by("project_id")\
+                                                              .values("project_id")\
+                                                              .annotate(num_missing_testables=Count("id"))
+        for issues_missing_testable_count in num_issues_missing_testables_by_sprint:
+            estimates_by_sprint_id.setdefault(issues_missing_testable_count['project_id'], {})['num_missing_testable_issues'] = issues_missing_testable_count.get('num_missing_testables', 0)
+
+        num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                               assigned_to_id__isnull=True)\
+                                                       .order_by("project_id")\
+                                                       .values("project_id")\
+                                                       .annotate(num_unassigned=Count('id'))
+        for num_assigned_issues in num_unassigned_issues_by_sprint:
+            estimates_by_sprint_id.setdefault(num_assigned_issues['project_id'], {})['num_unassigned_issues'] = num_assigned_issues.get('num_unassigned', 0)
+
+
+        for d in estimates_by_sprint_id.values():
+            d["num_missing_estimates"] = d.get('num_testable_issues', 0) - d.get('num_estimates', 0)
+            
+        return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
+        
+        
     def filter_assigned_tasks_are_active(self):
         return self.filter(status3__name__in=['in dev', 'pending'],
                            project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
@@ -1001,6 +1107,8 @@ class Project(BaseModel):
                       ('spec', 'Spec'),
                       ('inbox', 'Inbox') )
 
+    CLOCKABLE_PROJECT_TYPES = [ "sprint", "spec", "minutes" ]
+    
     code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)
     budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -1677,12 +1785,12 @@ class Project(BaseModel):
             issue_points_comparative = IssuePoints.objects.filter(issue__project=self, user=user).distinct()
 
             open_status_options = Issue.STATUSES_INDICATING_INCOMPLETE[rate.time_tracking_mode]
-            if rate.time_tracking_mode == 'developer':
-                exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
-            elif rate.time_tracking_mode == 'manager':
-                exclude_features_for_role = []
-            elif rate.time_tracking_mode == 'tester':
-                exclude_features_for_role = []
+            # if rate.time_tracking_mode == 'developer':
+            #     exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
+            # elif rate.time_tracking_mode == 'manager':
+            #     exclude_features_for_role = []
+            # elif rate.time_tracking_mode == 'tester':
+            #     exclude_features_for_role = []
 
             stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
@@ -1867,6 +1975,7 @@ class Project(BaseModel):
             json_stats['spendable_budget_msg'] = 'This is more than the spendable budget'
 
         json_stats['spent'] = int(round(total['hours_billable_core_rate'] or 0))
+        json_stats['progress_against_budget'] = (float(total['hours_billable_core_rate'] or 0) / float(self.budget)) if self.budget else 0
 
         if self.has_budget and self.stats['amount_under_budget'] > 0:
             json_stats['budget_status'] = 'R%s under budget' %(round(self.stats['amount_under_budget'] or 0, 2))
@@ -1902,6 +2011,11 @@ class Project(BaseModel):
                 json_stats['per_role'][role_name]['per_user'][user.pk]\
                     = int(round(user_data['hours_billable_core_rate'] or 0))
 
+        json_stats['per_user'] = dict( [(user.id, d) for user, d in stats['per_user'].items()] )
+        for u in json_stats['per_user'].values():
+            u['time_tracking_mode'] = u['rate'].time_tracking_mode
+            del u['rate']
+        
         return json_stats
 
     def cache_stats(self, start=None, end=None, issues=None):
@@ -2992,9 +3106,9 @@ class Entry(BaseModel):
 
         if self.source != 'emacs':
             if was_created:
-                RefreshNotifier().notify_model_create(self)
+                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.project_id]})
             else:
-                RefreshNotifier().notify_model_update(self)
+                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.project_id]})
 
     def delete(self, *args, **kwargs):
         if self.source != 'emacs':
@@ -4348,6 +4462,19 @@ class ProjectIssueOrder(BaseModel):
                                 .aggregate(max_order=Max('order'))['max_order'] or 0
         return max_order + self.INCREMENT
 
+    @classmethod
+    def get_previous_issue(self, issue):
+        issue_order = ProjectIssueOrder.objects.filter(issue=issue).values("order").first()
+        if issue_order is None:
+            return None
+        previous = ProjectIssueOrder.objects.filter(project=issue.project_id,
+                                                    order__lt=issue_order['order'])\
+                                            .values("issue")\
+                                            .order_by("-order").first()
+        if previous is None:
+            return None
+        return previous['issue']
+        
 
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
@@ -4471,6 +4598,8 @@ class CalendarEvent(BaseModel):
                     ('deadline', 'Deadline') )
     EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled'), ("CONFIRMED", "Confirmed"), ("UNKNOWN", "UNKNOWN") )
 
+    NON_WORKING_EVENT_TYPES = ["sickday", "leave", "office_closed"]
+
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
@@ -4518,6 +4647,27 @@ class CalendarEvent(BaseModel):
                     users.add(user)
         return users
 
+    @classmethod
+    def num_non_working_days_in_range(self, user, date_from_inclusive, date_to_inclusive):
+
+        weekends = [ x.date() for x in date_helper.daterange(date_from_inclusive, date_to_inclusive)
+                          if calendar.weekday(year=x.year, month=x.month, day=x.day)>=5 ]
+        
+        holidays_in_range = Holiday.holidays_in_range(date_from_inclusive, date_to_inclusive)\
+                            .exclude(applies_on__in=weekends)
+        events = self.objects.filter(user=user,
+                                     start__gte=date_from_inclusive,
+                                     start__lte=date_to_inclusive,
+                                     event_type__in=self.NON_WORKING_EVENT_TYPES)\
+                             .exclude(start__in=holidays_in_range.values_list("applies_on", flat=True))\
+                             .exclude(start__date__in=weekends)
+
+        num_events = events.count()
+        num_holidays = holidays_in_range.count()
+
+        return num_events + num_holidays + len(weekends)
+                             
+    
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))
@@ -4756,6 +4906,11 @@ class Holiday(BaseModel):
     def is_a_holiday(self, d):
         return d.weekday() in [5,6] or self.objects.filter(applies_on=d).count() > 0
 
+    @classmethod
+    def holidays_in_range(self, date_from_inclusive, date_to_inclusive):
+        return Holiday.objects.filter(applies_on__gte=date_from_inclusive,
+                                      applies_on__lte=date_to_inclusive)
+    
     @classmethod
     def business_days_in_range(self, date_from_inclusive, date_to_inclusive):
         holiday_dates = Holiday.objects.filter(applies_on__gte=date_from_inclusive,
