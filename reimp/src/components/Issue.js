@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { keys, keyBy, map, includes, flatMap } from 'lodash'
+import { size, keys, keyBy, map, includes, flatMap } from 'lodash'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { ENTITY_KEY__ISSUE, getCellStyle } from '../actions/ItemListKeyRegistry'
@@ -228,6 +228,15 @@ class Issue extends Component {
                                          style={getCellStyle(header)} >
                                       {
                                           issue.has_attachment && <div className="icon icon--attachment"></div>
+                                      }
+                                    </div>
+                                )
+                            case "problems":
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)} >
+                                      {
+                                          issue.needs_testables && size(issue.testables) === 0 && <div className="icon icon--missing-testables"></div>
                                       }
                                     </div>
                                 )

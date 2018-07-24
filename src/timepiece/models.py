@@ -4040,7 +4040,7 @@ class Issue(BaseModel):
 
     ISSUE_TYPES = ( ('issue', 'Issue'), ('adhoc', 'Adhoc'), ('correspondence', 'Correspondence'), ('minutes', 'Minutes') )
     TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
-    
+
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')

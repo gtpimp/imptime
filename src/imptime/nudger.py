@@ -117,11 +117,21 @@ class Nudger(object):
                               .filter_by_logged_in_user(user)\
                               .filter(project__in=sprints,
                                       assigned_to=user)\
-                              .exclude(issue_type='adhoc')\
                               .filter_open(user)
+        sprints_by_id = dict( [(x.id, x) for x in sprints] )
+
+        # only these sprints get nudges for non-adhoc issues. all
+        # other sprints are in a management status and so only adhoc
+        # issues matter.
+        sprint_types_for_non_adhoc_issues = [ "sprint", "checklist" ]
 
         nudge_ids = []
         for issue in issues:
+
+            if sprints_by_id[issue.project_id].project_type not in sprint_types_for_non_adhoc_issues and \
+               issue.issue_type != "adhoc":
+                continue
+            
             reason = "assigned_issues"
             nudge, is_new = Nudge.objects.get_or_create(user=user,
                                                         issue_id=issue.id,

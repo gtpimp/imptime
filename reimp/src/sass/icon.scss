@@ -156,6 +156,10 @@
     @include icon(15px, 15px, 'attachment.png');
 }
 
+.icon--missing-testables {
+    @include icon(15px, 15px, 'missing-testables.png');
+}
+
 .icon--correspondence {
     @include icon(15px, 15px, 'correspondence.png');
 }
