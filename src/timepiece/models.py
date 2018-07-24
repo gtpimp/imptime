@@ -3844,6 +3844,7 @@ class Rate(BaseModel):
             This is mainly for serialization, you wouldn't expect to save this object now """
         self.billable_amount = None
         self.amount = None
+        
     @classmethod
     def full_rate_for_project(self, user_id, project_id):
         rate = self.objects.filter(user_id=user_id, project_id=project_id).first()

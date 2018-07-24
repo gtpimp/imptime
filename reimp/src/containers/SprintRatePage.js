@@ -139,6 +139,7 @@ class SprintRatePage extends Component {
 
     renderUserRates() {
         const { can_view_rates, can_view_velocity, can_view_time_tracking_mode,
+                can_view_commission,
                 user_ids, sprint_id } = this.props
 
         return (
@@ -151,6 +152,7 @@ class SprintRatePage extends Component {
                   <tr>
                     <th>User</th>
                     { can_view_rates && <th>Billable rate</th> }
+                    { can_view_commission && <th>Billable rate with commission</th> }
                     { can_view_velocity && <th>Velocity</th> }
                     { can_view_time_tracking_mode && <th>Time tracking mode</th> }
                   </tr>
@@ -166,7 +168,15 @@ class SprintRatePage extends Component {
                              { can_view_rates &&
                                <td>
                                  <EditableUserRate user_id={user_id}
-                                                   sprint_id={sprint_id} />
+                                                   sprint_id={sprint_id}
+                                                   show_with_commission={false}/>
+                               </td>
+                             }
+                             { can_view_commission &&
+                               <td>
+                                 <EditableUserRate user_id={user_id}
+                                                   sprint_id={sprint_id}
+                                                   show_with_commission={true}/>
                                </td>
                              }
                              { can_view_velocity &&
@@ -226,6 +236,7 @@ function mapStateToProps(state, props) {
     const can_view_rates = has_permission(state, project_id, 'has_view_ctc_billable_rates')
     const can_view_velocity = has_permission(state, project_id, 'has_view_velocity')
     const can_view_budget = has_permission(state, project_id, 'has_view_budget')
+    const can_view_commission = can_view_budget && can_view_rates
     const can_view_time_tracking_mode = can_view_velocity
     const can_invite_user = has_permission(state, project_id, 'has_invite_users')
     
@@ -239,6 +250,7 @@ function mapStateToProps(state, props) {
         can_view_velocity,
         can_view_time_tracking_mode,
         can_view_budget,
+        can_view_commission,
         can_invite_user,
         is_inviting_user
     }

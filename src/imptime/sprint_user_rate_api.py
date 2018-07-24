@@ -36,10 +36,12 @@ class SprintUserRateViewSet(BaseViewSet):
                 can_view_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_ctc_billable_rates
                 can_view_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_velocity
                 can_view_time_tracking_mode = can_view_velocity
+                can_view_commission = can_view_billable_amount and self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_budget
             else:
                 can_view_billable_amount = False
                 can_view_velocity = False
                 can_view_time_tracking_mode = can_view_velocity
+                can_view_commission = False
 
             if 'sprint_id' in filter_args and 'user_id' in filter_args and surs.count() == 0:
                 # We return an empty sprint rate so that the caller can tell what's going on.
@@ -59,7 +61,8 @@ class SprintUserRateViewSet(BaseViewSet):
                 s = SprintUserRateSerializer(surs, many=True,
                                              can_view_billable_amount=can_view_billable_amount,
                                              can_view_velocity=can_view_velocity,
-                                             can_view_time_tracking_mode = can_view_time_tracking_mode)
+                                             can_view_time_tracking_mode = can_view_time_tracking_mode,
+                                             can_view_commission = can_view_commission)
                 surs_data = s.data
                 context['sprint_user_rates'] = surs_data
             context['pagination'] = pagination

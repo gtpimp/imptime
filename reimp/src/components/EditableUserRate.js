@@ -29,7 +29,7 @@ class EditableUserRate extends Component {
     }
     
     render() {
-        const { sprint_id, project_id, user_id, sur, can_edit } = this.props
+        const { sprint_id, project_id, user_id, sur, can_edit, show_with_commission } = this.props
 
         return (
             <PermissionInspectorHighlighter project_id={project_id}
@@ -44,7 +44,7 @@ class EditableUserRate extends Component {
                                   actionLabel="User rate"
                 >
                   <UserRateForm user_id={user_id} sprint_id={sprint_id}/>
-                  <UserRate user_id={user_id} sprint_id={sprint_id} />
+                  <UserRate user_id={user_id} sprint_id={sprint_id} show_with_commission={show_with_commission} />
                   <div className="text-component--empty">No rate</div>
                 </EditableProperty>
               </PermissionInspectorHighlighter>
@@ -55,6 +55,7 @@ class EditableUserRate extends Component {
 
 function mapStateToProps(state, props) {
     const { sprint_id, user_id } = props
+    let show_with_commission = ( props.show_with_commission === undefined && true ) || props.show_with_commission
     const sprint = getSprint(state, sprint_id) || {}
     const user = getUser(state, user_id) || {}
     const sur = getSprintUserRate(state, sprint_id, user_id)
@@ -69,7 +70,8 @@ function mapStateToProps(state, props) {
         user,
         sur,
         can_edit,
-        can_view
+        can_view,
+        show_with_commission
     }
 }
 

@@ -53,15 +53,18 @@ class UserRate extends Component {
 
 function mapStateToProps(state, props) {
     const { sprint_id, user_id } = props
-
+    let show_with_commission = ( props.show_with_commission === undefined && true ) || props.show_with_commission
+    
     const sprint = getSprint(state, sprint_id) || {}
     const sur = getSprintUserRate(state, sprint_id, user_id) || {}
     const can_view = has_permission(state, sprint.project_id, "has_view_ctc_billable_rates")
     const is_invalidated = isSurInvalidated(state, sur.id)
     const is_loading = isSurLoading(state, sur.id)
+
+    const value = (show_with_commission && sur.billable_amount_with_commission) || sur.billable_amount
     
     return {
-        value: sur.billable_amount,
+        value,
         can_view,
         is_invalidated,
         is_loading

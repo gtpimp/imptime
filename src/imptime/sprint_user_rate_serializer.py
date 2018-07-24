@@ -9,6 +9,7 @@ class SprintUserRateSerializer(BaseSerializer):
     sprint_id = serializers.CharField()
     user_id = serializers.CharField()
     billable_amount = serializers.FloatField()
+    billable_amount_with_commission = serializers.FloatField()
     velocity = serializers.FloatField()
     work_ratio = serializers.FloatField()
     time_tracking_mode = serializers.CharField()
@@ -17,6 +18,7 @@ class SprintUserRateSerializer(BaseSerializer):
         self.can_view_billable_amount=kwargs.pop('can_view_billable_amount', False)
         self.can_view_velocity=kwargs.pop('can_view_velocity', False)
         self.can_view_time_tracking_mode=kwargs.pop('can_view_time_tracking_mode', False)
+        self.can_view_commission = kwargs.pop('can_view_commission', False)
         super(SprintUserRateSerializer, self).__init__(*args, **kwargs)
         
     
@@ -28,4 +30,9 @@ class SprintUserRateSerializer(BaseSerializer):
             rate.velocity = None
         if not self.can_view_time_tracking_mode:
             rate.time_tracking_mode = None
+        if self.can_view_commission:
+            rate.billable_amount_with_commission = rate.full_rate
+        else:
+            rate.billable_amount_with_commission = rate.billable_amount
+            
         return super(SprintUserRateSerializer, self).to_representation(rate, *args, **kwargs)

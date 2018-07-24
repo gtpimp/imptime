@@ -16,6 +16,7 @@ import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { invalidateSprintReviews } from '../actions/SprintReviews'
 import { invalidateProjectDashboards } from '../actions/ProjectDashboards'
 import { invalidateNudges } from '../actions/Nudges'
+import { invalidateSursForSprint } from '../actions/SprintUserRates'
 import { invalidateCompanyProblems } from '../actions/CompanyProblems'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 import { invalidateAutoClocks } from '../actions/AutoClock'
@@ -67,6 +68,7 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateSprintRoadmaps(sprint_roadmap_ids))
         dispatch(invalidateProjectDashboards([d.params.project_id]))
         dispatch(invalidateCostSummary(d.entity_ref))
+        dispatch(invalidateSursForSprint(d.entity_ref))
 
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateIssues([d.entity_ref]))

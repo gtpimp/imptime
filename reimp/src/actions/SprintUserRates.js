@@ -12,6 +12,7 @@ export const ANNOUNCE_SURS_LOAD_FAILED = 'ANNOUNCE_SURS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_SURS = 'ANNOUNCE_LOADING_SURS'
 export const INVALIDATE_SURS = 'INVALIDATE_SURS'
 export const INVALIDATE_ALL_SURS = 'INVALIDATE_ALL_SURS'
+export const INVALIDATE_SURS_FOR_SPRINT = 'INVALIDATE_SURS_FOR_SPRINT'
 export const INVALIDATE_SUR_FOR_SPRINT_AND_USER = 'INVALIDATE_SUR_FOR_SPRINT_AND_USER'
 
 export function invalidateAllSurs() {
@@ -24,6 +25,13 @@ export function invalidateSurs(sur_ids) {
     return {
         type: INVALIDATE_SURS,
 	sur_ids_to_invalidate: sur_ids
+    }
+}
+
+export function invalidateSursForSprint(sprint_id) {
+    return {
+        type: INVALIDATE_SURS_FOR_SPRINT,
+        sprint_id: sprint_id
     }
 }
 
