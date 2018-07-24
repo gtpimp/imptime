@@ -17,6 +17,7 @@ class CompanyProblemCalculator(object):
         for company_problem in company_problems:
             company_problem.delete()
 
+        self._create_missed_review_schedules(projects)
         self._create_missing_rates(projects)
         self._create_missing_budgets(projects)
         self._create_missing_meta_info(projects)
@@ -109,4 +110,19 @@ class CompanyProblemCalculator(object):
                                                  problem_type='missing_review_schedule',
                                                  money_sensitive=False,
                                                  defaults={'description':"Sprint requires a review schedule",
+                                                           'status':'open'})
+
+    def _create_missed_review_schedules(self, projects):
+        sprints = Sprint.objects.filter_open()\
+                                .filter(reviews__isnull=False)
+
+        sprints = SprintReview.filter_has_an_issue_due_for_review(sprints)
+        
+        for sprint in sprints:
+            CompanyProblem.objects.get_or_create(user_id=None,
+                                                 project_id=sprint.business_id, #sic
+                                                 sprint_id=sprint.id,
+                                                 problem_type='expired_review_schedule',
+                                                 money_sensitive=False,
+                                                 defaults={'description':"At least one issue requires a review",
                                                            'status':'open'})

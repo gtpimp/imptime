@@ -97,7 +97,6 @@ class Nudger(object):
         keep_these_nudge_ids = []
         keep_these_nudge_ids.extend(self._nudge_for_assigned_issues(sprint_qs, user))
         keep_these_nudge_ids.extend(self._nudge_for_pending_reviews(sprint_qs, user))
-        keep_these_nudge_ids.extend(self._nudge_for_full_inboxes(sprint_qs, user))
         Nudge.objects.filter(user=user, sprint__in=sprint_qs)\
                      .exclude(pk__in=keep_these_nudge_ids)\
                      .exclude(reason='manual')\
@@ -157,35 +156,6 @@ class Nudger(object):
             previous_issue_nudge = Nudge.objects.filter(issue=previous_issue, user=user).first()
             if previous_issue_nudge is not None:
                 UserNudgeOrder.insert_after(nudge, set_after_this_nudge=previous_issue_nudge)
-    
-    def _nudge_for_full_inboxes(self, sprint_qs, user):
-        sprint_ids = sprint_qs.filter(project_type='inbox')\
-                              .values_list("pk", flat=True)
-        sprints = Sprint.objects.all().filter(pk__in=sprint_ids)
-        issues = Issue.objects.all()\
-                              .filter_by_logged_in_user(user)\
-                              .filter(project__in=sprints)\
-                              .filter_open(user)
-        sprints_requiring_nudging = issues.order_by("project_id")\
-                                          .values("project_id")\
-                                          .annotate(num_issues=Count("project_id"))
-
-        nudge_ids = []
-        for to_nudge in sprints_requiring_nudging:
-            reason = "inbox"
-            nudge = Nudge.objects.get_or_create(user=user,
-                                                sprint_id=to_nudge['project_id'],
-                                                reason=reason)[0]
-            nudge_ids.append(nudge.id)
-            nudge.description = "%s issue%s in the inbox" % (to_nudge['num_issues'], ("s" if to_nudge['num_issues']>0 else ""))
-            nudge.issue_id = issues.filter(project_id=to_nudge['project_id'])\
-                                   .order_by_project_id(to_nudge['project_id']).values('pk')[0]['pk']
-            nudge.due_date = issues.filter(project_id=to_nudge['project_id'])\
-                                   .order_by("modified").values('modified')[0]['modified']
-            nudge.due_date_reason = "oldest issue in the inbox"
-            nudge.save()
-        return nudge_ids
-
     
     def _nudge_for_pending_reviews(self, sprint_qs, user):
         sprint_ids = sprint_qs.values_list("pk", flat=True)

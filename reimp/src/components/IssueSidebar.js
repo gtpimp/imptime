@@ -410,6 +410,7 @@ class IssueSidebar extends Component {
                         { this.renderEstimatesStack() }
                         { this.renderAttachmentsStack() }
                         { this.renderFeatureStack() }
+                        { this.renderReviewsStack() }
                       </div>
                     }
                   </PropertyStack>

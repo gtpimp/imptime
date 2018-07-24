@@ -5043,6 +5043,14 @@ class ProjectReview(BaseModel):
     class Meta:
         unique_together = (('project', 'review_by'),)
 
+    @classmethod
+    def filter_has_an_issue_due_for_review(self, project_qs):
+        now = timezone.now()
+        project_qs = project_qs.filter(reviews__must_always_review=True,
+                                       issues__reviews__last_reviewed_at__lt=now-timedelta(days=1)*F('reviews__review_cycle_days'))\
+                               .distinct()
+        return project_qs
+        
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectReview, self).save(*args, **kwargs)
