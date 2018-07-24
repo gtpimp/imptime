@@ -1,6 +1,7 @@
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
 from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
+from timepiece.models import IssuePoints
 from django.utils import timezone
 from django.conf import settings
 from testable.models import Testable
@@ -27,14 +28,31 @@ class BulkTextParser(object):
                     feature = None
                 description = orgnode.CleanBody()
 
-                description, testables = self._parse_testables(description)
-                issue = self.create_issue(sprint, subject, description, feature)
+                meta_info = self.parse_meta_info(description)
+                issue = self.create_issue(sprint, subject, meta_info, feature)
                 issues.append(issue)
-                for testable in testables:
+                for testable in meta_info['testables']:
                     testable.issue = issue
                     testable.save()
+
+                estimate = meta_info['attributes'].get('estimate', None)
+                if estimate:
+                    estimate = float(estimate)
+                    IssuePoints.objects.get_or_create(user=self.logged_in_user,
+                                                      issue=issue,
+                                                      defaults={'points':estimate})
+                    
         return issues
 
+    def parse_meta_info(self, description):
+        description = description.strip()
+        description, attributes = self._parse_attributes(description)
+        description, testables = self._parse_testables(description)
+
+        return { 'description': description,
+                 'attributes': attributes,
+                 'testables': testables }
+    
     def _parse_testables(self, description):
         groups = re.split("testable:", description, flags=re.IGNORECASE)
         if len(groups) <= 1:
@@ -47,17 +65,30 @@ class BulkTextParser(object):
             testables.append(Testable(steps=step_group, order=order_count))
             order_count += 1
         return description, testables
+
+    def _parse_attributes(self, description):
+        attribute_names = [ "type", "status", "estimate" ]
+        attributes = {}
+        for i in range(len(attribute_names)):
+            for attribute_name in attribute_names:
+                attribute_pattern = "{name}: ?([^\n]*)\n".format(name=attribute_name)
+                match = re.match(attribute_pattern, description)
+                if match:
+                    value = match.groups(0)[0].strip()
+                    description = description[0:match.start()]+description[match.end():].strip()
+                    attributes[attribute_name] = value
+        return description, attributes
     
-    def create_issue(self, sprint, subject, description, feature):
+    def create_issue(self, sprint, subject, meta_info, feature):
         issue, is_new = Issue.objects.get_or_create(project=sprint,
                                                     subject=subject,
                                                     defaults={'auto_created_during_import':True,
-                                                              'issue_type':'issue',
-                                                              'status2':IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0], #sic
+                                                              'issue_type':meta_info['attributes'].get('type', 'issue'),
+                                                              'status2':IssueStatus.objects.get_or_create(name=meta_info['attributes'].get('status', 'new'), business=sprint.business)[0], #sic
                                                               'feature':feature,
                                                               'assigned_to':self.logged_in_user,
                                                               'number':Issue.get_next_issue_number(sprint.business), #sic
-                                                              'description':description[0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
+                                                              'description':meta_info['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],
                                                               'story_points':0,
                                                               'created':timezone.now(),
                                                               'modified':timezone.now()})

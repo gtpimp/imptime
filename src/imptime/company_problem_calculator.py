@@ -74,7 +74,15 @@ class CompanyProblemCalculator(object):
             if sprint.id not in estimates_by_sprint_id:
                 continue
             d = estimates_by_sprint_id[sprint.id]
-            if d.get('num_missing_testable_issues', 0) > 0:
+            if d.get('num_adhoc_issues', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='adhoc_issues',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are adhoc" % d['num_adhoc_issues'],
+                                                               'status':'open'})
+            elif d.get('num_missing_testable_issues', 0) > 0:
                 CompanyProblem.objects.get_or_create(user_id=None,
                                                      project_id=sprint.business_id, #sic
                                                      sprint_id=sprint.id,

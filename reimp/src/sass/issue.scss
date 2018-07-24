@@ -112,6 +112,29 @@ issue--grouped {
     opacity: 0.5;
 }
 
+.issue-cell__issue-management-general-icon {
+    @extend .div-table__cell--default;
+    @extend .icon--management;
+    opacity: 0.5;
+}
+
+.issue-cell__issue-management-assign-icon {
+    @extend .issue-cell__issue-management-general-icon;
+}
+
+.issue-cell__issue-management-estimate-icon {
+    @extend .issue-cell__issue-management-general-icon;
+}
+
+.issue-cell__issue-management-testables-icon {
+    @extend .issue-cell__issue-management-general-icon;
+}
+
+.issue-cell__issue-management-scope-icon {
+    @extend .issue-cell__issue-management-general-icon;
+}
+
+
 .issue-cell__issue-correspondence-icon {
     @extend .div-table__cell--default;
     @extend .icon--correspondence;

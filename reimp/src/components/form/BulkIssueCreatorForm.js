@@ -65,6 +65,13 @@ class BulkIssueCreatorForm extends Component {
                   Testable:
                   - do something else
                   - confirm it also worked
+
+                  *** my new issue4 with attributes
+                  type: management-general
+                  status: dev done
+                  estimate: 1.5
+
+                  Doing admin type things
                   
                 `}</pre>
                 </div>

@@ -26,6 +26,7 @@ class SprintSerializer(BaseSerializer):
     num_testable_issues = serializers.IntegerField()
     num_missing_testable_issues = serializers.IntegerField()
     num_issues_missing_estimates = serializers.IntegerField()
+    num_adhoc_issues = serializers.IntegerField()
     num_issues_unassigned = serializers.IntegerField()
     num_issues_with_estimates = serializers.IntegerField()
     num_open_issues_with_estimates = serializers.IntegerField()
@@ -76,6 +77,7 @@ class SprintSerializer(BaseSerializer):
         sprint.num_testable_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_testable_issues', 0)
         sprint.num_missing_testable_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_missing_testable_issues', 0)
         sprint.num_issues_missing_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_missing_estimates', 0)
+        sprint.num_adhoc_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_adhoc_issues', 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
         if sprint_template:

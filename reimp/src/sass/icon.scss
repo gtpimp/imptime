@@ -149,7 +149,11 @@
 }
 
 .icon--adhoc {
-    @include icon(15px, 15px, 'adhoc.png');
+    @include icon(15px, 15px, 'question_mark.png');
+}
+
+.icon--management {
+    @include icon(15px, 15px, 'management.png');
 }
 
 .icon--attachment {

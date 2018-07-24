@@ -1031,6 +1031,14 @@ class ProjectQuerySet(QuerySet):
 
         for d in estimates_by_sprint_id.values():
             d["num_missing_estimates"] = d.get('num_testable_issues', 0) - d.get('num_estimates', 0)
+
+        num_adhoc_issues_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                          issue_type="adhoc")\
+                                                  .order_by("project_id")\
+                                                  .values("project_id")\
+                                                  .annotate(num_adhoc=Count('id'))
+        for num_adhoc_issues in num_adhoc_issues_by_sprint:
+            estimates_by_sprint_id.setdefault(num_adhoc_issues['project_id'], {})['num_adhoc_issues'] = num_adhoc_issues.get('num_adhoc', 0)
             
         return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
         
@@ -4069,7 +4077,7 @@ class Issue(BaseModel):
     modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField(default=None, null=True, blank=True)
     auto_created_during_import = models.BooleanField(default=False)
-    issue_type = models.CharField(max_length=20, choices=ISSUE_TYPES, default='issue', null=False)
+    issue_type = models.CharField(max_length=50, choices=ISSUE_TYPES, default='issue', null=False)
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 

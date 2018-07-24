@@ -24,6 +24,20 @@ class SprintStateSummary extends Component {
         }
     }
 
+    renderHasAdhocIssuesAction() {
+        const { sprint } = this.props
+        return (
+            <div>
+              {sprint.num_adhoc_issues}
+              &nbsp;
+              <Pluralize singular="issue" showCount={false} count={sprint.num_adhoc_issues}/>
+              &nbsp;
+              <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_adhoc_issues}/>
+              &nbsp;adhoc
+            </div>
+        )
+    }
+
     renderMissingTestablesAction() {
         const { sprint } = this.props
         return (
@@ -118,7 +132,9 @@ class SprintStateSummary extends Component {
 
     renderUnhandledProblems() {
         const { sprint, cost_summary, can_view_budget } = this.props
-        if ( sprint.num_missing_testable_issues > 0 ) {
+        if ( sprint.num_adhoc_issues > 0 ) {
+            return this.renderHasAdhocIssuesAction()
+        } else if ( sprint.num_missing_testable_issues > 0 ) {
             return this.renderMissingTestablesAction()
         } else if ( sprint.num_issues_unassigned > 0 ) {
             return this.renderMissingAssignedAction()
