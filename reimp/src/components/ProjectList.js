@@ -30,6 +30,36 @@ import DivTable from './DivTable'
 import '../sass/project-list.scss'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
+
+const div_table_row = {
+    display: 'flex',
+    flexDirection: 'row',
+    minHeight: '35px',
+    font: theme.fonts.list_items,
+    paddingLeft: '24px'
+}
+
+const DivTableHeaderRow = styled('div')(props => Object.assign(div_table_row,
+                                                  {font: theme.fonts.list_items,
+                                                   height: '40px',
+                                                   marginTop: '25px',
+                                                   paddingLeft: '12px'
+                                                  }
+))
+
+const DivTableHeaderCell = styled('div')(props => ({color: theme.colours.strong_text,
+                                                    paddingLeft: '6px',
+                                                    paddingTop: '6px',
+                                                    marginLeft: '6px',
+                                                    marginRight: '6px',
+                                                    display: 'flex',
+
+                                                    '&:hover': {
+                                                        cursor: 'pointer',
+                                                        backgroundColor: 'rgba(0,92,134, 0.07)',
+                                                    }}))
 
 class ProjectList extends Component {
 
@@ -77,13 +107,13 @@ class ProjectList extends Component {
     }
     
     onCollapse() {
-	const { dispatch, list_key } = this.props
-	dispatch(collapse_list(list_key))
+	      const { dispatch, list_key } = this.props
+	      dispatch(collapse_list(list_key))
     }
 
     onExpand() {
-	const { dispatch, list_key } = this.props
-	dispatch(expand_list(list_key))
+	      const { dispatch, list_key } = this.props
+	      dispatch(expand_list(list_key))
     }
 
     onClickedProject(event, project_id) {
@@ -106,63 +136,62 @@ class ProjectList extends Component {
 
     onChangePage() {
         const { dispatch, list_key } = this.props
-	dispatch(invalidateList(list_key))
-	dispatch(fetchProjectsIfNeeded(list_key))
+	      dispatch(invalidateList(list_key))
+	      dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     onRefresh(event) {
         const { dispatch, list_key } = this.props
-	dispatch(invalidateList(list_key))
-	dispatch(invalidateAllProjects())
-	dispatch(fetchProjectsIfNeeded(list_key))
-	if ( event ) {
-	    event.stopPropagation()
-	}
+	      dispatch(invalidateList(list_key))
+	      dispatch(invalidateAllProjects())
+	      dispatch(fetchProjectsIfNeeded(list_key))
+	      if ( event ) {
+	          event.stopPropagation()
+	      }
     }
 
     renderHeader() {
         const { header_list } = this.props
         return (
-            <div className="div-table__header_row">
-              { map(header_list, (v, k) => (
-                    <div key={k}
-                         className="div-table__header_cell"
-                         style={getCellStyle(v)}>
-                      {v.label }
-                    </div>
-                ))}
-            </div>
+            <DivTableHeaderRow>
+            { map(header_list, (v, k) => (
+                <DivTableHeaderCell key={k}
+                                    style={getCellStyle(v)}>
+                  {v.label }
+                </DivTableHeaderCell>
+            ))}
+            </DivTableHeaderRow>
         )
     }
     
     renderCollapsedProject(project) {
-	const { list_key, loading_item_ids } = this.props
+	      const { list_key, loading_item_ids } = this.props
         const is_loading=loading_item_ids.indexOf(project.id) !== -1
         
-	return (
-	    <div key={"collapsed_project_"+project.id+"_"+list_key}>
+	      return (
+	          <div key={"collapsed_project_"+project.id+"_"+list_key}>
               { is_loading && "Loading..." }
               { ! is_loading &&
                 <div>
                   Project: {project.name}
                 </div>
               }
-	    </div>
-	)
+	          </div>
+	      )
     }
 
     render_collapsed() {
-	const { selected_items } = this.props
+	      const { selected_items } = this.props
 
-	return (
-	    <div className="panel panel--collapsed">
-		<div className="panel-heading" onClick={this.onExpand}>
-		    <div className="panel__title">
-			{ selected_items.map((project, index) => this.renderCollapsedProject(project)) }
-		    </div>
-		</div>
-	    </div>
-	)
+	      return (
+	          <div className="panel panel--collapsed">
+		          <div className="panel-heading" onClick={this.onExpand}>
+		            <div className="panel__title">
+			            { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
+		            </div>
+		          </div>
+	          </div>
+	      )
     }
 
     renderExpandedProject(project, index) {

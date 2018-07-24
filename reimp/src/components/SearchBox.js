@@ -7,11 +7,11 @@ import {initFilter, runFilter, getFilter, hideResults, showResults, clearResults
 import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
 import SearchInput from './SearchInput'
-import glamorous from 'glamorous'
+import styled from 'react-emotion'
 
-const SearchBoxDiv = glamorous.div({"width": "306px",
-                                    "height": "28px",
-                                    "paddingLeft": "12px"})
+const SearchBoxDiv = styled('div')(props => ({"width": "306px",
+                                              "height": "28px",
+                                              "paddingLeft": "12px"}))
 
 
 class SearchBox extends Component {

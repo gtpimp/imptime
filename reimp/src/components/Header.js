@@ -3,15 +3,14 @@ import {connect} from 'react-redux'
 import '../sass/header.css'
 import { logged_in_user } from '../actions/Auth'
 import Navbar from '../components/Navbar'
-import Toolbar from './toolbar/Toolbar'
+import SubNavBar from './SubNavBar'
 import ReleaseNotesPopup from '../components/ReleaseNotesPopup'
 import Maintenance from './Maintenance'
 import Error from './Error'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
-
-const HeaderDiv = glamorous.div({font: theme.fonts.header})
+const HeaderDiv = styled('div')(props => ({font: theme.fonts.header}))
 
 class Header extends Component {
     
@@ -23,7 +22,7 @@ class Header extends Component {
               <Maintenance/>
               <Error/>
               <Navbar/>
-              <Toolbar />
+              <SubNavBar />
               { has_usable_password &&
                 <ReleaseNotesPopup />
               }

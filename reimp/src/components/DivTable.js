@@ -8,6 +8,20 @@ import '../sass/div-table.css'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
+
+const div_table_row = {
+    display: 'flex',
+    flexDirection: 'row',
+    minHeight: '35px',
+    font: theme.fonts.list_items,
+    paddingLeft: '24px'
+}
+
+const DivTableHeaderRow = styled('div')(props => Object.assign(div_table_row,
+                                                  {font: theme.fonts.list_items,
+                                                   height: '40px'}))
 
 class DivTable extends Component {
 
@@ -31,15 +45,15 @@ class DivTable extends Component {
 
     renderDefaultHeader(header_list) {
         return (
-            <div className="div-table__header_row">
+            <DivTableHeaderRow>
               { map(header_list, (v, k) => (
-                    <div key={k}
-                         className="div-table__header_cell"
-                         style={getCellStyle(v)}>
-                      {v.label }
-                    </div>
-                ))}
-            </div>
+                  <div key={k}
+                       className="div-table__header_cell"
+                       style={getCellStyle(v)}>
+                    {v.label }
+                  </div>
+              ))}
+            </DivTableHeaderRow>
         )
     }
     

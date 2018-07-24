@@ -1,34 +1,56 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter, Link} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import SearchBox from '../components/SearchBox'
 import {logged_in_user} from '../actions/Auth'
 import { getLoggedInUser } from '../actions/Users'
+import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
-import { can_create_release_notes, logout } from '../actions/Auth'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
-import glamorous from 'glamorous'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
-const NavbarDiv = glamorous.div({display: "flex",
-                                 background: "linear-gradient(#0b8bb2, #056a86)",
-                                 justifyContent: "space-between",
-                                 alignItems: "center",
-                                 height: "36px",
-                                 width: "100%"},
-                                ({user_initiated_network_activity=false,
-                                  is_websockets_connected=false}) =>
-                                      ({borderTop:(user_initiated_network_activity || !is_websockets_connected)? "1px solid #D54859" : "auto"})
-)
+const navbar_submenu_item = {color: "#ffffff",
+                             font: theme.fonts.regular_large,
+                             paddingTop: '12px',
+                             textTransform: 'none',
+                             paddingLeft: '12px',
+                             borderBottom: '1px solid #eee',
+
+                             '&:hover': {
+                                 color: '#333',
+                                 backgroundColor: '#eee',
+                                 cursor: 'pointer',
+                             }}
+
+const NavbarDiv = styled('div')(props => ({display: "flex",
+                                           color: "#ffffff",
+                                           background: "linear-gradient(#0b8bb2, #056a86)",
+                                           justifyContent: "space-between",
+                                           alignItems: "center",
+                                           height: "36px",
+                                           width: "100%",
+                                           borderTop:(props.user_initiated_network_activity || !props.is_websockets_connected)? "1px solid #D54859" : "auto"}
+))
+
+const NavbarLeftDiv = styled('div')(props => ({display: 'flex',
+                                               width: '41.3%',
+                                               paddingLeft: '12px'}))
+
+const NavbarRightDiv = styled('div')(props => ({display: 'flex',
+                                                width: "58.7%"}))
+
+const GlamLink = styled(Link)(props => (navbar_submenu_item))
 
 class Navbar extends Component {
 
     constructor(props) {
         super(props)
         this.onSelectFloatingCalendar = this.onSelectFloatingCalendar.bind(this)
-        this.onLogout = this.onLogout.bind(this)
     }
-
+    
     onSelectFloatingCalendar(evt) {
         const { dispatch } = this.props
         if ( evt ) {
@@ -37,22 +59,16 @@ class Navbar extends Component {
         dispatch(showFloatingCalendar())
     }
 
-    onLogout() {
-        const { dispatch, history } = this.props
-        dispatch(logout())
-        history.push('/')
-    }
-
     render() {
 
         const {  is_loading, is_saving, is_websockets_connected,
                  username, has_edit_release_notes_permission, default_schedule_id  } = this.props
         const user_initiated_network_activity = is_loading || is_saving
-
+        
         return (
             <NavbarDiv user_initiated_network_activity={user_initiated_network_activity}
                        is_websockets_connected={is_websockets_connected}>
-              <div className="navbar__left">
+              <NavbarLeftDiv>
                 <NavTab to="/projects" label="Projects" />
                 <MienSelector></MienSelector>
               </div>
@@ -79,6 +95,9 @@ class Navbar extends Component {
                 </div>
                 <div className="navbar__tab"><NavTab to="/work_summary" label="Work summary" /></div>
                 <div className="navbar__tab"><NavTab to="/dashboard" label="Dashboard" /></div>
+                <div className="navbar__tab"><NavTab>
+                  <AutoClockPopup/>
+                </NavTab></div>
                 <div className="navbar__tab"><NavTab to="/usertimesheets" label="Timesheets" /></div>
                 <div className="navbar__tab"><NavTab to="/projects" label="Projects" /></div>
                 <div className="navbar__tab"><NavTab to="/invoices" label="Invoices"/></div>
@@ -98,7 +117,7 @@ class Navbar extends Component {
                 <NavTab>
                   <SearchBox/>
                 </NavTab>
-              </div>
+              </NavbarRightDiv>
             </NavbarDiv>
         )
     }

@@ -3,10 +3,9 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import Breadcrumb from './Breadcrumb'
 import { areBreadcrumbsActive, getBreadcrumbs } from '../actions/Breadcrumbs'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
 
-const BreadcrumbsDiv = glamorous.div(({is_active=true}) => ({opacity: is_active ? 1: 0.2}))
+const BreadcrumbsDiv = styled('div')(props => (({opacity: props.is_active ? 1: 0.2})))
 
 class Breadcrumbs extends Component {
 

@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../../sass/toolbar.css'
-import Breadcrumbs from '../../components/Breadcrumbs'
 import BillableHoursStatementToolbarPanel from './BillableHoursStatementToolbarPanel'
 import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'
@@ -26,20 +24,25 @@ import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../../theme/default'
 
-const ToolbarDiv = glamorous.div({display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
-                                  height: "36px",
-                                  color: theme.colours.strong_text,
-                                  marginLeft: "12px",
-                                  fontSize: "15px",
-                                  width: "100%"})
+const ToolbarDiv = styled('div')(props => ({display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            height: "36px",
+                                            color: theme.colours.strong_text,
+                                            backgroundColor: theme.colours.left_panel_background,
+                                            fontSize: "15px",
+                                            width: "100%"}))
 
-class ToolBar extends Component {
-        
+const ToolbarSideDiv = styled('div')(props => ({alignItems: "center",
+                                                display: "flex",
+                                                flexGrow: "1",
+                                                justifyContent: props.side === 'left' ?  'flex-start' : 'flex-end'}))
+
+class Toolbar extends Component {
+    
     renderPanel(id) {
         switch(id) {
             case 'company_problem':
@@ -99,12 +102,9 @@ class ToolBar extends Component {
         const {panelIds} = this.props
         return (
             <ToolbarDiv>
-              <div className="toolbar__container toolbar__container--left">
-                <Breadcrumbs />
-              </div>
-              <div className="toolbar__container toolbar__container--right">
+              <ToolbarSideDiv side="right">
                 {panelIds.map((panelId) => this.renderPanel(panelId))}
-              </div>
+              </ToolbarSideDiv>
             </ToolbarDiv>
         )
     }
@@ -119,4 +119,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(ToolBar)
+export default connect(mapStateToProps)(Toolbar)

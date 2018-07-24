@@ -1,12 +1,5 @@
 @import 'variables.scss';
 
-.auto-clock {
-    position: fixed;
-    top: 8px;
-    left: 400px;
-    z-index:999;
-}
-
 .auto-clock--visible {
     min-height: 50px;
     font-size: $font-size-default;

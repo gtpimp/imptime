@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link, withRouter} from 'react-router-dom'
-import '../sass/breadcrumb.css'
 import { map, get, filter } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
@@ -17,23 +16,36 @@ import {
 import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
+import SubMenuItemLink from './SubMenuItemLink'
 
-const BreadcrumbDiv = glamorous.div({
+const BreadcrumbDiv = styled('div')(props => ({
     display: "inline-flex",
     cursor: "pointer",
     textDecoration: "none",
-    ':lastChild': {font: 'breadcrumb_selected'}
-})
+    alignItems: 'center',
+    color: theme.colours.strong_text,
+    ':last-child': {
+        font: theme.fonts.breadcrumb_selected
+    }
+}))
 
 
-const BreadcrumbSeparatorDiv = glamorous.div({
-    "alignItems": "center",
-    "display": "inline-flex",
-    "paddingLeft": "16px",
-    "paddingRight": "16px"
-})
+const BreadcrumbSeparatorDiv = styled('div')(props => ({
+    alignItems: "center",
+    display: "inline-flex",
+    paddingLeft: "16px",
+    paddingRight: "16px"
+}))
+
+const BreadcrumbMenuDiv = styled('div')(props => ({
+    position: 'absolute',
+    top: '65px',
+    minWidth: '145px',
+    zIndex: '9',
+    borderRadius: '3px',
+}))
 
 const menu_buttons = {
 
@@ -180,10 +192,10 @@ class Breadcrumb extends Component {
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
                                                 permission_names={button_perms}>
-                  <div className="breadcrumb-menu__item"
-                       onClick={() => this.onClickBreadcrumbActionButton(button)}>
+                  <SubMenuItemLink
+                    onClick={() => this.onClickBreadcrumbActionButton(button)}>
                     {label}
-                  </div>
+                  </SubMenuItemLink>
                 </PermissionInspectorHighlighter>
             )
         } else {
@@ -191,11 +203,11 @@ class Breadcrumb extends Component {
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
                                                 permission_names={button_perms}>
-                  <div className="breadcrumb-menu__item">
+                  <SubMenuItemLink>
                     <Link to={button['nav_url'](breadcrumb.selected_entities)}>
                       {label}
                     </Link>
-                  </div>
+                  </SubMenuItemLink>
                 </PermissionInspectorHighlighter>
             )
         }
@@ -215,10 +227,12 @@ class Breadcrumb extends Component {
                 {label}
               </Link>
               { buttons && 
-                <div className="breadcrumb-menu">
-                  <Link className="breadcrumb-menu__item" to={to}>
-                    {label}
-                  </Link>
+                <BreadcrumbMenuDiv>
+                  <SubMenuItemLink>
+                    <Link to={to}>
+                      {label}
+                    </Link>
+                  </SubMenuItemLink>
                   { map(buttons, function(button, index) {
                         const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
                         const can_view = button.perms === undefined || permissions === null ||
@@ -229,7 +243,7 @@ class Breadcrumb extends Component {
                         return that.renderBreadcrumbLink(button, breadcrumb, index, button_perms)
                     })
                   }
-                </div>
+                </BreadcrumbMenuDiv>
               }
               { !is_last &&
                 <BreadcrumbSeparatorDiv>

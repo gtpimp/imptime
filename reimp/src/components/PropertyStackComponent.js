@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../sass/breadcrumb.css'
+// import '../sass/breadcrumb.css'
 class PropertyStackComponent extends Component {
 
     render() {

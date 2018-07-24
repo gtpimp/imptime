@@ -11,7 +11,6 @@ import ChangePasswordPage from './ChangePasswordPage'
 import CompanyProblemPage from './CompanyProblemPage'
 import PasswordChangedPage from './PasswordChangedPage'
 import DashboardPage from './DashboardPage'
-import DevPage from './DevPage'
 import ForgotPasswordPage from './ForgotPasswordPage'
 import IssuesPage from './IssuesPage'
 import InvoicesPage from './InvoicesPage'
@@ -57,7 +56,6 @@ class MainRouter extends Component {
               <Route exact path="/company/billable_hours" component={BillableHoursStatementPage}/>
               <Route exact path="/password/forgot" component={ForgotPasswordPage}/>
               <Route exact path="/password/reminded" component={PasswordReminderSentPage}/>
-              <Route exact path="/dev" component={DevPage}/>
               <Route exact path="/release_notes_editor" component={ReleaseNotesPage}/>
               <Route exact path="/invoices" component={InvoicesPage}/>
               <Route exact path="/projects" component={ProjectsPage}/>

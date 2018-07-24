@@ -2,7 +2,20 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import SplitPane from 'react-split-pane'
+import Toolbar from './toolbar/Toolbar'
 import { setGlobalPageFlag, getGlobalPageFlag } from '../actions/Page'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
+
+const pane_css = { overflow: "auto",
+                   display:"flex",
+                   flexDirection:"column",
+                   width: "100%" }
+
+const SplitPaneLeft = styled('div')(props => Object.assign(pane_css,
+                                    {backgroundColor: theme.colours.left_panel_background}))
+const SplitPaneRight = styled('div')(props => Object.assign(pane_css,
+                                     {backgroundColor: theme.colours.right_panel_background}))
 
 class Splitter extends Component {
 
@@ -33,12 +46,13 @@ class Splitter extends Component {
                          onChange={this.saveSize}
                          {...this.props}
               >
-                <div className="main-layout__inner_scroll-panel">
+                <SplitPaneLeft>
+                  <Toolbar/>
                   {left}
-                </div>
-                <div className="main-layout__inner_scroll-panel">
+                </SplitPaneLeft>
+                <SplitPaneRight>
                   {right}
-                </div>
+                </SplitPaneRight>
               </SplitPane>
             </div>
         )

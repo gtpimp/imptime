@@ -1,20 +1,29 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import '../sass/search-input.css'
 import ReactTimeout from 'react-timeout'
-import glamorous from 'glamorous'
-import { default_theme as theme } from '../glamorous/theme'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
 
-const SearchInputDiv = glamorous.div({color: theme.colours.strong_text,
-                                      backgroundColor: theme.colours.page_background,
-                                      display: "flex",
-                                      borderRadius: "3px",
-                                      paddingLeft: "12px"})
+const SearchInputDiv = styled('div')(props => ({color: theme.colours.strong_text,
+                                                backgroundColor: theme.colours.page_background,
+                                                display: "flex",
+                                                borderRadius: "3px",
+                                                paddingLeft: "12px",
+                                                height: "28px",
+                                                width: "306px"}))
 
-const SearchInputInput = glamorous.input({backgroundColor: theme.colours.page_background,
-                                          border: "0px",
-                                          width: "278px",
-                                          ':focus':{outlineWidth: "0"}})
+const SearchInputInput = styled('input')(props => ({backgroundColor: theme.colours.page_background,
+                                                    border: "0px",
+                                                    width: "278px",
+                                                    font: theme.fonts.search_bar,
+                                                    ':focus':{outlineWidth: "0"}}))
+
+const SearchInputIconDiv = styled('div')(props => ({height: "28px"}))
+
+const SearchInputIcon = styled('i')(props => ({height: "26px",
+                                               width: "28px",
+                                               paddingTop: "2px"
+}))
 
 class SearchInput extends Component {
 
@@ -27,9 +36,9 @@ class SearchInput extends Component {
                                 placeholder={this.props.placeholder}
                                 onChange={this.props.onChange}/>
               { this.props.onOpenDropDown &&
-                <div className="search-input__component" onClick={this.props.onOpenDropDown}>
-                  <glamorous.I className="material-icons" height="28px">search</glamorous.I>
-                </div>
+                <SearchInputIconDiv onClick={this.props.onOpenDropDown}>
+                  <SearchInputIcon className="material-icons">search</SearchInputIcon>
+                </SearchInputIconDiv>
               }
             </SearchInputDiv>
         )

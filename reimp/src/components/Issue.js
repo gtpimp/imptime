@@ -35,6 +35,84 @@ import DeleteIssue from '../components/DeleteIssue'
 import TagListFlat from '../components/TagListFlat'
 import Timestamp from './Timestamp'
 import { logged_in_user } from '../actions/Auth'
+import styled from 'react-emotion'
+import { default_theme as theme } from '../theme/default'
+
+
+const DefaultListRowStyle = {display: 'flex',
+                             flexDirection: 'row',
+                             minHeight: '40px',
+                             font: theme.fonts.list_items,              
+                             paddingLeft: '18px',
+                             backgroundColor: theme.colours.left_panel_background,
+                             '&:hover': {
+                                 backgroundColor: theme.colours.list_rollover
+                             }
+}
+
+const TableCellStyle = {display: 'flex',
+                        font: theme.fonts.list_items,
+                        verticalAlign: 'middle',
+                        alignItems: 'center',
+                        color: theme.colours.normal_text,
+}
+
+const IssueRowDiv = styled('div')(props => Object.assign(DefaultListRowStyle,
+                                            {backgroundColor: props.is_selected ? theme.colours.list_selected : theme.colours.left_panel_background,
+
+                                             font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items,
+                                             '&:hover': {
+                                                 backgroundColor: props.is_selected ? theme.colours.list_selected_rollover : theme.colours.list_rollover
+                                             }
+                                            }))
+
+const TableCellDiv = styled('div')(props => Object.assign(TableCellStyle,
+                                             {font: props.isFeature ? theme.fonts.feature_issue : theme.fonts.list_items}))
+
+const TableCellSecondaryDiv = styled('div')(props => Object.assign(TableCellStyle,
+                                                      {color: theme.colours.normal_text,
+                                                       opacity: '0.6',
+
+                                                       '&:hover': {
+                                                           opacity: '1.0'
+                                                       }
+                                                      }))
+
+const IconStyle = {
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    backgroundSize: '24px 24px',
+    height: '24px',
+    width: '24px',
+}
+
+const FeatureExpandIconUrl = require(`../images/ic_expand_more_black_24dp_1x.png`)
+const FeatureExpandIconDiv = styled('div')(props => Object.assign(IconStyle,
+                                                     {backgroundImage: `url(${FeatureExpandIconUrl})`}
+))
+
+const FeatureCollapseIconUrl = require(`../images/ic_chevron_right_black_24dp_1x.png`)
+const FeatureCollapseIconDiv = styled('div')(props => Object.assign(IconStyle,
+                                                       {backgroundImage: `url(${FeatureCollapseIconUrl})`}
+))
+
+const ChildIconUrl = require(`../images/ic_subdirectory_arrow_right_black_24dp_1x.png`)
+const ChildIconDiv = styled('div')(props => Object.assign(IconStyle,
+                                   {backgroundImage: `url(${ChildIconUrl})`,
+                                    opacity: '0.2'},
+                                   ({belongsToSelectedFeature=false}) => ({
+                                       opacity: belongsToSelectedFeature ? '1.0' : '0.2'
+                                   })
+))
+
+
+const AttachmentIconUrl = require(`../images/attachment.png`)
+const AttachmentIconDiv = styled('div')(props => Object.assign(IconStyle,
+                                        {backgroundImage: `url(${AttachmentIconUrl})`,
+                                         backgroundSize: '15px 15px',
+                                         height: '15px',
+                                         width: '15px'}
+))
 
 class Issue extends Component {
 
@@ -140,12 +218,11 @@ class Issue extends Component {
 
     render_expanded() {
         const {
-            issue, is_selected, is_highlighted,
-            is_invalidated, is_saving, is_fake,
-            isOver, show_children,
+            issue, is_selected,
+            show_children,
             subject_prefix, subject_suffix,
             header_list,
-            isFeatureOfSelectedIssue, belongsToSelectedFeature, is_cursor_item, tag_category_names,
+            isFeatureOfSelectedIssue, belongsToSelectedFeature, tag_category_names,
             tagsByCategoryName, all_estimates_by_user_id,
             all_actuals_by_user_id, sprint, issue_id_as_list,
             logged_in_user_id, logged_in_user_can_estimate_user_id
@@ -157,52 +234,33 @@ class Issue extends Component {
 
         if (!issue) {
             return (
-                <div class="div-table__row">
-                  <div class="div-table__cell">Loading...</div>
-                </div>
+                <IssueRowDiv>
+                  <TableCellDiv>Loading...</TableCellDiv>
+                </IssueRowDiv>
             )
         }
 
         if (issue.loaded === false) {
             return (
-                <div key={this.key + "." + issue.id}
-                     onClick={this.onClickedIssue}
-                     className={classNames("div-table__row", 'issue',
-                                           {'div-table__row--selected': is_selected,
-                                            'div-table__row--drop-target': isOver})}
+                <IssueRowDiv key={this.key + "." + issue.id}
+                             onClick={this.onClickedIssue}
                 >
-                  <div className="div-table__cell">
-                    <div className="issue_list__issue_number_button">{issue.number}</div>
-                  </div>
-                  <div className="div-table__cell">Loading...</div>
-                </div>
+                  <TableCellDiv>
+                    <div>{issue.number}</div>
+                  </TableCellDiv>
+                  <TableCellDiv>Loading...</TableCellDiv>
+                </IssueRowDiv>
             )
         } else {
             const isFeature = issue.can_group_issues
             const belongsToAFeature = issue.parent_group_id || false
-            const isStandalone = !isFeature && !belongsToAFeature
 
             return (
-                <div key={that.key + "." + issue.id}
-                     onClick={that.onClickedIssue}
-                     className={classNames("div-table__row",
-                                           'issue',
-                                           'list-table__row--compact',
-                                           {
-                                               'div-table__row--selected': is_selected,
-                                               'div-table__row--highlighted': is_highlighted,
-                                               'div-table__row--drop-target': isOver,
-                                               'issue--standalone': isStandalone,
-                                               'issue--fake': is_fake===true,
-                                               'issue--feature': isFeature,
-                                               'issue--grouped': belongsToAFeature,
-                                               'issue--cursor-item': is_cursor_item,
-                                               'issue--feature-of-selected-issue': isFeatureOfSelectedIssue,
-                                               'issue--belongs-to-selected-feature': belongsToSelectedFeature,
-                                               /*'tr--selected': is_selected,*/
-                                               'div-table__row--invalidated': is_invalidated,
-                                               'div-table__row--saving': is_saving,
-                                           })}
+                <IssueRowDiv key={that.key + "." + issue.id}
+                             onClick={that.onClickedIssue}
+                             is_selected={is_selected}
+                             isFeature={isFeature}
+                             belongsToAFeature={belongsToAFeature}
                 >
 
                   { map(visible_header_keys, function(header_key) {
@@ -210,54 +268,55 @@ class Issue extends Component {
                         switch(header_key) {
                             case "number":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       <div>{issue.number}</div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "issue_type":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)} >
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)} >
                                       <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "attachment":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)} >
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)} >
                                       {
-                                          issue.has_attachment && <div className="icon icon--attachment"></div>
+                                          issue.has_attachment && <AttachmentIconDiv></AttachmentIconDiv>
                                       }
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "expand_feature":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}>
                                       { issue.can_group_issues &&
                                         <div>
                                           { show_children &&
-                                            <div className={classNames("icon--collapse",
-                                                                       {"icon--collapse--highlight":isFeatureOfSelectedIssue})}
-                                                 onClick={that.onCollapseFeaturesClick}></div>
+                                            <FeatureExpandIconDiv onClick={that.onCollapseFeaturesClick}
+                                                                  isFeatureOfSelectedIssue={isFeatureOfSelectedIssue}>
+                                            </FeatureExpandIconDiv>
                                           }
                                           { !show_children &&
-                                            <div className="icon--expand" onClick={that.onExpandFeaturesClick}></div>
+                                            <FeatureCollapseIconDiv onClick={that.onExpandFeaturesClick}>
+                                            </FeatureCollapseIconDiv>
                                           }
                                         </div>
                                       }
                                       { !issue.can_group_issues && issue.parent_group_id &&
-                                        <div className={classNames({"icon--child":true,
-                                                                    "icon--child--highlight":belongsToSelectedFeature})}></div>
+                                        <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
                                       }
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "name":
                                 return (
-                                    <div className="div-table__cell" key={header_key}
-                                         style={getCellStyle(header)}>
-                                      <div className="issue-cell__issue-name">
+                                    <TableCellDiv key={header_key}
+                                                  style={getCellStyle(header)}
+                                                  isFeature={isFeature}>
+                                      <div>
                                         {subject_prefix}{issue.subject}{subject_suffix}
                                         { issue.group_children && issue.group_children.length > 0 &&
                                           <span>
@@ -268,35 +327,33 @@ class Issue extends Component {
                                           </span>
                                         }
                                       </div>
-                                    </div>
+                                    </TableCellDiv>
                                 )
                             case "assignee":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "created_at":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
-                                      <div className="issue-cell__created-at">
-                                        <Timestamp value={issue.created_at} format="from_now"/>
-                                      </div>
-                                    </div>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
+                                      <Timestamp value={issue.created_at} format="from_now"/>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "status":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "estimate_summary":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="issue-cell__estimate_summary">
                                         {map(sprint.user_ids_who_can_estimate, function(user_id) {
                                              const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
@@ -322,16 +379,16 @@ class Issue extends Component {
                                              }
                                          })}
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "tags":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="issue-cell__tag">
                                         <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "tag_columns":
                                 return (
@@ -354,56 +411,49 @@ class Issue extends Component {
                             case "estimate_columns":
                                 return (
                                     map(sprint.user_ids_who_can_estimate, (user_id) =>
-                                        <div key={user_id}
-                                             className="div-table__cell issue__cell__secondary"
-                                             style={getCellStyle(header)}>
-                                          <div className="issue-cell__estimate_column">
-                                            {logged_in_user_id === user_id &&
-                                             <EditableIssueEstimate issue_id={issue.id}
-                                                                    actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                                                    class_name="issue-cell__my-estimate"/> }
+                                        <TableCellSecondaryDiv key={user_id}
+                                                               style={getCellStyle(header)}>
+                                          {logged_in_user_id === user_id &&
+                                           <EditableIssueEstimate issue_id={issue.id}
+                                                                  actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                                  class_name="issue-cell__my-estimate"/> }
 
-                                            {logged_in_user_id !== user_id &&
-                                             <Progress issue={issue}
-                                                       actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                                       estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
-                                            }
-                                          </div>
-                                        </div>
+                                          {logged_in_user_id !== user_id &&
+                                           <Progress issue={issue}
+                                                     actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                     estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
+                                          }
+                                        </TableCellSecondaryDiv>
                                     )
                                 )
                             case "my_estimate":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
-                                      <div className="issue-cell__estimate_column">
-                                        {logged_in_user_can_estimate_user_id &&
-                                         <EditableIssueEstimate issue_id={issue.id}
-                                                                class_name="issue-cell__my-estimate"/>
-                                        }
-                                      </div>
-                                    </div>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
+                                      {logged_in_user_can_estimate_user_id &&
+                                       <EditableIssueEstimate issue_id={issue.id}
+                                                              class_name="issue-cell__my-estimate"/>
+                                      }
+                                    </TableCellSecondaryDiv>
                                 )
                             case "estimated":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )                                   
                             case "my_time":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
-                                      <div className="issue__cell--elapsed-time">
-                                        <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
-                                      </div>
-                                    </div>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
+                                      <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "clock_in":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                                         <TimerSwitch
                                             active={issue.am_i_clocked_in}
@@ -411,27 +461,27 @@ class Issue extends Component {
                                             onStop={that.onClockOut}
                                         />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "delete":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                                         <DeleteIssue
                                             onDelete={that.onDeleteIssue}
                                         />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
                             case "small_delete":
                                 return (
-                                    <div className="div-table__cell issue__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
+                                    <TableCellSecondaryDiv key={header_key}
+                                                           style={getCellStyle(header)}>
                                       <div className={"reveal-on-hover--block"}>
                                         <div className="issue__small-delete-image" onClick={that.onDeleteIssue} />
                                       </div>
-                                    </div>
+                                    </TableCellSecondaryDiv>
                                 )
 
                             default:
@@ -440,7 +490,7 @@ class Issue extends Component {
                     }
                   )}
                   
-                </div>
+                </IssueRowDiv>
             )
         }
     }

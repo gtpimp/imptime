@@ -20,7 +20,6 @@ import project_dashboard from './project_dashboard'
 import project_statement from './project_statement'
 import work_summary from './work_summary'
 import project_user_permission from './project_user_permission'
-import rie from './rie'
 import settings from './settings'
 import sprint from './sprint'
 import sprint_user_rate from './sprint_user_rate'
@@ -57,7 +56,6 @@ const rootReducer = combineReducers({
     project_statement,
     project_user_permission,
     work_summary,
-    rie,
     settings,
     sprint,
     sprint_user_rate,    

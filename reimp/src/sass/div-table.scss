@@ -16,7 +16,7 @@
 
 .div-table__header_row {
     @extend .div-table__row;
-    background-color: $div-header-background-color;
+    /*background-color: $div-header-background-color;*/
     font-size: $font-size-small;
     border-bottom: 1px solid $header-background-color;
 }
@@ -46,9 +46,6 @@ div-table__row--highlighted {
 }
 
 div-table__row--invalidated {
-}
-
-div-table__row--saving {
 }
 
 .div-table__row--drop-target {
