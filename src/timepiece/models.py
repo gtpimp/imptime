@@ -4031,6 +4031,8 @@ class Issue(BaseModel):
         ('client_qa_passed', 'external qa passed'),
         ('reopened', 'reopened'),
         ('onhold', 'on hold'),
+        ('blocked', 'blocked'),
+        ('waiting', 'waiting'),
         ('bug', 'bug'),
         ('to be estimated', 'to be estimated'),
         ('needscodereview', 'needs code review'),
