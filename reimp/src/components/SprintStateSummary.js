@@ -148,6 +148,23 @@ class SprintStateSummary extends Component {
             return this.renderExceedingDevCost()
         }
     }
+
+    renderWarnings() {
+        const { sprint } = this.props
+        if ( sprint.num_management_alert_issues === 0 ) {
+            return null
+        }
+
+        return (
+            <div className="sprint-state-summary__warnings" data-tip="hello world" data-for="main_tooltip" >
+              <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
+              &nbsp;
+              <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_management_alert_issues}/>
+              &nbsp;
+              attention
+            </div>
+        )
+    }
     
     renderAction() {
         const { sprint, cost_summary } = this.props
@@ -164,6 +181,7 @@ class SprintStateSummary extends Component {
               <div className="sprint-state-summary__problems--unhandled">
                 { this.renderUnhandledProblems() }
               </div>
+              { this.renderWarnings() }
             </div>
         )
         

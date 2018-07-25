@@ -1039,6 +1039,16 @@ class ProjectQuerySet(QuerySet):
                                                   .annotate(num_adhoc=Count('id'))
         for num_adhoc_issues in num_adhoc_issues_by_sprint:
             estimates_by_sprint_id.setdefault(num_adhoc_issues['project_id'], {})['num_adhoc_issues'] = num_adhoc_issues.get('num_adhoc', 0)
+
+        management_alert_statuses = Issue.STATUSES_INDICATING_MANAGER_ATTENTION
+        management_alert_issues = Issue.objects.filter(project__in=sprints,
+                                                       issue_type__in=Issue.TESTABLE_ISSUE_TYPES,
+                                                       status2__name__in=management_alert_statuses)\
+                                               .order_by('project_id')\
+                                               .values('project_id')\
+                                               .annotate(num_issues=Count('id'))
+        for management_alert_issue in management_alert_issues:
+            estimates_by_sprint_id.setdefault(management_alert_issue['project_id'], {})['num_management_alert_issues'] = management_alert_issue.get('num_issues', 0)
             
         return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
         
@@ -4050,6 +4060,8 @@ class Issue(BaseModel):
                                        'manager': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
 
+    STATUSES_INDICATING_MANAGER_ATTENTION = [ 'blocked', 'waiting', 'to be designed', 'cannot reproduce' ]
+    
     ISSUE_TYPES = ( ('issue', 'Issue'),
                     ('adhoc', 'Adhoc'),
                     ('correspondence', 'Correspondence'),
