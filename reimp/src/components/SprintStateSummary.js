@@ -7,6 +7,7 @@ import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import CurrencyValue from './CurrencyValue'
 import ProgressBar from './ProgressBar'
 import { showMoney } from '../actions/Mien'
+import Floater from "react-floater";
 
 class SprintStateSummary extends Component {
 
@@ -156,13 +157,24 @@ class SprintStateSummary extends Component {
         }
 
         return (
-            <div className="sprint-state-summary__warnings" data-tip="hello world" data-for="main_tooltip" >
-              <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
-              &nbsp;
-              <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_management_alert_issues}/>
-              &nbsp;
-              attention
-            </div>
+            <Floater
+                title="Warning"
+                disableHoverToClick
+                event="hover"
+                eventDelay={0}
+                placement="bottom"
+                content={
+                    <div className="sprint-state-summary__warnings" data-tip="hello world" data-for="main_tooltip" >
+                      <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
+                      &nbsp;
+                      <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_management_alert_issues}/>
+                      &nbsp;
+                      attention
+                    </div>
+                }
+            >
+                    <div className="icon--warning"></div>
+            </Floater>
         )
     }
     
