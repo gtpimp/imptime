@@ -133,9 +133,7 @@ class SprintStateSummary extends Component {
 
     renderUnhandledProblems() {
         const { sprint, cost_summary, can_view_budget } = this.props
-        if ( sprint.num_adhoc_issues > 0 ) {
-            return this.renderHasAdhocIssuesAction()
-        } else if ( sprint.num_missing_testable_issues > 0 ) {
+        if ( sprint.num_missing_testable_issues > 0 ) {
             return this.renderMissingTestablesAction()
         } else if ( sprint.num_issues_unassigned > 0 ) {
             return this.renderMissingAssignedAction()
@@ -152,7 +150,9 @@ class SprintStateSummary extends Component {
 
     renderWarnings() {
         const { sprint } = this.props
-        if ( sprint.num_management_alert_issues === 0 ) {
+
+        const has_warnings = sprint.num_adhoc_issues > 0 || sprint.num_management_alert_issues > 0
+        if ( ! has_warnings ) {
             return null
         }
 
@@ -165,15 +165,33 @@ class SprintStateSummary extends Component {
                 placement="bottom"
                 content={
                     <div className="sprint-state-summary__warnings" data-tip="hello world" data-for="main_tooltip" >
-                      <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
-                      &nbsp;
-                      <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_management_alert_issues}/>
-                      &nbsp;
-                      attention
+                      { sprint.num_management_alert_issues > 0 &&
+                        (
+                            <p>
+                              <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
+                              &nbsp;
+                              <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_management_alert_issues}/>
+                              &nbsp;
+                              blocked. Please find a resolution and then change the issue status to <i>waiting</i>.
+                            </p>
+                        )
+                      }
+                      { sprint.num_adhoc_issues > 0 &&
+                        (
+                            <p>
+                              <Pluralize singular="issue" count={sprint.num_adhoc_issues}/>
+                              &nbsp;
+                              <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_adhoc_issues}/>
+                              &nbsp;
+                              ad hoc and <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_adhoc_issues}/> classification.
+                              Please change <Pluralize singular="it" plural="them" showCount={false} count={sprint.num_adhoc_issues}/> to a more specific type.
+                            </p>
+                        )
+                      }
                     </div>
                 }
             >
-                    <div className="icon--warning"></div>
+              <div className="icon--warning"></div>
             </Floater>
         )
     }
