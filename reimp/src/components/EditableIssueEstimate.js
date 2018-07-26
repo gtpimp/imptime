@@ -36,7 +36,12 @@ class EditableIssueEstimate extends Component {
               >
                 <IssueEstimateForm />
                 <div className="text-component--readonly">
+                  { estimate_hours &&
                   <Progress issue={issue} actual={actual} estimate={estimate_hours} force_show={true} />
+                  }
+                  { can_edit && ! estimate_hours &&
+                    <div className="icon--timer-estimate" />
+                  }
                 </div>
                 <div className="text-component--empty">0</div>
               </EditableProperty>
