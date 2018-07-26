@@ -458,6 +458,7 @@ class BusinessPermissions(BaseModel):
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
     can_view_testables = models.BooleanField(default=True, verbose_name="Can View Testables")
+    can_view_issue_history = models.BooleanField(default=True, verbose_name="Can View Issue History")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
@@ -559,6 +560,7 @@ class BusinessPermissions(BaseModel):
         bp.can_be_scheduled = True
         bp.can_view_business_comments = True
         bp.can_view_testables = True
+        bp.can_view_issue_history = True
         bp.can_view_actual_hours = True
         bp.can_see_other_user_points = True
         bp.can_estimate_own_points = False #typically project creators won't be estimators
@@ -844,6 +846,10 @@ class BusinessPermissions(BaseModel):
     def has_view_testables(self):
         return self.is_active_member_of_business and self.can_view_testables
 
+    @property
+    def has_view_issue_history(self):
+        return self.is_active_member_of_business and self.can_view_issue_history
+    
     @property
     def has_edit_business_comments(self):
         return self.is_active_member_of_business and self.can_edit_business_comments
@@ -4579,6 +4585,7 @@ class IssueHistory(BaseModel):
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
     after = models.TextField(blank=True, null=True)
+    money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
 
     @classmethod
     def add_history(self, user, issue, description, before, after):

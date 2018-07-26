@@ -47,7 +47,7 @@ class TestableViewSet(BaseViewSet):
                                                       order=max_order+1)[0]
             issue.save()
             IssueHistory.add_history(request.user, issue,
-                                     "added testable %s" % testable.id, "", testable.steps)
+                                     "added testable", "", testable.steps)
             data = {'status': 'success'}
 
         except Exception, ex:
@@ -75,7 +75,7 @@ class TestableViewSet(BaseViewSet):
                                                 .enrich(testable.steps,
                                                         project_id=issue.project.business_id) #sic
 
-            IssueHistory.add_history(request.user, issue, "edited testable %s" % testable_id,
+            IssueHistory.add_history(request.user, issue, "edited testable",
                                      old_testable_value, testable.steps)
             testable.save()
             issue.save()
@@ -94,7 +94,7 @@ class TestableViewSet(BaseViewSet):
             testable_id = params['testable_id']
             issue = self.allowed_issue(issue_pk)
             testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
-            IssueHistory.add_history(request.user, issue, "deleted testable %s" % testable.id, testable.steps, "")
+            IssueHistory.add_history(request.user, issue, "deleted testable", testable.steps, "")
             testable.delete()
             Testable.renumber(issue.id)
             issue.save()

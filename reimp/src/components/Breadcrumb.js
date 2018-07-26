@@ -112,6 +112,10 @@ const menu_buttons = {
         { label: (objs) => 'Delete',
           dispatch_action: (objs) => (window.confirm("Delete issue " + objs.issue.number +"?") && deleteIssues([objs.issue.id])) || null
         },
+        { label: (objs) => 'History',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/issues/' + objs.issue.id + '/history',
+          perms: (objs) => ['has_view_issue_history']
+        },
     ]
     
 }
