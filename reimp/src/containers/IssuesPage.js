@@ -37,6 +37,7 @@ class IssuesPage extends Component {
         super(props)
         this.onSelectIssues = this.onSelectIssues.bind(this)
         this.onSetSidebarViewMode = this.onSetSidebarViewMode.bind(this)
+        this.state = {}
     }
 
     componentDidMount() {
@@ -47,12 +48,11 @@ class IssuesPage extends Component {
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
         dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
-
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, default_issue_id } = new_props
+        const { dispatch, project, sprint, default_issue_id, selected_issue } = new_props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
 
@@ -72,6 +72,14 @@ class IssuesPage extends Component {
                 this.selectDefaultIssue(new_props)
             }
         }
+        if ( (selected_issue && selected_issue.loaded !== false && this.state.breadcrumb_issue_id !== selected_issue.id) &&
+             ( (project && new_props.project.id !== this.props.project.id) ||
+               (sprint && new_props.sprint.id !== this.props.sprint.id) ||
+               (selected_issue && new_props.selected_issue.id !== this.props.selected_issue.id) ||
+               (selected_issue && selected_issue.loaded !== false && this.state.breadcrumb_issue_id !== selected_issue.id) ) ) {
+            dispatch(setIssueBreadcrumbsHelper(project, sprint, selected_issue))
+            this.setState({'breadcrumb_issue_id': selected_issue.id})
+        }
     }
 
     refresh(these_props) {
@@ -86,7 +94,10 @@ class IssuesPage extends Component {
         
         if ( sprint.id ) {
             this.selectDefaultIssue(this.props)
-            dispatch(setIssueBreadcrumbsHelper(project, sprint, selected_issue))
+            if ( selected_issue && selected_issue.loaded !== false ) {
+                dispatch(setIssueBreadcrumbsHelper(project, sprint, selected_issue))
+                this.setState({'breadcrumb_issue_id': selected_issue.id})
+            }
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }

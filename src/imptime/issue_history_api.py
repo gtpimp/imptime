@@ -1,5 +1,5 @@
 import logging
-from invoice_serializer import InvoiceSerializer
+from issue_history_serializer import IssueHistorySerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from base_api import BaseViewSet
@@ -17,11 +17,6 @@ from rest_framework.decorators import detail_route
 
 logger = logging.getLogger(__name__)
 
-# Sprints are weird: They use the timepiece.Project model for legacy
-# reasons. This api renames the model to Sprint in the import, but
-# functions on the model will still refer to project. This is noted
-# with 'sic' where it could be surprising.
-
 @permission_classes((IsAuthenticated,))
 class IssueHistoryViewSet(BaseViewSet):
 
@@ -35,18 +30,16 @@ class IssueHistoryViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
-            invoices = self.allowed_invoices().order_by("-payment_due")
-            
-            invoices = self.apply_filter(qs=invoices, raw_filter_args=filter_args)
-
-            invoices = self.apply_pagination(qs=invoices, pagination=pagination)
+            issue_histories = self.allowed_issue_histories().order_by("created")
+            issue_histories = self.apply_filter(qs=issue_histories, raw_filter_args=filter_args)
+            issue_histories = self.apply_pagination(qs=issue_histories, pagination=pagination)
             
             if format_args.get('ids_only'):
-                context['ids'] = [str(x) for x in invoices.values_list('id', flat=True)]
+                context['ids'] = [str(x) for x in issue_histories.values_list('id', flat=True)]
             else:
-                s = InvoiceSerializer(invoices, many=True)
-                invoices_data = s.data
-                context['invoices'] = invoices_data
+                s = IssueHistorySerializer(issue_histories, many=True)
+                issue_histories_data = s.data
+                context['issue_histories'] = issue_histories_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:

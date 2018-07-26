@@ -10,6 +10,7 @@ import clock_api
 import invoice_api
 import issue_comment_api
 import issue_estimate_api
+import issue_history_api
 import issue_review_api
 import mien_api
 import multiple_issue_summary_api
@@ -74,6 +75,8 @@ router.register(r'issue/attachment', issue_attachment_api.IssueAttachmentViewSet
                 base_name='issue_attachment')
 router.register(r'issue/estimate', issue_estimate_api.IssueEstimateViewSet,
                 base_name='issue_estimate')
+router.register(r'issue/history', issue_history_api.IssueHistoryViewSet,
+                base_name='issue_history')
 router.register(r'issue_review', issue_review_api.IssueReviewViewSet,
                 base_name='issue_review')
 router.register(r'clock', clock_api.ClockViewSet,
