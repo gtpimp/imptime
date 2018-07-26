@@ -25,21 +25,7 @@ class SprintStateSummary extends Component {
         }
     }
 
-    renderHasAdhocIssuesAction() {
-        const { sprint } = this.props
-        return (
-            <div>
-              {sprint.num_adhoc_issues}
-              &nbsp;
-              <Pluralize singular="issue" showCount={false} count={sprint.num_adhoc_issues}/>
-              &nbsp;
-              <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_adhoc_issues}/>
-              &nbsp;adhoc
-            </div>
-        )
-    }
-
-    renderMissingTestablesAction() {
+    renderMissingTestables() {
         const { sprint } = this.props
         return (
             <div>
@@ -49,7 +35,17 @@ class SprintStateSummary extends Component {
         )
     }
 
-    renderMissingAssignedAction() {
+    renderMissingTestablesDescription() {
+        const { sprint } = this.props
+        return (
+            <p>
+              <Pluralize singular="issue" count={sprint.num_missing_testable_issues}/>
+              &nbsp;without testables. All issues that will be estimated require testables.
+            </p>
+        )
+    }
+
+    renderMissingAssigned() {
         const { sprint } = this.props
         return (
             <div>
@@ -59,37 +55,81 @@ class SprintStateSummary extends Component {
         )
     }
 
+    renderMissingAssignedDescription() {
+        const { sprint } = this.props
+        return (
+            <p>
+              <Pluralize singular="issue" count={sprint.num_issues_unassigned}/>
+              &nbsp;unassigned. All issues must be assigned before working on them.
+            </p>
+        )
+    }
+
     renderMissingEstimates() {
         const { sprint } = this.props
         return (
             <div>
               <Pluralize singular="issue" count={sprint.num_issues_missing_estimates}/>
-              &nbsp;without estimates
+              &nbsp;without estimates.
             </div>
+        )
+    }
+
+    renderMissingEstimatesDescription() {
+        const { sprint } = this.props
+        return (
+            <p>
+              <Pluralize singular="issue" count={sprint.num_issues_missing_estimates}/>
+              &nbsp;without estimates. All issues must be estimated before working on them.
+            </p>
         )
     }
 
     renderMissingBudget() {
         return (
             <div>
-              <div>Missing budget</div>
+              <div>Missing budget.</div>
             </div>
+        )
+    }
+
+    renderMissingBudgetDescription() {
+        return (
+            <p>
+              <div>Missing budget. All sprints require a budget, even if it's just an indication.</div>
+            </p>
         )
     }
 
     renderOverBudget() {
         return (
             <div>
-              <div>Budget exceeded</div>
+              <div>Budget exceeded.</div>
             </div>
+        )
+    }
+
+    renderOverBudgetDescription() {
+        return (
+            <p>
+              <div>Budget exceeded. The budget on this sprint has been exceeded, either increase the budget or remove some issues.</div>
+            </p>
         )
     }
 
     renderExceedingDevCost() {
         return (
             <div>
-              <div>Dev going slower than expected</div>
+              <div>Slow dev.</div>
             </div>
+        )
+    }
+
+    renderExceedingDevCostDescription() {
+        return (
+            <p>
+              <div>The work on issues is going slower than expected, this is likely to cause a budget over-run if not addressed. </div>
+            </p>
         )
     }
 
@@ -133,19 +173,52 @@ class SprintStateSummary extends Component {
 
     renderUnhandledProblems() {
         const { sprint, cost_summary, can_view_budget } = this.props
+
+        let most_pressing_problem_rendered = null
+        let most_pressing_problem_description = []
         if ( sprint.num_missing_testable_issues > 0 ) {
-            return this.renderMissingTestablesAction()
-        } else if ( sprint.num_issues_unassigned > 0 ) {
-            return this.renderMissingAssignedAction()
-        } else if ( sprint.num_issues_missing_estimates > 0 ) {
-            return this.renderMissingEstimates()
-        } else if ( can_view_budget && ! sprint.budget > 0 ) {
-            return this.renderMissingBudget()
-        } else if ( can_view_budget && sprint.budget > 0 && cost_summary && !cost_summary.under_budget ) {
-            return this.renderOverBudget()
-        } else if ( cost_summary.projections.revised_dev_commission_cost > cost_summary.original_dev_commission_cost ) {
-            return this.renderExceedingDevCost()
+            most_pressing_problem_rendered = most_pressing_problem_rendered || this.renderMissingTestables()
+            most_pressing_problem_description.push(this.renderMissingTestablesDescription())
         }
+        if ( sprint.num_issues_unassigned > 0 ) {
+            most_pressing_problem_rendered = most_pressing_problem_rendered || this.renderMissingAssigned()
+            most_pressing_problem_description.push(this.renderMissingAssignedDescription())
+        }
+        if ( sprint.num_issues_missing_estimates > 0 ) {
+            most_pressing_problem_rendered = most_pressing_problem_rendered || this.renderMissingEstimates()
+            most_pressing_problem_description.push(this.renderMissingEstimatesDescription())
+        }
+        if ( can_view_budget && ! sprint.budget > 0 ) {
+            most_pressing_problem_rendered = most_pressing_problem_rendered || this.renderMissingBudget()
+            most_pressing_problem_description.push(this.renderMissingBudgetDescription())
+        }
+        if ( can_view_budget && sprint.budget > 0 && cost_summary && !cost_summary.under_budget ) {
+            most_pressing_problem_rendered = most_pressing_problem_rendered || this.renderOverBudget()
+            most_pressing_problem_description.push(this.renderOverBudgetDescription())
+        }
+        if ( cost_summary.projections.revised_dev_commission_cost > cost_summary.original_dev_commission_cost ) {
+            most_pressing_problem_rendered = most_pressing_problem_rendered || this.renderExceedingDevCost()
+            most_pressing_problem_description.push(this.renderExceedingDevCostDescription())
+        }
+
+        if ( most_pressing_problem_rendered === null ) {
+            return null
+        }
+
+        return (
+            <Floater
+                title="Problems"
+                disableHoverToClick
+                event="hover"
+                eventDelay={0}
+                placement="bottom"
+                content={most_pressing_problem_description}
+            >
+                    <div className="sprint-state-summary__problems--unhandled">
+                      {most_pressing_problem_rendered}
+                    </div>
+            </Floater>
+        )
     }
 
     renderWarnings() {
@@ -164,7 +237,7 @@ class SprintStateSummary extends Component {
                 eventDelay={0}
                 placement="bottom"
                 content={
-                    <div className="sprint-state-summary__warnings" data-tip="hello world" data-for="main_tooltip" >
+                    <div className="sprint-state-summary__warnings">
                       { sprint.num_management_alert_issues > 0 &&
                         (
                             <p>
@@ -208,9 +281,7 @@ class SprintStateSummary extends Component {
               { this.renderBudgetProgress() }
               { this.renderActual() }
               { this.renderBudget() }
-              <div className="sprint-state-summary__problems--unhandled">
-                { this.renderUnhandledProblems() }
-              </div>
+              { this.renderUnhandledProblems() }
               { this.renderWarnings() }
             </div>
         )
