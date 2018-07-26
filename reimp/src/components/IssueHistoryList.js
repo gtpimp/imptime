@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import map from 'lodash/map'
+import { map, size } from 'lodash'
 import { connect } from 'react-redux'
 import {
     invalidateList,
@@ -40,24 +40,30 @@ class IssueHistoryList extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, list_key, issue_id } = props
+        const { dispatch, filter, list_key, issue_id } = props
         if ( issue_id ) {
             dispatch(ensureIssuesLoaded([issue_id]))
         }
-        dispatch(fetchIssueHistoriesIfNeeded(list_key))
+        if ( size(filter) > 0 ) {
+            dispatch(fetchIssueHistoriesIfNeeded(list_key))
+        }
     }
 
     onChangePage() {
-        const { dispatch, list_key } = this.props
+        const { dispatch, filter, list_key } = this.props
 	dispatch(invalidateList(list_key))
-	dispatch(fetchIssueHistoriesIfNeeded(list_key))
+        if ( size(filter) > 0 ) {
+	    dispatch(fetchIssueHistoriesIfNeeded(list_key))
+        }
     }
 
     onRefresh(event) {
-        const { dispatch, list_key } = this.props
+        const { dispatch, filter, list_key } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(invalidateAllIssueHistories())
-	dispatch(fetchIssueHistoriesIfNeeded(list_key))
+        if ( size(filter) > 0 ) {
+	    dispatch(fetchIssueHistoriesIfNeeded(list_key))
+        }
 	if ( event ) {
 	    event.stopPropagation()
 	}

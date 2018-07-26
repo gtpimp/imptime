@@ -1,7 +1,7 @@
 import datetime
 import timings
 import itertools
-from django.db.models import Case, When
+from django.db.models import Case, When, SET_NULL
 from lib.quality_helper import Quality
 from django.core.urlresolvers import reverse
 import os
@@ -4580,6 +4580,7 @@ class IssuePoints(BaseModel):
 class IssueHistory(BaseModel):
 
     issue_id = models.IntegerField(blank=False, null=False, db_index=True)
+    original_issue = models.ForeignKey(Issue, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
     created_by = models.ForeignKey(User, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)

@@ -151,12 +151,11 @@ export var INVOICE_HEADER_LIST = {'invoice_number': {label:"Number", width:"auto
                                   //'client_order_number': {label:'Order number', width:'auto', flex:1}
 }
 
-export var ISSUE_HISTORY_HEADER_LIST = {'created_by': {label:"User", width:"auto", flex:1},
-                                        'created_at': {label:'Date', width:'auto', flex:1},
-                                        'description': {label:'Description', width:'auto', flex:1},
-                                        'before': {label:'Before', width:'auto', flex:1},
-                                        'after': {label:'After', width:'auto', flex:1},
-}
+export var ISSUE_HISTORY_HEADER_LIST = [ {key:'created_by', label:"User", description:"The user who made the change", width:medium_col_width},
+                                         {key:'created_at', label:"Date", description:"When the change was made", width:medium_col_width},
+                                         {key:'description', label:"Description", description:"What type of change was made", width:medium_col_width},
+                                         {key:'before', label:"Before", description:"The value before the change", width:medium_col_width},
+                                         {key:'after', label:"After", description:"The value after the change", width:medium_col_width} ]
 
 export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'active': {label:"Active", width: small_col_width},

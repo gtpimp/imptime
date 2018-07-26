@@ -39,7 +39,7 @@ class IssueHistoryViewSet(BaseViewSet):
             else:
                 s = IssueHistorySerializer(issue_histories, many=True)
                 issue_histories_data = s.data
-                context['issue_histories'] = issue_histories_data
+                context['items'] = issue_histories_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:

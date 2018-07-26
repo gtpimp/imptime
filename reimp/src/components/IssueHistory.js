@@ -9,6 +9,7 @@ import {
     getIssueHistory
 } from '../actions/IssueHistories'
 import { ensureIssuesLoaded, getIssue } from '../actions/Issues'
+import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import OtherUser from './OtherUser'
 import Timestamp from './Timestamp'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
@@ -16,17 +17,23 @@ import { getCellStyle } from '../actions/ItemListKeyRegistry'
 class IssueHistory extends Component {
 
     componentDidMount() {
-	const { dispatch, issue_id, issue_history_id } = this.props
+	const { dispatch, issue, issue_id, issue_history_id } = this.props
         if ( issue_id ) {
             dispatch(ensureIssuesLoaded([issue_id]))
+        }
+        if ( issue && issue.project_id ) {
+            dispatch(ensureProjectsLoaded([issue.project_id]))
         }
 	dispatch(ensureIssueHistoriesLoaded([issue_history_id]))
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, issue_id, issue_history_id } = new_props
+        const { dispatch, issue, issue_id, issue_history_id } = new_props
         if ( issue_id ) {
             dispatch(ensureIssuesLoaded([issue_id]))
+        }
+        if ( issue && issue.project_id ) {
+            dispatch(ensureProjectsLoaded([issue.project_id]))
         }
 	dispatch(ensureIssueHistoriesLoaded([issue_history_id]))
     }
@@ -70,6 +77,7 @@ class IssueHistory extends Component {
                                 return (
                                     <div className="div-table__cell" key={header_key}
                                          style={getCellStyle(header)}>
+                                      <Timestamp value={issue_history.created_at} format="datetime"/>
                                       <Timestamp value={issue_history.created_at} format="from_now"/>
                                     </div>
                                 )
@@ -111,6 +119,7 @@ function mapStateToProps(state, props) {
     const issue_history = getIssueHistory(state, issue_history_id) || {}
     const issue_id = issue_history.issue_id
     const issue = getIssue(state, issue_id)
+    const project = issue && issue.project_id && getProject(issue.project_id)
 
     let can_view = true
     if ( issue_id && issue ) {
@@ -121,7 +130,9 @@ function mapStateToProps(state, props) {
     
     return {
         issue_history,
-        issue_id, 
+        issue_id,
+        issue,
+        project,
         is_loading: !issue_history.id,
         header_list,
         can_view

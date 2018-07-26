@@ -37,7 +37,7 @@ class IssueHistoryPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { issue_id } = this.props
+    const issue_id = props.match.params.issueId
     const issue_history_header_list = ISSUE_HISTORY_HEADER_LIST
     
     return {

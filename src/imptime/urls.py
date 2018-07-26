@@ -75,7 +75,7 @@ router.register(r'issue/attachment', issue_attachment_api.IssueAttachmentViewSet
                 base_name='issue_attachment')
 router.register(r'issue/estimate', issue_estimate_api.IssueEstimateViewSet,
                 base_name='issue_estimate')
-router.register(r'issue/history', issue_history_api.IssueHistoryViewSet,
+router.register(r'issue_history', issue_history_api.IssueHistoryViewSet,
                 base_name='issue_history')
 router.register(r'issue_review', issue_review_api.IssueReviewViewSet,
                 base_name='issue_review')
