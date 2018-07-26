@@ -7,7 +7,7 @@ import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import CurrencyValue from './CurrencyValue'
 import ProgressBar from './ProgressBar'
 import { showMoney } from '../actions/Mien'
-import Floater from "react-floater";
+import Floater from "react-floater"
 
 class SprintStateSummary extends Component {
 
@@ -244,7 +244,7 @@ class SprintStateSummary extends Component {
                       <div className="sprint-state-summary__warnings">
                         { sprint.num_management_alert_issues > 0 &&
                           (
-                              <div className="sprint-state-summary__section">
+                              <div className="floater__section">
                                 <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
                                 &nbsp;
                                 <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_management_alert_issues}/>

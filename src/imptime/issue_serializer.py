@@ -45,6 +45,7 @@ class IssueSerializer(BaseSerializer):
     comments = IssueCommentSerializer(many=True)
     testables = TestableSerializer(many=True, source="testables_in_order")
     needs_testables = serializers.BooleanField()
+    needs_estimate = serializers.BooleanField()
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
     visual_spec_annotation_ids_by_doc_id = serializers.DictField(child=ListField(child=serializers.IntegerField()))
@@ -100,7 +101,10 @@ class IssueSerializer(BaseSerializer):
             for entry in issue.all_entries:
                 all_actuals.setdefault(entry.user_id, {'user_id':entry.user_id}).setdefault('hours', 0)
                 all_actuals[entry.user_id]['hours'] += entry.hours
+                
             issue.all_actuals = all_actuals.values()
+
+        issue.needs_estimate = len([x for x in issue.all_estimates if x.user_id==issue.assigned_to_id]) == 0
 
         if not bp.has_share_issues:
             issue.share_ref = None
