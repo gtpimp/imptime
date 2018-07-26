@@ -4075,13 +4075,15 @@ class Issue(BaseModel):
     
     ISSUE_TYPES = ( ('issue', 'Issue'),
                     ('adhoc', 'Adhoc'),
-                    ('correspondence', 'Correspondence'),
-                    ('minutes', 'Minutes'),
+                    ('management-general', 'General management'),
+                    ('management-meeting', 'Create issues for speccing and scoping'),
+                    ('management-spec', 'Create issues for speccing and scoping'),
+                    ('management-finance', 'Performing recons and finance tasks'),
                     ('management-assign', 'Assign issues'),
                     ('management-estimate', 'Estimate issues'),
                     ('management-testables', 'Create testables'),
-                    ('management-scope', 'Create issues for scoping'),
-                    ('management-general', 'General management')
+                    ('correspondence', 'Correspondence'),
+                    ('minutes', 'Minutes')
     )
     TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
 
