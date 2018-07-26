@@ -4102,6 +4102,8 @@ class Issue(BaseModel):
     share_ref = models.CharField(max_length=40, null=True)
     share_ref_created_at = models.DateTimeField(null=True)
 
+    risky = models.BooleanField(default=False)
+
     objects = IssueQuerySet().as_manager()
 
     def save(self, *args, **kwargs):

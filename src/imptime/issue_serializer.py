@@ -55,6 +55,7 @@ class IssueSerializer(BaseSerializer):
     review_ids = serializers.ListField(child=serializers.CharField())
     share_ref = serializers.CharField()
     has_attachment = serializers.SerializerMethodField()
+    risky = serializers.BooleanField()
 
     def get_has_attachment(self, issue):
         if len(issue.visual_spec_document_ids) > 0:

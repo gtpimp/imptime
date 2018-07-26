@@ -131,6 +131,10 @@ export function updateIssueType(issue_ids, value) {
     return updateItem(ENTITY_KEY__ISSUE, issue_ids, "type_name", value)
 }
 
+export function updateIssueRisky(issue_ids, value) {
+    return updateItem(ENTITY_KEY__ISSUE, issue_ids, "risky", value)
+}
+
 export function updateIssueFeature(issue_ids, value) {
     return updateItem(ENTITY_KEY__ISSUE, issue_ids, "feature_name", value)
 }

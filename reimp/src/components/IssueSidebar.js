@@ -7,6 +7,7 @@ import PropertyStackComponent from './PropertyStackComponent'
 import EditableIssueTitle from './EditableIssueTitle'
 import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
+import EditableIssueRisky from './EditableIssueRisky'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
 import MienFeature from './MienFeature'
@@ -255,6 +256,15 @@ class IssueSidebar extends Component {
                 </div>
               </div>
 
+              <div className="property-row">
+                <div className="property-label">
+                  Risky
+                </div>
+                <div className="property-value">
+                  <EditableIssueRisky issue_ids={[issue.id]} project_id={issue.project_id}/>
+                </div>
+              </div>
+              
               <div className="property-row">
                 <div className="property-label">
                   Tags
