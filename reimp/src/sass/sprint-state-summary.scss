@@ -6,8 +6,14 @@
 
 .sprint-state-summary__problems--unhandled {
     color: red;
+    display: flex;
 }
 
 .sprint-state-summary__warnings {
     color: darkorange;
+    display: flex;
+}
+
+.sprint-state-summary__section {
+    margin-bottom: 10px;
 }

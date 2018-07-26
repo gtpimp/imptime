@@ -38,10 +38,10 @@ class SprintStateSummary extends Component {
     renderMissingTestablesDescription() {
         const { sprint } = this.props
         return (
-            <p>
+            <div className="sprint-state-summary__section" key="missing_testables_description">
               <Pluralize singular="issue" count={sprint.num_missing_testable_issues}/>
               &nbsp;without testables. All issues that will be estimated require testables.
-            </p>
+            </div>
         )
     }
 
@@ -58,10 +58,10 @@ class SprintStateSummary extends Component {
     renderMissingAssignedDescription() {
         const { sprint } = this.props
         return (
-            <p>
+            <div className="sprint-state-summary__section" key="missing_assigned_description">
               <Pluralize singular="issue" count={sprint.num_issues_unassigned}/>
               &nbsp;unassigned. All issues must be assigned before working on them.
-            </p>
+            </div>
         )
     }
 
@@ -78,10 +78,10 @@ class SprintStateSummary extends Component {
     renderMissingEstimatesDescription() {
         const { sprint } = this.props
         return (
-            <p>
+            <div className="sprint-state-summary__section" key="missing_estimates_description">
               <Pluralize singular="issue" count={sprint.num_issues_missing_estimates}/>
               &nbsp;without estimates. All issues must be estimated before working on them.
-            </p>
+            </div>
         )
     }
 
@@ -95,9 +95,9 @@ class SprintStateSummary extends Component {
 
     renderMissingBudgetDescription() {
         return (
-            <p>
+            <div className="sprint-state-summary__section" key="missing_budget_description">
               <div>Missing budget. All sprints require a budget, even if it's just an indication.</div>
-            </p>
+            </div>
         )
     }
 
@@ -111,9 +111,9 @@ class SprintStateSummary extends Component {
 
     renderOverBudgetDescription() {
         return (
-            <p>
+            <div className="sprint-state-summary__section" key="over_budget_description">
               <div>Budget exceeded. The budget on this sprint has been exceeded, either increase the budget or remove some issues.</div>
-            </p>
+            </div>
         )
     }
 
@@ -127,9 +127,9 @@ class SprintStateSummary extends Component {
 
     renderExceedingDevCostDescription() {
         return (
-            <p>
+            <div className="sprint-state-summary__section" key="exceeding_dev_cost_description">
               <div>The work on issues is going slower than expected, this is likely to cause a budget over-run if not addressed. </div>
-            </p>
+            </div>
         )
     }
 
@@ -206,18 +206,21 @@ class SprintStateSummary extends Component {
         }
 
         return (
-            <Floater
-                title="Problems"
-                disableHoverToClick
-                event="hover"
-                eventDelay={0}
-                placement="bottom"
-                content={most_pressing_problem_description}
-            >
-                    <div className="sprint-state-summary__problems--unhandled">
-                      {most_pressing_problem_rendered}
-                    </div>
-            </Floater>
+            <div>
+              <Floater
+                  title="Problems"
+                  disableHoverToClick
+                  event="hover"
+                  eventDelay={0}
+                  placement="bottom"
+                  content={most_pressing_problem_description}
+              >
+                <div className="sprint-state-summary__problems--unhandled">
+                  <div className="icon--error"></div>
+                  {most_pressing_problem_rendered}
+                </div>
+              </Floater>
+            </div>
         )
     }
 
@@ -230,42 +233,44 @@ class SprintStateSummary extends Component {
         }
 
         return (
-            <Floater
-                title="Warning"
-                disableHoverToClick
-                event="hover"
-                eventDelay={0}
-                placement="bottom"
-                content={
-                    <div className="sprint-state-summary__warnings">
-                      { sprint.num_management_alert_issues > 0 &&
-                        (
-                            <p>
-                              <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
-                              &nbsp;
-                              <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_management_alert_issues}/>
-                              &nbsp;
-                              blocked. Please find a resolution and then change the issue status to <i>waiting</i>.
-                            </p>
-                        )
-                      }
-                      { sprint.num_adhoc_issues > 0 &&
-                        (
-                            <p>
-                              <Pluralize singular="issue" count={sprint.num_adhoc_issues}/>
-                              &nbsp;
-                              <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_adhoc_issues}/>
-                              &nbsp;
-                              ad hoc and <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_adhoc_issues}/> classification.
-                              Please change <Pluralize singular="it" plural="them" showCount={false} count={sprint.num_adhoc_issues}/> to a more specific type.
-                            </p>
-                        )
-                      }
-                    </div>
-                }
-            >
-              <div className="icon--warning"></div>
-            </Floater>
+            <div>
+              <Floater
+                  title="Warning"
+                  disableHoverToClick
+                  event="hover"
+                  eventDelay={0}
+                  placement="bottom"
+                  content={
+                      <div className="sprint-state-summary__warnings">
+                        { sprint.num_management_alert_issues > 0 &&
+                          (
+                              <div className="sprint-state-summary__section">
+                                <Pluralize singular="issue" count={sprint.num_management_alert_issues}/>
+                                &nbsp;
+                                <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_management_alert_issues}/>
+                                &nbsp;
+                                blocked. Please find a resolution and then change the issue status to <i>waiting</i>.
+                              </div>
+                          )
+                        }
+                        { sprint.num_adhoc_issues > 0 &&
+                          (
+                              <div className="sprint-state-summary__section">
+                                <Pluralize singular="issue" count={sprint.num_adhoc_issues}/>
+                                &nbsp;
+                                <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_adhoc_issues}/>
+                                &nbsp;
+                                ad hoc and <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_adhoc_issues}/> classification.
+                                Please change <Pluralize singular="it" plural="them" showCount={false} count={sprint.num_adhoc_issues}/> to a more specific type.
+                              </div>
+                          )
+                        }
+                      </div>
+                  }
+              >
+                <div className="icon--warning"></div>
+              </Floater>
+            </div>
         )
     }
     

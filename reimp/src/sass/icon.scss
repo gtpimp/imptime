@@ -279,6 +279,11 @@
     background-color: white;
 }
 
+.icon--error {
+    @include icon(18px, 18px, 'baseline_error_black_18dp.png');
+    background-color: white;
+}
+
 
 .issue_sidebar__issue_copy_img {
     @include icon(15px, 15px, 'material-icons-whiterefresh-copy.png');
