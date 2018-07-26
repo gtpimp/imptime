@@ -212,7 +212,7 @@ class SprintStateSummary extends Component {
                   disableHoverToClick
                   event="hover"
                   eventDelay={0}
-                  placement="bottom"
+                  placement="right"
                   content={most_pressing_problem_description}
               >
                 <div className="sprint-state-summary__problems--unhandled">
@@ -239,7 +239,7 @@ class SprintStateSummary extends Component {
                   disableHoverToClick
                   event="hover"
                   eventDelay={0}
-                  placement="bottom"
+                  placement="right"
                   content={
                       <div className="sprint-state-summary__warnings">
                         { sprint.num_management_alert_issues > 0 &&
@@ -255,7 +255,7 @@ class SprintStateSummary extends Component {
                         }
                         { sprint.num_adhoc_issues > 0 &&
                           (
-                              <div className="sprint-state-summary__section">
+                              <div className="floater__section">
                                 <Pluralize singular="issue" count={sprint.num_adhoc_issues}/>
                                 &nbsp;
                                 <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_adhoc_issues}/>
@@ -295,11 +295,7 @@ class SprintStateSummary extends Component {
     
     render() {
 
-        return (
-            <div>
-              {this.renderAction()}
-            </div>
-        )
+        return this.renderAction()
     }
     
 }

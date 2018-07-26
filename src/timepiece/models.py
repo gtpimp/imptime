@@ -1030,7 +1030,7 @@ class ProjectQuerySet(QuerySet):
 
 
         for d in estimates_by_sprint_id.values():
-            d["num_missing_estimates"] = d.get('num_testable_issues', 0) - d.get('num_estimates', 0)
+            d["num_missing_estimates"] = d.get('num_testable_issues', 0) - d.get('num_estimated', 0)
 
         num_adhoc_issues_by_sprint = Issue.objects.filter(project__in=sprints,
                                                           issue_type="adhoc")\
