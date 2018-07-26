@@ -227,7 +227,9 @@ class SprintStateSummary extends Component {
     renderWarnings() {
         const { sprint } = this.props
 
-        const has_warnings = sprint.num_adhoc_issues > 0 || sprint.num_management_alert_issues > 0
+        const has_warnings = sprint.num_adhoc_issues > 0 ||
+                             sprint.num_management_alert_issues > 0 ||
+                             sprint.num_open_risky_issues > 0
         if ( ! has_warnings ) {
             return null
         }
@@ -249,7 +251,7 @@ class SprintStateSummary extends Component {
                                 &nbsp;
                                 <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_management_alert_issues}/>
                                 &nbsp;
-                                blocked. Please find a resolution and then change the issue status to <i>waiting</i>.
+                                blocked. Find a resolution and then change the issue status to <i>waiting</i> to remove this warning.
                               </div>
                           )
                         }
@@ -262,6 +264,17 @@ class SprintStateSummary extends Component {
                                 &nbsp;
                                 ad hoc and <Pluralize singular="requires" plural="require" showCount={false} count={sprint.num_adhoc_issues}/> classification.
                                 Please change <Pluralize singular="it" plural="them" showCount={false} count={sprint.num_adhoc_issues}/> to a more specific type.
+                              </div>
+                          )
+                        }
+                        { sprint.num_open_risky_issues > 0 &&
+                          (
+                              <div className="floater__section">
+                                <Pluralize singular="issue" count={sprint.num_open_risky_issues}/>
+                                &nbsp;
+                                <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_open_risky_issues}/>
+                                &nbsp;
+                                risky. This implies the estimates or deadlines for this sprint might not be accurate.
                               </div>
                           )
                         }
