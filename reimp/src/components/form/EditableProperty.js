@@ -190,7 +190,7 @@ function mapStateToProps(state, props) {
         can_edit,
         is_editing,
         is_readonly: isReadonly(state, property_key),
-        is_empty: !is_editing && !initial_value && !initial_value === false,
+        is_empty: !is_editing && !initial_value && initial_value !== false,
         class_name: class_name || "",
         wideView: wideView || false,
         action_label,
