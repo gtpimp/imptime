@@ -130,7 +130,15 @@ issue--grouped {
     @extend .issue-cell__issue-management-general-icon;
 }
 
-.issue-cell__issue-management-scope-icon {
+.issue-cell__issue-management-spec-icon {
+    @extend .issue-cell__issue-management-general-icon;
+}
+
+.issue-cell__issue-management-finance-icon {
+    @extend .issue-cell__issue-management-general-icon;
+}
+
+.issue-cell__issue-management-meeting-icon {
     @extend .issue-cell__issue-management-general-icon;
 }
 
