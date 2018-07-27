@@ -233,20 +233,18 @@ class BaseViewSet(viewsets.ViewSet):
                                       business__business_permissions__user=self.request.user,
                                       business__business_permissions__can_view_invoices=True)
 
-    def allowed_issue_histories(self):
-        return IssueHistory.objects.all().filter(issue_id__in=self.allowed_issues())
+    def allowed_issue_histories(self): 
+        non_sensitive = IssueHistory.objects.filter(money_sensitive=False,
+                                                    original_issue__project__business__in=self.allowed_projects()\
+                                                    .filter(business_permissions__user=self.request.user,
+                                                            business_permissions__can_view_issue_history=True))
+        sensitive = IssueHistory.objects.filter(money_sensitive=True,
+                                                original_issue__project__business__in=self.allowed_projects_for_money(self.allowed_projects())\
+                                                .filter(business_permissions__user=self.request.user,
+                                                        business_permissions__can_view_issue_history=True))
         
-        # non_sensitive = IssueHistory.objects.filter(money_sensitive=False,
-        #                                             original_issue___project__in=self.allowed_projects()\
-        #                                             .filter(business_permissions__user=self.request.user,
-        #                                                     business_permissions__can_view_issue_history=True))
-        # sensitive = IssueHistory.objects.filter(money_sensitive=True,
-        #                                         original_issue__project__in=self.allowed_projects_for_money(self.allowed_projects())\
-        #                                         .filter(business_permissions__user=self.request.user,
-        #                                                 business_permissions__can_view_issue_history=True))
-        
-        # return IssueHistory.objects.filter(Q(pk__in=non_sensitive.values_list('id', flat=True))|
-        #                                    Q(pk__in=sensitive.values_list('id', flat=True)))
+        return IssueHistory.objects.filter(Q(pk__in=non_sensitive.values_list('id', flat=True))|
+                                           Q(pk__in=sensitive.values_list('id', flat=True)))
     
     def allowed_sprint_rates(self):
         return Rate.objects.filter(project__business__in=self.allowed_projects())\
