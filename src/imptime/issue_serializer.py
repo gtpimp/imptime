@@ -105,7 +105,7 @@ class IssueSerializer(BaseSerializer):
                 
             issue.all_actuals = all_actuals.values()
 
-        issue.needs_estimate = len([x for x in issue.all_estimates if x.user_id==issue.assigned_to_id]) == 0
+        issue.needs_estimate = len([x for x in (issue.all_estimates or []) if x.user_id==issue.assigned_to_id]) == 0
 
         if not bp.has_share_issues:
             issue.share_ref = None
