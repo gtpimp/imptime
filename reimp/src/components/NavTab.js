@@ -6,7 +6,6 @@ import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 
 const nav_item_css = {paddingLeft:"12px",
-                      paddingRight:"12px",
                       display:"flex",
                       alignItems:"center",
                       justifyContent:"center",

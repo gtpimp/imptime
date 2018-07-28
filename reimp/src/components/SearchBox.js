@@ -9,8 +9,7 @@ import ReactTimeout from 'react-timeout'
 import SearchInput from './SearchInput'
 import styled from 'react-emotion'
 
-const SearchBoxDiv = styled('div')(props => ({"width": "306px",
-                                              "height": "28px",
+const SearchBoxDiv = styled('div')(props => ({"height": "28px",
                                               "paddingLeft": "12px"}))
 
 

@@ -9,8 +9,7 @@ const SearchInputDiv = styled('div')(props => ({color: theme.colours.strong_text
                                                 display: "flex",
                                                 borderRadius: "3px",
                                                 paddingLeft: "12px",
-                                                height: "28px",
-                                                width: "306px"}))
+                                                height: "28px"}))
 
 const SearchInputInput = styled('input')(props => ({backgroundColor: theme.colours.page_background,
                                                     border: "0px",
