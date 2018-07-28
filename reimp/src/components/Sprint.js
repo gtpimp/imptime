@@ -99,7 +99,7 @@ class Sprint extends Component {
     }
 
     render_expanded() {
-        const { sprint, sprint_id, isOver, is_loading, is_selected, onClickedSprint, header_list} = this.props
+        const { sprint, sprint_id, is_loading, is_selected, onClickedSprint, header_list} = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         const that = this
