@@ -25,14 +25,6 @@ const NavDropdownMenuItem = styled('div')(props => Object.assign(nav_item_css,
                                            backgroundColor: props.expanded === true ? theme.colours.panel_background : "auto",
                                            color: props.colourName === null ? "#ffffff" : theme.colours[props.colourName]}))
 
-const NavDropdownMenuContent = styled('div')(props => ({position:"absolute",
-                                                        top: "36px",
-                                                        width:"100px",
-                                                        flexDirection: "column",
-                                                        backgroundColor: theme.colours.panel_background,
-                                                        display: props.sub_menu_visible ? "flex" : "none"
-}))
-
 const NavDropdownIcon = styled('div')(props => ({display: "inline-block",
                                                  textAlign: "center",
                                                  width: "30px"}))
@@ -53,6 +45,7 @@ class NavTab extends Component {
     }
 
     hideSubMenu() {
+        return;
         this.setState({sub_menu_visible: false,
                        expanded: false})
     }
@@ -92,9 +85,17 @@ class NavTab extends Component {
                       {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
                     </i>
                   </NavDropdownIcon>
-                  <NavDropdownMenuContent sub_menu_visible={sub_menu_visible}>
+                  <div sub_menu_visible={sub_menu_visible}
+                       className={css`position:absolute;
+                                      top: 36px;
+                                      padding-left: 24px;
+                                      width: 290px;
+                                      flex-direction: column;
+                                      background-color: ${theme.colours.panel_background};
+                                      display: ${sub_menu_visible ? "flex" : "none"}`}
+                  >
                     {children}
-                  </NavDropdownMenuContent>
+                  </div>
                 </NavDropdownMenuItem>
             )
         }
