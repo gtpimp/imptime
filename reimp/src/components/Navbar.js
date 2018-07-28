@@ -98,14 +98,18 @@ class Navbar extends Component {
                   <div className={`${submenu_button}`}>
                     <Link to='/company/problems'>Problems</Link>
                   </div>
+                  <div className={`${submenu_button}`}>
+                    <Link to='/invoices'>Invoices</Link>
+                  </div>
+                  <div className={`${submenu_button}`}>
+                    <Link to="/usertimesheets">Timesheets</Link>
+                  </div>
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />
                 <NavTab>
                   <AutoClockPopup/>
                 </NavTab>
-                <NavTab to="/usertimesheets" label="Timesheets" />
-                <NavTab to="/invoices" label="Invoices"/>
                 <NavTab>
                   <SearchBox/>
                 </NavTab>
