@@ -16,9 +16,11 @@ import { invalidateSprintDeadlines } from '../actions/SprintDeadlines'
 import { invalidateSprintReviews } from '../actions/SprintReviews'
 import { invalidateProjectDashboards } from '../actions/ProjectDashboards'
 import { invalidateNudges } from '../actions/Nudges'
+import { invalidateSursForSprint } from '../actions/SprintUserRates'
 import { invalidateCompanyProblems } from '../actions/CompanyProblems'
 import { invalidateSprintRoadmaps, getSprintRoadmapIdsFromSprintIds } from '../actions/SprintRoadmaps'
 import { invalidateAutoClocks } from '../actions/AutoClock'
+import { invalidateCostSummary } from '../actions/CostSummary'
 import { invalidateAllMultipleIssueSummaries } from '../actions/MultipleIssueSummary'
 import { invalidateSurForSprintAndUser } from '../actions/SprintUserRates'
 import { invalidateWikis } from '../actions/Wikis'
@@ -65,6 +67,8 @@ function triggerInvalidateEntity(d, dispatch) {
         const sprint_roadmap_ids = getSprintRoadmapIdsFromSprintIds([d.entity_ref])
         dispatch(invalidateSprintRoadmaps(sprint_roadmap_ids))
         dispatch(invalidateProjectDashboards([d.params.project_id]))
+        dispatch(invalidateCostSummary(d.entity_ref))
+        dispatch(invalidateSursForSprint(d.entity_ref))
 
     } else if ( d.entity_name === 'issue' ) {
         dispatch(invalidateIssues([d.entity_ref]))
@@ -99,6 +103,7 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateCompanyProblems([d.entity_ref]))
     } else if ( d.entity_name === 'entry' ) {
         dispatch(invalidateAutoClocks([d.entity_ref]))
+        dispatch(invalidateCostSummary(d.params.sprint_id))
     } else if ( d.entity_name === 'user' ) {
         dispatch(invalidateUsers([d.entity_ref]))
     } else if ( d.entity_name === 'rate' ) {
@@ -106,6 +111,7 @@ function triggerInvalidateEntity(d, dispatch) {
 
         // So that the estimate counts within the sprint shows correctly
         dispatch(invalidateSprints([d.params.sprint_id]))
+        dispatch(invalidateCostSummary(d.params.sprint_id))
     } else if ( d.entity_name === 'wikipage' ) {
         dispatch(invalidateWikis([d.entity_ref]))
     } else if ( d.entity_name === 'mien' ) {

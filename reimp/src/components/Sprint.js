@@ -8,6 +8,7 @@ import Hours from './Hours'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
+import SprintStateSummary from './SprintStateSummary'
 import moment from 'moment'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
@@ -98,7 +99,7 @@ class Sprint extends Component {
     }
 
     render_expanded() {
-        const { sprint, is_loading, is_selected, onClickedSprint, header_list} = this.props
+        const { sprint, sprint_id, isOver, is_loading, is_selected, onClickedSprint, header_list} = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         const that = this
@@ -405,6 +406,14 @@ class Sprint extends Component {
                                       </SprintCellDiv>
                                     </TableCellSecondaryDiv>
                                 )
+                            case "state_summary":
+                                return (
+                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                         style={getCellStyle(header)}>
+                                      <SprintStateSummary sprint_id={sprint_id} />
+                                    </div>
+                                )
+
                             default:
                                 console.error("Unknown header: " + header_key + " (headers are " + visible_header_keys + ")")
                                 

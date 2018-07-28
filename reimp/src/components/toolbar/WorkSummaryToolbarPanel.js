@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
-import ReactTooltip from 'react-tooltip'
 import { invalidateAllSummaries } from '../../actions/WorkSummary'
 import { LIST_KEY__WORK_SUMMARY_LIST } from '../../actions/ItemListKeyRegistry'
 import { invalidateList } from '../../actions/ItemList'
@@ -24,7 +23,6 @@ class WorkSummariesToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               <ToolbarButton tooltip="Refresh" icon="refresh" onClick={this.invalidateComponents}/>
-              <ReactTooltip place="bottom" type="info" />
             </div>
         )
     }

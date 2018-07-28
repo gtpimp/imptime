@@ -7,8 +7,8 @@ import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureTimeSummaryLoaded, getTimeSummary} from '../actions/TimeSummary'
 import OtherUser from '../components/OtherUser'
 import { ensureUsersLoaded } from '../actions/Users'
-import CurrencyValue from '../components/CurrencyValue'
 import Hours from './Hours'
+import EditableUserRate from './EditableUserRate'
 
 class SprintTimeSummary extends Component {
 
@@ -29,7 +29,7 @@ class SprintTimeSummary extends Component {
     }
 
     renderSummaryForDevelopers(developers) {
-        const { time_summary } = this.props
+        const { time_summary, sprint_id } = this.props
         return (
 
             <table className="sprint_time_summary__table">
@@ -66,7 +66,7 @@ class SprintTimeSummary extends Component {
                         <OtherUser user_id={developer_id} />
                       </th>
                       <td>
-                        <CurrencyValue value={developer.dev_rate} prefix="@" />
+                        <EditableUserRate sprint_id={sprint_id} user_id={developer_id} />
                       </td>
                       <td>
                         <Hours hours={developer.dev_hours_used}/>

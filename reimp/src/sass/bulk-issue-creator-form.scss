@@ -1,5 +1,26 @@
 
+.bulk-issue-creator-page {
+    width: 80%;
+    margin-left: 10%;
+}
 
 .bulk-issue-creator-form__textarea {
     height: 200;
+}
+
+.bulk-issue-creator-form__content {
+    width: 100%;
+}
+
+.bulk-issue-creator-form__help {
+    float: right;
+}
+
+.bulk-issue-creator-form__textarea {
+    float: left;
+    width: 50%;
+}
+
+.bulk-issue-creator-form__actions {
+    clear: left;
 }

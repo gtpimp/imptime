@@ -6,6 +6,7 @@ import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
 import MienFeature from './MienFeature'
 import moment from 'moment'
+import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
@@ -17,6 +18,8 @@ import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
 import MultipleIssueSummary from './MultipleIssueSummary'
+import Hours from './Hours'
+import CurrencyValue from './CurrencyValue'
 
 class SprintSidebar extends Component {
 
@@ -26,24 +29,26 @@ class SprintSidebar extends Component {
     }
     
     componentDidMount() {
-	      const { dispatch, project_id, sprint_id } = this.props
-	      if ( project_id ) {
-	          dispatch(ensureProjectsLoaded([project_id]))
-	      }
-	      if ( sprint_id ) {
-	          dispatch(ensureSprintsLoaded([sprint_id]))
-	      }
+	const { dispatch, project_id, sprint_id } = this.props
+	if ( project_id ) {
+	    dispatch(ensureProjectsLoaded([project_id]))
+	}
+	if ( sprint_id ) {
+	    dispatch(ensureSprintsLoaded([sprint_id]))
+            dispatch(ensureCostSummaryLoaded(sprint_id))
+        }
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = this.props
         const { project_id, sprint_id } = new_props
-	      if ( project_id ) {
-	          dispatch(ensureProjectsLoaded([project_id]))
-	      }
-	      if ( sprint_id ) {
-	          dispatch(ensureSprintsLoaded([sprint_id]))
-	      }
+	if ( project_id ) {
+	    dispatch(ensureProjectsLoaded([project_id]))
+	}
+	if ( sprint_id ) {
+	    dispatch(ensureSprintsLoaded([sprint_id]))
+            dispatch(ensureCostSummaryLoaded(sprint_id))
+	}
     }
 
     showEmacsSprint() {
@@ -68,7 +73,7 @@ class SprintSidebar extends Component {
     
     render() {
 
-        const { sprint_id, sprint, has_view_review_cycle_permission } = this.props
+        const { sprint_id, sprint, has_view_review_cycle_permission, cost_summary, can_view_costs } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -133,11 +138,37 @@ class SprintSidebar extends Component {
                     </PropertyStackComponent>
                   </MienFeature>
                 }
-                
-                <MienFeature feature_name="multiple_issue_summary">
+
+                { cost_summary &&
                   <PropertyStackComponent>
-                    <MultipleIssueSummary filter={{sprint_ids:[sprint_id]}} project_id={sprint.project_id} />
+                    <div className="property--title">
+                      Experimental, do not trust these numbers
+                    </div>
+                    <div className="named-property">
+                      <div className="named-property__name">Estimated dev hours (original velocity)</div>
+                      <div className="named-property__value"><Hours hours={cost_summary.projections.original_dev_hours}/></div>
+                    </div>
+                    { can_view_costs && 
+                      <div className="named-property">
+                        <div className="named-property__name">Estimated dev cost (original velocity)</div>
+                        <div className="named-property__value"><CurrencyValue value={cost_summary.projections.original_dev_commission_cost}/></div>
+                      </div>
+                    }
+                    <div className="named-property">
+                      <div className="named-property__name">Estimated dev hours (actual velocity)</div>
+                      <div className="named-property__value"><Hours hours={cost_summary.projections.revised_dev_hours}/></div>
+                    </div>
+                    { can_view_costs && 
+                      <div className="named-property">
+                        <div className="named-property__name">Estimated dev cost (actual velocity)</div>
+                        <div className="named-property__value"><CurrencyValue value={cost_summary.projections.revised_dev_commission_cost}/></div>
+                      </div>
+                    }
                   </PropertyStackComponent>
+                }
+                  
+                <MienFeature feature_name="multiple_issue_summary">
+                  <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} />
                 </MienFeature>
 
                 <MienFeature feature_name="deadlines">
@@ -159,14 +190,18 @@ export function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
+    const cost_summary = getCostSummary(state, sprint_id)
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
+    const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
     
     return {
-        sprint_id: sprint_id,
-        sprint: sprint,
-        project_id: project_id,
-        project: project,
-        has_view_review_cycle_permission
+        sprint_id,
+        sprint,
+        cost_summary,
+        project_id,
+        project,
+        has_view_review_cycle_permission,
+        can_view_costs
     }
 }
 

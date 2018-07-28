@@ -1,0 +1,20 @@
+@import 'variables.scss';
+
+.sprint-state-summary {
+    width: 100%;
+}
+
+.sprint-state-summary__warnings {
+    display: flex;
+    flex-direction: column;
+}
+
+.sprint-state-summary__problems--unhandled {
+    color: red;
+    display: flex;
+}
+
+.sprint-state-summary__warnings {
+    color: darkorange;
+    display: flex;
+}

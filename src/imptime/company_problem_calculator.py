@@ -17,8 +17,11 @@ class CompanyProblemCalculator(object):
         for company_problem in company_problems:
             company_problem.delete()
 
+        self._create_missed_review_schedules(projects)
         self._create_missing_rates(projects)
         self._create_missing_budgets(projects)
+        self._create_missing_meta_info(projects)
+        self._create_missing_review_schedules(projects)
 
     def _create_missing_rates(self, projects):
         entries = Entry.objects.filter(issue__project__business_id__in=projects)
@@ -61,4 +64,73 @@ class CompanyProblemCalculator(object):
                                                  problem_type='missing_budget',
                                                  money_sensitive=True,
                                                  defaults={'description':"Time clocked but no budget set",
+                                                           'status':'open'})
+
+    def _create_missing_meta_info(self, projects):
+        sprints = Sprint.objects.filter(project_type__in=Sprint.CLOCKABLE_PROJECT_TYPES)\
+                                .filter_open()
+        sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee = sprints.get_meta_info()
+        for sprint in sprints:
+            if sprint.id not in estimates_by_sprint_id:
+                continue
+            d = estimates_by_sprint_id[sprint.id]
+            if d.get('num_adhoc_issues', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='adhoc_issues',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are adhoc" % d['num_adhoc_issues'],
+                                                               'status':'open'})
+            elif d.get('num_missing_testable_issues', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='missing_testables',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are missing testables" % d['num_missing_testable_issues'],
+                                                               'status':'open'})
+            elif d.get('num_issues_unassigned', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='missing_assignee',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are not assigned" % d['num_missing_unassigned'],
+                                                               'status':'open'})
+            elif d.get('num_missing_estimates', 0) > 0:
+                CompanyProblem.objects.get_or_create(user_id=None,
+                                                     project_id=sprint.business_id, #sic
+                                                     sprint_id=sprint.id,
+                                                     problem_type='missing_estimate',
+                                                     money_sensitive=False,
+                                                     defaults={'description':"%d issues are not estimated" % d['num_missing_estimates'],
+                                                               'status':'open'})
+                
+    def _create_missing_review_schedules(self, projects):
+        sprints = Sprint.objects.filter(project_type__in=Sprint.REVIEW_SCHEDULE_PROJECT_TYPES)\
+                                .filter_open()\
+                                .filter(reviews__isnull=True)
+        for sprint in sprints:
+            CompanyProblem.objects.get_or_create(user_id=None,
+                                                 project_id=sprint.business_id, #sic
+                                                 sprint_id=sprint.id,
+                                                 problem_type='missing_review_schedule',
+                                                 money_sensitive=False,
+                                                 defaults={'description':"Sprint requires a review schedule",
+                                                           'status':'open'})
+
+    def _create_missed_review_schedules(self, projects):
+        sprints = Sprint.objects.filter_open()\
+                                .filter(reviews__isnull=False)
+
+        sprints = SprintReview.filter_has_an_issue_due_for_review(sprints)
+        
+        for sprint in sprints:
+            CompanyProblem.objects.get_or_create(user_id=None,
+                                                 project_id=sprint.business_id, #sic
+                                                 sprint_id=sprint.id,
+                                                 problem_type='expired_review_schedule',
+                                                 money_sensitive=False,
+                                                 defaults={'description':"At least one issue requires a review",
                                                            'status':'open'})

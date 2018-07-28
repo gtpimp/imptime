@@ -50,6 +50,7 @@ export const ANNOUNCE_BULK_CREATED_ISSUES = 'ANNOUNCE_BULK_CREATED_ISSUES'
 const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", description:"Issue number", width:tiny_col_width},
                                       {key:'issue_type', label:'', description:"Icon showing the issue type", width:tiny_col_width},
                                       {key:'attachment', label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width},
+                                      {key:'problems', label:'', description:"Icon showing if the issue has problems", width:tiny_col_width},
                                       {key:'expand_feature', label:'', description:"Icon to allow expanding feature issues", width:tiny_col_width},
                                       {key:'name', label:"Name", description:"Issue subject", width:"auto", flex:1},
                                       {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
@@ -128,6 +129,10 @@ export function updateIssueStatus(issue_ids, value) {
 
 export function updateIssueType(issue_ids, value) {
     return updateItem(ENTITY_KEY__ISSUE, issue_ids, "type_name", value)
+}
+
+export function updateIssueRisky(issue_ids, value) {
+    return updateItem(ENTITY_KEY__ISSUE, issue_ids, "risky", value)
 }
 
 export function updateIssueFeature(issue_ids, value) {

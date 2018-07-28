@@ -17,7 +17,7 @@ from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 from imptime.models import VisualSpecIssueAnnotation, WikiPage
 from imptime.models import Mien, CompanyProblem
-from imptime.models import Mien, Schedule, ScheduleItem
+from imptime.models import Mien, Schedule, ScheduleItem, IssueHistory
 from invoicing.models import Invoice
 
 class PermissionHelper():
@@ -95,6 +95,8 @@ class BaseViewSet(viewsets.ViewSet):
 
         page_size = pagination.get(
             'page_size', settings.PAGINATION_DEFAULT_PAGINATION)
+        if page_size > settings.MAX_PAGINATION:
+            page_size = settings.MAX_PAGINATION
         current_page = pagination.get('current_page', 1)
         pagination['page_size'] = page_size
         pagination['current_page'] = current_page
@@ -231,6 +233,19 @@ class BaseViewSet(viewsets.ViewSet):
                                       business__business_permissions__user=self.request.user,
                                       business__business_permissions__can_view_invoices=True)
 
+    def allowed_issue_histories(self): 
+        non_sensitive = IssueHistory.objects.filter(money_sensitive=False,
+                                                    original_issue__project__business__in=self.allowed_projects()\
+                                                    .filter(business_permissions__user=self.request.user,
+                                                            business_permissions__can_view_issue_history=True))
+        sensitive = IssueHistory.objects.filter(money_sensitive=True,
+                                                original_issue__project__business__in=self.allowed_projects_for_money(self.allowed_projects())\
+                                                .filter(business_permissions__user=self.request.user,
+                                                        business_permissions__can_view_issue_history=True))
+        
+        return IssueHistory.objects.filter(Q(pk__in=non_sensitive.values_list('id', flat=True))|
+                                           Q(pk__in=sensitive.values_list('id', flat=True)))
+    
     def allowed_sprint_rates(self):
         return Rate.objects.filter(project__business__in=self.allowed_projects())\
                            .filter(Q(project__business__business_permissions__user=self.request.user)&

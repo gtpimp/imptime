@@ -3,6 +3,7 @@ export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
 export const LIST_KEY__ISSUE_LIST = 'issues'
 export const LIST_KEY__INVOICE_LIST = 'invoices'
+export const LIST_KEY__ISSUE_HISTORY_LIST = 'issue_history'
 export const LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details'
 export const LIST_KEY__USER_LIST = 'users'
 export const LIST_KEY__PROJECT_USER_LIST = 'project_users'
@@ -27,6 +28,7 @@ export const LIST_KEY__WORK_SUMMARY_LIST = 'work_summaries'
 
 export const ENTITY_KEY__CALENDAR_EVENT = 'calendar_event'
 export const ENTITY_KEY__INVOICE = 'invoice'
+export const ENTITY_KEY__ISSUE_HISTORY = 'issue_history'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
 export const ENTITY_KEY__ISSUE = 'issue'
@@ -53,6 +55,7 @@ export const ENTITY_KEY__AUTO_CLOCK = 'auto_clock'
 export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
 export const ENTITY_KEY__SPRINT_USER_RATE = 'sprint_user_rate'
 export const ENTITY_KEY__WORK_SUMMARY = 'work_summary'
+export const ENTITY_KEY__SPRINT_COST_SUMMARY = 'sprint_cost_summary'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
@@ -60,14 +63,17 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__VISUAL_SPEC_ISSUE,
                                   ENTITY_KEY__ISSUE,
                                   ENTITY_KEY__INVOICE,
+                                  ENTITY_KEY__ISSUE_HISTORY,
                                   ENTITY_KEY__MIEN,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE,
-                                  ENTITY_KEY__CALENDAR_EVENT ]
+                                  ENTITY_KEY__CALENDAR_EVENT,
+                                  ENTITY_KEY__SPRINT_COST_SUMMARY ]
 
 export const PAGE_KEY__CALENDAR_PAGE = 'calendar_page'
 export const PAGE_KEY__DASHBOARD_PAGE = 'dashboard_page'
-export const PAGE_KEY__INVOICES_PAGE = 'invoice_page'
+export const PAGE_KEY__INVOICES_PAGE = 'issue_history_page'
+export const PAGE_KEY__ISSUE_HISTORY_PAGE = 'issue_history_page'
 export const PAGE_KEY__PROJECTS_PAGE = 'projects_page'
 export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'
 export const PAGE_KEY__PROJECT_ROADMAP_PAGE = 'project_roadmap_page'
@@ -144,6 +150,12 @@ export var INVOICE_HEADER_LIST = {'invoice_number': {label:"Number", width:"auto
                                   //'client_order_name': {label:'Order name', width:'auto', flex:1},
                                   //'client_order_number': {label:'Order number', width:'auto', flex:1}
 }
+
+export var ISSUE_HISTORY_HEADER_LIST = [ {key:'created_by', label:"User", description:"The user who made the change", width:medium_col_width},
+                                         {key:'created_at', label:"Date", description:"When the change was made", width:medium_col_width},
+                                         {key:'description', label:"Description", description:"What type of change was made", width:medium_col_width},
+                                         {key:'before', label:"Before", description:"The value before the change", width:medium_col_width},
+                                         {key:'after', label:"After", description:"The value after the change", width:medium_col_width} ]
 
 export var PROJECT_HEADER_LIST = {'name': {label:"Name", width:"auto", flex:1},
                                   'active': {label:"Active", width: small_col_width},

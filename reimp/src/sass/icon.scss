@@ -33,6 +33,11 @@
     @include icon(20px, 19.45px, 'icon_settings_black@2x.png')
 }
 
+.icon--timer-estimate {
+    @include icon(20px, 20px, 'icon_time_black 14@2x.png')
+    opacity:0.2;
+}
+
 .icon--timer-inactive {
     @include icon(20px, 20px, 'icon_time_black 14@2x.png')
 }
@@ -149,11 +154,19 @@
 }
 
 .icon--adhoc {
-    @include icon(15px, 15px, 'adhoc.png');
+    @include icon(15px, 15px, 'question_mark.png');
+}
+
+.icon--management {
+    @include icon(15px, 15px, 'management.png');
 }
 
 .icon--attachment {
     @include icon(15px, 15px, 'attachment.png');
+}
+
+.icon--missing-testables {
+    @include icon(15px, 15px, 'missing-testables.png');
 }
 
 .icon--correspondence {
@@ -268,7 +281,12 @@
 
 .icon--warning {
     @include icon(18px, 18px, 'baseline_warning_black_18dp.png');
-    background-color: black;
+    background-color: transparent;
+}
+
+.icon--error {
+    @include icon(18px, 18px, 'baseline_error_black_18dp.png');
+    background-color: transparent;
 }
 
 

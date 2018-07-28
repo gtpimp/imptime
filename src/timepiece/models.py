@@ -1,6 +1,7 @@
 import datetime
 import timings
-from django.db.models import Case, When
+import itertools
+from django.db.models import Case, When, SET_NULL
 from lib.quality_helper import Quality
 from django.core.urlresolvers import reverse
 import os
@@ -457,6 +458,7 @@ class BusinessPermissions(BaseModel):
     can_be_scheduled = models.BooleanField(default=False, verbose_name="Can Be Scheduled")
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
     can_view_testables = models.BooleanField(default=True, verbose_name="Can View Testables")
+    can_view_issue_history = models.BooleanField(default=True, verbose_name="Can View Issue History")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
@@ -558,6 +560,7 @@ class BusinessPermissions(BaseModel):
         bp.can_be_scheduled = True
         bp.can_view_business_comments = True
         bp.can_view_testables = True
+        bp.can_view_issue_history = True
         bp.can_view_actual_hours = True
         bp.can_see_other_user_points = True
         bp.can_estimate_own_points = False #typically project creators won't be estimators
@@ -844,6 +847,10 @@ class BusinessPermissions(BaseModel):
         return self.is_active_member_of_business and self.can_view_testables
 
     @property
+    def has_view_issue_history(self):
+        return self.is_active_member_of_business and self.can_view_issue_history
+    
+    @property
     def has_edit_business_comments(self):
         return self.is_active_member_of_business and self.can_edit_business_comments
 
@@ -929,6 +936,140 @@ class ProjectQuerySet(QuerySet):
         else:
             return self
 
+    def get_meta_info(self):
+        sprints = self.prefetch_related("reviews")\
+                      .prefetch_related("issues__entries")
+        
+        entries = Entry.objects.filter(issue__project__in=sprints,
+                                       issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                               .filter(issue__assigned_to_id=F('user_id'))\
+                               .order_by("issue__project_id")\
+                               .values("issue__project_id").distinct()\
+                               .annotate(hours_per_sprint=Sum('hours'))
+
+        hours_per_sprint_by_assignee = dict( [(x['issue__project_id'], x['hours_per_sprint']) for x in entries] )
+
+        issue_points = IssuePoints.objects.filter(issue__project__in=sprints,
+                                                  issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES,
+                                                  issue__assigned_to_id=F('user_id'))\
+                                          .filter(issue__assigned_to_id=F('issue__project__rate__user_id'))\
+                                          .order_by('issue__project', 'issue_id')\
+                                          .values('issue__project', 'issue_id')\
+                                          .annotate(points_per_issue=Sum(F('points')*F('issue__project__rate__velocity')))
+        estimates_by_sprint_id = {}
+        for k, v in itertools.groupby(issue_points, lambda x: x['issue__project']):
+            estimates_by_sprint_id[k] = { 'num_estimated': 0,
+                                          'estimated_hours': 0 }
+            for estimated_issue in v:
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_hours'] += estimated_issue['points_per_issue'] or 0
+
+
+                
+        # For this count we assume that only developer times matter,
+        # and other times can be inferred.  This is logical if by
+        # developer we mean 'person doing the assigned work' and other
+        # time tracking roles are actually supporting that work (eg
+        # management and testing).
+        ASSIGNEE_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[ASSIGNEE_TIME_TRACKING_MODE]
+        open_issue_points = issue_points.filter(issue__status2__name__in=open_statuses)
+        for k, v in itertools.groupby(open_issue_points, lambda x: x['issue__project']):
+            estimates_by_sprint_id[k]['num_open_estimated'] = 0
+            estimates_by_sprint_id[k]['estimated_open_hours'] = 0
+            for estimated_issue in v:
+                if estimated_issue['points_per_issue']:
+                    estimates_by_sprint_id[k]['num_open_estimated'] += 1
+                    estimates_by_sprint_id[k]['estimated_open_hours'] += estimated_issue['points_per_issue'] or 0
+
+        # For this count we want to know if the primary work has been
+        # done, ie by the developer.
+        DEV_CLOSED_TIME_TRACKING_MODE = 'developer'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[DEV_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_dev_closed_issues'] = num_closed_issues.get('num_closed', 0)
+                    
+        # For this count we assume the tester has the final word on
+        # being closed.  Also we don't care about estimates for this count.
+        COMPLETELY_CLOSED_TIME_TRACKING_MODE = 'tester'
+        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
+        closed_issues = Issue.objects.filter(project__in=sprints,
+                                             issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                     .exclude(status2__name__in=open_statuses)\
+                                     .order_by('project_id')\
+                                     .values('project_id')\
+                                     .annotate(num_closed=Count('id'))
+        for num_closed_issues in closed_issues:
+            estimates_by_sprint_id.setdefault(num_closed_issues['project_id'], {})['num_completely_closed_issues'] = num_closed_issues.get('num_closed', 0)
+
+        testable_issues = Issue.objects.filter(project__in=sprints,
+                                               issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                       .order_by('project_id')\
+                                       .values('project_id')\
+                                       .annotate(num_testable=Count('id'))
+        for testable_issue_count in testable_issues:
+            estimates_by_sprint_id.setdefault(testable_issue_count['project_id'], {})['num_testable_issues'] = testable_issue_count.get('num_testable', 0)
+
+        num_issues_missing_testables_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                                      testables__isnull=True,
+                                                                      issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
+                                                              .order_by("project_id")\
+                                                              .values("project_id")\
+                                                              .annotate(num_missing_testables=Count("id"))
+        for issues_missing_testable_count in num_issues_missing_testables_by_sprint:
+            estimates_by_sprint_id.setdefault(issues_missing_testable_count['project_id'], {})['num_missing_testable_issues'] = issues_missing_testable_count.get('num_missing_testables', 0)
+
+        num_unassigned_issues_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                               assigned_to_id__isnull=True)\
+                                                       .order_by("project_id")\
+                                                       .values("project_id")\
+                                                       .annotate(num_unassigned=Count('id'))
+        for num_assigned_issues in num_unassigned_issues_by_sprint:
+            estimates_by_sprint_id.setdefault(num_assigned_issues['project_id'], {})['num_unassigned_issues'] = num_assigned_issues.get('num_unassigned', 0)
+
+
+        for d in estimates_by_sprint_id.values():
+            d["num_missing_estimates"] = d.get('num_testable_issues', 0) - d.get('num_estimated', 0)
+
+        num_adhoc_issues_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                          issue_type="adhoc")\
+                                                  .order_by("project_id")\
+                                                  .values("project_id")\
+                                                  .annotate(num_adhoc=Count('id'))
+        for num_adhoc_issues in num_adhoc_issues_by_sprint:
+            estimates_by_sprint_id.setdefault(num_adhoc_issues['project_id'], {})['num_adhoc_issues'] = num_adhoc_issues.get('num_adhoc', 0)
+
+        management_alert_statuses = Issue.STATUSES_INDICATING_MANAGER_ATTENTION
+        management_alert_issues = Issue.objects.filter(project__in=sprints,
+                                                       issue_type__in=Issue.TESTABLE_ISSUE_TYPES,
+                                                       status2__name__in=management_alert_statuses)\
+                                               .order_by('project_id')\
+                                               .values('project_id')\
+                                               .annotate(num_issues=Count('id'))
+        for management_alert_issue in management_alert_issues:
+            estimates_by_sprint_id.setdefault(management_alert_issue['project_id'], {})['num_management_alert_issues'] = management_alert_issue.get('num_issues', 0)
+
+            
+        risky_issues_by_sprint = Issue.objects.filter(project__in=sprints,
+                                                      status2__name__in=open_statuses,
+                                                      risky=True)\
+                                              .order_by('project_id')\
+                                              .values('project_id')\
+                                              .annotate(num_issues=Count('id'))
+        for risky_issues in risky_issues_by_sprint:
+            estimates_by_sprint_id.setdefault(risky_issues['project_id'], {})['num_open_risky_issues'] = risky_issues.get('num_issues', 0)
+
+            
+        return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
+        
+        
     def filter_assigned_tasks_are_active(self):
         return self.filter(status3__name__in=['in dev', 'pending'],
                            project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
@@ -1001,6 +1142,10 @@ class Project(BaseModel):
                       ('spec', 'Spec'),
                       ('inbox', 'Inbox') )
 
+    CLOCKABLE_PROJECT_TYPES = [ "sprint", "spec", "minutes" ]
+
+    REVIEW_SCHEDULE_PROJECT_TYPES = ["inbox"]
+    
     code = models.CharField(max_length=255,blank=True,null=True)
     name = models.CharField(max_length=255, db_index=True)
     budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -1103,9 +1248,9 @@ class Project(BaseModel):
 
         elif role_name in ["developer", "manager", "tester"]:
             if include_scope_creep:
-                return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate']
+                return self.new_stats['per_role'][role_name]['adjusted_points_non_management_core_rate']
             else:
-                return self.new_stats['per_role'][role_name]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
+                return self.new_stats['per_role'][role_name]['adjusted_points_non_management_core_rate_no_scope_creep']
 
         return None
 
@@ -1643,15 +1788,15 @@ class Project(BaseModel):
 
         stats_per_role = {}
         for mode in TIME_TRACKING_MODES:
-            stats_per_role[mode] = { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_adhoc_billable': 0,
-                                     'points_calculated_open_non_adhoc_billable_core_rate': 0,
+            stats_per_role[mode] = { 'hours':0, 'hours_billable':0, 'points_calculated_open_non_management_billable': 0,
+                                     'points_calculated_open_non_management_billable_core_rate': 0,
                                      'per_user': {},
                                      'average_rate': {},
                                      'hours_billable_core_rate': 0,
-                                     'adjusted_points_non_adhoc_core_rate': 0,
-                                     'adjusted_points_non_adhoc_core_rate_no_scope_creep': 0,
+                                     'adjusted_points_non_management_core_rate': 0,
+                                     'adjusted_points_non_management_core_rate_no_scope_creep': 0,
                                      'users_in_role': [],
-                                     'projected_billable': 0, 'points_estimated_open_non_adhoc_billable':0,
+                                     'projected_billable': 0, 'points_estimated_open_non_management_billable':0,
                                      'projected_estimated_billable':0,
                                      'adjusted_points_billable':0 }
 
@@ -1677,55 +1822,55 @@ class Project(BaseModel):
             issue_points_comparative = IssuePoints.objects.filter(issue__project=self, user=user).distinct()
 
             open_status_options = Issue.STATUSES_INDICATING_INCOMPLETE[rate.time_tracking_mode]
-            if rate.time_tracking_mode == 'developer':
-                exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
-            elif rate.time_tracking_mode == 'manager':
-                exclude_features_for_role = []
-            elif rate.time_tracking_mode == 'tester':
-                exclude_features_for_role = []
+            # if rate.time_tracking_mode == 'developer':
+            #     exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
+            # elif rate.time_tracking_mode == 'manager':
+            #     exclude_features_for_role = []
+            # elif rate.time_tracking_mode == 'tester':
+            #     exclude_features_for_role = []
 
-            stats_per_user[user]['points_non_adhoc'] = _get_total(issue_points.exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_non_management'] = _get_total(issue_points.exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
 
-            stats_per_user[user]['points_closed_non_adhoc'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
+            stats_per_user[user]['points_closed_non_management'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
                                                                          .exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_closed'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
                                                                .values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_open_non_adhoc'] = _get_total(issue_points.filter(issue__status2__name__in=open_status_options)\
+            stats_per_user[user]['points_open_non_management'] = _get_total(issue_points.filter(issue__status2__name__in=open_status_options)\
                                                                        .exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
 
-            stats_per_user[user]['adjusted_points_non_adhoc'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
-            stats_per_user[user]['adjusted_points_non_adhoc_no_scope_creep'] = (stats_per_user[user]['points_non_adhoc'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
+            stats_per_user[user]['adjusted_points_non_management'] = (stats_per_user[user]['points_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
+            stats_per_user[user]['adjusted_points_non_management_no_scope_creep'] = (stats_per_user[user]['points_non_management'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
 
-            stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
-            stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
+            stats_per_user[user]['adjusted_points_ctc'] = stats_per_user[user]['adjusted_points_non_management'] * float(stats_per_user[user]['rate'].amount)
+            stats_per_user[user]['adjusted_points_billable'] = stats_per_user[user]['adjusted_points_non_management'] * float(stats_per_user[user]['rate'].full_rate)
 
             stats_per_user[user]['unadjusted_points_billable_core_rate_no_scope_creep'] = \
-              (stats_per_user[user]['points_non_adhoc'] or 0) * \
+              (stats_per_user[user]['points_non_management'] or 0) * \
               (stats_per_user[user]['rate'].velocity or 0) * \
               float(stats_per_user[user]['rate'].billable_amount or 0)
 
             stats_per_user[user]['unadjusted_points_billable_core_rate'] = \
-              (stats_per_user[user]['points_non_adhoc'] or 0) * \
+              (stats_per_user[user]['points_non_management'] or 0) * \
               (stats_per_user[user]['rate'].full_velocity or 0) * \
               float(stats_per_user[user]['rate'].billable_amount or 0)
 
 
-            stats_per_user[user]['points_comparative_non_adhoc'] = _get_total(issue_points_comparative\
+            stats_per_user[user]['points_comparative_non_management'] = _get_total(issue_points_comparative\
                                                                               .exclude(issue__issue_type='adhoc').values('user')\
                                                                               .annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_closed_non_adhoc'] = _get_total(issue_points_comparative.exclude(issue__status2__name__in=open_status_options)\
+            stats_per_user[user]['points_comparative_closed_non_management'] = _get_total(issue_points_comparative.exclude(issue__status2__name__in=open_status_options)\
                                                                                      .exclude(issue__issue_type='adhoc')\
                                                                                      .values('user').annotate(total=Sum('points')))
-            stats_per_user[user]['points_comparative_open_non_adhoc'] = _get_total(issue_points_comparative\
+            stats_per_user[user]['points_comparative_open_non_management'] = _get_total(issue_points_comparative\
                                                                                    .filter(issue__status2__name__in=open_status_options)\
                                                                                    .exclude(issue__issue_type='adhoc')\
                                                                                    .values('user').annotate(total=Sum('points')))
 
-            stats_per_user[user]['adjusted_points_comparative_non_adhoc'] = (stats_per_user[user]['points_comparative_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
+            stats_per_user[user]['adjusted_points_comparative_non_management'] = (stats_per_user[user]['points_comparative_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
 
-            stats_per_user[user]['adjusted_points_comparative_ctc'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].amount)
-            stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_adhoc'] * float(stats_per_user[user]['rate'].full_rate)
+            stats_per_user[user]['adjusted_points_comparative_ctc'] = stats_per_user[user]['adjusted_points_comparative_non_management'] * float(stats_per_user[user]['rate'].amount)
+            stats_per_user[user]['adjusted_points_comparative_billable'] = stats_per_user[user]['adjusted_points_comparative_non_management'] * float(stats_per_user[user]['rate'].full_rate)
 
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
 
@@ -1749,28 +1894,28 @@ class Project(BaseModel):
             else:
                 stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_for_role']) or 0) / float((stats_per_user[user]['points_closed'] or 1))
             # if stats_per_user[user]['hours_closed_real']:
-            #     #stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_adhoc'] or 1))
+            #     #stats_per_user[user]['calculated_velocity'] = (float(stats_per_user[user]['hours_closed_real']) or 0) / float((stats_per_user[user]['points_closed_non_management'] or 1))
 
             # else:
             #     stats_per_user[user]['calculated_velocity'] = 1
             stats_per_user[user]['calculated_work_ratio'] = 1 # to be fixed (float(stats_per_user[user]['hours_adhoc']) or 0.0) / (float((stats_per_user[user]['hours'] or 1)))
 
-            stats_per_user[user]['points_calculated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
-            stats_per_user[user]['points_calculated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
-            stats_per_user[user]['points_calculated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
+            stats_per_user[user]['points_calculated_open_non_management'] = (stats_per_user[user]['points_open_non_management'] or 0) * (stats_per_user[user]['calculated_velocity'] or 1)
+            stats_per_user[user]['points_calculated_open_non_management_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_calculated_open_non_management'] or 0)
+            stats_per_user[user]['points_calculated_open_non_management_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_calculated_open_non_management'] or 0)
 
-            stats_per_user[user]['adjusted_points_non_adhoc_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_adhoc'] or 0)
-            stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_adhoc_no_scope_creep'] or 0)
-            stats_per_user[user]['points_calculated_open_non_adhoc_billable_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_adhoc'] or 0)
+            stats_per_user[user]['adjusted_points_non_management_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_management'] or 0)
+            stats_per_user[user]['adjusted_points_non_management_core_rate_no_scope_creep'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['adjusted_points_non_management_no_scope_creep'] or 0)
+            stats_per_user[user]['points_calculated_open_non_management_billable_core_rate'] = float(stats_per_user[user]['rate'].billable_amount) * (stats_per_user[user]['points_calculated_open_non_management'] or 0)
 
-            stats_per_user[user]['points_estimated_open_non_adhoc'] = (stats_per_user[user]['points_open_non_adhoc'] or 0) * (stats_per_user[user]['rate'].full_velocity or 1)
-            stats_per_user[user]['points_estimated_open_non_adhoc_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
-            stats_per_user[user]['points_estimated_open_non_adhoc_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_estimated_open_non_adhoc'] or 0)
+            stats_per_user[user]['points_estimated_open_non_management'] = (stats_per_user[user]['points_open_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 1)
+            stats_per_user[user]['points_estimated_open_non_management_ctc'] = float(stats_per_user[user]['rate'].amount) * (stats_per_user[user]['points_estimated_open_non_management'] or 0)
+            stats_per_user[user]['points_estimated_open_non_management_billable'] = float(stats_per_user[user]['rate'].full_rate) * (stats_per_user[user]['points_estimated_open_non_management'] or 0)
 
-            stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_adhoc'] or 0) / float(stats_per_user[user]['points_non_adhoc'] or 1) * 100
+            stats_per_user[user]['percentage_points_complete'] = float(stats_per_user[user]['points_closed_non_management'] or 0) / float(stats_per_user[user]['points_non_management'] or 1) * 100
 
-            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate']
-            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_adhoc_core_rate_no_scope_creep'] += stats_per_user[user]['adjusted_points_non_adhoc_core_rate_no_scope_creep']
+            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_management_core_rate'] += stats_per_user[user]['adjusted_points_non_management_core_rate']
+            stats_per_role[rate.time_tracking_mode]['adjusted_points_non_management_core_rate_no_scope_creep'] += stats_per_user[user]['adjusted_points_non_management_core_rate_no_scope_creep']
             stats_per_role[rate.time_tracking_mode]['users_in_role'].append(user)
 
         for user in users:
@@ -1794,8 +1939,8 @@ class Project(BaseModel):
 
         total_stats['points_billable'] = sum(stats_per_user[x]['adjusted_points_billable'] or 0 for x in users)
         total_stats['points_comparative_billable'] = sum(stats_per_user[x]['adjusted_points_comparative_billable'] or 0 for x in users)
-        total_stats['points_non_adhoc'] = sum(stats_per_user[x]['points_non_adhoc'] or 0 for x in users)
-        total_stats['points_closed_non_adhoc'] = sum(stats_per_user[x]['points_closed_non_adhoc'] or 0 for x in users)
+        total_stats['points_non_management'] = sum(stats_per_user[x]['points_non_management'] or 0 for x in users)
+        total_stats['points_closed_non_management'] = sum(stats_per_user[x]['points_closed_non_management'] or 0 for x in users)
         total_stats['hours'] = sum(stats_per_user[x]['hours'] or 0 for x in users)
         total_stats['hours_real'] = sum(stats_per_user[x]['hours_real'] or 0 for x in users)
         total_stats['hours_closed_real'] = sum(stats_per_user[x]['hours_closed_real'] or 0 for x in users)
@@ -1811,29 +1956,29 @@ class Project(BaseModel):
         total_stats['hours_billable_with_scope_creep'] = float(total_stats['points_billable'])
         total_stats['scope_creep_percentage'] = self.ratio_scope_creep*100
         total_stats['hours_adhoc_billable'] = sum(stats_per_user[x]['hours_adhoc_billable'] or 0 for x in users)
-        total_stats['points_calculated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_ctc'] or 0 for x in users)
-        total_stats['points_calculated_open_non_adhoc_billable'] = sum(stats_per_user[x]['points_calculated_open_non_adhoc_billable'] or 0 for x in users)
-        total_stats['points_estimated_open_non_adhoc_ctc'] = sum(stats_per_user[x]['points_estimated_open_non_adhoc_ctc'] or 0 for x in users)
-        total_stats['points_estimated_open_non_adhoc_billable'] = sum(stats_per_user[x]['points_estimated_open_non_adhoc_billable'] or 0 for x in users)
+        total_stats['points_calculated_open_non_management_ctc'] = sum(stats_per_user[x]['points_calculated_open_non_management_ctc'] or 0 for x in users)
+        total_stats['points_calculated_open_non_management_billable'] = sum(stats_per_user[x]['points_calculated_open_non_management_billable'] or 0 for x in users)
+        total_stats['points_estimated_open_non_management_ctc'] = sum(stats_per_user[x]['points_estimated_open_non_management_ctc'] or 0 for x in users)
+        total_stats['points_estimated_open_non_management_billable'] = sum(stats_per_user[x]['points_estimated_open_non_management_billable'] or 0 for x in users)
         total_stats['unadjusted_points_billable_core_rate'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate'] or 0 for x in users)
         total_stats['unadjusted_points_billable_core_rate_no_scope_creep'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate_no_scope_creep'] or 0 for x in users)
 
 
-        total_stats['percentage_points_complete'] = (total_stats['points_closed_non_adhoc'] or 0) / (total_stats['points_non_adhoc'] or 1) * 100
+        total_stats['percentage_points_complete'] = (total_stats['points_closed_non_management'] or 0) / (total_stats['points_non_management'] or 1) * 100
 
 
-        total_stats['projected_total_billable_no_more_adhoc'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_total_billable_no_more_adhoc'] = float(total_stats['points_calculated_open_non_management_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_total_billable_no_more_adhoc_with_scope_creep'] = float(total_stats['projected_total_billable_no_more_adhoc'])
 
         total_stats['projected_adhoc_billable'] = 1/(total_stats['percentage_points_complete']/100 or 1) * (float(total_stats['hours_adhoc_billable'] or 0)) - (float(total_stats['hours_adhoc_billable'] or 0))
-        total_stats['projected_total_billable'] = float(total_stats['points_calculated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_total_billable'] = float(total_stats['points_calculated_open_non_management_billable']) + float(total_stats['hours_billable'])
         total_stats['projected_total_billable_with_scope_creep'] = total_stats['projected_total_billable']
 
-        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
-        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_adhoc_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_management_billable']) + float(total_stats['hours_billable'])
+        total_stats['projected_estimated_total_billable'] = float(total_stats['points_estimated_open_non_management_billable']) + float(total_stats['hours_billable'])
 
-        total_stats['management_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_management
-        total_stats['testing_points_non_adhoc'] = total_stats['points_non_adhoc'] * self.ratio_testing
+        total_stats['management_points_non_management'] = total_stats['points_non_management'] * self.ratio_management
+        total_stats['testing_points_non_management'] = total_stats['points_non_management'] * self.ratio_testing
 
         total_stats['total_quote_cost'] = float(total_stats['hours_billable_with_scope_creep'])
 
@@ -1867,6 +2012,7 @@ class Project(BaseModel):
             json_stats['spendable_budget_msg'] = 'This is more than the spendable budget'
 
         json_stats['spent'] = int(round(total['hours_billable_core_rate'] or 0))
+        json_stats['progress_against_budget'] = (float(total['hours_billable_core_rate'] or 0) / float(self.budget)) if self.budget else 0
 
         if self.has_budget and self.stats['amount_under_budget'] > 0:
             json_stats['budget_status'] = 'R%s under budget' %(round(self.stats['amount_under_budget'] or 0, 2))
@@ -1902,6 +2048,11 @@ class Project(BaseModel):
                 json_stats['per_role'][role_name]['per_user'][user.pk]\
                     = int(round(user_data['hours_billable_core_rate'] or 0))
 
+        json_stats['per_user'] = dict( [(user.id, d) for user, d in stats['per_user'].items()] )
+        for u in json_stats['per_user'].values():
+            u['time_tracking_mode'] = u['rate'].time_tracking_mode
+            del u['rate']
+        
         return json_stats
 
     def cache_stats(self, start=None, end=None, issues=None):
@@ -2992,9 +3143,9 @@ class Entry(BaseModel):
 
         if self.source != 'emacs':
             if was_created:
-                RefreshNotifier().notify_model_create(self)
+                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.project_id]})
             else:
-                RefreshNotifier().notify_model_update(self)
+                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.project_id]})
 
     def delete(self, *args, **kwargs):
         if self.source != 'emacs':
@@ -3730,6 +3881,7 @@ class Rate(BaseModel):
             This is mainly for serialization, you wouldn't expect to save this object now """
         self.billable_amount = None
         self.amount = None
+        
     @classmethod
     def full_rate_for_project(self, user_id, project_id):
         rate = self.objects.filter(user_id=user_id, project_id=project_id).first()
@@ -3898,34 +4050,49 @@ class IssueQuerySet(QuerySet):
 class Issue(BaseModel):
 
     ISSUE_STATUS_CHOICES = (
-           ('new', 'new'),
-           ('dev_done', 'dev done'),
-           ('in_internal_qa', 'internal qa'),
-           ('internal_qa_passed', 'internal qa passed'),
-           ('in_client_qa', 'external qa'),
-           ('client_qa_passed', 'external qa passed'),
-           ('reopened', 'reopened'),
-           ('onhold', 'on hold'),
-           ('bug', 'bug'),
-           ('to be estimated', 'to be estimated'),
-           ('needscodereview', 'needs code review'),
-           ("cannot reproduce", "cannot reproduce"),
-           ("discuss with client", "discuss with client"),
-           ('dev unclear', 'dev unclear'),
-           ('duplicate', 'duplicate'),
-           ('to be designed', 'to be designed'),
-           ('imported', 'imported'),
-           ('management', 'management'),
-           ('quick_clocker', 'quick clocker')
-        )
+        ('new', 'new'),
+        ('dev_done', 'dev done'),
+        ('in_internal_qa', 'internal qa'),
+        ('internal_qa_passed', 'internal qa passed'),
+        ('in_client_qa', 'external qa'),
+        ('client_qa_passed', 'external qa passed'),
+        ('reopened', 'reopened'),
+        ('onhold', 'on hold'),
+        ('blocked', 'blocked'),
+        ('waiting', 'waiting'),
+        ('bug', 'bug'),
+        ('to be estimated', 'to be estimated'),
+        ('needscodereview', 'needs code review'),
+        ("cannot reproduce", "cannot reproduce"),
+        ("discuss with client", "discuss with client"),
+        ('dev unclear', 'dev unclear'),
+        ('duplicate', 'duplicate'),
+        ('to be designed', 'to be designed'),
+        ('imported', 'imported'),
+        ('management', 'management'),
+        ('quick_clocker', 'quick clocker'),
+    )
  
     STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear', 'discuss_with_client', 'needscodereview'],
                                        'manager': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
 
-    ISSUE_TYPES = ( ('issue', 'Issue'), ('adhoc', 'Adhoc'), ('correspondence', 'Correspondence'), ('minutes', 'Minutes') )
-    TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
+    STATUSES_INDICATING_MANAGER_ATTENTION = [ 'blocked', 'waiting', 'to be designed', 'cannot reproduce' ]
     
+    ISSUE_TYPES = ( ('issue', 'Issue'),
+                    ('adhoc', 'Adhoc'),
+                    ('management-general', 'General management'),
+                    ('management-meeting', 'Create issues for speccing and scoping'),
+                    ('management-spec', 'Create issues for speccing and scoping'),
+                    ('management-finance', 'Performing recons and finance tasks'),
+                    ('management-assign', 'Assign issues'),
+                    ('management-estimate', 'Estimate issues'),
+                    ('management-testables', 'Create testables'),
+                    ('correspondence', 'Correspondence'),
+                    ('minutes', 'Minutes')
+    )
+    TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
+
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
     project = models.ForeignKey(Project, related_name='issues')
@@ -3943,7 +4110,7 @@ class Issue(BaseModel):
     modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField(default=None, null=True, blank=True)
     auto_created_during_import = models.BooleanField(default=False)
-    issue_type = models.CharField(max_length=20, choices=ISSUE_TYPES, default='issue', null=False)
+    issue_type = models.CharField(max_length=50, choices=ISSUE_TYPES, default='issue', null=False)
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
 
@@ -3953,6 +4120,8 @@ class Issue(BaseModel):
 
     share_ref = models.CharField(max_length=40, null=True)
     share_ref_created_at = models.DateTimeField(null=True)
+
+    risky = models.BooleanField(default=False)
 
     objects = IssueQuerySet().as_manager()
 
@@ -4348,6 +4517,19 @@ class ProjectIssueOrder(BaseModel):
                                 .aggregate(max_order=Max('order'))['max_order'] or 0
         return max_order + self.INCREMENT
 
+    @classmethod
+    def get_previous_issue(self, issue):
+        issue_order = ProjectIssueOrder.objects.filter(issue=issue).values("order").first()
+        if issue_order is None:
+            return None
+        previous = ProjectIssueOrder.objects.filter(project=issue.project_id,
+                                                    order__lt=issue_order['order'])\
+                                            .values("issue")\
+                                            .order_by("-order").first()
+        if previous is None:
+            return None
+        return previous['issue']
+        
 
 class IssueAttachment(BaseModel):
     issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
@@ -4398,11 +4580,13 @@ class IssuePoints(BaseModel):
 class IssueHistory(BaseModel):
 
     issue_id = models.IntegerField(blank=False, null=False, db_index=True)
+    original_issue = models.ForeignKey(Issue, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
     created_by = models.ForeignKey(User, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
     after = models.TextField(blank=True, null=True)
+    money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
 
     @classmethod
     def add_history(self, user, issue, description, before, after):
@@ -4471,6 +4655,8 @@ class CalendarEvent(BaseModel):
                     ('deadline', 'Deadline') )
     EVENT_STATUSES = ( ('ready', 'Ready'), ('done', 'Done'), ('cancelled', 'Cancelled'), ("CONFIRMED", "Confirmed"), ("UNKNOWN", "UNKNOWN") )
 
+    NON_WORKING_EVENT_TYPES = ["sickday", "leave", "office_closed"]
+
     user = models.ForeignKey(User, blank=False, null=False, db_index=True)
     business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
     start = models.DateTimeField(blank=False,null=False, db_index=True)
@@ -4518,6 +4704,27 @@ class CalendarEvent(BaseModel):
                     users.add(user)
         return users
 
+    @classmethod
+    def num_non_working_days_in_range(self, user, date_from_inclusive, date_to_inclusive):
+
+        weekends = [ x.date() for x in date_helper.daterange(date_from_inclusive, date_to_inclusive)
+                          if calendar.weekday(year=x.year, month=x.month, day=x.day)>=5 ]
+        
+        holidays_in_range = Holiday.holidays_in_range(date_from_inclusive, date_to_inclusive)\
+                            .exclude(applies_on__in=weekends)
+        events = self.objects.filter(user=user,
+                                     start__gte=date_from_inclusive,
+                                     start__lte=date_to_inclusive,
+                                     event_type__in=self.NON_WORKING_EVENT_TYPES)\
+                             .exclude(start__in=holidays_in_range.values_list("applies_on", flat=True))\
+                             .exclude(start__date__in=weekends)
+
+        num_events = events.count()
+        num_holidays = holidays_in_range.count()
+
+        return num_events + num_holidays + len(weekends)
+                             
+    
     @property
     def end(self):
         return self.start + datetime.timedelta(hours=float(self.hours))
@@ -4757,6 +4964,11 @@ class Holiday(BaseModel):
         return d.weekday() in [5,6] or self.objects.filter(applies_on=d).count() > 0
 
     @classmethod
+    def holidays_in_range(self, date_from_inclusive, date_to_inclusive):
+        return Holiday.objects.filter(applies_on__gte=date_from_inclusive,
+                                      applies_on__lte=date_to_inclusive)
+    
+    @classmethod
     def business_days_in_range(self, date_from_inclusive, date_to_inclusive):
         holiday_dates = Holiday.objects.filter(applies_on__gte=date_from_inclusive,
                                                applies_on__lte=date_to_inclusive)\
@@ -4885,6 +5097,14 @@ class ProjectReview(BaseModel):
     class Meta:
         unique_together = (('project', 'review_by'),)
 
+    @classmethod
+    def filter_has_an_issue_due_for_review(self, project_qs):
+        now = timezone.now()
+        project_qs = project_qs.filter(reviews__must_always_review=True,
+                                       issues__reviews__last_reviewed_at__lt=now-timedelta(days=1)*F('reviews__review_cycle_days'))\
+                               .distinct()
+        return project_qs
+        
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectReview, self).save(*args, **kwargs)

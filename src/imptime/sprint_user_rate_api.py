@@ -36,10 +36,12 @@ class SprintUserRateViewSet(BaseViewSet):
                 can_view_billable_amount = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_ctc_billable_rates
                 can_view_velocity = self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_velocity
                 can_view_time_tracking_mode = can_view_velocity
+                can_view_commission = can_view_billable_amount and self.logged_in_permissions(project) is not None and self.logged_in_permissions(project).can_view_budget
             else:
                 can_view_billable_amount = False
                 can_view_velocity = False
                 can_view_time_tracking_mode = can_view_velocity
+                can_view_commission = False
 
             if 'sprint_id' in filter_args and 'user_id' in filter_args and surs.count() == 0:
                 # We return an empty sprint rate so that the caller can tell what's going on.
@@ -59,7 +61,8 @@ class SprintUserRateViewSet(BaseViewSet):
                 s = SprintUserRateSerializer(surs, many=True,
                                              can_view_billable_amount=can_view_billable_amount,
                                              can_view_velocity=can_view_velocity,
-                                             can_view_time_tracking_mode = can_view_time_tracking_mode)
+                                             can_view_time_tracking_mode = can_view_time_tracking_mode,
+                                             can_view_commission = can_view_commission)
                 surs_data = s.data
                 context['sprint_user_rates'] = surs_data
             context['pagination'] = pagination
@@ -92,10 +95,16 @@ class SprintUserRateViewSet(BaseViewSet):
                     rate = Rate.objects.get_or_create(user=user, project=sprint)[0] #sic
 
                     if 'billable_amount' in rate_values and can_edit_billable_amount:
-                        rate.billable_amount = float(rate_values['billable_amount'])
+                        try:
+                            rate.billable_amount = float(rate_values['billable_amount'])
+                        except ValueError:
+                            rate.billable_amount = 0
                         rate.save()
                     if 'velocity' in rate_values and can_edit_velocity:
-                        rate.velocity = float(rate_values['velocity'])
+                        try:
+                            rate.velocity = float(rate_values['velocity'])
+                        except ValueError:
+                            rate.velocity = 0
                         rate.save()
                     if 'time_tracking_mode' in rate_values and can_edit_time_tracking_mode:
                         rate.time_tracking_mode = rate_values['time_tracking_mode']
@@ -121,6 +130,14 @@ class SprintUserRateViewSet(BaseViewSet):
                 sprint_ids.append(sprint_id)
                 user_ids.append(user_id)
             filter_args['sprint_id__in'] = sprint_ids
+            filter_args['user_id__in'] = user_ids
+            
+        sprint_ids = filter_args.pop('sprint_ids', [])
+        if len(sprint_ids)>0:
+            filter_args['sprint_id__in'] = sprint_ids
+
+        user_ids = filter_args.pop('user_ids', [])
+        if len(user_ids)>0:
             filter_args['user_id__in'] = user_ids
             
         return super(SprintUserRateViewSet, self).apply_filter(qs, filter_args)

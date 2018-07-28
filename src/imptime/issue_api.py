@@ -261,7 +261,11 @@ class IssueViewSet(BaseViewSet):
                                                 .order_by_project_id(project_id=sprint_id, descending=True) #sic
                     for child_issue in child_issues:
                         SprintIssueOrder.insert_after(child_issue, set_after_this_issue=feature_issue)
-                else:
+                elif field_name == "risky":
+                    old_value = issue.risky
+                    issue.risky = (new_value == 1)
+                    IssueHistory.add_history(request.user, issue, "changed risky", old_value, new_value)
+                else: 
                     raise Exception("Unsupported field name: %s" % field_name)
                 issue.save()
 
@@ -286,7 +290,7 @@ class IssueViewSet(BaseViewSet):
             issue_id_before = params.get('issue_id_before', None)
 
             sprint = self.allowed_sprint(sprint_id)
-            if not self.logged_in_permissions(sprint.business).has_edit_issues:
+            if not self.logged_in_permissions(sprint.business).has_add_issue:
                 raise Exception('Permission denied to create issues')
 
             def create_issue():

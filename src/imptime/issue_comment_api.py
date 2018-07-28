@@ -40,7 +40,7 @@ class IssueCommentViewSet(BaseViewSet):
             issue.save()
 
             IssueHistory.add_history(request.user, issue,
-                                     "added comment %s" % comment.id, "", comment.comment)
+                                     "added comment", "", comment.comment)
             data = {'status': 'success'}
 
         except Exception, ex:
@@ -64,7 +64,7 @@ class IssueCommentViewSet(BaseViewSet):
             comment.enriched_comment = MarkdownEnrichment(request.user).enrich(comment.comment,
                                                                                project_id=issue.project.business_id) #sic
             
-            IssueHistory.add_history(request.user, issue, "edited comment %s" % comment_id,
+            IssueHistory.add_history(request.user, issue, "edited comment",
                                      old_comment_value, comment.comment)
 
             comment.save()
@@ -84,7 +84,7 @@ class IssueCommentViewSet(BaseViewSet):
             comment_id = params['comment_id']
             issue = self.allowed_issue(issue_pk)
             comment = IssueComment.objects.filter(issue=issue).get(pk=comment_id)
-            IssueHistory.add_history(request.user, issue, "deleted comment %s" % comment.id, comment.comment, "")
+            IssueHistory.add_history(request.user, issue, "deleted comment", comment.comment, "")
             comment.delete()
             issue.save()
 

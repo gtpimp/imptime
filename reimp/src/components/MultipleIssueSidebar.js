@@ -10,6 +10,7 @@ import EditableIssueStatus from '../components/EditableIssueStatus'
 import EditableIssueType from '../components/EditableIssueType'
 import EditableIssueParent from './EditableIssueParent'
 import MultipleIssueSummary from './MultipleIssueSummary'
+import EditableIssueRisky from './EditableIssueRisky'
 import TagListFlat from './TagListFlat'
 import {
     ensureIssuesLoaded,
@@ -102,6 +103,15 @@ class MultipleIssueSidebar extends Component {
                     </div>
                   </div>
 
+                  <div className="property-row">
+                    <div className="property-label">
+                      Risky
+                    </div>
+                    <div className="property-value">
+                      <EditableIssueRisky issue_ids={issue_ids} project_id={project_id}/>
+                    </div>
+                  </div>
+                  
                   <div className="property-row">
                     <div className="property-label">
                       Assigned user

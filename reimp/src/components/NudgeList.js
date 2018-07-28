@@ -28,6 +28,7 @@ import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
 import DivTable from './DivTable'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
+import Pagination from '../components/Pagination'
 
 class NudgeList extends Component {
 
@@ -35,6 +36,7 @@ class NudgeList extends Component {
         super(props)
         this.onChangeNudgeSelection = this.onChangeNudgeSelection.bind(this)
         this.reorderNudge = this.reorderNudge.bind(this)
+        this.onChangePage = this.onChangePage.bind(this)
     }
     
     componentDidMount() {
@@ -57,6 +59,12 @@ class NudgeList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
+    onChangePage() {
+        const { dispatch, list_key } = this.props
+	dispatch(invalidateList(list_key))
+	dispatch(fetchNudgesIfNeeded(list_key))
+    }
+    
     onChangeNudgeSelection(nudge, selected) {
         const { dispatch, list_key, onSelect } = this.props
         dispatch(unselectAllItems(list_key))
@@ -95,7 +103,7 @@ class NudgeList extends Component {
 
     render() {
 
-        const { nudge_ids, is_loading, header_list, selected_item_ids, onShowMoreIssues } = this.props
+        const { list_key, nudge_ids, is_loading, header_list, selected_item_ids, onShowMoreIssues } = this.props
         const that = this
 
         if ( (is_loading && !nudge_ids && nudge_ids.length) === 0 ) {
@@ -118,6 +126,9 @@ class NudgeList extends Component {
                                         updateMienHeaders={updateNudgeMienHeaders}
                                         header_list_name="nudge"
             >
+              <Pagination list_key={list_key}
+                          on_changed={this.onChangePage} />
+              
               <DivTable header_list={header_list}
                         onReorder={that.reorderNudge}
               >

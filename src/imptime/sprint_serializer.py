@@ -24,14 +24,20 @@ class SprintSerializer(BaseSerializer):
     created = serializers.DateTimeField()
     num_issues = serializers.IntegerField()
     num_testable_issues = serializers.IntegerField()
+    num_missing_testable_issues = serializers.IntegerField()
+    num_issues_missing_estimates = serializers.IntegerField()
+    num_adhoc_issues = serializers.IntegerField()
     num_issues_unassigned = serializers.IntegerField()
     num_issues_with_estimates = serializers.IntegerField()
     num_open_issues_with_estimates = serializers.IntegerField()
     num_completely_closed_issues = serializers.IntegerField()
     num_dev_closed_issues = serializers.IntegerField()
+    num_management_alert_issues = serializers.IntegerField()
+    num_open_risky_issues = serializers.IntegerField()
     estimated_hours_by_assignee = serializers.FloatField()
     estimated_open_hours_by_assignee = serializers.FloatField()
     sprint_type = serializers.CharField(source="project_type")
+    sprint_type_is_clockable = serializers.BooleanField()
     sprint_template_id = serializers.CharField(source="cloned_from_sprint_id")
     sprint_clone_ids = serializers.ListField(child=serializers.CharField())
     deadline_ids = serializers.ListField(child=serializers.CharField(), source="ordered_deadline_ids")
@@ -71,6 +77,11 @@ class SprintSerializer(BaseSerializer):
         sprint.num_completely_closed_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_completely_closed_issues', 0)
         sprint.num_dev_closed_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_dev_closed_issues', 0)
         sprint.num_testable_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_testable_issues', 0)
+        sprint.num_missing_testable_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_missing_testable_issues', 0)
+        sprint.num_issues_missing_estimates = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_missing_estimates', 0)
+        sprint.num_adhoc_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_adhoc_issues', 0)
+        sprint.num_management_alert_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_management_alert_issues', 0)
+        sprint.num_open_risky_issues = self.estimates_by_sprint_id.get(sprint.id, {}).get('num_open_risky_issues', 0)
 
         sprint_template = sprint.parent_sprint_templates.all().first()
         if sprint_template:
@@ -78,6 +89,8 @@ class SprintSerializer(BaseSerializer):
         else:
             sprint.cloned_from_sprint_id = None
 
+        sprint.sprint_type_is_clockable = sprint.project_type in sprint.CLOCKABLE_PROJECT_TYPES
+            
         sprint.sprint_clone_ids = SprintTemplate.objects.filter(sprint=sprint).values_list('clones__id', flat=True)
         sprint.ordered_deadline_ids = sprint.deadlines.order_by("deadline").values_list('id', flat=True)
         sprint.review_ids = [x.id for x in sprint.reviews.all()]

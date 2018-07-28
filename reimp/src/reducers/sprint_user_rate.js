@@ -12,6 +12,7 @@ import {
     ANNOUNCE_LOADING_SURS,
     INVALIDATE_SURS,
     INVALIDATE_ALL_SURS,
+    INVALIDATE_SURS_FOR_SPRINT,
     INVALIDATE_SUR_FOR_SPRINT_AND_USER
 } from '../actions/SprintUserRates.js'
 
@@ -29,6 +30,8 @@ export default function sprint_user_rate(state = initialState, action) {
 
     let state_copy = Object.assign({}, state)
     let ids
+    let surs
+    let surs_ids_to_invalidate
     
     switch (action.type) {
 	case INVALIDATE_ALL_SURS:
@@ -41,11 +44,16 @@ export default function sprint_user_rate(state = initialState, action) {
             ids = stringifyIds(action.sur_ids_to_invalidate)
             return Object.assign({}, state,
                                  {invalidated_item_ids: union(state.invalidated_item_ids, ids)})
-                                 
+
+        case INVALIDATE_SURS_FOR_SPRINT:
+            surs = get(state, 'items_by_id')
+            surs_ids_to_invalidate = stringifyIds(keys(keyBy(filter(surs, (sur) => ""+sur.sprint_id===""+action.sprint_id), "id")))
+            return Object.assign({}, state,
+                                 {invalidated_item_ids: union(state.invalidated_item_ids, surs_ids_to_invalidate)})
 
         case INVALIDATE_SUR_FOR_SPRINT_AND_USER:
-            const surs = get(state, 'items_by_id')
-            const surs_ids_to_invalidate = stringifyIds(keys(keyBy(filter(surs, (sur) => sur.sprint_id===action.sprint_id && sur.user_id===action.user_id), "id")))
+            surs = get(state, 'items_by_id')
+            surs_ids_to_invalidate = stringifyIds(keys(keyBy(filter(surs, (sur) => ""+sur.sprint_id===""+action.sprint_id && ""+sur.user_id===""+action.user_id), "id")))
             return Object.assign({}, state,
                                  {invalidated_item_ids: union(state.invalidated_item_ids, surs_ids_to_invalidate)})
             

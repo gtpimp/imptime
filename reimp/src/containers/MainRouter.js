@@ -13,6 +13,7 @@ import PasswordChangedPage from './PasswordChangedPage'
 import DashboardPage from './DashboardPage'
 import ForgotPasswordPage from './ForgotPasswordPage'
 import IssuesPage from './IssuesPage'
+import IssueHistoryPage from './IssueHistoryPage'
 import InvoicesPage from './InvoicesPage'
 import PasswordReminderSentPage from './PasswordReminderSentPage'
 import ProjectDashboardPage from './ProjectDashboardPage'
@@ -73,6 +74,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/rates" component={SprintRatePage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/history" component={IssueHistoryPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" component={VisualSpecDocumentPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>

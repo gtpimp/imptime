@@ -5,9 +5,6 @@ import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {
-    isLoadingCostSummary,
-} from '../actions/CostSummary'
-import {
     isLoadingTimeSummary,
 } from '../actions/TimeSummary'
 import {
@@ -153,7 +150,7 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project_id = props.match.params.projectId
     const project = getProject(state, project_id) || {}
-    const is_loading = isLoadingCostSummary(state, sprint_id) || isLoadingTimeSummary(state, sprint_id)
+    const is_loading = isLoadingTimeSummary(state, sprint_id)
     const project_statement = getProjectStatement(state, project_id)
     const filter = { sprint_ids: [sprint_id] }
     

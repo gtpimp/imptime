@@ -27,7 +27,7 @@ class CompanyProblemViewSet(BaseViewSet):
             format_args = params.get('format', {})
             ordering = params.get('ordering', {})
 
-            company_problems = self.allowed_company_problems().order_by("created")
+            company_problems = self.allowed_company_problems().order_by("sprint__business_id", "sprint_id", "problem_type")
             company_problems = self._filter_important_problems(company_problems)
             company_problems = self.apply_filter(qs=company_problems, raw_filter_args=filter_args)
             company_problems = self.apply_ordering(qs=company_problems, ordering=ordering)
@@ -56,7 +56,7 @@ class CompanyProblemViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def _filter_important_problems(self, company_problems):
-        return company_problems.filter(problem_type__in=['missing_rate'])
+        return company_problems
     
     def update(self, request, pk):
         try:

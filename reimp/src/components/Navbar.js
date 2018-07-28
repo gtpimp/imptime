@@ -4,6 +4,10 @@ import {withRouter} from 'react-router-dom'
 import {Link} from 'react-router-dom'
 import SearchBox from '../components/SearchBox'
 import AutoClockPopup from '../components/auto_clock/AutoClockPopup'
+import {logged_in_user} from '../actions/Auth'
+import { getLoggedInUser } from '../actions/Users'
+import classNames from 'classnames'
+import '../sass/navbar.css'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
@@ -59,7 +63,8 @@ class Navbar extends Component {
 
     render() {
 
-        const {is_loading, is_saving, is_websockets_connected} = this.props
+        const {  is_loading, is_saving, is_websockets_connected,
+                 username, has_edit_release_notes_permission, default_schedule_id  } = this.props
         const user_initiated_network_activity = is_loading || is_saving
         
         return (
@@ -74,6 +79,8 @@ class Navbar extends Component {
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar" >
                   <GlamLink to='/calendar'>My calendar</GlamLink>
+                  <GlamLink to={'/schedule/'+default_schedule_id}>Nudge</Link>
+                  <GlamLink to='/calendar'>My calendar</Link>
                   <GlamLink to='/schedule'>All calendars</GlamLink>
                 </NavTab>               
                 <NavTab variant="dashboard-toggle" label="Company" >
@@ -99,11 +106,16 @@ class Navbar extends Component {
 function mapStateToProps(state, props) {
     const loading = state.loading
     const websockets = state.websockets || {}
+    const has_edit_release_notes_permission = can_create_release_notes(state)
+    const default_schedule_id = (getLoggedInUser(state) || {}).default_schedule_id
     
     return {
         is_loading: loading.is_loading,
         is_saving: loading.is_saving,
-        is_websockets_connected: websockets.isConnected
+        is_websockets_connected: websockets.isConnected,
+        username: logged_in_user(state).username,
+        has_edit_release_notes_permission,
+        default_schedule_id
     }
 }
 

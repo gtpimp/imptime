@@ -21,6 +21,7 @@ import {
     getSavingItemIds,
     getLoadingItemIds
 } from '../actions/Item'
+import { has_permission } from './Users'
 import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
 export const SET_MIEN_BUTTON = 'SET_MIEN_BUTTON'
@@ -30,6 +31,12 @@ export const STOP_MIEN_CONFIGURER = 'STOP_MIEN_CONFIGURER'
 
 const DEFAULT_MIEN_FEATURES = [ "emacs", "issue_estimates", "issue_reviews", "review_schedule", "deadlines", "costs" ]
 
+export function showMoney(state, project_id) {
+    // Because money comes up a lot, this is a helper function.
+    // If this function returns True, it's absolutely ok to show money.
+    // If this function returns False, do not under any circumstances show money.
+    return doesMienHaveFeature(state, 'costs') && project_id && has_permission(state, project_id, 'has_view_ctc_billable_rates')
+}
 
 export function getCurrentMien(state) {
     const mien_id = getCurrentMienId(state)

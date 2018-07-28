@@ -12,7 +12,6 @@ import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
 import { updateSettings, isConfigured } from '../actions/Settings'
 import { ensureUsersLoaded } from '../actions/Users'
 import FloatingPlanningCalendar from '../components/FloatingPlanningCalendar'
-import ReactTooltip from 'react-tooltip'
 import Error from '../components/Error'
 import Maintenance from '../components/Maintenance'
 import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
@@ -122,7 +121,6 @@ class MainLayout extends Component {
               <div className="main-layout__panel  main-layout__middle">
                 <div className="main-layout__scroll-container">
                   <MainRouter />
-                  <ReactTooltip place="bottom" type="info" />
                 </div>
               </div>
               <div className="main-layout__panel main-layout__footer">

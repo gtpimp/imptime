@@ -51,7 +51,7 @@ class AutoClockPopup extends Component {
                                   issue_id={available_issue_id}
                                   onSubmitted={this.onClockIn}
               />
-              
+               
             </div>
         )
     }

@@ -44,6 +44,8 @@ class IssueSerializer(BaseSerializer):
     group_children = ListField(source="group_children_ids")
     comments = IssueCommentSerializer(many=True)
     testables = TestableSerializer(many=True, source="testables_in_order")
+    needs_testables = serializers.BooleanField()
+    needs_estimate = serializers.BooleanField()
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
     visual_spec_annotation_ids_by_doc_id = serializers.DictField(child=ListField(child=serializers.IntegerField()))
@@ -53,6 +55,7 @@ class IssueSerializer(BaseSerializer):
     review_ids = serializers.ListField(child=serializers.CharField())
     share_ref = serializers.CharField()
     has_attachment = serializers.SerializerMethodField()
+    risky = serializers.BooleanField()
 
     def get_has_attachment(self, issue):
         if len(issue.visual_spec_document_ids) > 0:
@@ -77,7 +80,8 @@ class IssueSerializer(BaseSerializer):
         issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
-            
+
+        issue.needs_testables = issue.issue_type in issue.TESTABLE_ISSUE_TYPES
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
         issue.visual_spec_document_ids = VisualSpecDocument.objects.filter(visual_spec_issues__issue=issue)\
                                                                    .order_by("visual_spec_issues__order")\
@@ -98,7 +102,10 @@ class IssueSerializer(BaseSerializer):
             for entry in issue.all_entries:
                 all_actuals.setdefault(entry.user_id, {'user_id':entry.user_id}).setdefault('hours', 0)
                 all_actuals[entry.user_id]['hours'] += entry.hours
+                
             issue.all_actuals = all_actuals.values()
+
+        issue.needs_estimate = len([x for x in (issue.all_estimates or []) if x.user_id==issue.assigned_to_id]) == 0
 
         if not bp.has_share_issues:
             issue.share_ref = None

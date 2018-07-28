@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { keys, keyBy, map, includes, flatMap } from 'lodash'
+import { size, keys, keyBy, map, includes, flatMap } from 'lodash'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { ENTITY_KEY__ISSUE, getCellStyle } from '../actions/ItemListKeyRegistry'
@@ -34,6 +34,7 @@ import ElapsedTime from '../components/ElapsedTime'
 import DeleteIssue from '../components/DeleteIssue'
 import TagListFlat from '../components/TagListFlat'
 import Timestamp from './Timestamp'
+import Floater from "react-floater"
 import { logged_in_user } from '../actions/Auth'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
@@ -288,6 +289,51 @@ class Issue extends Component {
                                           issue.has_attachment && <AttachmentIconDiv></AttachmentIconDiv>
                                       }
                                     </TableCellDiv>
+                                )
+                            case "problems":
+                                const issue_has_problems = (issue.needs_testables && (size(issue.testables) === 0 ||
+                                                                                      issue.needs_estimate ||
+                                                                                      issue.assigned_to_id === null))
+                                return (
+                                    <div className="div-table__cell" key={header_key}
+                                         style={getCellStyle(header)} >
+                                      { issue_has_problems && (
+                                            <Floater
+                                                title="Issue problems"
+                                                disableHoverToClick
+                                                event="hover"
+                                                eventDelay={0}
+                                                placement="right"
+                                                content={
+                                                    <div>
+                                                        { size(issue.testables) === 0 &&
+                                                        <div className="floater__section">
+                                                          <div>
+                                                            This issue is missing testables and should not be worked on yet.
+                                                          </div>
+                                                        </div>
+                                                      }
+                                                      { issue.assigned_to_id === null &&
+                                                        <div className="floater__section">
+                                                          <div>
+                                                            This issue has no assigned user.
+                                                          </div>
+                                                        </div>
+                                                      }
+                                                      { issue.assigned_to_id !== null && issue.needs_estimate &&
+                                                        <div className="floater__section">
+                                                          <div>
+                                                            This issue is missing an estimate by the assigned user and should not be worked on yet.
+                                                          </div>
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                }
+                                            >
+                                                      <div className="icon icon--warning"></div> 
+                                            </Floater>
+                                        )}
+                                    </div>
                                 )
                             case "expand_feature":
                                 return (

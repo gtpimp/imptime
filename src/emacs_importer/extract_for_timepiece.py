@@ -8,7 +8,8 @@ from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from django.contrib.auth.models import User
 from timepiece.models import Business, Project, Activity, Entry, Location, Attribute
-from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder, IssueComment
+from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder, IssueComment, IssuePoints
+from imptime.bulk_text_parser import BulkTextParser
 import logging
 logger = logging.getLogger(__name__)
 
@@ -142,6 +143,11 @@ class Extractor(object):
                 
         feature, subject = self._unpack_subject(orgnode.Heading(), project.business)
 
+        description = (orgnode.CleanBody() or "").strip()
+        bulk_text_parser = BulkTextParser(timesheet_user)
+        meta_info = bulk_text_parser.parse_meta_info(description)
+        description = meta_info['description']
+
         issue_is_new = False
         if issue_id is None or issue is None:
             # Auto create the issue
@@ -149,19 +155,27 @@ class Extractor(object):
                 issue, issue_is_new = Issue.objects.get_or_create(project=project,
                                                                   subject=subject,
                                                                   defaults={'auto_created_during_import':True,
-                                                                            'issue_type':'adhoc',
-                                                                            'status2':IssueStatus.objects.get_or_create(name='dev done', business=business)[0],
+                                                                            'issue_type':meta_info['attributes'].get('type', 'adhoc'),
+                                                                            'status2':IssueStatus.objects.get_or_create(name=meta_info['attributes'].get('status','dev done'),
+                                                                                                                        business=business)[0],
                                                                             'feature':feature,
                                                                             'assigned_to':timesheet_user,
                                                                             'number':Issue.get_next_issue_number(project.business),
-                                                                            'description':(orgnode.CleanBody() or "").strip(),
+                                                                            'description':description,
                                                                             'story_points':0})
                 ProjectIssueOrder.insert_at_the_end(issue)
                 if issue_is_new:
                     self.status['num_issues_created'] += 1
             except Issue.MultipleObjectsReturned:
                 issue = Issue.objects.filter(project=project, subject=subject).first()
-        
+
+        estimate = meta_info['attributes'].get('estimate', None)
+        if estimate:
+            estimate = float(estimate)
+            IssuePoints.objects.get_or_create(user=timesheet_user,
+                                              issue=issue,
+                                              defaults={'points':estimate})
+                
         # Insert the clock entries
         for clock in orgnode.getClocks():
 

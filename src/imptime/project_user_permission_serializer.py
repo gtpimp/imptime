@@ -18,6 +18,7 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     has_edit_issues = serializers.BooleanField()
     has_share_issues = serializers.BooleanField()
     has_view_issues = serializers.BooleanField()
+    has_view_issue_history = serializers.BooleanField()
     has_edit_issue_states = serializers.BooleanField()
     has_edit_project_states = serializers.BooleanField()
     has_add_issue = serializers.BooleanField()
