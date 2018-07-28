@@ -87,6 +87,7 @@ class NavTab extends Component {
                   <div sub_menu_visible={sub_menu_visible}
                        className={css`position:absolute;
                                       top: 36px;
+                                      z-index:9;
                                       -webkit-box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
                                       -moz-box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
                                       box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
