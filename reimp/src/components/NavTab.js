@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { Link } from 'react-router-dom' 
 import styled from 'react-emotion'
+import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 
 const nav_item_css = {paddingLeft:"12px",
@@ -87,7 +88,7 @@ class NavTab extends Component {
                                      colourName={colourName || null}>
                   {this.props.label}
                   <NavDropdownIcon>
-                    <i className="material-icons">
+                    <i className={cx("material-icons", css`font-size:${theme.font_sizes.dropdown_arrow}`)} >
                       {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
                     </i>
                   </NavDropdownIcon>

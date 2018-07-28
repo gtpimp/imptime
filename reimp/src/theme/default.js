@@ -51,7 +51,12 @@ export const default_theme = {
         button_menu: fonts_raw['regular-15'],
         breadcrumb_selected: fonts_raw['bold-15'],
         button_large: fonts_raw['semibold-25'],
-        sidebar_title: fonts_raw['semibold-25']
+        sidebar_title: fonts_raw['semibold-25'],
+
+    },
+
+    font_sizes: {
+        dropdown_arrow: "12px"
     }
     
 }
