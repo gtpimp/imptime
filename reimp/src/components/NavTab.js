@@ -84,8 +84,7 @@ class NavTab extends Component {
                       {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
                     </i>
                   </NavDropdownIcon>
-                  <div sub_menu_visible={sub_menu_visible}
-                       className={css`position:absolute;
+                  <div className={css`position:absolute;
                                       top: 36px;
                                       z-index:9;
                                       -webkit-box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
