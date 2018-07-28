@@ -45,7 +45,6 @@ class NavTab extends Component {
     }
 
     hideSubMenu() {
-        return;
         this.setState({sub_menu_visible: false,
                        expanded: false})
     }
@@ -88,8 +87,12 @@ class NavTab extends Component {
                   <div sub_menu_visible={sub_menu_visible}
                        className={css`position:absolute;
                                       top: 36px;
-                                      padding-left: 24px;
-                                      width: 290px;
+                                      -webkit-box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
+                                      -moz-box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
+                                      box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
+                                      color: ${theme.colours.strong_text};
+                                      padding: 24px;
+                                      min-width: 290px;
                                       flex-direction: column;
                                       background-color: ${theme.colours.panel_background};
                                       display: ${sub_menu_visible ? "flex" : "none"}`}

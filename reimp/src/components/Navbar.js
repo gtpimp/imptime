@@ -13,19 +13,6 @@ import { css } from 'emotion'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 
-const navbar_submenu_item = {color: "#ffffff",
-                             font: theme.fonts.regular_large,
-                             paddingTop: '12px',
-                             textTransform: 'none',
-                             paddingLeft: '12px',
-                             borderBottom: '1px solid #eee',
-
-                             '&:hover': {
-                                 color: '#333',
-                                 backgroundColor: '#eee',
-                                 cursor: 'pointer',
-                             }}
-
 const NavbarDiv = styled('div')(props => ({display: "flex",
                                            color: "#ffffff",
                                            background: "linear-gradient(#0b8bb2, #056a86)",
@@ -39,7 +26,21 @@ const NavbarDiv = styled('div')(props => ({display: "flex",
 
 const NavbarRightDiv = styled('div')(props => ({display: 'flex'}))
 
-const GlamLink = styled(Link)(props => (navbar_submenu_item))
+const submenu_button = css`color: ${theme.colours.strong_text};
+                           //background-color: ${theme.colours.button_background};
+                           font: ${theme.fonts.regular_large};
+                           padding-top: 12px;
+                           text-transform: none;
+                           padding-left: 12px;
+                           text-align: center;
+                           height: 36px;
+                           display: flex;
+                           justify-content: center;
+                           flex-direction: column;
+                           cursor: default;
+                           &:hover: {
+                               cursor: 'pointer';
+                           }`
 
 class Navbar extends Component {
 
@@ -77,14 +78,26 @@ class Navbar extends Component {
                   <MienSelector></MienSelector>
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar" >
-                  <GlamLink to='/calendar'>My calendar</GlamLink>
-                  <GlamLink to={'/schedule/'+default_schedule_id}>Nudge</GlamLink>
-                  <GlamLink to='/calendar'>My calendar</GlamLink>
-                  <GlamLink to='/schedule'>All calendars</GlamLink>
+                  <div className={`${submenu_button}`}>
+                    <Link to='/calendar'>My calendar</Link>
+                  </div>
+                  <div className={`${submenu_button}`}>
+                    <Link to={'/schedule/'+default_schedule_id}>Nudge</Link>
+                  </div>
+                  <div className={`${submenu_button}`}>
+                    <Link to='/calendar'>My calendar</Link>
+                  </div>
+                  <div className={`${submenu_button}`}>
+                    <Link to='/schedule'>All calendars</Link>
+                  </div>
                 </NavTab>               
                 <NavTab variant="dashboard-toggle" label="Company" >
-                  <GlamLink to='/company/billable_hours'>Billable hours</GlamLink>
-                  <GlamLink to='/company/problems'>Problems</GlamLink>
+                  <div className={`${submenu_button}`}>
+                    <Link to='/company/billable_hours'>Billable hours</Link>
+                  </div>
+                  <div className={`${submenu_button}`}>
+                    <Link to='/company/problems'>Problems</Link>
+                  </div>
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />
