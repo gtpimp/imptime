@@ -37,11 +37,6 @@ const NavbarDiv = styled('div')(props => ({display: "flex",
                                            borderTop:(props.user_initiated_network_activity || !props.is_websockets_connected)? "1px solid #D54859" : "auto"}
 ))
 
-const NavbarLeftDiv = css`display: flex;
-                          padding-left: '12px';
-                          margin-right: '3px';
-`
-
 const NavbarRightDiv = styled('div')(props => ({display: 'flex'}))
 
 const GlamLink = styled(Link)(props => (navbar_submenu_item))
@@ -70,7 +65,11 @@ class Navbar extends Component {
         return (
             <NavbarDiv user_initiated_network_activity={user_initiated_network_activity}
                        is_websockets_connected={is_websockets_connected}>
-              <div className="NavBarLeft">
+              <div className={css`display: flex;
+                                  margin-left: 24px;
+                                  margin-right: 3px;
+                                 `}>
+
                 <NavTab to="/projects" label="Projects" />
               </div>
               <NavbarRightDiv>
