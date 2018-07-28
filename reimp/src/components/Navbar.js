@@ -66,7 +66,7 @@ class Navbar extends Component {
             <NavbarDiv user_initiated_network_activity={user_initiated_network_activity}
                        is_websockets_connected={is_websockets_connected}>
               <div className={css`display: flex;
-                                  margin-left: 24px;
+                                  margin-left: 12px;
                                   margin-right: 3px;
                                  `}>
 
