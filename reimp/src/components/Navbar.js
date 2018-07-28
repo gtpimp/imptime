@@ -9,6 +9,7 @@ import '../sass/navbar.css'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
+import { css } from 'emotion'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 
@@ -32,15 +33,16 @@ const NavbarDiv = styled('div')(props => ({display: "flex",
                                            alignItems: "center",
                                            height: "36px",
                                            width: "100%",
+                                           paddingRight: "3px",
                                            borderTop:(props.user_initiated_network_activity || !props.is_websockets_connected)? "1px solid #D54859" : "auto"}
 ))
 
-const NavbarLeftDiv = styled('div')(props => ({display: 'flex',
-                                               width: '41.3%',
-                                               paddingLeft: '12px'}))
+const NavbarLeftDiv = css`display: flex;
+                          padding-left: '12px';
+                          margin-right: '3px';
+`
 
-const NavbarRightDiv = styled('div')(props => ({display: 'flex',
-                                                width: "58.7%"}))
+const NavbarRightDiv = styled('div')(props => ({display: 'flex'}))
 
 const GlamLink = styled(Link)(props => (navbar_submenu_item))
 
@@ -68,9 +70,9 @@ class Navbar extends Component {
         return (
             <NavbarDiv user_initiated_network_activity={user_initiated_network_activity}
                        is_websockets_connected={is_websockets_connected}>
-              <NavbarLeftDiv>
+              <div className="NavBarLeft">
                 <NavTab to="/projects" label="Projects" />
-              </NavbarLeftDiv>
+              </div>
               <NavbarRightDiv>
                 <NavTab variant="dashboard-toggle" label="Mien">
                   <MienSelector></MienSelector>

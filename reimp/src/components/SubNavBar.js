@@ -28,6 +28,7 @@ const SubNavBarDiv = styled('div')(props => ({display: "flex",
                                               color: theme.colours.strong_text,
                                               backgroundColor: theme.colours.sub_nav_bar,
                                               fontSize: "15px",
+                                              marginRight: "3px",
                                               width: "100%"}))
 
 const ToolbarDiv = styled('div')(props => ({alignItems: "center",
@@ -37,7 +38,7 @@ const ToolbarDiv = styled('div')(props => ({alignItems: "center",
                                             justifyContent: props.side === 'left' ?  'flex-start' : 'flex-end'}))
 
 const ProfilePictureDiv = styled('div')(props => ({height: "36px",
-    padding: "3px"}))
+                                                   padding: "3px"}))
 
 const ProfilePictureIcon = styled('i')(props => ({width: "30px",
                                                   height: "30px"}))
