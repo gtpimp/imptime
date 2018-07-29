@@ -11,7 +11,7 @@ import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import { css } from 'emotion'
 import styled from 'react-emotion'
-import PopupPanelButton from './PopupPanelButton'
+import PopupPanelLink from './PopupPanelLink'
 
 const NavbarDiv = styled('div')(props => ({display: "flex",
                                            color: "#ffffff",
@@ -62,32 +62,32 @@ class Navbar extends Component {
                   <MienSelector></MienSelector>
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar" >
-                  <PopupPanelButton>
+                  <PopupPanelLink>
                     <Link to='/calendar'>My calendar</Link>
-                  </PopupPanelButton>
-                  <PopupPanelButton>
+                  </PopupPanelLink>
+                  <PopupPanelLink>
                     <Link to={'/schedule/'+default_schedule_id}>Nudge</Link>
-                  </PopupPanelButton>
-                  <PopupPanelButton>
+                  </PopupPanelLink>
+                  <PopupPanelLink>
                     <Link to='/calendar'>My calendar</Link>
-                  </PopupPanelButton>
-                  <PopupPanelButton>
+                  </PopupPanelLink>
+                  <PopupPanelLink>
                     <Link to='/schedule'>All calendars</Link>
-                  </PopupPanelButton>
+                  </PopupPanelLink>
                 </NavTab>               
                 <NavTab variant="dashboard-toggle" label="Company" >
-                  <PopupPanelButton>
+                  <PopupPanelLink>
                     <Link to='/company/billable_hours'>Billable hours</Link>
-                  </PopupPanelButton>
-                  <PopupPanelButton>
+                  </PopupPanelLink>
+                  <PopupPanelLink>
                     <Link to='/company/problems'>Problems</Link>
-                  </PopupPanelButton>
-                  <PopupPanelButton>
+                  </PopupPanelLink>
+                  <PopupPanelLink>
                     <Link to='/invoices'>Invoices</Link>
-                  </PopupPanelButton>
-                  <PopupPanelButton>
+                  </PopupPanelLink>
+                  <PopupPanelLink>
                     <Link to="/usertimesheets">Timesheets</Link>
-                  </PopupPanelButton>
+                  </PopupPanelLink>
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />

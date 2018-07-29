@@ -19,7 +19,7 @@ import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 import PopupPanel from './PopupPanel'
-import PopupPanelButton from './PopupPanelButton'
+import PopupPanelLink from './PopupPanelLink'
 
 const BreadcrumbDiv = styled('div')(props => ({
     display: "inline-flex",
@@ -197,11 +197,11 @@ class Breadcrumb extends Component {
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
                                                 permission_names={button_perms}>
-                  <PopupPanelButton>
+                  <PopupPanelLink>
                     <div onClick={() => this.onClickBreadcrumbActionButton(button)}>
                       {label}
                     </div>
-                  </PopupPanelButton>
+                  </PopupPanelLink>
                 </PermissionInspectorHighlighter>
             )
         } else {
@@ -209,11 +209,11 @@ class Breadcrumb extends Component {
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
                                                 permission_names={button_perms}>
-                  <PopupPanelButton>
+                  <PopupPanelLink>
                     <Link to={button['nav_url'](breadcrumb.selected_entities)}>
                       {label}
                     </Link>
-                  </PopupPanelButton>
+                  </PopupPanelLink>
                 </PermissionInspectorHighlighter>
             )
         }
@@ -235,11 +235,11 @@ class Breadcrumb extends Component {
               { buttons && 
                 <BreadcrumbMenuDiv>
                   <PopupPanel>
-                    <PopupPanelButton>
+                    <PopupPanelLink>
                       <Link to={to}>
                         {label}
                       </Link>
-                    </PopupPanelButton>
+                    </PopupPanelLink>
                     { map(buttons, function(button, index) {
                           const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
                           const can_view = button.perms === undefined || permissions === null ||
