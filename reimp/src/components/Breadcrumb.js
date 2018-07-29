@@ -20,6 +20,9 @@ import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 import PopupPanel from './PopupPanel'
 import PopupPanelLink from './PopupPanelLink'
+import PopupPanelButton from './PopupPanelButton'
+import PopupPanelSeparator from './PopupPanelSeparator'
+import PopupPanelHeading from './PopupPanelHeading'
 
 const BreadcrumbDiv = styled('div')(props => ({
     display: "inline-flex",
@@ -52,19 +55,29 @@ const menu_buttons = {
 
     'projects': [
         { label: (objs) => '+ New Project',
+          type: "button",
           generic_action: function(objs, props) {
               props.dispatch(startCandidateProject())
               props.history.push('/projects/')
           }}
     ],
     'project': [
+        { label: (objs) => "Sections",
+          type: "heading"
+        },
         { label: (objs) => 'Sprints',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints'
         },
-        { label: (objs) => 'Minutes',
-          dispatch_action: (objs, props) => startMinutesEditor(objs.project.id,
-                                                               (issue) => props.history.push('/projects/' + issue.project_id + '/sprints/' + issue.sprint_id + "/issues/" + issue.id)),
-          perms: (objs) => ['has_add_issue']
+        { label: (objs) => 'Wiki',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/',
+          perms: (objs) => ['has_view_business_comments']
+        },
+        { label: (objs) => 'Users',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/users'
+        },
+        
+        { label: (objs) => "Summaries",
+          type: "heading"
         },
         { label: (objs) => 'Dashboard',
           nav_url: (objs) => '/projects/' + objs.project.id + '/dashboard'
@@ -75,15 +88,17 @@ const menu_buttons = {
         { label: (objs) => 'Roadmap',
           nav_url: (objs) => '/projects/' + objs.project.id + '/roadmap'
         },
+        
+        { label: (objs) => "Other",
+          type: "heading"
+        },
         { label: (objs) => 'Gallery',
           nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
         },
-        { label: (objs) => 'Wiki',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/',
-          perms: (objs) => ['has_view_business_comments']
-        },
-        { label: (objs) => 'Users',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/users'
+        { label: (objs) => 'Minutes',
+          dispatch_action: (objs, props) => startMinutesEditor(objs.project.id,
+                                                               (issue) => props.history.push('/projects/' + issue.project_id + '/sprints/' + issue.sprint_id + "/issues/" + issue.id)),
+          perms: (objs) => ['has_add_issue']
         },
         { label: (objs) => 'Permission inspector',
           dispatch_action: (objs) => startPermissionInspector(objs.project.id),
@@ -92,6 +107,7 @@ const menu_buttons = {
     ],
     'sprints': [
         { label: (objs) => '+ New Sprint',
+          type: "button",
           generic_action: function(objs, props) {
               props.dispatch(startCandidateSprint(objs.project.id, (objs.sprint && objs.sprint.id) || null))
               props.history.push('/projects/' + objs.project.id + '/sprints/')
@@ -119,12 +135,6 @@ const menu_buttons = {
         },
     ],
     'issues': [
-        { label: (objs) => '+ New Issue',
-          dispatch_action: (objs) => startCandidateIssue(objs.sprint.id, objs.issue.id)
-        },
-        { label: (objs) => '+ New Feature',
-          dispatch_action: (objs) => startCandidateFeature(objs.sprint.id, objs.issue.id)
-        },
         { label: (objs) => 'Bulk Create Issues',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate'
         },
@@ -133,7 +143,15 @@ const menu_buttons = {
         },
         { label: (objs) => 'Collapse All',
           dispatch_action: (objs) => collapseAllFeatures(objs.issues)          
-        }
+        },
+        { label: (objs) => '+ New Issue',
+          type: "button",
+          dispatch_action: (objs) => startCandidateIssue(objs.sprint.id, objs.issue.id)
+        },
+        { label: (objs) => '+ New Feature',
+          type: "button",
+          dispatch_action: (objs) => startCandidateFeature(objs.sprint.id, objs.issue.id)
+        },
     ],
     'issue': [
         { label: (objs) => 'Toggle as feature',
@@ -191,17 +209,30 @@ class Breadcrumb extends Component {
 
     renderBreadcrumbLink(button, breadcrumb, key, button_perms) {
         const { project_id } = this.props
-        const label = button.label(breadcrumb.selected_entities)
-        if ( button['dispatch_action'] || button['generic_action'] ) {
+        const label = (button.label && button.label(breadcrumb.selected_entities)) || ""
+        if (button.type === "separator" ) {
+            return <PopupPanelSeparator key={key} />
+        } else if (button.type === "heading" ) {
+            return <PopupPanelHeading key={key} >{label}</PopupPanelHeading>
+        } else if ( button['dispatch_action'] || button['generic_action'] ) {
             return (
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
                                                 permission_names={button_perms}>
-                  <PopupPanelLink>
+                  { button.type === "button" &&
+                  <PopupPanelButton>
                     <div onClick={() => this.onClickBreadcrumbActionButton(button)}>
                       {label}
                     </div>
-                  </PopupPanelLink>
+                  </PopupPanelButton>
+                  }
+                  { button.type !== "button" &&
+                    <PopupPanelLink>
+                      <div onClick={() => this.onClickBreadcrumbActionButton(button)}>
+                        {label}
+                      </div>
+                    </PopupPanelLink>
+                  }
                 </PermissionInspectorHighlighter>
             )
         } else {
@@ -235,11 +266,6 @@ class Breadcrumb extends Component {
               { buttons && 
                 <BreadcrumbMenuDiv>
                   <PopupPanel>
-                    <PopupPanelLink>
-                      <Link to={to}>
-                        {label}
-                      </Link>
-                    </PopupPanelLink>
                     { map(buttons, function(button, index) {
                           const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
                           const can_view = button.perms === undefined || permissions === null ||

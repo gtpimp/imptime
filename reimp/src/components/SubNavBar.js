@@ -10,7 +10,7 @@ import { default_theme as theme } from '../theme/default'
 import { cx, css } from 'emotion'
 
 const navbar_submenu_item = css`color: theme.colours.link;
-                                font: theme.fonts.links;
+                                font: theme.fonts.link;
                                 margin-top: 12px;
                                 text-transform: none;
                                 padding-left: 12px;

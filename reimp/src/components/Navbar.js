@@ -63,9 +63,6 @@ class Navbar extends Component {
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar" >
                   <PopupPanelLink>
-                    <Link to='/calendar'>My calendar</Link>
-                  </PopupPanelLink>
-                  <PopupPanelLink>
                     <Link to={'/schedule/'+default_schedule_id}>Nudge</Link>
                   </PopupPanelLink>
                   <PopupPanelLink>

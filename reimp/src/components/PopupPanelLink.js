@@ -11,7 +11,7 @@ class PopupPanelLink extends Component {
                                 font: ${theme.fonts.link};
                                 font-weight: ${active ? "bold" : "normal"};
                                 text-transform: none;
-                                margin-bottom: 12px;
+                                padding-bottom: 12px;
                                 text-align: left;
                                 justify-content: center;
                                 cursor: pointer;

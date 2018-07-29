@@ -46,7 +46,6 @@ class NavTab extends Component {
     }
 
     hideSubMenu() {
-        return
         this.setState({sub_menu_visible: false,
                        expanded: false})
     }

@@ -43,7 +43,7 @@ export const default_theme = {
         list_items: fonts_raw['regular-12'],
         descriptions: fonts_raw['regular-12'],
         button_popup: fonts_raw['semibold-12'],
-        links: fonts_raw['semibold-12'],
+        link: fonts_raw['semibold-12'],
         list_headers: fonts_raw['semibold-12'],
         feature_issue: fonts_raw['bold-12'],
         header: fonts_raw['regular-15'],
