@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import PropertyStack from '../PropertyStack'
+import PropertyStackComponent from '../PropertyStackComponent'
 import { map } from 'lodash'
 import { Field, reduxForm } from 'redux-form'
 import ProjectName from '../ProjectName'
@@ -8,6 +10,7 @@ import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
 import { getPreferredRole } from '../../actions/AutoClock'
+import Floater from 'react-floater'
 
 class AutoClockNewEntryForm extends Component {
 
@@ -111,66 +114,127 @@ class AutoClockNewEntryForm extends Component {
         return (
             <form className="auto-clock-form">
 
-              <div>
+              <PropertyStack>
+
+                <PropertyStackComponent>
+                
                   { role_options && role_options.length > 0 &&
-                    <div className="auto-clock__role">
-                      <Field name="role" component={this.renderRoleField} />
+                    <div className="property-row">
+                      <div className="property-label">
+                        Role
+                      </div>
+                      <div className="property-value">
+                        <Field name="role" component={this.renderRoleField} />
+                      </div>
                     </div>
                   }
-
-                  <div className="auto-clock__form__description">
-                    <Field name="description" component={this.renderDescriptionField} />
+                  <div className="property-row">
+                    <div className="property-label">
+                      Description
+                    </div>
+                    <div className="property-value">
+                      <Field name="description" component={this.renderDescriptionField} />
+                    </div>
                   </div>
-              </div>
+                </PropertyStackComponent>
 
-              <div className="auto-clock-entry__clockables">
                 { project_id &&
-                  <div className="auto-clock-entry__clockable">
-                    <div className="auto-clock-entry__label">
-                      Project:
-                    </div>
-                    <div className="auto-clock-entry__field auto-clock-entry__project_name">
-                      <ProjectName project_id={project_id} />
-                    </div>
-                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockProject)} />
-                  </div>
+                  <Floater title="Clock in project"
+                           disableHoverToClick
+                           event="hover"
+                           eventDelay={0}
+                           placement="right"
+                           content={"Clocking into a project uses the most recent active sprint will be used."}>
+
+                    <PropertyStackComponent>
+                      <div className="property-row">
+                        <div className="property-label">
+                          Project
+                        </div>
+                        <div className="property-row">
+                          <div className="property-value">
+                            <ProjectName project_id={project_id} />
+                            <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockProject)} />
+                          </div>
+                        </div>
+                      </div>
+                    </PropertyStackComponent>
+                  </Floater>
                 }
 
                 { sprint_id &&
-                  <div className="auto-clock-entry__clockable">
-                    <div className="auto-clock-entry__label">
-                      Sprint:
-                    </div>
-                    <div className="auto-clock-entry__field auto-clock-entry__sprint_name">
-                      <SprintName sprint_id={sprint_id} />
-                    </div>
-                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockSprint)} />
-                  </div>
+                  <PropertyStackComponent>
+                    <Floater title="Clock in sprint"
+                             disableHoverToClick
+                             event="hover"
+                             eventDelay={0}
+                             placement="right"
+                             content={"Clocking into a sprint uses a default issue based on role you select."}>
+
+
+                      <div className="property-row">
+                        <div className="property-label">
+                          Sprint
+                        </div>
+                        <div className="property-row">
+                          <div className="property-value">
+                            <SprintName sprint_id={sprint_id} />
+                            <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockSprint)} />
+                          </div>
+                        </div>
+                      </div>
+                    </Floater>
+                  </PropertyStackComponent>
                 }
 
                 { issue_id &&
-                  <div className="auto-clock-entry__clockable">
-                    <div className="auto-clock-entry__label">
-                      Issue:
-                    </div>
-                    <div className="auto-clock-entry__field auto-clock-entry__issue_name">
-                      <IssueName issue_id={issue_id} />
-                    </div>
-                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockIssue)} />
-                  </div>
+                  <PropertyStackComponent>
+                    <Floater title="Clock in issue"
+                             disableHoverToClick
+                             event="hover"
+                             eventDelay={0}
+                             placement="right"
+                             content={"Clocks into this issue."}>
+
+
+                      <div className="property-row">
+                        <div className="property-label">
+                          Issue
+                        </div>
+                        <div className="property-row">
+                          <div className="property-value">
+                            <IssueName issue_id={issue_id} />
+                            <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockIssue)} />
+                          </div>
+                        </div>
+                      </div>
+                    </Floater>
+                  </PropertyStackComponent>
                 }
 
                 { can_clock_admin &&
-                  <div className="auto-clock-entry__clockable">
-                    <div className="auto-clock-entry__label">
-                      General admin
-                    </div>
-                    <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockAdmin)} />
-                  </div>
+                  <PropertyStackComponent>
+                    <Floater title="Clock in admin"
+                             disableHoverToClick
+                             event="hover"
+                             eventDelay={0}
+                             placement="right"
+                             content={"Clocks into your default admin project, which is useful for cross project work which might not be billable."}>
+                      <div className="property-row">
+                        <div className="property-label">
+                          General admin
+                        </div>
+                        <div className="property-row">
+                          <div className="property-value">
+                            <div className="icon--timer-start auto-clock__start" onClick={handleSubmit(this.clockAdmin)} />
+                          </div>
+                        </div>
+                      </div>
+                    </Floater>
+                  </PropertyStackComponent>
                 }
-
                   
-              </div>
+              </PropertyStack>
                 
             </form>
         )

@@ -11,7 +11,7 @@ class PopupPanelText extends Component {
                                 font: ${theme.fonts.regular_normal};
                                 font-weight: normal;
                                 text-transform: none;
-                                margin-bottom: 12px;
+                                padding-bottom: 12px;
                                 text-align: left;
                                 justify-content: center;
                                 `}>

@@ -36,6 +36,8 @@ import {
     getListFilter
 } from '../../actions/ItemList'
 import PopupPanelButton from '../PopupPanelButton'
+import PopupPanelHeading from '../PopupPanelHeading'
+import PopupPanelText from '../PopupPanelText'
 
 
 class AutoClockPopup extends Component {
@@ -137,34 +139,27 @@ class AutoClockPopup extends Component {
         const { most_recent_entry} = this.props
 
         return (
-            <div className="auto-clock__current" >
+            <div>
+              <PopupPanelHeading>
+                Current clock
+              </PopupPanelHeading>
 
-              { most_recent_entry &&
-                <div className="auto-clock__most_recent">
-
-                  { ! most_recent_entry.is_active &&
-                    <div className="auto-clock__header">
-                      No active clock, showing previous clock
-                    </div>
-                  }
-                  
-                  { most_recent_entry.is_active &&
-                    <div>
-                      <div className="auto-clock__header">
-                        Currently active clock
-                      </div>
-
-                      <div className="auto-clock__active_section" onClick={() => this.onClockOut(most_recent_entry.id)}>
-                        <div className="icon--timer-stop"/>
-                        Stop
-                      </div>
-                    </div>
-                  }
-                  
-                  <AutoClockEntry entry_id={most_recent_entry.id}/>
+              { ! most_recent_entry.is_active &&
+                <PopupPanelText>
+                  No active clock
+                </PopupPanelText>
+              }
+                
+              { most_recent_entry.is_active &&
+                <div>
+                  <PopupPanelText>
+                    <AutoClockEntry entry_id={most_recent_entry.id}/>
+                  </PopupPanelText>
+                  <PopupPanelButton onClick={() => this.onClockOut(most_recent_entry.id)}>
+                    Stop
+                  </PopupPanelButton>
                 </div>
               }
-
             </div>
         )
     }
@@ -175,16 +170,26 @@ class AutoClockPopup extends Component {
                 auto_clocking_enabled } = this.props
         
         return (
-            <div className="auto-clock__next">
-
-              <div className="auto-clock__header">
-                New clock
-              </div>
-              
+            <div>
+              <PopupPanelHeading>
+                Clock In
+              </PopupPanelHeading>
               { ! available_project_id &&
-                <div>Select a project to start clocking</div>
+                <PopupPanelText>
+                  <div>
+                    Select a project, sprint or issue to start clocking
+                  </div>
+                </PopupPanelText>
               }
-
+              { available_project_id &&
+                <div>
+                  <AutoClockNewEntryForm project_id={available_project_id}
+                                         sprint_id={available_sprint_id}
+                                           issue_id={available_issue_id}
+                                           onSubmitted={this.onClockIn} />
+                </div>
+              }
+                  
               { false &&
                 // Disabled because this isn't 100% tested yet.
                 <div className="auto-clock__toggle_autoclocking">
@@ -195,13 +200,7 @@ class AutoClockPopup extends Component {
                   />
                 </div>
               }
-              
-              { available_project_id &&
-                <AutoClockNewEntryForm project_id={available_project_id}
-                                       sprint_id={available_sprint_id}
-                                       issue_id={available_issue_id}
-                                       onSubmitted={this.onClockIn} />
-              }
+                    
             </div>
         )
     }
@@ -209,7 +208,10 @@ class AutoClockPopup extends Component {
     renderPanel() {
         return (
             <ModalDialog isOpen={true}
-                         onClose={this.onHidePopup}>
+                         onClose={this.onHidePopup}
+                         variant="large"
+                         title="Clock in / Clock out">
+
               { this.renderCurrentClock() }
               { this.renderAvailableClock() }
 
