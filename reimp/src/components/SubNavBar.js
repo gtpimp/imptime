@@ -7,19 +7,19 @@ import { can_create_release_notes, logout } from '../actions/Auth'
 import {logged_in_user} from '../actions/Auth'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
+import { cx, css } from 'emotion'
 
-const navbar_submenu_item = {color: theme.colours.link,
-                             font: theme.fonts.links,
-                             marginTop: '12px',
-                             textTransform: 'none',
-                             paddingLeft: '12px',
-                             borderBottom: '1px solid #eee',
-
-                             '&:hover': {
-                                 color: '#333',
-                                 backgroundColor: '#eee',
-                                 cursor: 'pointer',
-                             }}
+const navbar_submenu_item = css`color: theme.colours.link;
+                                font: theme.fonts.links;
+                                margin-top: 12px;
+                                text-transform: none;
+                                padding-left: 12px;
+                                border-bottom: 1px solid #eee;
+                                cursor: pointer;
+                                &:hover: {
+                                    color: #333;
+                                    background-color: #eee;
+                                }`
 
 const SubNavBarDiv = styled('div')(props => ({display: "flex",
                                               justifyContent: "space-between",
@@ -37,15 +37,6 @@ const ToolbarDiv = styled('div')(props => ({alignItems: "center",
                                             paddingLeft: "24px",
                                             justifyContent: props.side === 'left' ?  'flex-start' : 'flex-end'}))
 
-const ProfilePictureDiv = styled('div')(props => ({height: "36px",
-                                                   padding: "3px"}))
-
-const ProfilePictureIcon = styled('i')(props => ({width: "30px",
-                                                  height: "30px"}))
-
-const GlamLink = styled(Link)(props => (navbar_submenu_item))
-
-const DivLink = styled('div')(props => (navbar_submenu_item))
 
 class SubNavBar extends Component {
 
@@ -69,16 +60,27 @@ class SubNavBar extends Component {
               </ToolbarDiv>
               <ToolbarDiv side="right">
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
-                  <GlamLink to='/password/change'>Edit profile</GlamLink>
+
+                  <div className={`${navbar_submenu_item}`}>
+                    <Link to='/password/change'>Edit profile</Link>
+                  </div>
+                  
                   { has_edit_release_notes_permission &&
-                    <GlamLink to='/release_notes_editor'>Release notes</GlamLink>
+                    <div className={`${navbar_submenu_item}`}>
+                      <Link to='/release_notes_editor'>Release notes</Link>
+                    </div>
                   }
-                  <DivLink onClick={this.onLogout}>Logout</DivLink>
+                  <div onClick={this.onLogout} className={`${navbar_submenu_item}`}>
+                    Logout
+                  </div>
                 </NavTab>
                 <NavTab>
-                  <ProfilePictureDiv>
-                    <ProfilePictureIcon className="material-icons">account_circle</ProfilePictureIcon>
-                  </ProfilePictureDiv>
+                  <div className={css`height: 36px;
+                                      paddding: 3px;`}>
+                    <i className={cx("material-icons", css`width:30px; height:30px`)}>
+                      account_circle
+                    </i>
+                  </div>
                 </NavTab>
               </ToolbarDiv>
               
