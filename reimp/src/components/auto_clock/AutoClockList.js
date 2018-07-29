@@ -37,7 +37,7 @@ class AutoClockList extends Component {
 	const { dispatch, list_key } = this.props
 	dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
-        dispatch(update_list_pagination(list_key, { page_size: 8 }))
+        dispatch(update_list_pagination(list_key, { page_size: 50 }))
         this.refresh()
     }
 

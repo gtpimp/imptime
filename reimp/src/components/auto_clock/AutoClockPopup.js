@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {Link} from 'react-router-dom'
 import ModalDialog from '../ModalDialog'
 import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity,
          clockIn,
          clockOut,
-         shouldShowAutoClockPopup,
          hideAutoClockPopup,
          showAutoClockPopup,
          isAutoClockingEnabled,
@@ -13,7 +13,6 @@ import { getAvailableAutoClockEntity,
          disableAutoClocking
 } from '../../actions/AutoClock'
 import AutoClockNewEntryForm from './AutoClockNewEntryForm'
-import AutoClockList from './AutoClockList'
 import AutoClockEntry from './AutoClockEntry'
 import AutoClockEntity from './AutoClockEntity'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
@@ -36,6 +35,7 @@ import {
     update_list_filter,
     getListFilter
 } from '../../actions/ItemList'
+import PopupPanelButton from '../PopupPanelButton'
 
 
 class AutoClockPopup extends Component {
@@ -49,7 +49,7 @@ class AutoClockPopup extends Component {
         this.onHidePopup = this.onHidePopup.bind(this)
         this.onAutoClockingEnabledToggleClick = this.onAutoClockingEnabledToggleClick.bind(this)
         this.state = { show_list: false,
-                       show_popup: shouldShowAutoClockPopup() }
+                       show_popup: false }
     }
 
     componentDidMount() {
@@ -206,52 +206,17 @@ class AutoClockPopup extends Component {
         )
     }
 
-    renderClockHistory() {
-
-        return (
-            <div className="auto-clock__history">
-              <div className="auto-clock-list__header">
-                Previous clocks
-                <div className="button"  onClick={this.showList}>
-                  show
-                </div>
-              </div>
-            </div>
-        )
-    }
-
-    renderClockHistoryModal() {
-        const { show_list } = this.state
-
-        if ( ! show_list ) { return null }
-        return (
-            <ModalDialog isOpen={true}
-                         className={"auto-clock-modal"}
-                         overlayClassName="auto-clock-modal__overlay"
-                         onRequestClose={this.hideList}
-                         contentLabel="Clock history">
-              <div>
-                <div className="editable-property-modal__close">
-                  <i className="material-icons" onClick={this.hideList}>close</i>
-                </div>
-                <div className="auto-clock-list__header">
-                  Clock history
-                </div>
-              </div>
-              <div className="editable-property-modal__content">
-                <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
-              </div>
-            </ModalDialog>
-        )
-    }
-
     renderPanel() {
         return (
             <ModalDialog isOpen={true}
                          onClose={this.onHidePopup}>
               { this.renderCurrentClock() }
               { this.renderAvailableClock() }
-              { this.renderClockHistory() }
+
+              <PopupPanelButton>
+                <Link to='/clock/history'>Clock history</Link>
+              </PopupPanelButton>
+              
             </ModalDialog>
         )
     }
@@ -280,7 +245,6 @@ class AutoClockPopup extends Component {
             <div>
               { this.renderClockToggle() }
               { show_popup && this.renderPanel() }
-              { this.renderClockHistoryModal() }
             </div>
         )
     }

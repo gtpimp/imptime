@@ -8,6 +8,7 @@ import BillableHoursStatementPage from './BillableHoursStatementPage'
 import BulkIssueCreatorPage from './BulkIssueCreatorPage'
 import CalendarPage from './CalendarPage'
 import ChangePasswordPage from './ChangePasswordPage'
+import ClockHistoryPage from './ClockHistoryPage'
 import CompanyProblemPage from './CompanyProblemPage'
 import PasswordChangedPage from './PasswordChangedPage'
 import DashboardPage from './DashboardPage'
@@ -49,6 +50,7 @@ class MainRouter extends Component {
               <Route exact path="/calendar/:scheduleId/projects/:projectId" component={CalendarPage}/>
               <Route exact path="/calendar/:scheduleId/projects/:projectId/sprints/:sprintId" component={CalendarPage}/>
               <Route exact path="/calendar/:scheduleId/projects/:projectId/sprints/:sprintId/issues/:issueId" component={CalendarPage}/>
+              <Route exact path="/clock/history" component={ClockHistoryPage}/>
               <Route exact path="/schedule" component={SchedulesPage}/>
               <Route exact path="/schedule/:scheduleId" component={ScheduleItemPage}/>
               <Route exact path="/password/changed" component={PasswordChangedPage}/>

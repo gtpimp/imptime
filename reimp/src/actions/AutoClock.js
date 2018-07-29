@@ -23,10 +23,6 @@ import {
     get_selected_issue_ids
 } from '../actions/Page'
 
-export function shouldShowAutoClockPopup() {
-    return cookie.load('show_auto_clock_popup') === "1" || false
-}
-
 export function hideAutoClockPopup() {
     cookie.save('show_auto_clock_popup', "0", { path: '/' })
 }
