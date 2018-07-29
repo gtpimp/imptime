@@ -11,7 +11,7 @@ import MienSelector from './MienSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import { css } from 'emotion'
 import styled from 'react-emotion'
-import { default_theme as theme } from '../theme/default'
+import PopupPanelButton from './PopupPanelButton'
 
 const NavbarDiv = styled('div')(props => ({display: "flex",
                                            color: "#ffffff",
@@ -25,22 +25,6 @@ const NavbarDiv = styled('div')(props => ({display: "flex",
 ))
 
 const NavbarRightDiv = styled('div')(props => ({display: 'flex'}))
-
-const submenu_button = css`color: ${theme.colours.strong_text};
-                           //background-color: ${theme.colours.button_background};
-                           font: ${theme.fonts.regular_large};
-                           padding-top: 12px;
-                           text-transform: none;
-                           padding-left: 12px;
-                           text-align: center;
-                           height: 36px;
-                           display: flex;
-                           justify-content: center;
-                           flex-direction: column;
-                           cursor: default;
-                           &:hover: {
-                               cursor: 'pointer';
-                           }`
 
 class Navbar extends Component {
 
@@ -78,32 +62,32 @@ class Navbar extends Component {
                   <MienSelector></MienSelector>
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar" >
-                  <div className={`${submenu_button}`}>
+                  <PopupPanelButton>
                     <Link to='/calendar'>My calendar</Link>
-                  </div>
-                  <div className={`${submenu_button}`}>
+                  </PopupPanelButton>
+                  <PopupPanelButton>
                     <Link to={'/schedule/'+default_schedule_id}>Nudge</Link>
-                  </div>
-                  <div className={`${submenu_button}`}>
+                  </PopupPanelButton>
+                  <PopupPanelButton>
                     <Link to='/calendar'>My calendar</Link>
-                  </div>
-                  <div className={`${submenu_button}`}>
+                  </PopupPanelButton>
+                  <PopupPanelButton>
                     <Link to='/schedule'>All calendars</Link>
-                  </div>
+                  </PopupPanelButton>
                 </NavTab>               
                 <NavTab variant="dashboard-toggle" label="Company" >
-                  <div className={`${submenu_button}`}>
+                  <PopupPanelButton>
                     <Link to='/company/billable_hours'>Billable hours</Link>
-                  </div>
-                  <div className={`${submenu_button}`}>
+                  </PopupPanelButton>
+                  <PopupPanelButton>
                     <Link to='/company/problems'>Problems</Link>
-                  </div>
-                  <div className={`${submenu_button}`}>
+                  </PopupPanelButton>
+                  <PopupPanelButton>
                     <Link to='/invoices'>Invoices</Link>
-                  </div>
-                  <div className={`${submenu_button}`}>
+                  </PopupPanelButton>
+                  <PopupPanelButton>
                     <Link to="/usertimesheets">Timesheets</Link>
-                  </div>
+                  </PopupPanelButton>
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />

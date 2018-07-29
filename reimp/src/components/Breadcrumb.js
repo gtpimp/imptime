@@ -18,7 +18,8 @@ import { startPermissionInspector } from '../actions/Auth'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
-import SubMenuItemLink from './SubMenuItemLink'
+import PopupPanel from './PopupPanel'
+import PopupPanelButton from './PopupPanelButton'
 
 const BreadcrumbDiv = styled('div')(props => ({
     display: "inline-flex",
@@ -196,10 +197,11 @@ class Breadcrumb extends Component {
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
                                                 permission_names={button_perms}>
-                  <SubMenuItemLink
-                    onClick={() => this.onClickBreadcrumbActionButton(button)}>
-                    {label}
-                  </SubMenuItemLink>
+                  <PopupPanelButton>
+                    <div onClick={() => this.onClickBreadcrumbActionButton(button)}>
+                      {label}
+                    </div>
+                  </PopupPanelButton>
                 </PermissionInspectorHighlighter>
             )
         } else {
@@ -207,11 +209,11 @@ class Breadcrumb extends Component {
                 <PermissionInspectorHighlighter key={key}
                                                 project_id={project_id}
                                                 permission_names={button_perms}>
-                  <SubMenuItemLink>
+                  <PopupPanelButton>
                     <Link to={button['nav_url'](breadcrumb.selected_entities)}>
                       {label}
                     </Link>
-                  </SubMenuItemLink>
+                  </PopupPanelButton>
                 </PermissionInspectorHighlighter>
             )
         }
@@ -232,21 +234,23 @@ class Breadcrumb extends Component {
               </Link>
               { buttons && 
                 <BreadcrumbMenuDiv>
-                  <SubMenuItemLink>
-                    <Link to={to}>
-                      {label}
-                    </Link>
-                  </SubMenuItemLink>
-                  { map(buttons, function(button, index) {
-                        const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
-                        const can_view = button.perms === undefined || permissions === null ||
-                                         filter(button_perms, (perm) => permissions[perm] === true).length>0
-                        if ( ! can_view ) {
-                            return null
-                        }
-                        return that.renderBreadcrumbLink(button, breadcrumb, index, button_perms)
-                    })
-                  }
+                  <PopupPanel>
+                    <PopupPanelButton>
+                      <Link to={to}>
+                        {label}
+                      </Link>
+                    </PopupPanelButton>
+                    { map(buttons, function(button, index) {
+                          const button_perms = (button.perms !== undefined && button.perms(breadcrumb.selected_entities)) || null
+                          const can_view = button.perms === undefined || permissions === null ||
+                                           filter(button_perms, (perm) => permissions[perm] === true).length>0
+                          if ( ! can_view ) {
+                              return null
+                          }
+                          return that.renderBreadcrumbLink(button, breadcrumb, index, button_perms)
+                      })
+                    }
+                  </PopupPanel>
                 </BreadcrumbMenuDiv>
               }
               { !is_last &&
