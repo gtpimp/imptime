@@ -23,8 +23,8 @@ class PopupPanelButton extends Component {
                                 justify-content: center;
                                 flex-direction: column;
                                 cursor: pointer;
-                                &:hover: {
-                                    background-color: ${theme.colours.button_background_hover}
+                                &:hover {
+                                    background-color: ${theme.colours.button_background_hover};
                                 }`}
                  onClick={action}
             >

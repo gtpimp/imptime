@@ -6,6 +6,7 @@ import { getVisibleItemIds } from '../actions/ItemList'
 import { css } from 'emotion'
 import Modal from 'react-modal'
 import MienFeature from './MienFeature'
+import Floater from "react-floater"
 import { setCurrentMienId,
          getCurrentMienId,
          getMiens,
@@ -148,10 +149,37 @@ class MienSelector extends Component {
 
     renderMienEditButtons(mien) {
         return (
-            <div>
-              <div className="mien-editor-button-bar__button icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
-              <div className="mien-editor-button-bar__button icon--edit" onClick={(event) => this.onStartEditingMien(event, mien)}/>
-              <div className="mien-editor-button-bar__button icon--copy" onClick={(event) => this.onStartCopyingMien(event, mien)}/>
+            <div className={css`display:flex; flex-direction: row; margin-right: 20px;`}>
+              <Floater
+                  title="Delete mien"
+                  disableHoverToClick
+                  event="hover"
+                  eventDelay={0}
+                  placement="bottom"
+                  content={<div>Delete this mien</div>}
+              >
+                <div className="mien-editor-button-bar__button icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
+              </Floater>
+              <Floater
+                  title="Edit mien"
+                  disableHoverToClick
+                  event="hover"
+                  eventDelay={0}
+                  placement="bottom"
+                  content={<div>Edit the mien title</div>}
+              >
+                <div className="mien-editor-button-bar__button icon--edit" onClick={(event) => this.onStartEditingMien(event, mien)}/>
+              </Floater>
+              <Floater
+                  title="Copy mien"
+                  disableHoverToClick
+                  event="hover"
+                  eventDelay={0}
+                  placement="bottom"
+                  content={<div>Make a new as a copy of this mien</div>}
+              >
+                <div className="mien-editor-button-bar__button icon--copy" onClick={(event) => this.onStartCopyingMien(event, mien)}/>
+              </Floater>
             </div>
         )
     }
@@ -191,9 +219,10 @@ class MienSelector extends Component {
             <div>
               { map(miens, (mien) =>
                   <PopupPanelLink key={mien.id} active={current_mien_id === mien.id}>
-                    <div onClick={() => this.onChangeMien(mien.id) } >
-                      {mien.title}
+                    <div className={css`display:flex; flex-direction: row`}
+                         onClick={() => this.onChangeMien(mien.id) } >
                       { is_mien_configurer_active && this.renderMienEditButtons(mien) }
+                      {mien.title}
                     </div>
                   </PopupPanelLink>
                 )}

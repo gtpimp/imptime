@@ -5,17 +5,18 @@ import { default_theme as theme } from '../theme/default'
 class PopupPanelLink extends Component {
 
     render() {
-        const { children } = this.props
+        const { children, active } = this.props
         return (
             <div className={css`color: ${theme.colours.link};
                                 font: ${theme.fonts.link};
+                                font-weight: ${active ? "bold" : "normal"};
                                 text-transform: none;
-                                font-weight: normal;
                                 padding-top: 12px;
                                 text-align: left;
                                 justify-content: center;
                                 cursor: pointer;
-                                &:hover: {
+                                &:hover {
+                                    font-weight: bold;
                                     cursor: 'pointer';
                                 }`}>
                  {children}
