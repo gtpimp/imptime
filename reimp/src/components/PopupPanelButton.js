@@ -5,23 +5,29 @@ import { default_theme as theme } from '../theme/default'
 class PopupPanelButton extends Component {
 
     render() {
-        const { children } = this.props
+        const { children, active, onClick } = this.props
+
+        const action = onClick || function() {}
+        
         return (
             <div className={css`color: ${theme.colours.strong_text};
-                                //background-color: ${theme.colours.button_background};
+                                background-color: ${theme.colours.button_background};
                                 font: ${theme.fonts.regular_large};
-                                padding-top: 12px;
+                                font-weight: ${active ? "bold" : "normal"};
                                 text-transform: none;
                                 padding-left: 12px;
+                                margin-top: 24px;
                                 text-align: center;
                                 height: 36px;
                                 display: flex;
                                 justify-content: center;
                                 flex-direction: column;
-                                cursor: default;
+                                cursor: pointer;
                                 &:hover: {
-                                    cursor: 'pointer';
-                                }`}>
+                                    background-color: ${theme.colours.button_background_hover}
+                                }`}
+                 onClick={action}
+            >
                  {children}
             </div>
         )

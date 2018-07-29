@@ -1,27 +1,5 @@
 @import 'variables.scss';
 
-.mien-select-panel {
-    display: flex;
-    font: $font-3;
-    width: 70%;
-    padding-left: 15%;
-}
-
-.mien-buttons {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-}
-
-.mien-button-bar {
-    padding-left: 50px;
-    opacity: 0.8;
-}
-
-.mien-button-bar__button {
-    padding: 5px;
-}
-
 .mien-button {
     position: relative;
     background-color: #ccc;

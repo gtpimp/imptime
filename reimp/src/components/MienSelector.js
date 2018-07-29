@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { map } from 'lodash'
 import '../sass/mien-selector.css'
 import { getVisibleItemIds } from '../actions/ItemList'
+import { css } from 'emotion'
 import Modal from 'react-modal'
 import MienFeature from './MienFeature'
 import { setCurrentMienId,
@@ -21,8 +22,9 @@ import { setCurrentMienId,
          isMienConfigurerActive,
          getMienBeingConfigured
 } from '../actions/Mien'
-import classNames from 'classnames'
 import MienTitleForm from './form/MienTitleForm'
+import PopupPanelButton from './PopupPanelButton'
+import PopupPanelLink from './PopupPanelLink'
 import { LIST_KEY__MIEN_LIST } from '../actions/ItemListKeyRegistry'
 
 class MienSelector extends Component {
@@ -36,12 +38,9 @@ class MienSelector extends Component {
         this.onStartEditingMien = this.onStartEditingMien.bind(this)
         this.onCancelEditingMien = this.onCancelEditingMien.bind(this)
         this.onSaveMienTitle = this.onSaveMienTitle.bind(this)
-        this.hideButtonBar = this.hideButtonBar.bind(this)
-        this.showButtonBar = this.showButtonBar.bind(this)
         this.hideEditButtons = this.hideEditButtons.bind(this)
         this.showEditButtons = this.showEditButtons.bind(this)
-        this.state = { show_button_bar: false,
-                       editing_mien: null }
+        this.state = { editing_mien: null }
     }
 
     componentDidMount() {
@@ -112,14 +111,6 @@ class MienSelector extends Component {
         dispatch(deleteMiens([mien.id]))
     }
 
-    showButtonBar() {
-        this.setState({show_button_bar: true})
-    }
-
-    hideButtonBar() {
-        this.setState({show_button_bar: false})
-    }
-
     showEditButtons() {
         const { dispatch } = this.props
         dispatch(startMienConfigurer())
@@ -128,7 +119,6 @@ class MienSelector extends Component {
     hideEditButtons() {
         const { dispatch } = this.props
         dispatch(stopMienConfigurer())
-        this.hideButtonBar()
         this.setState({editing_mien: null})
     }
 
@@ -136,24 +126,21 @@ class MienSelector extends Component {
         const { is_mien_configurer_active } = this.props
         
         return (
-            <div className="mien-button-bar">
+            <div>
               { ! is_mien_configurer_active &&
-                <div className="mien-button-bar__button button toolbar-button--large" 
-                     onClick={this.onCreateCandidateMien}>
+                <PopupPanelButton onClick={this.onCreateCandidateMien}>
                   + New
-                </div>
+                </PopupPanelButton>
               }
               { ! is_mien_configurer_active &&
-                <div className="mien-button-bar__button button toolbar-button--large" 
-                     onClick={this.showEditButtons}>
+                <PopupPanelButton onClick={this.showEditButtons}>
                   Configure
-                </div>
+                </PopupPanelButton>
               }
               { is_mien_configurer_active &&
-                <div className="mien-button-bar__button button toolbar-button--large"
-                     onClick={this.hideEditButtons}>
+                <PopupPanelButton onClick={this.hideEditButtons}>
                   Stop configuring
-                </div>
+                </PopupPanelButton>
               }
             </div>
         )
@@ -161,7 +148,7 @@ class MienSelector extends Component {
 
     renderMienEditButtons(mien) {
         return (
-            <div className="mien-editor-button-bar">
+            <div>
               <div className="mien-editor-button-bar__button icon--small-delete" onClick={(event) => this.deleteMien(event, mien)}/>
               <div className="mien-editor-button-bar__button icon--edit" onClick={(event) => this.onStartEditingMien(event, mien)}/>
               <div className="mien-editor-button-bar__button icon--copy" onClick={(event) => this.onStartCopyingMien(event, mien)}/>
@@ -200,15 +187,15 @@ class MienSelector extends Component {
 
     renderMiens() {
         const { miens, current_mien_id, is_mien_configurer_active } = this.props
-        const button_class = "button mien-button"
         return (
-            <div className="mien-buttons">
+            <div>
               { map(miens, (mien) =>
-                  <div key={mien.id} onClick={() => this.onChangeMien(mien.id) }
-                       className={classNames(button_class, {'button--active': current_mien_id === mien.id})}>
-                    {mien.title}
-                    { is_mien_configurer_active && this.renderMienEditButtons(mien) }
-                  </div>
+                  <PopupPanelLink key={mien.id} active={current_mien_id === mien.id}>
+                    <div onClick={() => this.onChangeMien(mien.id) } >
+                      {mien.title}
+                      { is_mien_configurer_active && this.renderMienEditButtons(mien) }
+                    </div>
+                  </PopupPanelLink>
                 )}
             </div>
         )
@@ -230,12 +217,13 @@ class MienSelector extends Component {
         const { candidate_mien, is_mien_configurer_active } = this.props
         const is_creating_candidate_mien = candidate_mien || false
         const is_editing_mien_title = this.state.editing_mien || false
-        const show_button_bar = this.state.show_button_bar
 
         return (
-            <div className="mien-select-panel" onMouseLeave={this.hideButtonBar} onMouseOver={this.showButtonBar}>
+            <div className={css`display: flex;
+                                flex-direction: column;
+                            `}>
               { this.renderMiens() }
-              { (show_button_bar || is_mien_configurer_active) && this.renderButtonBar() }
+              { this.renderButtonBar() }
               { is_creating_candidate_mien && this.renderMienCreator() }
               { is_editing_mien_title && this.renderMienTitleEditor() }
               { is_mien_configurer_active && this.renderDefaultMienConfigurer() }

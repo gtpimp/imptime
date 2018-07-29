@@ -26,7 +26,8 @@ export const default_theme = {
                panel_background: '#E9EEF2',
                left_panel_background: '#fafbfc',
                right_panel_background: '#ffffff',
-               button_background: '#005C86'
+               button_background: '#D8DDE1',
+               button_background_hover: '#C7CCD0'
     },
 
     fonts: {
