@@ -26,6 +26,8 @@ import { setCurrentMienId,
 import MienTitleForm from './form/MienTitleForm'
 import PopupPanelButton from './PopupPanelButton'
 import PopupPanelLink from './PopupPanelLink'
+import PopupPanelHeading from './PopupPanelHeading'
+import PopupPanelText from './PopupPanelText'
 import { LIST_KEY__MIEN_LIST } from '../actions/ItemListKeyRegistry'
 
 class MienSelector extends Component {
@@ -251,6 +253,16 @@ class MienSelector extends Component {
             <div className={css`display: flex;
                                 flex-direction: column;
                             `}>
+              <PopupPanelHeading>
+                Mien Selection
+              </PopupPanelHeading>
+              <PopupPanelText>
+                Miens are layouts that are personal to you and can be configured.
+                <br/>
+                You can have multiple layouts and switch between them for
+                <br/>
+                different purposes.
+              </PopupPanelText>
               { this.renderMiens() }
               { this.renderButtonBar() }
               { is_creating_candidate_mien && this.renderMienCreator() }
