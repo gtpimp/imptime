@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import Modal from 'react-modal';
+import ModalDialog from '../ModalDialog'
 import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity,
          clockIn,
@@ -15,6 +15,7 @@ import { getAvailableAutoClockEntity,
 import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import AutoClockList from './AutoClockList'
 import AutoClockEntry from './AutoClockEntry'
+import AutoClockEntity from './AutoClockEntity'
 import { ENTITY_KEY__AUTO_CLOCK, LIST_KEY__RECENT_AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
@@ -116,9 +117,8 @@ class AutoClockPopup extends Component {
     renderClockToggle() {
         const { most_recent_entry} = this.props
         return (
-            <div className="auto-clock__show"
-                 onClick={this.onShowPopup}
-                 onMouseOver={this.onShowPopup} >
+            <div className="auto-clock__button"
+                 onClick={this.onShowPopup}>
               { most_recent_entry && most_recent_entry.is_active &&
                 <div className="icon--timer-active auto-clock__stop"
                      onClick={() => this.onClockOut(most_recent_entry.id)}
@@ -225,11 +225,11 @@ class AutoClockPopup extends Component {
 
         if ( ! show_list ) { return null }
         return (
-            <Modal isOpen={true}
-                   className={"auto-clock-modal"}
-                   overlayClassName="auto-clock-modal__overlay"
-                   onRequestClose={this.hideList}
-                   contentLabel="Clock history">
+            <ModalDialog isOpen={true}
+                         className={"auto-clock-modal"}
+                         overlayClassName="auto-clock-modal__overlay"
+                         onRequestClose={this.hideList}
+                         contentLabel="Clock history">
               <div>
                 <div className="editable-property-modal__close">
                   <i className="material-icons" onClick={this.hideList}>close</i>
@@ -241,7 +241,34 @@ class AutoClockPopup extends Component {
               <div className="editable-property-modal__content">
                 <AutoClockList list_key={ENTITY_KEY__AUTO_CLOCK} />
               </div>
-            </Modal>
+            </ModalDialog>
+        )
+    }
+
+    renderPanel() {
+        return (
+            <ModalDialog isOpen={true}
+                         onClose={this.onHidePopup}>
+              { this.renderCurrentClock() }
+              { this.renderAvailableClock() }
+              { this.renderClockHistory() }
+            </ModalDialog>
+        )
+    }
+
+    renderClockStatus() {
+        const { most_recent_entry } = this.props
+        return (
+            <div>
+              { most_recent_entry &&
+                <div className="auto-clock__mini-auto-clock-status">
+                  <AutoClockEntity project_id={most_recent_entry.project_id}
+                                   sprint_id={most_recent_entry.sprint_id}
+                                   issue_id={most_recent_entry.issue_id}
+                                   className="auto-clock-entry__entities_row" />
+                </div>
+              }
+            </div>
         )
     }
 
@@ -250,25 +277,9 @@ class AutoClockPopup extends Component {
 
         return (
 
-            <div className="auto-clock" onMouseLeave={this.onHidePopup}>
-
+            <div>
               { this.renderClockToggle() }
-              
-              { show_popup &&
-                <div className="auto-clock--visible" >
-                  { this.renderCurrentClock() }
-                  { this.renderAvailableClock() }
-                  { this.renderClockHistory() }
-                </div>
-              }
-              {/* { ! show_popup && most_recent_entry &&
-                  <div className="auto-clock__mini-auto-clock-status">
-                  <AutoClockEntity project_id={most_recent_entry.project_id}
-                  sprint_id={most_recent_entry.sprint_id}
-                  issue_id={most_recent_entry.issue_id}
-                  className="auto-clock-entry__entities_row" />
-                  </div>
-                  } */}
+              { show_popup && this.renderPanel() }
               { this.renderClockHistoryModal() }
             </div>
         )

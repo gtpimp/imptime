@@ -8,6 +8,7 @@ import {logged_in_user} from '../actions/Auth'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 import { cx, css } from 'emotion'
+import AutoClockPopup from './auto_clock/AutoClockPopup'
 
 const navbar_submenu_item = css`color: theme.colours.link;
                                 font: theme.fonts.link;
@@ -60,14 +61,7 @@ class SubNavBar extends Component {
               </ToolbarDiv>
               <ToolbarDiv side="right">
 
-                <NavTab colourName="normal_text">
-                  <div className="
-                  label={username} colourName="normal_text"
-                  <AutoClockPopup/>
-                </NavTab>
-
-                <NavTab to="/dashboard" label="Clock" />
-
+                <AutoClockPopup />
 
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
 
@@ -84,6 +78,7 @@ class SubNavBar extends Component {
                     Logout
                   </div>
                 </NavTab>
+                { false && 
                 <NavTab>
                   <div className={css`height: 36px;
                                       paddding: 3px;`}>
@@ -92,6 +87,7 @@ class SubNavBar extends Component {
                     </i>
                   </div>
                 </NavTab>
+                }
               </ToolbarDiv>
               
             </SubNavBarDiv>
