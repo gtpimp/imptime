@@ -116,312 +116,312 @@ class Sprint extends Component {
 
 	      if ( ! is_loading === false ) {
 	          return (
-		            <SprintRowDiv key={this.key+"."+sprint.id}
-                              onClick={onClickedSprint}
-                              is_selected={is_selected}
-		            >
-		              <TableCellDiv>{sprint && sprint.id}</TableCellDiv>
-		              <TableCellDiv>Loading...</TableCellDiv>
-		            </SprintRowDiv>
+		      <SprintRowDiv key={this.key+"."+sprint.id}
+                                    onClick={onClickedSprint}
+                                    is_selected={is_selected}
+		      >
+		        <TableCellDiv>{sprint && sprint.id}</TableCellDiv>
+		        <TableCellDiv>Loading...</TableCellDiv>
+		      </SprintRowDiv>
 	          )
 	      } else {
-            return (
-		            <SprintRowDiv key={this.key+"."+sprint.id}
-                              onClick={onClickedSprint}
-                              is_selected={is_selected}
-		            >
+                  return (
+		      <SprintRowDiv key={this.key+"."+sprint.id}
+                                    onClick={onClickedSprint}
+                                    is_selected={is_selected}
+		      >
 
-                  { map(visible_header_keys, function(header_key) {
-                        const header = headers_by_key[header_key]
-                        switch(header_key) {
-                            case "number":
-                                return (
-                                    <TableCellDiv key={header_key}
-                                                  style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.number}
-                                      </SprintCellDiv>
-                                    </TableCellDiv>
-                                )
-                            case "ref":
-                                return (
-                                    <TableCellDiv key={header_key}
-                                                  style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.id}
-                                      </SprintCellDiv>
-                                    </TableCellDiv>
-                                )
-                            case "name":
-                                return (
-                                    <TableCellDiv key={header_key}
-                                                  style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.name}
-                                      </SprintCellDiv>
-                                    </TableCellDiv>
-                                )
-                            case "start_time":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "end_time":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_issues":
-                                return (
-                                    <SprintLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
-                                                onClick={that.onIssuesClick}
-                                                key={header_key}
-                                                style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.num_issues || 0} Issues
-                                      </SprintCellDiv>
-                                    </SprintLink>
-                                )
-                            case "num_testable_issues":
-                                return (
-                                    <SprintLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
-                                                onClick={that.onIssuesClick}
-                                                key={header_key}
-                                                style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.num_testable_issues || 0} Issues
-                                      </SprintCellDiv>
-                                    </SprintLink>
-                                )
-                            case "status":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "type":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_issues_unassigned":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.num_issues_unassigned}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "hours_by_assignee":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        { sprint.hours_by_assignee && 
-                                          <Hours hours={sprint.hours_by_assignee} />
-                                        }
-                                        { ! sprint.hours_by_assignee && "" }
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "estimates_by_assignee":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        <Hours hours={sprint.estimated_hours_by_assignee} />
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "open_estimates_by_assignee":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        <Hours hours={sprint.estimated_open_hours_by_assignee} />
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_issues_with_estimates":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.num_issues_with_estimates || ""}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_issues_without_estimates":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0)}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_open_issues_with_estimates":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.num_open_issues_with_estimates || ""}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_open_issues_without_estimates":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_testable_issues || 0) - (sprint.num_open_issues_with_estimates || 0)}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_completely_closed_issues":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.num_completely_closed_issues || ""}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_not_completely_closed_issues":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0)}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_dev_closed_issues":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {sprint.num_dev_closed_issues || ""}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "num_not_dev_closed_issues":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0)}
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "are_all_issues_completely_closed":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_testable_issues !== undefined &&
-                                          ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) === 0)) &&
-                                         <SprintStatusDiv status_ok={true}/>
-                                        }
-                                        {(sprint.num_testable_issues !== undefined &&
-                                          ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) !== 0)) &&
-                                         <SprintStatusDiv />
-                                        }
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "are_all_issues_dev_closed":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_testable_issues !== undefined &&
-                                          ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) === 0)) &&
-                                         <SprintStatusDiv status_ok={true}/>
-                                        }
-                                        {(sprint.num_testable_issues !== undefined &&
-                                          ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) !== 0)) &&
-                                         <SprintStatusDiv />
-                                        }
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "are_all_issues_assigned":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned === 0) &&
-                                         <SprintStatusDiv status_ok={true}/>
-                                        }
-                                        {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned !== 0) &&
-                                         <SprintStatusDiv />
-                                        }
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "are_all_issues_estimated":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.num_testable_issues !== undefined &&
-                                          ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) === 0)) &&
-                                         <SprintStatusDiv status_ok={true}/>
-                                        }
-                                        {(sprint.num_testable_issues !== undefined &&
-                                          ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) !== 0)) &&
-                                         <SprintStatusDiv />
-                                        }
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "has_dev_started":
-                                return (
-                                    <TableCellSecondaryDiv key={header_key}
-                                                           style={getCellStyle(header)}>
-                                      <SprintCellDiv>
-                                        {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
-                                         <SprintStatusDiv status_ok={true}/>
-                                        }
-                                        {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee <= 0) &&
-                                         <SprintStatusDiv />
-                                        }
-                                      </SprintCellDiv>
-                                    </TableCellSecondaryDiv>
-                                )
-                            case "state_summary":
-                                return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         style={getCellStyle(header)}>
-                                      <SprintStateSummary sprint_id={sprint_id} />
-                                    </div>
-                                )
+                        { map(visible_header_keys, function(header_key) {
+                              const header = headers_by_key[header_key]
+                              switch(header_key) {
+                                  case "number":
+                                      return (
+                                          <TableCellDiv key={header_key}
+                                                        style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.number}
+                                            </SprintCellDiv>
+                                          </TableCellDiv>
+                                      )
+                                  case "ref":
+                                      return (
+                                          <TableCellDiv key={header_key}
+                                                        style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.id}
+                                            </SprintCellDiv>
+                                          </TableCellDiv>
+                                      )
+                                  case "name":
+                                      return (
+                                          <TableCellDiv key={header_key}
+                                                        style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.name}
+                                            </SprintCellDiv>
+                                          </TableCellDiv>
+                                      )
+                                  case "start_time":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "end_time":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_issues":
+                                      return (
+                                          <SprintLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                                      onClick={that.onIssuesClick}
+                                                      key={header_key}
+                                                      style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.num_issues || 0} Issues
+                                            </SprintCellDiv>
+                                          </SprintLink>
+                                      )
+                                  case "num_testable_issues":
+                                      return (
+                                          <SprintLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                                      onClick={that.onIssuesClick}
+                                                      key={header_key}
+                                                      style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.num_testable_issues || 0} Issues
+                                            </SprintCellDiv>
+                                          </SprintLink>
+                                      )
+                                  case "status":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "type":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_issues_unassigned":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.num_issues_unassigned}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "hours_by_assignee":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              { sprint.hours_by_assignee && 
+                                                <Hours hours={sprint.hours_by_assignee} />
+                                              }
+                                                { ! sprint.hours_by_assignee && "" }
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "estimates_by_assignee":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              <Hours hours={sprint.estimated_hours_by_assignee} />
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "open_estimates_by_assignee":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              <Hours hours={sprint.estimated_open_hours_by_assignee} />
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_issues_with_estimates":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.num_issues_with_estimates || ""}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_issues_without_estimates":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0)}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_open_issues_with_estimates":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.num_open_issues_with_estimates || ""}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_open_issues_without_estimates":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_testable_issues || 0) - (sprint.num_open_issues_with_estimates || 0)}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_completely_closed_issues":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.num_completely_closed_issues || ""}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_not_completely_closed_issues":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0)}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_dev_closed_issues":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {sprint.num_dev_closed_issues || ""}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "num_not_dev_closed_issues":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0)}
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "are_all_issues_completely_closed":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_testable_issues !== undefined &&
+                                                ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) === 0)) &&
+                                               <SprintStatusDiv status_ok={true}/>
+                                              }
+                                               {(sprint.num_testable_issues !== undefined &&
+                                                 ((sprint.num_testable_issues || 0) - (sprint.num_completely_closed_issues || 0) !== 0)) &&
+                                                <SprintStatusDiv />
+                                               }
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "are_all_issues_dev_closed":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_testable_issues !== undefined &&
+                                                ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) === 0)) &&
+                                               <SprintStatusDiv status_ok={true}/>
+                                              }
+                                               {(sprint.num_testable_issues !== undefined &&
+                                                 ((sprint.num_testable_issues || 0) - (sprint.num_dev_closed_issues || 0) !== 0)) &&
+                                                <SprintStatusDiv />
+                                               }
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "are_all_issues_assigned":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned === 0) &&
+                                               <SprintStatusDiv status_ok={true}/>
+                                              }
+                                               {(sprint.num_issues_unassigned !== undefined && sprint.num_issues_unassigned !== 0) &&
+                                                <SprintStatusDiv />
+                                               }
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "are_all_issues_estimated":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.num_testable_issues !== undefined &&
+                                                ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) === 0)) &&
+                                               <SprintStatusDiv status_ok={true}/>
+                                              }
+                                               {(sprint.num_testable_issues !== undefined &&
+                                                 ((sprint.num_testable_issues || 0) - (sprint.num_issues_with_estimates || 0) !== 0)) &&
+                                                <SprintStatusDiv />
+                                               }
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "has_dev_started":
+                                      return (
+                                          <TableCellSecondaryDiv key={header_key}
+                                                                 style={getCellStyle(header)}>
+                                            <SprintCellDiv>
+                                              {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
+                                               <SprintStatusDiv status_ok={true}/>
+                                              }
+                                               {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee <= 0) &&
+                                                <SprintStatusDiv />
+                                               }
+                                            </SprintCellDiv>
+                                          </TableCellSecondaryDiv>
+                                      )
+                                  case "state_summary":
+                                      return (
+                                          <div className="div-table__cell sprint__cell__secondary" key={header_key}
+                                               style={getCellStyle(header)}>
+                                            <SprintStateSummary sprint_id={sprint_id} />
+                                          </div>
+                                      )
 
-                            default:
-                                console.error("Unknown header: " + header_key + " (headers are " + visible_header_keys + ")")
-                                
-                        }
-                    }
-                  )}
-                </SprintRowDiv>
-            )
+                                  default:
+                                      console.error("Unknown header: " + header_key + " (headers are " + visible_header_keys + ")")
+                                      
+                              }
+                          }
+                          )}
+                      </SprintRowDiv>
+                  )
 	      }
     }
 
