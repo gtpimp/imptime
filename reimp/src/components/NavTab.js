@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import styled from 'react-emotion'
 import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
+import PopupPanel from './PopupPanel'
 
 const nav_item_css = {paddingLeft:"12px",
                       display:"flex",
@@ -84,20 +85,15 @@ class NavTab extends Component {
                       {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
                     </i>
                   </NavDropdownIcon>
+                  
                   <div className={css`position:absolute;
                                       top: 36px;
                                       z-index:9;
-                                      -webkit-box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
-                                      -moz-box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
-                                      box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
-                                      color: ${theme.colours.strong_text};
-                                      padding: 24px;
-                                      min-width: 290px;
-                                      flex-direction: column;
-                                      background-color: ${theme.colours.panel_background};
                                       display: ${sub_menu_visible ? "flex" : "none"}`}
                   >
-                    {children}
+                    <PopupPanel>
+                      {children}
+                    </PopupPanel>
                   </div>
                 </NavDropdownMenuItem>
             )
