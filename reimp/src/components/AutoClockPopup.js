@@ -8,6 +8,7 @@ import ProjectName from '../ProjectName'
 import SprintName from '../SprintName'
 import IssueName from '../IssueName'
 import AutoClockEntryForm from './AutoClockEntryForm'
+import PopupPanel from './PopupPanel'
 
 class AutoClockPopup extends Component {
     constructor(props) {
@@ -42,7 +43,7 @@ class AutoClockPopup extends Component {
                 available_sprint_id, available_issue_id } = this.props
 
         return (
-            <div> 
+            <PopupPanel>
               <div className="auto-clock__header">Auto clock</div>
               <div className="auto-clock__status">Not clocked in</div>
 
@@ -52,7 +53,7 @@ class AutoClockPopup extends Component {
                                   onSubmitted={this.onClockIn}
               />
               
-            </div>
+            </PopupPanel>
         )
     }
 }

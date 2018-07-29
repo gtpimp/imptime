@@ -88,7 +88,7 @@ class Navbar extends Component {
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />
-                <NavTab>
+                <NavTab variant="dashboard-toggle" label="Calendar" >
                   <AutoClockPopup/>
                 </NavTab>
                 <NavTab>
