@@ -62,6 +62,9 @@ class Navbar extends Component {
                   <MienSelector></MienSelector>
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar" >
+                  <PopupPanelLink onClick={this.onSelectFloatingCalendar}>
+                    Popup
+                  </PopupPanelLink>
                   <PopupPanelLink>
                     <Link to={'/schedule/'+default_schedule_id}>Nudge</Link>
                   </PopupPanelLink>
@@ -88,9 +91,6 @@ class Navbar extends Component {
                 </NavTab>
                 <NavTab to="/work_summary" label="Work summary" />
                 <NavTab to="/dashboard" label="Dashboard" />
-                <NavTab variant="dashboard-toggle" label="Calendar" >
-                  <AutoClockPopup/>
-                </NavTab>
                 <NavTab>
                   <SearchBox/>
                 </NavTab>

@@ -59,6 +59,16 @@ class SubNavBar extends Component {
                 <Breadcrumbs />
               </ToolbarDiv>
               <ToolbarDiv side="right">
+
+                <NavTab colourName="normal_text">
+                  <div className="
+                  label={username} colourName="normal_text"
+                  <AutoClockPopup/>
+                </NavTab>
+
+                <NavTab to="/dashboard" label="Clock" />
+
+
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
 
                   <div className={`${navbar_submenu_item}`}>
