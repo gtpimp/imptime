@@ -95,7 +95,7 @@ class IssueSerializer(BaseSerializer):
         issue.tag_ids = [x.id for x in issue.tags.all()]
 
         if not bp.has_see_other_user_points:
-            issue.all_estimates = None
+            issue.all_estimates = [x for x in (issue.all_estimates or []) if x.user_id == self.logged_in_user.id]
             issue.all_actuals = None
         else:
             all_actuals = {}
@@ -105,8 +105,18 @@ class IssueSerializer(BaseSerializer):
                 
             issue.all_actuals = all_actuals.values()
 
-        issue.needs_estimate = len([x for x in (issue.all_estimates or []) if x.user_id==issue.assigned_to_id]) == 0
-
+        issue_has_estimate_by_assigned_user = len([x for x in (issue.all_estimates or []) if x.user_id==issue.assigned_to_id and x.points > 0])
+        if bp.can_see_other_user_points:
+            issue.needs_estimate = not issue_has_estimate_by_assigned_user
+        
+        elif bp.has_estimate_own_points:
+            if issue.assigned_to_id != self.logged_in_user.id:
+                issue.needs_estimate = False
+            else:
+                issue.needs_estimate = not issue_has_estimate_by_assigned_user
+        else:
+            issue.needs_estimate = False
+            
         if not bp.has_share_issues:
             issue.share_ref = None
 
