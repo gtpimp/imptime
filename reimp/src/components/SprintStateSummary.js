@@ -177,7 +177,7 @@ class SprintStateSummary extends Component {
         return (
             <div className="sprint-state-summary__estimate">
               <div className="sprint-state-summary__estimate_row">
-                Estimated work remaining: <Hours hours={cost_summary.projections.original_open_dev_hours} />
+                Estimated issue work remaining: &nbsp;<Hours hours={cost_summary.projections.original_open_dev_hours} /> hours
               </div>
             </div>
         )

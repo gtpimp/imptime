@@ -1039,7 +1039,7 @@ class ProjectQuerySet(QuerySet):
             d["num_missing_estimates"] = d.get('num_testable_issues', 0) - d.get('num_estimated', 0)
 
         num_adhoc_issues_by_sprint = Issue.objects.filter(project__in=sprints,
-                                                          issue_type="adhoc")\
+                                                          issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
                                                   .order_by("project_id")\
                                                   .values("project_id")\
                                                   .annotate(num_adhoc=Count('id'))
@@ -1724,7 +1724,7 @@ class Project(BaseModel):
                 dev_estimate_cost += min_cost
                 dev_estimate_hours += points
 
-                if issue.issue_type != 'adhoc':
+                if issue.issue_type not in Issue.MANAGEMENT_ISSUE_TYPES:
                     for manager in managers:
                         user_id = manager.id
                         try:
@@ -1829,15 +1829,21 @@ class Project(BaseModel):
             # elif rate.time_tracking_mode == 'tester':
             #     exclude_features_for_role = []
 
-            stats_per_user[user]['points_non_management'] = _get_total(issue_points.exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
+            stats_per_user[user]['points_non_management'] = _get_total(issue_points.exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
+                                                                       .values('user')\
+                                                                       .annotate(total=Sum('points')))
             stats_per_user[user]['open_status_options'] = sorted(open_status_options)
 
             stats_per_user[user]['points_closed_non_management'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
-                                                                         .exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
+                                                                              .exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
+                                                                              .values('user')\
+                                                                              .annotate(total=Sum('points')))
             stats_per_user[user]['points_closed'] = _get_total(issue_points.exclude(issue__status2__name__in=open_status_options)\
                                                                .values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_open_non_management'] = _get_total(issue_points.filter(issue__status2__name__in=open_status_options)\
-                                                                       .exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
+                                                                            .exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
+                                                                            .values('user')\
+                                                                            .annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_open_non_management_no_scope_creep'] = (stats_per_user[user]['points_open_non_management'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
 
@@ -1859,14 +1865,15 @@ class Project(BaseModel):
 
 
             stats_per_user[user]['points_comparative_non_management'] = _get_total(issue_points_comparative\
-                                                                              .exclude(issue__issue_type='adhoc').values('user')\
-                                                                              .annotate(total=Sum('points')))
+                                                                                   .exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
+                                                                                   .values('user')\
+                                                                                   .annotate(total=Sum('points')))
             stats_per_user[user]['points_comparative_closed_non_management'] = _get_total(issue_points_comparative.exclude(issue__status2__name__in=open_status_options)\
-                                                                                     .exclude(issue__issue_type='adhoc')\
+                                                                                     .exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
                                                                                      .values('user').annotate(total=Sum('points')))
             stats_per_user[user]['points_comparative_open_non_management'] = _get_total(issue_points_comparative\
                                                                                    .filter(issue__status2__name__in=open_status_options)\
-                                                                                   .exclude(issue__issue_type='adhoc')\
+                                                                                   .exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
                                                                                    .values('user').annotate(total=Sum('points')))
 
             stats_per_user[user]['adjusted_points_comparative_non_management'] = (stats_per_user[user]['points_comparative_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
@@ -1878,10 +1885,20 @@ class Project(BaseModel):
 
             stats_per_user[user]['hours_for_role'] = _get_total(entries.filter_on_role(stats_per_user[user]['rate'].time_tracking_mode).values('user').annotate(total=Sum('hours')))
 
-            stats_per_user[user]['hours_real'] = _get_total(entries.exclude(issue__issue_type='adhoc').order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_real'] = _get_total(entries.exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
+                                                            .order_by('user')\
+                                                            .values('user')\
+                                                            .annotate(total=Sum('hours')))
             stats_per_user[user]['hours_closed'] = _get_total(entries.exclude(issue__status2__name__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
-            stats_per_user[user]['hours_closed_real'] = _get_total(entries.exclude(issue__issue_type='adhoc').exclude(issue__status2__name__in=open_status_options).order_by('user').values('user').annotate(total=Sum('hours')))
-            stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__issue_type='adhoc').order_by('user').values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_closed_real'] = _get_total(entries.exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
+                                                                   .exclude(issue__status2__name__in=open_status_options)\
+                                                                   .order_by('user')\
+                                                                   .values('user')\
+                                                                   .annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_adhoc'] = _get_total(entries.filter(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
+                                                             .order_by('user')\
+                                                             .values('user')\
+                                                             .annotate(total=Sum('hours')))
 
             stats_per_user[user]['hours_ctc'] = stats_per_user[user]['rate'].amount * stats_per_user[user]['hours']
             stats_per_user[user]['hours_billable'] = stats_per_user[user]['rate'].full_rate * float(stats_per_user[user]['hours'])
@@ -4094,6 +4111,7 @@ class Issue(BaseModel):
                     ('minutes', 'Minutes')
     )
     TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
+    MANAGEMENT_ISSUE_TYPES = [x[0] for x in ISSUE_TYPES if x[0] not in TESTABLE_ISSUE_TYPES]
 
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
     number = models.IntegerField(null=True,blank=True, db_index=True)
@@ -4373,7 +4391,7 @@ class Issue(BaseModel):
 
     @classmethod
     def get_adhoc_timesheet_entries(self, project):
-        return Entry.objects.filter(issue__project=project, issue__issue_type='adhoc')
+        return Entry.objects.filter(issue__project=project, issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)
 
     def comments_in_order(self):
         return self.comments.all().order_by("-created")
