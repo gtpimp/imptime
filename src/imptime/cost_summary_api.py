@@ -63,6 +63,7 @@ class CostSummaryViewSet(BaseViewSet):
     def _calculate_projections(self, cost_summary, bp):
 
         projections = { 'original_dev_hours': 0,
+                        'original_open_dev_hours': 0,
                         'original_dev_commission_cost': 0,
                         'revised_dev_hours': 0,
                         'revised_dev_commission_cost': 0}
@@ -71,6 +72,7 @@ class CostSummaryViewSet(BaseViewSet):
             if dev_user_data['time_tracking_mode'] != 'developer':
                 continue
             projections['original_dev_hours'] += dev_user_data['adjusted_points_non_management_no_scope_creep']
+            projections['original_open_dev_hours'] += dev_user_data['adjusted_points_open_non_management_no_scope_creep'] 
             if bp.has_view_ctc_billable_rates:
                 projections['original_dev_commission_cost'] += dev_user_data['adjusted_points_comparative_billable']
             

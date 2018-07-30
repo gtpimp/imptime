@@ -8,6 +8,7 @@ import CurrencyValue from './CurrencyValue'
 import ProgressBar from './ProgressBar'
 import { showMoney } from '../actions/Mien'
 import Floater from "react-floater"
+import Hours from './Hours'
 
 class SprintStateSummary extends Component {
 
@@ -171,6 +172,17 @@ class SprintStateSummary extends Component {
         )
     }
 
+    renderEstimate() {
+        const { cost_summary } = this.props
+        return (
+            <div className="sprint-state-summary__estimate">
+              <div className="sprint-state-summary__estimate_row">
+                Estimated work remaining: <Hours hours={cost_summary.projections.original_open_dev_hours} />
+              </div>
+            </div>
+        )
+    }
+
     renderUnhandledProblems() {
         const { sprint, cost_summary, can_view_budget } = this.props
 
@@ -299,6 +311,7 @@ class SprintStateSummary extends Component {
               { this.renderBudgetProgress() }
               { this.renderActual() }
               { this.renderBudget() }
+              { this.renderEstimate() }
               { this.renderUnhandledProblems() }
               { this.renderWarnings() }
             </div>

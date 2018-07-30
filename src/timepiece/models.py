@@ -1839,6 +1839,8 @@ class Project(BaseModel):
             stats_per_user[user]['points_open_non_management'] = _get_total(issue_points.filter(issue__status2__name__in=open_status_options)\
                                                                        .exclude(issue__issue_type='adhoc').values('user').annotate(total=Sum('points')))
 
+            stats_per_user[user]['adjusted_points_open_non_management_no_scope_creep'] = (stats_per_user[user]['points_open_non_management'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
+
             stats_per_user[user]['adjusted_points_non_management'] = (stats_per_user[user]['points_non_management'] or 0) * (stats_per_user[user]['rate'].full_velocity or 0)
             stats_per_user[user]['adjusted_points_non_management_no_scope_creep'] = (stats_per_user[user]['points_non_management'] or 0) * (stats_per_user[user]['rate'].velocity or 0)
 
@@ -1962,7 +1964,7 @@ class Project(BaseModel):
         total_stats['points_estimated_open_non_management_billable'] = sum(stats_per_user[x]['points_estimated_open_non_management_billable'] or 0 for x in users)
         total_stats['unadjusted_points_billable_core_rate'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate'] or 0 for x in users)
         total_stats['unadjusted_points_billable_core_rate_no_scope_creep'] = sum(stats_per_user[x]['unadjusted_points_billable_core_rate_no_scope_creep'] or 0 for x in users)
-
+        total_stats['adjusted_points_open_non_management_no_scope_creep'] = sum(stats_per_user[x]['adjusted_points_open_non_management_no_scope_creep'] or 0 for x in users)
 
         total_stats['percentage_points_complete'] = (total_stats['points_closed_non_management'] or 0) / (total_stats['points_non_management'] or 1) * 100
 
@@ -4577,6 +4579,18 @@ class IssuePoints(BaseModel):
     def __unicode__(self):
         return u'%s:%s - %s hours' % (self.issue.subject, self.user.username, self.points)
 
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(IssuePoints, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self, params={'issue_id': str(self.issue_id),
+                                                                'sprint_id': str(self.issue.project_id),
+                                                                'user_id': str(self.user_id)})
+        else:
+            RefreshNotifier().notify_model_update(self, params={'issue_id': str(self.issue_id),
+                                                                'sprint_id': str(self.issue.project_id),
+                                                                'user_id': str(self.user_id)})
+    
 class IssueHistory(BaseModel):
 
     issue_id = models.IntegerField(blank=False, null=False, db_index=True)
