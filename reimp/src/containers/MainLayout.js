@@ -18,9 +18,9 @@ import GlobalCommentAnnotation from '../components/GlobalCommentAnnotation'
 import MainRouter from './MainRouter'
 import { ShortcutManager } from 'react-shortcuts'
 import keymap from '../actions/Keymap'
-
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
+import { ensureMiensLoaded, getCurrentMienId, getCurrentMien } from '../actions/Mien'
 
 var HTML5Backend = require('react-dnd-html5-backend');
 const shortcut_manager = new ShortcutManager(keymap)
@@ -43,15 +43,23 @@ class MainLayout extends Component {
     }
     
     componentDidMount() {
-        const { dispatch } = this.props
+        const { dispatch, current_mien, current_mien_id } = this.props
         dispatch(updateSettings(window.LOCAL_SETTINGS))
+        if ( current_mien_id && !current_mien ) {
+            dispatch(ensureMiensLoaded([current_mien_id]))
+        }
+        
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
+        const { dispatch, current_mien_id, current_mien } = new_props
         if ( (new_props.logged_in_user_id && new_props.logged_in_user_id !== this.props.logged_in_user_id) ||
              new_props.are_settings_loaded !== this.props.are_settings_loaded ) {
             this.refresh(new_props)
+        }
+        if ( current_mien_id && !current_mien ) {
+            dispatch(ensureMiensLoaded([current_mien_id]))
         }
     }
 
@@ -136,6 +144,8 @@ function mapStateToProps(state) {
     const user = logged_in_user()
     const logged_in_user_id = user['user_id'] || null
     const has_usable_password = user['has_usable_password'] || false
+    const current_mien_id =  getCurrentMienId(state)
+    const current_mien = getCurrentMien(state)
     
     return {
         is_logged_in: is_authenticated(),
@@ -143,6 +153,8 @@ function mapStateToProps(state) {
         logged_in_user_id: logged_in_user_id,
         has_usable_password: has_usable_password,
         settings: state.settings,
+        current_mien_id,
+        current_mien
     }
 }
 
