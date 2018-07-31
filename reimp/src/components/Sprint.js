@@ -63,6 +63,7 @@ class Sprint extends Component {
                             case "number":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       {sprint.number}
                                     </DivTableCell>
@@ -70,6 +71,7 @@ class Sprint extends Component {
                             case "ref":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       {sprint.id}
                                     </DivTableCell>
@@ -84,6 +86,7 @@ class Sprint extends Component {
                             case "start_time":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
                                     </DivTableCell>
@@ -91,13 +94,16 @@ class Sprint extends Component {
                             case "end_time":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra__style={getCellStyle(header)}>
                                       <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
                                     </DivTableCell>
                                 )
                             case "num_issues":
                                 return (
-                                    <DivTableCell key={header_key} extra_style={getCellStyle(header)}>
+                                    <DivTableCell key={header_key}
+                                                  secondary={true}
+                                                  extra_style={getCellStyle(header)}>
                                       <DivTableLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
                                                     extra_style={getCellStyle(header)}>
                                         {sprint.num_issues || 0} Issues
@@ -106,7 +112,9 @@ class Sprint extends Component {
                                 )
                             case "num_testable_issues":
                                 return (
-                                    <DivTableCell key={header_key} extra_style={getCellStyle(header)}>
+                                    <DivTableCell key={header_key}
+                                                  secondary={true}
+                                                  extra_style={getCellStyle(header)}>
                                       <DivTableLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
                                                     key={header_key}
                                                     extra_style={getCellStyle(header)}>
@@ -117,6 +125,7 @@ class Sprint extends Component {
                             case "status":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <EditableSprintStatus class_name="sprint-cell__status" sprint_ids={[sprint.id]} project_id={sprint.project_id} />
                                     </DivTableCell>
@@ -124,6 +133,7 @@ class Sprint extends Component {
                             case "type":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <EditableSprintType class_name="sprint-cell__type" sprint_ids={[sprint.id]} />
                                     </DivTableCell>
@@ -131,6 +141,7 @@ class Sprint extends Component {
                             case "hours_by_assignee":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       { sprint.hours_by_assignee && 
                                         <Hours hours={sprint.hours_by_assignee} />
@@ -141,6 +152,7 @@ class Sprint extends Component {
                             case "estimates_by_assignee":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <Hours hours={sprint.estimated_hours_by_assignee} />
                                     </DivTableCell>
@@ -148,6 +160,7 @@ class Sprint extends Component {
                             case "open_estimates_by_assignee":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <Hours hours={sprint.estimated_open_hours_by_assignee} />
                                     </DivTableCell>
@@ -155,6 +168,7 @@ class Sprint extends Component {
                             case "has_dev_started":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
                                        <StatusCircle colour="green"/>
@@ -167,6 +181,7 @@ class Sprint extends Component {
                             case "state_summary":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <SprintStateSummary sprint_id={sprint_id} />
                                     </DivTableCell>

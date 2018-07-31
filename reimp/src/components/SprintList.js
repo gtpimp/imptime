@@ -166,17 +166,17 @@ class SprintList extends Component {
         const { header_list } = this.props
         return (
             <DivTableHeaderRow>
-              { map(header_list, (v, index) => (
-                  <DivTableHeaderCell key={index}
-                                      extra_style={getCellStyle(v)}>
-                      { v.key === "name" &&
-                        <div className={css`font: ${theme.fonts.bold_large}; `}>
-                          {sprint_type}
-                        </div>
-                      }
-                      { v.key !== "name" && v.label }
-                    </DivTableHeaderCell>
-                ))}
+                { map(header_list, (v, index) => (
+                      <DivTableHeaderCell key={index}
+                                          extra_style={getCellStyle(v)}>
+                        { v.key === "name" &&
+                          <div className={css`font: ${theme.fonts.bold_large}; `}>
+                            {sprint_type}
+                          </div>
+                        }
+                          { v.key !== "name" && v.label }
+                      </DivTableHeaderCell>
+                  ))}
             </DivTableHeaderRow>
         )
     }

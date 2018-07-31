@@ -94,7 +94,7 @@ class Project extends Component {
                    }
                     
                     {includes(visible_header_keys, "num_sprints") &&
-                     <DivTableCell extra_style={getCellStyle(header_list.num_sprints)}>
+                     <DivTableCell secondary={true} extra_style={getCellStyle(header_list.num_sprints)}>
                        <DivTableLink to={'/projects/'+project.id+'/sprints/'}
                                      extra_style={getCellStyle(header_list.num_sprints)}>
                          { project && project.num_open_sprints > 0 &&
@@ -107,7 +107,7 @@ class Project extends Component {
                     }
 
                      {includes(visible_header_keys, "created_at") &&
-                      <DivTableCell extra_style={getCellStyle(header_list.created_at)}>
+                      <DivTableCell secondary={true} extra_style={getCellStyle(header_list.created_at)}>
                         <div className="project-cell__created-at">
                           <Timestamp
                               value={project.recent_activity && project.recent_activity.project_created_at}
@@ -118,7 +118,7 @@ class Project extends Component {
 
                       
                       {includes(visible_header_keys, "sort_reason") &&
-                       <DivTableCell extra_style={getCellStyle(header_list.sort_reason)}>
+                       <DivTableCell secondary={true} extra_style={getCellStyle(header_list.sort_reason)}>
                          <div className="project-cell__sort-reason">
                            {project.recent_activity && project.recent_activity.sort_reason}
                          </div>
@@ -128,7 +128,7 @@ class Project extends Component {
 
 
                        {includes(visible_header_keys, "sort_date") &&
-                        <DivTableCell extra_style={getCellStyle(header_list.sort_date)}>
+                        <DivTableCell secondary={true} extra_style={getCellStyle(header_list.sort_date)}>
                           <div className="project-cell__sort-date">
                             <Timestamp
                                 value={project.recent_activity && project.recent_activity.sort_date}
@@ -139,7 +139,7 @@ class Project extends Component {
 
                         
                         {includes(visible_header_keys, "delete") &&
-                         <DivTableCell extra_style={getCellStyle(header_list.delete)}>
+                         <DivTableCell secondary={true} extra_style={getCellStyle(header_list.delete)}>
                            <div className="reveal-on-hover--block issue__cell--issue-delete">
                              <DeleteProject
                                  onDelete={this.onDeleteProject}
@@ -149,7 +149,7 @@ class Project extends Component {
                         }
 
                          { includes(visible_header_keys, "small_delete") &&
-                           <DivTableCell extra_style={getCellStyle(header_list.small_delete)}>
+                           <DivTableCell secondary={true} extra_style={getCellStyle(header_list.small_delete)}>
                              { can_show_project_delete &&
                                <div className={"reveal-on-hover--block"}>
                                  <div className="project__small-delete-image"
@@ -159,24 +159,6 @@ class Project extends Component {
                            </DivTableCell>
                          }
                            
-                           {includes(visible_header_keys, "delete") &&
-                            <DivTableCell extra_style={getCellStyle(header_list.delete)}>
-                              <div className="reveal-on-hover--block issue__cell--issue-delete">
-                                <DeleteProject onDelete={this.onDeleteProject} />
-                              </div>
-                            </DivTableCell>
-                           }
-
-                            { includes(visible_header_keys, "small_delete") &&
-                              <DivTableCell extra_style={getCellStyle(header_list.small_delete)}>
-                                { can_show_project_delete &&
-                                  <div className={"reveal-on-hover--block"}>
-                                    <div className="project__small-delete-image"
-                                         onClick={this.onDeleteProject} />
-                                  </div>
-                                }
-                              </DivTableCell>
-                            }
 		</DivTableRow>
             )
 	}

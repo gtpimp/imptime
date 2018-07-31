@@ -382,6 +382,7 @@ class Issue extends Component {
                             case "assignee":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                                     </DivTableCell>
@@ -389,6 +390,7 @@ class Issue extends Component {
                             case "created_at":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <Timestamp value={issue.created_at} format="from_now"/>
                                     </DivTableCell>
@@ -396,6 +398,7 @@ class Issue extends Component {
                             case "status":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                                     </DivTableCell>
@@ -403,6 +406,7 @@ class Issue extends Component {
                             case "estimate_summary":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <div className="issue-cell__estimate_summary">
                                         {map(sprint.user_ids_who_can_estimate, function(user_id) {
@@ -434,6 +438,7 @@ class Issue extends Component {
                             case "tags":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       <div className="issue-cell__tag">
                                         <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
@@ -445,15 +450,15 @@ class Issue extends Component {
                                     map(tag_category_names, function(tag_category_name) {
                                         const tags = tagsByCategoryName[tag_category_name]
                                         return (
-                                            <div key={tag_category_name}
-                                                 className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
-                                                 extra_style={getCellStyle(header)}>
+                                            <DivTableCell key={header_key}
+                                                          secondary={true}
+                                                          extra_style={getCellStyle(header)}>
                                               { map(tags, (tag) =>
                                                   <div key={tag.id} className="issue-cell__tag_column">
                                                     {tag.name}
                                                   </div>
                                                 )}
-                                            </div>
+                                            </DivTableCell>
                                         )
                                     })
 
@@ -462,6 +467,7 @@ class Issue extends Component {
                                 return (
                                     map(sprint.user_ids_who_can_estimate, (user_id) =>
                                         <DivTableCell key={user_id}
+                                                      secondary={true}
                                                       extra_style={getCellStyle(header)}>
                                           {logged_in_user_id === user_id &&
                                            <EditableIssueEstimate issue_id={issue.id}
@@ -479,6 +485,7 @@ class Issue extends Component {
                             case "my_estimate":
                                 return (
                                     <DivTableCell key={header_key}
+                                                  secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       {logged_in_user_can_estimate_user_id &&
                                        <EditableIssueEstimate issue_id={issue.id}
@@ -489,21 +496,24 @@ class Issue extends Component {
                             case "estimated":
                                 return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  secondary={true}
+                                                  extra_style={getCellStyle(header)}>
                                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                                     </DivTableCell>
                                 )                                   
                             case "my_time":
                                 return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  secondary={true}
+                                                  extra_style={getCellStyle(header)}>
                                       <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
                                     </DivTableCell>
                                 )
                             case "clock_in":
                                 return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  secondary={true}
+                                                  extra_style={getCellStyle(header)}>
                                       <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
                                         <TimerSwitch
                                             active={issue.am_i_clocked_in}
@@ -516,7 +526,8 @@ class Issue extends Component {
                             case "delete":
                                 return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  secondary={true}
+                                                  extra_style={getCellStyle(header)}>
                                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                                         <DeleteIssue
                                             onDelete={that.onDeleteIssue}
@@ -527,7 +538,8 @@ class Issue extends Component {
                             case "small_delete":
                                 return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  secondary={true}
+                                                  extra_style={getCellStyle(header)}>
                                       <div className={"reveal-on-hover--block"}>
                                         <div className="issue__small-delete-image" onClick={that.onDeleteIssue} />
                                       </div>
