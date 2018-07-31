@@ -8,7 +8,8 @@ import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
-import { ProjectRowDiv, ProjectStatusDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
+import { ProjectStatusDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
+import DivTableRow from './DivTableRow'
 
 class Project extends Component {
 
@@ -55,27 +56,27 @@ class Project extends Component {
                 visible_header_keys, header_list, can_show_project_delete } = this.props
 	if ( ! project ) {
 	    return (
-                <ProjectRowDiv>
+                <DivTableRow>
                   <TableCellDiv>
                     Loading...
                   </TableCellDiv>
-                </ProjectRowDiv>
+                </DivTableRow>
             )
 	}
 	
 	if ( ! is_loading === false ) {
 	    return (
-		<ProjectRowDiv key={this.key+"."+project.id}
-		               onClick={onClickedProject}
-                               is_selected={is_selected}
+		<DivTableRow key={this.key+"."+project.id}
+		             onClick={onClickedProject}
+                             is_selected={is_selected}
 		>
 		  <div className="div-table__cell">{project && project.id}</div>
 		  <div className="div-table__cell">Loading...</div>
-		</ProjectRowDiv>
+		</DivTableRow>
 	    )
 	} else {
             return (
-		<ProjectRowDiv key={this.key+"."+project.id} is_selected={is_selected}>
+		<DivTableRow key={this.key+"."+project.id} is_selected={is_selected}>
                   {includes(visible_header_keys, "name") &&
 		   <TableCellDiv
                        onClick={onClickedProject}
@@ -175,7 +176,7 @@ class Project extends Component {
                                 }
                               </TableCellSecondaryDiv>
                             }
-		</ProjectRowDiv>
+		</DivTableRow>
             )
 	}
     }

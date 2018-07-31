@@ -17,7 +17,7 @@ export const default_theme = {
                list_text: '#005C86',
                link: '#005C86',
                list_highlight: 'rgba(0,92,134, 0.7)',
-               list_rollover: 'rgba(0,92,134, 0.7)',
+               list_rollover: 'rgba(0,92,134, 0.2)',
                list_selected: 'rgba(11,139,178, 0.15)',
                list_selected_rollover: 'rgba(11,139,178, 0.3)',
                notok: '#E25A50',
