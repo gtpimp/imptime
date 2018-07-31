@@ -56,6 +56,7 @@ import { Shortcuts } from 'react-shortcuts'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { setGloballySelectedIssueId } from '../actions/Page'
 
+
 class IssueList extends Component {
 
     constructor(props) {

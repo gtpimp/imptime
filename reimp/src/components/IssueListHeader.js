@@ -7,6 +7,9 @@ import '../sass/sticky-header.scss'
 import {
     isDirty
 } from 'redux-form'
+import DivTableHeaderRow from './DivTableHeaderRow'
+import DivTableHeaderCell from './DivTableHeaderCell'
+
 
 class IssueListHeader extends Component {
 
@@ -42,59 +45,55 @@ class IssueListHeader extends Component {
         const { header_list, tag_category_names, sprint, logged_in_user_id } = this.props
         
         return(
-            <div className="div-table__header_row">
+            <DivTableHeaderRow>
               { map(header_list, function(v, index) {
                     const k = v.key
                     const react_key = ""+ k + index
                     if ( k === "tag_columns" ) {
                         return (
                             map(tag_category_names, (tag_category_name) => (
-                                <div key={tag_category_name}
-                                     className="div-table__header_cell issue-list__header_call__tag_category"
-                                     style={getCellStyle(v)}>
+                                <DivTableHeaderCell key={tag_category_name}
+                                                    extra_style={getCellStyle(v)}>
                                   {tag_category_name}
-                                </div>
+                                </DivTableHeaderCell>
                             ))
                         )
                     } else if ( k === "estimate_columns" ) {
                         return (
                             map(sprint.user_ids_who_can_estimate, (user_id) => (
-                                <div key={user_id}
-                                     className="div-table__header_cell issue-list__header_call__user_estimate"
-                                     style={getCellStyle(v)}>
+                                <DivTableHeaderCell key={user_id}
+                                                    extra_style={getCellStyle(v)}>
                                   <OtherUser user_id={user_id}
                                              render_mode="inline--small"
                                              display_mode="username" />
-                                </div>
+                                </DivTableHeaderCell>
                             ))
                         )
                     } else if ( k === "my_estimate" ) {
                         const user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
                         if ( user_id ) {
                             return (
-                                <div key={user_id}
-                                     className="div-table__header_cell issue-list__header_call__user_estimate"
-                                     style={getCellStyle(v)}>
+                                <DivTableHeaderCell key={user_id}
+                                                    extra_style={getCellStyle(v)}>
                                   <OtherUser user_id={user_id}
                                              render_mode="inline--small"
                                              display_mode="username" />
-                                </div>
+                                </DivTableHeaderCell>
                             )
                         } else {
                             return null
                         }
                     } else {
                         return (
-                            <div key={react_key}
-                                 className="div-table__header_cell"
-                                 style={getCellStyle(v)}>
+                            <DivTableHeaderCell key={react_key}
+                                                extra_style={getCellStyle(v)}>
                               {v.label }
-                            </div>
+                            </DivTableHeaderCell>
                         )
                     }
                 })
               }
-            </div>
+            </DivTableHeaderRow>
         )
     }
 }
