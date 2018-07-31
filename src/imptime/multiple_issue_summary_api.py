@@ -71,7 +71,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         return response
 
     def _get_download_filter(self, request):
-        raw_filter = json.loads(request.POST['post_params'])
+        raw_filter = json.loads(request.POST.get('post_params', {}))
         s = MultipleIssueFilterSerializer(data=raw_filter)
         s.is_valid(raise_exception=True)
         return s.validated_data

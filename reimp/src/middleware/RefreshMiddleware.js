@@ -74,6 +74,7 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateIssues([d.entity_ref]))
         dispatch(invalidateIssueGeneralDetails([d.entity_ref]))
         dispatch(invalidateAllMultipleIssueSummaries())
+        dispatch(invalidateCostSummary(d.params.sprint_id))
 
     } else if ( d.entity_name === 'issuetag' || d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {
         dispatch(invalidateIssues(d.params.issues))
