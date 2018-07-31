@@ -15,7 +15,7 @@ class DivTableCell extends Component {
 
             <div className={css`display: flex;
                                 font: ${theme.fonts.list_items};
-                                padding-eft: 6px;
+                                padding-left: 6px;
                                 vertical-align: middle;
                                 align-items: center;
                                 flex: ${extra_style.flex || "0 0 190px"};

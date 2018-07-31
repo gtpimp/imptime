@@ -21,7 +21,7 @@ class DivTableRow extends Component {
                                 flex-direction: row;
                                 min-height: 40px;
                                 font: theme.fonts.list_items;
-                                padding-left: 18px;
+                                padding-left: 24px;
                             `}
                  onClick={action}>
                  {this.props.children}

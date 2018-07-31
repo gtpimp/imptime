@@ -23,8 +23,10 @@ import {
 } from '../actions/Sprints'
 import { setGloballySelectedSprintId } from '../actions/Page'
 import Sprint from './Sprint'
-import DivTable from './DivTable'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
+import DivTable from './DivTable'
+import DivTableHeaderRow from './DivTableHeaderRow'
+import DivTableHeaderCell from './DivTableHeaderCell'
 
 class SprintList extends Component {
 
@@ -161,18 +163,17 @@ class SprintList extends Component {
     renderHeader(sprint_type) {
         const { header_list } = this.props
         return (
-            <div className="div-table__header_row sprint_type_header">
+            <DivTableHeaderRow>
               { map(header_list, (v, index) => (
-                    <div key={index}
-                         className="div-table__header_cell"
-                         style={getCellStyle(v)}>
+                  <DivTableHeaderCell key={index}
+                                      extra_style={getCellStyle(v)}>
                       { v.key === "name" &&
                         <div className="sprint_header__type">{sprint_type}</div>
                       }
                       { v.key !== "name" && v.label }
-                    </div>
+                    </DivTableHeaderCell>
                 ))}
-            </div>
+            </DivTableHeaderRow>
         )
     }
 
