@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {withRouter, Link} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import {get, includes, keys} from 'lodash'
 import { connect } from 'react-redux'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
@@ -8,8 +8,10 @@ import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
-import { ProjectStatusDiv, TableCellDiv, TableCellSecondaryDiv, TableCellLinkDiv } from './styles'
 import DivTableRow from './DivTableRow'
+import DivTableCell from './DivTableCell'
+import DivTableLink from './DivTableLink'
+import StatusCircle from './StatusCircle'
 
 class Project extends Component {
 
@@ -57,9 +59,9 @@ class Project extends Component {
 	if ( ! project ) {
 	    return (
                 <DivTableRow>
-                  <TableCellDiv>
+                  <DivTableCell>
                     Loading...
-                  </TableCellDiv>
+                  </DivTableCell>
                 </DivTableRow>
             )
 	}
@@ -78,103 +80,102 @@ class Project extends Component {
             return (
 		<DivTableRow key={this.key+"."+project.id} is_selected={is_selected}>
                   {includes(visible_header_keys, "name") &&
-		   <TableCellDiv
+		   <DivTableCell
                        onClick={onClickedProject}
-                       style={getCellStyle(header_list.name)}>
+                       extra_style={getCellStyle(header_list.name)}>
                      {project.name}
-                   </TableCellDiv>
+                   </DivTableCell>
                   }
 
                    {includes(visible_header_keys, "active") &&
-                    <TableCellDiv style={getCellStyle(header_list.active)}>
-                      <ProjectStatusDiv colour={ this.getProjectStatus(project) }>
-                      </ProjectStatusDiv>
-                    </TableCellDiv>
+                    <DivTableCell extra_style={getCellStyle(header_list.active)}>
+                      <StatusCircle colour={ this.getProjectStatus(project) } />
+                    </DivTableCell>
                    }
                     
                     {includes(visible_header_keys, "num_sprints") &&
-                     <TableCellDiv>
-                       <Link to={'/projects/'+project.id+'/sprints/'}
-                             style={getCellStyle(header_list.num_sprints)}>
+                     <DivTableCell>
+                       <DivTableLink to={'/projects/'+project.id+'/sprints/'}
+                                     extra_style={getCellStyle(header_list.num_sprints)}>
                          { project && project.num_open_sprints > 0 &&
-                           <TableCellLinkDiv>
+                           <div>
                              {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
-                           </TableCellLinkDiv>
+                           </div>
                          }
-                       </Link>
-                     </TableCellDiv>
+                       </DivTableLink>
+                     </DivTableCell>
                     }
 
                      {includes(visible_header_keys, "created_at") &&
-                      <TableCellSecondaryDiv style={getCellStyle(header_list.created_at)}>
+                      <DivTableCell extra_style={getCellStyle(header_list.created_at)}>
                         <div className="project-cell__created-at">
                           <Timestamp
                               value={project.recent_activity && project.recent_activity.project_created_at}
                               format="from_now"/>
                         </div>
-                      </TableCellSecondaryDiv>
+                      </DivTableCell>
                      }
 
                       
                       {includes(visible_header_keys, "sort_reason") &&
-                       <TableCellSecondaryDiv style={getCellStyle(header_list.sort_reason)}>
+                       <DivTableCell extra_style={getCellStyle(header_list.sort_reason)}>
                          <div className="project-cell__sort-reason">
                            {project.recent_activity && project.recent_activity.sort_reason}
                          </div>
-                       </TableCellSecondaryDiv>
+                       </DivTableCell>
                       }
 
 
 
                        {includes(visible_header_keys, "sort_date") &&
-                        <TableCellSecondaryDiv style={getCellStyle(header_list.sort_date)}>
+                        <DivTableCell extra_style={getCellStyle(header_list.sort_date)}>
                           <div className="project-cell__sort-date">
                             <Timestamp
                                 value={project.recent_activity && project.recent_activity.sort_date}
                                 format="from_now"/>
                           </div>
-                        </TableCellSecondaryDiv>
+                        </DivTableCell>
                        }
 
                         
                         {includes(visible_header_keys, "delete") &&
-                         <TableCellSecondaryDiv style={getCellStyle(header_list.delete)}>
+                         <DivTableCell extra_style={getCellStyle(header_list.delete)}>
                            <div className="reveal-on-hover--block issue__cell--issue-delete">
                              <DeleteProject
                                  onDelete={this.onDeleteProject}
                              />
                            </div>
-                         </TableCellSecondaryDiv>
+                         </DivTableCell>
                         }
 
                          { includes(visible_header_keys, "small_delete") &&
-                           <TableCellSecondaryDiv style={getCellStyle(header_list.small_delete)}>
+                           <DivTableCell extra_style={getCellStyle(header_list.small_delete)}>
                              { can_show_project_delete &&
                                <div className={"reveal-on-hover--block"}>
                                  <div className="project__small-delete-image"
                                       onClick={this.onDeleteProject} />
                                </div>
                              }
-                           </TableCellSecondaryDiv>
+                           </DivTableCell>
                          }
                            
                            {includes(visible_header_keys, "delete") &&
-                            <TableCellSecondaryDiv style={getCellStyle(header_list.delete)}>
+                            <DivTableCell extra_style={getCellStyle(header_list.delete)}>
                               <div className="reveal-on-hover--block issue__cell--issue-delete">
                                 <DeleteProject onDelete={this.onDeleteProject} />
                               </div>
-                            </TableCellSecondaryDiv>
+                            </DivTableCell>
                            }
 
                             { includes(visible_header_keys, "small_delete") &&
-                              <TableCellSecondaryDiv style={getCellStyle(header_list.small_delete)}>
+                              <DivTableCell extra_style={getCellStyle(header_list.small_delete)}>
                                 { can_show_project_delete &&
                                   <div className={"reveal-on-hover--block"}>
                                     <div className="project__small-delete-image"
                                          onClick={this.onDeleteProject} />
                                   </div>
                                 }
-                              </TableCellSecondaryDiv>
+                              </DivTableCell>
                             }
 		</DivTableRow>
             )

@@ -78,7 +78,7 @@ class NavTab extends Component {
             return ( 
                 <NavDropdownMenuItem expanded={expanded}
                                      onMouseOver={this.showSubMenu}
-                                     onMouseOut={this.hideSubMenu}
+                                     onMouseLeave={this.hideSubMenu}
                                      colourName={colourName || null}>
                   {this.props.label}
                   <NavDropdownIcon>

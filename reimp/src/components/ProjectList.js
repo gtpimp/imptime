@@ -30,36 +30,8 @@ import DivTable from './DivTable'
 import '../sass/project-list.scss'
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
-import styled from 'react-emotion'
-import { default_theme as theme } from '../theme/default'
-
-const div_table_row = {
-    display: 'flex',
-    flexDirection: 'row',
-    minHeight: '35px',
-    font: theme.fonts.list_items,
-    paddingLeft: '24px'
-}
-
-const DivTableHeaderRow = styled('div')(props => Object.assign(div_table_row,
-                                                  {font: theme.fonts.list_items,
-                                                   height: '40px',
-                                                   marginTop: '25px',
-                                                   paddingLeft: '12px'
-                                                  }
-))
-
-const DivTableHeaderCell = styled('div')(props => ({color: theme.colours.strong_text,
-                                                    paddingLeft: '6px',
-                                                    paddingTop: '6px',
-                                                    marginLeft: '6px',
-                                                    marginRight: '6px',
-                                                    display: 'flex',
-
-                                                    '&:hover': {
-                                                        cursor: 'pointer',
-                                                        backgroundColor: 'rgba(0,92,134, 0.07)',
-                                                    }}))
+import DivTableHeaderRow from './DivTableHeaderRow'
+import DivTableHeaderCell from './DivTableHeaderCell'
 
 class ProjectList extends Component {
 
@@ -156,7 +128,7 @@ class ProjectList extends Component {
             <DivTableHeaderRow>
             { map(header_list, (v, k) => (
                 <DivTableHeaderCell key={k}
-                                    style={getCellStyle(v)}>
+                                    extra_style={getCellStyle(v)}>
                   {v.label }
                 </DivTableHeaderCell>
             ))}

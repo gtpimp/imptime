@@ -6,7 +6,7 @@ class NavTabPopup extends Component {
     render() {
         return (
             <div className={css`position:absolute;
-                                top: 36px;
+                                top: 33px;
                                 display: flex;
                                 z-index:9;`} >
                  {this.props.children}

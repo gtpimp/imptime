@@ -11,6 +11,7 @@ import { showFloatingCalendar } from '../actions/CalendarEvents'
 import { css } from 'emotion'
 import styled from 'react-emotion'
 import PopupPanelLink from './PopupPanelLink'
+import PopupPanelHeading from './PopupPanelHeading'
 
 const NavbarDiv = styled('div')(props => ({display: "flex",
                                            color: "#ffffff",
@@ -61,12 +62,19 @@ class Navbar extends Component {
                   <MienSelector></MienSelector>
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Calendar" >
+                  <PopupPanelHeading>
+                    Immediate planning
+                  </PopupPanelHeading>
                   <PopupPanelLink onClick={this.onSelectFloatingCalendar}>
-                    Popup
+                    Diary
                   </PopupPanelLink>
                   <PopupPanelLink>
                     <Link to={'/schedule/'+default_schedule_id}>Nudge</Link>
                   </PopupPanelLink>
+
+                  <PopupPanelHeading>
+                    Long term planning
+                  </PopupPanelHeading>
                   <PopupPanelLink>
                     <Link to='/calendar'>My calendar</Link>
                   </PopupPanelLink>
@@ -75,21 +83,42 @@ class Navbar extends Component {
                   </PopupPanelLink>
                 </NavTab>               
                 <NavTab variant="dashboard-toggle" label="Company" >
+
+                  <PopupPanelHeading>
+                    Checklists
+                  </PopupPanelHeading>
+                  <PopupPanelLink>
+                    <Link to='/company/problems'>Problems</Link>
+                  </PopupPanelLink>
+
+                  <PopupPanelHeading>
+                    Time
+                  </PopupPanelHeading>
                   <PopupPanelLink>
                     <Link to='/company/billable_hours'>Billable hours</Link>
                   </PopupPanelLink>
                   <PopupPanelLink>
-                    <Link to='/company/problems'>Problems</Link>
+                    <Link to="/usertimesheets">Timesheets</Link>
                   </PopupPanelLink>
+
+                  <PopupPanelHeading>
+                    Summaries
+                  </PopupPanelHeading>
+                  <PopupPanelLink>
+                    <Link to="/work_summary">Daily work summary</Link>
+                  </PopupPanelLink>
+                  <PopupPanelLink>
+                    <Link to="/dashboard">Dashboard</Link>
+                  </PopupPanelLink>
+
+                  <PopupPanelHeading>
+                    Finance
+                  </PopupPanelHeading>
                   <PopupPanelLink>
                     <Link to='/invoices'>Invoices</Link>
                   </PopupPanelLink>
-                  <PopupPanelLink>
-                    <Link to="/usertimesheets">Timesheets</Link>
-                  </PopupPanelLink>
+
                 </NavTab>
-                <NavTab to="/work_summary" label="Work summary" />
-                <NavTab to="/dashboard" label="Dashboard" />
                 <NavTab>
                   <SearchBox/>
                 </NavTab>

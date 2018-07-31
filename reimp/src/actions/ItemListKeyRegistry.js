@@ -1,4 +1,3 @@
-
 export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
 export const LIST_KEY__ISSUE_LIST = 'issues'

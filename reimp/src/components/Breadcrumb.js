@@ -62,7 +62,7 @@ const menu_buttons = {
           }}
     ],
     'project': [
-        { label: (objs) => "Sections",
+        { label: (objs) => "Manage this project",
           type: "heading"
         },
         { label: (objs) => 'Sprints',
@@ -74,6 +74,9 @@ const menu_buttons = {
         },
         { label: (objs) => 'Users',
           nav_url: (objs) => '/projects/' + objs.project.id + '/users'
+        },
+        { label: (objs) => 'Gallery and attachments',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
         },
         
         { label: (objs) => "Summaries",
@@ -91,9 +94,6 @@ const menu_buttons = {
         
         { label: (objs) => "Other",
           type: "heading"
-        },
-        { label: (objs) => 'Gallery',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
         },
         { label: (objs) => 'Minutes',
           dispatch_action: (objs, props) => startMinutesEditor(objs.project.id,
