@@ -1,17 +1,5 @@
 @import 'variables.scss';
 
-.modal-dialog {
-  background-color: $color-2;
-  border-radius: 2px;
-  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
-  box-sizing: border-box;
-  position: absolute;
-  top: 10%;
-  left: 40%;
-  outline: none;
-  overflow: auto;
-}
-
 .modal-dialog--default {
 
   width: 288px;
@@ -28,10 +16,6 @@
   left: 0;
   right: 0;
     bottom: 0;
-}
-
-.modal-dialog__content {
-  //margin-top: 13px;
 }
 
 .modal-dialog__header {

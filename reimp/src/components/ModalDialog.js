@@ -1,9 +1,20 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css, cx } from 'emotion'
 import Modal from 'react-modal';
 import '../sass/modal-dialog.scss'
 import classNames from 'classnames'
 import PopupPanel from './PopupPanel'
+
+const modal_dialog = css`border-radius: 2px;
+                         box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
+                         box-sizing: border-box;
+                         position: absolute;
+                         top: 10%;
+                         left: 40%;
+                         max-height: 80%;
+                         overflow: auto;
+                         outline: none; `
 
 class ModalDialog extends Component {
 
@@ -13,7 +24,7 @@ class ModalDialog extends Component {
         
         return (
             <Modal isOpen={isOpen || false}
-                   className={classNames('modal-dialog', 'modal-dialog--' + variant)}
+                   className={cx(modal_dialog, 'modal-dialog--' + variant)}
                    overlayClassName="modal-dialog__overlay"
                    onRequestClose={onClose || function () { }}
                    contentLabel={title}>
@@ -24,7 +35,7 @@ class ModalDialog extends Component {
                     <div className="modal-dialog__close"><i className="material-icons" onClick={onClose || function () { }}>close</i></div>
                   }
                 </div>
-                <div className="modal-dialog__content">
+                <div>
                   {children}
                 </div>
               </PopupPanel>

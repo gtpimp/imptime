@@ -13,6 +13,7 @@ class PopupPanel extends Component {
                             box-shadow: 13px 14px 14px -10px rgba(0,0,0,0.39);
                             color: ${theme.colours.strong_text};
                             padding: 24px;
+                            height: 100%;
                             min-width: 290px;
                             flex-direction: column;
                             background-color: ${theme.colours.panel_background};

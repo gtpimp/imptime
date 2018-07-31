@@ -6,6 +6,7 @@ import styled from 'react-emotion'
 import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import PopupPanel from './PopupPanel'
+import NavTabPopup from './NavTabPopup'
 
 const nav_item_css = {paddingLeft:"12px",
                       display:"flex",
@@ -85,16 +86,14 @@ class NavTab extends Component {
                       {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}
                     </i>
                   </NavDropdownIcon>
-                  
-                  <div className={css`position:absolute;
-                                      top: 36px;
-                                      z-index:9;
-                                      display: ${sub_menu_visible ? "flex" : "none"}`}
-                  >
-                    <PopupPanel>
-                      {children}
-                    </PopupPanel>
-                  </div>
+
+                  { sub_menu_visible && 
+                    <NavTabPopup>
+                      <PopupPanel>
+                        {children}
+                      </PopupPanel>
+                    </NavTabPopup>
+                  }
                 </NavDropdownMenuItem>
             )
         }

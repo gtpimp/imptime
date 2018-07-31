@@ -37,6 +37,7 @@ class SprintResultSerializer(BaseResultSerializer):
     
 class IssueResultSerializer(BaseResultSerializer):
     issue_id = serializers.CharField(source='id')
+    number = serializers.CharField()
     subject = serializers.CharField()
     status_name = serializers.CharField(source='status2_name')
     assigned_to_quick_name = serializers.CharField()
