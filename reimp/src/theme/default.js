@@ -6,7 +6,8 @@ const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-seri
                     'regular-15': "normal normal 400 15px 'Fira Sans', sans-serif",
                     'bold-12': "normal normal 600 12px 'Fira Sans', sans-serif",
                     'bold-15': "normal normal 600 15px 'Fira Sans', sans-serif",
-                    'semibold-20': "normal normal 500 20px 'Fira Sans', sans-serif"
+                    'semibold-20': "normal normal 500 20px 'Fira Sans', sans-serif",
+                    'regular-10': "normal normal 400 10px 'Fira Sans', sans-serif",
 }
 
 export const default_theme = {
@@ -54,6 +55,8 @@ export const default_theme = {
         breadcrumb_selected: fonts_raw['bold-15'],
         button_large: fonts_raw['semibold-25'],
         sidebar_title: fonts_raw['semibold-25'],
+
+        informational: fonts_raw['regular-10']
 
     },
 

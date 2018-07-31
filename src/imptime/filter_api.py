@@ -58,9 +58,9 @@ class FilterViewSet(BaseViewSet):
                                                            Q(description__icontains=search_term))\
                                                    .order_by("name")
 
-            issues_within_active_sprints = None
-            sprints_within_active_projects = None
-            issues_within_active_issues = None
+            issues_within_active_sprints = []
+            sprints_within_active_projects = []
+            issues_within_active_issues = []
 
             if active_sprint_ids:
                 issues_within_active_sprints = allowed_issues.filter(project__id__in=active_sprint_ids)
@@ -88,14 +88,14 @@ class FilterViewSet(BaseViewSet):
             sprints = allowed_sprints
             projects = allowed_projects
 
-            #issues = [x for x in issues[0:500] if x.project.can_view_by_user(request.user)]
+            max_results = 10
             
-            context['all_projects'] = ProjectResultSerializer(projects, many=True, result_category='all_projects').data
-            context['all_sprints'] = SprintResultSerializer(sprints, many=True, result_category='all_sprints').data
-            context['all_issues'] = IssueResultSerializer(issues, many=True, result_category='all_issues').data
-            context['issues_within_active_issues'] = IssueResultSerializer(issues_within_active_issues, many=True, result_category='issues_within_active_issues').data
-            context['issues_within_active_sprints'] = IssueResultSerializer(issues_within_active_sprints, many=True, result_category='issues_within_active_sprints').data
-            context['sprints_within_active_projects'] = SprintResultSerializer(sprints_within_active_projects, many=True, result_category='sprints_within_active_projects').data
+            context['all_projects'] = ProjectResultSerializer(projects[0:max_results], many=True, result_category='all_projects').data
+            context['all_sprints'] = SprintResultSerializer(sprints[0:max_results], many=True, result_category='all_sprints').data
+            context['all_issues'] = IssueResultSerializer(issues[0:max_results], many=True, result_category='all_issues').data
+            context['issues_within_active_issues'] = IssueResultSerializer(issues_within_active_issues[0:max_results], many=True, result_category='issues_within_active_issues').data
+            context['issues_within_active_sprints'] = IssueResultSerializer(issues_within_active_sprints[0:max_results], many=True, result_category='issues_within_active_sprints').data
+            context['sprints_within_active_projects'] = SprintResultSerializer(sprints_within_active_projects[0:max_results], many=True, result_category='sprints_within_active_projects').data
 
             data = {'status': 'success', 'payload': context}
 

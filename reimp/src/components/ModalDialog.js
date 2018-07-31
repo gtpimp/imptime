@@ -9,21 +9,23 @@ class ModalDialog extends Component {
 
     render() {
 
+        const { isOpen, onClose, title, variant, children } = this.props
+        
         return (
-            <Modal isOpen={this.props.isOpen || false}
-                   className={classNames('modal-dialog', 'modal-dialog--' + this.props.variant)}
+            <Modal isOpen={isOpen || false}
+                   className={classNames('modal-dialog', 'modal-dialog--' + variant)}
                    overlayClassName="modal-dialog__overlay"
-                   onRequestClose={this.props.onClose || function () { }}
-                   contentLabel={this.props.title}>
+                   onRequestClose={onClose || function () { }}
+                   contentLabel={title}>
               <PopupPanel>
-                <div className={classNames('modal-dialog__header', 'modal-dialog__header--' + this.props.variant)}>
-                  <label htmlFor="assigned" className={classNames('modal-dialog__title', 'modal-dialog__title--' + this.props.variant)}>{this.props.title}</label>
-                  { this.props.onClose &&
-                    <div className="modal-dialog__close"><i className="material-icons" onClick={this.props.onClose || function () { }}>close</i></div>
+                <div className={classNames('modal-dialog__header', 'modal-dialog__header--' + variant)}>
+                  <label htmlFor="assigned" className={classNames('modal-dialog__title', 'modal-dialog__title--' + variant)}>{title}</label>
+                  { onClose &&
+                    <div className="modal-dialog__close"><i className="material-icons" onClick={onClose || function () { }}>close</i></div>
                   }
                 </div>
                 <div className="modal-dialog__content">
-                  {this.props.children}
+                  {children}
                 </div>
               </PopupPanel>
             </Modal>
@@ -32,8 +34,14 @@ class ModalDialog extends Component {
 }
 
 function mapStateToProps(state, props) {
+
+    const { onClose, isOpen, title, variant } = props
+    
     return {
-        variant: props.variant || 'default'
+        onClose,
+        isOpen: isOpen || true,
+        variant: variant || 'default',
+        title
     }
 }
 

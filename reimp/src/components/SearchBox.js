@@ -8,10 +8,23 @@ import {FILTER_KEY__GLOBAL} from '../actions/ItemListKeyRegistry'
 import ReactTimeout from 'react-timeout'
 import SearchInput from './SearchInput'
 import styled from 'react-emotion'
+import ModalDialog from './ModalDialog'
+import PopupPanelHeading from './PopupPanelHeading'
+import { css } from 'emotion'
+import { default_theme as theme } from '../theme/default'
 
 const SearchBoxDiv = styled('div')(props => ({"height": "28px",
                                               "paddingLeft": "12px"}))
 
+const search_result_row = css`padding-bottom: 18px;
+                              cursor: pointer;
+                              display: flex;
+                              &:hover {
+                                background-color: ${theme.colours.list_rollover};
+                              }`
+
+const search_result_field = css`font: ${theme.fonts.informational};
+                                padding-left: 10px;`
 
 class SearchBox extends Component {
 
@@ -94,15 +107,16 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__issue_results">
-              <h2>{name}</h2>
+              <PopupPanelHeading>{name}</PopupPanelHeading>
               {map(issue_results, function (issue_result, index) {
                    return (
-                       <div key={index} className="search-box__search-result" onClick={() => that.onClickIssueResult(issue_result) }>
-                         <div>{issue_result.number}</div>
+                       <div key={index}
+                            onClick={() => that.onClickIssueResult(issue_result)}
+                            className={search_result_row}>
+                         <div className={search_result_field}>{issue_result.number}</div>
                          <div>{issue_result.subject}</div>
-                         <div>{issue_result.status_name}</div>
-                         <div>{issue_result.project_name}</div>
-                         <hr/>
+                         <div className={search_result_field}>{issue_result.status_name}</div>
+                         <div className={search_result_field}>{issue_result.project_name}</div>
                        </div>
                    )
                }
@@ -115,14 +129,16 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__sprint_results">
-              <h2>{name}</h2>
+              <PopupPanelHeading>{name}</PopupPanelHeading>
               {map(sprint_results, function (sprint_result, index) {
                    return (
-                       <div key={index} className="search-box__search-result" onClick={() => that.onClickSprintResult(sprint_result) }>
-                         <div>{sprint_result.number}</div>
+                       <div key={index}
+                            className={search_result_row}
+                            onClick={() => that.onClickSprintResult(sprint_result) }>
+                         <div className={search_result_field}>{sprint_result.number}</div>
                          <div>{sprint_result.name}</div>
-                         <div>{sprint_result.status_name}</div>
-                         <div>{sprint_result.project_name}</div>
+                         <div className={search_result_field}>{sprint_result.status_name}</div>
+                         <div className={search_result_field}>{sprint_result.project_name}</div>
                          <hr/>
                        </div>
                    )
@@ -136,10 +152,12 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__project_results">
-              <h2>{name}</h2>
+              <PopupPanelHeading>{name}</PopupPanelHeading>
               {map(project_results, function (project_result, index) {
                    return (
-                       <div key={index} className="search-box__search-result" onClick={() => that.onClickProjectResult(project_result) }>
+                       <div key={index}
+                            className={search_result_row}
+                            onClick={() => that.onClickProjectResult(project_result) }>
                          <div>{project_result.name}</div>
                          <hr/>
                        </div>
@@ -156,9 +174,9 @@ class SearchBox extends Component {
               { results.sprints_within_active_projects.length > 0 && this.renderSprintResults("Sprint results within active projects", results.sprints_within_active_projects) }
               { results.issues_within_active_sprints.length > 0 && this.renderIssueResults("Issue results within active sprints", results.issues_within_active_sprints) }
               { results.issues_within_active_issues.length > 0 && this.renderIssueResults("Issue results within active issues", results.issues_within_active_issues) }
-              { results.all_issues.length > 0 && this.renderIssueResults("Other issues", results.all_issues) }
-              { results.all_projects.length > 0 && this.renderProjectResults("Other projects", results.all_projects) }
-              { results.all_sprints.length > 0 && this.renderSprintResults("Other sprints", results.all_sprints) }
+              { results.all_issues.length > 0 && this.renderIssueResults("Older issues", results.all_issues) }
+              { results.all_projects.length > 0 && this.renderProjectResults("Older projects", results.all_projects) }
+              { results.all_sprints.length > 0 && this.renderSprintResults("Older sprints", results.all_sprints) }
 
               { results.sprints_within_active_projects.length === 0 &&
                 results.issues_within_active_sprints.length === 0 &&
@@ -193,11 +211,12 @@ class SearchBox extends Component {
                 </div>
               }
 
-              { show_results && results &&
-                <div className="search-box__search-results--loaded">
-                  <button className="button button--primary search-box__close" onClick={this.onHideResults}>Close</button>
-                  { this.renderResults(results) }
-                </div>
+                { show_results && results &&
+                  <ModalDialog variant="large"
+                               onClose={this.onHideResults}
+                               title="Search results">
+                    { this.renderResults(results) }
+                  </ModalDialog>
               }
             </SearchBoxDiv>
         )
