@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { each, map, union, includes, difference, keys } from 'lodash'
+import { css } from 'emotion'
+import { default_theme as theme } from '../theme/default'
 import {
     SPRINT_TYPE_ORDER,
     getCellStyle
@@ -168,7 +170,9 @@ class SprintList extends Component {
                   <DivTableHeaderCell key={index}
                                       extra_style={getCellStyle(v)}>
                       { v.key === "name" &&
-                        <div className="sprint_header__type">{sprint_type}</div>
+                        <div className={css`font: ${theme.fonts.bold_large}; `}>
+                          {sprint_type}
+                        </div>
                       }
                       { v.key !== "name" && v.label }
                     </DivTableHeaderCell>

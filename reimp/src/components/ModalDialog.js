@@ -13,7 +13,8 @@ const modal_dialog = css`border-radius: 2px;
                          top: 10%;
                          left: 40%;
                          max-height: 80%;
-                         overflow: auto;
+                         overflow-y: auto;
+                         overflow-x: hidden;
                          outline: none; `
 
 class ModalDialog extends Component {

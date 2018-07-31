@@ -64,6 +64,7 @@ class EditableIssueTag extends Component {
                                   initial_value={tag_id}
                                   edit_as_modal={true}
                                   action_label="Issue tags"
+                                  wideView={true}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                 >
@@ -76,6 +77,7 @@ class EditableIssueTag extends Component {
                   <EditableProperty property_key={'issue_tag_new'}
                                     edit_as_modal={true}
                                     initial_value=''
+                                    wideView={true}
                                     action_label="Issue tags" 
                                     onChange={this.onChange}
                                     can_edit={can_edit}

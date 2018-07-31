@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'
-import PopupPanelButton from '../PopupPanelButton'
 import { submit } from 'redux-form'
 
 class IssueTypeForm extends Component {

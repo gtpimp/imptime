@@ -18,6 +18,7 @@
     border-radius: 8px;
     background-color: $tag-background-color;
     color: $tag-font-color;
+    font-family: 'Fira Sans';
 }
 
 .tag__component {
@@ -68,16 +69,19 @@
     margin-right:  10px;
     width: 100px;
     padding: 5px;
+    font-family: 'Fira Sans';
 }
 
 .tagform--name {
     width: 100px;
     padding: 5px;
+    font-family: 'Fira Sans';
 }
 
 .taglisttree__category-name {
     margin-top: 5px;
     margin-bottom: 3px;
+    font-family: 'Fira Sans';
 }
 
 .tagform__select-existing-tag {
@@ -85,6 +89,7 @@
 
 .tagform__new-tag {
     margin-left: 50px;
+    font-family: 'Fira Sans';
 }
 
 .taglisttree__tag {
