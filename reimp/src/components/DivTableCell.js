@@ -18,6 +18,8 @@ class DivTableCell extends Component {
                                 padding-left: 6px;
                                 vertical-align: middle;
                                 align-items: center;
+                                margin-left: 6px;
+                                margin-right: 6px;
                                 flex: ${extra_style.flex || "0 0 190px"};
                                 max-width: ${extra_style.maxWidth || "auto"};
                                 color: ${theme.colours.normal_text};

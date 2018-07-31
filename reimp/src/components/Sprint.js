@@ -97,19 +97,22 @@ class Sprint extends Component {
                                 )
                             case "num_issues":
                                 return (
-                                    <DivTableLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
-                                                  key={header_key}
-                                                  extra_style={getCellStyle(header)}>
-                                      {sprint.num_issues || 0} Issues
-                                    </DivTableLink>
+                                    <DivTableCell key={header_key} extra_style={getCellStyle(header)}>
+                                      <DivTableLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                                    extra_style={getCellStyle(header)}>
+                                        {sprint.num_issues || 0} Issues
+                                      </DivTableLink>
+                                    </DivTableCell>
                                 )
                             case "num_testable_issues":
                                 return (
-                                    <DivTableLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
-                                                  key={header_key}
-                                                  extra_style={getCellStyle(header)}>
-                                      {sprint.num_testable_issues || 0} Issues
-                                    </DivTableLink>
+                                    <DivTableCell key={header_key} extra_style={getCellStyle(header)}>
+                                      <DivTableLink to={'/projects/'+sprint.project_id+'/sprints/'+sprint.id+'/issues'}
+                                                    key={header_key}
+                                                    extra_style={getCellStyle(header)}>
+                                        {sprint.num_testable_issues || 0} Issues
+                                      </DivTableLink>
+                                    </DivTableCell>
                                 )
                             case "status":
                                 return (
@@ -163,10 +166,10 @@ class Sprint extends Component {
                                 )
                             case "state_summary":
                                 return (
-                                    <div className="div-table__cell sprint__cell__secondary" key={header_key}
-                                         extra_style={getCellStyle(header)}>
+                                    <DivTableCell key={header_key}
+                                                  extra_style={getCellStyle(header)}>
                                       <SprintStateSummary sprint_id={sprint_id} />
-                                    </div>
+                                    </DivTableCell>
                                 )
 
                             default:

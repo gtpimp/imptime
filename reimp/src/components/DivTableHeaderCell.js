@@ -17,12 +17,16 @@ class DivTableHeaderCell extends Component {
                                 margin-left: 6px;
                                 margin-right: 6px;
                                 display: flex;
+                                height: 24px;
                                 flex: ${extra_style.flex || "0 0 190px"};
                                 max-width: ${extra_style.maxWidth || "auto"};
+                                border-right: 2px solid ${theme.colours.cell_separator};
                                 &:hover: {
                                   cursor: pointer;
                                   background-color: ${theme.colours.list_highlight};
-                                }
+                                };
+
+
                                `}>
                  {this.props.children}
             </div>

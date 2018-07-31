@@ -28,7 +28,8 @@ export const default_theme = {
                left_panel_background: '#fafbfc',
                right_panel_background: '#ffffff',
                button_background: '#D8DDE1',
-               button_background_hover: '#C7CCD0'
+               button_background_hover: '#C7CCD0',
+               cell_separator: '#ededed'
     },
 
     fonts: {
