@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
-import Modal from 'react-modal';
+import ModalDialog from '../ModalDialog';
 import '../../sass/editable-property.scss'
 import { isEditing, isReadonly, setEditing, setReadonly, setMode, getMode } from '../../actions/EditableProperty'
 
@@ -152,12 +152,10 @@ class EditableProperty extends Component {
                  onClick={this.startEditing}>
               <div>
                 { is_editing && edit_as_modal &&
-                  <Modal isOpen={true}
-                         className={classNames("editable-property-modal",
-                                               {"editable-property-modal--wide": wideView}) }
-                         overlayClassName="editable-property-modal__overlay"
-                         onRequestClose={this.stopEditing}
-                         contentLabel={action_label || ""}>
+                  <ModalDialog isOpen={true}
+                               variant={wideView ? "large" : "default"}
+                               onRequestClose={this.stopEditing}
+                               contentLabel={action_label || ""}>
                     <div className="editable-property-modal__row editable-property-modal__row--header">
                       <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
                       <div className="editable-property-modal__close"><i className="material-icons" onClick={this.stopEditing}>close</i></div>
@@ -165,7 +163,7 @@ class EditableProperty extends Component {
                     <div className="editable-property-modal__content">
                       {editing_child}
                     </div>
-                  </Modal>
+                  </ModalDialog>
                 }
                 { is_editing && !edit_as_modal && editing_child}
                 { is_readonly && readonly_child }

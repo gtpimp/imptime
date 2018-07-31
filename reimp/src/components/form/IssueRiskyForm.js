@@ -54,7 +54,6 @@ class IssueRiskyForm extends Component {
                            data={risky_options}
                     />
                 </div>
-                <button className="single-value-selector__submit" type="submit">Submit</button>
             </form>
         )
     }

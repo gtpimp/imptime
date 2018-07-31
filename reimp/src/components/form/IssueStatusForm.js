@@ -58,7 +58,6 @@ class IssueStatusForm extends Component {
                            data={status_options}
                     />
                 </div>
-                <button className="single-value-selector__submit" type="submit">Submit</button>
             </form>
         )
     }

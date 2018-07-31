@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'
+import PopupPanelButton from '../PopupPanelButton'
+import { submit } from 'redux-form'
 
 class IssueTypeForm extends Component {
 
@@ -10,6 +12,7 @@ class IssueTypeForm extends Component {
         super(props)
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
+        this.onClickSubmit = this.onClickSubmit.bind(this)
     }
 
     componentDidMount() {
@@ -45,6 +48,11 @@ class IssueTypeForm extends Component {
         )
     }
 
+    onClickSubmit() {
+        const { dispatch } = this.props
+        dispatch(submit('issue_type_form'))
+    }
+
     render() {
         const { handleSubmit, type_options } = this.props
         return (
@@ -58,7 +66,6 @@ class IssueTypeForm extends Component {
                            data={type_options}
                     />
                 </div>
-                <button className="single-value-selector__submit" type="submit">Submit</button>
             </form>
         )
     }
