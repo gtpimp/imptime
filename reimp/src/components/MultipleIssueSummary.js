@@ -270,7 +270,7 @@ class MultipleIssueSummary extends Component {
                         </td>
                         
                         <td>
-                          {Math.round(summary.estimates_by_user[user_id].given_velocity*100)/100}
+                          {Math.round(summary.estimates_by_user[user_id].given_velocity*100)/100 || 0}
                         </td>
                         <td>
                           <Hours hours={summary.estimates_by_user[user_id].velocity_estimates} />

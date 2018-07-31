@@ -5,8 +5,7 @@ import {Link} from 'react-router-dom'
 class DivTableLink extends Component {
 
     render() {
-        let { onClick, to, extra_style } = this.props
-        onClick = onClick || null
+        let { to, extra_style } = this.props
         extra_style = extra_style = {}
         return (
 
@@ -17,7 +16,7 @@ class DivTableLink extends Component {
                                  &:hover { 
                                    text-decoration: underline; 
                                  }`}
-                  onClick={onClick}
+                  onClick={(evt) => evt.stopPropagation()}
             >
                  {this.props.children}
             </Link>

@@ -42,6 +42,7 @@ class SprintStateSummary extends Component {
             <div className="sprint-state-summary__section" key="missing_testables_description">
               <Pluralize singular="issue" count={sprint.num_missing_testable_issues}/>
               &nbsp;without testables. All issues that will be estimated require testables.
+              <br/>
             </div>
         )
     }
@@ -62,6 +63,7 @@ class SprintStateSummary extends Component {
             <div className="sprint-state-summary__section" key="missing_assigned_description">
               <Pluralize singular="issue" count={sprint.num_issues_unassigned}/>
               &nbsp;unassigned. All issues must be assigned before working on them.
+              <br/>
             </div>
         )
     }
@@ -82,6 +84,7 @@ class SprintStateSummary extends Component {
             <div className="sprint-state-summary__section" key="missing_estimates_description">
               <Pluralize singular="issue" count={sprint.num_issues_missing_estimates}/>
               &nbsp;without estimates. All issues must be estimated before working on them.
+              <br/>
             </div>
         )
     }
@@ -98,6 +101,7 @@ class SprintStateSummary extends Component {
         return (
             <div className="sprint-state-summary__section" key="missing_budget_description">
               <div>Missing budget. All sprints require a budget, even if it's just an indication.</div>
+              <br/>
             </div>
         )
     }
@@ -114,6 +118,7 @@ class SprintStateSummary extends Component {
         return (
             <div className="sprint-state-summary__section" key="over_budget_description">
               <div>Budget exceeded. The budget on this sprint has been exceeded, either increase the budget or remove some issues.</div>
+              <br/>
             </div>
         )
     }
@@ -130,6 +135,7 @@ class SprintStateSummary extends Component {
         return (
             <div className="sprint-state-summary__section" key="exceeding_dev_cost_description">
               <div>The work on issues is going slower than expected, this is likely to cause a budget over-run if not addressed. </div>
+              <br/>
             </div>
         )
     }

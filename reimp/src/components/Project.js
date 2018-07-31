@@ -94,7 +94,7 @@ class Project extends Component {
                    }
                     
                     {includes(visible_header_keys, "num_sprints") &&
-                     <DivTableCell>
+                     <DivTableCell extra_style={getCellStyle(header_list.num_sprints)}>
                        <DivTableLink to={'/projects/'+project.id+'/sprints/'}
                                      extra_style={getCellStyle(header_list.num_sprints)}>
                          { project && project.num_open_sprints > 0 &&
