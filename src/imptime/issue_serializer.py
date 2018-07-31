@@ -96,14 +96,14 @@ class IssueSerializer(BaseSerializer):
 
         if not bp.has_see_other_user_points:
             issue.all_estimates = [x for x in (issue.all_estimates or []) if x.user_id == self.logged_in_user.id]
-            issue.all_actuals = None
-        else:
-            all_actuals = {}
-            for entry in issue.all_entries:
+        
+        all_actuals = {}
+        for entry in issue.all_entries:
+            if bp.has_see_other_user_points or entry.user_id == self.logged_in_user.id:
                 all_actuals.setdefault(entry.user_id, {'user_id':entry.user_id}).setdefault('hours', 0)
                 all_actuals[entry.user_id]['hours'] += entry.hours
-                
-            issue.all_actuals = all_actuals.values()
+
+        issue.all_actuals = all_actuals.values()
 
         issue_has_estimate_by_assigned_user = len([x for x in (issue.all_estimates or []) if x.user_id==issue.assigned_to_id and x.points > 0])
         if bp.can_see_other_user_points:
