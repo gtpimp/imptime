@@ -236,10 +236,55 @@ class Issue extends Component {
                                     </DivTableCell>
                                 )
                             case "issue_type":
+                                const cell = (<div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>)
+                                let content = cell
+                                let tooltip = null
+                                let title = null
+
+                                if ( issue.type_name === "adhoc" ) {
+                                    title = "Adhoc"
+                                    tooltip = (<div>Adhoc issues are created by external timesheets where the issue type is not known. 
+                                      Please change the issue type to be more specific.
+                                    </div>)
+                                } else if ( issue.type_name === "management-general" ) {
+                                    title = "General management"
+                                    tooltip = (<div>General management.</div>)
+                                } else if ( issue.type_name === "management-meeting" ) {
+                                    title = "Meetings"
+                                    tooltip = (<div>Used to schedule and clock meetings</div>)
+                                } else if ( issue.type_name === "management-spec" ) {
+                                    title = "Specifications"
+                                    tooltip = (<div>Creating issues and technical planning.</div>)
+                                } else if ( issue.type_name === "management-finance" ) {
+                                    title = "Finance"
+                                    tooltip = (<div>For tracking reconciliations, invoicing and statements.</div>)
+                                } else if ( issue.type_name === "management-assign" ) {
+                                    title = "Assigning issues"
+                                    tooltip = (<div>For assigning issues to appropriate users.</div>)
+                                } else if ( issue.type_name === "management-estimate" ) {
+                                    title = "Estimating issues"
+                                    tooltip = (<div>For estimating issues.</div>)
+                                } else if ( issue.type_name === "management-testables" ) {
+                                    title = "Writing testables"
+                                    tooltip = (<div>For writing testables. Sometimes covered by management-spec issues.</div>)
+                                }
+                                if ( tooltip ) {
+                                    content = (
+                                        <Floater title={title}
+                                                 disableHoverToClick
+                                                 event="hover"
+                                                 eventDelay={0}
+                                                 placement="bottom"
+                                                 content={tooltip}
+                                        >
+                                          {cell}
+                                        </Floater>
+                                    )
+                                }
                                 return (
                                     <DivTableCell key={header_key}
                                                   extra_style={getCellStyle(header)} >
-                                      <div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>
+                                      {content}
                                     </DivTableCell>
                                 )
                             case "attachment":
@@ -268,30 +313,30 @@ class Issue extends Component {
                                                 content={
                                                     <div>
                                                         { size(issue.testables) === 0 &&
-                                                        <div className="floater__section">
-                                                          <div>
-                                                            This issue is missing testables and should not be worked on yet.
+                                                          <div className="floater__section">
+                                                            <div>
+                                                                          This issue is missing testables and should not be worked on yet.
+                                                            </div>
                                                           </div>
-                                                        </div>
-                                                      }
-                                                      { issue.assigned_to_id === null &&
-                                                        <div className="floater__section">
-                                                          <div>
-                                                            This issue has no assigned user.
+                                                        }
+                                                        { issue.assigned_to_id === null &&
+                                                          <div className="floater__section">
+                                                            <div>
+                                                                          This issue has no assigned user.
+                                                            </div>
                                                           </div>
-                                                        </div>
-                                                      }
-                                                      { issue.assigned_to_id !== null && issue.needs_estimate &&
-                                                        <div className="floater__section">
-                                                          <div>
-                                                            This issue is missing an estimate by the assigned user and should not be worked on yet.
+                                                        }
+                                                        { issue.assigned_to_id !== null && issue.needs_estimate &&
+                                                          <div className="floater__section">
+                                                            <div>
+                                                                          This issue is missing an estimate by the assigned user and should not be worked on yet.
+                                                            </div>
                                                           </div>
-                                                        </div>
-                                                      }
+                                                        }
                                                     </div>
-                                                }
+                                                        }
                                             >
-                                                      <div className="icon icon--warning"></div> 
+                                                    <div className="icon icon--warning"></div> 
                                             </Floater>
                                         )}
                                     </div>
@@ -301,131 +346,131 @@ class Issue extends Component {
                                     <DivTableCell key={header_key}
                                                   extra_style={getCellStyle(header)}>
                                       { issue.can_group_issues &&
-                                        <div>
-                                          { show_children &&
-                                            <FeatureExpandIconDiv onClick={that.onCollapseFeaturesClick}
-                                                                  isFeatureOfSelectedIssue={isFeatureOfSelectedIssue}>
-                                            </FeatureExpandIconDiv>
-                                          }
-                                          { !show_children &&
-                                            <FeatureCollapseIconDiv onClick={that.onExpandFeaturesClick}>
-                                            </FeatureCollapseIconDiv>
-                                          }
-                                        </div>
+                                      <div>
+                                        { show_children &&
+                                        <FeatureExpandIconDiv onClick={that.onCollapseFeaturesClick}
+                                                              isFeatureOfSelectedIssue={isFeatureOfSelectedIssue}>
+                                        </FeatureExpandIconDiv>
+                                        }
+                                        { !show_children &&
+                                        <FeatureCollapseIconDiv onClick={that.onExpandFeaturesClick}>
+                                        </FeatureCollapseIconDiv>
+                                        }
+                                      </div>
                                       }
                                       { !issue.can_group_issues && issue.parent_group_id &&
-                                        <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
+                                      <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
                                       }
                                     </DivTableCell>
-                                )
-                            case "name":
-                                return (
+                                    )
+                                    case "name":
+                                    return (
                                     <DivTableCell key={header_key}
                                                   extra_style={getCellStyle(header)}
                                                   isFeature={isFeature}>
-                                        {subject_prefix}{issue.subject}{subject_suffix}
-                                        { issue.group_children && issue.group_children.length > 0 &&
-                                          <span>
-                                            ({issue.group_children.length}
-                                            {issue.group_children.length === 1 && <span>child</span>}
-                                            {issue.group_children.length > 1 && <span>children</span>}
-                                            )
-                                          </span>
-                                        }
+                                      {subject_prefix}{issue.subject}{subject_suffix}
+                                      { issue.group_children && issue.group_children.length > 0 &&
+                                      <span>
+                                        ({issue.group_children.length}
+                                        {issue.group_children.length === 1 && <span>child</span>}
+                                        {issue.group_children.length > 1 && <span>children</span>}
+                                        )
+                                      </span>
+                                      }
                                     </DivTableCell>
-                                )
-                            case "assignee":
-                                return (
+                                    )
+                                    case "assignee":
+                                    return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  extra_style={getCellStyle(header)}>
                                       <EditableIssueAssignedUser class_name="issue-cell__assignee" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                                     </DivTableCell>
-                                )
-                            case "created_at":
-                                return (
+                                    )
+                                    case "created_at":
+                                    return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  extra_style={getCellStyle(header)}>
                                       <Timestamp value={issue.created_at} format="from_now"/>
                                     </DivTableCell>
-                                )
-                            case "status":
-                                return (
+                                    )
+                                    case "status":
+                                    return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  extra_style={getCellStyle(header)}>
                                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={issue_id_as_list} project_id={issue.project_id}/>
                                     </DivTableCell>
-                                )
-                            case "estimate_summary":
-                                return (
+                                    )
+                                    case "estimate_summary":
+                                    return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  extra_style={getCellStyle(header)}>
                                       <div className="issue-cell__estimate_summary">
                                         {map(sprint.user_ids_who_can_estimate, function(user_id) {
-                                             const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
-                                             const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
-                                             if ( actual || estimate ) {
-                                                 return (
-                                                     <div className="issue-cell__estimate_summary__user" key={user_id}>
-                                                       <div className="issue-cell__estimate_summary__user__cell">
-                                                         <OtherUser user_id={user_id}/>
-                                                       </div>
-                                                       <div className="issue-cell__estimate_summary__user__cell">
-                                                         {logged_in_user_id === user_id &&
-                                                          <EditableIssueEstimate issue_id={issue.id}
-                                                                                 actual={actual}
-                                                                                 class_name="issue-cell__my-estimate"/>
-                                                         }
-                                                         {logged_in_user_id !== user_id &&
-                                                          <Progress issue={issue} actual={actual} estimate={estimate} />
-                                                         }
-                                                       </div>
-                                                     </div>
-                                                 )
-                                             }
-                                         })}
+                                        const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
+                                        const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
+                                        if ( actual || estimate ) {
+                                        return (
+                                        <div className="issue-cell__estimate_summary__user" key={user_id}>
+                                          <div className="issue-cell__estimate_summary__user__cell">
+                                            <OtherUser user_id={user_id}/>
+                                          </div>
+                                          <div className="issue-cell__estimate_summary__user__cell">
+                                            {logged_in_user_id === user_id &&
+                                            <EditableIssueEstimate issue_id={issue.id}
+                                                                   actual={actual}
+                                                                   class_name="issue-cell__my-estimate"/>
+                                            }
+                                            {logged_in_user_id !== user_id &&
+                                            <Progress issue={issue} actual={actual} estimate={estimate} />
+                                            }
+                                          </div>
+                                        </div>
+                                        )
+                                        }
+                                        })}
                                       </div>
                                     </DivTableCell>
-                                )
-                            case "tags":
-                                return (
+                                    )
+                                    case "tags":
+                                    return (
                                     <DivTableCell key={header_key}
-                                                           extra_style={getCellStyle(header)}>
+                                                  extra_style={getCellStyle(header)}>
                                       <div className="issue-cell__tag">
                                         <TagListFlat issue_ids={issue_id_as_list} can_edit={false} />
                                       </div>
                                     </DivTableCell>
-                                )
-                            case "tag_columns":
-                                return (
+                                    )
+                                    case "tag_columns":
+                                    return (
                                     map(tag_category_names, function(tag_category_name) {
-                                        const tags = tagsByCategoryName[tag_category_name]
-                                        return (
-                                            <div key={tag_category_name}
-                                                 className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
-                                                 extra_style={getCellStyle(header)}>
-                                              { map(tags, (tag) =>
-                                                  <div key={tag.id} className="issue-cell__tag_column">
-                                                    {tag.name}
-                                                  </div>
-                                              )}
-                                            </div>
-                                        )
+                                    const tags = tagsByCategoryName[tag_category_name]
+                                    return (
+                                    <div key={tag_category_name}
+                                         className="div-table__cell issue__cell__secondary issue-cell__tag_column_container"
+                                         extra_style={getCellStyle(header)}>
+                                      { map(tags, (tag) =>
+                                      <div key={tag.id} className="issue-cell__tag_column">
+                                        {tag.name}
+                                      </div>
+                                      )}
+                                    </div>
+                                    )
                                     })
 
-                                )
-                            case "estimate_columns":
-                                return (
+                                    )
+                                    case "estimate_columns":
+                                    return (
                                     map(sprint.user_ids_who_can_estimate, (user_id) =>
-                                        <DivTableCell key={user_id}
-                                                               extra_style={getCellStyle(header)}>
-                                          {logged_in_user_id === user_id &&
-                                           <EditableIssueEstimate issue_id={issue.id}
-                                                                  actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                                                  class_name="issue-cell__my-estimate"/> }
+                                    <DivTableCell key={user_id}
+                                                  extra_style={getCellStyle(header)}>
+                                      {logged_in_user_id === user_id &&
+                                      <EditableIssueEstimate issue_id={issue.id}
+                                                             actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                             class_name="issue-cell__my-estimate"/> }
 
-                                          {logged_in_user_id !== user_id &&
-                                           <Progress issue={issue}
-                                                     actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                      {logged_in_user_id !== user_id &&
+                                      <Progress issue={issue}
+                                                actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
                                                      estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
                                           }
                                         </DivTableCell>
