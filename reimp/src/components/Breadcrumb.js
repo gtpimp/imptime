@@ -15,6 +15,7 @@ import {
 } from '../actions/Issues'
 import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
+import { startSprintSnapshotSelector } from '../actions/SprintSnapshots'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
@@ -132,6 +133,12 @@ const menu_buttons = {
         { label: (objs) => 'Cost Summary',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary',
           perms: (objs) => ['has_view_ctc_billable_rates']
+        },
+        { label: (objs) => 'Snapshots',
+          type: "button",
+          generic_action: function(objs, props) {
+              props.dispatch(startSprintSnapshotSelector())
+          }
         },
     ],
     'issues': [

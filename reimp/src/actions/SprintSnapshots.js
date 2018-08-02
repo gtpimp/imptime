@@ -1,4 +1,4 @@
-import { get, keys, includes } from 'lodash'
+import { get } from 'lodash'
 import {
     invalidateAllItems,
     invalidateItems,
@@ -6,7 +6,6 @@ import {
     ensureItemsLoaded,
     getItem,
     getItems,
-    getAllItems,
     getItemsById,
     updateItem,
     startCandidateItem,
@@ -20,29 +19,10 @@ import {
     getSavingItemIds,
     getLoadingItemIds
 } from '../actions/Item'
-import { has_permission } from './Users'
 import { ENTITY_KEY__SPRINT_SNAPSHOT } from './ItemListKeyRegistry'
 
-export const SET_SPRINT_SNAPSHOT_BUTTON = 'SET_SPRINT_SNAPSHOT_BUTTON'
-export const SET_SPRINT_SNAPSHOT = 'SET_SPRINT_SNAPSHOT'
-export const START_SPRINT_SNAPSHOT_CONFIGURER = 'START_SPRINT_SNAPSHOT_CONFIGURER'
-export const STOP_SPRINT_SNAPSHOT_CONFIGURER = 'STOP_SPRINT_SNAPSHOT_CONFIGURER'
-
-export function showMoney(state, project_id) {
-    // Because money comes up a lot, this is a helper function.
-    // If this function returns True, it's absolutely ok to show money.
-    // If this function returns False, do not under any circumstances show money.
-    return doesSprintSnapshotHaveFeature(state, 'costs') && project_id && has_permission(state, project_id, 'has_view_ctc_billable_rates')
-}
-
-export function getHeaderListForSprintSnapshot(snapshot, name) {
-    return get(snapshot, ["headers", name], null)
-}
-
-export function getHeaderListForCurrentSprintSnapshot(state, name) {
-    const snapshot = getCurrentSprintSnapshot(state)
-    return getHeaderListForSprintSnapshot(snapshot, name)
-}
+export const START_SPRINT_SNAPSHOT_SELECTOR = 'START_SPRINT_SNAPSHOT_SELECTOR'
+export const STOP_SPRINT_SNAPSHOT_SELECTOR = 'STOP_SPRINT_SNAPSHOT_SELECTOR'
 
 export function invalidateAllSprintSnapshots() {
     return (dispatch, getState) => {
@@ -81,10 +61,6 @@ export function getSprintSnapshotsById(state, snapshot_ids) {
 
 export function updateSprintSnapshotDescription(snapshot_id, value) {
     return updateItem(ENTITY_KEY__SPRINT_SNAPSHOT, [snapshot_id], "description", value)
-}
-
-export function updateSprintSnapshotHeaders(snapshot_id, name, headers) {
-    return updateItem(ENTITY_KEY__SPRINT_SNAPSHOT, [snapshot_id], "headers", {'name':name, 'headers':headers}) 
 }
 
 export function startCandidateSprintSnapshot(initial_candidate_props) {
@@ -127,4 +103,16 @@ export function getSavingSprintSnapshotIds(state, snapshot_ids) {
 
 export function is_snapshot_invalidated(state, snapshot_id) {
     return is_item_invalidated(ENTITY_KEY__SPRINT_SNAPSHOT, state, snapshot_id)
+}
+
+export function startSprintSnapshotSelector() {
+    return { type: START_SPRINT_SNAPSHOT_SELECTOR }
+}
+
+export function stopSprintSnapshotSelector() {
+    return { type: STOP_SPRINT_SNAPSHOT_SELECTOR }
+}
+
+export function isSprintSnapshotSelectorActive(state) {
+    return get(state, [ "sprint_snapshot", "sprint_snapshot_selector_active"], false)
 }

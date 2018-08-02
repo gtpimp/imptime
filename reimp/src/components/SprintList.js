@@ -152,7 +152,6 @@ class SprintList extends Component {
 
         return (
             <Sprint key={list_key + sprint.id + index}
-                    is_collapsed={false}
                     header_list={header_list}
                     onClickedSprint={(event) => that.onClickedSprint(event, sprint.id)}
                     is_loading={loading_item_ids.indexOf(sprint.id) !== -1}

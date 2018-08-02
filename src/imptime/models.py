@@ -597,3 +597,7 @@ class ScheduleItem(BaseModel):
     def delete(self):
         super(ScheduleItem, self).delete()
         RefreshNotifier().notify_model_delete(self)
+
+class SprintSnapshot(BaseModel):
+    sprint = ProtectedForeignKey(Sprint, related_name='snapshots', null=False, blank=False)
+    

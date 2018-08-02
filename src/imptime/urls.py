@@ -28,6 +28,7 @@ import sprint_api
 import sprint_deadline_api
 import sprint_review_api
 import sprint_roadmap_api
+import sprint_snapshot_api
 import sprint_user_rate_api
 import testable_api
 import tag_api
@@ -65,6 +66,8 @@ router.register(r'sprint_deadline', sprint_deadline_api.SprintDeadlineViewSet,
                 base_name='sprint_deadline')
 router.register(r'sprint_roadmap', sprint_roadmap_api.SprintRoadmapViewSet,
                 base_name='sprint_roadmap')
+router.register(r'sprint_snapshot', sprint_snapshot_api.SprintSnapshotViewSet,
+                base_name='sprint_snapshot')
 router.register(r'sprint_review', sprint_review_api.SprintReviewViewSet,
                 base_name='sprint_review')
 router.register(r'sprint', sprint_api.SprintViewSet,
