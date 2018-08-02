@@ -3,10 +3,7 @@ import {connect} from 'react-redux'
 import { map } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
-//import EditableSprintName from '../components/EditableSprintName'
 import OtherUser from '../components/OtherUser'
-//import PropertyStackComponent from '../components/PropertyStackComponent'
-//import SprintTimeSummary from '../components/SprintTimeSummary'
 import EditableUserRate from '../components/EditableUserRate'
 import EditableUserVelocity from '../components/EditableUserVelocity'
 import EditableUserTimeTrackingMode from '../components/EditableUserTimeTrackingMode'
@@ -14,17 +11,14 @@ import EditableSprintCommission from '../components/EditableSprintCommission'
 import EditableSprintBudget from '../components/EditableSprintBudget'
 import EditableSprintRatios from '../components/EditableSprintRatios'
 import { has_permission } from '../actions/Users'
-//import '../sass/sprint-rate.scss'
 import {
     PAGE_KEY__SPRINT_RATE_PAGE,
-    //    LIST_KEY__SPRINT_RATES
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
     setPageFlag,
     getPageFlag,
     clearPageFlag
-    //    select_sprints
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject, saveInviteUser} from '../actions/Projects'
 import {ensureSprintsLoaded,
@@ -32,13 +26,6 @@ import {ensureSprintsLoaded,
 } from '../actions/Sprints'
 import ModalDialog from '../components/ModalDialog'
 import InviteUserForm from '../components/form/InviteUserForm'
-//import {
-//    initList,
-//    selectItems,
-//    update_list_filter,
-//    update_list_pagination,
-//    invalidateList
-//} from '../actions/ItemList'
 
 class SprintRatePage extends Component {
 

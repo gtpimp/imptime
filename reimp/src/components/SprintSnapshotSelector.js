@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
+import {Link} from 'react-router-dom'
 import { getVisibleItemIds } from '../actions/ItemList'
 import { css } from 'emotion'
 import Modal from 'react-modal'
 import Floater from "react-floater"
 import ModalDialog from './ModalDialog'
 import Timestamp from './Timestamp'
+import SprintName from './SprintName'
 import { initList,
          update_list_pagination,
          invalidateList
@@ -80,6 +82,7 @@ class SprintSnapshotSelector extends Component {
 
     onChangeSprintSnapshot(snapshot_id) {
         // const { dispatch } = this.props
+        
         alert("ouch")
     }
 
@@ -183,7 +186,7 @@ class SprintSnapshotSelector extends Component {
     }
 
     renderSprintSnapshots() {
-        const { snapshots, list_key } = this.props
+        const { snapshots, list_key, project_id, sprint_id } = this.props
         return (
             <div>
               <PopupPanelHeading>
@@ -193,14 +196,16 @@ class SprintSnapshotSelector extends Component {
               <Pagination list_key={list_key} on_changed={this.onRefresh} hide_if_one_page={true} />
               { map(snapshots, (snapshot) =>
                   <PopupPanelLink key={snapshot.id}>
-                    <div className={css`display:flex; 
+                    <Link to={'/projects/'+project_id+'/sprints/'+sprint_id+'/snapshots/'+snapshot.id}
+                          onClick={(evt) => evt.stopPropagation()}
+                    >
+                      <div className={css`display:flex; 
                                         flex-direction: row; 
-                                        justify-content: space-between`}
-                         onClick={() => this.onChangeSprintSnapshot(snapshot.id) } >
-                      
-                      {snapshot.description}
-                      <Timestamp format="dateshort-time" value={snapshot.created_at} />
-                    </div>
+                                        justify-content: space-between`}>
+                        {snapshot.description}
+                        <Timestamp format="dateshort-time" value={snapshot.created_at} />
+                      </div>
+                    </Link>
                   </PopupPanelLink>
                 )}
             </div>
@@ -208,7 +213,7 @@ class SprintSnapshotSelector extends Component {
     }
 
     render() {
-        const { is_active, candidate_sprint_snapshot } = this.props
+        const { is_active, sprint_id, candidate_sprint_snapshot } = this.props
         const is_creating_candidate_sprint_snapshot = candidate_sprint_snapshot || false
         const is_editing_sprint_snapshot_description = this.state.editing_sprint_snapshot || false
 
@@ -226,7 +231,7 @@ class SprintSnapshotSelector extends Component {
                                 flex-direction: column;
                             `}>
                 <PopupPanelHeading>
-                  Snapshots for sprint 
+                  Snapshots for sprint <SprintName sprint_id={sprint_id}/>
                 </PopupPanelHeading>
                 <PopupPanelText>
                   SprintSnapshots are summaries of sprint values at a moment in time
@@ -252,12 +257,14 @@ function mapStateToProps(state, props) {
     const { sprint_id } = props
     const list_key = LIST_KEY__SPRINT_SNAPSHOT_LIST
     const sprint = getSprint(state, sprint_id)
+    const project_id = sprint && sprint.project_id
     const snapshot_ids = getVisibleItemIds(state, list_key)
     const snapshots = getSprintSnapshots(state, snapshot_ids)
     const candidate_sprint_snapshot = getCandidateSprintSnapshot(state) || null
     const is_active = isSprintSnapshotSelectorActive(state) || false
 
     return {
+        project_id,
         sprint_id,
         sprint,
         is_active,

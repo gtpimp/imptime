@@ -24,6 +24,7 @@ import PopupPanelLink from './PopupPanelLink'
 import PopupPanelButton from './PopupPanelButton'
 import PopupPanelSeparator from './PopupPanelSeparator'
 import PopupPanelHeading from './PopupPanelHeading'
+import SprintSnapshotSelector from './SprintSnapshotSelector'
 
 const BreadcrumbDiv = styled('div')(props => ({
     display: "inline-flex",
@@ -255,6 +256,18 @@ class Breadcrumb extends Component {
             )
         }
     }
+
+    renderGlobalObjects() {
+        const { breadcrumb } = this.props
+        return (
+            <div>
+              { breadcrumb.selected_entities && breadcrumb.selected_entities.sprint &&
+                <SprintSnapshotSelector sprint_id={breadcrumb.selected_entities.sprint.id}/>
+              }
+            </div>
+        )
+
+    }
     
     render() {
         const {label, to, is_last, breadcrumb, permissions } = this.props
@@ -290,6 +303,7 @@ class Breadcrumb extends Component {
                   <i className="material-icons">chevron_right</i>
                 </BreadcrumbSeparatorDiv>
               }
+              { this.renderGlobalObjects() }
             </BreadcrumbDiv>
         )
     }

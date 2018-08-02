@@ -13,7 +13,6 @@ import DivTableRow from './DivTableRow'
 import DivTableCell from './DivTableCell'
 import DivTableLink from './DivTableLink'
 import StatusCircle from './StatusCircle'
-import SprintSnapshotSelector from './SprintSnapshotSelector'
 
 class Sprint extends Component {
 
@@ -57,8 +56,6 @@ class Sprint extends Component {
                              onClick={onClickedSprint}
                              is_selected={is_selected}
 		>
-                  <SprintSnapshotSelector sprint_id={sprint_id}/>
-
                   { map(visible_header_keys, function(header_key) {
                         const header = headers_by_key[header_key]
                         switch(header_key) {

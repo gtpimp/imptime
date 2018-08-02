@@ -40,7 +40,10 @@ export function setProjectBreadcrumbsHelper(optional_project) {
     return setBreadcrumbs(breadcrumbs)
 }
 
-export function setSprintBreadcrumbsHelper(project, optional_sprint) {
+export function setSprintBreadcrumbsHelper(project, optional_sprint, auto_set) {
+    if ( auto_set !== false ) {
+        auto_set = true
+    }
     const sprint = optional_sprint || {}
     const breadcrumbs = [{to: '/projects',
                           type: 'projects',
@@ -61,7 +64,10 @@ export function setSprintBreadcrumbsHelper(project, optional_sprint) {
                           selected_entities: {project: project,
                                               sprint: sprint}})
     }
-    return setBreadcrumbs(breadcrumbs)
+    if ( auto_set === true ) {
+        return setBreadcrumbs(breadcrumbs)
+    }
+    return breadcrumbs
 }
 
 export function setIssueBreadcrumbsHelper(project, sprint, optional_issue) {
