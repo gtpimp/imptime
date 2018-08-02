@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import requests
 import os
-import csv
+import unicodecsv as csv
 
 def download_media(request, url, content_type, filename=None, as_attachment=False):
     if 's3' in settings.DEFAULT_FILE_STORAGE:

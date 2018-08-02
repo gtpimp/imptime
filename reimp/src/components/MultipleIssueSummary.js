@@ -470,7 +470,7 @@ function mapStateToProps(state, props) {
     const show_money = showMoney(state, project_id)
     return {
         summary: summary || {},
-        filter,
+        filter : filter || { sprint_ids: [sprint_id]},
         sprint_id,
         show_money,
         container_class_name

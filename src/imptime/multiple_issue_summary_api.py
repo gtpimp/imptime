@@ -53,12 +53,12 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         filter = self._get_download_filter(request)
         issue_qs = self.allowed_issues()
         issue_qs = self.apply_filter(issue_qs, {}, filter)
-        calculator = MultipleIssueSummaryCalculator(self.request, issue_qs=issue_qs)
-        data = calculator.get_data()
+        self.calculator = MultipleIssueSummaryCalculator(self.request, issue_qs=issue_qs)
+        data = self.calculator.get_data()
 
         data['issues_by_id'] = dict( [(x['id'], x) for x in Issue.objects.filter(pk__in=data['all_issue_ids']).values('id', 'subject', 'number')] )
         data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=data['all_user_ids']).values('id', "first_name", "last_name")] )
-        data['sprints_by_id'] = dict( [(x['id'], x) for x in Sprint.objects.filter(pk__in=data['all_sprint_ids']).values('code', "name")] )
+        data['sprints_by_id'] = dict( [(x['id'], x) for x in Sprint.objects.filter(pk__in=data['all_sprint_ids']).values('id', 'code', "name")] )
         data['tags_by_id'] = dict( [(x['id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values('id', "name", "category__name", "category_id")] )
         data['tag_categories_by_id'] = dict( [(x['category_id'], x) for x in Tag.objects.filter(pk__in=data['all_tag_ids']).values("category__name", "category_id").distinct()] )
         
@@ -71,13 +71,15 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         return response
 
     def _get_download_filter(self, request):
-        raw_filter = json.loads(request.POST.get('post_params', {}))
+        raw_filter = json.loads(request.POST.get('post_params', '{}'))
+        if len(raw_filter) == 0:
+            raise Exception("Must filter this call")
         s = MultipleIssueFilterSerializer(data=raw_filter)
         s.is_valid(raise_exception=True)
         return s.validated_data
     
     def _write_actuals_by_sprint(self, writer, data):
-        show_costs = self.has_view_ctc_billable_rates
+        show_costs = self.calculator.has_view_ctc_billable_rates
         writer.writerow([""])
         writer.writerow(["Actuals by sprint"])
 
@@ -86,7 +88,8 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             header2.append("Cost")
         writer.writerow(header2)
         for sprint_id, sprint_data in data['actuals_by_sprint'].items():
-            row = [sprint_data.name]
+            row = []
+            row.append(data['sprints_by_id'][sprint_id]['name'])
             row.append(human_readable_hours(sprint_data['hours']))
             row.append(sprint_data['hours'])
             if show_costs:
@@ -94,7 +97,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             writer.writerow(row)
         
     def _write_user_actuals(self, writer, data):
-        show_costs = self.has_view_ctc_billable_rates
+        show_costs = self.calculator.has_view_ctc_billable_rates
         writer.writerow([""])
         writer.writerow(["Actuals by user"])
 
@@ -114,7 +117,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
     
     def _write_issue_actuals(self, writer, data):
 
-        show_costs = self.has_view_ctc_billable_rates
+        show_costs = self.calculator.has_view_ctc_billable_rates
         writer.writerow([""])
         writer.writerow(["Actuals by issue"])
 
@@ -160,7 +163,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             writer.writerow(row)
 
     def _write_actuals_by_tag_category(self, writer, data):
-        show_costs = self.has_view_ctc_billable_rates
+        show_costs = self.calculator.has_view_ctc_billable_rates
         writer.writerow([""])
         writer.writerow(["Actuals by category"])
         header2 = ["User", "Tag category", "Tag", "Hours (time)", "Hours (decimal)"]
