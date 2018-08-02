@@ -4076,7 +4076,6 @@ class Issue(BaseModel):
         ('in_client_qa', 'external qa'),
         ('client_qa_passed', 'external qa passed'),
         ('reopened', 'reopened'),
-        ('onhold', 'on hold'),
         ('blocked', 'blocked'),
         ('waiting', 'waiting'),
         ('bug', 'bug'),
@@ -4092,7 +4091,9 @@ class Issue(BaseModel):
         ('quick_clocker', 'quick clocker'),
     )
  
-    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear', 'discuss_with_client', 'needscodereview'],
+    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear',
+                                                     'discuss_with_client', 'needscodereview', 'blocked', 'waiting',
+                                                     'to be designed'],
                                        'manager': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
                                        'tester': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['internal_qa_passed', 'in_client_qa', 'client_qa_passed', 'duplicate', "onhold"]] }
 
