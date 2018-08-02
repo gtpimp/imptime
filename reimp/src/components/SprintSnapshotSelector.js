@@ -1,0 +1,226 @@
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import { map } from 'lodash'
+import '../sass/snapshot-selector.css'
+import { getVisibleItemIds } from '../actions/ItemList'
+import { css } from 'emotion'
+import Modal from 'react-modal'
+import Floater from "react-floater"
+import { getSprintSnapshots,
+         fetchSprintSnapshotsIfNeeded,
+         startCandidateSprintSnapshot,
+         saveCandidateSprintSnapshot,
+         updateCandidateDescription,
+         cancelCandidateSprintSnapshot,
+         getCandidateSprintSnapshot,
+         deleteSprintSnapshots,
+         updateSprintSnapshotDescription
+} from '../actions/Snapshot'
+import SprintSnapshotDescriptionForm from './form/SprintSnapshotDescriptionForm'
+import PopupPanelButton from './PopupPanelButton'
+import PopupPanelLink from './PopupPanelLink'
+import PopupPanelHeading from './PopupPanelHeading'
+import PopupPanelText from './PopupPanelText'
+import { LIST_KEY__SPRINT_SNAPSHOT_LIST } from '../actions/ItemListKeyRegistry'
+
+class SprintSnapshotSelector extends Component {
+
+    constructor(props) {
+        super(props)
+        this.onChangeSprintSnapshot = this.onChangeSprintSnapshot.bind(this)
+        this.onCreateCandidateSprintSnapshot = this.onCreateCandidateSprintSnapshot.bind(this)
+        this.onCancelCreateCandidateSprintSnapshot = this.onCancelCreateCandidateSprintSnapshot.bind(this)
+        this.onSaveCandidateSprintSnapshot = this.onSaveCandidateSprintSnapshot.bind(this)
+        this.onStartEditingSprintSnapshot = this.onStartEditingSprintSnapshot.bind(this)
+        this.onCancelEditingSprintSnapshot = this.onCancelEditingSprintSnapshot.bind(this)
+        this.onSaveSprintSnapshotDescription = this.onSaveSprintSnapshotDescription.bind(this)
+        this.hideEditButtons = this.hideEditButtons.bind(this)
+        this.showEditButtons = this.showEditButtons.bind(this)
+        this.state = { editing_sprint_snapshot: null }
+    }
+
+    componentDidMount() {
+        this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const {dispatch} = props
+        dispatch(fetchSprintSnapshotsIfNeeded(LIST_KEY__SPRINT_SNAPSHOT_LIST))
+    }
+
+    onChangeSprintSnapshot(snapshot_id) {
+        const { dispatch } = this.props
+        dispatch(setCurrentSprintSnapshotId(snapshot_id))
+    }
+
+    onCreateCandidateSprintSnapshot() {
+        const { dispatch } = this.props
+        dispatch(startCandidateSprintSnapshot())
+    }
+
+    onCancelCreateCandidateSprintSnapshot(event) {
+        const { dispatch } = this.props
+        event.preventDefault()
+        dispatch(cancelCandidateSprintSnapshot())
+    }
+
+    onSaveCandidateSprintSnapshot(new_values) {
+        const { dispatch } = this.props
+        dispatch(updateCandidateDescription(new_values.description))
+        dispatch(saveCandidateSprintSnapshot( (snapshot_id) => dispatch(setCurrentSprintSnapshotId(snapshot_id))))
+    }
+
+    onStartEditingSprintSnapshot(event, snapshot) {
+        event.preventDefault()
+        this.setState({editing_sprint_snapshot: snapshot})
+    }
+
+    onCancelEditingSprintSnapshot(event) {
+        event.preventDefault()
+        this.setState({editing_sprint_snapshot: null})
+    }
+
+    onSaveSprintSnapshotDescription(new_values) {
+        const { dispatch } = this.props
+        dispatch(updateSprintSnapshotDescription(this.state.editing_sprint_snapshot.id, new_values.description))
+        this.setState({editing_sprint_snapshot: null})
+    }
+
+    deleteSprintSnapshot(event, snapshot) {
+        const { dispatch } = this.props
+        event.preventDefault()
+        if (! window.confirm("Delete sprint snapshot " + snapshot.description + "?") ) {
+            return
+        }
+        dispatch(deleteSprintSnapshots([snapshot.id]))
+    }
+
+    renderSprintSnapshotEditButtons(snapshot) {
+        return (
+            <div className={css`display:flex; flex-direction: row; margin-right: 20px;`}>
+              <Floater
+                  description="Delete snapshot"
+                  disableHoverToClick
+                  event="hover"
+                  eventDelay={0}
+                  placement="bottom"
+                  content={<div>Delete this snapshot</div>}
+              >
+                <div className="snapshot-editor-button-bar__button icon--small-delete" onClick={(event) => this.deleteSprintSnapshot(event, snapshot)}/>
+              </Floater>
+              <Floater
+                  description="Edit snapshot"
+                  disableHoverToClick
+                  event="hover"
+                  eventDelay={0}
+                  placement="bottom"
+                  content={<div>Edit the snapshot description</div>}
+              >
+                <div className="snapshot-editor-button-bar__button icon--edit" onClick={(event) => this.onStartEditingSprintSnapshot(event, snapshot)}/>
+              </Floater>
+            </div>
+        )
+    }
+
+    renderSprintSnapshotCreator() {
+        const { candidate_sprint_snapshot } = this.props
+        return (
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={this.onCancelCreateCandidateSprintSnapshot}
+                   contentLabel="New Description">
+              <SprintSnapshotDescriptionForm onCancel={this.onCancelCreateCandidateSprintSnapshot}
+                             initial_value={candidate_sprint_snapshot.description}
+                             onSubmitted={this.onSaveCandidateSprintSnapshot}/>
+            </Modal>
+        )
+    }
+
+    renderSprintSnapshotDescriptionEditor() {
+        return (
+            <Modal isOpen={true}
+                   className="editable-property-modal"
+                   overlayClassName="editable-property-modal__overlay"
+                   onRequestClose={this.onCancelCreateCandidateSprintSnapshot}
+                   contentLabel="Edit Description">
+              <SprintSnapshotDescriptionForm onCancel={this.onCancelEditingSprintSnapshot}
+                             initial_value={this.state.editing_sprint_snapshot.description}
+                             onSubmitted={this.onSaveSprintSnapshotDescription}/>
+            </Modal>
+        )
+    }
+
+    renderSprintSnapshots() {
+        const { snapshots } = this.props
+        return (
+            <div>
+              { map(snapshots, (snapshot) =>
+                  <PopupPanelLink key={snapshot.id}>
+                    <div className={css`display:flex; flex-direction: row`}
+                         onClick={() => this.onChangeSprintSnapshot(snapshot.id) } >
+                      {snapshot.description}
+                    </div>
+                  </PopupPanelLink>
+                )}
+            </div>
+        )
+    }
+
+    renderDefaultSprintSnapshotConfigurer() {
+        return (
+            <div className="snapshot-selector__default_configurer">
+              <SprintSnapshotFeature feature_name="costs">
+                <div className="snapshot-selector__default_configurer__feature">
+                  Show financial values (if allowed on the project)
+                </div>
+              </SprintSnapshotFeature>
+            </div>
+        )
+    }
+
+    render() {
+        const { candidate_sprint_snapshot } = this.props
+        const is_creating_candidate_sprint_snapshot = candidate_sprint_snapshot || false
+        const is_editing_sprint_snapshot_description = this.state.editing_sprint_snapshot || false
+
+        return (
+            <div className={css`display: flex;
+                                flex-direction: column;
+                            `}>
+              <PopupPanelHeading>
+                SprintSnapshot Selection
+              </PopupPanelHeading>
+              <PopupPanelText>
+                SprintSnapshots are summaries of sprint values at a moment in time
+                <br/>
+                They can be used to compare how a sprint has changed over time, 
+                <br/>
+                typically for reporting purposes.
+              </PopupPanelText>
+              { this.renderSprintSnapshots() }
+              { is_creating_candidate_sprint_snapshot && this.renderSprintSnapshotCreator() }
+              { is_editing_sprint_snapshot_description && this.renderSprintSnapshotDescriptionEditor() }
+            </div>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+
+    const snapshot_ids = getVisibleItemIds(state, LIST_KEY__SPRINT_SNAPSHOT_LIST)
+    const snapshots = getSprintSnapshots(state, snapshot_ids)
+    const candidate_sprint_snapshot = getCandidateSprintSnapshot(state) || null
+
+    return {
+        candidate_sprint_snapshot,
+        snapshots
+    }
+}
+
+export default connect(mapStateToProps)(SprintSnapshotSelector)
