@@ -6,6 +6,10 @@ import { css } from 'emotion'
 import Modal from 'react-modal'
 import Floater from "react-floater"
 import ModalDialog from './ModalDialog'
+import { initList,
+         update_list_pagination
+} from '../actions/ItemList'
+
 import { getSprintSnapshots,
          fetchSprintSnapshotsIfNeeded,
          startCandidateSprintSnapshot,
@@ -33,6 +37,7 @@ class SprintSnapshotSelector extends Component {
         this.onCreateCandidateSprintSnapshot = this.onCreateCandidateSprintSnapshot.bind(this)
         this.onCancelCreateCandidateSprintSnapshot = this.onCancelCreateCandidateSprintSnapshot.bind(this)
         this.onSaveCandidateSprintSnapshot = this.onSaveCandidateSprintSnapshot.bind(this)
+        this.onCancelCreateCandidateSprintSnapshot = this.onCancelCreateCandidateSprintSnapshot.bind(this)
         this.onStartEditingSprintSnapshot = this.onStartEditingSprintSnapshot.bind(this)
         this.onCancelEditingSprintSnapshot = this.onCancelEditingSprintSnapshot.bind(this)
         this.onSaveSprintSnapshotDescription = this.onSaveSprintSnapshotDescription.bind(this)
@@ -41,6 +46,9 @@ class SprintSnapshotSelector extends Component {
     }
 
     componentDidMount() {
+        const { dispatch, list_key } = this.props
+        dispatch(initList(list_key))
+        dispatch(update_list_pagination(list_key, { page_size: 10 }))
         this.refresh()
     }
 
@@ -50,11 +58,11 @@ class SprintSnapshotSelector extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, sprint_id, sprint} = props
+        const {dispatch, sprint_id, sprint, list_key} = props
         if ( ! sprint || sprint_id !== this.props.sprint_id ) {
             dispatch(ensureSprintsLoaded([sprint_id]))
         }
-        dispatch(fetchSprintSnapshotsIfNeeded(LIST_KEY__SPRINT_SNAPSHOT_LIST))
+        dispatch(fetchSprintSnapshotsIfNeeded(list_key))
     }
 
     onChangeSprintSnapshot(snapshot_id) {
@@ -69,14 +77,16 @@ class SprintSnapshotSelector extends Component {
 
     onCancelCreateCandidateSprintSnapshot(event) {
         const { dispatch } = this.props
-        event.preventDefault()
+        if ( event ) {
+            event.preventDefault()
+        }
         dispatch(cancelCandidateSprintSnapshot())
     }
 
     onSaveCandidateSprintSnapshot(new_values) {
         const { dispatch, sprint_id } = this.props
         dispatch(updateCandidateDescription(new_values.description))
-        dispatch(saveCandidateSprintSnapshot(sprint_id))
+        dispatch(saveCandidateSprintSnapshot((snapshot_id) => this.onCancelCreateCandidateSprintSnapshot()))
     }
 
     onStartEditingSprintSnapshot(event, snapshot) {
@@ -218,8 +228,9 @@ class SprintSnapshotSelector extends Component {
 function mapStateToProps(state, props) {
 
     const { sprint_id } = props
+    const list_key = LIST_KEY__SPRINT_SNAPSHOT_LIST
     const sprint = getSprint(state, sprint_id)
-    const snapshot_ids = getVisibleItemIds(state, LIST_KEY__SPRINT_SNAPSHOT_LIST)
+    const snapshot_ids = getVisibleItemIds(state, list_key)
     const snapshots = getSprintSnapshots(state, snapshot_ids)
     const candidate_sprint_snapshot = getCandidateSprintSnapshot(state) || null
     const is_active = isSprintSnapshotSelectorActive(state) || false
@@ -229,7 +240,8 @@ function mapStateToProps(state, props) {
         sprint,
         is_active,
         candidate_sprint_snapshot,
-        snapshots
+        snapshots,
+        list_key
     }
 }
 

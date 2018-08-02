@@ -81,6 +81,7 @@ export function cancelCandidateSprintSnapshot() {
 
 export function saveCandidateSprintSnapshot(on_done) {
     return saveCandidateItem(ENTITY_KEY__SPRINT_SNAPSHOT, on_done)
+                             
 }
 
 export function deleteSprintSnapshots(snapshot_ids) {
