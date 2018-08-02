@@ -7,7 +7,8 @@ import Modal from 'react-modal'
 import Floater from "react-floater"
 import ModalDialog from './ModalDialog'
 import { initList,
-         update_list_pagination
+         update_list_pagination,
+         invalidateList
 } from '../actions/ItemList'
 
 import { getSprintSnapshots,
@@ -21,6 +22,7 @@ import { getSprintSnapshots,
          updateSprintSnapshotDescription
 } from '../actions/SprintSnapshots'
 import SprintSnapshotDescriptionForm from './form/SprintSnapshotDescriptionForm'
+import Pagination from './Pagination'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import PopupPanelButton from './PopupPanelButton'
 import PopupPanelLink from './PopupPanelLink'
@@ -41,6 +43,7 @@ class SprintSnapshotSelector extends Component {
         this.onStartEditingSprintSnapshot = this.onStartEditingSprintSnapshot.bind(this)
         this.onCancelEditingSprintSnapshot = this.onCancelEditingSprintSnapshot.bind(this)
         this.onSaveSprintSnapshotDescription = this.onSaveSprintSnapshotDescription.bind(this)
+        this.onRefresh = this.onRefresh.bind(this)
         this.hideSelector = this.hideSelector.bind(this)
         this.state = { editing_sprint_snapshot: null }
     }
@@ -65,6 +68,15 @@ class SprintSnapshotSelector extends Component {
         dispatch(fetchSprintSnapshotsIfNeeded(list_key))
     }
 
+    onRefresh(event) {
+        const { dispatch, list_key } = this.props
+	if ( event ) {
+	    event.stopPropagation()
+	}
+	dispatch(invalidateList(list_key))
+	dispatch(fetchSprintSnapshotsIfNeeded(list_key))
+    }
+
     onChangeSprintSnapshot(snapshot_id) {
         // const { dispatch } = this.props
         alert("ouch")
@@ -84,7 +96,7 @@ class SprintSnapshotSelector extends Component {
     }
 
     onSaveCandidateSprintSnapshot(new_values) {
-        const { dispatch, sprint_id } = this.props
+        const { dispatch } = this.props
         dispatch(updateCandidateDescription(new_values.description))
         dispatch(saveCandidateSprintSnapshot((snapshot_id) => this.onCancelCreateCandidateSprintSnapshot()))
     }
@@ -170,9 +182,10 @@ class SprintSnapshotSelector extends Component {
     }
 
     renderSprintSnapshots() {
-        const { snapshots } = this.props
+        const { snapshots, list_key } = this.props
         return (
             <div>
+              <Pagination list_key={list_key} on_changed={this.onRefresh} hide_if_one_page={true} />
               { map(snapshots, (snapshot) =>
                   <PopupPanelLink key={snapshot.id}>
                     <div className={css`display:flex; flex-direction: row`}
