@@ -6,6 +6,7 @@ import { css } from 'emotion'
 import Modal from 'react-modal'
 import Floater from "react-floater"
 import ModalDialog from './ModalDialog'
+import Timestamp from './Timestamp'
 import { initList,
          update_list_pagination,
          invalidateList
@@ -185,12 +186,20 @@ class SprintSnapshotSelector extends Component {
         const { snapshots, list_key } = this.props
         return (
             <div>
+              <PopupPanelHeading>
+                Previous snapshots
+              </PopupPanelHeading>
+
               <Pagination list_key={list_key} on_changed={this.onRefresh} hide_if_one_page={true} />
               { map(snapshots, (snapshot) =>
                   <PopupPanelLink key={snapshot.id}>
-                    <div className={css`display:flex; flex-direction: row`}
+                    <div className={css`display:flex; 
+                                        flex-direction: row; 
+                                        justify-content: space-between`}
                          onClick={() => this.onChangeSprintSnapshot(snapshot.id) } >
+                      
                       {snapshot.description}
+                      <Timestamp format="dateshort-time" value={snapshot.created_at} />
                     </div>
                   </PopupPanelLink>
                 )}
@@ -226,12 +235,12 @@ class SprintSnapshotSelector extends Component {
                   <br/>
                   which is useful for reporting purposes.
                 </PopupPanelText>
-                { this.renderSprintSnapshots() }
+                { ! is_creating_candidate_sprint_snapshot && ! is_editing_sprint_snapshot_description && (
+                      <PopupPanelButton onClick={this.onCreateCandidateSprintSnapshot}>Take snapshot</PopupPanelButton>
+                  )}
                 { is_creating_candidate_sprint_snapshot && this.renderSprintSnapshotCreator() }
                 { is_editing_sprint_snapshot_description && this.renderSprintSnapshotDescriptionEditor() }
-                { ! is_creating_candidate_sprint_snapshot && ! is_editing_sprint_snapshot_description && (
-                    <PopupPanelButton onClick={this.onCreateCandidateSprintSnapshot}>Take snapshot</PopupPanelButton>
-                )}
+                { this.renderSprintSnapshots() }
               </div>
             </ModalDialog>
         )

@@ -7,3 +7,5 @@ class SprintSnapshotSerializer(BaseSerializer):
     id = serializers.CharField()
     description = serializers.CharField()
     sprint_id = serializers.CharField()
+    created_at = serializers.DateTimeField(source='created')
+    
