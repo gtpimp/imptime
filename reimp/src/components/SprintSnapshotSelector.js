@@ -18,7 +18,7 @@ import { getSprintSnapshots,
 } from '../actions/SprintSnapshots'
 import SprintSnapshotDescriptionForm from './form/SprintSnapshotDescriptionForm'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
-// import PopupPanelButton from './PopupPanelButton'
+import PopupPanelButton from './PopupPanelButton'
 import PopupPanelLink from './PopupPanelLink'
 import PopupPanelHeading from './PopupPanelHeading'
 import PopupPanelText from './PopupPanelText'
@@ -63,8 +63,8 @@ class SprintSnapshotSelector extends Component {
     }
 
     onCreateCandidateSprintSnapshot() {
-        const { dispatch } = this.props
-        dispatch(startCandidateSprintSnapshot())
+        const { dispatch, sprint_id } = this.props
+        dispatch(startCandidateSprintSnapshot(sprint_id))
     }
 
     onCancelCreateCandidateSprintSnapshot(event) {
@@ -199,13 +199,16 @@ class SprintSnapshotSelector extends Component {
                 <PopupPanelText>
                   SprintSnapshots are summaries of sprint values at a moment in time
                   <br/>
-                  They can be used to compare how a sprint has changed over time, 
+                  They can be used to compare how a sprint has changed, 
                   <br/>
-                  typically for reporting purposes.
+                  which is useful for reporting purposes.
                 </PopupPanelText>
                 { this.renderSprintSnapshots() }
                 { is_creating_candidate_sprint_snapshot && this.renderSprintSnapshotCreator() }
                 { is_editing_sprint_snapshot_description && this.renderSprintSnapshotDescriptionEditor() }
+                { ! is_creating_candidate_sprint_snapshot && ! is_editing_sprint_snapshot_description && (
+                    <PopupPanelButton onClick={this.onCreateCandidateSprintSnapshot}>Take snapshot</PopupPanelButton>
+                )}
               </div>
             </ModalDialog>
         )

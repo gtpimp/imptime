@@ -63,8 +63,10 @@ export function updateSprintSnapshotDescription(snapshot_id, value) {
     return updateItem(ENTITY_KEY__SPRINT_SNAPSHOT, [snapshot_id], "description", value)
 }
 
-export function startCandidateSprintSnapshot(initial_candidate_props) {
+export function startCandidateSprintSnapshot(sprint_id, initial_candidate_props) {
     return (dispatch, getState) => {
+        initial_candidate_props = initial_candidate_props || {}
+        initial_candidate_props['sprint_id'] = sprint_id
         dispatch(startCandidateItem(ENTITY_KEY__SPRINT_SNAPSHOT, initial_candidate_props || {}))
     }
 }

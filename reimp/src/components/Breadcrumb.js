@@ -135,7 +135,6 @@ const menu_buttons = {
           perms: (objs) => ['has_view_ctc_billable_rates']
         },
         { label: (objs) => 'Snapshots',
-          type: "button",
           generic_action: function(objs, props) {
               props.dispatch(startSprintSnapshotSelector())
           }

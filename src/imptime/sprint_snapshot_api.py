@@ -92,17 +92,9 @@ class SprintSnapshotViewSet(BaseViewSet):
         try:
             context = {}
             params = request.data['item']
-
-            clone_of_sprint_snapshot_id = params.get("clone_of_sprint_snapshot_id", None)
-            if clone_of_sprint_snapshot_id:
-                sprint_snapshot = self.allowed_sprint_snapshots().get(pk=clone_of_sprint_snapshot_id)
-                sprint_snapshot.id = None
-                sprint_snapshot.description = params['description']
-                sprint_snapshot.save()
-            else:
-                sprint_snapshot = SprintSnapshot.objects.create(user=request.user,
-                                        description=params['description'])
-
+            sprint_id = params['sprint_id']
+            sprint = self.allowed_sprints().get(pk=sprint_id)
+            sprint_snapshot = SprintSnapshot.objects.create(sprint=sprint, description=params['description'])
             context['item'] = SprintSnapshotSerializer(sprint_snapshot).data
             data = {'status': 'success', 'payload': context}
 
