@@ -187,6 +187,11 @@ class SprintSnapshotSelector extends Component {
 
     renderSprintSnapshots() {
         const { snapshots, list_key, project_id, sprint_id } = this.props
+
+        if ( ! snapshots || snapshots.length === 0 ) {
+            return null
+        }
+         
         return (
             <div>
               <PopupPanelHeading>

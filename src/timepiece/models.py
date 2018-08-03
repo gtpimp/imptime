@@ -227,9 +227,13 @@ class Business(BaseModel):
         return Project.objects.filter(business=self).order_by_business_id(self.id)
 
     def get_users_allowed_to_estimate_on_business(self, current_user):
+        """ current_user is a permission check, use None only if you don't care about permissions """
         business_permissions_by_user = BusinessPermissions.by_user(self)
-        bp = BusinessPermissions.objects.get_or_create(business=self,user=current_user)[0]
-        can_view_other_user_points = BusinessPermissions.has_see_other_user_points
+        if current_user:
+            bp = BusinessPermissions.objects.get_or_create(business=self,user=current_user)[0]
+            can_view_other_user_points = BusinessPermissions.has_see_other_user_points
+        else:
+            can_view_other_user_points = True
 
         if can_view_other_user_points:
             users = BusinessPermissions.active_users_for_business(self)
@@ -238,7 +242,7 @@ class Business(BaseModel):
             support_staff = [ user for user in business_users if Rate.for_business(user.id, self.id) and Rate.for_business(user.id, self.id).time_tracking_mode in [ 'tester', 'manager' ] ]
             users = list(set(developers + support_staff))
         else:
-            if bp.has_estimate_own_points:
+            if user and bp.has_estimate_own_points:
                 users = User.objects.filter(id__in = [current_user.id])
             else:
                 users = User.objects.none()
@@ -1777,6 +1781,8 @@ class Project(BaseModel):
         return self._new_stats
 
     def calculate_new_stats(self, current_user):
+        """current_user is a permission check, can use None if permissions
+           are not relevant (eg storing snapshot)"""
         if self._new_stats is not None:
             return self._new_stats
 
