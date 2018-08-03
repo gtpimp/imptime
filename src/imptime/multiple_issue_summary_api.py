@@ -92,7 +92,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             row.append(human_readable_hours(sprint_data['hours']))
             row.append(sprint_data['hours'])
             if show_costs:
-                row.append(sprint_data['commission_cost'])
+                row.append(sprint_data['cost_with_commission'])
             writer.writerow(row)
         
     def _write_user_actuals(self, writer, data):
