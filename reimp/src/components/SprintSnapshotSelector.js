@@ -12,7 +12,9 @@ import SprintName from './SprintName'
 import { has_permission } from '../actions/Users'
 import { initList,
          update_list_pagination,
-         invalidateList
+         update_list_filter,
+         invalidateList,
+         getListFilter
 } from '../actions/ItemList'
 
 import { getSprintSnapshots,
@@ -53,8 +55,9 @@ class SprintSnapshotSelector extends Component {
     }
 
     componentDidMount() {
-        const { dispatch, list_key } = this.props
+        const { dispatch, sprint_id, list_key } = this.props
         dispatch(initList(list_key))
+        dispatch(update_list_filter(list_key, { sprint_id: sprint_id }))
         dispatch(update_list_pagination(list_key, { page_size: 10 }))
         this.refresh()
     }
@@ -65,9 +68,13 @@ class SprintSnapshotSelector extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, sprint_id, sprint, list_key} = props
+        const {dispatch, sprint_id, sprint, list_key, filter} = props
         if ( ! sprint || sprint_id !== this.props.sprint_id ) {
             dispatch(ensureSprintsLoaded([sprint_id]))
+        }
+        if ( filter.sprint_id != sprint_id ) {
+            dispatch(update_list_filter(list_key, { sprint_id: sprint_id }))
+            dispatch(invalidateList(list_key))
         }
         dispatch(fetchSprintSnapshotsIfNeeded(list_key))
     }
@@ -272,12 +279,14 @@ function mapStateToProps(state, props) {
     const candidate_sprint_snapshot = getCandidateSprintSnapshot(state) || null
     const is_active = isSprintSnapshotSelectorActive(state) || false
     const can_take_snapshots = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
+    const filter = getListFilter(state, list_key)
 
     return {
         project_id,
         sprint_id,
         sprint,
         is_active,
+        filter,
         candidate_sprint_snapshot,
         snapshots,
         list_key,

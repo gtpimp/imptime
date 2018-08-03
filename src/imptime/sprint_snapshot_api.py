@@ -126,3 +126,9 @@ class SprintSnapshotViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    def apply_filter(self, qs, raw_filter_args):
+        sprint_id = raw_filter_args.pop('sprint_id', None)
+        if sprint_id:
+            qs = qs.filter(sprint_id=sprint_id)
+        return super(SprintSnapshotViewSet, self).apply_filter(qs, raw_filter_args)
