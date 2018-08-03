@@ -218,11 +218,14 @@ class SprintSnapshotSelector extends Component {
     }
 
     render() {
-        const { is_active, sprint_id, candidate_sprint_snapshot } = this.props
+        const { is_active, sprint_id, candidate_sprint_snapshot, can_take_snapshots } = this.props
         const is_creating_candidate_sprint_snapshot = candidate_sprint_snapshot || false
         const is_editing_sprint_snapshot_description = this.state.editing_sprint_snapshot || false
 
         if ( ! is_active ) {
+            return null
+        }
+        if ( ! can_take_snapshots ) {
             return null
         }
         
@@ -267,6 +270,7 @@ function mapStateToProps(state, props) {
     const snapshots = getSprintSnapshots(state, snapshot_ids)
     const candidate_sprint_snapshot = getCandidateSprintSnapshot(state) || null
     const is_active = isSprintSnapshotSelectorActive(state) || false
+    const can_take_snapshots = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
 
     return {
         project_id,
@@ -275,7 +279,8 @@ function mapStateToProps(state, props) {
         is_active,
         candidate_sprint_snapshot,
         snapshots,
-        list_key
+        list_key,
+        can_take_snapshots
     }
 }
 

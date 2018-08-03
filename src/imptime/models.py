@@ -605,8 +605,8 @@ class SprintSnapshot(BaseModel):
     cost_summary = models.TextField(null=True)
 
     @classmethod
-    def create_snapshot(self, description, sprint_id):
-        snapshot = self.calculate_snapshot(sprint_id, user=None)
+    def create_snapshot(self, description, sprint_id, user):
+        snapshot = self.calculate_snapshot(sprint_id, user=user)
         SprintSnapshot.objects.create(description=description,
                                       sprint_id=sprint_id,
                                       cost_summary=json.dumps(snapshot['cost_summary']))
@@ -622,8 +622,7 @@ class SprintSnapshot(BaseModel):
         cost_summary['id'] = sprint_id
         cost_summary['projections'] = self._calculate_projections(cost_summary, sprint=sprint, user=user)
         snapshot['cost_summary'] = cost_summary
-        if user is not None:
-            snapshot = self._clean_snapshot(snapshot, user)
+        snapshot = self._clean_snapshot(snapshot, user)
         return snapshot
 
     @classmethod
@@ -642,10 +641,7 @@ class SprintSnapshot(BaseModel):
 
     @classmethod
     def _calculate_projections(self, cost_summary, sprint, user):
-        if user is not None:
-            bp = ProjectPermissions.for_user(user, sprint.business)  # sic
-        else:
-            bp = None
+        bp = ProjectPermissions.for_user(user, sprint.business)  # sic
             
         projections = { 'original_dev_hours': 0,
                         'original_open_dev_hours': 0,
@@ -658,7 +654,7 @@ class SprintSnapshot(BaseModel):
                 continue
             projections['original_dev_hours'] += dev_user_data['adjusted_points_non_management_no_scope_creep']
             projections['original_open_dev_hours'] += dev_user_data['adjusted_points_open_non_management_no_scope_creep'] 
-            if bp and bp.has_view_ctc_billable_rates:
+            if bp.has_view_ctc_billable_rates:
                 projections['original_dev_commission_cost'] += dev_user_data['adjusted_points_comparative_billable']
             
             revised_estimates_by_user = cost_summary['breakdown']['revised_estimates_by_user'].get(dev_user_id)
@@ -666,7 +662,7 @@ class SprintSnapshot(BaseModel):
                 continue
             projections['revised_dev_hours'] += revised_estimates_by_user['velocity_estimates']
 
-            if bp and bp.has_view_ctc_billable_rates:
+            if bp.has_view_ctc_billable_rates:
                 projections['revised_dev_commission_cost'] += revised_estimates_by_user['velocity_commission_cost']
 
         return projections

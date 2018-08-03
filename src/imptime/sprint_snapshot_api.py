@@ -94,7 +94,9 @@ class SprintSnapshotViewSet(BaseViewSet):
             params = request.data['item']
             sprint_id = params['sprint_id']
             sprint = self.allowed_sprints().get(pk=sprint_id)
-            sprint_snapshot = SprintSnapshot.objects.create(sprint=sprint, description=params['description'])
+            sprint_snapshot = SprintSnapshot.create_snapshot(description=params['description'],
+                                                             sprint_id=sprint.id,
+                                                             user=request.user)
             context['item'] = SprintSnapshotSerializer(sprint_snapshot).data
             data = {'status': 'success', 'payload': context}
 

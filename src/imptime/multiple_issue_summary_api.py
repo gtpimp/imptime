@@ -52,7 +52,7 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         filter = self._get_download_filter(request)
         issue_qs = self.allowed_issues()
         issue_qs = self.apply_filter(issue_qs, {}, filter)
-        self.calculator = MultipleIssueSummaryCalculator(self.request.user, issue_qs=issue_qs)
+        self.calculator = MultipleIssueSummaryCalculator(user=self.request.user, issue_qs=issue_qs)
         data = self.calculator.get_data()
 
         data['issues_by_id'] = dict( [(x['id'], x) for x in Issue.objects.filter(pk__in=data['all_issue_ids']).values('id', 'subject', 'number')] )
@@ -217,5 +217,3 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
         if sprint_ids:
             qs = qs.filter(project_id__in=[x for x in sprint_ids if x])
         return super(MultipleIssueSummaryViewSet, self).apply_filter(qs, raw_filter_args)
-            
-    
