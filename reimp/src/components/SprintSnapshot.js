@@ -5,6 +5,7 @@ import SprintName from '../components/SprintName'
 import Timestamp from './Timestamp'
 import { has_permission } from '../actions/Users'
 import { getSprintSnapshot, ensureSprintSnapshotsLoaded } from '../actions/SprintSnapshots'
+import BreakdownSummary from './BreakdownSummary'
 
 class SprintSnapshotPage extends Component {
 
@@ -30,6 +31,7 @@ class SprintSnapshotPage extends Component {
             <div>
               Snapshot {sprint_snapshot.description} taken on
               <Timestamp value={sprint_snapshot.created_at} format="dateshort-time" />
+              <BreakdownSummary summary={sprint_snapshot.cost_summary} />
             </div>
         )
     }

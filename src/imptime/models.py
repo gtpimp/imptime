@@ -602,16 +602,15 @@ class ScheduleItem(BaseModel):
 class SprintSnapshot(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='snapshots', null=False, blank=False)
     description = models.TextField(null=True)
-    snapshot = models.TextField(null=True)
+    cost_summary = models.TextField(null=True)
 
     @classmethod
     def create_snapshot(self, description, sprint_id):
         snapshot = self.calculate_snapshot(sprint_id, user=None)
         SprintSnapshot.objects.create(description=description,
                                       sprint_id=sprint_id,
-                                      snapshot=json.dumps(snapshot))
+                                      cost_summary=json.dumps(snapshot['cost_summary']))
         return snapshot
-
     
     @classmethod
     def calculate_snapshot(self, sprint_id, user):
