@@ -72,7 +72,7 @@ class SprintSnapshotSelector extends Component {
         if ( ! sprint || sprint_id !== this.props.sprint_id ) {
             dispatch(ensureSprintsLoaded([sprint_id]))
         }
-        if ( filter.sprint_id != sprint_id ) {
+        if ( filter.sprint_id !== sprint_id ) {
             dispatch(update_list_filter(list_key, { sprint_id: sprint_id }))
             dispatch(invalidateList(list_key))
         }

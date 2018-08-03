@@ -205,6 +205,7 @@ class Breadcrumb extends Component {
             if ( action ) {
                 action()
             }
+            
         } else if ( breadcrumb_button['dispatch_action'] ) {
             const action = breadcrumb_button['dispatch_action'](breadcrumb.selected_entities, this.props)
             if ( action ) {

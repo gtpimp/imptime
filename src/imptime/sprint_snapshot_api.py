@@ -39,7 +39,7 @@ class SprintSnapshotViewSet(BaseViewSet):
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in sprint_snapshots.values_list('id', flat=True)]
             else:
-                s = SprintSnapshotSerializer(sprint_snapshots, many=True)
+                s = SprintSnapshotSerializer(sprint_snapshots, many=True, logged_in_user=request.user)
                 sprint_snapshots_data = s.data
                 context['sprint_snapshots'] = sprint_snapshots_data
             context['pagination'] = pagination
@@ -80,7 +80,8 @@ class SprintSnapshotViewSet(BaseViewSet):
 
             context = {}
             context['items'] = SprintSnapshotSerializer(self.allowed_sprint_snapshots().filter(pk__in=sprint_snapshot_pks),
-                                              many=True).data
+                                                        many=True,
+                                                        logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
@@ -97,7 +98,7 @@ class SprintSnapshotViewSet(BaseViewSet):
             sprint_snapshot = SprintSnapshot.create_snapshot(description=params['description'],
                                                              sprint_id=sprint.id,
                                                              user=request.user)
-            context['item'] = SprintSnapshotSerializer(sprint_snapshot).data
+            context['item'] = SprintSnapshotSerializer(sprint_snapshot, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
