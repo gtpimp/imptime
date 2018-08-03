@@ -15,6 +15,7 @@ import {
 } from '../actions/Issues'
 import { logged_in_users_permissions } from '../actions/Users'
 import { startPermissionInspector } from '../actions/Auth'
+import { startSprintSnapshotSelector } from '../actions/SprintSnapshots'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
@@ -23,6 +24,7 @@ import PopupPanelLink from './PopupPanelLink'
 import PopupPanelButton from './PopupPanelButton'
 import PopupPanelSeparator from './PopupPanelSeparator'
 import PopupPanelHeading from './PopupPanelHeading'
+import SprintSnapshotSelector from './SprintSnapshotSelector'
 
 const BreadcrumbDiv = styled('div')(props => ({
     display: "inline-flex",
@@ -132,6 +134,11 @@ const menu_buttons = {
         { label: (objs) => 'Cost Summary',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary',
           perms: (objs) => ['has_view_ctc_billable_rates']
+        },
+        { label: (objs) => 'Snapshots',
+          generic_action: function(objs, props) {
+              props.dispatch(startSprintSnapshotSelector())
+          }
         },
     ],
     'issues': [
@@ -249,6 +256,18 @@ class Breadcrumb extends Component {
             )
         }
     }
+
+    renderGlobalObjects() {
+        const { breadcrumb } = this.props
+        return (
+            <div>
+              { breadcrumb.selected_entities && breadcrumb.selected_entities.sprint &&
+                <SprintSnapshotSelector sprint_id={breadcrumb.selected_entities.sprint.id}/>
+              }
+            </div>
+        )
+
+    }
     
     render() {
         const {label, to, is_last, breadcrumb, permissions } = this.props
@@ -284,6 +303,7 @@ class Breadcrumb extends Component {
                   <i className="material-icons">chevron_right</i>
                 </BreadcrumbSeparatorDiv>
               }
+              { this.renderGlobalObjects() }
             </BreadcrumbDiv>
         )
     }

@@ -17,15 +17,15 @@ import StatusCircle from './StatusCircle'
 class Sprint extends Component {
 
     render_collapsed() {
-	      const { sprint } = this.props
-	      return (
-	          <div key={this.key+".collapsed_sprint."+sprint.id}>
-		          Sprint: {sprint.name}
-	          </div>
-	      )
+	const { sprint } = this.props
+	return (
+	    <div key={this.key+".collapsed_sprint."+sprint.id}>
+	      Sprint: {sprint.name}
+	    </div>
+	)
     }
 
-    render_expanded() {
+    render() {
         const { sprint, sprint_id, is_loading, is_selected, onClickedSprint, header_list} = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
@@ -56,7 +56,6 @@ class Sprint extends Component {
                              onClick={onClickedSprint}
                              is_selected={is_selected}
 		>
-
                   { map(visible_header_keys, function(header_key) {
                         const header = headers_by_key[header_key]
                         switch(header_key) {
@@ -197,33 +196,18 @@ class Sprint extends Component {
             )
 	}
     }
-
-    render() {
-        const { is_collapsed, is_expanded } = this.props
-
-	      if ( is_collapsed ) {
-	          return this.render_collapsed()
-	      }
-	      else if ( is_expanded ) {
-	          return this.render_expanded()
-	      } else {
-	          return ( <div>Dev error</div> )
-	      }
-    }
 }
 
 function mapStateToProps(state, props) {
     const { sprint } = state
-    const { sprint_id, is_selected, is_collapsed, is_loading, header_list } = props
+    const { sprint_id, is_selected, is_loading, header_list } = props
     const this_sprint = (sprint && sprint.items_by_id && sprint.items_by_id[sprint_id]) || {}
 
     return {
-	      sprint: this_sprint,
-	      sprint_id: sprint_id,
-	      is_selected: is_selected,
-	      is_loading: is_loading,
-	      is_collapsed: is_collapsed,
-	      is_expanded: !is_collapsed,
+	sprint: this_sprint,
+	sprint_id: sprint_id,
+	is_selected: is_selected,
+	is_loading: is_loading,
         header_list
     }
 }

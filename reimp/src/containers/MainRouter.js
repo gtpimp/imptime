@@ -24,6 +24,7 @@ import ProjectsPage from './ProjectsPage'
 import SprintCostSummaryPage from './SprintCostSummaryPage'
 import SprintDashboardPage from './SprintDashboardPage'
 import SprintRatePage from './SprintRatePage'
+import SprintSnapshotPage from './SprintSnapshotPage'
 import UserTimesheetPage from './UserTimesheetPage'
 import SchedulesPage from './SchedulesPage'
 import ScheduleItemPage from './ScheduleItemPage'
@@ -74,6 +75,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/rates" component={SprintRatePage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/snapshots/:snapshotId" component={SprintSnapshotPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/history" component={IssueHistoryPage}/>

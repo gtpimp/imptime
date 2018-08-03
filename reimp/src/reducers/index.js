@@ -22,6 +22,7 @@ import work_summary from './work_summary'
 import project_user_permission from './project_user_permission'
 import settings from './settings'
 import sprint from './sprint'
+import sprint_snapshot from './sprint_snapshot'
 import sprint_user_rate from './sprint_user_rate'
 import time_chart from './time_chart'
 import time_summary from './time_summary'
@@ -58,6 +59,7 @@ const rootReducer = combineReducers({
     work_summary,
     settings,
     sprint,
+    sprint_snapshot,
     sprint_user_rate,    
     time_chart,
     time_summary,

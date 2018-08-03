@@ -597,3 +597,17 @@ class ScheduleItem(BaseModel):
     def delete(self):
         super(ScheduleItem, self).delete()
         RefreshNotifier().notify_model_delete(self)
+
+class SprintSnapshot(BaseModel):
+    sprint = ProtectedForeignKey(Sprint, related_name='snapshots', null=False, blank=False)
+    description = models.TextField(null=True)
+    
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+
+        super(SprintSnapshot, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+    

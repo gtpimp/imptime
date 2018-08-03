@@ -24,7 +24,7 @@ export const LIST_KEY__AUTO_CLOCK = 'auto_clock'
 export const LIST_KEY__RECENT_AUTO_CLOCK = 'recent_auto_clock'
 export const LIST_KEY__SPRINT_RATES = 'sprint_rates'
 export const LIST_KEY__WORK_SUMMARY_LIST = 'work_summaries'
-
+export const LIST_KEY__SPRINT_SNAPSHOT_LIST = 'sprint_snapshots'
 
 export const ENTITY_KEY__CALENDAR_EVENT = 'calendar_event'
 export const ENTITY_KEY__INVOICE = 'invoice'
@@ -56,6 +56,7 @@ export const ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY = 'multiple_issue_summary'
 export const ENTITY_KEY__SPRINT_USER_RATE = 'sprint_user_rate'
 export const ENTITY_KEY__WORK_SUMMARY = 'work_summary'
 export const ENTITY_KEY__SPRINT_COST_SUMMARY = 'sprint_cost_summary'
+export const ENTITY_KEY__SPRINT_SNAPSHOT = 'sprint_snapshot'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
 // mechanism and therefore are in a different place in the state.
@@ -68,7 +69,8 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE,
                                   ENTITY_KEY__CALENDAR_EVENT,
-                                  ENTITY_KEY__SPRINT_COST_SUMMARY ]
+                                  ENTITY_KEY__SPRINT_COST_SUMMARY,
+                                  ENTITY_KEY__SPRINT_SNAPSHOT ]
 
 export const PAGE_KEY__CALENDAR_PAGE = 'calendar_page'
 export const PAGE_KEY__DASHBOARD_PAGE = 'dashboard_page'
@@ -97,6 +99,7 @@ export const PAGE_KEY__SCHEDULE_ITEM_PAGE = 'schedule_item_page'
 export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
 export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 export const PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE = 'billable_hours_statement_page'
+export const PAGE_KEY__SPRINT_SNAPSHOT_PAGE = 'sprint_snapshot_page'
 
 export const HEADER_LIST_NAME__ISSUE = "issue"
 export const HEADER_LIST_NAME__SPRINT = "sprint"

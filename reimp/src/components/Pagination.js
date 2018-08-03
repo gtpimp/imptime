@@ -32,25 +32,32 @@ class Pagination extends Component {
     }
 
     render() {
+        const { hide_if_one_page, is_loading, received_at, first_item_index, last_item_index,
+                num_items, has_prev_page, has_next_page } = this.props
+
+        if ( hide_if_one_page && ! has_prev_page && ! has_next_page ) {
+            return null
+        }
+        
         return (
             <div className="pager">
                 <div className="pager__last-updated">
-                    { this.props.is_loading &&
+                    { is_loading &&
                       <div>Loading...</div>
                     }
-                      { !this.props.is_loading &&
-                        <div>As at {this.props.received_at}</div>
+                      { !is_loading &&
+                        <div>As at {received_at}</div>
                       }
                 </div>
                 <div className="pager__text">
-		  Showing {this.props.first_item_index} to {this.props.last_item_index} out of {this.props.num_items}
+		  Showing {first_item_index} to {last_item_index} out of {num_items}
 		</div>
-                { this.props.has_prev_page &&
+                { has_prev_page &&
                   <div className="icon icon--previous-page" onClick={this.on_prev_page}>
 		      &nbsp;
 		  </div>
                 }
-		{ this.props.has_next_page &&
+		{ has_next_page &&
 		  <div className="icon icon--next-page" onClick={this.on_next_page}>
 		      &nbsp;
 		  </div>
@@ -64,7 +71,7 @@ class Pagination extends Component {
 function mapStateToProps(state, props) {
 
     const { item_list } = state
-    const { list_key, on_changed } = props
+    const { list_key, on_changed, hide_if_one_page } = props
     const l = (item_list && item_list[list_key]) || {}
     const pagination = l.pagination || {}
 
@@ -80,7 +87,8 @@ function mapStateToProps(state, props) {
 	has_next_page: pagination.has_next_page || false,
         is_loading: l.is_loading,
 	received_at: moment(l.received_at).format('h:mm:ss a'),
-        on_changed
+        on_changed,
+        hide_if_one_page: hide_if_one_page || false
     }
 
 }

@@ -16,7 +16,7 @@ from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 from imptime.models import VisualSpecIssueAnnotation, WikiPage
-from imptime.models import Mien, CompanyProblem
+from imptime.models import Mien, CompanyProblem, SprintSnapshot
 from imptime.models import Mien, Schedule, ScheduleItem, IssueHistory
 from invoicing.models import Invoice
 
@@ -225,6 +225,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_tags(self):
         return Tag.objects.filter(issues__in=self.allowed_issues())
 
+    def allowed_sprint_snapshots(self):
+        return SprintSnapshot.objects.filter(sprint__in=self.allowed_sprints())
+    
     def allowed_project_roles(self, project):
         return ProjectRole.objects.filter(business=project) #sic
     
