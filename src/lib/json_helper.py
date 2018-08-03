@@ -6,7 +6,7 @@ def _default_dump(obj):
     if isinstance(obj, decimal.Decimal):
         return float(obj)
     elif isinstance(obj, QuerySet):
-        return str(obj)
+        return []
     raise TypeError
 
 def json_dump(obj):
