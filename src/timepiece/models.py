@@ -4070,6 +4070,7 @@ class Issue(BaseModel):
 
     ISSUE_STATUS_CHOICES = (
         ('new', 'new'),
+        ('dev in progress', 'dev in progress'),
         ('dev_done', 'dev done'),
         ('in_internal_qa', 'internal qa'),
         ('internal_qa_passed', 'internal qa passed'),
@@ -4091,7 +4092,7 @@ class Issue(BaseModel):
         ('quick_clocker', 'quick clocker'),
     )
  
-    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear',
+    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear', 'dev in progress'
                                                      'discuss_with_client', 'needscodereview', 'blocked', 'waiting',
                                                      'to be designed'],
                                        'manager': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],
