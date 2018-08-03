@@ -13,15 +13,15 @@ import Hours from './Hours'
 class SprintStateSummary extends Component {
 
     componentDidMount() {
-        const { dispatch, sprint, sprint_id } = this.props
-        if ( sprint && sprint.sprint_type_is_clockable ) {
+        const { dispatch, sprint, sprint_id, optional_cost_summary } = this.props
+        if ( sprint && sprint.sprint_type_is_clockable && !optional_cost_summary ) {
             dispatch(ensureCostSummaryLoaded(sprint_id))
         }
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, sprint_id, sprint } = new_props
-        if ( sprint && sprint.sprint_type_is_clockable ) {
+        const { dispatch, sprint_id, sprint, optional_cost_summary } = new_props
+        if ( sprint && sprint.sprint_type_is_clockable && !optional_cost_summary ) {
             dispatch(ensureCostSummaryLoaded(sprint_id))
         }
     }
@@ -333,9 +333,10 @@ class SprintStateSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint_id } = props
+    const { sprint_id, optional_cost_summary } = props
     const sprint = getSprint(state, sprint_id)
-    const cost_summary = getCostSummary(state, sprint_id)
+    
+    const cost_summary = optional_cost_summary || getCostSummary(state, sprint_id)
 
     const show_money = sprint && showMoney(state, sprint.project_id)
     const can_view_budget = show_money && sprint && has_permission(state, sprint.project_id, 'has_view_budget')

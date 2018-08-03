@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import SprintName from '../components/SprintName'
 import Timestamp from './Timestamp'
 import { has_permission } from '../actions/Users'
 import { getSprintSnapshot, ensureSprintSnapshotsLoaded } from '../actions/SprintSnapshots'
 import BreakdownSummary from './BreakdownSummary'
+import SprintStateSummary from './SprintStateSummary'
 
 class SprintSnapshotPage extends Component {
 
@@ -26,13 +28,19 @@ class SprintSnapshotPage extends Component {
     }
 
     renderSnapshot() {
-        const { sprint_snapshot } = this.props
+        const { sprint_snapshot, sprint_id } = this.props
         return (
-            <div>
-              Snapshot {sprint_snapshot.description} taken on
-              <Timestamp value={sprint_snapshot.created_at} format="dateshort-time" />
-              { sprint_snapshot && sprint_snapshot.cost_summary && 
-                <BreakdownSummary summary={sprint_snapshot.cost_summary.breakdown} />
+            <div className={css`margin-left:20px`}>
+              <h1>
+                Snapshot {sprint_snapshot.description} taken on
+                <Timestamp value={sprint_snapshot.created_at} format="dateshort-time" />
+              </h1>
+              { sprint_snapshot && sprint_snapshot.cost_summary &&
+                <div>
+                  <SprintStateSummary sprint_id={sprint_id}
+                                      optional_cost_summary={sprint_snapshot.cost_summary} />
+                  <BreakdownSummary summary={sprint_snapshot.cost_summary.breakdown} />
+                </div>
               }
             </div>
         )
