@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db.models import Case, When
 from django.db.models.query import QuerySet
 from django.core.files import File as DjangoFile
+from lib.json_helper import json_dump
 from django.db import models
 from django.db.models import Max
 from impasync.refresh_notifier import RefreshNotifier
@@ -607,10 +608,9 @@ class SprintSnapshot(BaseModel):
     @classmethod
     def create_snapshot(self, description, sprint_id, user):
         snapshot = self.calculate_snapshot(sprint_id, user=user)
-        SprintSnapshot.objects.create(description=description,
-                                      sprint_id=sprint_id,
-                                      cost_summary=json.dumps(snapshot['cost_summary']))
-        return snapshot
+        return SprintSnapshot.objects.create(description=description,
+                                             sprint_id=sprint_id,
+                                             cost_summary=json_dump(snapshot['cost_summary']))
     
     @classmethod
     def calculate_snapshot(self, sprint_id, user):

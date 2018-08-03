@@ -9,6 +9,7 @@ import Floater from "react-floater"
 import ModalDialog from './ModalDialog'
 import Timestamp from './Timestamp'
 import SprintName from './SprintName'
+import { has_permission } from '../actions/Users'
 import { initList,
          update_list_pagination,
          invalidateList

@@ -31,7 +31,9 @@ class SprintSnapshotPage extends Component {
             <div>
               Snapshot {sprint_snapshot.description} taken on
               <Timestamp value={sprint_snapshot.created_at} format="dateshort-time" />
-              <BreakdownSummary summary={sprint_snapshot.cost_summary} />
+              { sprint_snapshot && sprint_snapshot.cost_summary && 
+                <BreakdownSummary summary={sprint_snapshot.cost_summary} />
+              }
             </div>
         )
     }

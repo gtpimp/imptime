@@ -48,7 +48,12 @@ export function ensureSprintSnapshotsLoaded(snapshot_ids) {
 }
 
 export function getSprintSnapshot(state, snapshot_id) {
-    return getItem(state, ENTITY_KEY__SPRINT_SNAPSHOT, snapshot_id)
+    const snapshot = getItem(state, ENTITY_KEY__SPRINT_SNAPSHOT, snapshot_id)
+    if ( snapshot && snapshot.cost_summary && snapshot.cost_summary.parsed !== true ) {
+        snapshot.cost_summary = JSON.parse(snapshot.cost_summary)
+        snapshot.cost_summary.parsed = true
+    }
+    return snapshot
 }
 
 export function getSprintSnapshots(state, snapshot_ids) {

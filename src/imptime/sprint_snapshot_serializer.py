@@ -10,7 +10,7 @@ class SprintSnapshotSerializer(BaseSerializer):
     project_id = serializers.CharField(source="sprint.business_id")
     created_at = serializers.DateTimeField(source='created')
     description = serializers.CharField()
-    cost_summary = serializers.CharField()
+    cost_summary = serializers.JSONField(binary=True)
 
     def to_representation(self, obj):
         obj.cost_summary = json.loads(obj.cost_summary or "null")
