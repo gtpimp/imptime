@@ -47,6 +47,7 @@ class Extractor(object):
 
         is_valid_timesheet_file = filename[-4:] == ".org" and filename[0] != "." and filename[0] != "#"
         if not is_valid_timesheet_file:
+            self.status['infos'].append("Ignoring, Not a timesheet file: %s" % filename)
             logger.debug("Ignoring, Not a timesheet file: %s" % filename)
             return
         business_name = filename.replace(".org", "").replace("id-", "")
@@ -120,6 +121,7 @@ class Extractor(object):
             raise Exception("No sprint found for [%s] in project %s" % (sprint_name, business.name)) #sic, sprints are called projects
 
         if not project.can_add_dev_time():
+            self.status['infos'].append("Ignoring time for sprint %s in project %s" % (sprint_name, business.name)) #sic
             return
 
         issue_id = Issue.extract_issue_id(orgnode.headline)
@@ -193,8 +195,14 @@ class Extractor(object):
                                  status='approved',
                                  comments=orgnode.Heading())
 
-            if issue is not None:
+            self.status['infos'].append("Set clock entry: issue:{issue_number} sprint:{sprint_name} project:{project_name} start:{start_time} end:{end_time}"\
+                                        .format(issue_number=issue.number,
+                                                sprint_name=sprint_name,
+                                                project_name=business.name,
+                                                start_time=clock['from'],
+                                                end_time=clock['to']))
 
+            if issue is not None:
                 if issue.assigned_to is None:
                     issue.assigned_to = timesheet_user
                     issue.save()
