@@ -9,6 +9,7 @@ import { getSprintSnapshot, ensureSprintSnapshotsLoaded } from '../actions/Sprin
 import BreakdownSummary from './BreakdownSummary'
 import SprintStateSummary from './SprintStateSummary'
 import CostSummary from './pure/CostSummary'
+import SprintBreakdown from './pure/SprintBreakdown'
 
 class SprintSnapshotPage extends Component {
 
@@ -41,6 +42,7 @@ class SprintSnapshotPage extends Component {
                   <SprintStateSummary sprint_id={sprint_id}
                                       optional_cost_summary={sprint_snapshot.cost_summary} />
                   <CostSummary cost_summary={sprint_snapshot.cost_summary} />
+                  <SprintBreakdown project_statement={sprint_snapshot.project_statement} />
                   <BreakdownSummary summary={sprint_snapshot.cost_summary.breakdown} />
                 </div>
               }

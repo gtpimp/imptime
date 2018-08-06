@@ -33,7 +33,7 @@ class CostSummaryViewSet(BaseViewSet):
 
             for sprint in sprints:
                 context = {}
-                cost_summary = SprintSnapshot.calculate_cost_summary(sprint_id=sprint.id, user=self.request.user)
+                cost_summary = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
                 res.append(cost_summary)
 
             context['items'] = res

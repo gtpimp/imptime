@@ -17,7 +17,7 @@ import {
 import SprintCostSummary from '../components/SprintCostSummary'
 import SprintTimeSummary from '../components/SprintTimeSummary'
 import SprintEstimateSummary from '../components/SprintEstimateSummary'
-import SprintBreakdown from '../components/SprintBreakdown'
+import SprintBreakdown from '../components/pure/SprintBreakdown'
 import SprintTimeChartByUser from '../components/SprintTimeChartByUser'
 import MultipleIssueSummary from '../components/MultipleIssueSummary'
 import {

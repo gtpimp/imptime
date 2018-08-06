@@ -17,6 +17,7 @@ from timepiece.models import IssueHistory
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
+from project_statement_calculator import ProjectStatementCalculator
 import PIL
 import os
 import hashlib
@@ -604,23 +605,28 @@ class SprintSnapshot(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='snapshots', null=False, blank=False)
     description = models.TextField(null=True)
     cost_summary = models.TextField(null=True)
+    project_statement = models.TextField(null=True)
 
     @classmethod
     def create_snapshot(self, description, sprint_id, user):
-        cost_summary = self.calculate_cost_summary(sprint_id, user=user)
+        sprint = Sprint.objects.get(pk=sprint_id)
+        cost_summary = self.calculate_cost_summary(sprint, user=user)
+        project_statement = ProjectStatementCalculator().get_data(user=user,
+                                                                  project_id=sprint.business_id) #sic
+        import pdb; pdb.set_trace()
         return SprintSnapshot.objects.create(description=description,
-                                             sprint_id=sprint_id,
-                                             cost_summary=json_dump(cost_summary))
+                                             sprint_id=sprint.id,
+                                             cost_summary=json_dump(cost_summary),
+                                             project_statement=json_dump(project_statement))
     
     @classmethod
-    def calculate_cost_summary(self, sprint_id, user):
-        sprint = Sprint.objects.get(pk=sprint_id)
+    def calculate_cost_summary(self, sprint, user):
         cost_summary = sprint.prepare_stats_for_json(user=user)
-        issue_qs = Issue.objects.filter(project_id=sprint_id) #sic
-        cost_summary['breakdown'] = MultipleIssueSummaryCalculator(user=user, issue_qs=issue_qs, summary_id=sprint_id).get_data()
-        cost_summary['id'] = sprint_id
+        issue_qs = Issue.objects.filter(project_id=sprint.id) #sic
+        cost_summary['breakdown'] = MultipleIssueSummaryCalculator(user=user, issue_qs=issue_qs, summary_id=sprint.id).get_data()
+        cost_summary['id'] = sprint.id
         cost_summary['projections'] = self._calculate_projections(cost_summary, sprint=sprint, user=user)
-        cost_summary = self.clean_cost_summary(cost_summary, sprint_id, user)
+        cost_summary = self.clean_cost_summary(cost_summary, sprint.id, user)
         return cost_summary
 
     @classmethod
