@@ -607,27 +607,25 @@ class SprintSnapshot(BaseModel):
 
     @classmethod
     def create_snapshot(self, description, sprint_id, user):
-        snapshot = self.calculate_snapshot(sprint_id, user=user)
+        cost_summary = self.calculate_cost_summary(sprint_id, user=user)
         return SprintSnapshot.objects.create(description=description,
                                              sprint_id=sprint_id,
-                                             cost_summary=json_dump(snapshot['cost_summary']))
+                                             cost_summary=json_dump(cost_summary))
     
     @classmethod
-    def calculate_snapshot(self, sprint_id, user):
+    def calculate_cost_summary(self, sprint_id, user):
         sprint = Sprint.objects.get(pk=sprint_id)
-        snapshot = { 'sprint_id': sprint_id }
         cost_summary = sprint.prepare_stats_for_json(user=user)
         issue_qs = Issue.objects.filter(project_id=sprint_id) #sic
         cost_summary['breakdown'] = MultipleIssueSummaryCalculator(user=user, issue_qs=issue_qs, summary_id=sprint_id).get_data()
         cost_summary['id'] = sprint_id
         cost_summary['projections'] = self._calculate_projections(cost_summary, sprint=sprint, user=user)
-        snapshot['cost_summary'] = cost_summary
-        snapshot = self._clean_snapshot(snapshot, user)
-        return snapshot
+        cost_summary = self.clean_cost_summary(cost_summary, sprint_id, user)
+        return cost_summary
 
     @classmethod
-    def _clean_snapshot(self, snapshot, user):
-        sprint = Sprint.objects.get(pk=snapshot['sprint_id'])
+    def clean_cost_summary(self, cost_summary, sprint_id, user):
+        sprint = Sprint.objects.get(pk=sprint_id)
         bp = ProjectPermissions.for_user(user, sprint.business)  # sic
         if not bp.has_view_ctc_billable_rates:
             cost_summary['projections']['revised_dev_commission_cost'] = 0
@@ -636,8 +634,8 @@ class SprintSnapshot(BaseModel):
                                    'sprint_id': cost_summary['sprint_id'],
                                    'projections': cost_summary['projections'],
                                    'progress_against_budget': cost_summary['progress_against_budget'] }
-            snapshot['cost_summary'] = clean_cost_summary
-        return snapshot
+            cost_summary = clean_cost_summary
+        return cost_summary
 
     @classmethod
     def _calculate_projections(self, cost_summary, sprint, user):

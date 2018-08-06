@@ -294,13 +294,14 @@ class IssueViewSet(BaseViewSet):
                 raise Exception('Permission denied to create issues')
 
             def create_issue():
-                issue = Issue.objects.create(
-                    project_id=sprint.id,   # sic
-                    status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
-                    number=Issue.get_next_issue_number(sprint.business),
-                    subject=params['subject'],
-                    created_by=request.user,
-                    can_group_issues=params.get('can_group_issues', False))
+                issue_status = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0]
+                issue = Issue.objects.create(project_id=sprint.id,   # sic
+                                             status2 = issue_status,
+                                             number=Issue.get_next_issue_number(sprint.business),
+                                             subject=params['subject'],
+                                             created_by=request.user,
+                                             can_group_issues=params.get('can_group_issues', False),
+                                             issue_type=params.get('issue_type', 'issue'))
 
                 if issue_id_before is None:
                     SprintIssueOrder.insert_at_the_end(issue)

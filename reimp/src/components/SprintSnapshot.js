@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import SprintName from '../components/SprintName'
 import Timestamp from './Timestamp'
@@ -28,7 +29,7 @@ class SprintSnapshotPage extends Component {
     }
 
     renderSnapshot() {
-        const { sprint_snapshot } = this.props
+        const { sprint_snapshot, sprint_id } = this.props
         return (
             <div className={css`margin-left:20px`}>
               <h1>

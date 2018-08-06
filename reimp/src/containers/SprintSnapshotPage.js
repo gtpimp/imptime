@@ -3,10 +3,10 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper, setBreadcrumbs } from '../actions/Breadcrumbs'
 import { has_permission } from '../actions/Users'
-import {
-    PAGE_KEY__SPRINT_SNAPSHOT_PAGE,
-} from '../actions/ItemListKeyRegistry'
-import { set_toolbars } from '../actions/Page'
+/* import {
+ *     PAGE_KEY__SPRINT_SNAPSHOT_PAGE,
+ * } from '../actions/ItemListKeyRegistry'*/
+// import { set_toolbars } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { getSprintSnapshot, ensureSprintSnapshotsLoaded } from '../actions/SprintSnapshots'
@@ -16,7 +16,7 @@ class SprintSnapshotPage extends Component {
 
     componentDidMount() {
         const {sprint_id, project_id, sprint_snapshot_id, dispatch} = this.props
-        dispatch(set_toolbars(PAGE_KEY__SPRINT_SNAPSHOT_PAGE, ['sprint-snapshot']))
+        // dispatch(set_toolbars(PAGE_KEY__SPRINT_SNAPSHOT_PAGE, ['sprint-snapshot']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureSprintSnapshotsLoaded([sprint_snapshot_id]))

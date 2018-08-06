@@ -248,6 +248,7 @@ class PlanningCalendar extends Component {
               </div>
               <NewIssueSidebar project_id={project_id}
                                sprint_id={sprint_id}
+                               default_issue_values={{issue_type:'management-meeting'}}
                                onCreatedIssues={this.onCreatedNewIssue}
               />
             </Modal>

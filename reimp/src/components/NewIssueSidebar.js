@@ -6,6 +6,7 @@ import {
     getCandidateIssue,
     updateCandidateSubject,
     updateCandidateSprint,
+    updateCandidateProperties,
     cancelCandidateIssue,
     saveCandidateIssue
 } from '../actions/Issues'
@@ -31,7 +32,7 @@ class NewIssueSidebar extends Component {
         const {onCreatedIssues, dispatch} = this.props
         dispatch(updateCandidateSubject(new_value.title))
         dispatch(updateCandidateSprint(new_value.sprint_id))
-        
+        dispatch(updateCandidateProperties(new_value))
         const onDone = function(issue_id) {
             onCreatedIssues([issue_id], new_value.sprint_id, new_value.project_id)
         }
@@ -40,7 +41,7 @@ class NewIssueSidebar extends Component {
 
     render() {
 
-        const { project_id, sprint_id } = this.props
+        const { project_id, sprint_id, default_issue_values } = this.props
         
         return (
             <Sidebar>
@@ -49,7 +50,8 @@ class NewIssueSidebar extends Component {
                   <div>
                     <NewIssueForm onSubmitted={this.onSaveCandidateIssue}
                                   default_project_id={project_id}
-                                  default_sprint_id={sprint_id} />
+                                  default_sprint_id={sprint_id}
+                                  optional_default_issue_values={default_issue_values}/>
                   </div>
                 </div>
               </PropertyStack>
@@ -59,13 +61,14 @@ class NewIssueSidebar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project_id, sprint_id, onCreatedIssues } = props
+    const { project_id, sprint_id, onCreatedIssues, default_issue_values } = props
 
     const candidate_issue = getCandidateIssue(state) || null
     return {
         candidate_issue: candidate_issue,
         project_id,
         sprint_id,
+        default_issue_values,
         onCreatedIssues
     }
 }
