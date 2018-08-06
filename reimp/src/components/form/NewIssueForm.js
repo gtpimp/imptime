@@ -58,12 +58,16 @@ class NewIssueForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted, onKeyDown, default_project_id, default_sprint_id } = props
+    const { onSubmitted, onKeyDown,
+            default_project_id, default_sprint_id,
+            optional_default_issue_values} = props
     
     return {
-        initialValues: {title:'',
-                        project_id: default_project_id,
-                        sprint_id: default_sprint_id},
+        initialValues: Object.assign({},
+                                     {title:'',
+                                      project_id: default_project_id,
+                                      sprint_id: default_sprint_id},
+                                     optional_default_issue_values),
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onKeyDown,

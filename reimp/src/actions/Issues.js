@@ -372,6 +372,10 @@ export function updateCandidateSprint(sprint_id) {
     return updateCandidateDetails(ENTITY_KEY__ISSUE, {sprint_id:sprint_id})
 }
 
+export function updateCandidateProperties(props) {
+    return updateCandidateDetails(ENTITY_KEY__ISSUE, props)
+}
+
 export function cancelCandidateIssue() {
     return cancelCandidateItem(ENTITY_KEY__ISSUE)
 }
