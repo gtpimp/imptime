@@ -18,6 +18,7 @@ from timepiece.models import BusinessPermissions as ProjectPermissions
 from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from project_statement_calculator import ProjectStatementCalculator
 from time_summary_calculator import TimeSummaryCalculator
+from estimate_summary_calculator import EstimateSummaryCalculator
 import PIL
 import hashlib
 import logging
@@ -607,6 +608,7 @@ class SprintSnapshot(BaseModel):
     project_statement = models.TextField(null=True)
     time_summary = models.TextField(null=True)
     affected_entities = models.TextField(null=True)
+    estimate_time_summary = models.TextField(null=True)
 
     @classmethod
     def create_snapshot(self, description, sprint_id, user):
@@ -615,6 +617,7 @@ class SprintSnapshot(BaseModel):
         project_statement = ProjectStatementCalculator().get_data(user=user,
                                                                   project_id=sprint.business_id) #sic
         time_summary = TimeSummaryCalculator().get_data(sprint_id=sprint.id, user=user)
+        estimate_time_summary = EstimateSummaryCalculator().get_data(sprint_id=sprint.id, user=user)
 
         affected_entities = { 'all_user_ids': [],
                               'all_sprint_ids': [],
@@ -622,6 +625,7 @@ class SprintSnapshot(BaseModel):
                               'all_issue_ids': [] }
         affected_entities['all_user_ids'].extend(time_summary['all_user_ids'])
         affected_entities['all_user_ids'].extend(cost_summary['breakdown']['all_user_ids'])
+        affected_entities['all_user_ids'].extend(estimate_time_summary['all_user_ids'])
         affected_entities['all_tag_ids'].extend(cost_summary['breakdown']['all_tag_ids'])
         affected_entities['all_issue_ids'].extend(cost_summary['breakdown']['all_issue_ids'])
         affected_entities['all_sprint_ids'].extend(cost_summary['breakdown']['all_sprint_ids'])
@@ -631,6 +635,7 @@ class SprintSnapshot(BaseModel):
                                              cost_summary=json_dump(cost_summary),
                                              project_statement=json_dump(project_statement),
                                              time_summary=json_dump(time_summary),
+                                             estimate_time_summary=json_dump(estimate_time_summary),
                                              affected_entities=json_dump(affected_entities))
     
     @classmethod
@@ -644,7 +649,22 @@ class SprintSnapshot(BaseModel):
         return cost_summary
 
     @classmethod
+    def clean_snapshot(self, snapshot, sprint_id, user):
+        sprint = Sprint.objects.get(pk=sprint_id)
+        bp = ProjectPermissions.for_user(user, sprint.business)  # sic
+        if not bp.has_view_ctc_billable_rates:
+            snapshot.project_statement = "null"
+            snapshot.time_summary = "null"
+            snapshot.estimate_time_summary = "null"
+            snapshot.cost_summary = "null"
+        if not bp.has_view_invoices:
+            snapshot.project_statement = "null"
+        return snapshot
+    
+    @classmethod
     def clean_cost_summary(self, cost_summary, sprint_id, user):
+        """ this function will need to be removed eventually, 
+            for the moment it's here to keep the cleaning in one place """
         sprint = Sprint.objects.get(pk=sprint_id)
         bp = ProjectPermissions.for_user(user, sprint.business)  # sic
         if not bp.has_view_ctc_billable_rates:

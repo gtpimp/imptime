@@ -17,6 +17,7 @@ import SprintBreakdown from './pure/SprintBreakdown'
 import ProjectInvoices from './pure/ProjectInvoices'
 import SprintBudgets from './pure/SprintBudgets'
 import TimeSummary from './pure/TimeSummary'
+import EstimateSummary from './pure/EstimateSummary'
  
 class SprintSnapshotPage extends Component {
 
@@ -76,6 +77,9 @@ class SprintSnapshotPage extends Component {
                   <br/>
                   <h2>Invoices</h2>  
                   <ProjectInvoices project_statement={sprint_snapshot.project_statement} />
+                  <br/>
+                  <h2>Estimate time summary</h2>
+                  <EstimateSummary estimate_time_summary={sprint_snapshot.estimate_time_summary} />
                   <br/>
                   <h2>Breakdown summary</h2>  
                   <BreakdownSummary summary={sprint_snapshot.cost_summary.breakdown} />

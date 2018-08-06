@@ -1,16 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map, keys } from 'lodash'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureEstimateSummaryLoaded,
         getEstimateSummary,
         download_sprint_comparative_estimates
 } from '../actions/EstimateSummary'
-import OtherUser from '../components/OtherUser'
 import { ensureUsersLoaded } from '../actions/Users'
-import CurrencyValue from '../components/CurrencyValue'
-import Hours from './Hours'
+import EstimateSummary from './pure/EstimateSummary'
 
 class SprintEstimateSummary extends Component {
 
@@ -53,58 +50,8 @@ class SprintEstimateSummary extends Component {
     refresh() {
     }
 
-    renderComparativeSummary() {
-        const { comparative_estimates } = this.props
-        return (
-            <table className="sprint_estimate__comparative_summary__table">
-              <thead className="sprint_estimate__comparative_summary_grid_header">
-                <th>User</th>
-                <th>Hours (as estimated)</th>
-                <th>Velocity</th>
-                <th>Hours (with velocity)</th>
-                <th>Developer Rate</th>
-                <th>Developer Cost</th>
-                <th>Tester estimates</th>
-                <th>Tester rate</th>
-                <th>Tester cost</th>
-                <th>Manager estimates</th>
-                <th>Manager rate</th>
-                <th>Manager cost</th>
-                <th>Working cost</th>
-                <th>Ratio scope creep</th>
-                <th>Total cost</th>
-              </thead>
-              <tbody>
-                { map(keys(comparative_estimates.by_user),
-                      function(user_id) {
-                          const estimates = comparative_estimates.by_user[user_id]
-                          return (
-                              <tr key={user_id}>
-                                <td><OtherUser user_id={user_id}/></td>
-                                <td><Hours hours={estimates.developer_original_hours}/></td>
-                                <td>{estimates.developer_velocity}</td>
-                                <td><Hours hours={estimates.developer_adjusted_hours}/></td>
-                                <td><CurrencyValue value={estimates.developer_rate_with_commission} prefix="@"/></td>
-                                <td><CurrencyValue value={estimates.developer_cost}/></td>
-                                <td><Hours hours={estimates.tester_adjusted_hours}/></td>
-                                <td><CurrencyValue value={estimates.tester_rate_with_commission} prefix="@"/></td>
-                                <td><CurrencyValue value={estimates.tester_cost}/></td>
-                                <td><Hours hours={estimates.manager_adjusted_hours}/></td>
-                                <td><CurrencyValue value={estimates.manager_rate_with_commission} prefix="@"/></td>
-                                <td><CurrencyValue value={estimates.manager_cost}/></td>
-                                <th><CurrencyValue value={estimates.working_cost}/></th>
-                                <td>{estimates.ratio_scope_creep}</td>
-                                <th><CurrencyValue value={estimates.total_cost}/></th>
-                              </tr>
-                          )
-                      }
-                )}
-              </tbody>
-            </table>
-        )
-    }
-
     render() {
+        const { estimate_summary } = this.props
         return (
             <div>
               <div className="sprint_estimate__comparative_summary"> 
@@ -113,7 +60,7 @@ class SprintEstimateSummary extends Component {
                   <div className="sprint_estimate__grid_icon icon--download_as_csv" onClick={this.download_sprint_comparative_estimates} />
                 </h2>
                 <div className="sprint_estimate__comparative_summary_grid">
-                  {this.renderComparativeSummary()}
+                  <EstimateSummary estimate_time_summary={estimate_summary} />
                 </div>
               </div>
             </div>
@@ -126,15 +73,13 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const estimate_summary = getEstimateSummary(state, sprint_id) || {}
-    const comparative_estimates = estimate_summary.comparative_estimates || {}
 
     return {
         sprint_id: sprint_id,
         sprint: sprint,
         project_id: project_id,
         project: project,
-        estimate_summary: estimate_summary,
-        comparative_estimates: comparative_estimates
+        estimate_summary: estimate_summary
     }
 }
 
