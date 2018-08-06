@@ -30,13 +30,15 @@ class ProjectStatementViewSet(BaseViewSet):
             params = json.loads(params)
             project_id = pk
 
+            default_from_date = datetime.now()-relativedelta(years=50)
+            default_to_date = datetime.now()+relativedelta(years=50)
             if params:
-                date_from_inclusive = params['filter']['date_from_inclusive']
-                date_to_inclusive = params['filter']['date_to_inclusive']
+                date_from_inclusive = params['filter'].get('date_from_inclusive', default_from_date)
+                date_to_inclusive = params['filter'].get('date_to_inclusive', default_to_date)
                 sprint_ids = params['filter'].setdefault('sprint_ids', None)
             else:
-                date_from_inclusive = datetime.now()-relativedelta(years=50)
-                date_to_inclusive = datetime.now()+relativedelta(years=50)
+                date_from_inclusive = default_from_date
+                date_to_inclusive = default_to_date
                 sprint_ids = None
 
             project_statement = self._get_data(user=request.user,
