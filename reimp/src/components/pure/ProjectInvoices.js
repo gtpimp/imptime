@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
-import ProgressBar from '../ProgressBar'
-import {map, keys} from 'lodash'
+import {map} from 'lodash'
 import CurrencyValue from '../CurrencyValue'
 import SprintLink from '../SprintLink'
 
@@ -8,6 +7,9 @@ class ProjectInvoices extends Component {
 
     render() {
         const { project_statement } = this.props
+        if (! project_statement ) {
+            return null
+        }
         const { sprint_infos } = project_statement
         return (
             <div className="project__statement__invoices_grid__header_summary">

@@ -9,7 +9,6 @@ import SprintBreakdown from './pure/SprintBreakdown'
 import SprintBudgets from './pure/SprintBudgets'
 import ProjectInvoices from './pure/ProjectInvoices'
 import IssueLink from './IssueLink'
-import CurrencyValue from './CurrencyValue'
 import Timestamp from './Timestamp'
 import {
     ensureProjectStatementLoaded,

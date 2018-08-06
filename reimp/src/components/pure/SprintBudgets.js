@@ -8,6 +8,11 @@ class SprintBudgets extends Component {
 
     render() {
         const { project_statement } = this.props
+
+        if ( ! project_statement ) {
+            return null
+        }
+        
         const { sprint_infos } = project_statement
         return (
             <table className="project__statement__table">

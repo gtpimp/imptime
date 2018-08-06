@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Case, When
 from django.db.models.query import QuerySet
-from django.core.files import File as DjangoFile
 from lib.json_helper import json_dump
 from django.db import models
 from django.db.models import Max
@@ -18,8 +17,8 @@ from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from project_statement_calculator import ProjectStatementCalculator
+from time_summary_calculator import TimeSummaryCalculator
 import PIL
-import os
 import hashlib
 import logging
 logger = logging.getLogger(__name__)
@@ -606,6 +605,8 @@ class SprintSnapshot(BaseModel):
     description = models.TextField(null=True)
     cost_summary = models.TextField(null=True)
     project_statement = models.TextField(null=True)
+    time_summary = models.TextField(null=True)
+    affected_entities = models.TextField(null=True)
 
     @classmethod
     def create_snapshot(self, description, sprint_id, user):
@@ -613,11 +614,24 @@ class SprintSnapshot(BaseModel):
         cost_summary = self.calculate_cost_summary(sprint, user=user)
         project_statement = ProjectStatementCalculator().get_data(user=user,
                                                                   project_id=sprint.business_id) #sic
-        import pdb; pdb.set_trace()
+        time_summary = TimeSummaryCalculator().get_data(sprint_id=sprint.id, user=user)
+
+        affected_entities = { 'all_user_ids': [],
+                              'all_sprint_ids': [],
+                              'all_tag_ids': [],
+                              'all_issue_ids': [] }
+        affected_entities['all_user_ids'].extend(time_summary['all_user_ids'])
+        affected_entities['all_user_ids'].extend(cost_summary['breakdown']['all_user_ids'])
+        affected_entities['all_tag_ids'].extend(cost_summary['breakdown']['all_tag_ids'])
+        affected_entities['all_issue_ids'].extend(cost_summary['breakdown']['all_issue_ids'])
+        affected_entities['all_sprint_ids'].extend(cost_summary['breakdown']['all_sprint_ids'])
+        
         return SprintSnapshot.objects.create(description=description,
                                              sprint_id=sprint.id,
                                              cost_summary=json_dump(cost_summary),
-                                             project_statement=json_dump(project_statement))
+                                             project_statement=json_dump(project_statement),
+                                             time_summary=json_dump(time_summary),
+                                             affected_entities=json_dump(affected_entities))
     
     @classmethod
     def calculate_cost_summary(self, sprint, user):

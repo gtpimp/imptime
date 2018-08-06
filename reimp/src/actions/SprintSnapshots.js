@@ -57,6 +57,14 @@ export function getSprintSnapshot(state, snapshot_id) {
         snapshot.project_statement = JSON.parse(snapshot.project_statement)
         snapshot.project_statement.parsed = true
     }
+    if ( snapshot && snapshot.time_summary && snapshot.time_summary.parsed !== true ) {
+        snapshot.time_summary = JSON.parse(snapshot.time_summary)
+        snapshot.time_summary.parsed = true
+    }
+    if ( snapshot && snapshot.affected_entities && snapshot.affected_entities.parsed !== true ) {
+        snapshot.affected_entities = JSON.parse(snapshot.affected_entities)
+        snapshot.affected_entities.parsed = true
+    }
     return snapshot
 }
 

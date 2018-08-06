@@ -6,13 +6,18 @@ import SprintName from '../components/SprintName'
 import Timestamp from './Timestamp'
 import { has_permission } from '../actions/Users'
 import { getSprintSnapshot, ensureSprintSnapshotsLoaded } from '../actions/SprintSnapshots'
+import { ensureUsersLoaded } from '../actions/Users'
+import { ensureTagsLoaded } from '../actions/Tags'
+import { ensureIssuesLoaded } from '../actions/Issues'
+import { ensureSprintsLoaded } from '../actions/Sprints'
 import BreakdownSummary from './BreakdownSummary'
 import SprintStateSummary from './SprintStateSummary'
 import CostSummary from './pure/CostSummary'
 import SprintBreakdown from './pure/SprintBreakdown'
 import ProjectInvoices from './pure/ProjectInvoices'
 import SprintBudgets from './pure/SprintBudgets'
-
+import TimeSummary from './pure/TimeSummary'
+ 
 class SprintSnapshotPage extends Component {
 
     componentDidMount() {
@@ -20,15 +25,22 @@ class SprintSnapshotPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.sprint_snapshot_id !== this.props.sprint_snapshot_id) {
+        if ( new_props.sprint_snapshot_id !== this.props.sprint_snapshot_id ||
+             new_props.sprint_snapshot.id !== this.props.sprint_snapshot.id ) {
             this.refresh(new_props)
         }
     }
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, sprint_snapshot_id } = props
+        const { dispatch, sprint_snapshot_id, sprint_snapshot } = props
         dispatch(ensureSprintSnapshotsLoaded([sprint_snapshot_id]))
+        if ( sprint_snapshot.affected_entities ) {
+            dispatch(ensureUsersLoaded(sprint_snapshot.affected_entities.all_user_ids))
+            dispatch(ensureTagsLoaded(sprint_snapshot.affected_entities.all_tag_ids))
+            dispatch(ensureIssuesLoaded(sprint_snapshot.affected_entities.all_issue_ids))
+            dispatch(ensureSprintsLoaded(sprint_snapshot.affected_entities.all_sprint_ids))
+        }
     }
 
     renderSnapshot() {
@@ -41,17 +53,31 @@ class SprintSnapshotPage extends Component {
               </h1>
               { sprint_snapshot && sprint_snapshot.cost_summary &&
                 <div>
+                  <h2>State summary</h2>
                   <SprintStateSummary sprint_id={sprint_id}
                                       optional_cost_summary={sprint_snapshot.cost_summary} />
                   <br/>
+                  <h2>Cost summary</h2>
                   <CostSummary cost_summary={sprint_snapshot.cost_summary} />
                   <br/>
+                  <h2>Sprint budgets</h2>
                   <SprintBudgets project_statement={sprint_snapshot.project_statement} />
                   <br/>
-                  <SprintBreakdown project_statement={sprint_snapshot.project_statement} />
+                  <h2>Time summary</h2>
+                  <TimeSummary time_summary={sprint_snapshot.time_summary}
+                               show_heading={true}
+                               sprint_id={sprint_id}
+                               use_live_data_where_possible={false}
+                  />
                   <br/>
+                  <h2>Breakdown</h2>  
+                  <SprintBreakdown project_statement={sprint_snapshot.project_statement}
+                                   use_live_data_where_possible={false} />
+                  <br/>
+                  <h2>Invoices</h2>  
                   <ProjectInvoices project_statement={sprint_snapshot.project_statement} />
                   <br/>
+                  <h2>Breakdown summary</h2>  
                   <BreakdownSummary summary={sprint_snapshot.cost_summary.breakdown} />
                 </div>
               }

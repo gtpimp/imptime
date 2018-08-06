@@ -9,8 +9,12 @@ import EditableUserRate from '../EditableUserRate'
 class SprintBreakdown extends Component {
 
     render() {
-        const { project_statement } = this.props
+        const { project_statement, use_live_data_where_possible  } = this.props
+        if ( ! project_statement ) {
+            return null
+        }
         const { sprint_infos } = project_statement
+        const use_live_data = use_live_data_where_possible === undefined ? true : use_live_data_where_possible
         return (
             <table className="project__statement__times_grid__table">
               <thead className="project__statement__times_grid__header">
@@ -82,7 +86,12 @@ class SprintBreakdown extends Component {
                                                         <Hours hours={time_for_user.total_hours} show_seconds={true}/>
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell project__statement__times_grid__rate_cell">
-                                                        <EditableUserRate sprint_id={sprint_id} user_id={user_id} />
+                                                        { use_live_data && 
+                                                          <EditableUserRate sprint_id={sprint_id} user_id={user_id} />
+                                                        }
+                                                        { ! use_live_data &&
+                                                          <CurrencyValue value={time_for_user.rate} />
+                                                        }
                                                       </td>
                                                       <td className="project__statement__times_grid__inner_cell">
                                                         <CurrencyValue value={time_for_user.billable_cost}/>
@@ -94,7 +103,7 @@ class SprintBreakdown extends Component {
                                           )
                                       }
                                   )
-                                }
+                                              }
                                               <th className="project__statement__times_grid__sprint_total">
                                                 <CurrencyValue value={times_for_sprint.totals.total_billable_cost}/>
                                               </th>

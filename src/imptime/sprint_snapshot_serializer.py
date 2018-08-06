@@ -13,7 +13,9 @@ class SprintSnapshotSerializer(BaseSerializer):
     created_at = serializers.DateTimeField(source='created')
     description = serializers.CharField()
     cost_summary = serializers.JSONField(binary=True)
+    time_summary = serializers.JSONField(binary=True)
     project_statement = serializers.JSONField(binary=True)
+    affected_entities = serializers.JSONField(binary=True)
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -30,5 +32,7 @@ class SprintSnapshotSerializer(BaseSerializer):
         if not bp.has_view_ctc_billable_rates:
             obj.project_statement = "null"
         obj.project_statement = json.loads(obj.project_statement or "null")
+        obj.time_summary = json.loads(obj.time_summary or "null")
+        obj.affected_entities = json.loads(obj.affected_entities or "null")
 
         return super(SprintSnapshotSerializer, self).to_representation(obj)
