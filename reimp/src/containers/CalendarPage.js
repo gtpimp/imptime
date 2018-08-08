@@ -107,9 +107,9 @@ class ScheduleItemPage extends Component {
             )
         } else {
             return (
-                <div className="main-layout__scroll-panel">
+                <Splitter>
                   { this.renderLeftPane() }
-                </div>
+                </Splitter>
             )
         }
     }
