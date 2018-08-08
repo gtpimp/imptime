@@ -309,9 +309,17 @@ class AutoClockPopup extends Component {
     renderAvailableClock() {
         const { available_project_id,
                 available_sprint_id, available_issue_id,
-                auto_clocking_enabled } = this.props
+                auto_clocking_enabled, most_recent_entry } = this.props
 
         if ( ! available_issue_id ) {
+            return null
+        }
+
+        if ( most_recent_entry &&
+             most_recent_entry.issue_id == available_issue_id &&
+             most_recent_entry.sprint_id == available_sprint_id &&
+             most_recent_entry.project_id == available_project_id ) {
+            
             return null
         }
         
