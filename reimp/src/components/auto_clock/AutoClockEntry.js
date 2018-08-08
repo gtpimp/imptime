@@ -67,14 +67,6 @@ class AutoClockEntry extends Component {
                    hours
                 </div>
               </div>
-              <div className="auto-clock-entry__role">
-                <div className="auto-clock-entry__label">
-                  Role:
-                </div>
-                <div className="auto-clock-entry__field">
-                  {entry.role_name}
-                </div>
-              </div>
               { entry.comments && 
                 <div className="auto-clock-entry__description">
                   <div className="auto-clock-entry__label">
@@ -97,7 +89,7 @@ function mapStateToProps(state, props) {
     return {
         entry_id,
         entry,
-        time_format: time_format || "short-time"
+        time_format: time_format || "dateshort-time"
     }
 
 }

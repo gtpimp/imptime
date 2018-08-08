@@ -17,6 +17,9 @@ class ClockEntrySerializer(BaseSerializer):
     project_id = serializers.CharField(source="issue.project.business_id") #sic
     
 class ClockEntryUpdateSerializer(BaseSerializer):
-    start_time = serializers.DateTimeField()
-    end_time = serializers.DateTimeField()
+    start_time = serializers.DateTimeField(required=False)
+    end_time = serializers.DateTimeField(required=False)
+    role_name = serializers.CharField(required=False)
+    description = serializers.CharField(required=False)
+    issue_id = serializers.CharField(required=False)
     

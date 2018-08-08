@@ -29,9 +29,11 @@ class EditableAutoClockEntry extends Component {
 
     onChange(new_values) {
         const { dispatch, entry_id } = this.props
-        dispatch(updateAutoClocks([entry_id], new_values.role_name, new_values.description,
-                                  new_values.start_time.format('YYYY-MM-DDTHH:mm:ss'),
-                                  new_values.end_time.format('YYYY-MM-DDTHH:mm:ss')))
+        dispatch(updateAutoClocks([entry_id],
+                                  {role_name:new_values.role_name,
+                                   description:new_values.description,
+                                   start_time:new_values.start_time.format('YYYY-MM-DDTHH:mm:ss'),
+                                   end_time:new_values.end_time.format('YYYY-MM-DDTHH:mm:ss')}))
     }
 
     onDeleteEntry() {
@@ -50,7 +52,7 @@ class EditableAutoClockEntry extends Component {
                               initial_value={entry}
                               onChange={this.onChange}
                               can_edit={can_edit}
-                              edit_as_modal={false}
+                              edit_as_modal={true}
             >
               <AutoClockEntryForm entry_id={entry.id} onDelete={this.onDeleteEntry} />
               <div>

@@ -237,14 +237,31 @@ class ClockViewSet(BaseViewSet):
             for entry_pk in entry_pks:
                 entry = self.allowed_timesheet_entry(entry_pk)
 
-                if not entry.issue.project.can_add_dev_time(): #sic
-                    raise Exception("Can't delete entries for locked sprints: %s" % entry.issue.project) #sic
-                
-                entry.role = ProjectRole.objects.get_or_create(business=entry.issue.project.business,
-                                                               name=params['role_name'])[0]
-                entry.start_time = validated_data['start_time']
-                entry.end_time = validated_data['end_time']
-                entry.comments = params['description'] or  ""
+                if entry.issue_id and not entry.issue.project.can_add_dev_time(): #sic
+                    raise Exception("Can't edit entries for locked sprints: %s" % entry.issue.project) #sic
+
+                if 'role_name' in validated_data:
+                    entry.role = ProjectRole.objects.get_or_create(
+                        business=entry.issue.project.business,
+                        name=validated_data['role_name'])[0]
+
+                if 'start_time' in validated_data:
+                    entry.start_time = validated_data['start_time']
+
+                if 'end_time' in validated_data:
+                    entry.end_time = validated_data['end_time']
+
+                if 'description' in validated_data:
+                    entry.comments = params['description'] or  ""
+
+                if 'issue_id' in validated_data:
+                    issue_id = validated_data['issue_id']
+                    issue = self.allowed_issues().get(pk=issue_id)
+
+                    if not issue.project.can_add_dev_time(): #sic
+                        raise Exception("Can't entries into a locked sprint: %s" % issue.project) #sic
+                    entry.issue_id = issue.id
+                    
                 entry.save()
                 
             data = {'status': 'success', 'payload': entry_pks}

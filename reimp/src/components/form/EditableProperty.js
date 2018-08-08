@@ -127,7 +127,8 @@ class EditableProperty extends Component {
                     initial_value: initial_value,
                     onSubmitted: that.onEdited,
                     onKeyDown: that.keyDown,
-                    onCancel: that.cancelEditing
+                    onCancel: that.cancelEditing,
+                    onClose: that.stopEditing
                 })
             } else if ( index === 1 ) {
                 readonly_child = React.cloneElement(child, {
