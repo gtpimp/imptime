@@ -74,12 +74,12 @@ def import_timesheet(request):
                           recipient_list=mail_to,
                           fail_silently=False)
 
-            elif len(status.get('infos', [])) > 0:
-                send_mail(subject="Warnings importing timesheet for %s : %s" %(username, form.filename),
-                          message="\n".join(status['infos']),
-                          from_email=settings.FROM_EMAIL,
-                          recipient_list=mail_to,
-                          fail_silently=False)
+            # elif len(status.get('infos', [])) > 0:
+            #     send_mail(subject="Warnings importing timesheet for %s : %s" %(username, form.filename),
+            #               message="\n".join(status['infos']),
+            #               from_email=settings.FROM_EMAIL,
+            #               recipient_list=mail_to,
+            #               fail_silently=False)
             
             return HttpResponse(json.dumps({'status':status,
                                             'msg':"Single file import of %s complete." % (form.filename)}))
