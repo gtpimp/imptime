@@ -1343,6 +1343,7 @@ class Project(BaseModel):
         return rate.time_tracking_mode
 
     def get_default_issue_for_type(self, user, issue_type, subject, description):
+        import pdb; pdb.set_trace()
         return Issue.objects.get_or_create(subject=subject,
                                            project=self,
                                            assigned_to=user,
@@ -2688,7 +2689,7 @@ class EntriesQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        return self.filter(issue__project__business__in=BusinessPermissions.active_businesses_for_user(user))
+        return self.filter(Q(issue__isnull=True)|Q(issue__project__business__in=BusinessPermissions.active_businesses_for_user(user)))
 
     def cost_totals_for_project(self, project):
         """ this function assumes that all entries in the queryset
@@ -3164,9 +3165,9 @@ class Entry(BaseModel):
 
         if self.source != 'emacs':
             if was_created:
-                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.project_id]})
+                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.project_id if self.issue else None]})
             else:
-                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.project_id]})
+                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.project_id] if self.issue else None})
 
     def delete(self, *args, **kwargs):
         if self.source != 'emacs':
@@ -3330,12 +3331,6 @@ class Entry(BaseModel):
             qs = entries.filter(issue__project=projects[name])
             data['paid_leave'][name] = qs.aggregate(s=Sum('hours'))['s']
         return data
-
-    def __unicode__(self):
-        """
-        The string representation of an instance of this class
-        """
-        return '%s on %s' % (self.user, self.project)
 
     class Meta:
         verbose_name_plural = 'entries'

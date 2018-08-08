@@ -40,7 +40,8 @@ class ClockViewSet(BaseViewSet):
             entries = entries.order_by("-start_time")
             entries = self.apply_filter(qs=entries,
                                          raw_filter_args=filter_args)
-            if format_args.get('distinct_by_issue'):
+
+            if format_args.get('distinct_by_issue', False) == True:
                 # This solution finds the issues matching the entries,
                 # and finds the Minimum start time for each
                 # issue. Then we paginate that list to get the numbers
@@ -113,51 +114,51 @@ class ClockViewSet(BaseViewSet):
                 project_id = deduced_project_id
                 
             if project_id is None:
-                if project_name is None:
-                    raise Exception("Must clock into a project")
-                project_id = self.allowed_projects().get(name=project_name).id
-                
-            project = self.allowed_project(project_id)
+                if project_name is not None:
+                    project_id = self.allowed_projects().get(name=project_name).id
 
-            if sprint_id is None:
+            if project_id:
+                project = self.allowed_project(project_id)
+
+            if sprint_id is None and project_id is not None:
                 sprint_id = project.get_most_recent_open_project_id(user_id=request.user.id) #sic
-            sprint = self.allowed_sprint(sprint_id)
-
-            if not sprint.can_add_dev_time():
-                raise Exception("Can't create entries for locked sprints: %s" % sprint)
+            if sprint_id:
+                sprint = self.allowed_sprint(sprint_id)
+                if not sprint.can_add_dev_time():
+                    raise Exception("Can't create entries for locked sprints: %s" % sprint)
 
             if issue_id is None:
-                if action_name is None:
-                    raise Exception("Need an action name to create default issues")
-                issue_type = self._resolve_issue_type_from_action(action_name)
-                issue = sprint.get_default_issue_for_type(user=request.user,
-                                                          issue_type=issue_type,
-                                                          subject=description[0:50],
-                                                          description="(quick creation)\n"+description)
+                if action_name is not None:
+                    issue_type = self._resolve_issue_type_from_action(action_name)
+                    issue = sprint.get_default_issue_for_type(user=request.user,
+                                                              issue_type=issue_type,
+                                                              subject=description[0:50],
+                                                              description="(quick creation)\n"+description)
+                else:
+                    # This is an unallocated issue, it will need resolving before it is useful.
+                    issue = None
+                    sprint = None
+                    project = None
+
             else:
                 issue = self.allowed_issue(issue_id)
-            
-            if most_recent_entry and \
-               most_recent_entry.issue.project.business_id == project_id and \
-               most_recent_entry.issue.project_id == sprint_id and \
-               most_recent_entry.issue_id == issue_id and \
-               most_recent_entry.comments == description:
-                entry = most_recent_entry
 
-            else:
-                for entry in open_entries:
-                    entry.end_time = timezone.now()
-                    entry.save()
+            for entry in open_entries:
+                entry.end_time = timezone.now()
+                entry.save()
 
-                entry = Entry.objects.create(user=request.user,
-                                             status='approved',
-                                             source='auto_clock',
-                                             start_time=timezone.now(),
-                                             comments=description or "",
-                                             end_time=None,
-                                             hours=0,
-                                             role=ProjectRole.objects.get_or_create(business=project, name=role_name)[0],
-                                             issue=issue)
+            role = ProjectRole.objects.get_or_create(business=project, name=role_name)[0] if project else None
+
+            entry = Entry.objects.create(user=request.user,
+                                         status='approved',
+                                         source='auto_clock',
+                                         start_time=timezone.now(),
+                                         comments=description or "",
+                                         end_time=None,
+                                         hours=0,
+                                         role=role,
+                                         issue=issue)
+            logger.debug("Created clock entry %s" % entry)
 
             context['clock_entry'] = ClockEntrySerializer(entry).data
             data = {'status': 'success', 'payload': { 'item': context }}
