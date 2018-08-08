@@ -63,7 +63,8 @@ export const default_theme = {
     },
 
     font_sizes: {
-        dropdown_arrow: "12px"
+        dropdown_arrow: "12px",
+        superscript: "10px"
     },
 
     spacing: {

@@ -67,7 +67,6 @@ class ClockViewSet(BaseViewSet):
                 entries = self.apply_pagination(qs=entries,
                                                 pagination=pagination)
 
-            
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in entries.values_list('id', flat=True)]
             else:
@@ -260,6 +259,11 @@ class ClockViewSet(BaseViewSet):
         is_active = raw_filter_args.pop('is_active', None)
         if is_active is not None:
             qs = qs.filter(end_time__isnull=is_active)
+
+        is_unallocated = raw_filter_args.pop('is_unallocated', None)
+        if is_unallocated is not None:
+            qs = qs.filter(issue_id__isnull=is_unallocated)
+            
         return super(ClockViewSet, self).apply_filter(qs, raw_filter_args)
 
     def _resolve_issue_type_from_action(self, action_name):

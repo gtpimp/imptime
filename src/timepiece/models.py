@@ -1343,7 +1343,6 @@ class Project(BaseModel):
         return rate.time_tracking_mode
 
     def get_default_issue_for_type(self, user, issue_type, subject, description):
-        import pdb; pdb.set_trace()
         return Issue.objects.get_or_create(subject=subject,
                                            project=self,
                                            assigned_to=user,

@@ -10,6 +10,7 @@ import SprintName from '../SprintName'
 import Timestamp from '../Timestamp'
 import Hours from '../Hours'
 import ProjectName from '../ProjectName'
+import Floater from 'react-floater'
 import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity,
          clockIn,
@@ -20,17 +21,17 @@ import { getAvailableAutoClockEntity,
          enableAutoClocking,
          disableAutoClocking
 } from '../../actions/AutoClock'
-import AutoClockEntity from './AutoClockEntity'
 import {default_theme as theme} from '../../theme/default'
 import { ENTITY_KEY__AUTO_CLOCK,
          LIST_KEY__RECENT_AUTO_CLOCK,
-         LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE
+         LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE,
+         LIST_KEY__RECENT_AUTO_CLOCK_UNALLOCATED
 } from '../../actions/ItemListKeyRegistry'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
 import ToggleButton from '../toolbar/ToggleButton'
 import {
-    fetchAutoClocksIfNeeded, getAutoClocks, setPreferredRole
+    fetchAutoClocksIfNeeded, getAutoClocks
 } from '../../actions/AutoClock'
 import {
     initList,
@@ -44,7 +45,8 @@ import {
     update_list_ordering,
     update_list_format,
     update_list_filter,
-    getListFilter
+    getListFilter,
+    getListPagination
 } from '../../actions/ItemList'
 import AutoClockQuickEntryForm from './AutoClockQuickEntryForm'
 import AutoClockManagementEntryForm from './AutoClockManagementEntryForm'
@@ -74,7 +76,7 @@ class AutoClockPopup extends Component {
     }
 
     componentDidMount() {
-        const { dispatch, list_key, list_key_by_issue } = this.props
+        const { dispatch, list_key, list_key_by_issue, list_key_unallocated } = this.props
         dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
         dispatch(update_list_pagination(list_key, { page_size: 1 }))
@@ -84,6 +86,13 @@ class AutoClockPopup extends Component {
         dispatch(update_list_format(list_key_by_issue, { 'distinct_by_issue': true }))
         dispatch(update_list_filter(list_key_by_issue, { 'is_active': false }))
         dispatch(update_list_pagination(list_key_by_issue, { page_size: 6 }))
+
+        dispatch(initList(list_key_unallocated))
+        dispatch(update_list_ordering(list_key_unallocated, { 'start_time': 'desc' }))
+        dispatch(update_list_filter(list_key_unallocated, { 'is_unallocated': true }))
+        dispatch(update_list_pagination(list_key_unallocated, { page_size: 6 }))
+
+        
         this.refresh()
     }
 
@@ -93,10 +102,11 @@ class AutoClockPopup extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, filter, filter_by_issue,
+        const { dispatch, filter, filter_by_issue, filter_unallocated,
                 logged_in_user_id,
                 list_key, nested_objects,
-                list_key_by_issue, nested_objects_by_issue } = props
+                list_key_by_issue, nested_objects_by_issue,
+                list_key_unallocated, nested_objects_unallocated } = props
         if ( filter.user_id !== logged_in_user_id ) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
         }
@@ -108,6 +118,14 @@ class AutoClockPopup extends Component {
         }
         dispatch(fetchAutoClocksIfNeeded(list_key_by_issue))
         dispatch(ensureNestedObjectsLoaded(nested_objects_by_issue))
+
+        if ( filter_unallocated.user_id !== logged_in_user_id ) {
+            dispatch(update_list_filter(list_key_unallocated, {user_id:logged_in_user_id}))
+        }
+        dispatch(fetchAutoClocksIfNeeded(list_key_unallocated))
+        dispatch(ensureNestedObjectsLoaded(nested_objects_unallocated))
+
+        
     }
 
     showQuickClock() {
@@ -171,10 +189,24 @@ class AutoClockPopup extends Component {
     renderEntryWithTimings(entry) {
         return (
             <div className={css`display:flex; justify-content:space-between; width:80%`}>
-              {this.renderIssueInline(entry.project_id, entry.sprint_id, entry.issue_id)}
+              {this.renderEntryInline(entry)}
               {this.renderTimings(entry)}
             </div>
         )
+    }
+
+    renderEntryInline(entry) {
+        if ( entry.issue_id ) {
+            return this.renderIssueInline(entry.project_id, entry.sprint_id, entry.issue_id)
+        } else {
+            return (
+                <div className={css`display:flex`}>
+                    <BreadcrumbCell>
+                      {entry.comments || "Unallocated"}
+                    </BreadcrumbCell>
+                </div>
+            )
+        }
     }
     
     renderTimings(entry) {
@@ -199,6 +231,7 @@ class AutoClockPopup extends Component {
     }
 
     renderIssueInline(project_id, sprint_id, issue_id) {
+        
         return (
             <div key="issue" className={css`display:flex`}>
               <BreadcrumbCell>
@@ -216,6 +249,32 @@ class AutoClockPopup extends Component {
         )
     }
 
+    renderUnallocatedAlert() {
+        const { pagination_unallocated } = this.props
+        const num_unallocated = pagination_unallocated && pagination_unallocated.num_items
+        if ( num_unallocated === 0 ) {
+            return null
+        }
+        return (
+            <div className={css`color:${theme.colours.notok};
+                                font-size:${theme.colours.superscript}`}
+                 onClick={this.openUnallocatedIssues}
+            >
+              <Floater title="Unallocated issues"
+                       disableHoverToClick
+                       event="hover"
+                       eventDelay={0}
+                       placement="right"
+                       content={<div>You have {num_unallocated} unallocated clock entries. These need to be assigned to an issue as soon as possible. Click to open and fix them.</div>}>
+                <Link to='/clock/history/unallocated'
+                      onClick={(evt) => evt.stopPropagation()}>
+                  {num_unallocated}
+                </Link>
+              </Floater>
+            </div>
+        )
+    }
+    
     renderClockToggle() {
         const { most_recent_entry} = this.props
         return (
@@ -227,10 +286,9 @@ class AutoClockPopup extends Component {
                     <div className="icon--timer-active auto-clock__stop"
                          onClick={this.onShowPopup} />
                   </BreadcrumbCell>
+                  { this.renderUnallocatedAlert() }
                   <BreadcrumbSeparator/>
-                  { this.renderIssueInline(most_recent_entry.project_id,
-                                           most_recent_entry.sprint_id,
-                                           most_recent_entry.issue_id) }
+                  { this.renderEntryInline(most_recent_entry) }
                   
                 </div>
               }
@@ -316,9 +374,9 @@ class AutoClockPopup extends Component {
         }
 
         if ( most_recent_entry &&
-             most_recent_entry.issue_id == available_issue_id &&
-             most_recent_entry.sprint_id == available_sprint_id &&
-             most_recent_entry.project_id == available_project_id ) {
+             most_recent_entry.issue_id === available_issue_id &&
+             most_recent_entry.sprint_id === available_sprint_id &&
+             most_recent_entry.project_id === available_project_id ) {
             
             return null
         }
@@ -414,8 +472,7 @@ class AutoClockPopup extends Component {
                     Start quick clock
                   </PopupPanelButton>
                   <div className={css`width:100%;padding-top:${theme.spacing.vertical_section_gap}`}>
-                    <Link className={css`float:right`} 
-                          to='/clock/history'>Clock history</Link>
+                    
                   </div>
                 </div>
               }
@@ -423,22 +480,6 @@ class AutoClockPopup extends Component {
               { show_quick_clock && this.renderQuickClockPanel() }
               
             </ModalDialog>
-        )
-    }
-
-    renderClockStatus() {
-        const { most_recent_entry } = this.props
-        return (
-            <div>
-              { most_recent_entry &&
-                <div className="auto-clock__mini-auto-clock-status">
-                  <AutoClockEntity project_id={most_recent_entry.project_id}
-                                   sprint_id={most_recent_entry.sprint_id}
-                                   issue_id={most_recent_entry.issue_id}
-                                   className="auto-clock-entry__entities_row" />
-                </div>
-              }
-            </div>
         )
     }
 
@@ -458,6 +499,7 @@ class AutoClockPopup extends Component {
 function mapStateToProps(state, props) {
     const list_key = LIST_KEY__RECENT_AUTO_CLOCK
     const list_key_by_issue = LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE
+    const list_key_unallocated = LIST_KEY__RECENT_AUTO_CLOCK_UNALLOCATED
 
     const { available_project_id,
             available_sprint_id,
@@ -481,9 +523,21 @@ function mapStateToProps(state, props) {
     const should_fetch_list_by_issue = shouldFetchList(state, list_key_by_issue)
     const is_invalidated_by_issue = areAnyItemsInvalidated(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids_by_issue)
     const items_by_id_by_issue = getAutoClocks(state, visible_item_ids_by_issue)
-    const filter_by_issue = getListFilter(state, list_key)
+    const filter_by_issue = getListFilter(state, list_key_by_issue)
     const most_recent_entry_by_issue = (items_by_id_by_issue && items_by_id_by_issue.length > 0 && items_by_id_by_issue[0]) || null
     const recent_entries_by_issue = items_by_id_by_issue
+
+    const visible_item_ids_unallocated = getVisibleItemIds(state, list_key_unallocated)
+    const is_loading_unallocated = isLoading(state, list_key_unallocated) || isLoadingItems(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids_unallocated)
+    const last_updated_unallocated = getLastUpdated(state, list_key_unallocated)
+    const nested_objects_unallocated = getNestedObjects(state, list_key_unallocated)
+    const should_fetch_list_unallocated = shouldFetchList(state, list_key_unallocated)
+    const is_invalidated_unallocated = areAnyItemsInvalidated(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids_unallocated)
+    const items_by_id_unallocated = getAutoClocks(state, visible_item_ids_unallocated)
+    const filter_unallocated = getListFilter(state, list_key_unallocated)
+    const most_recent_entry_unallocated = (items_by_id_unallocated && items_by_id_unallocated.length > 0 && items_by_id_unallocated[0]) || null
+    const recent_entries_unallocated = items_by_id_unallocated
+    const pagination_unallocated = getListPagination(state, list_key_unallocated)
     
     const logged_in_user_id = logged_in_user().user_id || -1
     const auto_clocking_enabled = isAutoClockingEnabled(state)
@@ -494,28 +548,40 @@ function mapStateToProps(state, props) {
         available_issue_id,
         auto_clock_ids: visible_item_ids,
         auto_clock_ids_by_issue: visible_item_ids_by_issue,
+        auto_clock_ids_unallocated: visible_item_ids_unallocated,
         auto_clocks_by_id: items_by_id,
         auto_clocks_by_id_by_issue: items_by_id_by_issue,
+        auto_clocks_by_id_unallocated: items_by_id_unallocated,
         is_loading,
         is_loading_by_issue,
+        is_loading_unallocated,
         is_invalidated,
         is_invalidated_by_issue,
+        is_invalidated_unallocated,
         should_fetch_list,
         should_fetch_list_by_issue,
+        should_fetch_list_unallocated,
         last_updated,
         last_updated_by_issue,
+        last_updated_unallocated,
         nested_objects,
         nested_objects_by_issue,
+        nested_objects_unallocated,
         filter,
         filter_by_issue,
+        filter_unallocated,
         logged_in_user_id,
         most_recent_entry,
         most_recent_entry_by_issue,
+        most_recent_entry_unallocated,
         recent_entries,
         recent_entries_by_issue,
+        recent_entries_unallocated,
         list_key,
         list_key_by_issue,
-        auto_clocking_enabled
+        list_key_unallocated,
+        auto_clocking_enabled,
+        pagination_unallocated
     }
 
 }

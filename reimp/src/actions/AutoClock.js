@@ -98,6 +98,10 @@ export function getAutoClocksById(state, auto_clock_ids) {
     return getItemsById(state, ENTITY_KEY__AUTO_CLOCK, auto_clock_ids)
 }
 
+export function getNumUnallocatedEntries(state) {
+    // return get(state, ["item", ENTITY_KEY__AUTO_CLOCK, 
+}
+
 export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue_id) {
     return (dispatch, getState) => {
         const state = getState()
