@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Prefetch
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Min
 from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
@@ -34,13 +34,39 @@ class ClockViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
+            active_entries_only = filter_args.get("is_active", None)
+            
             entries = self.allowed_timesheet_entries()
             entries = entries.order_by("-start_time")
             entries = self.apply_filter(qs=entries,
                                          raw_filter_args=filter_args)
-            entries = self.apply_pagination(qs=entries,
-                                             pagination=pagination)
+            if format_args.get('distinct_by_issue'):
+                # This solution finds the issues matching the entries,
+                # and finds the Minimum start time for each
+                # issue. Then we paginate that list to get the numbers
+                # manageable, and finally convert back to entries.
+                # Note that we don't re-paginate on entries because
+                # then page numbers will be wrong.
+                early_issues = Issue.objects.all()\
+                                            .annotate(first_clock=Min("entries__start_time"))\
+                                            .filter(first_clock__isnull=False,
+                                                    entries__in=entries)\
+                                            .order_by("-first_clock")
 
+                if active_entries_only == False:
+                    early_issues = early_issues.exclude(entries__end_time__isnull=True)
+                
+                early_issues = self.apply_pagination(qs=early_issues, pagination=pagination)
+                distinct_entries = self.allowed_timesheet_entries()
+                distinct_entries = self.apply_filter(qs=distinct_entries,
+                                                     raw_filter_args=filter_args)
+                entries = distinct_entries.filter(start_time__in=[x.first_clock for x in early_issues])\
+                                          .order_by("-start_time")
+            else:
+                entries = self.apply_pagination(qs=entries,
+                                                pagination=pagination)
+
+            
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in entries.values_list('id', flat=True)]
             else:
@@ -75,7 +101,18 @@ class ClockViewSet(BaseViewSet):
                 role_name = role_name or (most_recent_entry.role and most_recent_entry.role.name) or "manager"
 
             role_name = role_name or "manager"
-                
+
+            if issue_id is not None:
+                issue = self.allowed_issues().get(pk=issue_id)
+                deduced_sprint_id = issue.project_id #sic
+                deduced_project_id = issue.project.business_id #sic
+                if sprint_id and deduced_sprint_id != sprint_id:
+                    raise Exception("Issue's sprint id doesn't match the sprint")
+                if project_id and deduced_project_id != project_id:
+                    raise Exception("Issue's project id doesn't match the project")
+                sprint_id = deduced_sprint_id
+                project_id = deduced_project_id
+            
             if project_id is None:
                 if project_name is None:
                     raise Exception("Must clock into a project")
@@ -215,3 +252,9 @@ class ClockViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    def apply_filter(self, qs, raw_filter_args):
+        is_active = raw_filter_args.pop('is_active', None)
+        if is_active is not None:
+            qs = qs.filter(end_time__isnull=is_active)
+        return super(ClockViewSet, self).apply_filter(qs, raw_filter_args)

@@ -64,6 +64,13 @@ export const default_theme = {
 
     font_sizes: {
         dropdown_arrow: "12px"
+    },
+
+    spacing: {
+        horizontal_space_inline: "5px",
+        horizontal_text_space_inside_button: "12px",
+        vertical_row_space_tight: "2px",
+        mini_button_height: "24px"
     }
     
 }
