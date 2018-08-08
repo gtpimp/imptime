@@ -47,9 +47,12 @@ class AutoClockList extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, list_key, filter, nested_objects, logged_in_user_id } = props
+        const { dispatch, list_key, filter, nested_objects, logged_in_user_id, filter_unallocated } = props
         if ( filter.user_id !== logged_in_user_id ) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
+        }
+        if ( filter_unallocated !== undefined && filter.filter_unallocated !== filter_unallocated ) {
+            dispatch(update_list_filter(list_key, {is_unallocated:filter_unallocated}))
         }
         dispatch(fetchAutoClocksIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
@@ -104,7 +107,7 @@ class AutoClockList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key } = props
+    const { list_key, filter_unallocated } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -124,6 +127,7 @@ function mapStateToProps(state, props) {
         last_updated,
         nested_objects,
         filter,
+        filter_unallocated: filter_unallocated || undefined,
         logged_in_user_id
     }
 }
