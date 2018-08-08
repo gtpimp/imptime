@@ -240,27 +240,28 @@ class ClockViewSet(BaseViewSet):
                 if entry.issue_id and not entry.issue.project.can_add_dev_time(): #sic
                     raise Exception("Can't edit entries for locked sprints: %s" % entry.issue.project) #sic
 
-                if 'role_name' in validated_data:
-                    entry.role = ProjectRole.objects.get_or_create(
-                        business=entry.issue.project.business,
-                        name=validated_data['role_name'])[0]
-
-                if 'start_time' in validated_data:
-                    entry.start_time = validated_data['start_time']
-
-                if 'end_time' in validated_data:
-                    entry.end_time = validated_data['end_time']
-
-                if 'description' in validated_data:
-                    entry.comments = params['description'] or  ""
-
-                if 'issue_id' in validated_data:
+                if 'issue_id' in validated_data and validated_data['issue_id']:
                     issue_id = validated_data['issue_id']
                     issue = self.allowed_issues().get(pk=issue_id)
 
                     if not issue.project.can_add_dev_time(): #sic
                         raise Exception("Can't entries into a locked sprint: %s" % issue.project) #sic
-                    entry.issue_id = issue.id
+                    entry.issue = issue
+                    
+                if 'role_name' in validated_data and validated_data['role_name'] and entry.issue:
+                    entry.role = ProjectRole.objects.get_or_create(
+                        business=entry.issue.project.business,
+                        name=validated_data['role_name'])[0]
+
+                if 'start_time' in validated_data and validated_data['start_time']:
+                    entry.start_time = validated_data['start_time']
+
+                if 'end_time' in validated_data and validated_data['end_time']:
+                    entry.end_time = validated_data['end_time']
+
+                if 'description' in validated_data and validated_data['description']:
+                    entry.comments = params['description'] or  ""
+
                     
                 entry.save()
                 

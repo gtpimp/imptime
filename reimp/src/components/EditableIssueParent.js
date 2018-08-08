@@ -31,7 +31,7 @@ class EditableIssueParent extends Component {
                                   edit_as_modal={true}
                                   onChange={this.onChange}
                                   actionLabel="Set parent issue"
-                                  wideView={true} 
+                                  modal_variant="large"
                                   can_edit={can_edit}
                 >
                     <SelectIssueParentGroupForm project_id={project_id} />

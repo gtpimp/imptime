@@ -16,7 +16,7 @@ class AutoClockQuickEntryForm extends Component {
         const {input} = field
         return (
             <Textarea
-                rows="10"
+                rows="5"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"
                 onChange={input.onChange}

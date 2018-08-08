@@ -1,27 +1,37 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import moment from 'moment'
-import classNames from 'classnames'
 import { map } from 'lodash'
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+import { css, cx } from 'emotion'
 import { Field, reduxForm } from 'redux-form'
-import { getAutoClock, ensureAutoClocksLoaded, updateAutoClocks } from '../../actions/AutoClock'
+import { getAutoClock,
+         getAvailableAutoClockEntity,
+         ensureAutoClocksLoaded,
+         updateAutoClocks } from '../../actions/AutoClock'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
 import AutoClockEntry from './AutoClockEntry'
+import AutoClockInlineIssue from './AutoClockInlineIssue'
 import PopupPanelButton from '../PopupPanelButton'
+import PopupPanelHeading from '../PopupPanelHeading'
+import PopupPanelText from '../PopupPanelText'
+import PopupPanelSeparator from '../PopupPanelSeparator'
 import NewIssueSidebar from '../NewIssueSidebar'
+import Textarea from 'react-expanding-textarea'
+import PropertyStackComponent from '../PropertyStackComponent'
+import PropertyStack from '../PropertyStack'
 
 class AutoClockEntryForm extends Component {
 
     constructor(props) {
         super(props)
-        this.renderRoleField = this.renderRoleField.bind(this)
         this.renderDescriptionField = this.renderDescriptionField.bind(this)
         this.renderDateTimePicker = this.renderDateTimePicker.bind(this)
         this.onStartAssignToNewIssue = this.onStartAssignToNewIssue.bind(this)
         this.onStopAssignToNewIssue = this.onStopAssignToNewIssue.bind(this)
         this.onCreatedNewIssueForAssignToEntry = this.onCreatedNewIssueForAssignToEntry.bind(this)
+        this.onSelectedIssueForAssignToEntry = this.onSelectedIssueForAssignToEntry.bind(this)
         this.state = { assigning_to_new_issue: false }
     }
 
@@ -56,40 +66,23 @@ class AutoClockEntryForm extends Component {
         onClose()
     }
 
-    renderRoleField(field) {
-        const { role_options } = this.props
-        const {input} = field
-        return (
-            <div>
-              {
-                  map(role_options, function(option) {
-                      const checked = input.value && input.value === option.value
-                      return (
-                          <label key={option.value}
-                                 className={classNames("auto-clock__radio",
-                                                       {"auto-clock__radio--checked":checked,
-                                                        "auto-clock__radio--unchecked":!checked})}>
-                            <input type="radio"
-                                   name="role"
-                                   value={option.value}
-                                   onChange={input.onChange}
-                                   checked={checked} />
-                            {option.label}
-                          </label>
-                      )
-                  })
-              }
-            </div>
-        )
+    onSelectedIssueForAssignToEntry(issue_id) {
+        const { dispatch, entry, onClose } = this.props
+        if ( ! window.confirm("Assign this entry to this issue?") ) {
+            return false
+        }
+        dispatch(updateAutoClocks([entry.id], {issue_id:issue_id}))
+        this.onStopAssignToNewIssue()
+        onClose()
     }
 
     renderDescriptionField(field) {
         const {input} = field
         return (
-            <input
-                maxLength="100"
-                className="textarea textarea--text-component"
-                placeholder="Optional description"
+            <Textarea
+                rows="3"
+                className="textarea textarea--text-component textarea--description"
+                placeholder="Description"
                 onChange={input.onChange}
                 value={input.value}
             />
@@ -125,40 +118,90 @@ class AutoClockEntryForm extends Component {
         )
     }
 
+    renderAvailableIssueForAssigning() {
+        const { available_project_id,
+                available_sprint_id,
+                available_issue_id } = this.props
+
+        if (! available_issue_id ) {
+            return null
+        }
+        
+        return (
+            <div>
+              <PopupPanelText>
+                This is the most recently selected issue, click to assign the entry to it.
+              </PopupPanelText>
+              <AutoClockInlineIssue project_id={available_project_id}
+                                    sprint_id={available_sprint_id}
+                                    issue_id={available_issue_id}
+                                    onSelect={() => this.onSelectedIssueForAssignToEntry(available_issue_id)} />
+            </div>
+        )
+    }
+
     renderFlatForm() {
-        const { handleSubmit, entry_id, onDelete, role_options } = this.props
+        const { handleSubmit, entry_id, onDelete, available_issue_id } = this.props
 
         return (
             <form className="auto-clock-form" onSubmit={handleSubmit}>
 
+              <PopupPanelHeading>
+                Editing an existing clock 
+              </PopupPanelHeading>
               <AutoClockEntry entry_id={entry_id} />
+              <PopupPanelSeparator strong={true} />
 
+              { available_issue_id &&
+                <div>
+                  <PopupPanelHeading>
+                    Assign to an issue
+                  </PopupPanelHeading>
+                  { this.renderAvailableIssueForAssigning() }
+                  <PopupPanelHeading>
+                    Or
+                  </PopupPanelHeading>
+                </div>
+              }
               <PopupPanelButton onClick={this.onStartAssignToNewIssue}>
-                Assign to a new issue
+                assign to a new issue
               </PopupPanelButton>
-              
+              <PopupPanelSeparator strong={true} />
+
+              <PopupPanelHeading>
+                Correct the timing with an optional comment
+              </PopupPanelHeading>
+              <PropertyStack>
+                <PropertyStackComponent>
+                  <div className="property-row">
+                    <div className={cx("property-cell", css`width:25%`)}>
+                      Start:
+                    </div>
+                    <div className={cx("property-cell", css`width:75%`)}>
+                      <Field name="start_time" component={this.renderDateTimePicker} />
+                    </div>
+                  </div>
+                  <div className="property-row">
+                    <div className={cx("property-cell", css`width:25%`)}>
+                      End:
+                    </div>
+                    <div className={cx("property-cell", css`width:75%`)}>
+                      <Field name="end_time" component={this.renderDateTimePicker} />
+                    </div>
+                  </div>
+                </PropertyStackComponent>
+              </PropertyStack>
+
               <div className="auto-clock__form">
-                { role_options && role_options.length > 0 &&
-                  <div className="auto-clock__role">
-                    <Field name="role_name" component={this.renderRoleField} />
-                  </div>
-                }
-
-                  <div className="auto-clock__form__description">
-                    <Field name="description" component={this.renderDescriptionField} />
-                  </div>
-              </div>
-
-              <div className="auto-clock__form__start">
-                Start: 
-                <Field name="start_time" component={this.renderDateTimePicker} />
-              </div>
-              <div className="auto-clock__form__end">
-                End:
-                <Field name="end_time" component={this.renderDateTimePicker} />
+                <div className="auto-clock__form__description">
+                  <Field name="description" component={this.renderDescriptionField} />
+                </div>
               </div>
               
               <button type="submit" className="button">Save</button>
+
+              <PopupPanelSeparator strong={true} />
+              
               <button className="button" onClick={onDelete}>Delete</button>
               
             </form>
@@ -186,6 +229,10 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const role_options = map(project.logged_in_users_roles || [], function(role) { return ( {value: role, label: role} ) })
 
+    const { available_project_id,
+            available_sprint_id,
+            available_issue_id } = getAvailableAutoClockEntity(state)
+    
     return {
         initialValues: {start_time: moment(entry.start_time),
                         end_time: moment(entry.end_time),
@@ -199,7 +246,10 @@ function mapStateToProps(state, props) {
         project_id,
         entry,
         entry_id,
-        role_options
+        role_options,
+        available_project_id,
+        available_sprint_id,
+        available_issue_id,
     }
 }
 

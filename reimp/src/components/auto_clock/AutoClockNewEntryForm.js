@@ -16,7 +16,6 @@ class AutoClockNewEntryForm extends Component {
 
     constructor(props) {
         super(props)
-        this.renderRoleField = this.renderRoleField.bind(this)
         this.renderDescriptionField = this.renderDescriptionField.bind(this)
         this.clockProject = this.clockProject.bind(this)
         this.clockSprint = this.clockSprint.bind(this)
@@ -67,40 +66,13 @@ class AutoClockNewEntryForm extends Component {
         dispatch(ensureProjectsLoaded([available_project_id]))
     }
 
-    renderRoleField(field) {
-        const { role_options } = this.props
-        const {input} = field
-        return (
-            <div>
-              {
-                  map(role_options, function(option) {
-                      const checked = input.value && input.value === option.value
-                      return (
-                          <label key={option.value}
-                                 className={classNames("auto-clock__radio",
-                                                       {"auto-clock__radio--checked":checked,
-                                                        "auto-clock__radio--unchecked":!checked})}>
-                            <input type="radio"
-                                   name="role"
-                                   value={option.value}
-                                   onChange={input.onChange}
-                                   checked={checked} />
-                            {option.label}
-                          </label>
-                      )
-                  })
-              }
-            </div>
-        )
-    }
-
     renderDescriptionField(field) {
         const {input} = field
         return (
-            <input
-                maxLength="100"
-                className="textarea textarea--text-component"
-                placeholder="Optional description"
+            <Textarea
+                rows="3"
+                className="textarea textarea--text-component textarea--description"
+                placeholder="Description"
                 onChange={input.onChange}
                 value={input.value}
             />
@@ -118,16 +90,6 @@ class AutoClockNewEntryForm extends Component {
 
                 <PropertyStackComponent>
                 
-                  { role_options && role_options.length > 0 &&
-                    <div className="property-row">
-                      <div className="property-label">
-                        Role
-                      </div>
-                      <div className="property-value">
-                        <Field name="role" component={this.renderRoleField} />
-                      </div>
-                    </div>
-                  }
                   <div className="property-row">
                     <div className="property-label">
                       Description

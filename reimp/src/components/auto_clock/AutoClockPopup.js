@@ -5,7 +5,6 @@ import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {css} from 'emotion'
 import ModalDialog from '../ModalDialog'
-import IssueName from '../IssueName'
 import SprintName from '../SprintName'
 import Timestamp from '../Timestamp'
 import Hours from '../Hours'
@@ -50,6 +49,7 @@ import {
 } from '../../actions/ItemList'
 import AutoClockQuickEntryForm from './AutoClockQuickEntryForm'
 import AutoClockManagementEntryForm from './AutoClockManagementEntryForm'
+import AutoClockInlineIssue from './AutoClockInlineIssue'
 import PopupPanelButton from '../PopupPanelButton'
 import PopupPanelMiniButton from '../PopupPanelMiniButton'
 import PopupPanelText from '../PopupPanelText'
@@ -231,22 +231,9 @@ class AutoClockPopup extends Component {
     }
 
     renderIssueInline(project_id, sprint_id, issue_id) {
-        
-        return (
-            <div key="issue" className={css`display:flex`}>
-              <BreadcrumbCell>
-                <ProjectName project_id={project_id} />
-              </BreadcrumbCell>
-              <BreadcrumbSeparator/>
-              <BreadcrumbCell>
-                <SprintName sprint_id={sprint_id} />
-              </BreadcrumbCell>
-              <BreadcrumbSeparator/>
-              <BreadcrumbCell>
-                <IssueName issue_id={issue_id} />
-              </BreadcrumbCell>
-            </div>
-        )
+        return <AutoClockInlineIssue project_id={project_id}
+                                     sprint_id={sprint_id}
+                                     issue_id={issue_id} />
     }
 
     renderUnallocatedAlert() {
