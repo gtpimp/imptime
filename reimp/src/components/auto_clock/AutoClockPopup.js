@@ -21,6 +21,7 @@ import { getAvailableAutoClockEntity,
          disableAutoClocking
 } from '../../actions/AutoClock'
 import AutoClockEntity from './AutoClockEntity'
+import {default_theme as theme} from '../../theme/default'
 import { ENTITY_KEY__AUTO_CLOCK,
          LIST_KEY__RECENT_AUTO_CLOCK,
          LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE
@@ -45,7 +46,6 @@ import {
     update_list_filter,
     getListFilter
 } from '../../actions/ItemList'
-import PopupPanelButton from '../PopupPanelButton'
 import PopupPanelMiniButton from '../PopupPanelMiniButton'
 import PopupPanelHeading from '../PopupPanelHeading'
 import PopupPanelSeparator from '../PopupPanelSeparator'
@@ -336,9 +336,10 @@ class AutoClockPopup extends Component {
               { this.renderAvailableClock() }
               { this.renderPreviousClocks() }
 
-              <PopupPanelButton>
-                <Link to='/clock/history'>Clock history</Link>
-              </PopupPanelButton>
+              <div className={css`width:100%;padding-top:${theme.spacing.vertical_section_gap}`}>
+                <Link className={css`float:right`} 
+                      to='/clock/history'>Clock history</Link>
+              </div>
               
             </ModalDialog>
         )
