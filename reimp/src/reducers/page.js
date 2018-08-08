@@ -62,6 +62,7 @@ export default function page(state = initialState, action) {
                       issue_ids: action.issue_ids || l.issue_ids || null,
                       wiki_ids: action.wiki_ids || l.wiki_ids || null
             })
+            
             return state_copy;
 
         case SET_PAGE_FLAG:

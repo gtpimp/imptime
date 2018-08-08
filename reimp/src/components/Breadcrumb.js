@@ -18,32 +18,14 @@ import { startPermissionInspector } from '../actions/Auth'
 import { startSprintSnapshotSelector } from '../actions/SprintSnapshots'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import styled from 'react-emotion'
-import { default_theme as theme } from '../theme/default'
 import PopupPanel from './PopupPanel'
 import PopupPanelLink from './PopupPanelLink'
 import PopupPanelButton from './PopupPanelButton'
 import PopupPanelSeparator from './PopupPanelSeparator'
 import PopupPanelHeading from './PopupPanelHeading'
 import SprintSnapshotSelector from './SprintSnapshotSelector'
-
-const BreadcrumbDiv = styled('div')(props => ({
-    display: "inline-flex",
-    cursor: "pointer",
-    textDecoration: "none",
-    alignItems: 'center',
-    color: theme.colours.strong_text,
-    ':last-child': {
-        font: theme.fonts.breadcrumb_selected
-    }
-}))
-
-
-const BreadcrumbSeparatorDiv = styled('div')(props => ({
-    alignItems: "center",
-    display: "inline-flex",
-    paddingLeft: "16px",
-    paddingRight: "16px"
-}))
+import BreadcrumbCell from './BreadcrumbCell'
+import BreadcrumbSeparator from './BreadcrumbSeparator'
 
 const BreadcrumbMenuDiv = styled('div')(props => ({
     position: 'absolute',
@@ -279,7 +261,7 @@ class Breadcrumb extends Component {
         const buttons = show_breadcrumb_menu && menu_buttons[breadcrumb.type]
 
         return (
-            <BreadcrumbDiv onMouseLeave={this.hideBreadCrumbMenu}>
+            <BreadcrumbCell onMouseLeave={this.hideBreadCrumbMenu}>
               <Link to={to}
                     onMouseOver={this.showBreadCrumbMenu}>
                 {label}
@@ -301,12 +283,10 @@ class Breadcrumb extends Component {
                 </BreadcrumbMenuDiv>
               }
               { !is_last &&
-                <BreadcrumbSeparatorDiv>
-                  <i className="material-icons">chevron_right</i>
-                </BreadcrumbSeparatorDiv>
+                <BreadcrumbSeparator/>
               }
               { this.renderGlobalObjects() }
-            </BreadcrumbDiv>
+            </BreadcrumbCell>
         )
     }
 }

@@ -1,7 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
+import {css} from 'emotion'
 import ModalDialog from '../ModalDialog'
+import IssueName from '../IssueName'
+import SprintName from '../SprintName'
+import ProjectName from '../ProjectName'
 import '../../sass/auto-clock.scss'
 import { getAvailableAutoClockEntity,
          clockIn,
@@ -38,7 +42,8 @@ import {
 import PopupPanelButton from '../PopupPanelButton'
 import PopupPanelHeading from '../PopupPanelHeading'
 import PopupPanelText from '../PopupPanelText'
-
+import BreadcrumbCell from '../BreadcrumbCell'
+import BreadcrumbSeparator from '../BreadcrumbSeparator'
 
 class AutoClockPopup extends Component {
     constructor(props) {
@@ -122,9 +127,24 @@ class AutoClockPopup extends Component {
             <div className="auto-clock__button"
                  onClick={this.onShowPopup}>
               { most_recent_entry && most_recent_entry.is_active &&
-                <div className="icon--timer-active auto-clock__stop"
-                     onClick={() => this.onClockOut(most_recent_entry.id)}
-                />
+                <div className={css`display:flex`}>
+                  <BreadcrumbCell>
+                    <div className="icon--timer-active auto-clock__stop"
+                         onClick={this.onShowPopup} />
+                  </BreadcrumbCell>
+                  <BreadcrumbSeparator/>
+                  <BreadcrumbCell>
+                    <ProjectName project_id={most_recent_entry.project_id} />
+                  </BreadcrumbCell>
+                  <BreadcrumbSeparator/>
+                  <BreadcrumbCell>
+                    <SprintName sprint_id={most_recent_entry.sprint_id} />
+                  </BreadcrumbCell>
+                  <BreadcrumbSeparator/>
+                  <BreadcrumbCell>
+                    <IssueName issue_id={most_recent_entry.issue_id} />
+                  </BreadcrumbCell>
+                </div>
               }
               { (! most_recent_entry || ! most_recent_entry.is_active) &&
                 <div className="icon--timer-inactive"/>
