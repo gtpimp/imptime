@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import { size } from 'lodash'
 import {connect} from 'react-redux'
 import PropertyStack from './PropertyStack'
 import Sidebar from './Sidebar'
@@ -20,6 +21,10 @@ class NewProjectSidebar extends Component {
 
     onSaveCandidateProject(new_value) {
         const {dispatch} = this.props
+        if ( size(new_value.name) === 0 ) {
+            alert("Please enter a name")
+            return
+        }
         dispatch(updateCandidateName(new_value.name))
         dispatch(saveCandidateProject())
     }
