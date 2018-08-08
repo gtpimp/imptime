@@ -92,15 +92,14 @@ class ClockViewSet(BaseViewSet):
             sprint_id = params.get('sprint_id', None) or None
             issue_id = params.get('issue_id', None) or None
             description = params.get('description', None) or None
-            role_name = params.get('role', None) or None
-
+            action_name = params.get('action', None) or None
+            role_name = "developer"
+            
             open_entries = self.allowed_timesheet_entries().filter(end_time__isnull=True).select_related('issue')
             most_recent_entry = open_entries.order_by("-end_time").first()
             if most_recent_entry:
                 description = description or most_recent_entry.comments
                 role_name = role_name or (most_recent_entry.role and most_recent_entry.role.name) or "manager"
-
-            role_name = role_name or "manager"
 
             if issue_id is not None:
                 issue = self.allowed_issues().get(pk=issue_id)
@@ -112,14 +111,13 @@ class ClockViewSet(BaseViewSet):
                     raise Exception("Issue's project id doesn't match the project")
                 sprint_id = deduced_sprint_id
                 project_id = deduced_project_id
-            
+                
             if project_id is None:
                 if project_name is None:
                     raise Exception("Must clock into a project")
                 project_id = self.allowed_projects().get(name=project_name).id
                 
             project = self.allowed_project(project_id)
-            project_role = ProjectRole.objects.get_or_create(business=project, name=role_name)[0] #sic
 
             if sprint_id is None:
                 sprint_id = project.get_most_recent_open_project_id(user_id=request.user.id) #sic
@@ -129,16 +127,20 @@ class ClockViewSet(BaseViewSet):
                 raise Exception("Can't create entries for locked sprints: %s" % sprint)
 
             if issue_id is None:
-                issue = sprint.get_default_issue_for_role(project_role)
+                if action_name is None:
+                    raise Exception("Need an action name to create default issues")
+                issue_type = self._resolve_issue_type_from_action(action_name)
+                issue = sprint.get_default_issue_for_type(user=request.user,
+                                                          issue_type=issue_type,
+                                                          subject=description[0:50],
+                                                          description="(quick creation)\n"+description)
             else:
                 issue = self.allowed_issue(issue_id)
-
             
             if most_recent_entry and \
                most_recent_entry.issue.project.business_id == project_id and \
                most_recent_entry.issue.project_id == sprint_id and \
                most_recent_entry.issue_id == issue_id and \
-               most_recent_entry.role_name == role_name and \
                most_recent_entry.comments == description:
                 entry = most_recent_entry
 
@@ -258,3 +260,10 @@ class ClockViewSet(BaseViewSet):
         if is_active is not None:
             qs = qs.filter(end_time__isnull=is_active)
         return super(ClockViewSet, self).apply_filter(qs, raw_filter_args)
+
+    def _resolve_issue_type_from_action(self, action_name):
+        issue_types = Issue.MANAGEMENT_ISSUE_TYPES
+        if action_name not in issue_types:
+            raise Exception("Unknown action type (not found in management issue types) : %s" % action_name)
+        return action_name
+ 

@@ -154,7 +154,7 @@ export function getAvailableAutoClockEntity(state) {
 
 export function clockIn(data) {
     // data contains one or more of: 
-    // project_id, sprint_id, issue_id, project_name, role, description
+    // project_id, sprint_id, issue_id, project_name, action, description
     
     const url = "imp/clock/0/clockIn/"
     const field_name = "clockIn"

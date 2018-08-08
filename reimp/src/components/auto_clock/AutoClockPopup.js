@@ -46,7 +46,11 @@ import {
     update_list_filter,
     getListFilter
 } from '../../actions/ItemList'
+import AutoClockQuickEntryForm from './AutoClockQuickEntryForm'
+import AutoClockManagementEntryForm from './AutoClockManagementEntryForm'
+import PopupPanelButton from '../PopupPanelButton'
 import PopupPanelMiniButton from '../PopupPanelMiniButton'
+import PopupPanelText from '../PopupPanelText'
 import PopupPanelHeading from '../PopupPanelHeading'
 import PopupPanelSeparator from '../PopupPanelSeparator'
 import BreadcrumbCell from '../BreadcrumbCell'
@@ -55,16 +59,18 @@ import BreadcrumbSeparator from '../BreadcrumbSeparator'
 class AutoClockPopup extends Component {
     constructor(props) {
         super(props)
-        this.onClockIn = this.onClockIn.bind(this)
         this.onClockInIssue = this.onClockInIssue.bind(this)
         this.onClockOut = this.onClockOut.bind(this)
-        this.hideList = this.hideList.bind(this)
-        this.showList = this.showList.bind(this)
         this.onShowPopup = this.onShowPopup.bind(this)
         this.onHidePopup = this.onHidePopup.bind(this)
         this.onAutoClockingEnabledToggleClick = this.onAutoClockingEnabledToggleClick.bind(this)
-        this.state = { show_list: false,
-                       show_popup: false }
+        this.startManagementClock = this.startManagementClock.bind(this)
+        this.startQuickClock = this.startQuickClock.bind(this)
+        this.showQuickClock = this.showQuickClock.bind(this)
+        this.hideQuickClock = this.hideQuickClock.bind(this)
+        this.startQuickClock = this.startQuickClock.bind(this)
+        this.state = { show_popup: false,
+                       show_quick_clock: false}
     }
 
     componentDidMount() {
@@ -104,6 +110,31 @@ class AutoClockPopup extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects_by_issue))
     }
 
+    showQuickClock() {
+        this.setState({show_quick_clock:true})
+    }
+
+    hideQuickClock() {
+        this.setState({show_quick_clock:false})
+    }
+
+    startQuickClock(values) {
+        const { dispatch } = this.props
+        dispatch(clockIn({description:values.description}))
+        this.hideQuickClock()
+        this.onHidePopup()
+    }
+
+    startManagementClock(values) {
+        const { dispatch, available_project_id, available_sprint_id } = this.props
+        dispatch(clockIn({project_id: available_project_id,
+                          sprint_id: available_sprint_id,
+                          action: values.action,
+                          description:values.description}))
+        this.hideQuickClock()
+        this.onHidePopup()
+    }
+
     onHidePopup() {
         this.setState({show_popup:false})
         hideAutoClockPopup()
@@ -118,19 +149,14 @@ class AutoClockPopup extends Component {
         const { dispatch } = this.props
         dispatch(disableAutoClocking())
         dispatch(clockIn({issue_id:issue_id}))
-    }
-
-    onClockIn(new_values) {
-        const { dispatch } = this.props
-        dispatch(disableAutoClocking())
-        dispatch(clockIn(new_values))
-        setPreferredRole(new_values.role)
+        this.onHidePopup()
     }
 
     onClockOut(entry_id) {
         const { dispatch } = this.props
         dispatch(clockOut(entry_id))
         dispatch(disableAutoClocking())
+        this.onHidePopup()
     }
 
     onAutoClockingEnabledToggleClick(new_value) {
@@ -140,14 +166,6 @@ class AutoClockPopup extends Component {
         } else {
             dispatch(disableAutoClocking())
         }
-    }
-
-    hideList() {
-        this.setState({show_list: false})
-    }
-
-    showList() {
-        this.setState({show_list: true})
     }
 
     renderEntryWithTimings(entry) {
@@ -281,6 +299,9 @@ class AutoClockPopup extends Component {
                      )}
                  )}
               </div>
+
+              <PopupPanelSeparator strong={true} />
+              
             </div>
         )
     }
@@ -324,22 +345,74 @@ class AutoClockPopup extends Component {
         )
     }
 
+    renderQuickClockPanel() {
+        const { available_project_id,
+                available_sprint_id } = this.props
+        
+        return (
+
+            <div>
+
+              <div>
+                <PopupPanelHeading>
+                  Unallocated clocking
+                </PopupPanelHeading>
+                <PopupPanelText>
+                  Start clocking now, you will later need to resolve which issue this time belongs to.
+                </PopupPanelText>
+                <AutoClockQuickEntryForm onSubmitted={this.startQuickClock} />
+                <PopupPanelSeparator strong={true} />
+              </div>
+
+              { available_project_id && available_sprint_id && 
+                <div>
+                  <PopupPanelHeading>
+                    <div className={css`display:flex; justify-content:flex-start`}>
+                      Quick clock for
+                      &nbsp;
+                      <ProjectName project_id={available_project_id} />
+                      -
+                      <SprintName sprint_id={available_sprint_id} />
+                    </div>
+                  </PopupPanelHeading>
+                  <AutoClockManagementEntryForm onSubmitted={this.startManagementClock} />
+                  <PopupPanelSeparator strong={true} />
+                </div>
+              }
+              
+              <PopupPanelMiniButton onClick={this.hideQuickClock}>
+                Cancel
+              </PopupPanelMiniButton>
+            </div>
+            
+        )
+    }
+
     renderPanel() {
+        const { show_quick_clock } = this.state
         return (
             <ModalDialog isOpen={true}
                          onClose={this.onHidePopup}
                          variant="large"
                          title="Clocker">
 
-              
-              { this.renderCurrentClock() }
-              { this.renderAvailableClock() }
-              { this.renderPreviousClocks() }
 
-              <div className={css`width:100%;padding-top:${theme.spacing.vertical_section_gap}`}>
-                <Link className={css`float:right`} 
-                      to='/clock/history'>Clock history</Link>
-              </div>
+              { ! show_quick_clock &&
+                <div>
+                  { this.renderCurrentClock() }
+                  { this.renderAvailableClock() }
+                  { this.renderPreviousClocks() }
+                  <PopupPanelButton onClick={this.showQuickClock}>
+                    Start quick clock
+                  </PopupPanelButton>
+                  <div className={css`width:100%;padding-top:${theme.spacing.vertical_section_gap}`}>
+                    <Link className={css`float:right`} 
+                          to='/clock/history'>Clock history</Link>
+                  </div>
+                </div>
+              }
+
+              { show_quick_clock && this.renderQuickClockPanel() }
               
             </ModalDialog>
         )

@@ -1342,13 +1342,15 @@ class Project(BaseModel):
             return None
         return rate.time_tracking_mode
 
-    def get_default_issue_for_role(self, project_role):
-        return Issue.objects.get_or_create(subject=project_role.name,
+    def get_default_issue_for_type(self, user, issue_type, subject, description):
+        return Issue.objects.get_or_create(subject=subject,
                                            project=self,
-                                           defaults={'issue_type':'issue',
-                                                     'status2':IssueStatus.objects.get_or_create(name='auto', business=self.business)[0],
+                                           assigned_to=user,
+                                           issue_type=issue_type,
+                                           defaults={'status2':IssueStatus.objects.get_or_create(name='new', business=self.business)[0],
                                                      'number':Issue.get_next_issue_number(self.business),
-                                                     'description':"Default issue for %s" % project_role.name})[0]
+                                                     'description':description})[0]
+
     
     @property
     def scheduled_events(self):
