@@ -51,7 +51,7 @@ class AutoClockList extends Component {
         if ( filter.user_id !== logged_in_user_id ) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
         }
-        if ( filter_unallocated !== undefined && filter.filter_unallocated !== filter_unallocated ) {
+        if ( filter_unallocated !== undefined && filter.is_unallocated !== filter_unallocated ) {
             dispatch(update_list_filter(list_key, {is_unallocated:filter_unallocated}))
         }
         dispatch(fetchAutoClocksIfNeeded(list_key))
@@ -79,7 +79,7 @@ class AutoClockList extends Component {
 
     render() {
 
-        const { auto_clocks_by_id, is_loading, list_key } = this.props
+        const { auto_clocks_by_id, is_loading, list_key, filter_unallocated } = this.props
 
         if ( is_loading && !auto_clocks_by_id && auto_clocks_by_id.length === 0 ) {
             return (
@@ -90,6 +90,11 @@ class AutoClockList extends Component {
         return (
             <div className="auto-clock-list">
               <Pagination list_key={list_key} on_changed={this.onRefresh} />
+              { filter_unallocated &&
+                <h2>
+                  Unallocated time entries.
+                </h2>
+              }
               <DivTable>
                 { map(values(auto_clocks_by_id), (auto_clock) => this.render_row(auto_clock) ) }
               </DivTable>
