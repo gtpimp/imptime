@@ -4633,7 +4633,10 @@ class IssueHistory(BaseModel):
 
     @classmethod
     def add_history(self, user, issue, description, before, after):
-        IssueHistory.objects.create(created_by=user, issue_id=issue.id, description=description,
+        IssueHistory.objects.create(created_by=user,
+                                    original_issue=issue,
+                                    issue_id=issue.id,
+                                    description=description,
                                     before=before, after=after)
 
     @classmethod
