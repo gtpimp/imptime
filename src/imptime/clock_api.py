@@ -239,10 +239,6 @@ class ClockViewSet(BaseViewSet):
             for entry_pk in entry_pks:
                 entry = self.allowed_timesheet_entry(entry_pk)
 
-                entry_from_bp = ProjectPermissions.for_user(user=request.user,
-                                                            business=entry.issue.project.business,
-                                                            auto_create=False)
-
                 oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=request.user)
 
                 if entry.issue_id and not entry.issue.project.can_add_dev_time(): #sic
