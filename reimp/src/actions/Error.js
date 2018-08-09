@@ -1,6 +1,7 @@
 
 export const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE'
 export const SET_SOFT_ERROR_MESSAGE = 'SET_SOFT_ERROR_MESSAGE'
+export const SET_NOTIFICATION_MESSAGE = 'SET_NOTIFICATION_MESSAGE'
 
 export function setErrorMessage(error) {
     return {
@@ -14,6 +15,17 @@ export function setSoftErrorMessage(error) {
         type: SET_SOFT_ERROR_MESSAGE,
         error_message: error
     }
+}
+
+export function setNotificationMessage(message) {
+    return {
+        type: SET_NOTIFICATION_MESSAGE,
+        message
+    }
+}
+
+export function getNotificationMessage(state) {
+    return (state.notification_bar || {}).notification_message
 }
 
 export function getErrorMessage(state) {
@@ -30,4 +42,8 @@ export function getSoftErrorMessage(state) {
 
 export function clearSoftErrorMessage() {
     return setSoftErrorMessage(null)
+}
+
+export function clearNotificationMessage() {
+    return setNotificationMessage(null)
 }

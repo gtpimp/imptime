@@ -3,6 +3,7 @@ import slice from 'lodash/slice'
 import {
     SET_ERROR_MESSAGE,
     SET_SOFT_ERROR_MESSAGE,
+    SET_NOTIFICATION_MESSAGE
 } from '../actions/Error.js'
 
 import {
@@ -12,6 +13,7 @@ import {
 const initialState = {
     error_message: null,
     soft_error_message: null,
+    notification_message: null,
     async_messages: []
 }
 
@@ -22,6 +24,8 @@ export default function notification_bar(state = initialState, action) {
 	    return Object.assign({}, state, {error_message: action.error_message})
         case SET_SOFT_ERROR_MESSAGE:
 	    return Object.assign({}, state, {soft_error_message: action.error_message})
+        case SET_NOTIFICATION_MESSAGE:
+            return Object.assign({}, state, {notification_message: action.message})
         case ADD_ASYNC_MSG:
             messages = Object.assign([], state.async_messages)
             messages = messages.concat([{msg: action.msg, added_at: action.added_at}])

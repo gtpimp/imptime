@@ -78,6 +78,7 @@ class ClockHistoryPage extends Component {
                     </h2>
                   }
                   <AutoClockList list_key={list_key} />
+                    
                 </div>
                 {null}
               </Splitter>

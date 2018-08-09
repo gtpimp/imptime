@@ -11,6 +11,7 @@ import Hours from '../Hours'
 import ProjectName from '../ProjectName'
 import Floater from 'react-floater'
 import '../../sass/auto-clock.scss'
+import { setNotificationMessage } from '../../actions/Error'
 import { getAvailableAutoClockEntity,
          clockIn,
          clockOut,
@@ -18,7 +19,8 @@ import { getAvailableAutoClockEntity,
          showAutoClockPopup,
          isAutoClockingEnabled,
          enableAutoClocking,
-         disableAutoClocking
+         disableAutoClocking,
+         createHistoricClockEntry
 } from '../../actions/AutoClock'
 import {default_theme as theme} from '../../theme/default'
 import { ENTITY_KEY__AUTO_CLOCK,
@@ -50,6 +52,7 @@ import {
 import AutoClockQuickEntryForm from './AutoClockQuickEntryForm'
 import AutoClockManagementEntryForm from './AutoClockManagementEntryForm'
 import AutoClockInlineIssue from './AutoClockInlineIssue'
+import AutoClockNewEntryForm from './AutoClockNewEntryForm'
 import PopupPanelButton from '../PopupPanelButton'
 import PopupPanelMiniButton from '../PopupPanelMiniButton'
 import PopupPanelText from '../PopupPanelText'
@@ -71,8 +74,12 @@ class AutoClockPopup extends Component {
         this.showQuickClock = this.showQuickClock.bind(this)
         this.hideQuickClock = this.hideQuickClock.bind(this)
         this.startQuickClock = this.startQuickClock.bind(this)
+        this.onStartCreatingHistoricEntry = this.onStartCreatingHistoricEntry.bind(this)
+        this.onStopCreatingHistoricEntry = this.onStopCreatingHistoricEntry.bind(this)
+        this.onCreateHistoricEntry = this.onCreateHistoricEntry.bind(this)
         this.state = { show_popup: false,
-                       show_quick_clock: false}
+                       show_quick_clock: false,
+                       show_create_historic_entry: false}
     }
 
     componentDidMount() {
@@ -186,6 +193,33 @@ class AutoClockPopup extends Component {
         }
     }
 
+    onStartCreatingHistoricEntry(evt) {
+        if ( evt ) {
+            evt.preventDefault()
+        } 
+        this.setState({show_create_historic_entry:true})
+    }
+
+    onStopCreatingHistoricEntry(evt) {
+        if ( evt ) {
+            evt.preventDefault()
+        }
+        this.setState({show_create_historic_entry:false})
+    }
+
+    onCreateHistoricEntry(new_values) {
+        const { dispatch, available_issue_id } = this.props
+
+        const d = new_values
+        d.issue_id = available_issue_id
+
+        const on_done = function() {
+            dispatch(setNotificationMessage("Historic entry created"))
+        }
+        dispatch(createHistoricClockEntry(d, on_done))
+        this.onStopCreatingHistoricEntry()
+    }
+    
     renderEntryWithTimings(entry) {
         return (
             <div className={css`display:flex; justify-content:space-between; width:80%`}>
@@ -398,6 +432,13 @@ class AutoClockPopup extends Component {
         )
     }
 
+    renderCreateHistoricEntryPanel() {
+        return (
+            <AutoClockNewEntryForm onCancel={this.onStopCreatingHistoricEntry}
+                                   onSubmitted={this.onCreateHistoricEntry}/>
+        )
+    }
+
     renderQuickClockPanel() {
         const { available_project_id,
                 available_sprint_id } = this.props
@@ -442,7 +483,7 @@ class AutoClockPopup extends Component {
     }
 
     renderPanel() {
-        const { show_quick_clock } = this.state
+        const { show_quick_clock, show_create_historic_entry } = this.state
         return (
             <ModalDialog isOpen={true}
                          onClose={this.onHidePopup}
@@ -450,24 +491,47 @@ class AutoClockPopup extends Component {
                          title="Clocker">
 
 
-              { ! show_quick_clock &&
+              { ! show_quick_clock && ! show_create_historic_entry && 
                 <div>
                   { this.renderCurrentClock() }
                   { this.renderAvailableClock() }
                   { this.renderPreviousClocks() }
                   <PopupPanelButton onClick={this.showQuickClock}>
-                    Start quick clock
+                    <Floater
+                        description="Clock quickly"
+                        disableHoverToClick
+                        event="hover"
+                        eventDelay={0}
+                        placement="bottom"
+                        content={<div>A fast way to start clocking something new that you're about to start doing.</div>}
+                    >
+                      Start quick clock
+                    </Floater>
                   </PopupPanelButton>
                   <div className={css`width:100%;padding-top:${theme.spacing.vertical_section_gap}`}>
                     <Link to='/clock/history/'
                           onClick={(evt) => { evt.stopPropagation(); this.onHidePopup() }}>
                       Clock history
                     </Link>
+
+                    <Floater
+                        description="Create historic entry"
+                        disableHoverToClick
+                        event="hover"
+                        eventDelay={0}
+                        placement="bottom"
+                        content={<div>Create an entry for an event that's already finished.</div>}
+                    >
+                      <PopupPanelMiniButton onClick={this.onStartCreatingHistoricEntry}>Add old entry</PopupPanelMiniButton>
+                    </Floater>
+                    
                   </div>
                 </div>
               }
 
               { show_quick_clock && this.renderQuickClockPanel() }
+
+              { show_create_historic_entry && this.renderCreateHistoricEntryPanel() }
               
             </ModalDialog>
         )

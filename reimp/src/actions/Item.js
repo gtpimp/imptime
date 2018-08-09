@@ -280,7 +280,10 @@ export function saveCandidateItem(entity_key, on_done) {
                          body: JSON.stringify(data)}
         ).then(response => response.json())
          .then(json => {
-             if ( json.status !== 'success' ) {
+             if ( json.status === 'soft_failure' ) {
+                 console.log("Soft failure: " + json.error)
+                 dispatch(announceSoftFailure(entity_key, json.error))
+             } else if ( json.status !== 'success' ) {
                  console.log('Request failed with JSON response', json);
                  dispatch(announceCandidateItemSaveFailed(entity_key, json.error))
              } else {
@@ -342,8 +345,7 @@ export function itemPost(entity_key, item_ids, url,
              if ( json.status === 'soft_failure' ) {
                  console.log("Soft failure: " + json.error)
                  dispatch(announceSoftFailure(entity_key, json.error))
-             }
-             else if ( json.status !== 'success' ) {
+             } else if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {

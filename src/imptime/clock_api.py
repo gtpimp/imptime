@@ -13,7 +13,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole
-from clock_entry_serializer import ClockEntrySerializer, ClockEntryUpdateSerializer
+from clock_entry_serializer import ClockEntrySerializer, ClockEntryUpdateSerializer, ClockEntryCreateSerializer
 from timepiece.models import BusinessPermissions as ProjectPermissions
 
 logger = logging.getLogger(__name__)
@@ -82,6 +82,51 @@ class ClockViewSet(BaseViewSet):
             return self.error_response(ex)
         
         return HttpResponse(JSONRenderer().render(data))
+
+    def create(self, request):
+        try:
+            context = {}
+            params = request.data['item']
+            s = ClockEntryCreateSerializer(data=params)
+            s.is_valid(raise_exception=True)
+            validated_data = s.validated_data
+            issue_id = validated_data['issue_id']
+            start_time = validated_data['start_time']
+            end_time = validated_data['end_time']
+            description = validated_data['description']
+            role_name = "developer"
+            data = {'status': "success"}
+
+            issue = self.allowed_issues().get(pk=issue_id)
+            if not issue.project.can_add_dev_time():
+                data['status'] = "soft_failure"
+                data['error'] = "Can't add entries for locked sprints: %s" % issue.project.name
+                
+            if not self.can_set_time(issue.id, start_time) or not self.can_set_time(issue.id, end_time):
+                oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=request.user)
+                data['status'] = "soft_failure"
+                data['error'] = "Can't create an entry older than %s" % oldest_clockable_day.date()
+
+            if data['status'] == 'success':
+                role = ProjectRole.objects.get_or_create(business=issue.project.business, name=role_name)[0]
+                entry = Entry.objects.create(user=request.user,
+                                             status='approved',
+                                             source='historic_auto_clock',
+                                             start_time=start_time,
+                                             end_time=end_time,
+                                             comments=description or "",
+                                             role=role,
+                                             issue=issue)
+
+                context['clock_entry'] = ClockEntrySerializer(entry).data
+            data['payload'] = {'item': context}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        
+        return HttpResponse(JSONRenderer().render(data))
+        
     
     @detail_route(methods=['POST'])
     def clockIn(self, request, pk):
@@ -270,7 +315,7 @@ class ClockViewSet(BaseViewSet):
 
                 if 'start_time' in validated_data and validated_data['start_time']:
                     new_start_time = validated_data['start_time']
-                    if not self.can_set_time(entry, new_start_time):
+                    if not self.can_set_time(entry.issue_id, new_start_time):
                         data['status'] = "soft_failure"
                         data['error'] = "Can't set the end time older than %s" % oldest_clockable_day.date()
                         continue
@@ -279,7 +324,7 @@ class ClockViewSet(BaseViewSet):
 
                 if 'end_time' in validated_data and validated_data['end_time']:
                     new_end_time = validated_data['end_time']
-                    if not self.can_set_time(entry, new_end_time):
+                    if not self.can_set_time(entry.issue_id, new_end_time):
                         data['status'] = "soft_failure"
                         data['error'] = "Can't set the end time older than %s" % oldest_clockable_day.date()
                         continue
@@ -300,11 +345,12 @@ class ClockViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    def can_set_time(self, entry, t):
+    def can_set_time(self, issue_id, t):
         can_edit = t >= Entry.get_oldest_day_for_allowed_clocking(user=self.request.user)
-        if not can_edit and entry.issue_id:
+        if not can_edit and issue_id:
+            issue = Issue.objects.get(pk=issue_id)
             entry_from_bp = ProjectPermissions.for_user(user=self.request.user,
-                                                        business=entry.issue.project.business,
+                                                        business=issue.project.business,
                                                         auto_create=False)
             can_edit = entry_from_bp.has_edit_old_clock_entries
         return can_edit

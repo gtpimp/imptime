@@ -12,7 +12,9 @@ import {
     getItemsById,
     itemPost,
     setGlobalEntityFlag,
-    getGlobalEntityFlag
+    getGlobalEntityFlag,
+    startCandidateItem,
+    saveCandidateItem
 } from '../actions/Item'
 import {
     select_issues,
@@ -52,6 +54,13 @@ export function isAutoClockingEnabled(state) {
         }
     }
     return enabled
+}
+
+export function createHistoricClockEntry(data, on_done) {
+    return (dispatch, getState) => {
+        dispatch(startCandidateItem(ENTITY_KEY__AUTO_CLOCK, data))
+        dispatch(saveCandidateItem(ENTITY_KEY__AUTO_CLOCK, on_done))
+    }
 }
 
 export function getPreferredRole() {
