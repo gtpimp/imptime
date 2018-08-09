@@ -203,7 +203,7 @@ class Extractor(object):
                 self.status['errors'].append("Clock entry spans more than one day, if this is real then split the entry. From=%s, To=%s. Issue=%s:%s" % (clock['from'], clock['to'], issue.number, subject))
                 continue
 
-            if clock['to'] >= self.oldest_clockable_day:
+            if clock['to'] < self.oldest_clockable_day:
                 self.status['infos'].append("Ignoring clock entry %s - %s in issue %s because it's before %s" %
                                             (clock['from'], clock['to'], orgnode.headline, self.oldest_clockable_day))
                 continue

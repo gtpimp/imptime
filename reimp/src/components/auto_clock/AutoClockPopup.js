@@ -459,7 +459,10 @@ class AutoClockPopup extends Component {
                     Start quick clock
                   </PopupPanelButton>
                   <div className={css`width:100%;padding-top:${theme.spacing.vertical_section_gap}`}>
-                    
+                    <Link to='/clock/history/'
+                          onClick={(evt) => { evt.stopPropagation(); this.onHidePopup() }}>
+                      Clock history
+                    </Link>
                   </div>
                 </div>
               }

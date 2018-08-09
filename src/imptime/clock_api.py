@@ -35,9 +35,9 @@ class ClockViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             active_entries_only = filter_args.get("is_active", None)
-            
+
             entries = self.allowed_timesheet_entries()
-            entries = entries.order_by("-start_time")
+            entries = entries.order_by("-end_time")
             entries = self.apply_filter(qs=entries,
                                          raw_filter_args=filter_args)
 
@@ -62,7 +62,7 @@ class ClockViewSet(BaseViewSet):
                 distinct_entries = self.apply_filter(qs=distinct_entries,
                                                      raw_filter_args=filter_args)
                 entries = distinct_entries.filter(start_time__in=[x.first_clock for x in early_issues])\
-                                          .order_by("-start_time")
+                                          .order_by("-end_time")
             else:
                 entries = self.apply_pagination(qs=entries,
                                                 pagination=pagination)
