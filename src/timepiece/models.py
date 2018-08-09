@@ -4735,6 +4735,19 @@ class CalendarEvent(BaseModel):
         return users
 
     @classmethod
+    def date_num_working_days_from(self, user, start_date_inclusive, num_days, direction=+1):
+        running_date = start_date_inclusive
+        while num_days > 0:
+            if self.is_working_day(user, running_date):
+                num_days += direction
+            running_date += relativedelta(days=direction)
+        return running_date
+
+    @classmethod
+    def is_working_day(self, user, date):
+        return self.num_non_working_days_in_range(user, date, date) == 0
+     
+    @classmethod
     def num_non_working_days_in_range(self, user, date_from_inclusive, date_to_inclusive):
 
         weekends = [ x.date() for x in date_helper.daterange(date_from_inclusive, date_to_inclusive)
@@ -5000,6 +5013,7 @@ class Holiday(BaseModel):
     
     @classmethod
     def business_days_in_range(self, date_from_inclusive, date_to_inclusive):
+        """ this function only know about holidays. to include user's personal leave etc, use CalendarEvent """
         holiday_dates = Holiday.objects.filter(applies_on__gte=date_from_inclusive,
                                                applies_on__lte=date_to_inclusive)\
                                                .values('applies_on')

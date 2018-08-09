@@ -6,8 +6,9 @@ from implicitdesign import settings
 from timepiece.interface_plugin import get_interface_plugin
 from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
+from datetime import datetime
 from django.contrib.auth.models import User
-from timepiece.models import Business, Project, Activity, Entry, Location, Attribute
+from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, CalendarEvent
 from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder, IssueComment, IssuePoints
 from imptime.bulk_text_parser import BulkTextParser
 import logging
@@ -66,9 +67,16 @@ class Extractor(object):
         timesheet_user = User.objects.get(username=self.username)
         self.timings_before = self.get_project_timings_for_user(business=business, timesheet_user=timesheet_user)
 
+        self.oldest_clockable_day = CalendarEvent.date_num_working_days_from(user=timesheet_user,
+                                                                             start_date_inclusive=datetime.now().replace(hour=0,minute=0),
+                                                                             num_days=settings.NUM_BUSINESS_DAYS_FOR_ALLOWED_CLOCKING,
+                                                                             direction=-1)
+        self.status['infos'].append("Oldest clockable day is %s" % self.oldest_clockable_day)
+        
         live_entries = Entry.objects.all().filter(user=timesheet_user,
                                                   issue__project__business=business,
                                                   issue__project__status3__name__in=Project.can_add_dev_time_states(),
+                                                  end_time__gte=self.oldest_clockable_day,
                                                   source='emacs')
         live_entries.delete()
         
@@ -106,7 +114,8 @@ class Extractor(object):
 
         self.timings_after = self.get_project_timings_for_user(business=business, timesheet_user=timesheet_user)
         logger.info("Added %s hours of time for %s" % ((self.timings_after - self.timings_before), self.username))
-                
+
+
     def _process_orgnode(self, business, sprint_name, orgnode, issues_processed):
         activity = Activity.objects.get_or_create(code='dev')[0]
         try:
@@ -121,19 +130,28 @@ class Extractor(object):
             raise Exception("No sprint found for [%s] in project %s" % (sprint_name, business.name)) #sic, sprints are called projects
 
         if not project.can_add_dev_time():
-            self.status['infos'].append("Ignoring time for sprint %s in project %s" % (sprint_name, business.name)) #sic
+            self.status['infos'].append("Ignoring time for sprint %s in project %s, the sprint is probably closed" % (sprint_name, business.name)) #sic
             return
 
         issue_id = Issue.extract_issue_id(orgnode.headline)
         issue = None
 
+        has_at_least_one_valid_clock_entry = False
+        for clock in orgnode.getClocks():
+            if clock['to'] >= self.oldest_clockable_day:
+                has_at_least_one_valid_clock_entry = True
+                break
+
+        if not has_at_least_one_valid_clock_entry:
+            self.status['infos'].append("No clock entries for '%s' are after the oldest clockable day, ignoring" % orgnode.headline)
+            return
+            
         if issue_id is not None:
             try:
                 # this filter allows that issues could be in the wrong sprint, but they must be in the right business
                 issue = Issue.objects.get(number=issue_id, project__business=project.business)
             except Issue.DoesNotExist:
                 issue = None
-
             except Issue.MultipleObjectsReturned:
                 issue = Issue.objects.filter(number=issue_id, project__business=project.business).order_by("-interface_plugin_number", "-id")[0]
 
@@ -183,6 +201,11 @@ class Extractor(object):
 
             if clock['from'].day != clock['to'].day:
                 self.status['errors'].append("Clock entry spans more than one day, if this is real then split the entry. From=%s, To=%s. Issue=%s:%s" % (clock['from'], clock['to'], issue.number, subject))
+                continue
+
+            if clock['to'] >= self.oldest_clockable_day:
+                self.status['infos'].append("Ignoring clock entry %s - %s in issue %s because it's before %s" %
+                                            (clock['from'], clock['to'], orgnode.headline, self.oldest_clockable_day))
                 continue
             
             timesheet_comment_text = orgnode.CleanBody().strip()

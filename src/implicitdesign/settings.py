@@ -93,6 +93,10 @@ MEDIA_ROOT = os.path.join(PROJECT_HOME, "media")
 
 NUM_BUSINESS_HOURS_PER_DAY = 8
 
+# the number of business days backwards from today within which users
+# are allowed to edit their own timesheets.
+NUM_BUSINESS_DAYS_FOR_ALLOWED_CLOCKING = 2
+
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
