@@ -154,6 +154,10 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/issues/' + objs.issue.id + '/history',
           perms: (objs) => ['has_view_issue_history']
         },
+        { label: (objs) => 'Clocked times',
+          nav_url: (objs) => '/clock/history/issue/' + objs.issue.id,
+          perms: (objs) => ['has_view_actual_hours']
+        },
     ]
     
 }

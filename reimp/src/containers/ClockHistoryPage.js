@@ -9,10 +9,12 @@ import {
 class ClockHistoryPage extends Component {
 
     render() {
-        const { list_key, filter_unallocated} = this.props
+        const { list_key, filter_unallocated, filter_issue_id } = this.props
         return (
             <div className="list-layout__list">
-              <AutoClockList list_key={list_key} filter_unallocated={filter_unallocated} />
+              <AutoClockList list_key={list_key}
+                             filter_unallocated={filter_unallocated}
+                             filter_issue_id={filter_issue_id} />
             </div>
         )
     }
@@ -21,12 +23,15 @@ class ClockHistoryPage extends Component {
 function mapStateToProps(state, props) {
 
     const { filter } = props.match.params
+    const { issueId } = props.match.params
 
     const filter_unallocated = filter === "unallocated"
+    const filter_issue_id = issueId || undefined
     
     return {
         list_key: LIST_KEY__CLOCK_HISTORY_LIST,
-        filter_unallocated
+        filter_unallocated,
+        filter_issue_id
     }
 }
 

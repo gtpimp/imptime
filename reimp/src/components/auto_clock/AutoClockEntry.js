@@ -1,12 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import { css } from 'emotion'
 import '../../sass/auto-clock.scss'
 import moment from 'moment'
 import { getAutoClock, ensureAutoClocksLoaded } from '../../actions/AutoClock'
 import Timestamp from '../Timestamp'
 import Hours from '../Hours'
 import AutoClockEntity from './AutoClockEntity'
+import OtherUser from '../OtherUser'
 
 class AutoClockEntry extends Component {
 
@@ -37,6 +39,13 @@ class AutoClockEntry extends Component {
         return (
             <div className={classNames("auto-clock-entry", "entry__"+entry.id)}>
 
+              <div className={css`display: flex`}>
+                <div className="auto-clock-entry__label">
+                  User: 
+                </div>
+                <OtherUser user_id={entry.user_id} />
+              </div>
+              
               <div className="auto-clock-entry__times">
 
                 <div className="auto-clock-entry__label">

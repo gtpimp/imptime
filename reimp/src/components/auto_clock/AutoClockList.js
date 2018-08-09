@@ -25,6 +25,7 @@ import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
 import { logged_in_user } from '../../actions/Auth'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
 import Pagination from '../Pagination'
+import IssueName from '../IssueName'
 
 class AutoClockList extends Component {
 
@@ -47,13 +48,18 @@ class AutoClockList extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, list_key, filter, nested_objects, logged_in_user_id, filter_unallocated } = props
+        const { dispatch, list_key, filter, nested_objects, logged_in_user_id,
+                filter_unallocated, filter_issue_id } = props
         if ( filter.user_id !== logged_in_user_id ) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
         }
         if ( filter_unallocated !== undefined && filter.is_unallocated !== filter_unallocated ) {
             dispatch(update_list_filter(list_key, {is_unallocated:filter_unallocated}))
         }
+        if ( filter_issue_id !== undefined && filter.issue_id !== filter_issue_id ) {
+            dispatch(update_list_filter(list_key, {issue_id:filter_issue_id}))
+        }
+        
         dispatch(fetchAutoClocksIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
@@ -79,7 +85,7 @@ class AutoClockList extends Component {
 
     render() {
 
-        const { auto_clocks_by_id, is_loading, list_key, filter_unallocated } = this.props
+        const { auto_clocks_by_id, is_loading, list_key, filter_unallocated, filter_issue_id } = this.props
 
         if ( is_loading && !auto_clocks_by_id && auto_clocks_by_id.length === 0 ) {
             return (
@@ -93,6 +99,11 @@ class AutoClockList extends Component {
               { filter_unallocated &&
                 <h2>
                   Unallocated time entries.
+                </h2>
+              }
+              { filter_issue_id &&
+                <h2>
+                  For issue <IssueName issue_id={filter_issue_id} />
                 </h2>
               }
               <DivTable>
@@ -112,7 +123,7 @@ class AutoClockList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key, filter_unallocated } = props
+    const { list_key, filter_unallocated, filter_issue_id } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids)
     const last_updated = getLastUpdated(state, list_key)
@@ -133,6 +144,7 @@ function mapStateToProps(state, props) {
         nested_objects,
         filter,
         filter_unallocated: filter_unallocated || undefined,
+        filter_issue_id: filter_issue_id || undefined,
         logged_in_user_id
     }
 }
