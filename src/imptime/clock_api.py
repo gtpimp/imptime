@@ -239,6 +239,12 @@ class ClockViewSet(BaseViewSet):
             for entry_pk in entry_pks:
                 entry = self.allowed_timesheet_entry(entry_pk)
 
+                can_edit = entry.user_id == request.user_id
+                if not can_edit:
+                    data['status'] = "soft_failure"
+                    data['error'] = "Can only edit your own clock entries"
+                    continue
+                
                 oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=request.user)
 
                 if entry.issue_id and not entry.issue.project.can_add_dev_time(): #sic

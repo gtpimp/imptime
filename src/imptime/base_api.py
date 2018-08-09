@@ -168,8 +168,18 @@ class BaseViewSet(viewsets.ViewSet):
         return IssueReview.objects.filter(issue__in=self.allowed_issues())
     
     def allowed_timesheet_entries(self):
-        return TimesheetEntry.objects.all()\
-          .filter_by_logged_in_user(self.request.user).distinct()
+        users_timesheet_entries = TimesheetEntry.objects\
+                                                .all()\
+                                                .filter_by_logged_in_user(self.request.user)\
+                                                .distinct()
+        other_timesheet_entries_user_can_see = TimesheetEntry.objects\
+                                               .all()\
+                                               .filter(issue__project__business__business_permissions__user=self.request.user,
+                                                       issue__project__business__business_permissions__can_view_actual_hours=True)
+
+        qs =  TimesheetEntry.objects.filter(Q(pk__in=users_timesheet_entries.values_list('id', flat=True))|
+                                            Q(pk__in=other_timesheet_entries_user_can_see.values_list('id', flat=True)))
+        return qs
 
     def allowed_timesheet_entry(self, pk):
         return self.allowed_timesheet_entries().get(pk=pk)
