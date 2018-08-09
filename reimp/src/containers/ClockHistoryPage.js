@@ -7,6 +7,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import {ensureIssuesLoaded, getIssue} from '../actions/Issues'
 import {set_toolbars,} from '../actions/Page'
+import IssueName from '../components/IssueName'
 import {
     LIST_KEY__CLOCK_HISTORY_LIST,
     PAGE_KEY__CLOCK_HISTORY_PAGE
@@ -19,12 +20,19 @@ import Splitter from '../components/Splitter'
 class ClockHistoryPage extends Component {
 
     componentDidMount() {
-        const { dispatch, list_key, logged_in_user_id } = this.props
+        const { dispatch, list_key, logged_in_user_id, filter_unallocated, filter_issue_id } = this.props
         dispatch(set_toolbars(PAGE_KEY__CLOCK_HISTORY_PAGE, ['clock-history']))
 	dispatch(initList(list_key))
         if ( logged_in_user_id ) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
         }
+        if ( filter_unallocated ) {
+            dispatch(update_list_filter(list_key, {is_unallocated:filter_unallocated}))
+        }
+        if ( filter_issue_id ) {
+            dispatch(update_list_filter(list_key, {issue_id:filter_issue_id}))
+        }
+        
         this.refresh()
     }
 
@@ -58,9 +66,19 @@ class ClockHistoryPage extends Component {
         return (
             <div className="list-layout__list">
               <Splitter>
-                <AutoClockList list_key={list_key}
-                               filter_unallocated={filter_unallocated}
-                               filter_issue_id={filter_issue_id} />
+                <div>
+                  { filter_unallocated &&
+                    <h2>
+                      Unallocated time entries.
+                    </h2>
+                  }
+                  { filter_issue_id &&
+                    <h2>
+                      For issue <IssueName issue_id={filter_issue_id} />
+                    </h2>
+                  }
+                  <AutoClockList list_key={list_key} />
+                </div>
                 {null}
               </Splitter>
             </div>
