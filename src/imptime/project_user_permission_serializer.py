@@ -61,6 +61,7 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     has_edit_calendar = serializers.BooleanField()
     has_view_review_cycle = serializers.BooleanField()
     has_edit_review_cycle = serializers.BooleanField()
+    has_edit_old_clock_entries = serializers.BooleanField()
     has_edit_tags = serializers.BooleanField()
     has_view_velocity = serializers.BooleanField()
     has_edit_velocity = serializers.BooleanField()

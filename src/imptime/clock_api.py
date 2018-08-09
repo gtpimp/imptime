@@ -224,6 +224,7 @@ class ClockViewSet(BaseViewSet):
     def adjust(self, request, pk):
         try:
             params = request.data
+            data = {'status': "success"}
             
             if 'clock_ids' in params:
                 entry_pks = params['clock_ids']
@@ -237,16 +238,23 @@ class ClockViewSet(BaseViewSet):
             for entry_pk in entry_pks:
                 entry = self.allowed_timesheet_entry(entry_pk)
 
+                oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=request.user)
+
                 if entry.issue_id and not entry.issue.project.can_add_dev_time(): #sic
-                    raise Exception("Can't edit entries for locked sprints: %s" % entry.issue.project) #sic
+                    data['status'] = "soft_failure"
+                    data['error'] = "Can't edit entries for locked sprints: %s" % entry.issue.project.name
+                    continue
 
                 if 'issue_id' in validated_data and validated_data['issue_id']:
                     issue_id = validated_data['issue_id']
                     issue = self.allowed_issues().get(pk=issue_id)
 
                     if not issue.project.can_add_dev_time(): #sic
-                        raise Exception("Can't entries into a locked sprint: %s" % issue.project) #sic
-                    entry.issue = issue
+                        data['status'] = "soft_failure"
+                        data['error'] = "Can't move this entry into a locked sprint: %s" % issue.project.name
+                        continue
+                    else:
+                        entry.issue = issue
                     
                 if 'role_name' in validated_data and validated_data['role_name'] and entry.issue:
                     entry.role = ProjectRole.objects.get_or_create(
@@ -254,18 +262,30 @@ class ClockViewSet(BaseViewSet):
                         name=validated_data['role_name'])[0]
 
                 if 'start_time' in validated_data and validated_data['start_time']:
-                    entry.start_time = validated_data['start_time']
+                    new_start_time = validated_data['start_time']
+                    if new_start_time < Entry.get_oldest_day_for_allowed_clocking(user=request.user):
+                        data['status'] = "soft_failure"
+                        data['error'] = "Can't set the end time older than %s" % oldest_clockable_day.date
+                        continue
+                    else:
+                        entry.start_time = new_start_time
 
                 if 'end_time' in validated_data and validated_data['end_time']:
-                    entry.end_time = validated_data['end_time']
+                    new_end_time = validated_data['end_time']
+                    if new_end_time < Entry.get_oldest_day_for_allowed_clocking(user=request.user):
+                        data['status'] = "soft_failure"
+                        data['error'] = "Can't set the end time older than %s" % oldest_clockable_day.date
+                        continue
+                    else:
+                        entry.end_time = new_end_time
 
                 if 'description' in validated_data and validated_data['description']:
                     entry.comments = params['description'] or  ""
-
                     
                 entry.save()
-                
-            data = {'status': 'success', 'payload': entry_pks}
+
+            if entry_pks:
+                data['payload'] = entry_pks
 
         except Exception, ex:
             logger.exception(ex)

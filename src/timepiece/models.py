@@ -467,6 +467,7 @@ class BusinessPermissions(BaseModel):
     can_import_actual_hours = models.BooleanField(default=False, verbose_name="Can Import Actual Hours")
     can_edit_business_comments = models.BooleanField(default=False, verbose_name="Can edit project comments")
     can_view_review_cycle = models.BooleanField(default=False, verbose_name="Can View Review Cycle")
+    can_edit_old_clock_entries = models.BooleanField(default=False, verbose_name="Can Edit Old Clock Entries")
 
     can_do_dev_checklist = models.BooleanField(default=False, verbose_name="Do dev checklist")
     can_do_traffic_checklist = models.BooleanField(default=False, verbose_name="Traffic checklist")
@@ -568,6 +569,7 @@ class BusinessPermissions(BaseModel):
         bp.can_import_actual_hours = True
         bp.can_edit_business_comments = True
         bp.can_view_review_cycle = True
+        bp.can_edit_old_clock_entries = True
         bp.can_do_dev_checklist = True
         bp.can_do_traffic_checklist = True
         bp.can_do_finance_checklist = True
@@ -678,6 +680,10 @@ class BusinessPermissions(BaseModel):
     def has_view_review_cycle(self):
         return self.is_active_member_of_business and self.can_view_review_cycle
 
+    @property
+    def has_edit_old_clock_entries(self):
+        return self.is_active_member_of_business and self.can_edit_old_clock_entries
+    
     @property
     def has_edit_permissions(self):
         return self.is_active_member_of_business and self.can_edit_permissions
@@ -3001,6 +3007,13 @@ class Entry(BaseModel):
         return { 'hours': full_hours,
                  'minutes': minutes }
 
+    @classmethod
+    def get_oldest_day_for_allowed_clocking(self, user):
+        return CalendarEvent.date_num_working_days_from(user=user,
+                                                        start_date_inclusive=timezone.now().replace(hour=0,minute=0),
+                                                        num_days=settings.NUM_BUSINESS_DAYS_FOR_ALLOWED_CLOCKING,
+                                                        direction=-1)
+    
     @property
     def atrate(self):
         return self.hours * self.rate

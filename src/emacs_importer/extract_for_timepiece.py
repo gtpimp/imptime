@@ -67,10 +67,7 @@ class Extractor(object):
         timesheet_user = User.objects.get(username=self.username)
         self.timings_before = self.get_project_timings_for_user(business=business, timesheet_user=timesheet_user)
 
-        self.oldest_clockable_day = CalendarEvent.date_num_working_days_from(user=timesheet_user,
-                                                                             start_date_inclusive=datetime.now().replace(hour=0,minute=0),
-                                                                             num_days=settings.NUM_BUSINESS_DAYS_FOR_ALLOWED_CLOCKING,
-                                                                             direction=-1)
+        self.oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=timesheet_user)
         self.status['infos'].append("Oldest clockable day is %s" % self.oldest_clockable_day)
         
         live_entries = Entry.objects.all().filter(user=timesheet_user,
