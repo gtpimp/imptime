@@ -61,7 +61,7 @@ class SubNavBar extends Component {
               </ToolbarDiv>
               <ToolbarDiv side="right">
 
-                { false && <AutoClockPopup />}
+                <AutoClockPopup />
 
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
 
