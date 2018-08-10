@@ -26,6 +26,6 @@ class ClockEntryUpdateSerializer(BaseSerializer):
 class ClockEntryCreateSerializer(BaseSerializer):
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
-    description = serializers.CharField()
+    description = serializers.CharField(allow_null=True, required=False)
     issue_id = serializers.CharField()
     

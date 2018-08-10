@@ -93,7 +93,7 @@ class ClockViewSet(BaseViewSet):
             issue_id = validated_data['issue_id']
             start_time = validated_data['start_time']
             end_time = validated_data['end_time']
-            description = validated_data['description']
+            description = validated_data.get('description', "")
             role_name = "developer"
             data = {'status': "success"}
 
