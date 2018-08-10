@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import { map, keyBy, keys } from 'lodash'
 import Timestamp from './Timestamp'
 import classNames from 'classnames'
+import { has_permission } from '../actions/Users'
+import { doesMienHaveFeature } from '../actions/Mien'
 import {
     ensureBillableHoursStatementLoaded,
     getBillableHoursStatement,
@@ -161,6 +163,7 @@ class BillableHoursStatement extends Component {
     }
 
     renderHoursRow(header_list, row, index) {
+        const { show_money } = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
         
@@ -204,7 +207,9 @@ class BillableHoursStatement extends Component {
                             return (
                                 <div className="div-table__cell" key={header_key}
                                      style={getCellStyle(header)}>
-                                  <CurrencyValue value={row.cost_with_commission} />
+                                  { show_money &&
+                                    <CurrencyValue value={row.cost_with_commission} />
+                                  }
                                 </div>
                             )
                         case "business_days":
@@ -359,6 +364,8 @@ function mapStateToProps(state, props) {
     const filter = get_billable_hours_statement_filter(state)
     const show_invoices_section = true
 
+    const show_money = true || doesMienHaveFeature(state, 'costs')
+
     const num_days_before_month_become_interesting = 7
     if ( ! filter.date_from_inclusive ) {
         if ( moment().date() < num_days_before_month_become_interesting ) {
@@ -380,7 +387,8 @@ function mapStateToProps(state, props) {
         header_list_by_project_and_user,
         header_list_by_project,
         header_list_by_user,
-        header_list_totals
+        header_list_totals,
+        show_money,
     }
 }
 
