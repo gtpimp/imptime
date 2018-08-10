@@ -135,7 +135,7 @@ class IssuesPage extends Component {
         const styles = {maxHeight: height_limit}
         
         return (
-              <div className="list-layout__list" style={styles}>
+            <div className="list-layout__list" style={styles}>
                 { filter_sprint_id === sprint_id &&
                   <IssueList list_key={LIST_KEY__ISSUE_LIST}
                              onSelectIssues={this.onSelectIssues}
@@ -176,15 +176,14 @@ class IssuesPage extends Component {
     renderSinglePane() {
         const { sprint_id, is_single_selection, is_creating_issue, selected_issue} = this.props
 
+        const should_render_creation_pane = ( is_creating_issue || (is_single_selection && sprint_id && selected_issue ) )
+        
         return (
-            <div>
-              { !( is_creating_issue || (is_single_selection && sprint_id && selected_issue )) &&
-                this.renderLeftPane()
-              }
-              { ( is_creating_issue || (is_single_selection && sprint_id && selected_issue )) &&
-                this.renderRightPane()
-              }
-            </div>
+            <Splitter>
+              { ! should_render_creation_pane && this.renderLeftPane() }
+              { should_render_creation_pane && this.renderRightPane() }
+              {null}
+            </Splitter>
         )
     }
 
@@ -201,16 +200,18 @@ class IssuesPage extends Component {
         }
         if ( show_sidebar && sidebar_view_mode === 'fullscreen' ) {
             return (
-                <div className="main-layout__scroll-panel">
+                <Splitter>
                   {this.renderSinglePane()}
-                </div>
+                  {null}
+                </Splitter>
             )
         }
         if ( ! show_sidebar ) {
             return (
-                <div className="main-layout__scroll-panel">
+                <Splitter>
                   {this.renderLeftPane()}
-                </div>
+                  {null}
+                </Splitter>
             )
         }
     }

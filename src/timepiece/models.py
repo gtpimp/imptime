@@ -467,6 +467,7 @@ class BusinessPermissions(BaseModel):
     can_import_actual_hours = models.BooleanField(default=False, verbose_name="Can Import Actual Hours")
     can_edit_business_comments = models.BooleanField(default=False, verbose_name="Can edit project comments")
     can_view_review_cycle = models.BooleanField(default=False, verbose_name="Can View Review Cycle")
+    can_edit_old_clock_entries = models.BooleanField(default=False, verbose_name="Can Edit Old Clock Entries")
 
     can_do_dev_checklist = models.BooleanField(default=False, verbose_name="Do dev checklist")
     can_do_traffic_checklist = models.BooleanField(default=False, verbose_name="Traffic checklist")
@@ -568,6 +569,7 @@ class BusinessPermissions(BaseModel):
         bp.can_import_actual_hours = True
         bp.can_edit_business_comments = True
         bp.can_view_review_cycle = True
+        bp.can_edit_old_clock_entries = True
         bp.can_do_dev_checklist = True
         bp.can_do_traffic_checklist = True
         bp.can_do_finance_checklist = True
@@ -678,6 +680,10 @@ class BusinessPermissions(BaseModel):
     def has_view_review_cycle(self):
         return self.is_active_member_of_business and self.can_view_review_cycle
 
+    @property
+    def has_edit_old_clock_entries(self):
+        return self.is_active_member_of_business and self.can_edit_old_clock_entries
+    
     @property
     def has_edit_permissions(self):
         return self.is_active_member_of_business and self.can_edit_permissions
@@ -1342,13 +1348,15 @@ class Project(BaseModel):
             return None
         return rate.time_tracking_mode
 
-    def get_default_issue_for_role(self, project_role):
-        return Issue.objects.get_or_create(subject=project_role.name,
+    def get_default_issue_for_type(self, user, issue_type, subject, description):
+        return Issue.objects.get_or_create(subject=subject,
                                            project=self,
-                                           defaults={'issue_type':'issue',
-                                                     'status2':IssueStatus.objects.get_or_create(name='auto', business=self.business)[0],
+                                           assigned_to=user,
+                                           issue_type=issue_type,
+                                           defaults={'status2':IssueStatus.objects.get_or_create(name='new', business=self.business)[0],
                                                      'number':Issue.get_next_issue_number(self.business),
-                                                     'description':"Default issue for %s" % project_role.name})[0]
+                                                     'description':description})[0]
+
     
     @property
     def scheduled_events(self):
@@ -2686,7 +2694,7 @@ class EntriesQuerySet(QuerySet):
     def filter_by_logged_in_user(self, user):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
-        return self.filter(issue__project__business__in=BusinessPermissions.active_businesses_for_user(user))
+        return self.filter(Q(issue__isnull=True)|Q(issue__project__business__in=BusinessPermissions.active_businesses_for_user(user)))
 
     def cost_totals_for_project(self, project):
         """ this function assumes that all entries in the queryset
@@ -2999,6 +3007,13 @@ class Entry(BaseModel):
         return { 'hours': full_hours,
                  'minutes': minutes }
 
+    @classmethod
+    def get_oldest_day_for_allowed_clocking(self, user):
+        return CalendarEvent.date_num_working_days_from(user=user,
+                                                        start_date_inclusive=timezone.now().replace(hour=0,minute=0),
+                                                        num_days=settings.NUM_BUSINESS_DAYS_FOR_ALLOWED_CLOCKING,
+                                                        direction=-1)
+    
     @property
     def atrate(self):
         return self.hours * self.rate
@@ -3162,9 +3177,9 @@ class Entry(BaseModel):
 
         if self.source != 'emacs':
             if was_created:
-                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.project_id]})
+                RefreshNotifier().notify_model_create(self, params={'sprint_id': [self.issue.project_id if self.issue else None]})
             else:
-                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.project_id]})
+                RefreshNotifier().notify_model_update(self, params={'sprint_id': [self.issue.project_id] if self.issue else None})
 
     def delete(self, *args, **kwargs):
         if self.source != 'emacs':
@@ -3328,12 +3343,6 @@ class Entry(BaseModel):
             qs = entries.filter(issue__project=projects[name])
             data['paid_leave'][name] = qs.aggregate(s=Sum('hours'))['s']
         return data
-
-    def __unicode__(self):
-        """
-        The string representation of an instance of this class
-        """
-        return '%s on %s' % (self.user, self.project)
 
     class Meta:
         verbose_name_plural = 'entries'
@@ -4624,7 +4633,10 @@ class IssueHistory(BaseModel):
 
     @classmethod
     def add_history(self, user, issue, description, before, after):
-        IssueHistory.objects.create(created_by=user, issue_id=issue.id, description=description,
+        IssueHistory.objects.create(created_by=user,
+                                    original_issue=issue,
+                                    issue_id=issue.id,
+                                    description=description,
                                     before=before, after=after)
 
     @classmethod
@@ -4738,6 +4750,19 @@ class CalendarEvent(BaseModel):
                     users.add(user)
         return users
 
+    @classmethod
+    def date_num_working_days_from(self, user, start_date_inclusive, num_days, direction=+1):
+        running_date = start_date_inclusive
+        while num_days > 0:
+            if self.is_working_day(user, running_date):
+                num_days += direction
+            running_date += relativedelta(days=direction)
+        return running_date
+
+    @classmethod
+    def is_working_day(self, user, date):
+        return self.num_non_working_days_in_range(user, date, date) == 0
+     
     @classmethod
     def num_non_working_days_in_range(self, user, date_from_inclusive, date_to_inclusive):
 
@@ -5004,6 +5029,7 @@ class Holiday(BaseModel):
     
     @classmethod
     def business_days_in_range(self, date_from_inclusive, date_to_inclusive):
+        """ this function only know about holidays. to include user's personal leave etc, use CalendarEvent """
         holiday_dates = Holiday.objects.filter(applies_on__gte=date_from_inclusive,
                                                applies_on__lte=date_to_inclusive)\
                                                .values('applies_on')

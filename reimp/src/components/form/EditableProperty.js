@@ -114,7 +114,7 @@ class EditableProperty extends Component {
     render() {
 
         const {children, initial_value, is_readonly, is_editing, is_empty, can_edit,
-               edit_as_modal, class_name, wideView, action_label} = this.props
+               edit_as_modal, class_name, modal_variant, action_label} = this.props
 
         const that = this
         let editing_child = null
@@ -127,7 +127,8 @@ class EditableProperty extends Component {
                     initial_value: initial_value,
                     onSubmitted: that.onEdited,
                     onKeyDown: that.keyDown,
-                    onCancel: that.cancelEditing
+                    onCancel: that.cancelEditing,
+                    onClose: that.stopEditing
                 })
             } else if ( index === 1 ) {
                 readonly_child = React.cloneElement(child, {
@@ -153,7 +154,7 @@ class EditableProperty extends Component {
               <div>
                 { is_editing && edit_as_modal &&
                   <ModalDialog isOpen={true}
-                               variant={wideView ? "large" : "default"}
+                               variant={modal_variant}
                                onRequestClose={this.stopEditing}
                                contentLabel={action_label || ""}>
                     <div className="editable-property-modal__row editable-property-modal__row--header">
@@ -177,7 +178,7 @@ class EditableProperty extends Component {
 function mapStateToProps(state, props) {
 
     const {property_key, initial_value, edit_as_modal, can_edit,
-           class_name, wideView, action_label} = props
+           class_name, modal_variant, action_label} = props
 
     const is_editing = can_edit && isEditing(state, property_key)
 
@@ -190,7 +191,7 @@ function mapStateToProps(state, props) {
         is_readonly: isReadonly(state, property_key),
         is_empty: !is_editing && !initial_value && initial_value !== false,
         class_name: class_name || "",
-        wideView: wideView || false,
+        modal_variant,
         action_label,
         mode: getMode(state, property_key)
     }

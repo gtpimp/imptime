@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map, values } from 'lodash'
+import { map, values, size, filter as lofilter } from 'lodash'
 import classNames from 'classnames'
 import {
-    initList,
     invalidateList,
     shouldFetchList,
     getVisibleItemIds,
@@ -13,7 +12,6 @@ import {
     getLastUpdated,
     update_list_pagination,
     update_list_ordering,
-    update_list_filter,
     getListFilter
 } from '../../actions/ItemList'
 import { ENTITY_KEY__AUTO_CLOCK } from '../../actions/ItemListKeyRegistry'
@@ -22,9 +20,13 @@ import {
 } from '../../actions/AutoClock'
 import DivTable from '../DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../../actions/Item'
-import { logged_in_user } from '../../actions/Auth'
 import EditableAutoClockEntry from './EditableAutoClockEntry'
 import Pagination from '../Pagination'
+import { ensureUsersLoaded } from '../../actions/Users'
+import { ensureProjectsLoaded } from '../../actions/Projects'
+import { ensureSprintsLoaded } from '../../actions/Sprints'
+import { ensureIssuesLoaded } from '../../actions/Issues'
+
 
 class AutoClockList extends Component {
 
@@ -35,7 +37,6 @@ class AutoClockList extends Component {
     
     componentDidMount() {
 	const { dispatch, list_key } = this.props
-	dispatch(initList(list_key))
         dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
         dispatch(update_list_pagination(list_key, { page_size: 50 }))
         this.refresh()
@@ -47,10 +48,29 @@ class AutoClockList extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, list_key, filter, nested_objects, logged_in_user_id } = props
-        if ( filter.user_id !== logged_in_user_id ) {
-            dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
+        const { dispatch, list_key, filter, nested_objects, auto_clocks_by_id } = props
+        
+        if ( filter !== this.props.filter ) {
+            dispatch(invalidateList(list_key))
         }
+
+        const all_user_ids = lofilter(map(auto_clocks_by_id, (auto_clock) => auto_clock.user_id), (x) => x !== undefined && x !== null)
+        const all_issue_ids = lofilter(map(auto_clocks_by_id, (auto_clock) => auto_clock.issue_id), (x) => x !== undefined && x !== null)
+        const all_sprint_ids = lofilter(map(auto_clocks_by_id, (auto_clock) => auto_clock.sprint_id), (x) => x !== undefined && x !== null)
+        const all_project_ids = lofilter(map(auto_clocks_by_id, (auto_clock) => auto_clock.project_id), (x) => x !== undefined && x !== null)
+        if ( size(all_user_ids)>0 ) { 
+            dispatch(ensureUsersLoaded(all_user_ids))
+        }
+        if ( size(all_issue_ids)>0 ) {
+            dispatch(ensureIssuesLoaded(all_issue_ids))
+        }
+        if ( size(all_sprint_ids)>0 ) {
+            dispatch(ensureSprintsLoaded(all_sprint_ids))
+        }
+        if ( size(all_project_ids)>0 ) {
+            dispatch(ensureProjectsLoaded(all_project_ids))
+        }
+        
         dispatch(fetchAutoClocksIfNeeded(list_key))
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
@@ -113,7 +133,6 @@ function mapStateToProps(state, props) {
     const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__AUTO_CLOCK, visible_item_ids)
     const items_by_id = getAutoClocks(state, visible_item_ids)
     const filter = getListFilter(state, list_key)
-    const logged_in_user_id = logged_in_user().user_id || -1
 
     return {
         auto_clock_ids: visible_item_ids,
@@ -123,8 +142,7 @@ function mapStateToProps(state, props) {
         should_fetch_list,
         last_updated,
         nested_objects,
-        filter,
-        logged_in_user_id
+        filter
     }
 }
 

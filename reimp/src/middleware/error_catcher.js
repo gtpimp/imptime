@@ -15,7 +15,9 @@ export default function error_catcher_middleware(_ref) {
     return function (next) {
 	return function (action) {
 
-	    if ( action && action.type.indexOf('FAILED') !== -1 && ACTIONS_TO_IGNORE.indexOf(action.type) === -1 ) {
+	    if ( action && action.type.indexOf('FAILED') !== -1 &&
+                 ACTIONS_TO_IGNORE.indexOf(action.type) === -1 &&
+                 action.failure_type !== "soft") {
 
                 if ( action.error && action.error.indexOf && action.error.indexOf(DUPLICATE_LOADING_ERROR_MESSAGE) !== -1 ) {
                     console.log("Duplicate call running, not an error but component will wait for initialisation: " + action.type)

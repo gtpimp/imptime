@@ -63,6 +63,10 @@ export function getListFilter(state, list_key) {
     return (((state || {}).item_list || {})[list_key] ||  {}).filter || {}
 }
 
+export function getListPagination(state, list_key) {
+    return (((state || {}).item_list || {})[list_key] ||  {}).pagination || {}
+}
+
 export function update_list_ordering(list_key, ordering) {
     return {
         type: UPDATE_LIST_ORDERING,

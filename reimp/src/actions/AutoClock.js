@@ -12,7 +12,9 @@ import {
     getItemsById,
     itemPost,
     setGlobalEntityFlag,
-    getGlobalEntityFlag
+    getGlobalEntityFlag,
+    startCandidateItem,
+    saveCandidateItem
 } from '../actions/Item'
 import {
     select_issues,
@@ -52,6 +54,13 @@ export function isAutoClockingEnabled(state) {
         }
     }
     return enabled
+}
+
+export function createHistoricClockEntry(data, on_done) {
+    return (dispatch, getState) => {
+        dispatch(startCandidateItem(ENTITY_KEY__AUTO_CLOCK, data))
+        dispatch(saveCandidateItem(ENTITY_KEY__AUTO_CLOCK, on_done))
+    }
 }
 
 export function getPreferredRole() {
@@ -96,6 +105,10 @@ export function getAutoClocks(state, auto_clock_ids) {
 
 export function getAutoClocksById(state, auto_clock_ids) {
     return getItemsById(state, ENTITY_KEY__AUTO_CLOCK, auto_clock_ids)
+}
+
+export function getNumUnallocatedEntries(state) {
+    // return get(state, ["item", ENTITY_KEY__AUTO_CLOCK, 
 }
 
 export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue_id) {
@@ -154,7 +167,7 @@ export function getAvailableAutoClockEntity(state) {
 
 export function clockIn(data) {
     // data contains one or more of: 
-    // project_id, sprint_id, issue_id, project_name, role, description
+    // project_id, sprint_id, issue_id, project_name, action, description
     
     const url = "imp/clock/0/clockIn/"
     const field_name = "clockIn"
@@ -184,17 +197,14 @@ export function deleteAutoClocks(clock_ids) {
     return itemPost(ENTITY_KEY__AUTO_CLOCK, [clock_ids[0]], url, field_name, field_value, method, data)
 }
 
-export function updateAutoClocks(clock_ids, role_name, description, start_time, end_time) {
+export function updateAutoClocks(clock_ids, data) {
+    // data can contain any of: role_name, description, start_time, end_time, issue_id
 
     const url = "imp/clock/0/adjust/"
     const field_name = "clockUpdate"
     const field_value = null
     const method = "PUT"
-    const data = { clock_ids: clock_ids,
-                   role_name: role_name,
-                   description: description,
-                   start_time: start_time,
-                   end_time: end_time }
+    data['clock_ids'] = clock_ids
     return itemPost(ENTITY_KEY__AUTO_CLOCK, clock_ids, url, field_name, field_value, method, data)
 }
 

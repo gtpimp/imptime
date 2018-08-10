@@ -168,6 +168,7 @@ class EditPersonPermission(forms.ModelForm):
         self.fields['can_view_velocity'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_edit_velocity'].widget.attrs['class'] = 'medium-safe'
         self.fields['can_view_issue_history'].widget.attrs['class'] = 'medium-safe'
+        self.fields['can_edit_old_clock_entries'].widget.attrs['class'] = 'medium-safe'
         
         self.fields['can_view_permissions'].widget.attrs['class'] = 'unsafe'
         self.fields['can_view_review_cycle'].widget.attrs['class'] = 'unsafe'

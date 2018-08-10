@@ -36,6 +36,15 @@ class Splitter extends Component {
         const minSize = this.props.minSize || 50
         const split = this.props.vertical || "vertical"
 
+        if ( right === undefined || right === null ) {
+            return (
+                <div className="main-layout__scroll-panel">
+                  <Toolbar />
+                  {left}
+                </div>
+            )
+        }
+        
         return (
             <div className="main-layout__scroll-panel main-layout__scroll-container">
               <SplitPane style={{position:'relative'}}

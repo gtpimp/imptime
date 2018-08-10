@@ -21,7 +21,9 @@ export const LIST_KEY__FORM_TAG_LIST = 'form_tag_list'
 export const LIST_KEY__MIEN_LIST = 'mien_list'
 export const LIST_KEY__WIKI_LIST = 'wiki_list'
 export const LIST_KEY__AUTO_CLOCK = 'auto_clock'
+export const LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE = 'recent_auto_clock_by_issue'
 export const LIST_KEY__RECENT_AUTO_CLOCK = 'recent_auto_clock'
+export const LIST_KEY__RECENT_AUTO_CLOCK_UNALLOCATED = 'recent_auto_clock_unallocated'
 export const LIST_KEY__SPRINT_RATES = 'sprint_rates'
 export const LIST_KEY__WORK_SUMMARY_LIST = 'work_summaries'
 export const LIST_KEY__SPRINT_SNAPSHOT_LIST = 'sprint_snapshots'
@@ -100,6 +102,7 @@ export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
 export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 export const PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE = 'billable_hours_statement_page'
 export const PAGE_KEY__SPRINT_SNAPSHOT_PAGE = 'sprint_snapshot_page'
+export const PAGE_KEY__CLOCK_HISTORY_PAGE = 'clock_history_page'
 
 export const HEADER_LIST_NAME__ISSUE = "issue"
 export const HEADER_LIST_NAME__SPRINT = "sprint"

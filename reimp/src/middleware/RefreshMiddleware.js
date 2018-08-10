@@ -47,10 +47,13 @@ import {
     LIST_KEY__WIKI_LIST,
     LIST_KEY__AUTO_CLOCK,
     LIST_KEY__RECENT_AUTO_CLOCK,
+    LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE,
+    LIST_KEY__RECENT_AUTO_CLOCK_UNALLOCATED,
     LIST_KEY__MIEN_LIST,
     LIST_KEY__SCHEDULE_LIST,
     LIST_KEY__CALENDAR_EVENT_LIST,
     LIST_KEY__SPRINT_SNAPSHOT_LIST,
+    LIST_KEY__CLOCK_HISTORY_LIST,
     SELECTOR__SPRINTS
 } from '../actions/ItemListKeyRegistry'
 import { each, keys } from 'lodash'
@@ -180,6 +183,9 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name === "entry" ) {
         list_keys_to_invalidate[LIST_KEY__AUTO_CLOCK] = true
         list_keys_to_invalidate[LIST_KEY__RECENT_AUTO_CLOCK] = true
+        list_keys_to_invalidate[LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE] = true
+        list_keys_to_invalidate[LIST_KEY__CLOCK_HISTORY_LIST] = true
+        list_keys_to_invalidate[LIST_KEY__RECENT_AUTO_CLOCK_UNALLOCATED] = true
     } else if ( d.entity_name === "mien" ) {
         list_keys_to_invalidate[LIST_KEY__MIEN_LIST] = true
     } else if ( d.entity_name === "schedule" ) {

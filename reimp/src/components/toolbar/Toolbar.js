@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import BillableHoursStatementToolbarPanel from './BillableHoursStatementToolbarPanel'
 import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'
+import ClockHistoryToolbarPanel from './ClockHistoryToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
@@ -93,6 +94,8 @@ class Toolbar extends Component {
                 return <WorkSummaryToolbarPanel key='summary' {...this.props} />
             case 'calendar':
                 return <CalendarToolbarPanel key='summary' {...this.props} />
+            case 'clock-history':
+                return <ClockHistoryToolbarPanel key='summary' {...this.props} />
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

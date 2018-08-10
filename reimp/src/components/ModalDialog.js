@@ -5,17 +5,22 @@ import Modal from 'react-modal';
 import '../sass/modal-dialog.scss'
 import classNames from 'classnames'
 import PopupPanel from './PopupPanel'
+import {default_theme as theme} from '../theme/default'
 
 const modal_dialog = css`border-radius: 2px;
+                         font:${theme.fonts.regular_normal};
                          box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
                          box-sizing: border-box;
                          position: absolute;
                          top: 10%;
-                         left: 40%;
                          max-height: 80%;
                          overflow-y: auto;
                          overflow-x: hidden;
                          outline: none; `
+
+const modal_dialog_default = css`left: 40%; width:20%;`
+const modal_dialog_large = css`left: 25%; width:50%;`
+const modal_dialog_medium = css`left: 33%; width:33%;`
 
 class ModalDialog extends Component {
 
@@ -25,7 +30,10 @@ class ModalDialog extends Component {
         
         return (
             <Modal isOpen={isOpen || false}
-                   className={cx(modal_dialog, 'modal-dialog--' + variant)}
+                   className={cx(modal_dialog,
+                                 variant==="default" ? modal_dialog_default : null,
+                                 variant==="large" ? modal_dialog_large : null,
+                                 variant==="medium" ? modal_dialog_medium : null)}
                    overlayClassName="modal-dialog__overlay"
                    onRequestClose={onClose || function () { }}
                    contentLabel={title}>

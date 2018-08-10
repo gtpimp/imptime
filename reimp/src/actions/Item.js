@@ -3,9 +3,12 @@ import { impfetch } from './lib.js'
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { get, values, map, difference, intersection, keyBy, compact, filter } from 'lodash'
 
+import { setSoftErrorMessage } from './Error'
+
 export const ANNOUNCE_ITEMS_SAVING = 'ANNOUNCE_ITEMS_SAVING'
 export const ANNOUNCE_ITEMS_SAVED = 'ANNOUNCE_ITEMS_SAVED'
 export const ANNOUNCE_ITEM_SAVE_FAILED = 'ANNOUNCE_ITEM_SAVE_FAILED'
+export const ANNOUNCE_ITEM_SOFT_FAILURE = 'ANNOUNCE_ITEM_SOFT_FAILURE'
 
 export const ANNOUNCE_ITEMS_LOADED = 'ANNOUNCE_ITEMS_LOADED'
 export const ANNOUNCE_ITEMS_LOAD_FAILED = 'ANNOUNCE_ITEMS_LOAD_FAILED'
@@ -119,12 +122,20 @@ function fetchItemsPromise(dispatch, state, entity_key, item_ids, additional_get
     })
 }
 
-export function announceItemSaveFailed(entity_key, error) {
+export function announceItemSaveFailed(entity_key, error, failure_type) {
     return {
         type: ANNOUNCE_ITEM_SAVE_FAILED,
         entity_key: entity_key,
+        failure_type: failure_type || "error",
         error: error,
         received_at: Date.now()
+    }
+}
+
+export function announceSoftFailure(entity_key, error) {
+    return (dispatch, getState) => {
+        dispatch(announceItemSaveFailed(entity_key, error, "soft"))
+        dispatch(setSoftErrorMessage(error))
     }
 }
 
@@ -269,7 +280,10 @@ export function saveCandidateItem(entity_key, on_done) {
                          body: JSON.stringify(data)}
         ).then(response => response.json())
          .then(json => {
-             if ( json.status !== 'success' ) {
+             if ( json.status === 'soft_failure' ) {
+                 console.log("Soft failure: " + json.error)
+                 dispatch(announceSoftFailure(entity_key, json.error))
+             } else if ( json.status !== 'success' ) {
                  console.log('Request failed with JSON response', json);
                  dispatch(announceCandidateItemSaveFailed(entity_key, json.error))
              } else {
@@ -328,7 +342,10 @@ export function itemPost(entity_key, item_ids, url,
 			  body: JSON.stringify(data)}
 	).then(response => response.json())
 	 .then(json => {
-             if ( json.status !== 'success' ) {
+             if ( json.status === 'soft_failure' ) {
+                 console.log("Soft failure: " + json.error)
+                 dispatch(announceSoftFailure(entity_key, json.error))
+             } else if ( json.status !== 'success' ) {
 		 console.log('Request failed with JSON response', json);
 		 dispatch(announceItemSaveFailed(entity_key, json.error))
              } else {
