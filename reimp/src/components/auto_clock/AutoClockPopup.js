@@ -60,6 +60,7 @@ import PopupPanelHeading from '../PopupPanelHeading'
 import PopupPanelSeparator from '../PopupPanelSeparator'
 import BreadcrumbCell from '../BreadcrumbCell'
 import BreadcrumbSeparator from '../BreadcrumbSeparator'
+import IssueProgress from '../IssueProgress'
 
 class AutoClockPopup extends Component {
     constructor(props) {
@@ -131,7 +132,6 @@ class AutoClockPopup extends Component {
         }
         dispatch(fetchAutoClocksIfNeeded(list_key_unallocated))
         dispatch(ensureNestedObjectsLoaded(nested_objects_unallocated))
-
         
     }
 
@@ -242,13 +242,18 @@ class AutoClockPopup extends Component {
             )
         }
     }
+
+    getEntryHours(entry) {
+        if ( entry.is_active ) {
+            return moment().diff(moment(entry.start_time),'hours', true)
+        } else {
+            return entry.hours
+        }
+    }
     
     renderTimings(entry) {
 
-        let hours = entry.hours
-        if ( ! hours && entry.is_active ) {
-            hours = moment().diff(moment(entry.start_time),'hours', true)
-        }
+        const hours = this.getEntryHours(entry)
         
         return (
             <div key="timings" className={css`display:flex`}>
@@ -295,6 +300,18 @@ class AutoClockPopup extends Component {
             </div>
         )
     }
+
+    renderProgress(entry) {
+        if ( ! entry.issue_id ) {
+            return null
+        }
+        const hours = this.getEntryHours(entry)
+        return (
+            <div className={css`width:75px;height:100%;`}>
+              <IssueProgress issue_id={entry.issue_id} optional_actual={hours}  />
+            </div>
+        )
+    }
     
     renderClockToggle() {
         const { most_recent_entry} = this.props
@@ -308,9 +325,15 @@ class AutoClockPopup extends Component {
                          onClick={this.onShowPopup} />
                   </BreadcrumbCell>
                   { this.renderUnallocatedAlert() }
-                  <BreadcrumbSeparator/>
-                  { this.renderEntryInline(most_recent_entry) }
-                  
+                  <div className={css`font-size:${theme.font_sizes.auto_clock_status}`}>
+                    <BreadcrumbSeparator/>
+                  </div>
+                  <div className={css`font-size:${theme.font_sizes.auto_clock_status};display:flex;`}>
+                    { this.renderEntryInline(most_recent_entry) }
+                    <div className={css`margin-left:${theme.spacing.horizontal_space_inline}`}>
+                      { this.renderProgress(most_recent_entry) }
+                    </div>
+                  </div>
                 </div>
               }
               { (! most_recent_entry || ! most_recent_entry.is_active) &&

@@ -37,6 +37,7 @@ class NavTab extends Component {
         super(props)
         this.showSubMenu = this.showSubMenu.bind(this)
         this.hideSubMenu = this.hideSubMenu.bind(this)
+        this.toggleSubMenu = this.toggleSubMenu.bind(this)
         this.state = {sub_menu_visible: false,
                       expanded: false}
     }
@@ -49,6 +50,12 @@ class NavTab extends Component {
     hideSubMenu() {
         this.setState({sub_menu_visible: false,
                        expanded: false})
+    }
+
+    toggleSubMenu() {
+        const { sub_menu_visible, expanded } = this.state
+        this.setState({sub_menu_visible: !sub_menu_visible,
+                       expanded: !expanded})
     }
     
     render() {
@@ -77,10 +84,11 @@ class NavTab extends Component {
         } else if (variant === 'dashboard-toggle') {
             return ( 
                 <NavDropdownMenuItem expanded={expanded}
-                                     onMouseOver={this.showSubMenu}
                                      onMouseLeave={this.hideSubMenu}
                                      colourName={colourName || null}>
-                  {this.props.label}
+                  <div onClick={this.toggleSubMenu}>
+                    {this.props.label}
+                  </div>
                   <NavDropdownIcon>
                     <i className={cx("material-icons", css`font-size:${theme.font_sizes.dropdown_arrow}`)} >
                       {this.props.expanded ? 'arrow_drop_up' : 'arrow_drop_down'}

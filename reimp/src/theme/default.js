@@ -64,7 +64,8 @@ export const default_theme = {
 
     font_sizes: {
         dropdown_arrow: "12px",
-        superscript: "10px"
+        superscript: "10px",
+        auto_clock_status: "12px"
     },
 
     spacing: {

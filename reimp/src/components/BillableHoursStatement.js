@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import { map, keyBy, keys } from 'lodash'
 import Timestamp from './Timestamp'
 import classNames from 'classnames'
-import { has_permission } from '../actions/Users'
 import { doesMienHaveFeature } from '../actions/Mien'
 import {
     ensureBillableHoursStatementLoaded,
