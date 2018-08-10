@@ -308,7 +308,7 @@ class AutoClockPopup extends Component {
         const hours = this.getEntryHours(entry)
         return (
             <div className={css`width:75px;height:100%;`}>
-              <IssueProgress issue_id={entry.issue_id} optional_actual={hours}  />
+              <IssueProgress issue_id={entry.issue_id} optional_actual={hours} enable_live_timer={true}  />
             </div>
         )
     }

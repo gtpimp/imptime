@@ -16,7 +16,7 @@ class WikiForm extends Component {
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
-        const { handleSubmit } = this.props
+        const { handleSubmit, setTimeout, clearTimeout } = this.props
         if ( this.autoSaveTimer ) {
             clearTimeout(this.autoSaveTimer)
             this.autoSaveTimer = null
