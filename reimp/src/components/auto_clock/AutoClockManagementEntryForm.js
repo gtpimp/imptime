@@ -93,7 +93,7 @@ function mapStateToProps(state, props) {
 
     const { onSubmitted } = props
     const action_options = [ {value: 'management-general', label: 'General'},
-                             {value: 'management-meeting', label: 'Spec'},
+                             {value: 'management-meeting', label: 'Meeting'},
                              {value: 'management-spec', label: 'Spec'},
                              {value: 'management-finance', label: 'Finance'},
                              {value: 'management-assign', label: 'Assign'},
