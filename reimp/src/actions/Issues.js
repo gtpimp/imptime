@@ -505,20 +505,20 @@ export function deleteTagFromIssues(tag_id, issue_ids) {
 }
 
 export function addIssueNeedsAnother(issue_id, needs_issue_id) {
-    const url = "imp/" + ENTITY_KEY__ISSUE + "/" + issue_id + "/add_needs_issue/"
+    const url = "imp/" + ENTITY_KEY__ISSUE + "/add_needs_issue/"
     const field_name = "dependancy"
     const field_value = issue_id
-    const method = "PUT"
-    const data = { other_issue_id: needs_issue_id }
+    const method = "POST"
+    const data = { issue_id: issue_id, needs_issue_id: needs_issue_id }
     return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
 }
 
 export function removeIssueNeedsAnother(issue_id, needs_issue_id) {
-    const url = "imp/" + ENTITY_KEY__ISSUE + "/" + issue_id + "/remove_needs_issue/"
+    const url = "imp/" + ENTITY_KEY__ISSUE + "/remove_needs_issue/"
     const field_name = "dependancy"
     const field_value = issue_id
-    const method = "DELETE"
-    const data = { other_issue_id: needs_issue_id }
+    const method = "POST"
+    const data = { issue_id: issue_id, needs_issue_id: needs_issue_id }
     return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
 }
 

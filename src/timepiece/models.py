@@ -4163,6 +4163,7 @@ class Issue(BaseModel):
         self.check_quality()
         params = { 'project_id': self.project_id,  #sic
                    'sprint_id': self.project_id }
+
         if was_created:
             RefreshNotifier().notify_model_create(self, params)
         else:

@@ -439,37 +439,36 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    @list_route(methods=['PUT'])
-    def add_needs_issue(self, request, issue_pk):
+    @list_route(methods=['POST'])
+    def add_needs_issue(self, request):
         try:
-            context = {}
             data = {'status': "success"}
             params = request.data
-            other_issue_id = params['other_issue_id']
+            issue_id = params['issue_id']
+            needs_issue_id = params['needs_issue_id']
 
-            issue = self.allowed_issue(issue_pk)
-            other_issue = self.allowed_issue(other_issue_id)
+            issue = self.allowed_issue(issue_id)
+            needs_issue = self.allowed_issue(needs_issue_id)
 
             bp = ProjectPermissions.for_user(user=self.request.user,
                                              business=issue.project.business,
                                              auto_create=False)
-            other_bp = ProjectPermissions.for_user(user=self.request.user,
-                                                   business=other_issue.project.business,
+            needs_bp = ProjectPermissions.for_user(user=self.request.user,
+                                                   business=needs_issue.project.business,
                                                    auto_create=False)
 
-            if not bp.has_edit_issue():
+            if not bp.has_edit_issues:
                 data['status'] = "soft_failure"
                 data['error'] = "Insufficient permissions to edit issue %s" % issue
-            elif not other_bp.has_edit_issue():
+            elif not needs_bp.has_edit_issues:
                 data['status'] = "soft_failure"
-                data['error'] = "Insufficient permissions to edit issue %s" % other_issue
+                data['error'] = "Insufficient permissions to edit issue %s" % needs_issue
             else:
-                if other_issue not in issue.needs_issues:
-                    issue.needs_issues.add(other_issue)
-                    issue.save()
-                context['issue'] = IssueSerializer(issue, logged_in_user=request.user).data
+                issue.needs_issues.add(needs_issue)
+                issue.save()
+                needs_issue.save()
                 
-            data['payload'] = {'item': context}
+            data['payload'] = {'issues': []}
             
         except Exception, ex:
             logger.exception(ex)
@@ -477,47 +476,42 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
-    @list_route(methods=['DELETE'])
-    def remove_needs_issue(self, request, issue_pk):
+    @list_route(methods=['POST'])
+    def remove_needs_issue(self, request):
         try:
-            context = {}
             data = {'status': "success"}
             params = request.data
-            other_issue_id = params['other_issue_id']
+            issue_id = params['issue_id']
+            needs_issue_id = params['needs_issue_id']
 
-            issue = self.allowed_issue(issue_pk)
-            other_issue = self.allowed_issue(other_issue_id)
+            issue = self.allowed_issue(issue_id)
+            needs_issue = self.allowed_issue(needs_issue_id)
 
             bp = ProjectPermissions.for_user(user=self.request.user,
                                              business=issue.project.business,
                                              auto_create=False)
-            other_bp = ProjectPermissions.for_user(user=self.request.user,
-                                                   business=other_issue.project.business,
+            needs_bp = ProjectPermissions.for_user(user=self.request.user,
+                                                   business=needs_issue.project.business,
                                                    auto_create=False)
 
-            if not bp.has_edit_issue():
+            if not bp.has_edit_issues:
                 data['status'] = "soft_failure"
                 data['error'] = "Insufficient permissions to edit issue %s" % issue
-            elif not other_bp.has_edit_issue():
+            elif not needs_bp.has_edit_issues:
                 data['status'] = "soft_failure"
-                data['error'] = "Insufficient permissions to edit issue %s" % other_issue
+                data['error'] = "Insufficient permissions to edit issue %s" % needs_issue
             else:
-                if other_issue in issue.needs_issues:
-                    issue.needs_issues.remove(other_issue)
-                    issue.save()
-                context['issue'] = IssueSerializer(issue, logged_in_user=request.user).data
+                issue.needs_issues.remove(needs_issue)
+                issue.save()
+                needs_issue.save()
                 
-            data['payload'] = {'item': context}
+            data['payload'] = {'issues': []}
             
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-        
-        
-
-    
     
     @list_route(methods=['POST'])
     def open_minutes(self, request):
