@@ -504,6 +504,24 @@ export function deleteTagFromIssues(tag_id, issue_ids) {
     return itemPost(ENTITY_KEY__ISSUE, issue_ids, url, field_name, field_value, method, data)
 }
 
+export function addIssueNeedsAnother(issue_id, needs_issue_id) {
+    const url = "imp/" + ENTITY_KEY__ISSUE + "/" + issue_id + "/add_needs_issue/"
+    const field_name = "dependancy"
+    const field_value = issue_id
+    const method = "PUT"
+    const data = { other_issue_id: needs_issue_id }
+    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
+}
+
+export function removeIssueNeedsAnother(issue_id, needs_issue_id) {
+    const url = "imp/" + ENTITY_KEY__ISSUE + "/" + issue_id + "/remove_needs_issue/"
+    const field_name = "dependancy"
+    const field_value = issue_id
+    const method = "DELETE"
+    const data = { other_issue_id: needs_issue_id }
+    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
+}
+
 export function generateReadOnlyIssueCommentLink(issue_id, comment_id) {
     const url = "imp/" + ENTITY_KEY__ISSUE + "/gen_readonly_comment_link/"
     const field_name = "readonly_comment_link"

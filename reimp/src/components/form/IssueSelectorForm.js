@@ -69,7 +69,7 @@ class IssueSelectorForm extends Component {
     }
 
     render() {
-        const { handleSubmit, onKeyDown, default_project_id } = this.props
+        const { handleSubmit, default_project_id } = this.props
         const { project_id, sprint_id } = this.state
 
         return (
@@ -94,7 +94,7 @@ class IssueSelectorForm extends Component {
                   { sprint_id &&
                     <PropertyStackComponent title="Issue">
                       Create a new issue or select an issue:
-                      <IssueTitleField onKeyDown={onKeyDown} />
+                      <IssueTitleField />
                       <IssueSelectorField sprint_id={sprint_id}
                                           auto_focus={false}
                                           onChange={this.onChangeIssue} />
@@ -110,7 +110,7 @@ class IssueSelectorForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted, onKeyDown,
+    const { onSubmitted,
             default_project_id, default_sprint_id,
             optional_default_issue_values} = props
     
@@ -122,7 +122,6 @@ function mapStateToProps(state, props) {
                                      optional_default_issue_values),
         enableReinitialize: true,
         onSubmitted,
-        onKeyDown,
         default_project_id,
         optional_default_issue_values
     }

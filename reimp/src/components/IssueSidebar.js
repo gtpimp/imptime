@@ -39,6 +39,7 @@ import {
 import { ensureUsersLoaded } from '../actions/Users'
 import {getProject} from '../actions/Projects'
 import {getSprint} from '../actions/Sprints'
+import IssueDependancies from './IssueDependancies'
 
 class IssueSidebar extends Component {
 
@@ -279,6 +280,13 @@ class IssueSidebar extends Component {
         
     }
 
+    renderDependancyStack() {
+        const { issue } = this.props
+        return (
+            <IssueDependancies issue_id={issue.id} />
+        )
+    }
+
     renderDescriptionStack() {
         const { issue } = this.props
         return (
@@ -414,6 +422,7 @@ class IssueSidebar extends Component {
                         { this.renderTitleStack() }
                         { this.renderCreationStack() }
                         { this.renderInfoStack() }
+                        { this.renderDependancyStack() }
                         { this.renderDescriptionStack() }
                         { this.renderTestablesStack() }
                         { this.renderCommentsStack() }

@@ -46,6 +46,8 @@ class IssueSerializer(BaseSerializer):
     testables = TestableSerializer(many=True, source="testables_in_order")
     needs_testables = serializers.BooleanField()
     needs_estimate = serializers.BooleanField()
+    needs_issue_ids = serializers.ListField(child=serializers.CharField())
+    issue_ids_needing_us = serializers.ListField(child=serializers.CharField())
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
     visual_spec_annotation_ids_by_doc_id = serializers.DictField(child=ListField(child=serializers.IntegerField()))
@@ -120,6 +122,9 @@ class IssueSerializer(BaseSerializer):
         if not bp.has_share_issues:
             issue.share_ref = None
 
+        issue.needs_issue_ids = [ x.id for x in issue.needs_issues.all() ]
+        issue.issue_ids_needing_us = [ x.id for x in issue.issues_needing_us.all() ]
+            
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):

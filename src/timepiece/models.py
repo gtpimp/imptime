@@ -4144,6 +4144,7 @@ class Issue(BaseModel):
     issue_type = models.CharField(max_length=50, choices=ISSUE_TYPES, default='issue', null=False)
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    needs_issues = models.ManyToManyField("Issue", related_name="issues_needing_us")
 
     can_group_issues = models.BooleanField(default=False)
     parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
