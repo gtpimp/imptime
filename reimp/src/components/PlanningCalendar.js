@@ -43,6 +43,9 @@ import ProjectName from './ProjectName'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
 import IssueSelectorForm from './form/IssueSelectorForm'
+import PopupPanelButton from './PopupPanelButton'
+import PopupPanelMiniButton from './PopupPanelMiniButton'
+import PopupPanelHeading from './PopupPanelHeading'
 
 BigCalendar.momentLocalizer(moment);
 
@@ -297,48 +300,49 @@ class PlanningCalendar extends Component {
                 <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
               </div>
               <div className="editable-property-modal__content">
-                <div className="editable-property-modal__title">
-                  Add new scheduled item
-                </div>
-                <TimestampRange start={start} end={end}
-                                  range_format="single-day"
-                                  time_format="short-time" />
+                <PopupPanelHeading>
+                  Scheduling <TimestampRange start={start} end={end}
+                                             range_format="single-day"
+                                             time_format="short-time" />
+
+                </PopupPanelHeading>
                 <div className="editable-property-modal__title">
                   { something_selected &&
-                    <div>Choose one of the items below to schedule:</div>
+                    <div>Schedule most recently selected issue:</div>
                   }
-                  { !something_selected &&
-                    <div>Nothing available to schedule, select an issue, sprint or project from anywhere</div>
-                  }
-                </div>
-                <div className="editable-property-modal__title">
-                  Or create a new issue for this event
-                  <button className="button issue_sidebar--button" onClick={this.onStartSelectingIssue}>
-                    New issue
-                  </button>
                 </div>
                 { project_id && 
                   <div className="editable-property-modal__row"
                        onClick={(event) => this.addProjectToSchedule(event, project_id)}>
-                    <div className="icon--add-to-schedule"/>
+                    <PopupPanelMiniButton>Schedule project</PopupPanelMiniButton>
                     <ProjectName project_id={project_id} />
                   </div>
                 }
                 { sprint_id && 
                   <div className="editable-property-modal__row"
                        onClick={(event) => this.addSprintToSchedule(event, sprint_id)}>
-                    <div className="icon--add-to-schedule"/>
+                    <PopupPanelMiniButton>Schedule sprint</PopupPanelMiniButton>
                     <SprintName sprint_id={sprint_id} />
                   </div>
                 }
                 { issue_id && 
                   <div className="editable-property-modal__row"
                        onClick={(event) => this.addIssueToSchedule(event, issue_id)}>
-                    <div className="icon--add-to-schedule"/>
+                    <PopupPanelMiniButton>Schedule issue</PopupPanelMiniButton>
                     <IssueName issue_id={issue_id} />
                   </div>
                 }
+
+                <div className="editable-property-modal__title">
+                    {something_selected && "Or "}
+                  choose a new issue for this event
+                  <PopupPanelButton onClick={this.onStartSelectingIssue}>
+                    Select issue
+                  </PopupPanelButton>
+                </div>
+
               </div>
+
             </ModalDialog>            
         )
     }
