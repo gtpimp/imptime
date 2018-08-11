@@ -57,7 +57,7 @@ class IssueProgress extends Component {
     }
 
     render() {
-        const { issue, user_id, is_loading, optional_actual, all_actuals_by_user_id, all_estimates_by_user_id } = this.props
+        const { issue, user_id, optional_actual, all_actuals_by_user_id, all_estimates_by_user_id } = this.props
         const { live_timer_offset } = this.state
 
         let actual = optional_actual || (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
@@ -100,7 +100,6 @@ const makeMapStateToProps = () => {
             is_loading: !issue || !issue.id,
             all_actuals_by_user_id,
             all_estimates_by_user_id,
-            user_id,
             enable_live_timer: enable_live_timer || false
         }
     }
