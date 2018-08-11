@@ -248,9 +248,7 @@ class PlanningCalendar extends Component {
                                   time_format="short-time" />
                 </label>
               </div>
-              <IssueSelectorForm project_id={project_id}
-                                 sprint_id={sprint_id}
-                                 optional_default_issue_values={{issue_type:'management-meeting'}}
+              <IssueSelectorForm optional_default_issue_values={{issue_type:'management-meeting'}}
                                  onSubmitted={this.onSelectedIssue}/>
               { false && 
                 <NewIssueSidebar project_id={project_id}

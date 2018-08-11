@@ -7,6 +7,7 @@ import SprintSelectorField from './SprintSelectorField'
 import ProjectSelectorField from './ProjectSelectorField'
 import IssueTitleField from './IssueTitleField';
 import PropertyStackComponent from '../PropertyStackComponent'
+import { getGloballySelectedEntityIds } from '../../actions/Page'
 import {
     startCandidateIssue,
     updateCandidateSubject,
@@ -110,19 +111,21 @@ class IssueSelectorForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted,
-            default_project_id, default_sprint_id,
-            optional_default_issue_values} = props
+    const { onSubmitted, optional_default_issue_values} = props
+
+    const entityIdsAvailableForEventCreation = getGloballySelectedEntityIds(state)
+    const { project_id, sprint_id } = entityIdsAvailableForEventCreation || {}
     
     return {
         initialValues: Object.assign({},
                                      {issue_title:'',
-                                      project_id: default_project_id,
-                                      sprint_id: default_sprint_id},
+                                      project_id: project_id,
+                                      sprint_id: sprint_id},
                                      optional_default_issue_values),
         enableReinitialize: true,
         onSubmitted,
-        default_project_id,
+        default_project_id: project_id,
+        default_sprint_id: sprint_id,
         optional_default_issue_values
     }
 }
