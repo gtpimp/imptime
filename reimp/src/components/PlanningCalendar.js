@@ -37,11 +37,12 @@ import { getGloballySelectedEntityIds } from '../actions/Page'
 import {
     ENTITY_KEY__CALENDAR_EVENT
 } from '../actions/ItemListKeyRegistry'
-import Modal from 'react-modal'
+import ModalDialog from './ModalDialog'
 import TimestampRange from './TimestampRange'
 import ProjectName from './ProjectName'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
+import IssueSelectorForm from './form/IssueSelectorForm'
 
 BigCalendar.momentLocalizer(moment);
 
@@ -67,13 +68,13 @@ class PlanningCalendar extends Component {
         this.addIssueToSchedule = this.addIssueToSchedule.bind(this)
         this.getCalendarEventStartAt = this.getCalendarEventStartAt.bind(this)
         this.getCalendarEventEndAt = this.getCalendarEventEndAt.bind(this)
-        this.onStartCreatingNewIssue = this.onStartCreatingNewIssue.bind(this)
-        this.onStopCreatingNewIssue = this.onStopCreatingNewIssue.bind(this)
-        this.onCreatedNewIssue = this.onCreatedNewIssue.bind(this)
+        this.onStartSelectingIssue = this.onStartSelectingIssue.bind(this)
+        this.onStopSelectingIssue = this.onStopSelectingIssue.bind(this)
+        this.onSelectedIssue = this.onSelectedIssue.bind(this)
         this.state = { adding_item: false,
                        slotInfo: null,
                        selectedEvent: null,
-                       creating_new_issue: false}
+                       selecting_issue: false}
     }
     
     componentDidMount() {
@@ -202,22 +203,22 @@ class PlanningCalendar extends Component {
         return moment(calendar_event.end_at).toDate()
     }
 
-    onStartCreatingNewIssue(evt) {
+    onStartSelectingIssue(evt) {
         if ( evt ) {
             evt.preventDefault()
         }
         this.stopAddingItem()
-        this.setState({creating_new_issue:true})
+        this.setState({selecting_issue:true})
     }
 
-    onStopCreatingNewIssue() {
-        this.setState({creating_new_issue:false})
+    onStopSelectingIssue() {
+        this.setState({selecting_issue:false})
     }
     
-    onCreatedNewIssue(issues_ids, sprint_id, project_id) {
-        const issue_id = issues_ids[0]
+    onSelectedIssue(new_values) {
+        const { issue_id, sprint_id, project_id } = new_values
         this.addToSchedule(null, {project_id: project_id, sprint_id: sprint_id, issue_id: issue_id})
-        this.onStopCreatingNewIssue()
+        this.onStopSelectingIssue()
     }
 
     renderTitle(calendar_event) {
@@ -232,11 +233,10 @@ class PlanningCalendar extends Component {
         const { start, end } = this.state.slot_info
         
         return (
-            <Modal isOpen={true}
-                   className="editable-property-modal"
-                   overlayClassName="editable-property-modal__overlay"
-                   onRequestClose={this.onStopCreatingNewIssue}
-                   contentLabel="New issue for schedule">
+            <ModalDialog isOpen={true}
+                         onClose={this.onStopSelectingIssue}
+                         title="New issue for schedule"
+                         variant="large">
               <div className="editable-property-modal__row editable-property-modal__row--header">
                 <label className="editable-property-modal__title">
                   Creating a new issue, scheduled for
@@ -244,25 +244,29 @@ class PlanningCalendar extends Component {
                                   range_format="single-day"
                                   time_format="short-time" />
                 </label>
-                <div className="editable-property-modal__close"><i className="material-icons" onClick={this.onStopCreatingNewIssue}>close</i></div>
               </div>
-              <NewIssueSidebar project_id={project_id}
-                               sprint_id={sprint_id}
-                               default_issue_values={{issue_type:'management-meeting'}}
-                               onCreatedIssues={this.onCreatedNewIssue}
-              />
-            </Modal>
+              <IssueSelectorForm project_id={project_id}
+                                 sprint_id={sprint_id}
+                                 optional_default_issue_values={{issue_type:'management-meeting'}}
+                                 onSubmitted={this.onSelectedIssue}/>
+              { false && 
+                <NewIssueSidebar project_id={project_id}
+                                 sprint_id={sprint_id}
+                                 default_issue_values={{issue_type:'management-meeting'}}
+                                 onCreatedIssues={this.onSelectedIssue}
+                />
+              }
+            </ModalDialog>
         )
     }
 
     renderSelectedEvent(calendar_event) {
         const { can_edit } = this.props
         return (
-            <Modal isOpen={true}
-                   className="editable-property-modal"
-                   overlayClassName="editable-property-modal__overlay"
-                   onRequestClose={this.closeSelectedEventPopup}
-                   contentLabel="Scheduled Item">
+            <ModalDialog isOpen={true}
+                         onClose={this.closeSelectedEventPopup}
+                         title="Scheduled item"
+                         variant="large">
               <div className="editable-property-modal__row editable-property-modal__row--header">
                 <label htmlFor="assigned" className="editable-property-modal__title">
                   <TimestampRange start={calendar_event.start_at}
@@ -270,13 +274,12 @@ class PlanningCalendar extends Component {
                                   range_format="single-day"
                                   time_format="short-time" />
                 </label>
-                <div className="editable-property-modal__close"><i className="material-icons" onClick={this.closeSelectedEventPopup}>close</i></div>
               </div>
               <ScheduleItemBody schedule_item={calendar_event}
                                 can_edit={can_edit}
                                 onDeleted={this.closeSelectedEventPopup}
               />
-            </Modal>
+            </ModalDialog>
         )
     }
     
@@ -286,16 +289,12 @@ class PlanningCalendar extends Component {
         const { start, end } = this.state.slot_info
         const something_selected = project_id || sprint_id || issue_id
         return (
-            <Modal isOpen={true}
-                   className="editable-property-modal"
-                   overlayClassName="editable-property-modal__overlay"
-                   onRequestClose={this.stopAddingItem}
-                   contentLabel="Add scheduled item">
+            <ModalDialog isOpen={true}
+                         onClose={this.stopAddingItem}
+                         title="Add scheduled item"
+                         variant="large">
               <div className="editable-property-modal__row editable-property-modal__row--header">
                 <label htmlFor="assigned" className="editable-property-modal__title">{this.props.actionLabel}</label>
-                <div className="editable-property-modal__close">
-                  <i className="material-icons" onClick={this.stopAddingItem}>close</i>
-                </div>
               </div>
               <div className="editable-property-modal__content">
                 <div className="editable-property-modal__title">
@@ -314,7 +313,7 @@ class PlanningCalendar extends Component {
                 </div>
                 <div className="editable-property-modal__title">
                   Or create a new issue for this event
-                  <button className="button issue_sidebar--button" onClick={this.onStartCreatingNewIssue}>
+                  <button className="button issue_sidebar--button" onClick={this.onStartSelectingIssue}>
                     New issue
                   </button>
                 </div>
@@ -340,7 +339,7 @@ class PlanningCalendar extends Component {
                   </div>
                 }
               </div>
-            </Modal>            
+            </ModalDialog>            
         )
     }
 
@@ -369,7 +368,7 @@ class PlanningCalendar extends Component {
                   onEventResize={this.onResizedEvent}
               />
               { this.state.adding_item && this.renderAddingItem() }
-              { this.state.creating_new_issue && this.renderCreatingNewIssue() }
+              { this.state.selecting_issue && this.renderCreatingNewIssue() }
               { this.state.selectedEvent && this.renderSelectedEvent(this.state.selectedEvent) }
             </div>
         )

@@ -30,7 +30,7 @@ class NewIssueSidebar extends Component {
 
     onSaveCandidateIssue(new_value) {
         const {onCreatedIssues, dispatch} = this.props
-        dispatch(updateCandidateSubject(new_value.title))
+        dispatch(updateCandidateSubject(new_value.issue_title))
         dispatch(updateCandidateSprint(new_value.sprint_id))
         dispatch(updateCandidateProperties(new_value))
         const onDone = function(issue_id) {

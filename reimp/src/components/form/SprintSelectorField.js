@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { concat, partition, sortBy, keyBy } from 'lodash'
+import { concat, partition, sortBy } from 'lodash'
 import { Field } from 'redux-form'
 import { getSprints, fetchSprintsIfNeeded } from '../../actions/Sprints'
 import {
@@ -27,11 +27,10 @@ class SprintSelectorField extends Component {
     }
 
     onFieldChange(sprint_id, fieldOnChange) {
-        const {onChange, sprints} = this.props
-        const sprint = keyBy(sprints, "id")[sprint_id]
+        const {onChange} = this.props
         fieldOnChange(sprint_id)
         if ( onChange ) {
-            onChange(sprint)
+            onChange(sprint_id)
         }
     }
     
@@ -46,7 +45,8 @@ class SprintSelectorField extends Component {
         const { dispatch, project_id, filter, list_key } = props
         dispatch(initList(list_key))
         if ( filter.project_id !== project_id ) {
-            dispatch(update_list_filter(list_key, {project_id: project_id}))
+            dispatch(update_list_filter(list_key, {project_id: project_id,
+                                                   sprint_status: 'open'}))
         }
         if ( filter !== this.props.filter ) {
             dispatch(invalidateList(list_key))
