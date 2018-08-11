@@ -27,7 +27,7 @@ function mapStateToProps(state, props) {
     const { onSubmitted, onKeyDown, onCancel } = props
 
     return {
-        initialValues: {title:props.initial_value},
+        initialValues: {issue_title:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel,

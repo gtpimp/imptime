@@ -218,7 +218,8 @@ class Issue extends Component {
             const belongsToAFeature = issue.parent_group_id || false
 
             return (
-                <DivTableRow key={that.key + "." + issue.id}
+                <DivTableRow divkey={that.key + "." + issue.id}
+                             key={that.key + "." + issue.id}
                              onClick={that.onClickedIssue}
                              is_selected={is_selected}
                              isFeature={isFeature}
@@ -450,7 +451,7 @@ class Issue extends Component {
                                     map(tag_category_names, function(tag_category_name) {
                                         const tags = tagsByCategoryName[tag_category_name]
                                         return (
-                                            <DivTableCell key={header_key}
+                                            <DivTableCell key={header_key+tag_category_name}
                                                           secondary={true}
                                                           extra_style={getCellStyle(header)}>
                                               { map(tags, (tag) =>
