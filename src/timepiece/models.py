@@ -1072,6 +1072,14 @@ class ProjectQuerySet(QuerySet):
         for risky_issues in risky_issues_by_sprint:
             estimates_by_sprint_id.setdefault(risky_issues['project_id'], {})['num_open_risky_issues'] = risky_issues.get('num_issues', 0)
 
+        open_issues_needed = Issue.objects.filter(project__in=sprints,
+                                                  needs_issues__status2__name__in=open_statuses)\
+                                          .order_by('project_id')\
+                                          .values('project_id')\
+                                          .annotate(num_issues=Count('id'))
+        for open_issue_needed in open_issues_needed:
+            estimates_by_sprint_id.setdefault(open_issue_needed['project_id'], {})['num_open_issues_needed'] = open_issue_needed.get('num_issues', 0)
+
             
         return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
         
