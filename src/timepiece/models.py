@@ -4167,6 +4167,7 @@ class Issue(BaseModel):
 
     def save(self, *args, **kwargs):
         was_created = not self.id
+        do_dependancy_check = kwargs.pop('do_dependancy_check', True)
         super(Issue, self).save(*args, **kwargs)
         self.check_quality()
         params = { 'project_id': self.project_id,  #sic
@@ -4176,6 +4177,13 @@ class Issue(BaseModel):
             RefreshNotifier().notify_model_create(self, params)
         else:
             RefreshNotifier().notify_model_update(self, params)
+
+        if do_dependancy_check:
+            for other_issue in self.needs_issues.all():
+                other_issue.save(do_dependancy_check=False)
+            for other_issue in self.issues_needing_us.all():
+                other_issue.save(do_dependancy_check=False)
+            
 
     def copy(self, logged_in_user, add_suffix=True):
         issue_to_clone = self

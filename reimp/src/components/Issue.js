@@ -340,6 +340,25 @@ class Issue extends Component {
                                                     <div className="icon icon--warning"></div> 
                                             </Floater>
                                         )}
+                                        { size(issue.needs_open_issues_ids) > 0 && (
+                                            <Floater
+                                                title="Issue warnings"
+                                                disableHoverToClick
+                                                event="hover"
+                                                eventDelay={0}
+                                                placement="right"
+                                                content={
+                                                     <div>
+                                                          <div className="floater__section">
+                                                            <div>
+                                                              This issue needs other issues that are still open.
+                                                            </div>
+                                                          </div>
+                                                     </div>
+                                                }>
+                                                <div className="icon icon--unresolved_dependancy"></div> 
+                                            </Floater>        
+                                        )}
                                     </DivTableCell>
                                 )
                             case "expand_feature":
