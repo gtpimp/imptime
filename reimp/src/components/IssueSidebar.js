@@ -422,11 +422,11 @@ class IssueSidebar extends Component {
                         { this.renderTitleStack() }
                         { this.renderCreationStack() }
                         { this.renderInfoStack() }
-                        { this.renderDependancyStack() }
                         { this.renderDescriptionStack() }
                         { this.renderTestablesStack() }
                         { this.renderCommentsStack() }
                         { this.renderEstimatesStack() }
+                        { this.renderDependancyStack() }
                         { this.renderAttachmentsStack() }
                         { this.renderFeatureStack() }
                         { this.renderReviewsStack() }
