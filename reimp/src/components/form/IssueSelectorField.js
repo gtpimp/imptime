@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { keyBy, size } from 'lodash'
 import { Field } from 'redux-form'
 import { getIssues, fetchIssuesIfNeeded } from '../../actions/Issues'
 import {
@@ -22,6 +21,7 @@ class SelectIssueField extends Component {
         super(props)
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.onFieldChange = this.onFieldChange.bind(this)
+        this.onFilterChanged = this.onFilterChanged.bind(this)
     }
     
     componentDidMount() {
@@ -38,37 +38,47 @@ class SelectIssueField extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, project_id, sprint_id, filter, list_key } = props
-        if ( project_id !== this.props.project_id ||
-             filter.project_id !== project_id || 
-             filter.project_id !== this.props.filter.project_id ) {
+        if ( filter.project_id !== project_id ) {
             if ( project_id ) {
                 dispatch(update_list_filter(list_key, {project_id: project_id}))
             } else {
                 dispatch(clear_list_filter_option(list_key, 'project_id'))
             }
-            dispatch(invalidateList(list_key))
         }
-        if ( sprint_id !== this.props.sprint_id ||
-             filter.sprint_id !== sprint_id || 
-             filter.sprint_id !== this.props.filter.sprint_id ) {
+        if ( filter.sprint_id !== sprint_id ) {
             if ( sprint_id ) {
                 dispatch(update_list_filter(list_key, {sprint_id: sprint_id}))
             } else {
                 dispatch(clear_list_filter_option(list_key, 'sprint_id'))
             }
+        }
+        if ( filter !== this.props.filter ) {
             dispatch(invalidateList(list_key))
         }
-        if ( size(filter) > 0 ) {
+        
+        if ( filter.any_field || filter.project_id || filter.sprint_id ) {
             dispatch(fetchIssuesIfNeeded(list_key))
         }
     }
 
     onFieldChange(issue_id, fieldOnChange) {
-        const {onChange, issues} = this.props
-        const issue = keyBy(issues, "id")[issue_id]
+        const {onChange} = this.props
         fieldOnChange(issue_id)
         if ( onChange ) {
-            onChange(issue)
+            onChange(issue_id)
+        }
+    }
+
+    onFilterChanged(new_filter_value) {
+        const { dispatch, filter, list_key, default_issue_id } = this.props
+        if ( new_filter_value.length >= 3 ) {
+            dispatch(clear_list_filter_option(list_key, 'id'))
+            dispatch(update_list_filter(list_key, {any_field: new_filter_value}))
+        } else {
+            dispatch(clear_list_filter_option(list_key, 'any_field'))
+            if ( filter.id !== default_issue_id ) {
+                dispatch(update_list_filter(list_key, {id: default_issue_id}))
+            }
         }
     }
     
@@ -83,6 +93,7 @@ class SelectIssueField extends Component {
                 options={data}
                 rememberer_key={"issue_"+project_id}
                 auto_focus={auto_focus}
+                onFilterChanged={this.onFilterChanged}
                 {...rest}
             />
         )

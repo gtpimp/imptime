@@ -4,6 +4,7 @@ import {css} from 'emotion'
 import { reduxForm } from 'redux-form';
 import '../../sass/text-component.scss'
 import IssueSelectorField from './IssueSelectorField'
+import SprintName from '../SprintName'
 import SprintSelectorField from './SprintSelectorField'
 import ProjectSelectorField from './ProjectSelectorField'
 import IssueTitleField from './IssueTitleField';
@@ -15,25 +16,30 @@ import {
     updateCandidateProperties,
     saveCandidateIssue
 } from '../../actions/Issues'
+import PopupPanelMiniButton from '../PopupPanelMiniButton'
 
 class IssueSelectorForm extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { project_id: null,
-                       sprint_id: null,
-                       issue_id: null }
         this.onChangeProject = this.onChangeProject.bind(this)
         this.onChangeSprint = this.onChangeSprint.bind(this)
         this.onChangeIssue = this.onChangeIssue.bind(this)
         this.handleSubmitIntercept = this.handleSubmitIntercept.bind(this)
+        this.onStartCreateNewIssue = this.onStartCreateNewIssue.bind(this)
+        this.onStopCreateNewIssue = this.onStopCreateNewIssue.bind(this)
+        this.state = { project_id: null,
+                       sprint_id: null,
+                       issue_id: null,
+                       creating_issue: false}
     }
 
     componentDidMount() {
         const { default_project_id, default_sprint_id, default_issue_id } = this.props
         this.setState( {project_id: default_project_id,
                         sprint_id: default_sprint_id,
-                        issue_id: default_issue_id} )
+                        issue_id: default_issue_id,
+                        creating_issue: false} )
     }
 
     onChangeProject(new_project_id) {
@@ -46,6 +52,14 @@ class IssueSelectorForm extends Component {
 
     onChangeIssue(new_issue_id) {
         this.setState({issue_id:new_issue_id})
+    }
+
+    onStartCreateNewIssue() {
+        this.setState({creating_issue:true})
+    }
+
+    onStopCreateNewIssue() {
+        this.setState({creating_issue:false})
     }
 
     handleSubmitIntercept(values) {
@@ -70,9 +84,19 @@ class IssueSelectorForm extends Component {
         }
     }
 
+    renderCreateNewIssue() {
+        const { sprint_id } = this.state
+        return (
+            <div>
+              Create a new issue in sprint <SprintName sprint_id={sprint_id} />
+              <IssueTitleField />
+            </div>
+        )
+    }
+
     render() {
         const { handleSubmit, default_project_id } = this.props
-        const { project_id, sprint_id } = this.state
+        const { project_id, sprint_id, creating_issue } = this.state
 
         return (
             <form onSubmit={handleSubmit(this.handleSubmitIntercept)}>
@@ -97,11 +121,19 @@ class IssueSelectorForm extends Component {
                   </div>
                   <div className={css`width:30%;opacity:${sprint_id ? 1.0 : 0.2}`}>
                     <PropertyStackComponent title="Issue">
-                      Create a new issue or select an issue:
-                      <IssueTitleField />
-                      <IssueSelectorField sprint_id={sprint_id}
-                                          auto_focus={false}
-                                          onChange={this.onChangeIssue} />
+                      { creating_issue && this.renderCreateNewIssue() }
+                      { ! creating_issue &&
+                        <div>
+                          <IssueSelectorField sprint_id={sprint_id}
+                                              auto_focus={false}
+                                              onChange={this.onChangeIssue} />
+                          { sprint_id && 
+                            <PopupPanelMiniButton onClick={this.onStartCreateNewIssue}>
+                              New issue
+                            </PopupPanelMiniButton>
+                          }
+                        </div>
+                      }
                     </PropertyStackComponent>
                   </div>
                 </div>

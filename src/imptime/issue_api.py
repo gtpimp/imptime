@@ -13,7 +13,7 @@ from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Prefetch
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
@@ -413,6 +413,11 @@ class IssueViewSet(BaseViewSet):
         project_id = raw_filter_args.pop('project_id', None)
         if project_id is not None:
             raw_filter_args['sprint__project_id'] = project_id
+            
+        issue_any_field = raw_filter_args.pop('any_field', None)
+        if issue_any_field is not None and len(issue_any_field)>1:
+            qs = qs.filter(Q(subject__icontains=issue_any_field)|Q(description__icontains=issue_any_field))
+            
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
 
     @list_route(methods=['POST'])
