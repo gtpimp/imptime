@@ -60,8 +60,8 @@ class IssueProgress extends Component {
         const { issue, user_id, running_actual_increment, all_actuals_by_user_id, all_estimates_by_user_id } = this.props
         const { live_timer_offset } = this.state
 
-        const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
-        const actual = live_timer_offset + running_actual_increment + (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours)
+        const estimate = (all_estimates_by_user_id && all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
+        const actual = live_timer_offset + running_actual_increment + ((all_actuals_by_user_id && all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || 0)
         
         return (
             <div className={css`display:flex;align-items:center;height:100%;`}>

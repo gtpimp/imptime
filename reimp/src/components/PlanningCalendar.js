@@ -4,7 +4,6 @@ import { filter } from 'lodash'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
 import BigCalendar from 'react-big-calendar'
-import NewIssueSidebar from './NewIssueSidebar'
 import ScheduleItemTitle from './ScheduleItemTitle'
 import ScheduleItemBody from './ScheduleItemBody'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
@@ -230,7 +229,7 @@ class PlanningCalendar extends Component {
         )
     }
 
-    renderCreatingNewIssue(calendar_event) {
+    renderSelectIssue(calendar_event) {
         const { entityIdsAvailableForEventCreation } = this.props
         const { project_id, sprint_id } = entityIdsAvailableForEventCreation || {}
         const { start, end } = this.state.slot_info
@@ -238,11 +237,11 @@ class PlanningCalendar extends Component {
         return (
             <ModalDialog isOpen={true}
                          onClose={this.onStopSelectingIssue}
-                         title="New issue for schedule"
+                         title="Select issue for schedule"
                          variant="large">
               <div className="editable-property-modal__row editable-property-modal__row--header">
                 <label className="editable-property-modal__title">
-                  Creating a new issue, scheduled for
+                  Select or create an issue, scheduled for
                   <TimestampRange start={start} end={end}
                                   range_format="single-day"
                                   time_format="short-time" />
@@ -250,13 +249,6 @@ class PlanningCalendar extends Component {
               </div>
               <IssueSelectorForm optional_default_issue_values={{issue_type:'management-meeting'}}
                                  onSubmitted={this.onSelectedIssue}/>
-              { false && 
-                <NewIssueSidebar project_id={project_id}
-                                 sprint_id={sprint_id}
-                                 default_issue_values={{issue_type:'management-meeting'}}
-                                 onCreatedIssues={this.onSelectedIssue}
-                />
-              }
             </ModalDialog>
         )
     }
@@ -333,7 +325,7 @@ class PlanningCalendar extends Component {
 
                 <div className="editable-property-modal__title">
                     {something_selected && "Or "}
-                  choose a new issue for this event
+                  choose a different issue for this event
                   <PopupPanelButton onClick={this.onStartSelectingIssue}>
                     Select issue
                   </PopupPanelButton>
@@ -370,7 +362,7 @@ class PlanningCalendar extends Component {
                   onEventResize={this.onResizedEvent}
               />
               { this.state.adding_item && this.renderAddingItem() }
-              { this.state.selecting_issue && this.renderCreatingNewIssue() }
+              { this.state.selecting_issue && this.renderSelectIssue() }
               { this.state.selectedEvent && this.renderSelectedEvent(this.state.selectedEvent) }
             </div>
         )
