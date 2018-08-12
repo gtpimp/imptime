@@ -283,7 +283,9 @@ class IssueSidebar extends Component {
     renderDependancyStack() {
         const { issue } = this.props
         return (
-            <IssueDependancies issue_id={issue.id} />
+            <PropertyStackComponent title="Dependancies">
+              <IssueDependancies issue_id={issue.id} />
+            </PropertyStackComponent>
         )
     }
 
