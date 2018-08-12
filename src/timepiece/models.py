@@ -3209,6 +3209,12 @@ class Entry(BaseModel):
 
         return seconds + (delta.days * 86400)
 
+    @property
+    def running_hours(self):
+        if self.end_time:
+            return self.hours
+        return (timezone.now() - self.start_time).seconds
+    
     def __total_hours(self):
         """
         Determined the total number of hours worked in this entry
