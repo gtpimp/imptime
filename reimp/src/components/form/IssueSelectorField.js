@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { keyBy } from 'lodash'
+import { keyBy, size } from 'lodash'
 import { Field } from 'redux-form'
 import { getIssues, fetchIssuesIfNeeded } from '../../actions/Issues'
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../actions/ItemListKeyRegistry'
 import {
     initList,
+    update_list_pagination,
     update_list_filter,
     clear_list_filter_option,
     invalidateList,
@@ -26,6 +27,7 @@ class SelectIssueField extends Component {
     componentDidMount() {
         const { list_key, dispatch } = this.props
         dispatch(initList(list_key))
+        dispatch(update_list_pagination({page_size:30}))
         this.refresh()
     }
 
@@ -56,7 +58,9 @@ class SelectIssueField extends Component {
             }
             dispatch(invalidateList(list_key))
         }
-        dispatch(fetchIssuesIfNeeded(list_key))
+        if ( size(filter) > 0 ) {
+            dispatch(fetchIssuesIfNeeded(list_key))
+        }
     }
 
     onFieldChange(issue_id, fieldOnChange) {

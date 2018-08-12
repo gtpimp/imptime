@@ -101,7 +101,7 @@ class IssueDependancies extends Component {
               </div>
               <div className="property-value">
                 { map(issue.needs_issue_ids, (issue_id) =>
-                    <div className="property-row">
+                    <div className="property-row" key={issue_id}>
                       <IssueName issue_id={issue_id} />
                       &nbsp;(<IssueStatus issue_id={issue_id} />)
                       <div onClick={() => this.onDeleteNeedsIssue(issue_id)}
@@ -115,7 +115,7 @@ class IssueDependancies extends Component {
               </div>
               <div className="property-value">
                 { map(issue.issue_ids_needing_us, (issue_id) =>
-                    <div className="property-row">
+                    <div className="property-row" key={issue_id}>
                       <IssueName issue_id={issue_id} />
                       &nbsp;(<IssueStatus issue_id={issue_id} />)
                       <div onClick={() => this.onDeleteIssueNeedingUs(issue_id)}

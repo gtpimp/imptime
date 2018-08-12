@@ -229,4 +229,13 @@ class SprintViewSet(BaseViewSet):
         sprint_status = filter_args.pop('sprint_status', None)
         if sprint_status == 'open':
             filter_args['status3__name__in'] = Sprint.open_states()
+
         return filter_args
+
+    def apply_filter(self, qs, raw_filter_args):
+        sprint_any_field = raw_filter_args.pop('any_field', None)
+        if sprint_any_field is not None and len(sprint_any_field)>1:
+            qs = qs.filter(name__icontains=sprint_any_field)
+        return super(SprintViewSet, self).apply_filter(qs, raw_filter_args)
+    
+            

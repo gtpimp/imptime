@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {css} from 'emotion'
 import { reduxForm } from 'redux-form';
 import '../../sass/text-component.scss'
 import IssueSelectorField from './IssueSelectorField'
@@ -77,22 +78,24 @@ class IssueSelectorForm extends Component {
             <form onSubmit={handleSubmit(this.handleSubmitIntercept)}>
               <div>
 
-                <div className="issue_sidebar--textarea">
-                  <PropertyStackComponent title="Project">
-                    <ProjectSelectorField auto_focus={false}
-                                          onChange={this.onChangeProject}
-                                          default_project_id={project_id || default_project_id} />
-                  </PropertyStackComponent>
-                  
-                  { project_id &&
+                <div className={css`display:flex; justify-content:space-between`}>
+                  <div className={css`width:30%`}>
+                    <PropertyStackComponent title="Project">
+                      <ProjectSelectorField auto_focus={false}
+                                            onChange={this.onChangeProject}
+                                            default_project_id={project_id || default_project_id} />
+                    </PropertyStackComponent>
+                  </div>
+                
+                  <div className={css`width:30%;opacity:${project_id ? 1.0 : 0.2}`}>
                     <PropertyStackComponent title="Sprint">
                       <SprintSelectorField project_id={project_id}
                                            auto_focus={false}
                                            onChange={this.onChangeSprint}
                       />
                     </PropertyStackComponent>
-                  }
-                  { sprint_id &&
+                  </div>
+                  <div className={css`width:30%;opacity:${sprint_id ? 1.0 : 0.2}`}>
                     <PropertyStackComponent title="Issue">
                       Create a new issue or select an issue:
                       <IssueTitleField />
@@ -100,7 +103,7 @@ class IssueSelectorForm extends Component {
                                           auto_focus={false}
                                           onChange={this.onChangeIssue} />
                     </PropertyStackComponent>
-                  }
+                  </div>
                 </div>
                 <button className="button issue_sidebar--textarea" type="submit">Submit</button>
               </div>

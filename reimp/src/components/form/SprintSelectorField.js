@@ -9,6 +9,8 @@ import {
 import {
     initList,
     update_list_filter,
+    clear_list_filter_option,
+    update_list_pagination,
     getListFilter,
     invalidateList
 } from '../../actions/ItemList'
@@ -20,10 +22,39 @@ class SprintSelectorField extends Component {
         super(props)
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.onFieldChange = this.onFieldChange.bind(this)
+        this.onFilterChanged = this.onFilterChanged.bind(this)
     }
     
     componentDidMount() {
+        const { dispatch, list_key, project_id } = this.props
+        dispatch(initList(list_key))
+        dispatch(update_list_pagination({page_size:30}))
+        dispatch(update_list_filter(list_key, {project_id: project_id,
+                                               sprint_status: 'open'}))
         this.refresh()
+    }
+
+    componentWillReceiveProps(new_props) {
+        this.refresh(new_props)
+    }
+    
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, project_id, filter, list_key } = props
+        if ( filter.project_id !== project_id ) {
+            if ( project_id ) {
+                dispatch(update_list_filter(list_key, {project_id: project_id}))
+            } else {
+                dispatch(clear_list_filter_option(list_key, 'project_id'))
+            }
+               
+        }
+        if ( filter !== this.props.filter ) {
+            dispatch(invalidateList(list_key))
+        }
+        if ( filter.any_field || filter.project_id ) {
+            dispatch(fetchSprintsIfNeeded(list_key))
+        }
     }
 
     onFieldChange(sprint_id, fieldOnChange) {
@@ -34,24 +65,17 @@ class SprintSelectorField extends Component {
         }
     }
     
-    componentWillReceiveProps(new_props) {
-        if ( new_props.project_id !== this.props.project_id ) {
-            this.refresh(new_props)
+    onFilterChanged(new_filter_value) {
+        const { dispatch, filter, list_key, default_sprint_id } = this.props
+        if ( new_filter_value.length >= 3 ) {
+            dispatch(clear_list_filter_option(list_key, 'id'))
+            dispatch(update_list_filter(list_key, {any_field: new_filter_value}))
+        } else {
+            dispatch(clear_list_filter_option(list_key, 'any_field'))
+            if ( filter.id !== default_sprint_id ) {
+                dispatch(update_list_filter(list_key, {id: default_sprint_id}))
+            }
         }
-    }
-    
-    refresh(these_props) {
-        const props = these_props || this.props
-        const { dispatch, project_id, filter, list_key } = props
-        dispatch(initList(list_key))
-        if ( filter.project_id !== project_id ) {
-            dispatch(update_list_filter(list_key, {project_id: project_id,
-                                                   sprint_status: 'open'}))
-        }
-        if ( filter !== this.props.filter ) {
-            dispatch(invalidateList(list_key))
-        }
-        dispatch(fetchSprintsIfNeeded(list_key))
     }
 
     renderSingleValueSelector(field) {
@@ -65,6 +89,7 @@ class SprintSelectorField extends Component {
                 options={data}
                 rememberer_key={"sprint_"+project_id}
                 auto_focus={auto_focus}
+                onFilterChanged={this.onFilterChanged}
                 {...rest}
             />
         )
@@ -85,7 +110,7 @@ class SprintSelectorField extends Component {
 
 function mapStateToProps(state, props) {
     const { item_list } = state
-    const { onChange, project_id, auto_focus } = props
+    const { onChange, project_id, auto_focus, default_sprint_id } = props
     const list_key = SELECTOR__SPRINTS
     const l = (item_list && item_list[list_key]) || {}
     const sprint_ids = l.visible_item_ids || []
@@ -112,6 +137,7 @@ function mapStateToProps(state, props) {
         sprint_ids: sprint_ids,
         sprint_options: sprint_options,
         project_id,
+        default_sprint_id,
         auto_focus,
         filter,
         list_key

@@ -66,8 +66,8 @@ class ProjectSelectorField extends Component {
             dispatch(clear_list_filter_option(list_key, 'id'))
             dispatch(update_list_filter(list_key, {any_field: new_filter_value}))
         } else {
+            dispatch(clear_list_filter_option(list_key, 'any_field'))
             if ( filter.id !== default_project_id ) {
-                dispatch(clear_list_filter_option(list_key, 'any_field'))
                 dispatch(update_list_filter(list_key, {id: default_project_id}))
             }
         }
