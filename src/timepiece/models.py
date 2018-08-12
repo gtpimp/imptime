@@ -1005,10 +1005,10 @@ class ProjectQuerySet(QuerySet):
         # For this count we assume the tester has the final word on
         # being closed.  Also we don't care about estimates for this count.
         COMPLETELY_CLOSED_TIME_TRACKING_MODE = 'tester'
-        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
+        tester_open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
         closed_issues = Issue.objects.filter(project__in=sprints,
                                              issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
-                                     .exclude(status2__name__in=open_statuses)\
+                                     .exclude(status2__name__in=tester_open_statuses)\
                                      .order_by('project_id')\
                                      .values('project_id')\
                                      .annotate(num_closed=Count('id'))

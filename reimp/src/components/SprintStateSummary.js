@@ -308,7 +308,11 @@ class SprintStateSummary extends Component {
                                 &nbsp;
                                 <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_open_issues_needed}/>
                                 &nbsp;
-                                still open. If those issues aren't closed in time, this sprint may be delayed.
+                                still open. If
+                                &nbsp;
+                                <Pluralize singular="that issue isn't" plural="those issues aren't" showCount={false} count={sprint.num_open_issues_needed}/>
+                                &nbsp;
+                                closed in time, this sprint may be delayed.
                               </div>
                           )
                         }
