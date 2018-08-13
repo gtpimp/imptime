@@ -141,7 +141,9 @@ class ClockViewSet(BaseViewSet):
             action_name = params.get('action', None) or None
             role_name = "developer"
             
-            open_entries = self.allowed_timesheet_entries().filter(end_time__isnull=True).select_related('issue')
+            open_entries = self.allowed_timesheet_entries().filter(end_time__isnull=True,
+                                                                   user_id=request.user.id)\
+                                                           .select_related('issue')
             most_recent_entry = open_entries.order_by("-end_time").first()
             if most_recent_entry:
                 description = description or most_recent_entry.comments
