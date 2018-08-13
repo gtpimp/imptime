@@ -13,7 +13,7 @@ from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Prefetch
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, Q
 from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
@@ -27,6 +27,7 @@ from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectReview as SprintReview
+from timepiece.models import BusinessPermissions as ProjectPermissions
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +90,8 @@ class IssueViewSet(BaseViewSet):
                        .prefetch_related('group_children')\
                        .prefetch_related('issue_points__user')\
                        .prefetch_related('group_children')\
+                       .prefetch_related('issues_needing_us')\
+                       .prefetch_related('needs_issues')\
                        .prefetch_related('reviews')\
                        .prefetch_related('tags')\
                        .prefetch_related(Prefetch('entries', to_attr='active_clocks',
@@ -410,6 +413,11 @@ class IssueViewSet(BaseViewSet):
         project_id = raw_filter_args.pop('project_id', None)
         if project_id is not None:
             raw_filter_args['sprint__project_id'] = project_id
+            
+        issue_any_field = raw_filter_args.pop('any_field', None)
+        if issue_any_field is not None and len(issue_any_field)>1:
+            qs = qs.filter(Q(subject__icontains=issue_any_field)|Q(description__icontains=issue_any_field))
+            
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
 
     @list_route(methods=['POST'])
@@ -436,6 +444,80 @@ class IssueViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    @list_route(methods=['POST'])
+    def add_needs_issue(self, request):
+        try:
+            data = {'status': "success"}
+            params = request.data
+            issue_id = params['issue_id']
+            needs_issue_id = params['needs_issue_id']
+
+            issue = self.allowed_issue(issue_id)
+            needs_issue = self.allowed_issue(needs_issue_id)
+
+            bp = ProjectPermissions.for_user(user=self.request.user,
+                                             business=issue.project.business,
+                                             auto_create=False)
+            needs_bp = ProjectPermissions.for_user(user=self.request.user,
+                                                   business=needs_issue.project.business,
+                                                   auto_create=False)
+
+            if not bp.has_edit_issues:
+                data['status'] = "soft_failure"
+                data['error'] = "Insufficient permissions to edit issue %s" % issue
+            elif not needs_bp.has_edit_issues:
+                data['status'] = "soft_failure"
+                data['error'] = "Insufficient permissions to edit issue %s" % needs_issue
+            else:
+                issue.needs_issues.add(needs_issue)
+                issue.save()
+                needs_issue.save()
+                
+            data['payload'] = {'issues': []}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+    @list_route(methods=['POST'])
+    def remove_needs_issue(self, request):
+        try:
+            data = {'status': "success"}
+            params = request.data
+            issue_id = params['issue_id']
+            needs_issue_id = params['needs_issue_id']
+
+            issue = self.allowed_issue(issue_id)
+            needs_issue = self.allowed_issue(needs_issue_id)
+
+            bp = ProjectPermissions.for_user(user=self.request.user,
+                                             business=issue.project.business,
+                                             auto_create=False)
+            needs_bp = ProjectPermissions.for_user(user=self.request.user,
+                                                   business=needs_issue.project.business,
+                                                   auto_create=False)
+
+            if not bp.has_edit_issues:
+                data['status'] = "soft_failure"
+                data['error'] = "Insufficient permissions to edit issue %s" % issue
+            elif not needs_bp.has_edit_issues:
+                data['status'] = "soft_failure"
+                data['error'] = "Insufficient permissions to edit issue %s" % needs_issue
+            else:
+                issue.needs_issues.remove(needs_issue)
+                issue.save()
+                needs_issue.save()
+                
+            data['payload'] = {'issues': []}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+    
     @list_route(methods=['POST'])
     def open_minutes(self, request):
         try:

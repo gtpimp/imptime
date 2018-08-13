@@ -113,6 +113,7 @@ export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
 
 export const SELECTOR__PROJECTS = 'selector_projects'
 export const SELECTOR__SPRINTS = 'selector_sprints'
+export const SELECTOR__ISSUES = 'selector_issues'
 export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'
 export const FILTER_KEY__GLOBAL = 'global_filter'
 

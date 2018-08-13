@@ -194,6 +194,10 @@
     @include icon(24px, 24px, 'fullscreen_exit.png');
 }
 
+.icon--unresolved_dependancy {
+    @include icon(24px, 24px, 'unresolved_dependancy.png');
+}
+
 .icon__status--unresolved {
     height: 15px;
     width: 15px;

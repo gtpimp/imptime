@@ -34,7 +34,7 @@ class IssueTitleField extends Component {
     render() {
         return (
             <div className="issue_sidebar--textarea">
-              <Field name="title"
+              <Field name="issue_title"
                      component={this.renderTextarea} />
             </div>
         )

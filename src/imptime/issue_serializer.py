@@ -10,7 +10,7 @@ from issue_comment_serializer import IssueCommentSerializer, IssueShareCommentSe
 from issue_attachment_serializer import IssueAttachmentSerializer
 from visual_spec_issue_annotation_serializer import VisualSpecIssueAnnotationSerializer
 from imptime.models import VisualSpecDocument, VisualSpecIssueAnnotation
-from timepiece.models import BusinessPermissions, IssueReview
+from timepiece.models import BusinessPermissions, IssueReview, Issue
 from testable_serializer import TestableSerializer
 logger = logging.getLogger(__name__)
 
@@ -46,6 +46,9 @@ class IssueSerializer(BaseSerializer):
     testables = TestableSerializer(many=True, source="testables_in_order")
     needs_testables = serializers.BooleanField()
     needs_estimate = serializers.BooleanField()
+    needs_issue_ids = serializers.ListField(child=serializers.CharField())
+    issue_ids_needing_us = serializers.ListField(child=serializers.CharField())
+    needs_open_issues_ids = serializers.ListField(child=serializers.CharField())
     attachments = IssueAttachmentSerializer(many=True)
     visual_spec_document_ids = ListField()
     visual_spec_annotation_ids_by_doc_id = serializers.DictField(child=ListField(child=serializers.IntegerField()))
@@ -120,6 +123,10 @@ class IssueSerializer(BaseSerializer):
         if not bp.has_share_issues:
             issue.share_ref = None
 
+        issue.needs_issue_ids = [ x.id for x in issue.needs_issues.all() ]
+        issue.issue_ids_needing_us = [ x.id for x in issue.issues_needing_us.all() ]
+        issue.needs_open_issues_ids = [ x.id for x in issue.needs_issues.all() if x.status2.name in Issue.STATUSES_INDICATING_INCOMPLETE['developer'] ]
+            
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):

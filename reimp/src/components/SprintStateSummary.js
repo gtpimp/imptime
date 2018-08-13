@@ -247,7 +247,8 @@ class SprintStateSummary extends Component {
 
         const has_warnings = sprint.num_adhoc_issues > 0 ||
                              sprint.num_management_alert_issues > 0 ||
-                             sprint.num_open_risky_issues > 0
+                             sprint.num_open_risky_issues > 0 ||
+                             sprint.num_open_issues_needed
         if ( ! has_warnings ) {
             return null
         }
@@ -293,6 +294,25 @@ class SprintStateSummary extends Component {
                                 <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_open_risky_issues}/>
                                 &nbsp;
                                 risky. This implies the estimates or deadlines for this sprint might not be accurate.
+                              </div>
+                          )
+                        }
+                        { sprint.num_open_issues_needed > 0 &&
+                          (
+                              <div className="floater__section">
+                                This sprint depends on 
+                                &nbsp;
+                                <Pluralize singular="issue" count={sprint.num_open_issues_needed}/>
+                                &nbsp;
+                                that
+                                &nbsp;
+                                <Pluralize singular="is" plural="are" showCount={false} count={sprint.num_open_issues_needed}/>
+                                &nbsp;
+                                still open. If
+                                &nbsp;
+                                <Pluralize singular="that issue isn't" plural="those issues aren't" showCount={false} count={sprint.num_open_issues_needed}/>
+                                &nbsp;
+                                closed in time, this sprint may be delayed.
                               </div>
                           )
                         }

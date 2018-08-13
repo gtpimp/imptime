@@ -39,6 +39,7 @@ import {
 import { ensureUsersLoaded } from '../actions/Users'
 import {getProject} from '../actions/Projects'
 import {getSprint} from '../actions/Sprints'
+import IssueDependancies from './IssueDependancies'
 
 class IssueSidebar extends Component {
 
@@ -279,6 +280,15 @@ class IssueSidebar extends Component {
         
     }
 
+    renderDependancyStack() {
+        const { issue } = this.props
+        return (
+            <PropertyStackComponent title="Dependancies">
+              <IssueDependancies issue_id={issue.id} />
+            </PropertyStackComponent>
+        )
+    }
+
     renderDescriptionStack() {
         const { issue } = this.props
         return (
@@ -418,6 +428,7 @@ class IssueSidebar extends Component {
                         { this.renderTestablesStack() }
                         { this.renderCommentsStack() }
                         { this.renderEstimatesStack() }
+                        { this.renderDependancyStack() }
                         { this.renderAttachmentsStack() }
                         { this.renderFeatureStack() }
                         { this.renderReviewsStack() }

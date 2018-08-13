@@ -1005,10 +1005,10 @@ class ProjectQuerySet(QuerySet):
         # For this count we assume the tester has the final word on
         # being closed.  Also we don't care about estimates for this count.
         COMPLETELY_CLOSED_TIME_TRACKING_MODE = 'tester'
-        open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
+        tester_open_statuses = Issue.STATUSES_INDICATING_INCOMPLETE[COMPLETELY_CLOSED_TIME_TRACKING_MODE]
         closed_issues = Issue.objects.filter(project__in=sprints,
                                              issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
-                                     .exclude(status2__name__in=open_statuses)\
+                                     .exclude(status2__name__in=tester_open_statuses)\
                                      .order_by('project_id')\
                                      .values('project_id')\
                                      .annotate(num_closed=Count('id'))
@@ -1071,6 +1071,14 @@ class ProjectQuerySet(QuerySet):
                                               .annotate(num_issues=Count('id'))
         for risky_issues in risky_issues_by_sprint:
             estimates_by_sprint_id.setdefault(risky_issues['project_id'], {})['num_open_risky_issues'] = risky_issues.get('num_issues', 0)
+
+        open_issues_needed = Issue.objects.filter(project__in=sprints,
+                                                  needs_issues__status2__name__in=open_statuses)\
+                                          .order_by('project_id')\
+                                          .values('project_id')\
+                                          .annotate(num_issues=Count('id'))
+        for open_issue_needed in open_issues_needed:
+            estimates_by_sprint_id.setdefault(open_issue_needed['project_id'], {})['num_open_issues_needed'] = open_issue_needed.get('num_issues', 0)
 
             
         return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
@@ -3201,6 +3209,12 @@ class Entry(BaseModel):
 
         return seconds + (delta.days * 86400)
 
+    @property
+    def running_hours(self):
+        if self.end_time:
+            return self.hours
+        return (timezone.now() - self.start_time).seconds
+    
     def __total_hours(self):
         """
         Determined the total number of hours worked in this entry
@@ -4144,6 +4158,7 @@ class Issue(BaseModel):
     issue_type = models.CharField(max_length=50, choices=ISSUE_TYPES, default='issue', null=False)
     fixed_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
     fixed_ctc_amount = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+    needs_issues = models.ManyToManyField("Issue", related_name="issues_needing_us")
 
     can_group_issues = models.BooleanField(default=False)
     parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
@@ -4158,14 +4173,23 @@ class Issue(BaseModel):
 
     def save(self, *args, **kwargs):
         was_created = not self.id
+        do_dependancy_check = kwargs.pop('do_dependancy_check', True)
         super(Issue, self).save(*args, **kwargs)
         self.check_quality()
         params = { 'project_id': self.project_id,  #sic
                    'sprint_id': self.project_id }
+
         if was_created:
             RefreshNotifier().notify_model_create(self, params)
         else:
             RefreshNotifier().notify_model_update(self, params)
+
+        if do_dependancy_check:
+            for other_issue in self.needs_issues.all():
+                other_issue.save(do_dependancy_check=False)
+            for other_issue in self.issues_needing_us.all():
+                other_issue.save(do_dependancy_check=False)
+            
 
     def copy(self, logged_in_user, add_suffix=True):
         issue_to_clone = self
