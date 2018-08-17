@@ -1,9 +1,11 @@
 import os
 import fnmatch
+from dateutil.relativedelta import relativedelta
 from django.db.models import Q, Avg, Sum, Max, Min, F
 import git
 from implicitdesign import settings
 from timepiece.interface_plugin import get_interface_plugin
+from django.utils import timezone
 from orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from datetime import datetime
@@ -11,6 +13,7 @@ from django.contrib.auth.models import User
 from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, CalendarEvent
 from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder, IssueComment, IssuePoints
 from imptime.bulk_text_parser import BulkTextParser
+from timepiece.models import BusinessPermissions
 import logging
 logger = logging.getLogger(__name__)
 
@@ -67,7 +70,14 @@ class Extractor(object):
         timesheet_user = User.objects.get(username=self.username)
         self.timings_before = self.get_project_timings_for_user(business=business, timesheet_user=timesheet_user)
 
-        self.oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=timesheet_user)
+        
+        self.oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=timesheet_user, business=business)
+        bp = BusinessPermissions.for_user(user=timesheet_user,
+                                              business=business,
+                                              auto_create=False)
+        if bp.has_edit_old_clock_entries:
+            self.oldest_clockable_day = timezone.now()-relativedelta(month=12)
+        
         self.status['infos'].append("Oldest clockable day is %s" % self.oldest_clockable_day)
         
         live_entries = Entry.objects.all().filter(user=timesheet_user,
