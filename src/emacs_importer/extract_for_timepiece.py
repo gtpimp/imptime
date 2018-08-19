@@ -71,7 +71,7 @@ class Extractor(object):
         self.timings_before = self.get_project_timings_for_user(business=business, timesheet_user=timesheet_user)
 
         
-        self.oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=timesheet_user, business=business)
+        self.oldest_clockable_day = Entry.get_oldest_day_for_allowed_clocking(user=timesheet_user)
         bp = BusinessPermissions.for_user(user=timesheet_user,
                                               business=business,
                                               auto_create=False)
