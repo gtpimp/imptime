@@ -417,6 +417,10 @@ class IssueViewSet(BaseViewSet):
         issue_any_field = raw_filter_args.pop('any_field', None)
         if issue_any_field is not None and len(issue_any_field)>1:
             qs = qs.filter(Q(subject__icontains=issue_any_field)|Q(description__icontains=issue_any_field))
+
+        status_names = raw_filter_args.pop('status_names', None)
+        if status_names:
+            qs = qs.filter(status2__name__in=status_names)
             
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
 
