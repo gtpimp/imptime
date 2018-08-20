@@ -230,8 +230,6 @@ class PlanningCalendar extends Component {
     }
 
     renderSelectIssue(calendar_event) {
-        const { entityIdsAvailableForEventCreation } = this.props
-        const { project_id, sprint_id } = entityIdsAvailableForEventCreation || {}
         const { start, end } = this.state.slot_info
         
         return (

@@ -12,6 +12,7 @@ import { css } from 'emotion'
 import styled from 'react-emotion'
 import PopupPanelLink from './PopupPanelLink'
 import PopupPanelHeading from './PopupPanelHeading'
+import QuickIssueCreator from './QuickIssueCreator'
 
 const NavbarDiv = styled('div')(props => ({display: "flex",
                                            color: "#ffffff",
@@ -58,6 +59,9 @@ class Navbar extends Component {
                 <NavTab to="/projects" label="Projects" />
               </div>
               <NavbarRightDiv>
+                <NavTab variant="dashboard-toggle" label="+ Issue">
+                  <QuickIssueCreator />
+                </NavTab>
                 <NavTab variant="dashboard-toggle" label="Mien">
                   <MienSelector></MienSelector>
                 </NavTab>
