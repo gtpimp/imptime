@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
+import { css } from 'emotion'
+import { default_theme as theme } from '../theme/default'
 import classNames from 'classnames'
 import EditableProperty from './form/EditableProperty'
 import IssueStatusForm from './form/IssueStatusForm'
@@ -15,8 +17,8 @@ class EditableIssueStateFilter extends Component {
 
     onChange(new_value) {
         const { dispatch, list_key } = this.props
-        const status_names = [new_value.issue_status_name]
-        dispatch(update_list_filter(list_key, {'status_names': status_names}))
+        dispatch(update_list_filter(list_key,
+                                    {'status_names': new_value.issue_status_names}))
     }
 
     render() {
@@ -28,10 +30,15 @@ class EditableIssueStateFilter extends Component {
                               onChange={this.onChange}
                               can_edit={true}
             >
-              <IssueStatusForm project_id={project_id} />
+              <IssueStatusForm project_id={project_id}
+                               allow_multiselection={true}/>
               
               <div className={classNames("text-component--readonly")}>
-                { map(filter.status_names, (status_name) => status_name)}
+                { map(filter.status_names, (status_name) =>
+                    <div className={css`padding-right: ${theme.spacing.horizontal_space_inline}`}>
+                      {status_name}
+                    </div>
+                  )}
               </div>
               <div className="text-component--empty">Any status</div>
             </EditableProperty>
