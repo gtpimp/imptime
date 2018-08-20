@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {css} from 'emotion'
 import { Field, reduxForm } from 'redux-form'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'
 import MultiValueSelector from './MultiValueSelector'
+import PopupPanelMiniButton from '../PopupPanelMiniButton'
 
 class IssueStatusForm extends Component {
 
@@ -11,6 +13,9 @@ class IssueStatusForm extends Component {
         super(props)
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.renderMultiValueSelector = this.renderMultiValueSelector.bind(this)
+        this.selectAllOpen = this.selectAllOpen.bind(this)
+        this.selectAllClosed = this.selectAllClosed.bind(this)
+        this.selectAll = this.selectAll.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
     }
 
@@ -25,6 +30,27 @@ class IssueStatusForm extends Component {
     refresh() {
         const { dispatch, project_id } = this.props
         dispatch(ensureProjectsLoaded([project_id]))
+    }
+
+    selectAllOpen(evt) {
+        const { open_status_names, onSubmitted } = this.props
+        evt.preventDefault()
+        evt.stopPropagation()
+        onSubmitted({issue_status_names:open_status_names})
+    }
+
+    selectAllClosed(evt) {
+        const { closed_status_names, onSubmitted } = this.props
+        evt.preventDefault()
+        evt.stopPropagation()
+        onSubmitted({issue_status_names:closed_status_names})
+    }
+
+    selectAll(evt) {
+        const { onSubmitted } = this.props
+        evt.preventDefault()
+        evt.stopPropagation()
+        onSubmitted({issue_status_names:[]})
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
@@ -75,13 +101,20 @@ class IssueStatusForm extends Component {
                            data={status_options}
                     />
                   }
-                  { allow_multiselection && 
-                    <Field name="issue_status_names"
-                           component={this.renderMultiValueSelector}
-                           valueField="value"
-                           textField="label"
-                           data={status_options}
-                    />
+                  { allow_multiselection &&
+                    <div>
+                      <Field name="issue_status_names"
+                             component={this.renderMultiValueSelector}
+                             valueField="value"
+                             textField="label"
+                             data={status_options}
+                      />
+                      <div className={css`display:flex`}>
+                        <PopupPanelMiniButton onClick={this.selectAllOpen}>Open only</PopupPanelMiniButton>
+                        <PopupPanelMiniButton onClick={this.selectAllClosed}>Closed only</PopupPanelMiniButton>
+                        <PopupPanelMiniButton onClick={this.selectAll}>All</PopupPanelMiniButton>
+                      </div>
+                    </div>
                   }
                 </div>
             </form>
@@ -104,6 +137,8 @@ function mapStateToProps(state, props) {
         enableReinitialize: true,
         onSubmit: onSubmitted,
         status_options: status_options,
+        open_status_names: project.open_issue_status_names,
+        closed_status_names: project.closed_issue_status_names,
         project_id: project_id,
         project: project,
         allow_multiselection: allow_multiselection === true

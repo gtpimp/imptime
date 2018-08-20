@@ -18,6 +18,7 @@ import {
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import ModalDialog from '../ModalDialog'
 import EditableIssueStateFilter from '../EditableIssueStateFilter'
+import PopupPanelButton from '../PopupPanelButton'
 
 class IssuesToolbarPanel extends Component {
 
@@ -61,11 +62,13 @@ class IssuesToolbarPanel extends Component {
         return (
             <ModalDialog isOpen={true}
                          onClose={this.stopEditingFilter}
-                         title={"Filter issue list by status"}
+                         title={"Filter issue list"}
                          variant="medium">
 
               <EditableIssueStateFilter list_key={LIST_KEY__ISSUE_LIST}
                                         project_id={project_id} />
+
+              <PopupPanelButton onClick={this.stopEditingFilter}>Close</PopupPanelButton>
               
             </ModalDialog>
         )

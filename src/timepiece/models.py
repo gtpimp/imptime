@@ -4115,7 +4115,7 @@ class Issue(BaseModel):
         ('quick_clocker', 'quick clocker'),
     )
  
-    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear', 'dev in progress'
+    STATUSES_INDICATING_INCOMPLETE = { 'developer': ['new', 'bug', 'reopened', 'dev unclear', 'dev in progress',
                                                      'discuss_with_client', 'needscodereview', 'blocked', 'waiting',
                                                      'to be designed'],
                                        'manager': [y for x,y in ISSUE_STATUS_CHOICES if x not in ['client_qa_passed', 'duplicate', "onhold"]],

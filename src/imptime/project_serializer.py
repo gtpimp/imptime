@@ -40,6 +40,8 @@ class ProjectSerializer(BaseSerializer):
     allowed_user_ids = serializers.ListField(child=serializers.CharField())
     invited_user_ids = serializers.ListField(child=serializers.CharField())
     allowed_issue_status_names = serializers.ListField(child=serializers.CharField())
+    open_issue_status_names = serializers.ListField(child=serializers.CharField())
+    closed_issue_status_names = serializers.ListField(child=serializers.CharField())
     allowed_issue_type_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_type_names = serializers.ListField(child=serializers.CharField())
@@ -87,6 +89,11 @@ class ProjectSerializer(BaseSerializer):
                                                .order_by("name")\
                                                .values_list('name', flat=True)] #sic
 
+        nested_incomplete_status_names_for_role = [v for k,v in Issue.STATUSES_INDICATING_INCOMPLETE.items() if k in project.logged_in_users_default_role]
+        incomplete_status_names_for_role = [item for sublist in nested_incomplete_status_names_for_role for item in sublist]
+        project.open_issue_status_names = [x for x in project.allowed_issue_status_names if x in incomplete_status_names_for_role]
+        project.closed_issue_status_names = [x for x in project.allowed_issue_status_names if x not in incomplete_status_names_for_role]
+        
         project.allowed_issue_type_names = [x[0] for x in Issue.ISSUE_TYPES]
         
         project.allowed_sprint_status_names = [x for x in SprintStatus.objects.all()\

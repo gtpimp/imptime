@@ -34,13 +34,17 @@ class EditableIssueStateFilter extends Component {
                                allow_multiselection={true}/>
               
               <div className={classNames("text-component--readonly")}>
-                { map(filter.status_names, (status_name) =>
-                    <div className={css`padding-right: ${theme.spacing.horizontal_space_inline}`}>
+                { map(filter.status_names, (status_name, index) =>
+                    <div key={index} className={css`padding-right: ${theme.spacing.horizontal_space_inline}`}>
                       {status_name}
                     </div>
                   )}
+                <br/>
+                <a>Edit</a>
               </div>
-              <div className="text-component--empty">Any status</div>
+              <div className="text-component--empty">
+                Any status
+              </div>
             </EditableProperty>
         )
     }

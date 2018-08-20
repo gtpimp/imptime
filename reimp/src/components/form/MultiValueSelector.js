@@ -6,6 +6,7 @@ import { map, pull, filter, includes, keys, keyBy, find } from 'lodash'
 import { optionSelected, getBestOptions } from '../../actions/OptionRemember'
 import '../../sass/single-value-selector.css'
 import { default_theme as theme } from '../../theme/default'
+import PopupPanelMiniButton from '../PopupPanelMiniButton'
 
 export class MultiValueSelector extends Component {
 
@@ -199,7 +200,7 @@ export class MultiValueSelector extends Component {
                 <div className="single-value-selector__suggestions">
                   {this.render_suggestions()}
                 </div>
-                <button onClick={this.onSelectionFinalised}>Done</button>
+                <PopupPanelMiniButton onClick={this.onSelectionFinalised}>Done</PopupPanelMiniButton>
             </div>
         )
     }
