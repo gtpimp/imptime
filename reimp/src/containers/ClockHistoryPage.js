@@ -35,15 +35,15 @@ class ClockHistoryPage extends Component {
         const { dispatch, issue, sprint, project, list_key, 
                 filter, logged_in_user_id, filter_unallocated, filter_issue_id } = props
 
-        if ( logged_in_user_id && filter.logged_in_user_id !== this.props.logged_in_user_id ) {
+        if ( logged_in_user_id && (!filter || filter.logged_in_user_id !== this.props.logged_in_user_id)) {
             dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
             dispatch(invalidateList(list_key))
         }
-        if ( filter_unallocated && filter.filter_unallocated !== this.props.filter_unallocated ) {
+        if ( filter_unallocated && (!filter || filter.filter_unallocated !== this.props.filter_unallocated) ) {
             dispatch(update_list_filter(list_key, {is_unallocated:filter_unallocated}))
             dispatch(invalidateList(list_key))
         }
-        if ( filter_issue_id && filter.filter_issue_id !== this.props.filter_issue_id ) {
+        if ( filter_issue_id && (!filter || filter.filter_issue_id !== this.props.filter_issue_id )) {
             dispatch(update_list_filter(list_key, {issue_id:filter_issue_id}))
             dispatch(invalidateList(list_key))
         }
