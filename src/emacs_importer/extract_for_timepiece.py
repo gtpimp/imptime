@@ -76,7 +76,7 @@ class Extractor(object):
                                               business=business,
                                               auto_create=False)
         if bp.has_edit_old_clock_entries:
-            self.oldest_clockable_day = timezone.now()-relativedelta(month=12)
+            self.oldest_clockable_day = timezone.now()-relativedelta(months=12)
         
         self.status['infos'].append("Oldest clockable day is %s" % self.oldest_clockable_day)
         
