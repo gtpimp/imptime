@@ -1,14 +1,21 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {css} from 'emotion'
 import { Field, reduxForm } from 'redux-form'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import SingleValueSelector from './SingleValueSelector'
+import MultiValueSelector from './MultiValueSelector'
+import PopupPanelMiniButton from '../PopupPanelMiniButton'
 
 class IssueStatusForm extends Component {
 
     constructor(props) {
         super(props)
         this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
+        this.renderMultiValueSelector = this.renderMultiValueSelector.bind(this)
+        this.selectAllOpen = this.selectAllOpen.bind(this)
+        this.selectAllClosed = this.selectAllClosed.bind(this)
+        this.selectAll = this.selectAll.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
     }
 
@@ -23,6 +30,27 @@ class IssueStatusForm extends Component {
     refresh() {
         const { dispatch, project_id } = this.props
         dispatch(ensureProjectsLoaded([project_id]))
+    }
+
+    selectAllOpen(evt) {
+        const { open_status_names, onSubmitted } = this.props
+        evt.preventDefault()
+        evt.stopPropagation()
+        onSubmitted({issue_status_names:open_status_names})
+    }
+
+    selectAllClosed(evt) {
+        const { closed_status_names, onSubmitted } = this.props
+        evt.preventDefault()
+        evt.stopPropagation()
+        onSubmitted({issue_status_names:closed_status_names})
+    }
+
+    selectAll(evt) {
+        const { onSubmitted } = this.props
+        evt.preventDefault()
+        evt.stopPropagation()
+        onSubmitted({issue_status_names:[]})
     }
 
     onChangeAndSubmit(e, fieldOnChange) {
@@ -45,18 +73,49 @@ class IssueStatusForm extends Component {
         )
     }
 
+    renderMultiValueSelector(field) {
+        const { project_id } = this.props
+        const {input, data, ...rest} = field
+        return (
+            <MultiValueSelector
+                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                value={input.value}
+                options={data}
+                rememberer_key={"issue_statuses_"+project_id}
+                {...rest}
+            />
+        )
+    }    
+
     render() {
-        const { handleSubmit, status_options } = this.props
+        const { handleSubmit, status_options, allow_multiselection } = this.props
         return (
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="status">Status</label>
+                  <label htmlFor="status">Status</label>
+                  { ! allow_multiselection && 
                     <Field name="issue_status_name"
                            component={this.renderSingleValueSelector}
                            valueField="value"
                            textField="label"
                            data={status_options}
                     />
+                  }
+                  { allow_multiselection &&
+                    <div>
+                      <Field name="issue_status_names"
+                             component={this.renderMultiValueSelector}
+                             valueField="value"
+                             textField="label"
+                             data={status_options}
+                      />
+                      <div className={css`display:flex`}>
+                        <PopupPanelMiniButton onClick={this.selectAllOpen}>Open only</PopupPanelMiniButton>
+                        <PopupPanelMiniButton onClick={this.selectAllClosed}>Closed only</PopupPanelMiniButton>
+                        <PopupPanelMiniButton onClick={this.selectAll}>All</PopupPanelMiniButton>
+                      </div>
+                    </div>
+                  }
                 </div>
             </form>
         )
@@ -65,7 +124,7 @@ class IssueStatusForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project_id, onSubmitted } = props
+    const { project_id, onSubmitted, allow_multiselection } = props
     const project = getProject(state, project_id) || {}
     const status_names = project.allowed_issue_status_names || []
     const status_options = status_names.map(function(status_name) {
@@ -73,12 +132,16 @@ function mapStateToProps(state, props) {
     })
 
     return {
-        initialValues: {},
+        initialValues: {issue_status_name: props.initial_value,
+                        issue_status_names: props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         status_options: status_options,
+        open_status_names: project.open_issue_status_names,
+        closed_status_names: project.closed_issue_status_names,
         project_id: project_id,
-        project: project
+        project: project,
+        allow_multiselection: allow_multiselection === true
     }
 }
 

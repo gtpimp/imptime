@@ -17,7 +17,7 @@ import PopupPanelButton from '../PopupPanelButton'
 import PopupPanelHeading from '../PopupPanelHeading'
 import PopupPanelText from '../PopupPanelText'
 import PopupPanelSeparator from '../PopupPanelSeparator'
-import NewIssueSidebar from '../NewIssueSidebar'
+import IssueSelectorForm from '../form/IssueSelectorForm'
 import Textarea from 'react-expanding-textarea'
 import PropertyStackComponent from '../PropertyStackComponent'
 import PropertyStack from '../PropertyStack'
@@ -106,10 +106,9 @@ class AutoClockEntryForm extends Component {
         return (
             <div>
               Assigning to new issue
-
-              <NewIssueSidebar project_id={entry.project_id}
-                               sprint_id={entry.sprint_id}
-                               onCreatedIssues={this.onCreatedNewIssueForAssignToEntry} />
+              <IssueSelectorForm onSubmitted={this.onCreatedNewIssueForAssignToEntry}
+                                 optional_default_issue_values={{project_id:entry.project_id,
+                                                                 sprint_id:entry.sprint_id}} />
                                
               <PopupPanelButton onClick={this.onStopAssignToNewIssue}>
                 Cancel
@@ -164,7 +163,7 @@ class AutoClockEntryForm extends Component {
                 </div>
               }
               <PopupPanelButton onClick={this.onStartAssignToNewIssue}>
-                assign to a new issue
+                Find or create an issue for this entry
               </PopupPanelButton>
               <PopupPanelSeparator strong={true} />
 

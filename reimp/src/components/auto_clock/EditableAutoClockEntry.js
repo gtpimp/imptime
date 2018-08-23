@@ -58,7 +58,7 @@ class EditableAutoClockEntry extends Component {
                               onChange={this.onChange}
                               can_edit={can_edit}
                               edit_as_modal={true}
-                              modal_variant="medium"
+                              modal_variant="large"
             >
               <AutoClockEntryForm entry_id={entry.id} onDelete={this.onDeleteEntry} />
               <div>

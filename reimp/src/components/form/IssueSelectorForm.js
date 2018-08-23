@@ -35,11 +35,11 @@ class IssueSelectorForm extends Component {
     }
 
     componentDidMount() {
-        const { default_project_id, default_sprint_id, default_issue_id } = this.props
+        const { default_project_id, default_sprint_id, default_issue_id, initial_mode } = this.props
         this.setState( {project_id: default_project_id,
                         sprint_id: default_sprint_id,
                         issue_id: default_issue_id,
-                        creating_issue: false} )
+                        creating_issue: initial_mode === "create"} )
     }
 
     onChangeProject(new_project_id) {
@@ -146,7 +146,7 @@ class IssueSelectorForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted, optional_default_issue_values} = props
+    const { onSubmitted, optional_default_issue_values, initial_mode} = props
 
     const entityIdsAvailableForEventCreation = getGloballySelectedEntityIds(state)
     const { project_id, sprint_id } = entityIdsAvailableForEventCreation || {}
@@ -161,7 +161,8 @@ function mapStateToProps(state, props) {
         onSubmitted,
         default_project_id: project_id,
         default_sprint_id: sprint_id,
-        optional_default_issue_values
+        optional_default_issue_values,
+        initial_mode: initial_mode || "search"
     }
 }
 

@@ -12,7 +12,7 @@ import {
     LIST_KEY__CLOCK_HISTORY_LIST,
     PAGE_KEY__CLOCK_HISTORY_PAGE
 } from '../actions/ItemListKeyRegistry'
-import { initList, update_list_filter } from '../actions/ItemList'
+import { initList, update_list_filter, invalidateList } from '../actions/ItemList'
 import { logged_in_user } from '../actions/Auth'
 
 import Splitter from '../components/Splitter'
@@ -20,19 +20,9 @@ import Splitter from '../components/Splitter'
 class ClockHistoryPage extends Component {
 
     componentDidMount() {
-        const { dispatch, list_key, logged_in_user_id, filter_unallocated, filter_issue_id } = this.props
+        const { dispatch, list_key } = this.props
         dispatch(set_toolbars(PAGE_KEY__CLOCK_HISTORY_PAGE, ['clock-history']))
 	dispatch(initList(list_key))
-        if ( logged_in_user_id ) {
-            dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
-        }
-        if ( filter_unallocated ) {
-            dispatch(update_list_filter(list_key, {is_unallocated:filter_unallocated}))
-        }
-        if ( filter_issue_id ) {
-            dispatch(update_list_filter(list_key, {issue_id:filter_issue_id}))
-        }
-        
         this.refresh()
     }
 
@@ -42,7 +32,22 @@ class ClockHistoryPage extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, issue, sprint, project } = props
+        const { dispatch, issue, sprint, project, list_key, 
+                filter, logged_in_user_id, filter_unallocated, filter_issue_id } = props
+
+        if ( logged_in_user_id && (!filter || filter.logged_in_user_id !== this.props.logged_in_user_id)) {
+            dispatch(update_list_filter(list_key, {user_id:logged_in_user_id}))
+            dispatch(invalidateList(list_key))
+        }
+        if ( filter_unallocated && (!filter || filter.filter_unallocated !== this.props.filter_unallocated) ) {
+            dispatch(update_list_filter(list_key, {is_unallocated:filter_unallocated}))
+            dispatch(invalidateList(list_key))
+        }
+        if ( filter_issue_id && (!filter || filter.filter_issue_id !== this.props.filter_issue_id )) {
+            dispatch(update_list_filter(list_key, {issue_id:filter_issue_id}))
+            dispatch(invalidateList(list_key))
+        }
+        
         if ( props.issue_id && (!props.issue || props.issue.id !== props.issue_id) ) {
             dispatch(ensureIssuesLoaded([props.issue_id]))
         }
@@ -102,6 +107,7 @@ function mapStateToProps(state, props) {
     
     return {
         list_key: LIST_KEY__CLOCK_HISTORY_LIST,
+        filter,
         filter_unallocated,
         filter_issue_id,
         issue,
