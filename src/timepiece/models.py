@@ -2959,7 +2959,7 @@ class Entry(BaseModel):
     end_time = models.DateTimeField(blank=True, null=True, db_index=True)
     seconds_paused = models.PositiveIntegerField(default=0)
     pause_time = models.DateTimeField(blank=True, null=True)
-    comments = models.TextField(blank=True)
+    comments = models.TextField(blank=True, null=True)
     extended_comments = models.TextField(blank=True)
     date_updated = models.DateTimeField(auto_now=True)
     role = ProtectedForeignKey(ProjectRole, related_name='entries', null=True, blank=True)

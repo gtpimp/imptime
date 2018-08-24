@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 
-class PopupPanelButton extends Component {
+class PopupPanelMiniButton extends Component {
 
     render() {
         const { children, active, onClick } = this.props
@@ -39,5 +39,5 @@ class PopupPanelButton extends Component {
     
 }
 
-export default PopupPanelButton
+export default PopupPanelMiniButton
 
