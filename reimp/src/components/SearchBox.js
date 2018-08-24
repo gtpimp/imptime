@@ -214,7 +214,7 @@ class SearchBox extends Component {
 
         return (
             <SearchBoxDiv onKeyDown={this.keyDown}>
-              <SearchInput placeholder="Search Imptime"
+              <SearchInput placeholder="Search ImpTime"
                            onOpenDropDown={this.onShowResults}
                            onChange={this.onFilterTermChanged}/>
 
