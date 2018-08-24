@@ -50,7 +50,6 @@ import {
 } from '../actions/Sprints'
 import SprintName from './SprintName'
 import Timestamp from './Timestamp'
-import SprintDeadline from './SprintDeadline'
 import Card from './Card'
 
 const deadline_row = css`margin-bottom:${theme.spacing.vertical_section_gap};
@@ -206,6 +205,17 @@ class ProjectRoadmap extends Component {
                   <div className="icon--error"></div>
                 </Floater>
               }
+              { !has_problems &&
+                <Floater
+                    title="Problems"
+                    disableHoverToClick
+                    event="hover"
+                    eventDelay={0}
+                    placement="right"
+                    content={<div>This sprint has no immediate problems.</div>}>
+                  <div className="icon__status--ok"></div>
+                </Floater>
+              }
               { has_warnings &&
                 <Floater
                     title="Warning"
@@ -295,12 +305,12 @@ class ProjectRoadmap extends Component {
               <div className={css`font:informational`}>
                 { sprint.first_entry &&
                   <div className="project-roadmap__sprint-time-entry">
-                    First clock: <Timestamp value={sprint.first_entry.start_time} format="from_now" />
+                    First clock: &nbsp;<Timestamp value={sprint.first_entry.start_time} format="from_now" />
                   </div>
                 }
                 { sprint.last_entry &&
                   <div className="project-roadmap__sprint-time-entry">
-                    Last clock: <Timestamp value={sprint.last_entry.end_time} format="from_now" />
+                    Last clock: &nbsp;<Timestamp value={sprint.last_entry.end_time} format="from_now" />
                   </div>
                 }
                 { !sprint.last_entry &&
@@ -371,17 +381,40 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderBudget(sprint) {
+        const { show_money, cost_summaries_by_id } = this.props
+        const cost_summary = cost_summaries_by_id[sprint.id]
+        if ( ! show_money ) {
+            return null
+        }
+
+        if ( sprint.budget ) {
+            return (
+                <div className={deadline_row}>
+                  Budget: <CurrencyValue value={sprint.budget} />
+                </div>
+            )
+        }
+        
+        return (
+            <div className={deadline_row}>
+              No budget set
+            </div>
+        )
+    }
+
     renderSprintCard(sprint) {
         return (
             <Card key={sprint.id}>
               <SprintName sprint_id={sprint.id} />
-              { this.renderProblems(sprint) }
               { this.renderBudgetProgress(sprint) }
+              { this.renderProblems(sprint) }
               { this.renderActual(sprint) }
-              { this.renderRemaining(sprint) }
-              { this.renderIssueStatusSummary(sprint) }
-              { this.renderStartEnd(sprint) }
+              { this.renderBudget(sprint) }
               { this.renderDeadlines(sprint) }
+              { this.renderIssueStatusSummary(sprint) }
+              { this.renderRemaining(sprint) }
+              { this.renderStartEnd(sprint) }
               { this.renderWorkActivity(sprint) }
               { this.renderIssueCreationActivity(sprint) }
             </Card>
