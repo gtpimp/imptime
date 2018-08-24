@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { css } from 'emotion'
-import { map } from 'lodash'
+import { cx, css } from 'emotion'
+import { size, map, flatMap, filter, get } from 'lodash'
 import moment from 'moment'
 import { default_theme as theme } from '../theme/default'
 import { showMoney } from '../actions/Mien'
 import { has_permission } from '../actions/Users'
 import ProgressBar from './ProgressBar'
+import CurrencyValue from './CurrencyValue'
 import { getSetting } from '../actions/Settings'
 import {
     initList,
@@ -27,7 +28,8 @@ import {
 } from '../actions/SprintRoadmaps'
 import {
     fetchSprintDeadlinesIfNeeded,
-    getSprintDeadlinesById
+    getSprintDeadlinesById,
+    ensureSprintDeadlinesLoaded,
 } from '../actions/SprintDeadlines'
 import {
     fetchCostSummariesIfNeeded,
@@ -47,11 +49,17 @@ import Timestamp from './Timestamp'
 import SprintDeadline from './SprintDeadline'
 import Card from './Card'
 
+const deadline_row = css`margin-bottom:${theme.spacing.vertical_section_gap};
+                         display: flex;
+                         justify-content: space-between;`
+
+const deadline_row_cell = css`padding-right:${theme.spacing.horizontal_space_inline};`
+
 class ProjectRoadmap extends Component {
     
     componentDidMount() {
 	const { dispatch, sprint_list_key, roadmap_list_key,
-                deadline_list_key, cost_summary_list_key,
+                deadline_list_key, cost_summary_list_key, sprint_deadline_ids,
                 project_id } = this.props
         dispatch(initList(sprint_list_key))
         dispatch(initList(deadline_list_key))
@@ -65,8 +73,7 @@ class ProjectRoadmap extends Component {
         dispatch(update_list_format(sprint_list_key, {roadmap: true}))
         dispatch(fetchSprintsIfNeeded(sprint_list_key))
         
-        dispatch(update_list_filter(deadline_list_key, filter))
-        dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
+        dispatch(ensureSprintDeadlinesLoaded(sprint_deadline_ids))
         
         dispatch(update_list_filter(roadmap_list_key, filter))
         dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
@@ -76,7 +83,8 @@ class ProjectRoadmap extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, sprint_list_key, roadmap_list_key, deadline_list_key, cost_summary_list_key} = this.props
+        const {dispatch, sprint_list_key, roadmap_list_key,
+               deadline_list_key, cost_summary_list_key, sprint_deadline_ids} = this.props
         const { project_id } = new_props
         if ( project_id !== this.props.project_id ) {
 
@@ -94,74 +102,36 @@ class ProjectRoadmap extends Component {
         dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
         dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
         dispatch(fetchCostSummariesIfNeeded(cost_summary_list_key))
+        dispatch(ensureSprintDeadlinesLoaded(sprint_deadline_ids))
     }
 
-    getSprintDimensions(sprint) {
-        const { sprint_width_mode, sprint_roadmaps_by_id, num_business_hours_per_day } = this.props
-        const sprint_roadmap = sprint_roadmaps_by_id[sprint.id] || {}
+    renderDeadlines(sprint) {
+        const { sprint_deadlines_by_id } = this.props
         
-        const dimensions = {start: moment(),
-                            end: moment(),
-                            width: null}
-        
-        switch(sprint_width_mode) {
-            case 'clock':
-                dimensions.start = (sprint.first_entry && moment(sprint.first_entry.start_time)) || moment()
-                dimensions.end = (sprint.last_entry && moment(sprint.last_entry.end_time)) || moment()
-                dimensions.width_days = dimensions.end.diff(dimensions.start, 'days')
-                break
-            case 'deadline':
-                dimensions.start = (sprint_roadmap.first_deadline_at && moment(sprint_roadmap.first_deadline_at)) || moment()
-                dimensions.end = (sprint_roadmap.last_deadline_at && moment(sprint_roadmap.last_deadline_at)) || moment()
-                dimensions.width_days = dimensions.end.diff(dimensions.start, 'days')
-                break
-            case 'estimate':
-                const average_estimate_hours = ((sprint_roadmap.slowest_estimated_hours || 0)*1.0 + (sprint_roadmap.fastest_estimated_hours|| 0))/2
-                dimensions.width_days = Math.round(average_estimate_hours / num_business_hours_per_day)
-                break
-            default:
-                break
-        }
+        const deadlines = filter(sprint_deadlines_by_id, (deadline) => deadline.sprint_id === sprint.id)
 
-        if ( this.project_roadmap_el ) {
-            const max_width = this.project_roadmap_el.clientWidth;
-            dimensions.width_percentage = (dimensions.width_days / max_width) * 100 + "%"
-        } else {
-            dimensions.width_percentage = "0%"
-        }
-        
-        return dimensions
-    }
-
-    renderSprintContent__ActualDuration(sprint, dimensions) {
-        return (
-            <div>
-              { sprint.first_entry &&
-                <div className="project-roadmap__sprint-time-entry">
-                  First clock: <Timestamp value={sprint.first_entry.start_time} format="datetime" />
-                </div>
-              }
-              { sprint.last_entry &&
-                <div className="project-roadmap__sprint-time-entry">
-                  Last clock: <Timestamp value={sprint.last_entry.end_time} format="datetime" />
-                </div>
-              }
-              { !sprint.last_entry &&
+        if ( size(deadlines) === 0 ) {
+            return (
                 <div>
-                  No clocked time yet
+                  No deadlines
                 </div>
-              }
-            </div>
-        )
-    }
-
-    renderSprintContent__Deadline(sprint, dimensions) {
+            )
+        }
+        
         return (
-            <div>
-              { map(sprint.deadline_ids, function(deadline_id) {
+            <div className={deadline_row}>
+              <div>
+                Deadlines:
+              </div>
+              { map(deadlines, function(deadline) {
                     return (
-                        <div key={deadline_id}>
-                          <SprintDeadline deadline_id={deadline_id} />
+                        <div key={deadline.id} className={css`display:flex;`}>
+                          <div className={cx(deadline_row_cell, css`font-style:italic`)}>
+                            { deadline.description }
+                          </div>
+                          <div className={deadline_row_cell}>
+                            <Timestamp value={deadline.deadline} format="from_now" />
+                          </div>
                         </div>
                     )
                 })
@@ -170,51 +140,14 @@ class ProjectRoadmap extends Component {
         )
     }
 
-    renderSprintContent__Estimate(sprint, dimensions) {
-        return (
-            <div>
-              { dimensions.width_days &&
-                <div>Total sprint estimate</div>
-              }
-              { !dimensions.width_days &&
-                <div>No estimate</div>
-              }
-            </div>
-        )
-    }
-
-    renderSprint(sprint) {
-        const { sprint_width_mode } = this.props
-        const dimensions = this.getSprintDimensions(sprint)
-        
-        return (
-            <div key={sprint.id} className="project-roadmap__sprint">
-              <div className="project-roadmap__sprint-fixed-content">
-                <div className="project-roadmap__sprint-heading">
-                  <SprintName sprint_id={sprint.id} />
-                  <div className="project-roadmap__sprint-heading-status">
-                    - { sprint.status_name }
-                  </div>
-                </div>
-                { sprint_width_mode==='clock' && this.renderSprintContent__ActualDuration(sprint, dimensions) }
-                { sprint_width_mode==='deadline' && this.renderSprintContent__Deadline(sprint, dimensions) }
-                { sprint_width_mode==='estimate' && this.renderSprintContent__Estimate(sprint, dimensions) }
-              </div>
-              <div className="project-roadmap__sprint-variable-content" style={{width:dimensions.width_percentage||0}}>
-                { dimensions.width_days>0 &&
-                  <div className="project-roadmap__duration_text">
-                    {dimensions.width_days} days
-                  </div>
-                }
-              </div>
-            </div>
-        )
-    }
-
     renderBudgetProgress(sprint) {
-        const { can_view_budget, cost_summaries_by_id  } = this.props
+        const { can_view_budget, show_money, cost_summaries_by_id } = this.props
         const cost_summary = cost_summaries_by_id[sprint.id]
 
+        if (! show_money ) {
+            return null
+        }
+        
         if (! cost_summary ) {
             return null
         }
@@ -234,11 +167,54 @@ class ProjectRoadmap extends Component {
         }
     }
 
+    renderStartEnd(sprint) {
+        return (
+            <div className={deadline_row}>
+              <div>
+                Activity:
+              </div>
+              <div className={css`font:informational`}>
+                { sprint.first_entry &&
+                  <div className="project-roadmap__sprint-time-entry">
+                    First clock: <Timestamp value={sprint.first_entry.start_time} format="from_now" />
+                  </div>
+                }
+                { sprint.last_entry &&
+                  <div className="project-roadmap__sprint-time-entry">
+                    Last clock: <Timestamp value={sprint.last_entry.end_time} format="from_now" />
+                  </div>
+                }
+                { !sprint.last_entry &&
+                  <div>
+                    No clocked time yet
+                  </div>
+                }
+              </div>
+            </div>
+        )
+    }
+
+    renderActual(sprint) {
+        const { show_money, cost_summaries_by_id } = this.props
+        const cost_summary = cost_summaries_by_id[sprint.id]
+        if ( ! show_money ) {
+            return null
+        }
+        return (
+            <div className={deadline_row}>
+              Spent: <CurrencyValue value={cost_summary.spent} />
+            </div>
+        )
+    }
+
     renderSprintCard(sprint) {
         return (
-            <Card>
+            <Card key={sprint.id}>
               <SprintName sprint_id={sprint.id} />
               { this.renderBudgetProgress(sprint) }
+              { this.renderActual(sprint) }
+              { this.renderStartEnd(sprint) }
+              { this.renderDeadlines(sprint) }
             </Card>
         )
     }
@@ -276,9 +252,9 @@ function mapStateToProps(state, props) {
     const sprint_roadmaps_by_id = getSprintRoadmapsById(state, sprint_roadmap_ids)
     const is_loading = isLoading(state, list_key) || getLoadingItemIds(state, list_key).length > 0 || !haveItemsBeenRetrieved(state, sprint_ids, ENTITY_KEY__SPRINT)
     const sprint_width_mode = getSprintWidthMode(state, sprint_list_key)
-    const sprint_deadline_ids = getVisibleItemIds(deadline_list_key)
+    const sprint_deadline_ids = flatMap(sprints, (sprint) => get(sprint, "deadline_ids", []))
     const sprint_deadlines_by_id = getSprintDeadlinesById(state, sprint_deadline_ids)
-    const cost_summary_ids = getVisibleItemIds(cost_summary_list_key)
+    const cost_summary_ids = getVisibleItemIds(state, cost_summary_list_key)
     const cost_summaries_by_id = getCostSummariesById(state, cost_summary_ids)
 
     const show_money = showMoney(state, project_id)

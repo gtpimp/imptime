@@ -5168,9 +5168,9 @@ class ProjectDeadline(BaseModel):
         was_created = not self.id
         super(ProjectDeadline, self).save(*args, **kwargs)
         if was_created:
-            RefreshNotifier().notify_model_create(self)
+            RefreshNotifier().notify_model_create(self, params={'sprint_id': self.project_id})
         else:
-            RefreshNotifier().notify_model_update(self)
+            RefreshNotifier().notify_model_update(self, params={'sprint_id': self.project_id})
 
 class ProjectReview(BaseModel):
     project = ProtectedForeignKey(Project, null=False, related_name='reviews')

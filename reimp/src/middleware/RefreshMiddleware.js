@@ -101,6 +101,7 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateIssueReviews([d.entity_ref]))
     } else if ( d.entity_name === 'projectdeadline' ) {
         dispatch(invalidateSprintDeadlines([d.entity_ref]))
+        dispatch(invalidateSprints([d.params.sprint_id]))
     } else if ( d.entity_name === 'projectreview' ) {
         dispatch(invalidateSprintReviews([d.entity_ref]))
     } else if ( d.entity_name === 'nudge' ) {
