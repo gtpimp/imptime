@@ -10,6 +10,7 @@ import {
 import {
     set_toolbars,
     select_projects,
+    setBrowserTitle
 } from '../actions/Page'
 import ProjectRoadmap from '../components/ProjectRoadmap'
 
@@ -43,6 +44,7 @@ class ProjectRoadmapPage extends Component {
     render() {
 
         const { project } = this.props
+        setBrowserTitle(project.name)
 
         return (
             <div>

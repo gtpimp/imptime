@@ -137,4 +137,7 @@ class SprintDeadlineViewSet(BaseViewSet):
         project_id = raw_filter_args.pop('project_id', None)
         if project_id:
             qs = qs.filter(project__business_id=project_id) #sic
+        sprint_status = raw_filter_args.pop('sprint_status', None)
+        if sprint_status == 'open':
+            qs = qs.filter(project__status3__name__in=Sprint.open_states())
         return super(SprintDeadlineViewSet, self).apply_filter(qs, raw_filter_args)

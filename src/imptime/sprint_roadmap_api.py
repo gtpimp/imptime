@@ -7,6 +7,8 @@ from django.db.models import Prefetch, Count, Sum
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+from timepiece.models import Project as Sprint
+from timepiece.models import Business as Project
 
 logger = logging.getLogger(__name__)
 
@@ -49,3 +51,13 @@ class SprintRoadmapViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
+
+    def apply_filter(self, qs, raw_filter_args):
+        project_id = raw_filter_args.pop('project_id', None)
+        if project_id:
+            qs = qs.filter(business_id=project_id) #sic
+        sprint_status = raw_filter_args.pop('sprint_status', None)
+        if sprint_status == 'open':
+            raw_filter_args['status3__name__in'] = Sprint.open_states()
+        return super(SprintRoadmapViewSet, self).apply_filter(qs, raw_filter_args)
+    

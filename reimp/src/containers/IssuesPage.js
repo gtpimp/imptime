@@ -176,8 +176,7 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { show_sidebar, sidebar_view_mode, project,
-                sprint_id, is_single_selection, is_creating_issue, selected_issue} = this.props
+        const { show_sidebar, sidebar_view_mode, project } = this.props
 
         setBrowserTitle(project.name)
 

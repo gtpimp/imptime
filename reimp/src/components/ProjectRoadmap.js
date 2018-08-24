@@ -38,31 +38,38 @@ class ProjectRoadmap extends Component {
     
     componentDidMount() {
 	const { dispatch, list_key, deadline_list_key, project_id, roadmap_list_key } = this.props
-        if (project_id) {
-            dispatch(initList(list_key))
-            dispatch(update_list_filter(list_key, {project_id: project_id}))
-            dispatch(update_list_format(list_key, {roadmap: true}))
-            dispatch(fetchSprintsIfNeeded(list_key))
-            dispatch(update_list_filter(deadline_list_key, {project_id: project_id}))
-            dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
+        dispatch(initList(list_key))
+        dispatch(initList(deadline_list_key))
+        dispatch(initList(roadmap_list_key))
 
-            dispatch(update_list_filter(roadmap_list_key, {project_id: project_id}))
-            dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
-        }
+        const filter = {project_id: project_id,
+                        sprint_status: 'open'}
+        dispatch(update_list_filter(list_key, filter))
+        dispatch(update_list_format(list_key, {roadmap: true}))
+        dispatch(fetchSprintsIfNeeded(list_key))
+        dispatch(update_list_filter(deadline_list_key, filter))
+        dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
+        dispatch(update_list_filter(roadmap_list_key, filter))
+        dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, list_key, roadmap_list_key} = this.props
+        const {dispatch, list_key, roadmap_list_key, deadline_list_key} = this.props
         const { project_id } = new_props
         if ( project_id !== this.props.project_id ) {
-            dispatch(update_list_filter(list_key, {project_id: project_id}))
-            dispatch(update_list_filter(roadmap_list_key, {project_id: project_id}))
+
+            const filter = { project_id: project_id}
+            dispatch(update_list_filter(list_key, filter))
+            dispatch(update_list_filter(roadmap_list_key, filter))
+            dispatch(update_list_filter(deadline_list_key, filter))
             dispatch(invalidateList(list_key))
             dispatch(invalidateList(roadmap_list_key))
+            dispatch(invalidateList(deadline_list_key))
         }
         if (project_id) {
             dispatch(fetchSprintsIfNeeded(list_key))
             dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
+            dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
         }
     }
 
