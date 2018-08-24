@@ -3,8 +3,10 @@ import { ENTITY_KEY__SPRINT_COST_SUMMARY } from './ItemListKeyRegistry'
 import {
     invalidateItems,
     ensureItemsLoaded,
+    fetchItemsIfNeeded,
     isLoadingItems,
-    getItem
+    getItem,
+    getItemsById
 } from './Item'
 
 export function invalidateCostSummary(sprint_id) {
@@ -22,3 +24,15 @@ export function getCostSummary(state, sprint_id) {
 export function isLoadingCostSummary(state, sprint_id) {
     return isLoadingItems(state, ENTITY_KEY__SPRINT_COST_SUMMARY, [sprint_id])
 }
+
+export function fetchCostSummariesIfNeeded(list_key) {
+    return (dispatch, getState) => {
+        dispatch(fetchItemsIfNeeded(ENTITY_KEY__SPRINT_COST_SUMMARY, list_key))
+    }
+}
+
+export function getCostSummariesById(state, cost_summary_ids) {
+    return getItemsById(state, ENTITY_KEY__SPRINT_COST_SUMMARY, cost_summary_ids)
+}
+
+ 

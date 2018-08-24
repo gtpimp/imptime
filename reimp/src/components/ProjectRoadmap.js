@@ -1,7 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { css } from 'emotion'
 import { map } from 'lodash'
 import moment from 'moment'
+import { default_theme as theme } from '../theme/default'
+import { showMoney } from '../actions/Mien'
+import { has_permission } from '../actions/Users'
+import ProgressBar from './ProgressBar'
 import { getSetting } from '../actions/Settings'
 import {
     initList,
@@ -25,7 +30,14 @@ import {
     getSprintDeadlinesById
 } from '../actions/SprintDeadlines'
 import {
-    ENTITY_KEY__SPRINT
+    fetchCostSummariesIfNeeded,
+    getCostSummariesById
+} from '../actions/CostSummary'
+import {
+    ENTITY_KEY__SPRINT,
+    LIST_KEY__SPRINT_COST_SUMMARY,
+    LIST_KEY__SPRINT_ROADMAP,
+    LIST_KEY__SPRINT_DEADLINE
 } from '../actions/ItemListKeyRegistry'
 import {
     fetchSprintsIfNeeded
@@ -33,45 +45,55 @@ import {
 import SprintName from './SprintName'
 import Timestamp from './Timestamp'
 import SprintDeadline from './SprintDeadline'
+import Card from './Card'
 
 class ProjectRoadmap extends Component {
     
     componentDidMount() {
-	const { dispatch, list_key, deadline_list_key, project_id, roadmap_list_key } = this.props
-        dispatch(initList(list_key))
+	const { dispatch, sprint_list_key, roadmap_list_key,
+                deadline_list_key, cost_summary_list_key,
+                project_id } = this.props
+        dispatch(initList(sprint_list_key))
         dispatch(initList(deadline_list_key))
         dispatch(initList(roadmap_list_key))
+        dispatch(initList(cost_summary_list_key))
 
         const filter = {project_id: project_id,
                         sprint_status: 'open',
                         sprint_types: ['sprint', 'inbox']}
-        dispatch(update_list_filter(list_key, filter))
-        dispatch(update_list_format(list_key, {roadmap: true}))
-        dispatch(fetchSprintsIfNeeded(list_key))
+        dispatch(update_list_filter(sprint_list_key, filter))
+        dispatch(update_list_format(sprint_list_key, {roadmap: true}))
+        dispatch(fetchSprintsIfNeeded(sprint_list_key))
+        
         dispatch(update_list_filter(deadline_list_key, filter))
         dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
+        
         dispatch(update_list_filter(roadmap_list_key, filter))
         dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
+        
+        dispatch(update_list_filter(cost_summary_list_key, filter))
+        dispatch(fetchCostSummariesIfNeeded(cost_summary_list_key))
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, list_key, roadmap_list_key, deadline_list_key} = this.props
+        const {dispatch, sprint_list_key, roadmap_list_key, deadline_list_key, cost_summary_list_key} = this.props
         const { project_id } = new_props
         if ( project_id !== this.props.project_id ) {
 
             const filter = { project_id: project_id}
-            dispatch(update_list_filter(list_key, filter))
+            dispatch(update_list_filter(sprint_list_key, filter))
             dispatch(update_list_filter(roadmap_list_key, filter))
             dispatch(update_list_filter(deadline_list_key, filter))
-            dispatch(invalidateList(list_key))
+            dispatch(update_list_filter(cost_summary_list_key, filter))
+            dispatch(invalidateList(sprint_list_key))
             dispatch(invalidateList(roadmap_list_key))
             dispatch(invalidateList(deadline_list_key))
+            dispatch(invalidateList(cost_summary_list_key))
         }
-        if (project_id) {
-            dispatch(fetchSprintsIfNeeded(list_key))
-            dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
-            dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
-        }
+        dispatch(fetchSprintsIfNeeded(sprint_list_key))
+        dispatch(fetchSprintRoadmapsIfNeeded(roadmap_list_key))
+        dispatch(fetchSprintDeadlinesIfNeeded(deadline_list_key))
+        dispatch(fetchCostSummariesIfNeeded(cost_summary_list_key))
     }
 
     getSprintDimensions(sprint) {
@@ -189,6 +211,38 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderBudgetProgress(sprint) {
+        const { can_view_budget, cost_summaries_by_id  } = this.props
+        const cost_summary = cost_summaries_by_id[sprint.id]
+
+        if (! cost_summary ) {
+            return null
+        }
+
+        if ( ! cost_summary.budget ) {
+            return null
+        }
+
+        if ( can_view_budget ) {
+            return (
+                <ProgressBar current={ cost_summary.spent } max={ cost_summary.budget } />
+            )
+        } else {
+            return (
+                <ProgressBar current={ cost_summary.progress_against_budget } max={ 1.0 } />
+            )
+        }
+    }
+
+    renderSprintCard(sprint) {
+        return (
+            <Card>
+              <SprintName sprint_id={sprint.id} />
+              { this.renderBudgetProgress(sprint) }
+            </Card>
+        )
+    }
+
     render() {
 
         const { is_loading, sprints } = this.props
@@ -200,9 +254,11 @@ class ProjectRoadmap extends Component {
         }
         
         return (
-            <div className="project-roadmap"
-                 ref={ (el) => this.project_roadmap_el = el }>
-              {map(sprints, (sprint) => this.renderSprint(sprint))}
+            <div ref={ (el) => this.project_roadmap_el = el }>
+              <div className={css`display:flex;
+                                  flex-flow: row wrap;`}>
+                {map(sprints, (sprint) => this.renderSprintCard(sprint))}
+              </div>
             </div>
         )
     }
@@ -210,15 +266,23 @@ class ProjectRoadmap extends Component {
 
 function mapStateToProps(state, props) {
     const { list_key, project_id } = props
-    const deadline_list_key = list_key + "_DEADLINES"
+    const sprint_list_key = list_key
+    const deadline_list_key = LIST_KEY__SPRINT_DEADLINE
+    const roadmap_list_key = LIST_KEY__SPRINT_ROADMAP
+    const cost_summary_list_key = LIST_KEY__SPRINT_COST_SUMMARY
     const sprint_ids = getVisibleItemIds(state, list_key)
     const sprints = getVisibleItems(state, list_key, ENTITY_KEY__SPRINT)
     const sprint_roadmap_ids = getSprintRoadmapIdsFromSprintIds(sprint_ids)
     const sprint_roadmaps_by_id = getSprintRoadmapsById(state, sprint_roadmap_ids)
     const is_loading = isLoading(state, list_key) || getLoadingItemIds(state, list_key).length > 0 || !haveItemsBeenRetrieved(state, sprint_ids, ENTITY_KEY__SPRINT)
-    const sprint_width_mode = getSprintWidthMode(state, list_key)
+    const sprint_width_mode = getSprintWidthMode(state, sprint_list_key)
     const sprint_deadline_ids = getVisibleItemIds(deadline_list_key)
     const sprint_deadlines_by_id = getSprintDeadlinesById(state, sprint_deadline_ids)
+    const cost_summary_ids = getVisibleItemIds(cost_summary_list_key)
+    const cost_summaries_by_id = getCostSummariesById(state, cost_summary_ids)
+
+    const show_money = showMoney(state, project_id)
+    const can_view_budget = show_money && has_permission(state, project_id, 'has_view_budget')
     
     return {
         project_id,
@@ -227,9 +291,14 @@ function mapStateToProps(state, props) {
         sprints,
         is_loading,
         sprint_width_mode,
-        list_key,
+        sprint_list_key,
         deadline_list_key,
+        roadmap_list_key,
+        cost_summary_list_key,
         sprint_deadlines_by_id,
+        cost_summaries_by_id,
+        can_view_budget,
+        show_money,
         num_business_hours_per_day: getSetting(state, 'NUM_BUSINESS_HOURS_PER_DAY') || 8
     }
 }

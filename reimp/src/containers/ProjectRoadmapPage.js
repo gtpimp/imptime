@@ -5,7 +5,7 @@ import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     PAGE_KEY__PROJECT_ROADMAP_PAGE,
-    LIST_KEY__PROJECT_ROADMAP
+    LIST_KEY__SPRINT_ROADMAP
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
@@ -49,7 +49,7 @@ class ProjectRoadmapPage extends Component {
         return (
             <div>
               <h2>Roadmap</h2>
-              <ProjectRoadmap project_id={project_id} list_key={LIST_KEY__PROJECT_ROADMAP} />
+              <ProjectRoadmap project_id={project_id} list_key={LIST_KEY__SPRINT_ROADMAP} />
               <br/>
             </div>
         )

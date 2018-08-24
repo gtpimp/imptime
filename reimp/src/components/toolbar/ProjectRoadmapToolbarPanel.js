@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import classNames from 'classnames'
 import {
-    LIST_KEY__PROJECT_ROADMAP
+    LIST_KEY__SPRINT_ROADMAP
 } from '../../actions/ItemListKeyRegistry'
 import { setSprintWidthMode, getSprintWidthMode } from '../../actions/SprintRoadmaps'
 
@@ -69,7 +69,7 @@ class ProjectRoadmapToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const list_key = LIST_KEY__PROJECT_ROADMAP
+    const list_key = LIST_KEY__SPRINT_ROADMAP
     const sprint_width_mode = getSprintWidthMode(state, list_key)
     
     return {

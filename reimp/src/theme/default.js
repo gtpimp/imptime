@@ -28,6 +28,7 @@ export const default_theme = {
                left_panel_background: '#ffffff',
                right_panel_background: '#ffffff',
                single_panel_background: '#ffffff',
+               card_background: '#ffffff',
                button_background: '#D8DDE1',
                button_background_hover: '#C7CCD0',
                cell_separator: '#ededed'
@@ -73,7 +74,8 @@ export const default_theme = {
         horizontal_text_space_inside_button: "12px",
         vertical_row_space_tight: "2px",
         mini_button_height: "24px",
-        vertical_section_gap: "20px"
+        vertical_section_gap: "20px",
+        horizontal_section_gap: "20px",
         
     }
     

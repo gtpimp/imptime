@@ -24,6 +24,7 @@ class CostSummaryViewSet(BaseViewSet):
             params = json.loads(params)
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
+            format_args = params.get('format', {}) 
 
             sprints = self.allowed_sprints()
             sprints = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
@@ -31,10 +32,15 @@ class CostSummaryViewSet(BaseViewSet):
 
             res = []
 
-            for sprint in sprints:
-                context = {}
-                cost_summary = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
-                res.append(cost_summary)
+            if format_args.get('ids_only'):
+                context['ids'] = [str(x) for x in sprints.values_list(
+                    'id', flat=True)]
+            else:
+                for sprint in sprints:
+                    context = {}
+                    cost_summary = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
+                    cost_summary['id'] = sprint.id
+                    res.append(cost_summary)
 
             context['items'] = res
             data = {'status': 'success', 'payload': context}
@@ -45,3 +51,17 @@ class CostSummaryViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    def apply_filter(self, qs, raw_filter_args):
+        project_id = raw_filter_args.pop('project_id', None)
+        if project_id:
+            qs = qs.filter(business_id=project_id) #sic
+            
+        sprint_status = raw_filter_args.pop('sprint_status', None)
+        if sprint_status == 'open':
+            qs = qs.filter(status3__name__in=Sprint.open_states())
+            
+        sprint_types = raw_filter_args.pop('sprint_types', None)
+        if sprint_types is not None:
+            qs = qs.filter(project_type__in=sprint_types)
+            
+        return super(CostSummaryViewSet, self).apply_filter(qs, raw_filter_args)
