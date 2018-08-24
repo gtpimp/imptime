@@ -36,10 +36,14 @@ import ReleaseNotesPage from './ReleaseNotesPage'
 import SprintsPage from './SprintsPage'
 import VisualSpecDocumentPage from '../components/visual_spec/VisualSpecDocumentPage'
 import WelcomePage from './WelcomePage'
+import { setBrowserTitle } from '../actions/Page'
 
 class MainRouter extends Component {
 
     render() {
+
+        setBrowserTitle('ImpTime')
+        
         return (
             <Switch>
               <Route exact path="/" component={WelcomePage}/>

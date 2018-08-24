@@ -25,7 +25,8 @@ import {
     select_sprints,
     select_projects,
     getPageFlag,
-    setPageFlag
+    setPageFlag,
+    setBrowserTitle
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -189,7 +190,10 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { show_sidebar, sidebar_view_mode } = this.props
+        const { show_sidebar, sidebar_view_mode, project } = this.props
+
+        setBrowserTitle(project.name)
+        
         if ( show_sidebar && sidebar_view_mode === 'right' ) {
             return (
                 <Splitter name="issues_page">

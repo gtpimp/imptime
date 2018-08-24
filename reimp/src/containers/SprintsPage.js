@@ -24,7 +24,8 @@ import {
     set_toolbars,
     select_sprints,
     select_projects,
-    get_selected_sprint_ids
+    get_selected_sprint_ids,
+    setBrowserTitle
 } from '../actions/Page'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {getCandidateSprint, getSprintHeaderListForCurrentMien} from '../actions/Sprints'
@@ -161,8 +162,10 @@ class SprintsPage extends Component {
 
     render() {
 
-        const {show_sidebar } = this.props
+        const {show_sidebar, project } = this.props
 
+        setBrowserTitle(project.name)
+        
         if ( show_sidebar ) {
             return (
                 <Splitter name='sprints_page'>

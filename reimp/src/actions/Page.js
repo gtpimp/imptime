@@ -176,3 +176,12 @@ export function updateHeaderList(new_header_list, page_key) {
         header_list: header_list
     }
 }
+
+export function setBrowserTitle(title) {
+    if ( title ) {
+        document.title = title
+    } else {
+        document.title = "ImpTime"
+    }
+    
+}
