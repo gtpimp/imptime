@@ -174,47 +174,35 @@ class IssuesPage extends Component {
         }
     }
 
-    renderSinglePane() {
-        const { sprint_id, is_single_selection, is_creating_issue, selected_issue} = this.props
-
-        const should_render_creation_pane = ( is_creating_issue || (is_single_selection && sprint_id && selected_issue ) )
-        
-        return (
-            <Splitter>
-              { ! should_render_creation_pane && this.renderLeftPane() }
-              { should_render_creation_pane && this.renderRightPane() }
-              {null}
-            </Splitter>
-        )
-    }
-
     render() {
 
-        const { show_sidebar, sidebar_view_mode, project } = this.props
+        const { show_sidebar, sidebar_view_mode, project,
+                sprint_id, is_single_selection, is_creating_issue, selected_issue} = this.props
 
         setBrowserTitle(project.name)
-        
-        if ( show_sidebar && sidebar_view_mode === 'right' ) {
+
+
+        if ( sidebar_view_mode === 'fullscreen' ) {
+            if ( show_sidebar ) {
+                return (
+                    <Splitter>
+                      { this.renderRightPane() }
+                      {null}
+                    </Splitter>
+                )
+            } else {
+                return (
+                    <Splitter>
+                      { this.renderLeftPane() }
+                      {null}
+                    </Splitter>
+                )
+            }
+        } else {
             return (
                 <Splitter name="issues_page">
                   {this.renderLeftPane()}
-                  {this.renderRightPane()}
-                </Splitter>
-            )
-        }
-        if ( show_sidebar && sidebar_view_mode === 'fullscreen' ) {
-            return (
-                <Splitter>
-                  {this.renderSinglePane()}
-                  {null}
-                </Splitter>
-            )
-        }
-        if ( ! show_sidebar ) {
-            return (
-                <Splitter>
-                  {this.renderLeftPane()}
-                  {null}
+                  { (show_sidebar && this.renderRightPane()) || null }
                 </Splitter>
             )
         }
