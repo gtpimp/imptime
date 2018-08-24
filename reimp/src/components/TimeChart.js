@@ -76,12 +76,12 @@ class TimeChart extends Component {
         const { times, xaxis_datakey, yaxis_datakey, width, height,
                 reference_line_hours, public_holidays, sick_days, leave_days,
                 office_closed, average_hours_worked, average_hours_worked_warning_threshold,
-                show_y_axis } = this.props
+                show_y_axis, tooltip_renderer } = this.props
         const y_axis_domain = [0, 10]
 
         const is_bad = average_hours_worked_warning_threshold && average_hours_worked < average_hours_worked_warning_threshold
         const is_good = average_hours_worked_warning_threshold && average_hours_worked >= average_hours_worked_warning_threshold
-        
+
         return (
             <div className={classNames("time_chart",
                                        {"time_chart--bad":is_bad,
@@ -117,7 +117,7 @@ class TimeChart extends Component {
                 { public_holidays &&
                   <Scatter dataKey={'public_holidays'} shape='cross'/>
                 }
-                <Tooltip content={<TimeChartTooltip/>}/>
+                <Tooltip content={tooltip_renderer || <TimeChartTooltip/>}/>
               </ComposedChart>
             </div>
         )
@@ -125,7 +125,7 @@ class TimeChart extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { times, xaxis_datakey, yaxis_datakey, width, height } = props
+    const { times, xaxis_datakey, yaxis_datakey, width, height, tooltip_renderer } = props
     let { reference_line_hours } = props
     if ( reference_line_hours === undefined ) {
         reference_line_hours = 8
@@ -136,7 +136,8 @@ function mapStateToProps(state, props) {
         yaxis_datakey,
         width: width || 500,
         height: height || 100,
-        reference_line_hours: reference_line_hours
+        reference_line_hours,
+        tooltip_renderer
     }
 }
 

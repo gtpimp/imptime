@@ -74,6 +74,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/projectStatement" component={ProjectStatementPage}/>
               <Route exact path="/projects/:projectId/sprints" component={SprintsPage}/>
               <Route exact path="/projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
+              <Route exact path="/projects/:projectId/executiveSummary" component={ProjectRoadmapPage}/>
               <Route exact path="/projects/:projectId/gallery/" component={VisualSpecDocumentPage}/>
               <Route exact path="/projects/:projectId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
               <Route exact path="/projects/:projectId/wiki/" component={ProjectWikiPage}/>

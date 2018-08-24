@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import Pluralize from 'react-pluralize'
 import { cx, css } from 'emotion'
 import { size, map, flatMap, filter, get } from 'lodash'
 import moment from 'moment'
@@ -7,6 +8,7 @@ import { default_theme as theme } from '../theme/default'
 import { showMoney } from '../actions/Mien'
 import { has_permission } from '../actions/Users'
 import ProgressBar from './ProgressBar'
+import TimeChart from './TimeChart'
 import CurrencyValue from './CurrencyValue'
 import Hours from './Hours'
 import Floater from "react-floater"
@@ -56,6 +58,31 @@ const deadline_row = css`margin-bottom:${theme.spacing.vertical_section_gap};
                          justify-content: space-between;`
 
 const deadline_row_cell = css`padding-right:${theme.spacing.horizontal_space_inline};`
+
+class IssuesCreatedTimeChartTooltip extends Component {
+
+    render() {
+
+        const { active, payload, label } = this.props
+
+        if ( ! active || ! payload ) {
+            return null
+        }
+        
+        return (
+            <div className="time_chart__tooltip">
+              { map(payload, (series, index) =>
+                  (
+                      <div key={series.dataKey+"_"+index} className="time_chart__tooltip_series">
+                        <div>{series.value} issue created {moment(label).format('dddd DD-MMM-YYYY')}</div>
+                      </div>
+                  )
+                )}
+                      
+            </div>
+        )
+    }
+}
 
 class ProjectRoadmap extends Component {
     
@@ -114,7 +141,7 @@ class ProjectRoadmap extends Component {
 
         if ( size(deadlines) === 0 ) {
             return (
-                <div>
+                <div className={deadline_row}>
                   No deadlines
                 </div>
             )
@@ -213,6 +240,25 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderIssueStatusSummary(sprint) {
+
+        const num_open_issues = sprint.num_testable_issues-sprint.num_dev_closed_issues
+        return (
+            <div>
+              <div className={deadline_row}>
+                <div>
+                  {sprint.num_dev_closed_issues} closed <Pluralize singular="issue" count={sprint.num_dev_closed_issues} showCount={false}/>
+                </div>
+              </div>
+              <div className={deadline_row}>
+                <div>
+                  {num_open_issues} open <Pluralize singular="issue" count={num_open_issues} showCount={false}/>
+                </div>
+              </div>
+            </div>
+        )
+    }
+
     renderBudgetProgress(sprint) {
         const { can_view_budget, show_money, cost_summaries_by_id } = this.props
         const cost_summary = cost_summaries_by_id[sprint.id]
@@ -267,6 +313,51 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderWorkActivity(sprint) {
+        const { sprint_roadmaps_by_id } = this.props
+        const roadmap = sprint_roadmaps_by_id[sprint.id]
+        if (! roadmap ) {
+            return null
+        }
+        return (
+            <div className={deadline_row}>
+              <div>Work history</div>
+              <div>
+                <TimeChart times={roadmap.hours_per_day}
+                           yaxis_datakey="daily_hours"
+                           xaxis_datakey="started_on"
+                           reference_line_hours={0}
+                           width={250}
+                           height={75}
+                />
+              </div>
+            </div>
+        )
+    }
+
+    renderIssueCreationActivity(sprint) {
+        const { sprint_roadmaps_by_id } = this.props
+        const roadmap = sprint_roadmaps_by_id[sprint.id]
+        if (! roadmap ) {
+            return null
+        }
+        return (
+            <div className={deadline_row}>
+              <div>Issue creation</div>
+              <div>
+                <TimeChart times={roadmap.issues_created_by_day}
+                           yaxis_datakey="count"
+                           xaxis_datakey="created_day"
+                           reference_line_hours={0}
+                           width={250}
+                           height={75}
+                           tooltip_renderer={<IssuesCreatedTimeChartTooltip/>}
+                />
+              </div>
+            </div>
+        )
+    }
+
     renderActual(sprint) {
         const { show_money, cost_summaries_by_id } = this.props
         const cost_summary = cost_summaries_by_id[sprint.id]
@@ -284,12 +375,15 @@ class ProjectRoadmap extends Component {
         return (
             <Card key={sprint.id}>
               <SprintName sprint_id={sprint.id} />
+              { this.renderProblems(sprint) }
               { this.renderBudgetProgress(sprint) }
               { this.renderActual(sprint) }
               { this.renderRemaining(sprint) }
+              { this.renderIssueStatusSummary(sprint) }
               { this.renderStartEnd(sprint) }
               { this.renderDeadlines(sprint) }
-              { this.renderProblems(sprint) }
+              { this.renderWorkActivity(sprint) }
+              { this.renderIssueCreationActivity(sprint) }
             </Card>
         )
     }

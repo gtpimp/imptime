@@ -1,11 +1,12 @@
 import logging
 from rest_framework import serializers
+from dateutil.relativedelta import relativedelta
 from base_serializer import BaseSerializer
+from django.db.models import Count, Min, Max
+from django.utils import timezone
 from clock_entry_serializer import ClockEntrySerializer
-from timepiece.models import Entry
-from imptime.models import SprintTemplate
-from timepiece.models import ProjectDeadline as SprintDeadline
-from imptime.helpers import estimate_helper
+from timepiece.models import Entry, Issue
+from lib import chart_helper
 logger = logging.getLogger(__name__)
 
 class SprintRoadmapSerializer(BaseSerializer):
@@ -16,12 +17,8 @@ class SprintRoadmapSerializer(BaseSerializer):
     first_entry = ClockEntrySerializer()
     last_entry = ClockEntrySerializer()
     num_issues = serializers.IntegerField()
-    sprint_type = serializers.CharField(source="project_type")
-    deadline_ids = serializers.ListField(child=serializers.CharField(), source="ordered_deadline_ids")
-    first_deadline_at = serializers.DateTimeField()
-    last_deadline_at = serializers.DateTimeField()
-    fastest_estimated_hours = serializers.FloatField()
-    slowest_estimated_hours = serializers.FloatField()
+    hours_per_day = serializers.ListField(child=serializers.DictField())
+    issues_created_by_day = serializers.ListField(child=serializers.DictField())
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -30,24 +27,37 @@ class SprintRoadmapSerializer(BaseSerializer):
     def to_representation(self, sprint_roadmap, *args, **kwargs):
         sprint_roadmap.first_entry = Entry.objects.filter(issue__project_id=sprint_roadmap.id).order_by('start_time').first()
         sprint_roadmap.last_entry = Entry.objects.filter(issue__project_id=sprint_roadmap.id).order_by('-end_time').first()
-
-        sprint_roadmap.ordered_deadline_ids = sprint_roadmap.deadlines.order_by("deadline").values_list('id', flat=True)
-
-        first_deadline = SprintDeadline.objects.filter(project_id=sprint_roadmap.id).order_by("deadline").first()
-        sprint_roadmap.first_deadline_at = first_deadline.deadline if first_deadline else None
-
-        last_deadline = SprintDeadline.objects.filter(project_id=sprint_roadmap.id).order_by("deadline").last()
-        sprint_roadmap.last_deadline_at = last_deadline.deadline if last_deadline else None
-
-        sprint = sprint_roadmap
-        comparative_estimates = estimate_helper.get_comparative_estimates(sprint, self.logged_in_user)
-        if len(comparative_estimates) > 0 and comparative_estimates['aggregates']['fastest_user_id'] is not None:
-            fastest_user_id = comparative_estimates['aggregates']['fastest_user_id']
-            slowest_user_id = comparative_estimates['aggregates']['slowest_user_id']
-            sprint_roadmap.fastest_estimated_hours = comparative_estimates['by_user'][fastest_user_id]['total_hours']
-            sprint_roadmap.slowest_estimated_hours = comparative_estimates['by_user'][slowest_user_id]['total_hours']
-        else:
-            sprint_roadmap.fastest_estimated_hours = 0
-            sprint_roadmap.slowest_estimated_hours = 0
+        self._populate_activity(sprint_roadmap)
 
         return super(SprintRoadmapSerializer, self).to_representation(sprint_roadmap, *args, **kwargs)
+
+    def _populate_activity(self, sprint_roadmap):
+        DEFAULT_ACTIVITY_BACK_DAYS = 30
+
+        issue_creation_times = Issue.objects.filter(project=sprint_roadmap)\
+                                            .aggregate(first_created=Min("created"),
+                                                       last_created=Max("created"))
+
+        default_to_date = timezone.now()
+        default_from_date = default_to_date - relativedelta(days=DEFAULT_ACTIVITY_BACK_DAYS)
+        
+        to_date = max(issue_creation_times['last_created'] or default_to_date,
+                      sprint_roadmap.last_entry.end_time if sprint_roadmap.last_entry else default_to_date)
+        from_date = min(issue_creation_times['first_created'] or default_from_date,
+                        sprint_roadmap.first_entry.start_time if sprint_roadmap.first_entry else default_from_date)
+            
+        self._populate_daily_activity(sprint_roadmap, from_date, to_date)
+        self._populate_daily_issues_created(sprint_roadmap, from_date, to_date)
+    
+    def _populate_daily_activity(self, sprint_roadmap, from_date, to_date):
+        all_entries = Entry.objects.filter(issue__project=sprint_roadmap, start_time__gte=from_date)
+        sprint_roadmap.hours_per_day = chart_helper.fill_empty_days(from_date, to_date, all_entries.by_day())
+
+    def _populate_daily_issues_created(self, sprint_roadmap, from_date, to_date):
+        issues = Issue.objects.filter(project=sprint_roadmap)
+        count_by_day = issues.extra(select={'created_day':"date(created)"})\
+                             .values('created_day')\
+                             .order_by('created_day')\
+                             .annotate(count=Count('id'))
+        sprint_roadmap.issues_created_by_day = chart_helper.fill_empty_days(from_date, to_date, count_by_day,
+                                                                            x_label="created_day", y_label="count")
