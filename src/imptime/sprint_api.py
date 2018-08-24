@@ -236,6 +236,11 @@ class SprintViewSet(BaseViewSet):
         sprint_any_field = raw_filter_args.pop('any_field', None)
         if sprint_any_field is not None and len(sprint_any_field)>1:
             qs = qs.filter(name__icontains=sprint_any_field)
+            
+        sprint_types = raw_filter_args.pop('sprint_types', None)
+        if sprint_types is not None:
+            qs = qs.filter(project_type__in=sprint_types)
+            
         return super(SprintViewSet, self).apply_filter(qs, raw_filter_args)
     
             

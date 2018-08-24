@@ -43,7 +43,8 @@ class ProjectRoadmap extends Component {
         dispatch(initList(roadmap_list_key))
 
         const filter = {project_id: project_id,
-                        sprint_status: 'open'}
+                        sprint_status: 'open',
+                        sprint_types: ['sprint', 'inbox']}
         dispatch(update_list_filter(list_key, filter))
         dispatch(update_list_format(list_key, {roadmap: true}))
         dispatch(fetchSprintsIfNeeded(list_key))

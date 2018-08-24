@@ -56,8 +56,14 @@ class SprintRoadmapViewSet(BaseViewSet):
         project_id = raw_filter_args.pop('project_id', None)
         if project_id:
             qs = qs.filter(business_id=project_id) #sic
+            
         sprint_status = raw_filter_args.pop('sprint_status', None)
         if sprint_status == 'open':
             raw_filter_args['status3__name__in'] = Sprint.open_states()
+            
+        sprint_types = raw_filter_args.pop('sprint_types', None)
+        if sprint_types is not None:
+            qs = qs.filter(project_type__in=sprint_types)
+            
         return super(SprintRoadmapViewSet, self).apply_filter(qs, raw_filter_args)
     

@@ -43,13 +43,13 @@ class ProjectRoadmapPage extends Component {
 
     render() {
 
-        const { project } = this.props
+        const { project, project_id } = this.props
         setBrowserTitle(project.name)
 
         return (
             <div>
               <h2>Roadmap</h2>
-              <ProjectRoadmap project_id={project.id} list_key={LIST_KEY__PROJECT_ROADMAP} />
+              <ProjectRoadmap project_id={project_id} list_key={LIST_KEY__PROJECT_ROADMAP} />
               <br/>
             </div>
         )
