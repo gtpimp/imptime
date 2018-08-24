@@ -8,6 +8,7 @@ import { showMoney } from '../actions/Mien'
 import { has_permission } from '../actions/Users'
 import ProgressBar from './ProgressBar'
 import CurrencyValue from './CurrencyValue'
+import Hours from './Hours'
 import { getSetting } from '../actions/Settings'
 import {
     initList,
@@ -140,6 +141,24 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderRemaining(sprint) {
+        const { cost_summaries_by_id } = this.props
+        const cost_summary = cost_summaries_by_id[sprint.id]
+        if (! cost_summary || !cost_summary.projections ) {
+            return null
+        }
+        return (
+            <div className={deadline_row}>
+              <div>
+                Estimated time left:
+              </div>
+              <div>
+                <Hours hours={cost_summary.projections.original_open_dev_hours} /> hours
+              </div>
+            </div>
+        )
+    }
+
     renderBudgetProgress(sprint) {
         const { can_view_budget, show_money, cost_summaries_by_id } = this.props
         const cost_summary = cost_summaries_by_id[sprint.id]
@@ -213,6 +232,7 @@ class ProjectRoadmap extends Component {
               <SprintName sprint_id={sprint.id} />
               { this.renderBudgetProgress(sprint) }
               { this.renderActual(sprint) }
+              { this.renderRemaining(sprint) }
               { this.renderStartEnd(sprint) }
               { this.renderDeadlines(sprint) }
             </Card>
