@@ -9,6 +9,7 @@ import { has_permission } from '../actions/Users'
 import ProgressBar from './ProgressBar'
 import CurrencyValue from './CurrencyValue'
 import Hours from './Hours'
+import Floater from "react-floater"
 import { getSetting } from '../actions/Settings'
 import {
     initList,
@@ -141,6 +142,59 @@ class ProjectRoadmap extends Component {
         )
     }
 
+    renderProblems(sprint) {
+        const { can_view_budget, cost_summaries_by_id } = this.props
+        const cost_summary = cost_summaries_by_id[sprint.id]
+
+        if ( ! cost_summary || ! cost_summary.projections ) {
+            return null
+        }
+        
+        const has_problems = (can_view_budget && ! sprint.budget > 0) ||
+                             (can_view_budget && sprint.budget > 0 && cost_summary && !cost_summary.under_budget) ||
+                             cost_summary.projections.revised_dev_commission_cost > cost_summary.original_dev_commission_cost
+        
+        const has_warnings = sprint.num_missing_testable_issues > 0 ||
+                             sprint.num_issues_unassigned > 0 ||
+                             sprint.num_issues_missing_estimates > 0 ||
+                             sprint.num_adhoc_issues > 0 ||
+                             sprint.num_management_alert_issues > 0 ||
+                             sprint.num_open_risky_issues > 0 ||
+                             sprint.num_open_issues_needed
+
+        if (! has_problems && ! has_warnings ) {
+            return null
+        }
+
+        return (
+            <div className={deadline_row}>
+              { has_problems &&
+                <Floater
+                    title="Problems"
+                    disableHoverToClick
+                    event="hover"
+                    eventDelay={0}
+                    placement="right"
+                    content={<div>This sprint has some problems which should be addressed urgently.</div>}>
+                  <div className="icon--error"></div>
+                </Floater>
+              }
+              { has_warnings &&
+                <Floater
+                    title="Warning"
+                    disableHoverToClick
+                    event="hover"
+                    eventDelay={0}
+                    placement="right"
+                    content={<div>This sprint has some warnings which could affect development and projections.</div>}>
+                  <div className="icon--warning"></div>
+                </Floater>
+              }
+            </div>
+        )
+        
+    }
+
     renderRemaining(sprint) {
         const { cost_summaries_by_id } = this.props
         const cost_summary = cost_summaries_by_id[sprint.id]
@@ -235,6 +289,7 @@ class ProjectRoadmap extends Component {
               { this.renderRemaining(sprint) }
               { this.renderStartEnd(sprint) }
               { this.renderDeadlines(sprint) }
+              { this.renderProblems(sprint) }
             </Card>
         )
     }
