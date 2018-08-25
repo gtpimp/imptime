@@ -166,10 +166,6 @@ class SprintSidebar extends Component {
                     }
                   </PropertyStackComponent>
                 }
-                  
-                <MienFeature feature_name="multiple_issue_summary">
-                  <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} />
-                </MienFeature>
 
                 <MienFeature feature_name="deadlines">
                   <PropertyStackComponent title="Deadlines">
@@ -180,6 +176,11 @@ class SprintSidebar extends Component {
                     <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
                   </PropertyStackComponent>
                 </MienFeature>
+                  
+                <MienFeature feature_name="multiple_issue_summary">
+                  <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} />
+                </MienFeature>
+
               </PropertyStack>
             </div>
         )

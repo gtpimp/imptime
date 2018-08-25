@@ -66,14 +66,14 @@ const menu_buttons = {
         { label: (objs) => "Summaries",
           type: "heading"
         },
+        { label: (objs) => 'Executive Summary',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/executiveSummary'
+        },
         { label: (objs) => 'Dashboard',
           nav_url: (objs) => '/projects/' + objs.project.id + '/dashboard'
         },
         { label: (objs) => 'Statement',
           nav_url: (objs) => '/projects/' + objs.project.id + '/projectStatement'
-        },
-        { label: (objs) => 'Roadmap',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/roadmap'
         },
         
         { label: (objs) => "Other",
