@@ -181,6 +181,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__FORM_TAG_LIST] = true
     } else if ( d.entity_name === "wikipage" ) {
         list_keys_to_invalidate[LIST_KEY__WIKI_LIST] = true
+    } else if ( d.entity_name === "projectdeadline" ) {
+        list_keys_to_invalidate[LIST_KEY__SPRINT_DEADLINE] = true
     } else if ( d.entity_name === "entry" ) {
         list_keys_to_invalidate[LIST_KEY__AUTO_CLOCK] = true
         list_keys_to_invalidate[LIST_KEY__RECENT_AUTO_CLOCK] = true
