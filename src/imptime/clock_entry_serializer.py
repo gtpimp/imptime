@@ -20,12 +20,12 @@ class ClockEntryUpdateSerializer(BaseSerializer):
     start_time = serializers.DateTimeField(allow_null=True, required=False)
     end_time = serializers.DateTimeField(allow_null=True, required=False)
     role_name = serializers.CharField(allow_null=True, required=False)
-    description = serializers.CharField(allow_null=True, required=False)
+    description = serializers.CharField(allow_null=True, required=False, allow_blank=True)
     issue_id = serializers.CharField(allow_null=True, required=False)
     
 class ClockEntryCreateSerializer(BaseSerializer):
     start_time = serializers.DateTimeField()
     end_time = serializers.DateTimeField()
-    description = serializers.CharField(allow_null=True, required=False)
+    description = serializers.CharField(allow_null=True, required=False, allow_blank=True)
     issue_id = serializers.CharField()
     

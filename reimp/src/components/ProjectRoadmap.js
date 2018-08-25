@@ -73,7 +73,9 @@ class IssuesCreatedTimeChartTooltip extends Component {
               { map(payload, (series, index) =>
                   (
                       <div key={series.dataKey+"_"+index} className="time_chart__tooltip_series">
-                        <div>{series.value} issue created {moment(label).format('dddd DD-MMM-YYYY')}</div>
+                        <div>
+                          <Pluralize singular="issue" count={series.value}/> created {moment(label).format('dddd DD-MMM-YYYY')}
+                        </div>
                       </div>
                   )
                 )}
