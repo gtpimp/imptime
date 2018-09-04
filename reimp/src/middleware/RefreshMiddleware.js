@@ -45,6 +45,7 @@ import {
     LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
     LIST_KEY__FORM_TAG_LIST,
     LIST_KEY__WIKI_LIST,
+    LIST_KEY__SPRINT_DEADLINE,
     LIST_KEY__AUTO_CLOCK,
     LIST_KEY__RECENT_AUTO_CLOCK,
     LIST_KEY__RECENT_AUTO_CLOCK_BY_ISSUE,
@@ -110,7 +111,7 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateCompanyProblems([d.entity_ref]))
     } else if ( d.entity_name === 'entry' ) {
         dispatch(invalidateAutoClocks([d.entity_ref]))
-        dispatch(invalidateCostSummary(d.params.sprint_id))
+        // dispatch(invalidateCostSummary(d.params.sprint_id))
     } else if ( d.entity_name === 'user' ) {
         dispatch(invalidateUsers([d.entity_ref]))
     } else if ( d.entity_name === 'rate' ) {

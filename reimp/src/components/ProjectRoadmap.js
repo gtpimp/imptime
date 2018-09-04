@@ -384,8 +384,7 @@ class ProjectRoadmap extends Component {
     }
 
     renderBudget(sprint) {
-        const { show_money, cost_summaries_by_id } = this.props
-        const cost_summary = cost_summaries_by_id[sprint.id]
+        const { show_money } = this.props
         if ( ! show_money ) {
             return null
         }

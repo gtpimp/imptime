@@ -45,7 +45,9 @@ class MultipleIssueSummary extends Component {
         const {summary, container_class_name, project_id} = this.props
         return (
             <div className={classNames("multiple-issue-summary", container_class_name)}>
-              <BreakdownSummary summary={summary} project_id={project_id} />
+              <BreakdownSummary summary={summary}
+                                project_id={project_id}
+                                onDownload={this.download_actuals_by_issue} />
             </div>
         )
     }

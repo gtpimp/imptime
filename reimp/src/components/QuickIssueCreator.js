@@ -11,9 +11,7 @@ class QuickIssueCreator extends Component {
     }
 
     onIssueCreated(new_issue) {
-        const { history } = this.props
-        const { issue_id, sprint_id, project_id } = new_issue
-        history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_id)
+        
     }
     
     render() {

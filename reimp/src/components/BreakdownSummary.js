@@ -405,12 +405,15 @@ class BreakdownSummary extends Component {
     }
 
     render() {
-        const {summary} = this.props
+        const {summary, onDownload} = this.props
         return (
             <div>
               <PropertyStack>
                 <PropertyStackComponent>
                   <h1>Breakdown by user, tags and issues
+                    { onDownload &&
+                      <button onClick={onDownload}>Download</button>
+                    }
                   </h1>
                 </PropertyStackComponent>
                 {this.renderActualsBySprint(summary)}
@@ -426,12 +429,13 @@ class BreakdownSummary extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {summary, project_id} = props
+    const {summary, project_id, onDownload} = props
     const show_money = showMoney(state, project_id)
 
     return {
         summary: summary || {},
-        show_money
+        show_money,
+        onDownload
     }
 
 }
