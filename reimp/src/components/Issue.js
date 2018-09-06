@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import { ENTITY_KEY__ISSUE, getCellStyle } from '../actions/ItemListKeyRegistry'
 import { getSelectedItems, setItemFlag } from '../actions/ItemList'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
+import Hours from './Hours'
 import {
     updateIssueStatus,
     updateIssueFeature,
@@ -503,13 +504,18 @@ class Issue extends Component {
                                     )
                                 )
                             case "my_estimate":
+                                const actual = (all_actuals_by_user_id[logged_in_user_id] && all_actuals_by_user_id[logged_in_user_id].hours) || null
                                 return (
                                     <DivTableCell key={header_key}
                                                   secondary={true}
                                                   extra_style={getCellStyle(header)}>
                                       {logged_in_user_can_estimate_user_id &&
                                        <EditableIssueEstimate issue_id={issue.id}
+                                                              actual={actual}
                                                               class_name="issue-cell__my-estimate"/>
+                                      }
+                                      {!logged_in_user_can_estimate_user_id &&
+                                        <Hours hours={actual} />
                                       }
                                     </DivTableCell>
                                 )
@@ -526,7 +532,7 @@ class Issue extends Component {
                                     <DivTableCell key={header_key}
                                                   secondary={true}
                                                   extra_style={getCellStyle(header)}>
-                                      <ElapsedTime hours={issue.my_actual_hours} active={issue.am_i_clocked_in}/>
+                                      <Hours hours={issue.my_actual_hours} />
                                     </DivTableCell>
                                 )
                             case "clock_in":

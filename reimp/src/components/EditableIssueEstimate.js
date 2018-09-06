@@ -7,6 +7,7 @@ import { getIssue, updateIssueEstimate } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 import Progress from './Progress'
 import { format_hours } from '../actions/lib'
+import Hours from './Hours'
 
 class EditableIssueEstimate extends Component {
 
@@ -40,7 +41,10 @@ class EditableIssueEstimate extends Component {
                   <Progress issue={issue} actual={actual} estimate={estimate_hours} force_show={true} />
                   }
                   { can_edit && ! estimate_hours &&
-                    <div className="icon--timer-estimate" />
+                    <div>
+                      <Hours hours={actual} />
+                      <div className="icon--timer-estimate"/>
+                    </div>
                   }
                 </div>
                 <div className="text-component--empty">0</div>
