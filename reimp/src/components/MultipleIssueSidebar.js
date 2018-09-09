@@ -138,7 +138,7 @@ class MultipleIssueSidebar extends Component {
 
                 <MienFeature feature_name="multiple_issue_summary">
                   <PropertyStackComponent>
-                    <MultipleIssueSummary filter={{issue_ids:issue_ids}} project_id={project_id} />
+                    <MultipleIssueSummary filter={{issue_ids:issue_ids}} project_id={project_id} auto_load={false} />
                   </PropertyStackComponent>
                 </MienFeature>
                 

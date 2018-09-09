@@ -187,7 +187,7 @@ class SprintSidebar extends Component {
                 </MienFeature>
                   
                 <MienFeature feature_name="multiple_issue_summary">
-                  <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} />
+                  <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} auto_load={false} />
                 </MienFeature>
 
               </PropertyStack>

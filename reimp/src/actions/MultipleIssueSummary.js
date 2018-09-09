@@ -5,6 +5,7 @@ import {
     invalidateAllItems,
     invalidateItems,
     ensureItemsLoaded,
+    isLoadingItems,
     getItem,
     is_item_invalidated,
     getLoadingItemIds
@@ -31,6 +32,11 @@ export function ensureMultipleIssueSummaryLoaded(filter) {
     const summary_key = getSummaryKey(filter)
     const additional_get_args = {filter: filter}
     return ensureItemsLoaded(ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key], additional_get_args)
+}
+
+export function isLoadingMultipleIssueSummary(state, filter) {
+    const summary_key = getSummaryKey(filter)
+    return isLoadingItems(state, ENTITY_KEY__MULTIPLE_ISSUE_SUMMARY, [summary_key])
 }
 
 export function getMultipleIssueSummary(state, filter) {
