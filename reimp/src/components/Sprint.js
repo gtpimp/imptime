@@ -182,7 +182,7 @@ class Sprint extends Component {
                                     <DivTableCell key={header_key}
                                                   secondary={true}
                                                   extra_style={getCellStyle(header)}>
-                                      <SprintStateSummary sprint_id={sprint_id} />
+                                      <SprintStateSummary sprint_id={sprint_id} auto_load={false} />
                                     </DivTableCell>
                                 )
 

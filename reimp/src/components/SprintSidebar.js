@@ -35,7 +35,7 @@ class SprintSidebar extends Component {
 	}
 	if ( sprint_id ) {
 	    dispatch(ensureSprintsLoaded([sprint_id]))
-            dispatch(ensureCostSummaryLoaded(sprint_id))
+            // dispatch(ensureCostSummaryLoaded(sprint_id))
         }
     }
 
@@ -47,7 +47,7 @@ class SprintSidebar extends Component {
 	}
 	if ( sprint_id ) {
 	    dispatch(ensureSprintsLoaded([sprint_id]))
-            dispatch(ensureCostSummaryLoaded(sprint_id))
+            // dispatch(ensureCostSummaryLoaded(sprint_id))
 	}
     }
 
@@ -70,10 +70,45 @@ class SprintSidebar extends Component {
             </PropertyStackComponent>
         )
     }
+
+    /* renderCostSummary() {
+     *     const { cost_summary } = this.props
+     *     return (
+     *         { cost_summary &&
+     *           <PropertyStackComponent>
+     *             <div className="property--title">
+     *               Experimental, do not trust these numbers
+     *             </div>
+     *             <div className="named-property">
+     *               <div className="named-property__name">Estimated dev hours (original velocity)</div>
+     *               <div className="named-property__value"><Hours hours={cost_summary.projections.original_dev_hours}/></div>
+     *             </div>
+     *             { can_view_costs && 
+     *               <div className="named-property">
+     *                 <div className="named-property__name">Estimated dev cost (original velocity)</div>
+     *                 <div className="named-property__value"><CurrencyValue value={cost_summary.projections.original_dev_commission_cost}/></div>
+     *               </div>
+     *             }
+     *               <div className="named-property">
+     *                 <div className="named-property__name">Estimated dev hours (actual velocity)</div>
+     *                 <div className="named-property__value"><Hours hours={cost_summary.projections.revised_dev_hours}/></div>
+     *               </div>
+     *               { can_view_costs && 
+     *                 <div className="named-property">
+     *                   <div className="named-property__name">Estimated dev cost (actual velocity)</div>
+     *                   <div className="named-property__value"><CurrencyValue value={cost_summary.projections.revised_dev_commission_cost}/></div>
+     *                 </div>
+     *               }
+     *           </PropertyStackComponent>
+     *         }
+     *     )
+     * }*/
     
     render() {
 
-        const { sprint_id, sprint, has_view_review_cycle_permission, cost_summary, can_view_costs } = this.props
+        const { sprint_id, sprint, has_view_review_cycle_permission,
+                // cost_summary,
+                can_view_costs } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -139,33 +174,7 @@ class SprintSidebar extends Component {
                   </MienFeature>
                 }
 
-                { cost_summary &&
-                  <PropertyStackComponent>
-                    <div className="property--title">
-                      Experimental, do not trust these numbers
-                    </div>
-                    <div className="named-property">
-                      <div className="named-property__name">Estimated dev hours (original velocity)</div>
-                      <div className="named-property__value"><Hours hours={cost_summary.projections.original_dev_hours}/></div>
-                    </div>
-                    { can_view_costs && 
-                      <div className="named-property">
-                        <div className="named-property__name">Estimated dev cost (original velocity)</div>
-                        <div className="named-property__value"><CurrencyValue value={cost_summary.projections.original_dev_commission_cost}/></div>
-                      </div>
-                    }
-                    <div className="named-property">
-                      <div className="named-property__name">Estimated dev hours (actual velocity)</div>
-                      <div className="named-property__value"><Hours hours={cost_summary.projections.revised_dev_hours}/></div>
-                    </div>
-                    { can_view_costs && 
-                      <div className="named-property">
-                        <div className="named-property__name">Estimated dev cost (actual velocity)</div>
-                        <div className="named-property__value"><CurrencyValue value={cost_summary.projections.revised_dev_commission_cost}/></div>
-                      </div>
-                    }
-                  </PropertyStackComponent>
-                }
+                  {/* { false && this.renderCostSummary() } */}
 
                 <MienFeature feature_name="deadlines">
                   <PropertyStackComponent title="Deadlines">
@@ -191,14 +200,14 @@ export function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
-    const cost_summary = getCostSummary(state, sprint_id)
+    // const cost_summary = getCostSummary(state, sprint_id)
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
     const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
     
     return {
         sprint_id,
         sprint,
-        cost_summary,
+        // cost_summary,
         project_id,
         project,
         has_view_review_cycle_permission,

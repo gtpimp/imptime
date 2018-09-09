@@ -3,29 +3,39 @@ import { connect } from 'react-redux'
 import { getSprint } from '../actions/Sprints'
 import Pluralize from 'react-pluralize'
 import { has_permission } from '../actions/Users'
-import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
+import { getCostSummary, ensureCostSummaryLoaded, isLoadingCostSummary } from '../actions/CostSummary'
 import CurrencyValue from './CurrencyValue'
 import ProgressBar from './ProgressBar'
 import { showMoney } from '../actions/Mien'
 import Floater from "react-floater"
 import Hours from './Hours'
+import Loading from './Loading'
 
 class SprintStateSummary extends Component {
 
     componentDidMount() {
-        const { dispatch, sprint, sprint_id, optional_cost_summary } = this.props
-        if ( sprint && sprint.sprint_type_is_clockable && !optional_cost_summary ) {
-            dispatch(ensureCostSummaryLoaded(sprint_id))
+        const { dispatch, auto_load, sprint, sprint_id, optional_cost_summary } = this.props
+
+        if ( auto_load ) {
+            this.loadSummary()
         }
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, sprint_id, sprint, optional_cost_summary } = new_props
+        const { dispatch, auto_load } = new_props
+        if ( auto_load ) {
+            this.loadSummary(new_props)
+        }
+    }
+
+    loadSummary = (these_props) => {
+        const props = props || this.props
+        const { dispatch, sprint_id, sprint, optional_cost_summary } = props
         if ( sprint && sprint.sprint_type_is_clockable && !optional_cost_summary ) {
             dispatch(ensureCostSummaryLoaded(sprint_id))
         }
     }
-
+    
     renderMissingTestables() {
         const { sprint } = this.props
         return (
@@ -346,27 +356,39 @@ class SprintStateSummary extends Component {
     }
     
     render() {
+        const { auto_load, cost_summary, loading } = this.props
 
-        return this.renderAction()
+        if ( loading ) {
+            return <Loading/>
+        }
+        
+        if ( ! auto_load && ! cost_summary ) {
+            return (
+                <button onClick={this.loadSummary}>Load</button>
+            )
+        } else {
+            return this.renderAction()
+        }
     }
     
 }
 
 function mapStateToProps(state, props) {
-    const { sprint_id, optional_cost_summary } = props
+    const { sprint_id, optional_cost_summary, auto_load } = props
     const sprint = getSprint(state, sprint_id)
-    
     const cost_summary = optional_cost_summary || getCostSummary(state, sprint_id)
-
     const show_money = sprint && showMoney(state, sprint.project_id)
     const can_view_budget = show_money && sprint && has_permission(state, sprint.project_id, 'has_view_budget')
+    const loading = isLoadingCostSummary(state, sprint_id)
 
     return {
 	sprint,
 	sprint_id,
         cost_summary,
         can_view_budget,
-        show_money
+        show_money,
+        auto_load: auto_load !== false,
+        loading
     }
 }
 
