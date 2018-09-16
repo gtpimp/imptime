@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { size, map } from 'lodash'
 import Draggable from 'react-draggable'
+import { findDOMNode } from 'react-dom'
 import { AutoSizer, defaultTableHeaderRenderer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
@@ -27,7 +28,7 @@ class CommonTable extends Component {
         const { index } = props
 
         return this.isRowSortable(index)
-             ? <SortableRow index={-1} {...props} />
+             ? <SortableRow {...props} />
              : defaultTableRowRenderer(props)
     }
 
@@ -36,7 +37,7 @@ class CommonTable extends Component {
     }
 
     isRowSortable = (index) => {
-        return index >= 0 // Header row should not be draggable
+        return index >= 0
     }
 
     renderDraggableColumn = (args) => {
@@ -50,7 +51,7 @@ class CommonTable extends Component {
         }
     }
 
-    draggableHeaderRenderer = (props) => {
+    renderDraggableHeader = (props) => {
         return (
             <div className='DraggableHeader'>
               {defaultTableHeaderRenderer(props)}
@@ -73,7 +74,7 @@ class CommonTable extends Component {
             </div>
         )
     }    
-
+    
     render() {
         const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
                 items, header_list } = this.props
@@ -87,10 +88,11 @@ class CommonTable extends Component {
                                           header_list_name={header_list_name}
               >
 
-                <AutoSizer disableHeight>
-                  {({width}) => (
-                       <SortableTable height={500}
-                                      headerHeight={20}
+                <AutoSizer>
+                  {({width, height}) => (
+                       <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
+                                      height={height}
+                                      headerHeight={40}
                                       rowCount={size(items)}
                                       onSortEnd={this.onRowSorted}
                                       rowHeight={30}
@@ -103,6 +105,7 @@ class CommonTable extends Component {
                              <Column key={header.key}
                                      label={header.label}
                                      dataKey={header.key}
+                                     headerRenderer={this.renderDraggableHeader}
                                      cellRenderer={this.renderDraggableColumn}
                                      flexGrow={1}
                                      width={100} />
