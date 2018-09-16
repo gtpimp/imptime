@@ -32,7 +32,7 @@ const selGetAllIssuesById = (state, props) => {
 //    return issue.tag_ids
 //}
 
-const selGetAllTagsById = (state, props) => {
+export const selGetAllTagsById = (state, props) => {
     return getAllItems(state, ENTITY_KEY__TAG)
 }
 

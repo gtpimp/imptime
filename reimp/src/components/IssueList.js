@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
-import { size, uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
+import { groupBy, filter, keyBy, size, uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
+import styled from 'react-emotion'
+import Floater from "react-floater"
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
@@ -19,6 +21,7 @@ import {
     makeSelIssues,
     makeSelIssueObjectsToRender
 } from '../selectors/IssueListSelectors'
+import { selGetAllTagsById } from '../selectors/IssueSelectors'
 import {
     initList,
     invalidateList,
@@ -48,16 +51,44 @@ import {
     ensureIssuesLoaded,
     getAllAvailableIssueHeaders,
     updateIssueMienHeaders,
-    getIssueHeaderListForMien
+    getIssueHeaderListForMien,
+    deleteIssues
 } from '../actions/Issues'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Issue from '../components/Issue'
 import IssueListHeader from '../components/IssueListHeader'
 import DivTable from './DivTable'
+import DeleteIssue from './DeleteIssue'
+import DivTableCell from './DivTableCell'
 import { Shortcuts } from 'react-shortcuts'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { setGloballySelectedIssueId } from '../actions/Page'
+import EditableIssueAssignedUser from './EditableIssueAssignedUser'
+import EditableIssueStatus from './EditableIssueStatus'
+import EditableIssueEstimate from './EditableIssueEstimate'
+import Timestamp from './Timestamp'
+import Hours from './Hours'
+import OtherUser from './OtherUser'
+import Progress from './Progress'
+import TagListFlat from './TagListFlat'
+import TimerSwitch from './TimerSwitch'
 
+
+const IconStyle = {
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    backgroundSize: '24px 24px',
+    height: '24px',
+    width: '24px',
+}
+
+const AttachmentIconUrl = require(`../images/attachment.png`)
+const AttachmentIconDiv = styled('div')(props => Object.assign(IconStyle,
+                                                               {backgroundImage: `url(${AttachmentIconUrl})`,
+                                                                backgroundSize: '15px 15px',
+                                                                height: '15px',
+                                                                width: '15px'}
+))
 
 class IssueList extends Component {
 
@@ -336,6 +367,24 @@ class IssueList extends Component {
         dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
 
+    onDeleteIssue = (event) => {
+        const { issue, dispatch, onDelete } = this.props
+        event.stopPropagation()
+
+        if ( issue.actual_hours > 0 ) {
+            window.alert("This issue has time against it and so can't be deleted")
+            return
+        }
+        
+        if ( ! window.confirm( "Delete issue " + issue.number + " - " + issue.subject + "?") ) {
+            return
+        }
+        dispatch(deleteIssues([issue.id]))
+        if ( onDelete ) {
+            onDelete(issue.id)
+        }
+    }
+
     reorderIssue(index_of_row_being_moved, index_of_destination) {
         const {dispatch, list_key, issue_items} = this.props
 
@@ -395,43 +444,47 @@ class IssueList extends Component {
         )
     }
 
-    renderIssue(issue, index) {
-        const {
-            list_key,
-            saving_issue_ids,
-            invalidated_issue_ids,
-            selected_ids, highlighted_ids, loading_item_ids, expanded_issues,
-            header_list, cursor_item_id, tag_category_names
-        } = this.props
-        const key = issue.id + "_" + index
-        const issue_id = issue.id
-        const that = this
+    /* renderIssue(issue, index) {
+     *     const {
+     *         list_key,
+     *         saving_issue_ids,
+     *         invalidated_issue_ids,
+     *         selected_ids, highlighted_ids, loading_item_ids, expanded_issues,
+     *         header_list, cursor_item_id, tag_category_names
+     *     } = this.props
+     *     const key = issue.id + "_" + index
+     *     const issue_id = issue.id
+     *     const that = this
 
-        return <Issue
-                   key={key}
-                   list_key={list_key}
-                   is_collapsed={false}
-                   show_children={includes(expanded_issues, issue.id)}
-                   onClickedIssue={that.onClickedIssue}
-                   is_loading={loading_item_ids.indexOf(issue_id) !== -1}
-                   is_selected={selected_ids.indexOf(issue_id) !== -1}
-                   is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue_id) !== -1}
-                   is_cursor_item={""+issue.id===""+cursor_item_id}
-                   is_invalidated={invalidated_issue_ids.indexOf(issue_id) !== -1}
-                   is_saving={saving_issue_ids.indexOf(issue_id) !== -1}
-                   issue_id={issue_id}
-                   header_list={header_list}
-                   onDelete={that.onDeleteIssue}
-                   tag_category_names={tag_category_names}
-                   is_fake={false}
-        />
-    }
+     *     return <Issue
+     *                key={key}
+     *                list_key={list_key}
+     *                is_collapsed={false}
+     *                show_children={includes(expanded_issues, issue.id)}
+     *                onClickedIssue={that.onClickedIssue}
+     *                is_loading={loading_item_ids.indexOf(issue_id) !== -1}
+     *                is_selected={selected_ids.indexOf(issue_id) !== -1}
+     *                is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue_id) !== -1}
+     *                is_cursor_item={""+issue.id===""+cursor_item_id}
+     *                is_invalidated={invalidated_issue_ids.indexOf(issue_id) !== -1}
+     *                is_saving={saving_issue_ids.indexOf(issue_id) !== -1}
+     *                issue_id={issue_id}
+     *                header_list={header_list}
+     *                onDelete={that.onDeleteIssue}
+     *                tag_category_names={tag_category_names}
+     *                is_fake={false}
+     *     />
+     * }*/
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { issue_items } = this.props
+        const { sprint, issue_items, header_list, logged_in_user_id,
+                tag_category_names, all_tags_by_id, logged_in_user_can_estimate_user_id } = this.props
+        const that = this
         const issue = issue_items[rowIndex]
-
+        const header = header_list[columnIndex]
         const key = `cell_${rowIndex}_${columnIndex}`
+        const all_actuals_by_user_id = keyBy(issue.all_actuals, (o) => ""+o.user_id)
+        const all_estimates_by_user_id = keyBy(issue.all_estimates, (o) => ""+o.user_id)
         
         if ( isScrolling ) {
             return (
@@ -440,10 +493,361 @@ class IssueList extends Component {
                 </div>
             )
         }
+
+        let content = null
+        const header_key = header.key
+        switch(header_key) {
+            case "number":
+                content = (
+                    <DivTableCell key={header.key} >
+                      <div>{issue.number}</div>
+                    </DivTableCell>
+                )
+            case "issue_type":
+                const cell = (<div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>)
+                content = cell
+                let tooltip = null
+                let title = null
+
+                if ( issue.type_name === "adhoc" ) {
+                    title = "Adhoc"
+                    tooltip = (<div>Adhoc issues are created by external timesheets where the issue type is not known. 
+                      Please change the issue type to be more specific.
+                    </div>)
+                } else if ( issue.type_name === "management-general" ) {
+                    title = "General management"
+                    tooltip = (<div>General management.</div>)
+                } else if ( issue.type_name === "management-meeting" ) {
+                    title = "Meetings"
+                    tooltip = (<div>Used to schedule and clock meetings</div>)
+                } else if ( issue.type_name === "management-spec" ) {
+                    title = "Specifications"
+                    tooltip = (<div>Creating issues and technical planning.</div>)
+                } else if ( issue.type_name === "management-finance" ) {
+                    title = "Finance"
+                    tooltip = (<div>For tracking reconciliations, invoicing and statements.</div>)
+                } else if ( issue.type_name === "management-assign" ) {
+                    title = "Assigning issues"
+                    tooltip = (<div>For assigning issues to appropriate users.</div>)
+                } else if ( issue.type_name === "management-estimate" ) {
+                    title = "Estimating issues"
+                    tooltip = (<div>For estimating issues.</div>)
+                } else if ( issue.type_name === "management-testables" ) {
+                    title = "Writing testables"
+                    tooltip = (<div>For writing testables. Sometimes covered by management-spec issues.</div>)
+                }
+                if ( tooltip ) {
+                    content = (
+                        <Floater title={title}
+                                 disableHoverToClick
+                                 event="hover"
+                                 eventDelay={0}
+                                 placement="bottom"
+                                 content={tooltip}
+                        >
+                          {cell}
+                        </Floater>
+                    )
+                }
+                content = (
+                    <DivTableCell key={header_key}
+                                   >
+                      {content}
+                    </DivTableCell>
+                )
+            case "attachment":
+                content = (
+                    <DivTableCell key={header_key}
+                                   >
+                      {
+                          issue.has_attachment && <AttachmentIconDiv></AttachmentIconDiv>
+                      }
+                    </DivTableCell>
+                )
+            case "problems":
+                const issue_has_problems = (issue.needs_testables && (size(issue.testables) === 0 ||
+                                                                      issue.needs_estimate ||
+                                                                      issue.assigned_to_id === null))
+                content = (
+                    <DivTableCell className="div-table__cell" key={header_key}
+                    >
+                    { issue_has_problems && (
+                        <Floater
+                            title="Issue problems"
+                            disableHoverToClick
+                            event="hover"
+                            eventDelay={0}
+                            placement="right"
+                            content={
+                                <div>
+                                    { size(issue.testables) === 0 &&
+                                      <div className="floater__section">
+                                        <div>
+                                                      This issue is missing testables and should not be worked on yet.
+                                        </div>
+                                      </div>
+                                    }
+                                    { issue.assigned_to_id === null &&
+                                      <div className="floater__section">
+                                        <div>
+                                                      This issue has no assigned user.
+                                        </div>
+                                      </div>
+                                    }
+                                    { issue.assigned_to_id !== null && issue.needs_estimate &&
+                                      <div className="floater__section">
+                                        <div>
+                                                      This issue is missing an estimate by the assigned user and should not be worked on yet.
+                                        </div>
+                                      </div>
+                                    }
+                                </div>
+                                    }
+                        >
+                                <div className="icon icon--warning"></div> 
+                        </Floater>
+                        )}
+                            { size(issue.needs_open_issues_ids) > 0 && (
+                                  <Floater
+                                      title="Issue warnings"
+                                      disableHoverToClick
+                                      event="hover"
+                                      eventDelay={0}
+                                      placement="right"
+                                      content={
+                                          <div>
+                                            <div className="floater__section">
+                                              <div>
+                                                            This issue needs other issues that are still open.
+                                              </div>
+                                            </div>
+                                          </div>
+                                              }>
+                                          <div className="icon icon--unresolved_dependancy"></div> 
+                                  </Floater>        
+                              )}
+                    </DivTableCell>
+                )
+                /* case "expand_feature":
+                 *     content = (
+                 *         <DivTableCell key={header_key}
+                 *                       >
+                 *           { issue.can_group_issues &&
+                 *             <div>
+                 *               { show_children &&
+                 *                 <FeatureExpandIconDiv onClick={that.onCollapseFeaturesClick}
+                 *                                       isFeatureOfSelectedIssue={isFeatureOfSelectedIssue}>
+                 *                 </FeatureExpandIconDiv>
+                 *               }
+                 *                 { !show_children &&
+                 *                   <FeatureCollapseIconDiv onClick={that.onExpandFeaturesClick}>
+                 *                   </FeatureCollapseIconDiv>
+                 *                 }
+                 *             </div>
+                 *           }
+                 *             { !issue.can_group_issues && issue.parent_group_id &&
+                 *               <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
+                 *             }
+                 *         </DivTableCell>
+                 *     )*/
+            case "name":
+                content = (
+                    <DivTableCell key={header_key} >
+                      {issue.subject}
+                      { issue.group_children && issue.group_children.length > 0 &&
+                        <span>
+                          ({issue.group_children.length}
+                          {issue.group_children.length === 1 && <span>child</span>}
+                          {issue.group_children.length > 1 && <span>children</span>}
+                          )
+                        </span>
+                      }
+                    </DivTableCell>
+                )
+            case "assignee":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <EditableIssueAssignedUser class_name="issue-cell__assignee"
+                                                 issue_ids={[issue.id]}
+                                                 project_id={issue.project_id}/>
+                    </DivTableCell>
+                )
+            case "created_at":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <Timestamp value={issue.created_at} format="from_now"/>
+                    </DivTableCell>
+                )
+            case "status":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true} >
+                      <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
+                    </DivTableCell>
+                )
+            case "estimate_summary":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <div className="issue-cell__estimate_summary">
+                        {map(sprint.user_ids_who_can_estimate, function(user_id) {
+                             const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
+                             const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
+                             if ( actual || estimate ) {
+                                 return (
+                                     <div className="issue-cell__estimate_summary__user" key={user_id}>
+                                       <div className="issue-cell__estimate_summary__user__cell">
+                                         <OtherUser user_id={user_id}/>
+                                       </div>
+                                       <div className="issue-cell__estimate_summary__user__cell">
+                                         {logged_in_user_id === user_id &&
+                                          <EditableIssueEstimate issue_id={issue.id}
+                                                                 actual={actual}
+                                                                 class_name="issue-cell__my-estimate"/>
+                                         }
+                                          {logged_in_user_id !== user_id &&
+                                           <Progress issue={issue} actual={actual} estimate={estimate} />
+                                          }
+                                       </div>
+                                     </div>
+                                 )
+                             }
+                         })}
+                      </div>
+                    </DivTableCell>
+                )
+            case "tags":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <div className="issue-cell__tag">
+                        <TagListFlat issue_ids={[issue.id]} can_edit={false} />
+                      </div>
+                    </DivTableCell>
+                )
+            case "tag_columns":
+
+                const issue_tag_ids = issue.tag_ids
+                const tags = filter(all_tags_by_id, (tag) => includes(issue_tag_ids, tag.id))
+                const tagsByCategoryName = groupBy(tags, 'category_name')
+                content = (
+                    map(tag_category_names, function(tag_category_name) {
+
+                        const tags = tagsByCategoryName[tag_category_name]
+                        return (
+                            <DivTableCell key={header_key+tag_category_name}
+                                          secondary={true}
+                                          >
+                              { map(tags, (tag) =>
+                                  <div key={tag.id} className="issue-cell__tag_column">
+                                    {tag.name}
+                                  </div>
+                                )}
+                            </DivTableCell>
+                        )
+                    })
+
+                )
+            case "estimate_columns":
+                content = (
+                    map(sprint.user_ids_who_can_estimate, (user_id) =>
+                        <DivTableCell key={user_id}
+                                      secondary={true}
+                                      >
+                          {logged_in_user_id === user_id &&
+                           <EditableIssueEstimate issue_id={issue.id}
+                                                  actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                  class_name="issue-cell__my-estimate"/> }
+
+                           {logged_in_user_id !== user_id &&
+                            <Progress issue={issue}
+                                      actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                      estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
+                           }
+                        </DivTableCell>
+                    )
+                )
+            case "my_estimate":
+                const actual = (all_actuals_by_user_id[logged_in_user_id] && all_actuals_by_user_id[logged_in_user_id].hours) || null
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      {logged_in_user_can_estimate_user_id &&
+                       <EditableIssueEstimate issue_id={issue.id}
+                                              actual={actual}
+                                              class_name="issue-cell__my-estimate"/>
+                      }
+                       {!logged_in_user_can_estimate_user_id &&
+                        <Hours hours={actual} />
+                       }
+                    </DivTableCell>
+                )
+            case "estimated":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
+                    </DivTableCell>
+                )                                   
+            case "my_time":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <Hours hours={issue.my_actual_hours} />
+                    </DivTableCell>
+                )
+                /* case "clock_in":
+                 *     content = (
+                 *         <DivTableCell key={header_key}
+                 *                       secondary={true} >
+                 *           <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
+                 *             <TimerSwitch
+                 *                 active={issue.am_i_clocked_in}
+                 *                 onStart={that.onClockIn}
+                 *                 onStop={that.onClockOut}
+                 *             />
+                 *           </div>
+                 *         </DivTableCell>
+                 *     )*/
+            case "delete":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <div className="reveal-on-hover--block issue__cell--issue-delete">
+                        <DeleteIssue
+                            onDelete={that.onDeleteIssue}
+                        />
+                      </div>
+                    </DivTableCell>
+                )
+            case "small_delete":
+                content = (
+                    <DivTableCell key={header_key}
+                                  secondary={true}
+                                  >
+                      <div className={"reveal-on-hover--block"}>
+                        <div className="issue__small-delete-image" onClick={that.onDeleteIssue} />
+                      </div>
+                    </DivTableCell>
+                )
+
+            default:
+                console.error("Unknown header: " + header_key)
+        }
         
         return (
             <div key={key}>
-              {columnIndex},{rowIndex}
+              {content}
             </div>
         )
     }
@@ -587,7 +991,9 @@ const makeMapStateToProps = () => {
         const autoexpanded_feature_ids = getItemFlag(state, list_key, "flag_autoexpanded_feature_ids")
         const issue_items = selIssueObjectsToRender(state, props)
         const tag_category_names = selTagCategoryNamesForIssues(state, props)
+        const all_tags_by_id = selGetAllTagsById(state, props)
         const logged_in_user_id = logged_in_user().user_id
+        const logged_in_user_can_estimate_user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
         const issue_ids = selIssueIds(state, props)
 
         return {
@@ -619,8 +1025,10 @@ const makeMapStateToProps = () => {
             autoexpanded_feature_ids,
             header_list: issue_header_list,
             tag_ids,
+            all_tags_by_id,
             tag_category_names,
-            logged_in_user_id
+            logged_in_user_id,
+            logged_in_user_can_estimate_user_id
         }
     }
     return mapStateToProps
