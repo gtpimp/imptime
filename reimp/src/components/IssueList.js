@@ -859,7 +859,7 @@ class IssueList extends Component {
 
     render_grid() {
 
-        const { is_mien_configurer_active, header_list, is_visible, issue_items } = this.props
+            const { is_mien_configurer_active, header_list, is_visible, issue_items, selected_ids } = this.props
 
         if (!is_visible) {
             return (<div></div>)
@@ -897,6 +897,7 @@ class IssueList extends Component {
                            updateMienHeaders={updateIssueMienHeaders}
                            header_list_name="issue"
                            items={issue_items}
+                           selected_item_ids={selected_ids}
                            header_list={header_list}
                            renderCell={this.renderCell}
               />

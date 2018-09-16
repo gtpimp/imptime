@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
-import { keyBy, size, map } from 'lodash'
-import { css } from 'emotion'
+import { includes, keyBy, size, map } from 'lodash'
 import {connect} from 'react-redux'
 import Draggable from 'react-draggable'
 import { findDOMNode } from 'react-dom'
@@ -24,8 +23,6 @@ class CommonTable extends Component {
 
     onRowSorted = (args) => {
         const {newIndex, oldIndex} = args
-        const { items } = this.props
-
         if (newIndex === oldIndex) {
             return
         }
@@ -39,12 +36,19 @@ class CommonTable extends Component {
         onRowSelected(event, rowData.id)
     }
 
-    rowRenderer = (props) => {
-        const { index } = props
+    rowRenderer = (args) => {
+        const { index,  } = args
+        const { selected_item_ids, items } = this.props
+        const is_selected = includes(selected_item_ids, items[index].id)
 
+        if ( is_selected ) {
+            args.className += " common-table__row--selected"
+        }
+        args.className += " common-table__row"
+        
         return this.isRowSortable(index)
-             ? <SortableRow {...props} />
-             : defaultTableRowRenderer(props)
+             ? <SortableRow {...args} />
+             : defaultTableRowRenderer(args)
     }
 
     resizeColumn = ({ dataKey, deltaX }) => {
@@ -72,17 +76,17 @@ class CommonTable extends Component {
         }
     }
 
-    renderDraggableHeader = (props) => {
+    renderDraggableHeader = (args) => {
         return (
             <div className='DraggableHeader'>
-              {defaultTableHeaderRenderer(props)}
+              {defaultTableHeaderRenderer(args)}
               <Draggable
                   axis='x'
                   defaultClassName='DragHandle'
                   defaultClassNameDragging='DragHandleActive'
                   onStop={(event, data) => this.resizeColumn({
-                          dataKey: props.dataKey,
-                          deltaX: data.x
+                          dataKey: args.dataKey,
+                          deltaX: args.x
                       })}
                   position={{
                       x: 0,
@@ -148,7 +152,7 @@ class CommonTable extends Component {
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
-            onRowSelected, items, header_list } = props
+            selected_item_ids, onRowSelected, items, header_list } = props
 
     const mien_id = getCurrentMienId(state)
     
@@ -159,6 +163,7 @@ function mapStateToProps(state, props) {
         onRowSelected,
         header_list_name,
         items,
+        selected_item_ids,
         header_list,
         mien_id
     }

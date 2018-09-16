@@ -1,0 +1,13 @@
+@import "variables.scss";
+
+.common-table__row:hover {
+    background-color: $row-hover-color;
+}
+
+.common-table__row--selected {
+    background-color: $selected-row-color;
+}
+
+.common-table__row:hover.div-table__row--selected:hover {
+    background-color: $selected-row-hover-color;
+}
