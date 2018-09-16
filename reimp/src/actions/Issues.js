@@ -47,7 +47,7 @@ export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'
 export const ANNOUNCE_BULK_CREATING_ISSUES_FAILED = 'ANNOUNCE_BULK_CREATING_ISSUES_FAILED'
 export const ANNOUNCE_BULK_CREATED_ISSUES = 'ANNOUNCE_BULK_CREATED_ISSUES'
 
-const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", description:"Issue number", width:tiny_col_width},
+const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", description:"Issue number", width:"50px"},
                                       {key:'issue_type', label:'', description:"Icon showing the issue type", width:tiny_col_width},
                                       {key:'attachment', label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width},
                                       {key:'problems', label:'', description:"Icon showing if the issue has problems", width:tiny_col_width},

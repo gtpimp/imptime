@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
 import { keyBy, size, map } from 'lodash'
+import {connect} from 'react-redux'
 import Draggable from 'react-draggable'
 import { findDOMNode } from 'react-dom'
 import { AutoSizer, defaultTableHeaderRenderer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
+import { updateMienHeaders, getCurrentMienId } from '../actions/Mien'
 import 'react-virtualized/styles.css';
 
 const SortableTable = SortableContainer(Table, {
@@ -15,7 +17,7 @@ const DragHandle = SortableHandle(({ label }) => (
     <div>{label}</div>
 ))
 
-const MIN_COLUMN_WIDTH = 50
+const MIN_COLUMN_WIDTH = 30
 
 
 class CommonTable extends Component {
@@ -33,11 +35,13 @@ class CommonTable extends Component {
     }
 
     resizeColumn = ({ dataKey, deltaX }) => {
-        const { header_list } = this.props
+        const { dispatch, header_list, header_list_name, mien_id } = this.props
         const header = keyBy(header_list, "key")[dataKey]
         header.flexGrow = 0
         header.flexShrink = 0
         header.width = ""+Math.max(MIN_COLUMN_WIDTH, parseInt(header.width.replace("px",""), 10) + deltaX)+"px"
+
+        dispatch(updateMienHeaders(mien_id, header_list_name, header_list))
     }
 
     isRowSortable = (index) => {
@@ -108,11 +112,11 @@ class CommonTable extends Component {
                            <Column key={header.key}
                                    label={header.label}
                                    dataKey={header.key}
-                                   headerRenderer={this.renderDraggableHeader}
+                                   //headerRenderer={this.renderDraggableHeader}
                                    cellRenderer={this.renderDraggableColumn}
                                    flexGrow={header.flex || 0}
                                    flexShrink={header.flex || 0}
-                                   width={(header.width && parseInt(header.width.replace("px",""), 10)) || 200} />
+                                   width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
                          )}
                      </SortableTable>
                  )}
@@ -126,4 +130,23 @@ class CommonTable extends Component {
     
 }
 
-export default CommonTable
+function mapStateToProps(state, props) {
+    
+    const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
+            items, header_list } = props
+
+    const mien_id = getCurrentMienId(state)
+    
+    return {
+        getAvailableHeaders,
+        getHeaderListForMien,
+        updateMienHeaders,
+        header_list_name,
+        items,
+        header_list,
+        mien_id
+    }
+}
+
+export default connect(mapStateToProps)(CommonTable)
+
