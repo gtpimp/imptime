@@ -6,7 +6,7 @@ import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
 import MienFeature from './MienFeature'
 import moment from 'moment'
-import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
+// import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintName from '../components/EditableSprintName'
@@ -18,8 +18,6 @@ import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
 import MultipleIssueSummary from './MultipleIssueSummary'
-import Hours from './Hours'
-import CurrencyValue from './CurrencyValue'
 
 class SprintSidebar extends Component {
 
@@ -108,7 +106,8 @@ class SprintSidebar extends Component {
 
         const { sprint_id, sprint, has_view_review_cycle_permission,
                 // cost_summary,
-                can_view_costs } = this.props
+                // can_view_costs
+        } = this.props
         
         return (
             <div className="sidebar sprint-sidebar">
@@ -202,7 +201,7 @@ export function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     // const cost_summary = getCostSummary(state, sprint_id)
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
-    const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
+    // const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
     
     return {
         sprint_id,
@@ -211,7 +210,7 @@ export function mapStateToProps(state, props) {
         project_id,
         project,
         has_view_review_cycle_permission,
-        can_view_costs
+        // can_view_costs
     }
 }
 

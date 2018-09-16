@@ -14,6 +14,7 @@ import PasswordChangedPage from './PasswordChangedPage'
 import DashboardPage from './DashboardPage'
 import ForgotPasswordPage from './ForgotPasswordPage'
 import IssuesPage from './IssuesPage'
+import SlowIssuesPage from './slow/SlowIssuesPage'
 import IssueHistoryPage from './IssueHistoryPage'
 import InvoicesPage from './InvoicesPage'
 import PasswordReminderSentPage from './PasswordReminderSentPage'
@@ -85,6 +86,8 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/snapshots/:snapshotId" component={SprintSnapshotPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
+              <Route exact path="/slow/projects/:projectId/sprints/:sprintId/issues" component={SlowIssuesPage}/>
+              <Route exact path="/slow/projects/:projectId/sprints/:sprintId/issues/:issueId" component={SlowIssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/history" component={IssueHistoryPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" component={VisualSpecDocumentPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>

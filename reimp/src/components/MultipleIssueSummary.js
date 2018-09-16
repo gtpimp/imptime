@@ -28,7 +28,7 @@ class MultipleIssueSummary extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, filter, sprint_id, auto_load} = props
+        const {auto_load} = props
 
         if ( auto_load ) {
             this.loadSummary(props)
@@ -36,7 +36,7 @@ class MultipleIssueSummary extends Component {
     }
 
     loadSummary = (these_props) => {
-        const props = props || this.props
+        const props = these_props || this.props
         const {dispatch, filter, sprint_id} = props
 
         if ( ! filter && sprint_id ) {

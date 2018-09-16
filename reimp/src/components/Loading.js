@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { css, cx } from 'react-emotion'
 import loading_gif from '../images/loading.gif'
 
 class Loading extends Component {

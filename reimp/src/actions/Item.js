@@ -1,7 +1,7 @@
 import { impfetch } from './lib.js'
 
 import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
-import { get, values, map, difference, intersection, keyBy, compact, filter } from 'lodash'
+import { get, values, map, difference, intersection, keyBy, compact } from 'lodash'
 
 import { setSoftErrorMessage } from './Error'
 

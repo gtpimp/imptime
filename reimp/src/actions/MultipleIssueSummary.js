@@ -12,7 +12,7 @@ import {
 } from '../actions/Item'
 
 export function getSummaryKey(filter) {
-    return hash_flat_object(filter)
+    return "" + hash_flat_object(filter)
 }
 
 export function invalidateAllMultipleIssueSummaries() {

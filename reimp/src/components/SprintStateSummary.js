@@ -14,7 +14,7 @@ import Loading from './Loading'
 class SprintStateSummary extends Component {
 
     componentDidMount() {
-        const { dispatch, auto_load, sprint, sprint_id, optional_cost_summary } = this.props
+        const { auto_load } = this.props
 
         if ( auto_load ) {
             this.loadSummary()
@@ -22,14 +22,14 @@ class SprintStateSummary extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, auto_load } = new_props
+        const { auto_load } = new_props
         if ( auto_load ) {
             this.loadSummary(new_props)
         }
     }
 
     loadSummary = (these_props) => {
-        const props = props || this.props
+        const props = these_props || this.props
         const { dispatch, sprint_id, sprint, optional_cost_summary } = props
         if ( sprint && sprint.sprint_type_is_clockable && !optional_cost_summary ) {
             dispatch(ensureCostSummaryLoaded(sprint_id))
