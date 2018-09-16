@@ -34,12 +34,11 @@ class MienListColumnConfigurable extends Component {
     render() {
         const { is_mien_configurer_active } = this.props
 
-        return (
-            <div>
-              { is_mien_configurer_active && this.renderListColumnConfigurer() }
-              { !is_mien_configurer_active && this.props.children }
-            </div>
-        )
+        if ( is_mien_configurer_active ) {
+            return this.renderListColumnConfigurer()
+        } else {
+            return this.props.children
+        }
     }
 }
 

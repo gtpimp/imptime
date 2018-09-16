@@ -912,13 +912,16 @@ class IssueList extends Component {
             console.log("The next warning about <shortcuts> will be fixed once react-shortcuts makes a new release. See https://github.com/avocode/react-shortcuts/pull/41")
             window.shortcuts_warning = true
         }
-        return (
-            <Shortcuts name='ISSUE_LIST' handler={this.handleShortcuts}>
-              <div>
-                { this.render_grid() }
-              </div>
-            </Shortcuts>
-        )
+
+        return this.render_grid()
+        
+        /* return (
+         *     <Shortcuts name='ISSUE_LIST' handler={this.handleShortcuts}>
+         *       <div>
+         *         { this.render_grid() }
+         *       </div>
+         *     </Shortcuts>
+         * )*/
     }
 }
 

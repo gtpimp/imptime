@@ -81,41 +81,39 @@ class CommonTable extends Component {
 
         return (
 
-            <div>
-              <MienListColumnConfigurable getAvailableHeaders={getAvailableHeaders}
-                                          getHeaderListForMien={getHeaderListForMien}
-                                          updateMienHeaders={updateMienHeaders}
-                                          header_list_name={header_list_name}
-              >
+            <MienListColumnConfigurable getAvailableHeaders={getAvailableHeaders}
+                                        getHeaderListForMien={getHeaderListForMien}
+                                        updateMienHeaders={updateMienHeaders}
+                                        header_list_name={header_list_name}
+            >
 
-                <AutoSizer>
-                  {({width, height}) => (
-                       <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
-                                      height={height}
-                                      headerHeight={40}
-                                      rowCount={size(items)}
-                                      onSortEnd={this.onRowSorted}
-                                      rowHeight={30}
-                                      width={width}
-                                      useDragHandle
-                                      rowRenderer={this.rowRenderer}
-                                      rowGetter={({ index }) => items[index]}
-                       >
-                         { map(header_list, (header) =>
-                             <Column key={header.key}
-                                     label={header.label}
-                                     dataKey={header.key}
-                                     headerRenderer={this.renderDraggableHeader}
-                                     cellRenderer={this.renderDraggableColumn}
-                                     flexGrow={1}
-                                     width={100} />
-                           )}
-                       </SortableTable>
-                   )}
-                </AutoSizer>
-                
-              </MienListColumnConfigurable>
-            </div>
+              <AutoSizer>
+                {({width, height}) => (
+                     <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
+                                    height={height}
+                                    headerHeight={40}
+                                    rowCount={size(items)}
+                                    onSortEnd={this.onRowSorted}
+                                    rowHeight={30}
+                                    width={width}
+                                    useDragHandle
+                                    rowRenderer={this.rowRenderer}
+                                    rowGetter={({ index }) => items[index]}
+                     >
+                       { map(header_list, (header) =>
+                           <Column key={header.key}
+                                   label={header.label}
+                                   dataKey={header.key}
+                                   headerRenderer={this.renderDraggableHeader}
+                                   cellRenderer={this.renderDraggableColumn}
+                                   flexGrow={1}
+                                   width={100} />
+                         )}
+                     </SortableTable>
+                 )}
+              </AutoSizer>
+              
+            </MienListColumnConfigurable>
         )        
         
     }
