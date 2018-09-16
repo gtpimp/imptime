@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { groupBy, filter, keyBy, size, uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
+import { flatMap, keys, groupBy, filter, keyBy, size, uniq, concat, indexOf, map, union, difference, includes } from 'lodash'
 import styled from 'react-emotion'
 import Floater from "react-floater"
 import {connect} from 'react-redux'
@@ -36,8 +36,7 @@ import {
     getItemFlag,
     getLastUpdated,
     isLoading,
-    getListFilter,
-    getDisplayMode
+    getListFilter
 } from '../actions/ItemList'
 import {
     invalidateAllIssues,
@@ -55,9 +54,7 @@ import {
     deleteIssues
 } from '../actions/Issues'
 import { ensureTagsLoaded } from '../actions/Tags'
-import Issue from '../components/Issue'
 import IssueListHeader from '../components/IssueListHeader'
-import DivTable from './DivTable'
 import DeleteIssue from './DeleteIssue'
 import DivTableCell from './DivTableCell'
 import { Shortcuts } from 'react-shortcuts'
@@ -71,8 +68,6 @@ import Hours from './Hours'
 import OtherUser from './OtherUser'
 import Progress from './Progress'
 import TagListFlat from './TagListFlat'
-import TimerSwitch from './TimerSwitch'
-
 
 const IconStyle = {
     backgroundRepeat: 'no-repeat',
@@ -88,6 +83,15 @@ const AttachmentIconDiv = styled('div')(props => Object.assign(IconStyle,
                                                                 backgroundSize: '15px 15px',
                                                                 height: '15px',
                                                                 width: '15px'}
+))
+
+const ChildIconUrl = require(`../images/ic_subdirectory_arrow_right_black_24dp_1x.png`)
+const ChildIconDiv = styled('div')(props => Object.assign(IconStyle,
+                                                          {backgroundImage: `url(${ChildIconUrl})`,
+                                                           opacity: '0.2'},
+                                                          ({belongsToSelectedFeature=false}) => ({
+                                                              opacity: belongsToSelectedFeature ? '1.0' : '0.2'
+                                                          })
 ))
 
 class IssueList extends Component {
@@ -477,7 +481,7 @@ class IssueList extends Component {
      * }*/
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { sprint, issue_items, header_list, logged_in_user_id,
+        const { sprint, issue_items, header_list, logged_in_user_id, selected_items,
                 tag_category_names, all_tags_by_id, logged_in_user_can_estimate_user_id } = this.props
         const that = this
         const issue = issue_items[rowIndex].issue
@@ -490,11 +494,11 @@ class IssueList extends Component {
         
         if ( isScrolling ) {
             return (
-                <div key={key}>
+                <DivTableCell key={header_key}>
                   { header_key === "name" && issue.subject }
                   { header_key === "number" && issue.number }
                   { header_key !== "name" && header_key !== "number" && null }
-                </div>
+                </DivTableCell>
             )
         }
 
@@ -634,28 +638,19 @@ class IssueList extends Component {
                     </DivTableCell>
                 )
                 break
-                /* case "expand_feature":
-                 *     content = (
-                 *         <DivTableCell key={header_key}
-                 *                       >
-                 *           { issue.can_group_issues &&
-                 *             <div>
-                 *               { show_children &&
-                 *                 <FeatureExpandIconDiv onClick={that.onCollapseFeaturesClick}
-                 *                                       isFeatureOfSelectedIssue={isFeatureOfSelectedIssue}>
-                 *                 </FeatureExpandIconDiv>
-                 *               }
-                 *                 { !show_children &&
-                 *                   <FeatureCollapseIconDiv onClick={that.onExpandFeaturesClick}>
-                 *                   </FeatureCollapseIconDiv>
-                 *                 }
-                 *             </div>
-                 *           }
-                 *             { !issue.can_group_issues && issue.parent_group_id &&
-                 *               <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
-                 *             }
-                 *         </DivTableCell>
-                 *     )*/
+            case "expand_feature":
+                // This column is deprecated
+                const isChildOfSelectedFeature = includes(flatMap(selected_items, function(o) { return map(o.group_children, function(id) { return "" + id }) }), "" + issue.id)
+                const isSiblingOfSelectedIssue = includes(keys(keyBy(selected_items, 'parent_group_id')), issue.parent_group_id)
+                const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
+                content = (
+                    <DivTableCell key={header_key}
+                    >
+                      { !issue.can_group_issues && issue.parent_group_id &&
+                        <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
+                      }
+                    </DivTableCell>
+                )
                 break
             case "name":
                 content = (
@@ -823,25 +818,9 @@ class IssueList extends Component {
                     </DivTableCell>
                 )
                 break
-                /* case "clock_in":
-                 *     content = (
-                 *         <DivTableCell key={header_key}
-                 *                       secondary={true} >
-                 *           <div className={classNames({'reveal-on-hover--block': !issue.am_i_clocked_in})}>
-                 *             <TimerSwitch
-                 *                 active={issue.am_i_clocked_in}
-                 *                 onStart={that.onClockIn}
-                 *                 onStop={that.onClockOut}
-                 *             />
-                 *           </div>
-                 *         </DivTableCell>
-                 *     )*/
-                break
             case "delete":
                 content = (
-                    <DivTableCell key={header_key}
-                                  secondary={true}
-                                  >
+                    <DivTableCell key={header_key} secondary={true}>
                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                         <DeleteIssue
                             onDelete={that.onDeleteIssue}
@@ -879,12 +858,11 @@ class IssueList extends Component {
 
     render_grid() {
 
-        const { is_mien_configurer_active, header_list, is_visible, issue_items, project_id } = this.props
+        const { is_mien_configurer_active, header_list, is_visible, issue_items } = this.props
 
         if (!is_visible) {
             return (<div></div>)
         }
-        const that = this
 
         if ( is_mien_configurer_active ) {
             return this.renderListColumnConfigurer()
@@ -930,7 +908,8 @@ class IssueList extends Component {
                               rowGetter={({ index }) => issue_items[index]}
                        >
                          { map(header_list, (header) =>
-                             <Column label={header.label}
+                             <Column key={header.key}
+                                     label={header.label}
                                      dataKey={header.key}
                                      cellRenderer={this.renderCell}
                                      flexGrow={1}
@@ -953,7 +932,7 @@ class IssueList extends Component {
 
     render() {
 
-        const {is_visible, is_collapsed, is_expanded} = this.props
+        const {is_visible} = this.props
 
         if (!is_visible) {
             return (<div></div>)
@@ -1006,7 +985,6 @@ const makeMapStateToProps = () => {
         const candidate_issue = getCandidateIssue(state)
         const is_creating_issue = candidate_issue || false
         const cursor_item_id = getCursorItemId(state, list_key)
-        const display_mode = getDisplayMode(state, list_key)
         const expanded_issues = getItemFlag(state, list_key, "flag_expanded_issues")
         const autoexpanded_feature_ids = getItemFlag(state, list_key, "flag_autoexpanded_feature_ids")
         const issue_items = selIssueObjectsToRender(state, props)
