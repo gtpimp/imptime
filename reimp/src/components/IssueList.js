@@ -485,17 +485,19 @@ class IssueList extends Component {
         const key = `cell_${rowIndex}_${columnIndex}`
         const all_actuals_by_user_id = keyBy(issue.all_actuals, (o) => ""+o.user_id)
         const all_estimates_by_user_id = keyBy(issue.all_estimates, (o) => ""+o.user_id)
+        const header_key = header.key
+        let content = null
         
         if ( isScrolling ) {
             return (
                 <div key={key}>
-                  {issue.id}
+                  { header_key === "name" && issue.subject }
+                  { header_key === "number" && issue.number }
+                  { header_key !== "name" && header_key !== "number" && null }
                 </div>
             )
         }
 
-        let content = null
-        const header_key = header.key
         switch(header_key) {
             case "number":
                 content = (
