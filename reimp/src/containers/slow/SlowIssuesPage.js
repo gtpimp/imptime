@@ -4,7 +4,7 @@ import IssueSidebar from '../../components/IssueSidebar'
 import {withRouter} from 'react-router-dom'
 import NewIssueSidebar from '../../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../../components/MultipleIssueSidebar'
-import IssueList from '../../components/IssueList'
+import SlowIssueList from '../../components/slow/SlowIssueList'
 import {setIssueBreadcrumbsHelper} from '../../actions/Breadcrumbs'
 import { includes, compact } from 'lodash'
 import Splitter from '../../components/Splitter'
@@ -138,9 +138,9 @@ class SlowIssuesPage extends Component {
         return (
             <div className="list-layout__list" style={styles}>
                 { filter_sprint_id === sprint_id &&
-                  <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                             onSelectIssues={this.onSelectIssues}
-                             issue_header_list={issue_header_list}
+                  <SlowIssueList list_key={LIST_KEY__ISSUE_LIST}
+                                 onSelectIssues={this.onSelectIssues}
+                                 issue_header_list={issue_header_list}
                   />
                 }
               </div>

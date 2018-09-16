@@ -1,10 +1,8 @@
 import React, {Component} from 'react'
-import { size, uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
+import { uniq, concat, each, indexOf, map, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
-import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
-import { logged_in_user } from '../actions/Auth'
-import { AutoSizer, Table, Column } from 'react-virtualized'
-import 'react-virtualized/styles.css';
+import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
+import { logged_in_user } from '../../actions/Auth'
 import {
     makeSelTagCategoryNamesForIssues,
     makeSelTagIdsForIssues,
@@ -18,7 +16,7 @@ import {
     makeSelSavingIssueIds,
     makeSelIssues,
     makeSelIssueObjectsToRender
-} from '../selectors/IssueListSelectors'
+} from '../../selectors/IssueListSelectors'
 import {
     initList,
     invalidateList,
@@ -35,7 +33,7 @@ import {
     isLoading,
     getListFilter,
     getDisplayMode
-} from '../actions/ItemList'
+} from '../../actions/ItemList'
 import {
     invalidateAllIssues,
     fetchIssuesIfNeeded,
@@ -49,17 +47,17 @@ import {
     getAllAvailableIssueHeaders,
     updateIssueMienHeaders,
     getIssueHeaderListForMien
-} from '../actions/Issues'
-import { ensureTagsLoaded } from '../actions/Tags'
-import Issue from '../components/Issue'
-import IssueListHeader from '../components/IssueListHeader'
-import DivTable from './DivTable'
+} from '../../actions/Issues'
+import { ensureTagsLoaded } from '../../actions/Tags'
+import SlowIssue from './SlowIssue'
+import IssueListHeader from '../../components/IssueListHeader'
+import DivTable from '../DivTable'
 import { Shortcuts } from 'react-shortcuts'
-import MienListColumnConfigurable from './MienListColumnConfigurable'
-import { setGloballySelectedIssueId } from '../actions/Page'
+import MienListColumnConfigurable from '../MienListColumnConfigurable'
+import { setGloballySelectedIssueId } from '../../actions/Page'
 
 
-class IssueList extends Component {
+class SlowIssueList extends Component {
 
     constructor(props) {
         super(props)
@@ -381,6 +379,39 @@ class IssueList extends Component {
                />
     }
 
+    render_collapsed() {
+
+        const {
+            selected_items,
+            selected_ids, highlighted_ids, loading_item_ids, list_key,
+            expanded_issues, cursor_item_id, tag_category_names
+        } = this.props
+
+        return (
+            <div className="panel panel--collapsed">
+              <div className="panel-heading" onClick={this.onExpand}>
+                <div className="panel__title">{ selected_items.map((issue, index) =>
+                    <SlowIssue
+                        key={list_key + issue.id}
+                        list_key={list_key}
+                        is_collapsed={true}
+                        show_children={includes(expanded_issues, issue.id)}
+                        reorderIssue={this.reorderIssue}
+                        onClickedIssue={this.onClickedIssue}
+                        is_loading={loading_item_ids.indexOf(issue.id) !== -1}
+                        is_selected={selected_ids.indexOf(issue.id) !== -1}
+                        is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue.id) !== -1}
+                        is_cursor_item={""+issue.id===""+cursor_item_id}
+                        issue_id={issue.id}
+                        tag_category_names={tag_category_names}
+                        onDelete={this.onDeleteIssue} />
+                )}
+                </div>
+              </div>
+            </div>
+        )
+    }
+
     render_candidate_issue() {
 
         const {list_key} = this.props
@@ -407,7 +438,7 @@ class IssueList extends Component {
         const issue_id = issue.id
         const that = this
 
-        return <Issue
+        return <SlowIssue
                    key={key}
                    list_key={list_key}
                    is_collapsed={false}
@@ -427,35 +458,9 @@ class IssueList extends Component {
         />
     }
 
-    renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { issue_items } = this.props
-        const issue = issue_items[rowIndex]
+    render_expanded() {
 
-        const key = `cell_${rowIndex}_${columnIndex}`
-        
-        if ( isScrolling ) {
-            return (
-                <div key={key}>
-                  {issue.id}
-                </div>
-            )
-        }
-        
-        return (
-            <div key={key}>
-              {columnIndex},{rowIndex}
-            </div>
-        )
-    }
-
-    getColumnWidth = ({index}) => {
-        const { header_list } = this.props
-        return header_list[index].maxWidth
-    }
-
-    render_grid() {
-
-        const { is_mien_configurer_active, header_list, is_visible, issue_items, project_id } = this.props
+        const { is_mien_configurer_active, is_visible, issue_items, project_id } = this.props
 
         if (!is_visible) {
             return (<div></div>)
@@ -474,18 +479,18 @@ class IssueList extends Component {
             )
         }
 
-        /* const issue_rows = []
-         * each( issue_items, function(issue_item, index) {
-         *     if ( ! issue_item ) {
-         *         console.error("Unexpected: issue_item should not be null")
-         *     } else if ( issue_item.type === "candidate" ) {
-         *         issue_rows.push(that.render_candidate_issue())
-         *     } else if ( issue_item.type === "feature" ) {
-         *         issue_rows.push(that.renderIssue(issue_item.issue, index))
-         *     } else if ( issue_item.type === "issue" ) {
-         *         issue_rows.push(that.renderIssue(issue_item.issue, index))
-         *     }
-         * })*/
+        const issue_rows = []
+        each( issue_items, function(issue_item, index) {
+            if ( ! issue_item ) {
+                console.error("Unexpected: issue_item should not be null")
+            } else if ( issue_item.type === "candidate" ) {
+                issue_rows.push(that.render_candidate_issue())
+            } else if ( issue_item.type === "feature" ) {
+                issue_rows.push(that.renderIssue(issue_item.issue, index))
+            } else if ( issue_item.type === "issue" ) {
+                issue_rows.push(that.renderIssue(issue_item.issue, index))
+            }
+        })
 
         return (
 
@@ -495,33 +500,12 @@ class IssueList extends Component {
                                           updateMienHeaders={updateIssueMienHeaders}
                                           header_list_name="issue"
               >
-
-                <AutoSizer disableHeight>
-                  {({width}) => (
-                       <Table height={300}
-                              headerHeight={20}
-                              rowCount={size(issue_items)}
-                              rowHeight={30}
-                              width={width}
-                              rowGetter={({ index }) => issue_items[index]}
-                       >
-                         { map(header_list, (header) =>
-                             <Column label={header.label}
-                                     dataKey={header.key}
-                                     cellRenderer={this.renderCell}
-                                     flexGrow={1}
-                                     width={100} />
-                           )}
-                       </Table>
-                   )}
-                </AutoSizer>
-                
-                {/* <DivTable renderHeader={this.renderHeader}
-                onReorder={this.reorderIssue}
-                project_id={project_id}
-                permission_name_for_dragging={'has_edit_issues'}>
-                {issue_rows}
-                </DivTable> */}
+                <DivTable renderHeader={this.renderHeader}
+                          onReorder={this.reorderIssue}
+                          project_id={project_id}
+                          permission_name_for_dragging={'has_edit_issues'}>
+                  {issue_rows}
+                </DivTable>
               </MienListColumnConfigurable>
             </div>
         )
@@ -542,7 +526,8 @@ class IssueList extends Component {
         return (
             <Shortcuts name='ISSUE_LIST' handler={this.handleShortcuts}>
               <div>
-                { this.render_grid() }
+                { is_collapsed && this.render_collapsed() }
+                { is_expanded && this.render_expanded() }
               </div>
             </Shortcuts>
         )
@@ -611,6 +596,8 @@ const makeMapStateToProps = () => {
             loading_item_ids: loading_item_ids,
             has_items: items && items.length > 0,
             is_loading: isLoading(state, list_key),
+            is_collapsed: display_mode === "collapsed",
+            is_expanded: display_mode === "expanded" || !display_mode,
             last_updated: getLastUpdated(state, list_key),
             is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
             candidate_issue: candidate_issue,
@@ -626,4 +613,4 @@ const makeMapStateToProps = () => {
     return mapStateToProps
 }
 
-export default connect(makeMapStateToProps)(IssueList)
+export default connect(makeMapStateToProps)(SlowIssueList)
