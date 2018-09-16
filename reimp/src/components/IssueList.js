@@ -5,7 +5,7 @@ import Floater from "react-floater"
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
-import { AutoSizer, Table, Column } from 'react-virtualized'
+import CommonTable from './CommonTable'
 import 'react-virtualized/styles.css';
 import {
     makeSelTagCategoryNamesForIssues,
@@ -58,7 +58,6 @@ import IssueListHeader from '../components/IssueListHeader'
 import DeleteIssue from './DeleteIssue'
 import DivTableCell from './DivTableCell'
 import { Shortcuts } from 'react-shortcuts'
-import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { setGloballySelectedIssueId } from '../actions/Page'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueStatus from './EditableIssueStatus'
@@ -890,43 +889,14 @@ class IssueList extends Component {
          * })*/
 
         return (
-
-            <div>
-              <MienListColumnConfigurable getAvailableHeaders={getAllAvailableIssueHeaders}
-                                          getHeaderListForMien={getIssueHeaderListForMien}
-                                          updateMienHeaders={updateIssueMienHeaders}
-                                          header_list_name="issue"
-              >
-
-                <AutoSizer disableHeight>
-                  {({width}) => (
-                       <Table height={300}
-                              headerHeight={20}
-                              rowCount={size(issue_items)}
-                              rowHeight={30}
-                              width={width}
-                              rowGetter={({ index }) => issue_items[index]}
-                       >
-                         { map(header_list, (header) =>
-                             <Column key={header.key}
-                                     label={header.label}
-                                     dataKey={header.key}
-                                     cellRenderer={this.renderCell}
-                                     flexGrow={1}
-                                     width={100} />
-                           )}
-                       </Table>
-                   )}
-                </AutoSizer>
-                
-                {/* <DivTable renderHeader={this.renderHeader}
-                onReorder={this.reorderIssue}
-                project_id={project_id}
-                permission_name_for_dragging={'has_edit_issues'}>
-                {issue_rows}
-                </DivTable> */}
-              </MienListColumnConfigurable>
-            </div>
+              <CommonTable getAvailableHeaders={getAllAvailableIssueHeaders}
+                           getHeaderListForMien={getIssueHeaderListForMien}
+                           updateMienHeaders={updateIssueMienHeaders}
+                           header_list_name="issue"
+                           items={issue_items}
+                           header_list={header_list}
+                           renderCell={this.renderCell}
+              />
         )
     }
 
