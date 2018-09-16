@@ -23,12 +23,15 @@ class CommonTable extends Component {
 
     onRowSorted = (args) => {
         const {newIndex, oldIndex} = args
+        const { onRowReordered } = this.props
         if (newIndex === oldIndex) {
             return
         }
 
+        if ( onRowReordered ) {
+            onRowReordered(oldIndex, newIndex)
+        }
         this.forceUpdate()
-        window.alert("sorted")
     }
 
     onRowClicked = ({event, rowData}) => {
@@ -62,7 +65,8 @@ class CommonTable extends Component {
     }
 
     isRowSortable = (index) => {
-        return index >= 0
+        const { onRowReordered } = this.props
+        return index >= 0 && onRowReordered !== undefined
     }
 
     renderDraggableColumn = (args) => {
@@ -112,7 +116,7 @@ class CommonTable extends Component {
                                         header_list_name={header_list_name}
             >
 
-              <div style={{ flex: '1 1 auto' }}>
+              <div className="common-table">
                 <AutoSizer>
                   {({width, height}) => (
                        <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
@@ -152,7 +156,7 @@ class CommonTable extends Component {
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
-            selected_item_ids, onRowSelected, items, header_list } = props
+            selected_item_ids, onRowSelected, onRowReordered, items, header_list } = props
 
     const mien_id = getCurrentMienId(state)
     
@@ -161,6 +165,7 @@ function mapStateToProps(state, props) {
         getHeaderListForMien,
         updateMienHeaders,
         onRowSelected,
+        onRowReordered,
         header_list_name,
         items,
         selected_item_ids,

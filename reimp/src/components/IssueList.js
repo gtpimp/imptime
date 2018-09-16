@@ -894,6 +894,7 @@ class IssueList extends Component {
               <CommonTable getAvailableHeaders={getAllAvailableIssueHeaders}
                            getHeaderListForMien={getIssueHeaderListForMien}
                            onRowSelected={this.onClickedIssue}
+                           onRowReordered={this.reorderIssue}
                            updateMienHeaders={updateIssueMienHeaders}
                            header_list_name="issue"
                            items={issue_items}
