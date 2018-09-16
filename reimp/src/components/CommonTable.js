@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { size, map } from 'lodash'
+import { keyBy, size, map } from 'lodash'
 import Draggable from 'react-draggable'
 import { findDOMNode } from 'react-dom'
 import { AutoSizer, defaultTableHeaderRenderer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
@@ -33,7 +33,11 @@ class CommonTable extends Component {
     }
 
     resizeColumn = ({ dataKey, deltaX }) => {
-        window.alert("resized")
+        const { header_list } = this.props
+        const header = keyBy(header_list, "key")[dataKey]
+        header.flexGrow = 0
+        header.flexShrink = 0
+        header.width = ""+Math.max(MIN_COLUMN_WIDTH, parseInt(header.width.replace("px",""), 10) + deltaX)+"px"
     }
 
     isRowSortable = (index) => {
@@ -106,8 +110,9 @@ class CommonTable extends Component {
                                    dataKey={header.key}
                                    headerRenderer={this.renderDraggableHeader}
                                    cellRenderer={this.renderDraggableColumn}
-                                   flexGrow={1}
-                                   width={100} />
+                                   flexGrow={header.flex || 0}
+                                   flexShrink={header.flex || 0}
+                                   width={(header.width && parseInt(header.width.replace("px",""), 10)) || 200} />
                          )}
                      </SortableTable>
                  )}
