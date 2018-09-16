@@ -480,7 +480,7 @@ class IssueList extends Component {
         const { sprint, issue_items, header_list, logged_in_user_id,
                 tag_category_names, all_tags_by_id, logged_in_user_can_estimate_user_id } = this.props
         const that = this
-        const issue = issue_items[rowIndex]
+        const issue = issue_items[rowIndex].issue
         const header = header_list[columnIndex]
         const key = `cell_${rowIndex}_${columnIndex}`
         const all_actuals_by_user_id = keyBy(issue.all_actuals, (o) => ""+o.user_id)
@@ -503,6 +503,7 @@ class IssueList extends Component {
                       <div>{issue.number}</div>
                     </DivTableCell>
                 )
+                break
             case "issue_type":
                 const cell = (<div className={"issue-cell__issue-" + issue.type_name + "-icon"}></div>)
                 content = cell
@@ -555,6 +556,7 @@ class IssueList extends Component {
                       {content}
                     </DivTableCell>
                 )
+                break
             case "attachment":
                 content = (
                     <DivTableCell key={header_key}
@@ -564,6 +566,7 @@ class IssueList extends Component {
                       }
                     </DivTableCell>
                 )
+                break
             case "problems":
                 const issue_has_problems = (issue.needs_testables && (size(issue.testables) === 0 ||
                                                                       issue.needs_estimate ||
@@ -628,6 +631,7 @@ class IssueList extends Component {
                               )}
                     </DivTableCell>
                 )
+                break
                 /* case "expand_feature":
                  *     content = (
                  *         <DivTableCell key={header_key}
@@ -650,20 +654,22 @@ class IssueList extends Component {
                  *             }
                  *         </DivTableCell>
                  *     )*/
+                break
             case "name":
                 content = (
                     <DivTableCell key={header_key} >
                       {issue.subject}
-                      { issue.group_children && issue.group_children.length > 0 &&
-                        <span>
-                          ({issue.group_children.length}
-                          {issue.group_children.length === 1 && <span>child</span>}
-                          {issue.group_children.length > 1 && <span>children</span>}
-                          )
-                        </span>
-                      }
+                      {/* { issue.group_children && issue.group_children.length > 0 &&
+                      <span>
+                      ({issue.group_children.length}
+                      {issue.group_children.length === 1 && <span>child</span>}
+                      {issue.group_children.length > 1 && <span>children</span>}
+                      )
+                      </span>
+                      } */}
                     </DivTableCell>
                 )
+                break
             case "assignee":
                 content = (
                     <DivTableCell key={header_key}
@@ -674,6 +680,7 @@ class IssueList extends Component {
                                                  project_id={issue.project_id}/>
                     </DivTableCell>
                 )
+                break
             case "created_at":
                 content = (
                     <DivTableCell key={header_key}
@@ -682,6 +689,7 @@ class IssueList extends Component {
                       <Timestamp value={issue.created_at} format="from_now"/>
                     </DivTableCell>
                 )
+                break
             case "status":
                 content = (
                     <DivTableCell key={header_key}
@@ -689,6 +697,7 @@ class IssueList extends Component {
                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </DivTableCell>
                 )
+                break
             case "estimate_summary":
                 content = (
                     <DivTableCell key={header_key}
@@ -721,6 +730,7 @@ class IssueList extends Component {
                       </div>
                     </DivTableCell>
                 )
+                break
             case "tags":
                 content = (
                     <DivTableCell key={header_key}
@@ -731,6 +741,7 @@ class IssueList extends Component {
                       </div>
                     </DivTableCell>
                 )
+                break
             case "tag_columns":
 
                 const issue_tag_ids = issue.tag_ids
@@ -754,6 +765,7 @@ class IssueList extends Component {
                     })
 
                 )
+                break
             case "estimate_columns":
                 content = (
                     map(sprint.user_ids_who_can_estimate, (user_id) =>
@@ -773,6 +785,7 @@ class IssueList extends Component {
                         </DivTableCell>
                     )
                 )
+                break
             case "my_estimate":
                 const actual = (all_actuals_by_user_id[logged_in_user_id] && all_actuals_by_user_id[logged_in_user_id].hours) || null
                 content = (
@@ -789,6 +802,7 @@ class IssueList extends Component {
                        }
                     </DivTableCell>
                 )
+                break
             case "estimated":
                 content = (
                     <DivTableCell key={header_key}
@@ -796,7 +810,8 @@ class IssueList extends Component {
                                   >
                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
                     </DivTableCell>
-                )                                   
+                )
+                break
             case "my_time":
                 content = (
                     <DivTableCell key={header_key}
@@ -805,6 +820,7 @@ class IssueList extends Component {
                       <Hours hours={issue.my_actual_hours} />
                     </DivTableCell>
                 )
+                break
                 /* case "clock_in":
                  *     content = (
                  *         <DivTableCell key={header_key}
@@ -818,6 +834,7 @@ class IssueList extends Component {
                  *           </div>
                  *         </DivTableCell>
                  *     )*/
+                break
             case "delete":
                 content = (
                     <DivTableCell key={header_key}
@@ -830,6 +847,7 @@ class IssueList extends Component {
                       </div>
                     </DivTableCell>
                 )
+                break
             case "small_delete":
                 content = (
                     <DivTableCell key={header_key}
@@ -840,7 +858,7 @@ class IssueList extends Component {
                       </div>
                     </DivTableCell>
                 )
-
+                break
             default:
                 console.error("Unknown header: " + header_key)
         }
