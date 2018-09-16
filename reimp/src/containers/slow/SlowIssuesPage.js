@@ -121,7 +121,7 @@ class SlowIssuesPage extends Component {
         dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
 
         if ( issue_ids && issue_ids.length === 1 ) {
-            history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);
+            history.push('/slow/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);
         }
     }
 
