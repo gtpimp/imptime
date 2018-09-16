@@ -131,20 +131,17 @@ class IssuesPage extends Component {
     }
 
     renderLeftPane() {
-        const { issue_header_list, sprint_id, filter_sprint_id, header_height, footer_height, toolbar_height } = this.props
-        const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
-        const styles = {maxHeight: height_limit}
-        
+        const { issue_header_list, sprint_id, filter_sprint_id } = this.props
+        if ( filter_sprint_id !== sprint_id ) {
+            return null
+        }
         return (
-            <div className="list-layout__list" style={styles}>
-                { filter_sprint_id === sprint_id &&
-                  <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                             onSelectIssues={this.onSelectIssues}
-                             issue_header_list={issue_header_list}
-                  />
-                }
-              </div>
+            <IssueList list_key={LIST_KEY__ISSUE_LIST}
+                       onSelectIssues={this.onSelectIssues}
+                       issue_header_list={issue_header_list}
+            />
         )
+
     }
 
     renderRightPane() {

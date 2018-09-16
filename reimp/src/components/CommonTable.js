@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import { keyBy, size, map } from 'lodash'
+import { css } from 'emotion'
 import {connect} from 'react-redux'
 import Draggable from 'react-draggable'
 import { findDOMNode } from 'react-dom'
@@ -18,7 +19,6 @@ const DragHandle = SortableHandle(({ label }) => (
 ))
 
 const MIN_COLUMN_WIDTH = 30
-
 
 class CommonTable extends Component {
 
@@ -95,32 +95,34 @@ class CommonTable extends Component {
                                         header_list_name={header_list_name}
             >
 
-              <AutoSizer>
-                {({width, height}) => (
-                     <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
-                                    height={height}
-                                    headerHeight={40}
-                                    rowCount={size(items)}
-                                    onSortEnd={this.onRowSorted}
-                                    rowHeight={30}
-                                    width={width}
-                                    useDragHandle
-                                    rowRenderer={this.rowRenderer}
-                                    rowGetter={({ index }) => items[index]}
-                     >
-                       { map(header_list, (header) =>
-                           <Column key={header.key}
-                                   label={header.label}
-                                   dataKey={header.key}
-                                   //headerRenderer={this.renderDraggableHeader}
-                                   cellRenderer={this.renderDraggableColumn}
-                                   flexGrow={header.flex || 0}
-                                   flexShrink={header.flex || 0}
-                                   width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
-                         )}
-                     </SortableTable>
-                 )}
-              </AutoSizer>
+              <div style={{ flex: '1 1 auto' }}>
+                <AutoSizer>
+                  {({width, height}) => (
+                       <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
+                                      height={height}
+                                      headerHeight={40}
+                                      rowCount={size(items)}
+                                      onSortEnd={this.onRowSorted}
+                                      rowHeight={30}
+                                      width={width}
+                                      useDragHandle
+                                      rowRenderer={this.rowRenderer}
+                                      rowGetter={({ index }) => items[index]}
+                       >
+                         { map(header_list, (header) =>
+                             <Column key={header.key}
+                                     label={header.label}
+                                     dataKey={header.key}
+                                     //headerRenderer={this.renderDraggableHeader}
+                                     cellRenderer={this.renderDraggableColumn}
+                                     flexGrow={header.flex || 0}
+                                     flexShrink={header.flex || 0}
+                                     width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
+                           )}
+                       </SortableTable>
+                   )}
+                </AutoSizer>
+              </div>
               
             </MienListColumnConfigurable>
         )        
