@@ -38,10 +38,10 @@ class Splitter extends Component {
 
         if ( right === undefined || right === null ) {
             return (
-                <div className="main-layout__scroll-panel">
+                <SplitPaneLeft>
                   <Toolbar />
                   {left}
-                </div>
+                </SplitPaneLeft>
             )
         }
         
