@@ -22,8 +22,21 @@ const MIN_COLUMN_WIDTH = 30
 
 class CommonTable extends Component {
 
-    onRowSorted = () => {
+    onRowSorted = (args) => {
+        const {newIndex, oldIndex} = args
+        const { items } = this.props
+
+        if (newIndex === oldIndex) {
+            return
+        }
+
+        this.forceUpdate()
         window.alert("sorted")
+    }
+
+    onRowClicked = ({event, rowData}) => {
+        const { onRowSelected } = this.props
+        onRowSelected(event, rowData.id)
     }
 
     rowRenderer = (props) => {
@@ -102,7 +115,9 @@ class CommonTable extends Component {
                                       height={height}
                                       headerHeight={40}
                                       rowCount={size(items)}
+                                      onRowClick={this.onRowClicked}
                                       onSortEnd={this.onRowSorted}
+                                      distance={5}
                                       rowHeight={30}
                                       width={width}
                                       useDragHandle
@@ -128,14 +143,12 @@ class CommonTable extends Component {
         )        
         
     }
-    
-    
 }
 
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
-            items, header_list } = props
+            onRowSelected, items, header_list } = props
 
     const mien_id = getCurrentMienId(state)
     
@@ -143,6 +156,7 @@ function mapStateToProps(state, props) {
         getAvailableHeaders,
         getHeaderListForMien,
         updateMienHeaders,
+        onRowSelected,
         header_list_name,
         items,
         header_list,

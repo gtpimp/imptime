@@ -244,7 +244,9 @@ class IssueList extends Component {
 
     onClickedIssue(event, issue_id) {
         const {dispatch, onSelectIssues, selected_ids, sprint_id, project_id} = this.props
-        event.stopPropagation()
+        if ( event ) {
+            event.stopPropagation()
+        }
 
         let selected_issue_ids = []
         if (event.ctrlKey || event.metaKey) {
@@ -891,6 +893,7 @@ class IssueList extends Component {
         return (
               <CommonTable getAvailableHeaders={getAllAvailableIssueHeaders}
                            getHeaderListForMien={getIssueHeaderListForMien}
+                           onRowSelected={this.onClickedIssue}
                            updateMienHeaders={updateIssueMienHeaders}
                            header_list_name="issue"
                            items={issue_items}
