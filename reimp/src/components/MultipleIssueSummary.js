@@ -31,11 +31,11 @@ class MultipleIssueSummary extends Component {
         const {auto_load} = props
 
         if ( auto_load ) {
-            this.loadSummary(props)
+            this.loadSummary(null, props)
         }
     }
 
-    loadSummary = (these_props) => {
+    loadSummary = (event, these_props) => {
         const props = these_props || this.props
         const {dispatch, filter, sprint_id} = props
 
