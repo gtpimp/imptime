@@ -138,8 +138,8 @@ class CommonTable extends Component {
                                      dataKey={header.key}
                                      //headerRenderer={this.renderDraggableHeader}
                                      cellRenderer={this.renderDraggableColumn}
-                                     flexGrow={header.flex || 0}
-                                     flexShrink={header.flex || 0}
+                                     flexGrow={parseInt(header.flex || 0)}
+                                     flexShrink={parseInt(header.flex || 0)}
                                      width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
                            )}
                        </SortableTable>
