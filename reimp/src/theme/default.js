@@ -20,6 +20,7 @@ export const default_theme = {
                list_rollover: 'rgba(0,92,134, 0.07)',
                list_selected: 'rgba(11,139,178, 0.10)',
                list_selected_rollover: 'rgba(11,139,178, 0.15)',
+               new_item_background: '#E9EEF2',
                notok: '#E25A50',
                ok: '#85C087',
                page_background: '#E6EEF0',

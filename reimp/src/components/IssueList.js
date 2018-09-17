@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 import { flatMap, keys, groupBy, filter, keyBy, size, uniq, concat, indexOf, map, union, difference, includes } from 'lodash'
+import { css } from 'emotion'
+import { default_theme as theme } from '../theme/default'
 import styled from 'react-emotion'
 import Floater from "react-floater"
 import {connect} from 'react-redux'
@@ -485,12 +487,22 @@ class IssueList extends Component {
         const { sprint, issue_items, header_list, logged_in_user_id, selected_items,
                 tag_category_names, all_tags_by_id, logged_in_user_can_estimate_user_id } = this.props
         const that = this
-        const issue = issue_items[rowIndex].issue
         const header = header_list[columnIndex]
+        const header_key = header.key
+        const item = issue_items[rowIndex]
+        if ( item.type === "candidate" ) {
+            return  (
+                <DivTableCell key={header_key}
+                              extra_style={css`background-color:${theme.colours.new_item_background}`}>
+                  &nbsp;
+                </DivTableCell>
+            )
+        }
+        
+        const issue = item.issue
         const key = `cell_${rowIndex}_${columnIndex}`
         const all_actuals_by_user_id = keyBy(issue.all_actuals, (o) => ""+o.user_id)
         const all_estimates_by_user_id = keyBy(issue.all_estimates, (o) => ""+o.user_id)
-        const header_key = header.key
         let content = null
 
         if ( isScrolling ) {

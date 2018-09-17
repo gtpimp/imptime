@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { css } from 'emotion'
+import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 
 class DivTableCell extends Component {
@@ -14,7 +14,7 @@ class DivTableCell extends Component {
         
         return (
 
-            <div className={css`display: flex;
+            <div className={cx(css`display: flex;
                                 font: ${theme.fonts.list_items};
                                 padding-left: 6px;
                                 vertical-align: middle;
@@ -25,7 +25,7 @@ class DivTableCell extends Component {
                                 max-width: ${extra_style.maxWidth || "auto"};
                                 opacity: ${secondary ? 0.5 : 1.0};
                                 color: ${theme.colours.normal_text};
-                               `}
+                               `, extra_style)}
                  onClick={onClick}>
                  {this.props.children}
             </div>
