@@ -492,17 +492,18 @@ class IssueList extends Component {
         const all_estimates_by_user_id = keyBy(issue.all_estimates, (o) => ""+o.user_id)
         const header_key = header.key
         let content = null
-        
-        if ( isScrolling ) {
-            return (
-                <DivTableCell key={header_key}>
-                  { header_key === "name" && issue.subject }
-                  { header_key === "number" && issue.number }
-                  { header_key !== "name" && header_key !== "number" && null }
-                </DivTableCell>
-            )
-        }
 
+        if ( isScrolling ) {
+            const NON_SCROLLING_FIELDS = []
+            if ( includes(NON_SCROLLING_FIELDS, header_key) ) {
+                return (
+                    <DivTableCell key={header_key}>
+                      null
+                    </DivTableCell>
+                )
+            }
+        }
+        
         switch(header_key) {
             case "number":
                 content = (
