@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="height:100%; width: 100%;">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -78,18 +78,24 @@
         </style>
         
     </head>
-    <body>
-      <div id="root">
+    <body style="height:100%; width: 100%;" >
+      <div id="root" style="height:100%; width: 100%; background: #e6eef0;">
 
         <div class="init">
 
           <div class="header">
           </div>
-          <div id="loading_msg" class="block block--message"  style="display:none;background-image:url('/static/images2/gathering_imps.jpeg');background-repeat:no-repeat; height:500px; background-position:center;margin-top:20px;opacity:0.5; -webkit-text-stroke: 1px black;">
-            <div class="block__content" style="opacity:1; color:#ffffff">
+          <div id="loading_msg" class="block block--message"
+               style="display:none;background-repeat:no-repeat; height:500px; background-position:center;margin-top:20px;opacity:0.5;color:black;">
+            <div class="block__content" style="opacity:1; color:black">
               <div >
-                Gathering Imps
-                <br/><br/>
+                ImpTime
+                <br/>
+              </div>
+              <div style="font-size:20px">
+                <br/>
+                Loading...
+                <br/>
                 Please wait a few moments
               </div>
             </div>
@@ -102,7 +108,7 @@
              if ( el ) {
                  el.style.display = "block";
              }
-         }, 1000);
+         }, 10);
         </script>
 
       </div>
