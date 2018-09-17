@@ -372,8 +372,8 @@ class IssueList extends Component {
         dispatch(ungroupIssuesIntoFeature(selected_ids))
     }
 
-    onDeleteIssue = (event) => {
-        const { issue, dispatch, onDelete } = this.props
+    onDeleteIssue = (event, issue) => {
+        const { dispatch, onDelete } = this.props
         event.stopPropagation()
 
         if ( issue.actual_hours > 0 ) {
@@ -825,7 +825,7 @@ class IssueList extends Component {
                     <DivTableCell key={header_key} secondary={true}>
                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                         <DeleteIssue
-                            onDelete={that.onDeleteIssue}
+                            onDelete={(event) => that.onDeleteIssue(event, issue)}
                         />
                       </div>
                     </DivTableCell>
@@ -837,7 +837,7 @@ class IssueList extends Component {
                                   secondary={true}
                                   >
                       <div className={"reveal-on-hover--block"}>
-                        <div className="issue__small-delete-image" onClick={that.onDeleteIssue} />
+                        <div className="issue__small-delete-image" onClick={(event) => that.onDeleteIssue(event, issue)} />
                       </div>
                     </DivTableCell>
                 )
