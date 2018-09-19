@@ -244,10 +244,6 @@ urlpatterns = [
     ),
 
     url(
-        r'^time-sheet/update_issue_with_feature$', views.update_issue_with_feature, name='update_issue_with_feature',
-    ),
-
-    url(
         r'^time-sheet/issue_subject_update/$', views.issue_subject_update, name='issue_subject_update',
     ),
     url(r'^time-sheet/issue_search$', views.issue_search, {'active_project_id':None,'active_business_id':None}, name='issue_search',),
@@ -569,16 +565,6 @@ urlpatterns = [
         name='get_project_detail',
     ),
     url(
-        r'^time-sheet/add_feature/(?P<business_id>\d+)/$',
-        views.add_feature,
-        name='add_feature',
-    ),
-    url(
-        r'^time-sheet/business_features/(?P<business_id>\d+)/$',
-        views.business_features,
-        name='business_features',
-    ),
-    url(
         r'^time-sheet/allowed_issue_stati/(?P<issue_id>\d+)/$',
         views.allowed_issue_stati,
         name='allowed_issue_stati',
@@ -589,12 +575,6 @@ urlpatterns = [
        views.status_filter,
        name='status_filter',
    ),
-
-    url(
-        r'^time-sheet/feature_filter/(?P<project_id>\d+)$',
-        views.feature_filter,
-        name='feature_filter',
-    ),
 
    url(
        r'^time-sheet/business_users/(?P<business_id>\d+)/$',
@@ -644,7 +624,6 @@ urlpatterns = [
                        url(r'^issue_checkbox_context_menu/(?P<project_id>.*)/$', views.issue_checkbox_context_menu, {}, 'issue_checkbox_context_menu'),
     url(r'^bulk_move_issues_to_project/(?P<dest_project_id>.*)/$', views.bulk_move_issues_to_project, {}, 'bulk_move_issues_to_project'),
     url(r'^bulk_change_issue_state/$', views.bulk_change_issue_state, {}, 'bulk_change_issue_state'),
-    url(r'^bulk_change_issue_feature/$', views.bulk_change_issue_feature, {}, 'bulk_change_issue_feature'),
     url(r'^bulk_change_issue_assignee/$', views.bulk_change_issue_assignee, {}, 'bulk_change_issue_assignee'),
     url(r'^bulk_delete_issues/$', views.bulk_delete_issues, {}, 'bulk_delete_issues'),
     url(r'^bulk_move_issue_above_issue/$', views.bulk_move_issue_above_issue, {}, 'bulk_move_issue_above_issue'),

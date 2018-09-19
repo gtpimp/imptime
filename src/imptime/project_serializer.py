@@ -1,7 +1,7 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer, BaseModelSerializer
-from timepiece.models import Feature, IssueStatus, Issue, ProjectRole, Rate
+from timepiece.models import IssueStatus, Issue, ProjectRole, Rate
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
@@ -46,7 +46,6 @@ class ProjectSerializer(BaseSerializer):
     allowed_sprint_status_names = serializers.ListField(child=serializers.CharField())
     allowed_sprint_type_names = serializers.ListField(child=serializers.CharField())
     allowed_deadline_types = serializers.ListField(child=ProjectDeadlineTypeSerializer())
-    feature_names = serializers.ListField(child=serializers.CharField())
     logged_in_users_permissions = ProjectUserPermissionSerializer(source='user_permissions')
     logged_in_users_roles = serializers.ListField(child=serializers.CharField())
     logged_in_users_default_role = serializers.CharField()
@@ -81,7 +80,6 @@ class ProjectSerializer(BaseSerializer):
         best_rate = Rate.for_business(user_id=self.logged_in_user.id, business_id=project.id)
         project.logged_in_users_default_role = best_rate.time_tracking_mode if best_rate else "developer"
         project.invited_user_ids = project_user_ids.filter(invites_received__accepted=False)
-        project.feature_names = Feature.objects.filter(business=project).order_by("name")  # sic
         project.allowed_sprint_type_names = [ k for k,v in Sprint.PROJECT_TYPES ] #sic
 
         project.allowed_issue_status_names =  [x for x in IssueStatus.objects.all()\

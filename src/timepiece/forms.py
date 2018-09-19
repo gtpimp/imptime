@@ -28,7 +28,7 @@ from selectable import forms as selectable_forms
 from timepiece.lookups import ProjectLookup, QuickLookup
 from timepiece.lookups import UserLookup, BusinessLookup
 
-from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Feature, Issue, IssueStatus, BusinessPermissions, BusinessComment, Client
+from timepiece.models import Project, Business, Entry, Activity, UserProfile, Attribute, Location, Activity, Issue, IssueStatus, BusinessPermissions, BusinessComment, Client
 from timepiece.models import ProjectHours, Salary, CalendarEvent, TrafficChecklist, DevChecklist, FinanceChecklist, Schedule
 from timepiece.fields import UserModelChoiceField
 from django.contrib.auth.models import User
@@ -902,7 +902,6 @@ class IssueForm(forms.ModelForm):
             'subject',
             'description',
             'status2',
-            'feature',
             'assigned_to'
             )
 
@@ -914,9 +913,6 @@ class IssueForm(forms.ModelForm):
         super(IssueForm, self).__init__(*args, **kwargs)
         self.fields['subject'].widget = forms.TextInput()
         self.fields['subject'].required = False
-
-        if business is not None:
-            self.fields['feature'].widget.choices = [('', '')] + list((x.id, x.name) for x in Feature.objects.filter(business=business))
 
         self.fields['status2'].queryset = IssueStatus.objects.filter(business=business).order_by('name')
 
@@ -1239,7 +1235,6 @@ class SprintInvoiceReportSettingsForm(forms.Form):
     start = forms.DateField(initial=None, required=False)
     end = forms.DateField(initial=None, required=False)
 
-    include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     include_billable_per_user = forms.BooleanField(label="Tick to include billable per user", initial=True, required=False)
     only_these_statuses = forms.MultipleChoiceField( label="Only include these statuses",
                                                      required=True, initial=('all',),
@@ -1291,7 +1286,6 @@ class SprintInvoiceReportSettingsForm(forms.Form):
                 'only_issues_with_time': True,
                 'start': None,
                 'end': None,
-                'include_features': False,
                 'include_billable_per_user': False,
                 'only_these_statuses': ['all'],
                 'only_assigned_to': ['all'],
@@ -1309,7 +1303,6 @@ class SprintQuoteReportSettingsForm(forms.Form):
                                                      required=True, initial=('New',),
                                                      widget = CheckboxSelectMultiple)
 
-    include_features = forms.BooleanField(label="Tick to include features", initial=False, required=False)
     include_rates = forms.BooleanField(label="Tick to include rates", initial=False, required=False)
     show_hours = forms.BooleanField(label="Tick to show hours", initial=False, required=False)
     show_breakdown = forms.BooleanField(label="Tick to show breakdown", initial=False, required=False)
@@ -1391,16 +1384,6 @@ class IssueCheckboxContextMenuSelectByStateForm(forms.Form):
         statuses_in_use = IssueStatus.objects.filter(business=project.business).order_by("name")
         self.fields['status'].choices = [('na', ''),] + list([ (x.id, x.name) for x in statuses_in_use])
         self.fields['status'].widget.attrs['onchange'] = "this.form.submit();"
-
-class IssueCheckboxContextMenuChangeFeatureForm(forms.Form):
-
-    feature = forms.ChoiceField(label="New feature",
-                                required=True, initial=('New',) )
-
-    def __init__(self, project, *args, **kwargs):
-        super(IssueCheckboxContextMenuChangeFeatureForm, self).__init__(*args, **kwargs)
-        self.fields['feature'].choices = [('na', ''),] + list( [ (x.id,x.name) for x in Feature.objects.filter(business=project.business) ] )
-        self.fields['feature'].widget.attrs['onchange'] = "this.form.submit();"
 
 class IssueCheckboxContextMenuChangeAssigneeForm(forms.Form):
 

@@ -14,7 +14,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
+from timepiece.models import Issue, IssueHistory, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator

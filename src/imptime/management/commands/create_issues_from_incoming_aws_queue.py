@@ -3,7 +3,7 @@ from timepiece.models import Project as Sprint
 import json
 from django.core.mail import EmailMessage
 from timepiece.models import Business as Project
-from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
+from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import ProjectStatus as SprintStatus
 from imptime.models import VisualSpecDocument
@@ -268,20 +268,13 @@ this is the colour of yukc
             for orgnode in orgnodes:
                 if orgnode.Level() == 3:
                     subject = orgnode.Heading()
-                    if '|' in subject:
-                        feature_name, subject = subject.split('|')
-                        feature = Feature.objects.get_or_create(name=feature_name, business=project)[0]
-                    else:
-                        feature = None
                     description = orgnode.CleanBody()
                     raw_issues.append({'subject': subject,
-                                       'description': description,
-                                       'feature': feature})
+                                       'description': description})
         else:
             content = content or ''
             raw_issues.append({'subject': default_subject or content[0:20],
-                               'description': content,
-                               'feature': None})
+                               'description': content})
         return raw_issues
     
     def get_user(self, message):
@@ -305,7 +298,6 @@ this is the colour of yukc
                                          auto_created_during_import=True,
                                          issue_type='issue',
                                          status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
-                                         feature=raw_issue['feature'],
                                          assigned_to=user,
                                          number=Issue.get_next_issue_number(project),
                                          description=raw_issue['description'],

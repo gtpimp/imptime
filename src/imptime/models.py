@@ -714,5 +714,3 @@ class SprintSnapshot(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self)
     
-
-            

@@ -155,58 +155,6 @@
 
       {% endif %}
 
-      {% if settings.include_features %}
-
-        <div class="graph" style="float:left">
-          <h3 style="text-align:center">Breakdown by feature</h3>
-
-          <table>
-            {% for feature_name, feature_min_cost in estimate_stats.features.items %}
-              <tr>
-                <th>{{feature_name}}</th>
-                {% if settings.show_billable %}
-                  <td>R{{feature_min_cost|floatformat:"0"|intcomma}}</td>
-                {% endif %}
-              </tr>
-            {% endfor %}
-          </table>
-
-          <div class="graph_estimate_by_feature" style="height:250px;width:250px;"></div>
-        </div>
-
-
-        <script>
-         $.plot(".graph_estimate_by_feature",
-		            [ {%spaceless%}
-		              {% for feature_name, feature_min_cost in estimate_stats.features.items %}
-			              { label:"{{feature_name}}",
-			                data: {{feature_min_cost}}
-			              },
-		              {% endfor %}
-		            {%endspaceless%}
-		            ],
-		            { series: {
-		                pie: {
-		                    show: true,
-			                  radius: 1,
-			                  label: {
-			                      show: true,
-			                      formatter: function(label, series){
-                                var l = label;
-                                if ( l.length > 10 ) {
-				                            l = l.substring(0,10)+"...";
-			                          }
-			                          return '<div style="font-size:8pt;text-align:center;padding:2px;color:white;">'+l+'<br/>'+Math.round(series.percent)+'%</div>';
-			                      },
-			                      background: { opacity: 0.8 }
-		                    }
-                    }
-		            },
-		              legend: { show: false} } );
-        </script>
-
-      {% endif %}
-
     {% endif %}
 
     <div class="page_break""></div>
@@ -263,9 +211,6 @@
         {% if settings.issue_assignee %}
           <th>Assigned</th>
         {% endif %}
-        {% if settings.include_features %}
-          <th>Feature</th>
-        {% endif %}
         {% if settings.issue_status %}
           <th>Status</th>
         {% endif %}
@@ -284,9 +229,6 @@
 	          <td> {{estimate.issue.subject}} </td>
 	          {% if settings.issue_assignee %}
 	            <td> {{estimate.issue.assigned_to.get_full_name|default_if_none:""}} </td>
-	          {% endif %}
-	          {% if settings.include_features %}
-	            <td>{{estimate.issue.feature|default_if_none:""}}</td>
 	          {% endif %}
 	          {% if settings.issue_status %}
 	            <td> {{ estimate.issue.status }}</td>

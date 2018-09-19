@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from timepiece.models import Project as Sprint
 from django.core.mail import send_mail
 from timepiece.models import Business as Project
-from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
+from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import ProjectStatus as SprintStatus
 from imptime.models import VisualSpecDocument
@@ -247,20 +247,15 @@ class Command(BaseCommand):
             for orgnode in orgnodes:
                 if orgnode.Level() == 3:
                     subject = orgnode.Heading()
-                    if '|' in subject:
-                        feature_name, subject = subject.split('|')
-                        feature = Feature.objects.get_or_create(name=feature_name, business=project)[0]
-                    else:
-                        feature = None
                     description = orgnode.CleanBody()
                     raw_issues.append({'subject': subject,
                                        'description': description,
-                                       'feature': feature})
+                                       })
         else:
             content = content or ''
             raw_issues.append({'subject': default_subject or content[0:20],
                                'description': content,
-                               'feature': None})
+                               })
         return raw_issues
     
     def get_user(self, message):
@@ -281,7 +276,6 @@ class Command(BaseCommand):
                                          auto_created_during_import=True,
                                          issue_type='correspondence',
                                          status2=IssueStatus.objects.get_or_create(name='new', business=project)[0],
-                                         feature=raw_issue['feature'],
                                          assigned_to=user,
                                          number=Issue.get_next_issue_number(project),
                                          description=raw_issue['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],

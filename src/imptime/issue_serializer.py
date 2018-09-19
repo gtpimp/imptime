@@ -18,7 +18,6 @@ class IssueSerializer(BaseSerializer):
 
     id = serializers.CharField()
     assigned_to_quick_name = serializers.CharField()
-    feature = serializers.CharField()
     subject = serializers.CharField()
     subject_quality_error = serializers.CharField()
     description = serializers.CharField()
@@ -26,7 +25,6 @@ class IssueSerializer(BaseSerializer):
     status_name = serializers.CharField(source='status2_name')
     type_name = serializers.CharField()
     assigned_to_id = serializers.CharField()
-    feature_name = serializers.CharField()
     number = serializers.IntegerField()
     sprint_id = serializers.CharField()
     project_id = serializers.CharField()
@@ -75,7 +73,6 @@ class IssueSerializer(BaseSerializer):
 
         bp = BusinessPermissions.for_user(user=self.logged_in_user, business=issue.project.business, auto_create=False)
         
-        issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.status2_name = issue.status2.name if issue.status2_id else None
         issue.type_name = issue.issue_type
         issue.sprint_id = str(issue.project_id)  # sic

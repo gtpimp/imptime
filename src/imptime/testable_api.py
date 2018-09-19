@@ -119,7 +119,6 @@ class TestableViewSet(BaseViewSet):
                                              subject="%s (Testable %s)" % (issue.subject, testable.order),
                                              issue_type='issue',
                                              status2=IssueStatus.objects.get_or_create(name='new', business=issue.project.business)[0],
-                                             feature=issue.feature,
                                              assigned_to=issue.assigned_to,
                                              parent_group_id=issue.parent_group_id,
                                              number=Issue.get_next_issue_number(issue.project.business), #sic

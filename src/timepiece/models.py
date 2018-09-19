@@ -49,13 +49,8 @@ from datetime import timedelta, date
 COLOURS = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4","#FFEBCD","#0000FF","#8A2BE2","#A52A2A","#DEB887","#5F9EA0","#7FFF00","#D2691E","#FF7F50","#6495ED","#FFF8DC","#DC143C","#00FFFF","#00008B","#008B8B","#B8860B","#A9A9A9","#006400","#BDB76B","#556B2F","#FF8C00","#9932CC","#E9967A","#8FBC8F","#483D8B","#2F4F4F","#00CED1","#9400D3","#FF1493","#00BFFF","#696969","#1E90FF","#B22222","#FFFAF0","#228B22","#FF00FF","#DCDCDC","#F8F8FF","#FFD700","#DAA520","#BEBEBE","#808080","#00FF00","#008000","#ADFF2F","#F0FFF0","#FF69B4","#CD5C5C","#4B0082","#FFFFF0","#F0E68C","#E6E6FA","#FFF0F5","#7CFC00","#FFFACD","#ADD8E6","#F08080","#E0FFFF","#FAFAD2","#D3D3D3","#90EE90","#FFB6C1","#FFA07A","#20B2AA","#87CEFA","#778899","#B0C4DE","#00FF00","#32CD32","#FAF0E6","#FF00FF","#B03060","#7F0000","#66CDAA","#0000CD","#BA55D3","#9370DB","#3CB371","#7B68EE","#00FA9A","#48D1CC","#C71585","#191970","#F5FFFA","#FFE4E1","#FFE4B5","#FFDEAD","#000080","#FDF5E6","#808000","#6B8E23","#FFA500","#FF4500","#DA70D6","#EEE8AA","#98FB98","#AFEEEE","#DB7093","#FFEFD5","#FFDAB9","#CD853F","#FFC0CB","#DDA0DD","#B0E0E6","#A020F0","#7F007F","#FF0000","#BC8F8F","#4169E1","#8B4513","#FA8072","#F4A460","#2E8B57","#FFF5EE","#A0522D","#C0C0C0","#87CEEB","#6A5ACD","#708090","#FFFAFA","#00FF7F","#4682B4","#D2B48C","#008080","#D8BFD8","#FF6347","#40E0D0","#EE82EE","#F5DEB3","#F5F5F5","#FFFF00","#9ACD32"]
 
 ISSUE_DEV_COMPLETED_STATES = ["devdone", "dev done", "tested", "internal_qa_passed", "cannot reproduce"]
-FEATURE_NAMES_FOR_MANAGEMENT_ISSUES = [ "management", ]
-FEATURE_NAMES_FOR_TESTING_ISSUES = [ "testing", ]
 TIME_TRACKING_MODES = [ "developer", "tester", "manager" ]
 TIME_TRACKING_MODES_WITHOUT_VELOCITY = [ "tester", "manager" ]
-TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES = { 'developer': None,
-                                               'tester': ['testing',],
-                                               'manager': ['management',] }
 
 upload_to_logos = UploadTo("logos")
 upload_to_attachments = UploadTo("issue_attachments")
@@ -408,18 +403,9 @@ class BusinessComment(BaseModel):
     def __unicode__(self):
         return self.comment
 
-class Feature(BaseModel):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    business = models.ForeignKey(Business,related_name='features')
-
-    class Meta:
-        unique_together = (('name', 'business'), )
-        ordering = ['name']
-    def __unicode__(self):
-        return self.name
-
 class GlobalPermissions():
-    """ should be replaced by real django permissions probably, it's just such a mess right now """
+    """Semi hck so that one user has ability to add release notes. superuser
+       should have no meaning anywhere else."""
 
     def has_update_release_notes_permission(self, user):
         return user and user.is_superuser
@@ -1555,35 +1541,6 @@ class Project(BaseModel):
                 p[entry['project_id']] = Project.objects.get(pk=entry['project_id'])
         return p.values()
 
-    def costs_by_feature(self):
-
-        if hasattr(self, '_cached_billable_by_feature'):
-            return self._cached_billable_by_feature
-
-        costs_per_feature = OrderedDict()
-        features_in_project = list(self.issues.all().filter(feature__isnull=False).order_by('feature').values('feature').annotate(x=Count('feature'))) + [{'feature':None,'x':0}]
-        for feature in features_in_project:
-            entries_qs = Entry.objects.all().filter(issue__project=self)
-            if feature['feature'] is None:
-                cost_per_feature = costs_per_feature.setdefault('none', {'name':'no feature', 'ctc':0,'billable':0})
-                entries_qs = entries_qs.filter(Q(issue__isnull=True)|Q(issue__feature__isnull=True))
-            else:
-                cost_per_feature = costs_per_feature.setdefault(feature['feature'], {'name':Feature.objects.get(pk=feature['feature']), 'ctc':0,'billable':0})
-                entries_qs = entries_qs.filter(issue__feature_id=feature['feature'])
-
-            user_totals = entries_qs.values("user").annotate(hours=Sum('hours'))
-            for user_total in user_totals:
-                user = User.objects.get(pk=user_total['user'])
-                rate = Rate.objects.filter(project=self, user=user).first()
-                if rate is None:
-                    rate = Rate.objects.create(project=self, user=user, amount=0)
-                hours = float(user_total['hours']) * rate.full_velocity
-                cost_per_feature['ctc'] += hours * float(rate.amount)
-                cost_per_feature['billable'] += hours * float(rate.full_rate)
-
-        self._cached_billable_by_feature = costs_per_feature
-        return self._cached_billable_by_feature
-
     @classmethod
     def most_recent_project(self, business_id):
         entries_per_business_ids = Entry.objects.filter(issue__project__business_id=business_id).order_by('-end_time').values('issue__project_id')
@@ -1659,7 +1616,7 @@ class Project(BaseModel):
             return self._estimate_stats
         if issues is None:
             issues = self.issues.all()
-        stats = {'issues':[], 'users':{}, 'features':{}}
+        stats = {'issues':[], 'users':{}}
         self._estimate_stats = stats
 
         total_estimated_hours = 0
@@ -1766,13 +1723,6 @@ class Project(BaseModel):
                 total_estimated_hours += points or 0
                 issue_data['combined_cost_with_scope_creep'] = issue_data['combined_cost']
 
-                feature = issue.feature
-                if feature is None:
-                    feature = "na"
-                if feature not in stats['features']:
-                    stats['features'][feature] = 0
-                stats['features'][feature] += issue_data['combined_cost']
-
         stats['total_estimate_min'] = dev_estimate_cost + estimated_management_cost + estimated_testing_cost
         stats['total_estimate_max'] = stats['total_estimate_min']
         stats['dev_estimate_cost'] = dev_estimate_cost
@@ -1838,12 +1788,6 @@ class Project(BaseModel):
             issue_points_comparative = IssuePoints.objects.filter(issue__project=self, user=user).distinct()
 
             open_status_options = Issue.STATUSES_INDICATING_INCOMPLETE[rate.time_tracking_mode]
-            # if rate.time_tracking_mode == 'developer':
-            #     exclude_features_for_role = TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['manager'] + TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES['tester']
-            # elif rate.time_tracking_mode == 'manager':
-            #     exclude_features_for_role = []
-            # elif rate.time_tracking_mode == 'tester':
-            #     exclude_features_for_role = []
 
             stats_per_user[user]['points_non_management'] = _get_total(issue_points.exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
                                                                        .values('user')\
@@ -1899,7 +1843,7 @@ class Project(BaseModel):
 
             stats_per_user[user]['hours'] = _get_total(entries.order_by('user').values('user').annotate(total=Sum('hours')))
 
-            stats_per_user[user]['hours_for_role'] = _get_total(entries.filter_on_role(stats_per_user[user]['rate'].time_tracking_mode).values('user').annotate(total=Sum('hours')))
+            stats_per_user[user]['hours_for_role'] = _get_total(entries.values('user').annotate(total=Sum('hours')))
 
             stats_per_user[user]['hours_real'] = _get_total(entries.exclude(issue__issue_type__in=Issue.MANAGEMENT_ISSUE_TYPES)\
                                                             .order_by('user')\
@@ -1959,7 +1903,7 @@ class Project(BaseModel):
             rate = Rate.objects.filter(project=self, user=user).first() or Rate(project=self, user=user, amount=0, billable_amount=0, velocity=1)
 
             for role in TIME_TRACKING_MODES:
-                entries_for_role = entries_for_user.filter_on_role(role, role_if_no_feature=rate.time_tracking_mode).order_by("user_id")
+                entries_for_role = entries_for_user
                 hours = entries_for_role.values('user_id').aggregate(hours=Sum('hours'))['hours']
                 if hours is None:
                     continue
@@ -2743,28 +2687,6 @@ class EntriesQuerySet(QuerySet):
 
     def hours(self):
         return self.aggregate(num_hours=Sum('hours'))['num_hours']
-
-    def filter_on_role(self, role, role_if_no_feature=None):
-        """ development role is special, because it's the default """
-        qs = self
-
-        if role_if_no_feature is None:
-            role_if_no_feature = role
-
-        other_roles_reserved_feature_names = [v for k,v in TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES.items() if k != role and v is not None]
-        features_to_exclude = [ item for sublist in other_roles_reserved_feature_names for item in sublist ]
-
-        if role_if_no_feature == role:
-            # every entry will belong, except those specifically belonging to other roles
-            qs = qs.exclude(issue__feature__name__in=features_to_exclude)
-        else:
-            # every entry will be wrong, unless the feature exactly matches the required role
-            if TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role]:
-                qs = qs.filter(issue__feature__name__in=TIME_TRACKING_MODES_RESERVED_FEATURE_NAMES[role])
-            else:
-                qs = qs.exclude(Q(issue__feature__isnull=True)|Q(issue__feature__name__in=features_to_exclude))
-
-        return qs
 
     def billable_for_user(self, user_id):
         total = 0
@@ -4147,7 +4069,6 @@ class Issue(BaseModel):
     enriched_description = models.TextField(blank=True, null=True)
     story_points = models.FloatField(null=True,blank=True)
     order_deprecated = models.FloatField(null=True,blank=True) #deprecated
-    feature = models.ForeignKey("Feature", blank=True, null=True, related_name='issues')
     assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
     created = models.DateTimeField(auto_now_add=True)
@@ -4199,7 +4120,6 @@ class Issue(BaseModel):
             status2=issue_to_clone.status2,
             number=Issue.get_next_issue_number(issue_to_clone.project.business),
             subject=issue_to_clone.subject + (" (clone)" if add_suffix else ""),
-            feature=issue_to_clone.feature,
             assigned_to=issue_to_clone.assigned_to,
             created = timezone.now(),
             modified = timezone.now(),
