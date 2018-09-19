@@ -4,6 +4,7 @@ import {
 
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
+import { invalidateFeatures } from '../actions/Features'
 import { invalidateIssues } from '../actions/Issues'
 import { invalidateTags } from '../actions/Tags'
 import { invalidateIssueReviews } from '../actions/IssueReviews'
@@ -45,6 +46,7 @@ import {
     LIST_KEY__RELEASE_NOTES_EDITOR_LIST,
     LIST_KEY__FORM_TAG_LIST,
     LIST_KEY__WIKI_LIST,
+    LIST_KEY__FEATURE_LIST,
     LIST_KEY__SPRINT_DEADLINE,
     LIST_KEY__AUTO_CLOCK,
     LIST_KEY__RECENT_AUTO_CLOCK,
@@ -120,6 +122,8 @@ function triggerInvalidateEntity(d, dispatch) {
         // So that the estimate counts within the sprint shows correctly
         dispatch(invalidateSprints([d.params.sprint_id]))
         dispatch(invalidateCostSummary(d.params.sprint_id))
+    } else if ( d.entity_name === 'feature' ) {
+        dispatch(invalidateFeatures([d.entity_ref]))
     } else if ( d.entity_name === 'wikipage' ) {
         dispatch(invalidateWikis([d.entity_ref]))
     } else if ( d.entity_name === 'mien' ) {
@@ -180,6 +184,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         }
     } else if ( d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {
         list_keys_to_invalidate[LIST_KEY__FORM_TAG_LIST] = true
+    } else if ( d.entity_name === 'feature' ) {
+        list_keys_to_invalidate[LIST_KEY__FEATURE_LIST] = true
     } else if ( d.entity_name === "wikipage" ) {
         list_keys_to_invalidate[LIST_KEY__WIKI_LIST] = true
     } else if ( d.entity_name === "projectdeadline" ) {

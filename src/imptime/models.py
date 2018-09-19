@@ -757,6 +757,14 @@ class Feature(BaseModel):
     def get_next_feature_number(self, project):
         return Feature.get_last_feature_number(project) +1
 
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Feature, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+    
 
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()

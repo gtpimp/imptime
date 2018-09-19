@@ -1,9 +1,12 @@
 import React, {Component} from 'react'
 import { concat, indexOf, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
+import { default_theme as theme } from '../theme/default'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { logged_in_user } from '../actions/Auth'
 import CommonTable from './CommonTable'
+import DivTableCell from './DivTableCell'
 import 'react-virtualized/styles.css';
 import {
     makeSelFeatureIds,
@@ -212,13 +215,43 @@ class FeatureList extends Component {
     }
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
+        const { feature_items, header_list } = this.props
         const key = `feature_${columnIndex}_${rowIndex}`
+        const item = feature_items[rowIndex]
+        const feature = item.feature
+        let content = null
+        const header = header_list[columnIndex]
+        const header_key = header.key
+
+        if ( item.type === "candidate" ) {
+            return  (
+                <DivTableCell key={key}
+                              extra_style={css`background-color:${theme.colours.new_item_background}`}>
+                  { header_key === "name" && "Creating feature..." }
+                  { header_key !== "name" && <span>&nbsp;</span> }
+                </DivTableCell>
+            )
+        }
         
-        return (
-            <div key={key}>
-              yeah
-            </div>
-        )
+        switch(header_key) {
+            case "number":
+                content = (
+                    <DivTableCell key={key} >
+                      <div>{feature.number}</div>
+                    </DivTableCell>
+                )
+                break
+            case "name":
+                content = (
+                    <DivTableCell key={header_key} >
+                      {feature.name}
+                    </DivTableCell>
+                )
+                break
+            default:
+                console.error("Unknown header: " + header_key)
+        }
+        return content
     }
 
     getColumnWidth = ({index}) => {

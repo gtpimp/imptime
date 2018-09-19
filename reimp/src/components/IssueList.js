@@ -443,21 +443,22 @@ class IssueList extends Component {
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
         const { sprint, issue_items, header_list, logged_in_user_id, selected_items,
                 tag_category_names, all_tags_by_id, logged_in_user_can_estimate_user_id } = this.props
+        const key = `issue_${columnIndex}_${rowIndex}`
         const that = this
         const header = header_list[columnIndex]
         const header_key = header.key
         const item = issue_items[rowIndex]
         if ( item.type === "candidate" ) {
             return  (
-                <DivTableCell key={header_key}
+                <DivTableCell key={key}
                               extra_style={css`background-color:${theme.colours.new_item_background}`}>
-                  &nbsp;
+                  { header_key === "name" && "Creating issue..." }
+                  { header_key !== "name" && <span>&nbsp;</span> }
                 </DivTableCell>
             )
         }
         
         const issue = item.issue
-        const key = `cell_${rowIndex}_${columnIndex}`
         const all_actuals_by_user_id = keyBy(issue.all_actuals, (o) => ""+o.user_id)
         const all_estimates_by_user_id = keyBy(issue.all_estimates, (o) => ""+o.user_id)
         let content = null
@@ -466,7 +467,7 @@ class IssueList extends Component {
             const NON_SCROLLING_FIELDS = []
             if ( includes(NON_SCROLLING_FIELDS, header_key) ) {
                 return (
-                    <DivTableCell key={header_key}>
+                    <DivTableCell key={key}>
                       null
                     </DivTableCell>
                 )
@@ -528,7 +529,7 @@ class IssueList extends Component {
                     )
                 }
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                    >
                       {content}
                     </DivTableCell>
@@ -536,7 +537,7 @@ class IssueList extends Component {
                 break
             case "attachment":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                    >
                       {
                           issue.has_attachment && <AttachmentIconDiv></AttachmentIconDiv>
@@ -549,7 +550,7 @@ class IssueList extends Component {
                                                                       issue.needs_estimate ||
                                                                       issue.assigned_to_id === null))
                 content = (
-                    <DivTableCell className="div-table__cell" key={header_key}
+                    <DivTableCell className="div-table__cell" key={key}
                     >
                     { issue_has_problems && (
                         <Floater
@@ -615,7 +616,7 @@ class IssueList extends Component {
                 const isSiblingOfSelectedIssue = includes(keys(keyBy(selected_items, 'parent_group_id')), issue.parent_group_id)
                 const belongsToSelectedFeature = isChildOfSelectedFeature || isSiblingOfSelectedIssue
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                     >
                       { !issue.can_group_issues && issue.parent_group_id &&
                         <ChildIconDiv belongsToSelectedFeature={belongsToSelectedFeature}></ChildIconDiv>
@@ -625,7 +626,7 @@ class IssueList extends Component {
                 break
             case "name":
                 content = (
-                    <DivTableCell key={header_key} >
+                    <DivTableCell key={key} >
                       {issue.subject}
                       {/* { issue.group_children && issue.group_children.length > 0 &&
                       <span>
@@ -640,7 +641,7 @@ class IssueList extends Component {
                 break
             case "assignee":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       <EditableIssueAssignedUser class_name="issue-cell__assignee"
@@ -651,7 +652,7 @@ class IssueList extends Component {
                 break
             case "created_at":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       <Timestamp value={issue.created_at} format="from_now"/>
@@ -660,7 +661,7 @@ class IssueList extends Component {
                 break
             case "status":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true} >
                       <EditableIssueStatus class_name="issue-cell__status" issue_ids={[issue.id]} project_id={issue.project_id}/>
                     </DivTableCell>
@@ -668,7 +669,7 @@ class IssueList extends Component {
                 break
             case "estimate_summary":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       <div className="issue-cell__estimate_summary">
@@ -701,7 +702,7 @@ class IssueList extends Component {
                 break
             case "tags":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       <div className="issue-cell__tag">
@@ -757,7 +758,7 @@ class IssueList extends Component {
             case "my_estimate":
                 const actual = (all_actuals_by_user_id[logged_in_user_id] && all_actuals_by_user_id[logged_in_user_id].hours) || null
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       {logged_in_user_can_estimate_user_id &&
@@ -773,7 +774,7 @@ class IssueList extends Component {
                 break
             case "estimated":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       <EditableIssueEstimate class_name="issue-cell__my-estimate" issue_id={issue.id} />
@@ -782,7 +783,7 @@ class IssueList extends Component {
                 break
             case "my_time":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       <Hours hours={issue.my_actual_hours} />
@@ -791,7 +792,7 @@ class IssueList extends Component {
                 break
             case "delete":
                 content = (
-                    <DivTableCell key={header_key} secondary={true}>
+                    <DivTableCell key={key} secondary={true}>
                       <div className="reveal-on-hover--block issue__cell--issue-delete">
                         <DeleteIssue
                             onDelete={(event) => that.onDeleteIssue(event, issue)}
@@ -802,7 +803,7 @@ class IssueList extends Component {
                 break
             case "small_delete":
                 content = (
-                    <DivTableCell key={header_key}
+                    <DivTableCell key={key}
                                   secondary={true}
                                   >
                       <div className={"reveal-on-hover--block"}>
