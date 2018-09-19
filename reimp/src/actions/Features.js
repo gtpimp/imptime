@@ -1,0 +1,253 @@
+import { impfetch } from './lib.js'
+
+import { updateVisibleItemIdAbove } from './ItemList'
+import {
+    ENTITY_KEY__FEATURE,
+    ENTITY_KEY__TAG,
+    HEADER_LIST_NAME__FEATURE
+} from './ItemListKeyRegistry'
+
+import { includes, filter } from 'lodash'
+import {
+    updateMienHeaders,
+    getHeaderListForCurrentMien,
+    getHeaderListForMien
+} from '../actions/Mien'
+
+import {
+    invalidateAllItems,
+    invalidateItems,
+    fetchItemsIfNeeded,
+    ensureItemsLoaded,
+    getItem,
+    getItems,
+    getItemsById,
+    getItemByRef,
+    updateItem,
+    startCandidateItem,
+    saveCandidateItem,
+    updateCandidateDetails,
+    cancelCandidateItem,
+    getCandidateItem,
+    deleteItems,
+    itemPost,
+    is_item_invalidated,
+    getInvalidatedItemIds,
+    getSavingItemIds,
+    getLoadingItemIds
+} from '../actions/Item'
+
+export const SET_FEATURE_STORE_VALUE = 'SET_FEATURE_STORE_VALUE'
+export const ANNOUNCE_BULK_CREATING_FEATURES = 'ANNOUNCE_BULK_CREATING_FEATURES'
+export const ANNOUNCE_BULK_CREATING_FEATURES_FAILED = 'ANNOUNCE_BULK_CREATING_FEATURES_FAILED'
+export const ANNOUNCE_BULK_CREATED_FEATURES = 'ANNOUNCE_BULK_CREATED_FEATURES'
+
+const ALL_AVAILABLE_FEATURE_HEADERS = [ {key:'number', label:"#", description:"Feature number", width:"50px"},
+                                      {key:'name', label:"Name", description:"Feature subject", width:"auto", flex:1} 
+]
+
+const DEFAULT_FEATURE_HEADERS_KEYS = ["number", "name"]
+const DEFAULT_FEATURE_HEADERS = filter(ALL_AVAILABLE_FEATURE_HEADERS, (header) => includes(DEFAULT_FEATURE_HEADERS_KEYS, header.key))
+
+export function invalidateAllFeatures() {
+    return (dispatch, getState) => {
+        dispatch(invalidateAllItems(ENTITY_KEY__FEATURE))
+    }
+}
+
+export function invalidateFeatures(feature_ids) {
+    return (dispatch, getState) => {
+        dispatch(invalidateItems(ENTITY_KEY__FEATURE, feature_ids
+        ))
+    }
+}
+
+export function fetchFeaturesIfNeeded(list_key) {
+    return (dispatch, getState) => {
+        dispatch(fetchItemsIfNeeded(ENTITY_KEY__FEATURE, list_key))
+    }
+}
+
+export function ensureFeaturesLoaded(feature_ids) {
+    return ensureItemsLoaded(ENTITY_KEY__FEATURE, feature_ids)
+}
+
+export function getFeatureByRef(state, ref) {
+    return getItemByRef(state, ENTITY_KEY__FEATURE, ref)
+}
+
+export function getFeature(state, feature_id) {
+    return getItem(state, ENTITY_KEY__FEATURE, feature_id)
+}
+
+export function getFeatures(state, feature_ids) {
+    return getItems(state, ENTITY_KEY__FEATURE, feature_ids)
+}
+
+export function getFeaturesById(state, feature_ids) {
+    return getItemsById(state, ENTITY_KEY__FEATURE, feature_ids)
+}
+
+export function updateFeatureName(feature_id, value) {
+    return updateItem(ENTITY_KEY__FEATURE, [feature_id], "name", value)
+}
+
+export function updateFeatureDescription(feature_id, value) {
+    return updateItem(ENTITY_KEY__FEATURE, [feature_id], "description", value)
+}
+
+export function updateFeatureParent(feature_id, parent_feature_id) {
+    return updateItem(ENTITY_KEY__FEATURE, [feature_id], "parent_feature_id", parent_feature_id)
+}
+
+export function reorderFeature(moving_feature_ids, feature_id_after, list_key, index_of_destination, on_done) {
+    return (dispatch, getState) => {
+        dispatch(updateVisibleItemIdAbove(list_key, moving_feature_ids, feature_id_after, index_of_destination))
+        dispatch(updateItem(ENTITY_KEY__FEATURE, moving_feature_ids, "feature_id_after", feature_id_after, on_done))
+    }
+}
+
+export function startCandidateFeature(sprint_id, feature_id_parent) {
+    return (dispatch, getState) => {
+        dispatch(startCandidateItem(ENTITY_KEY__FEATURE,
+                                    { feature_id_parent: feature_id_parent,
+	                              sprint_id: sprint_id }))
+    }
+}
+
+export function updateCandidateName(name) {
+    return updateCandidateDetails(ENTITY_KEY__FEATURE, {name:name})
+}
+
+export function updateCandidateProperties(props) {
+    return updateCandidateDetails(ENTITY_KEY__FEATURE, props)
+}
+
+export function cancelCandidateFeature() {
+    return cancelCandidateItem(ENTITY_KEY__FEATURE)
+}
+
+export function saveCandidateFeature(on_done) {
+    return saveCandidateItem(ENTITY_KEY__FEATURE, on_done)
+}
+
+export function deleteFeatures(feature_ids) {
+    return deleteItems(ENTITY_KEY__FEATURE, feature_ids)
+}
+
+export function getCandidateFeature(state) {
+    return getCandidateItem(ENTITY_KEY__FEATURE, state)
+}
+
+export function getInvalidatedFeatureIds(state, feature_ids) {
+    return getInvalidatedItemIds(ENTITY_KEY__FEATURE, state, feature_ids)
+}
+
+export function getLoadingFeatureIds(state, feature_ids) {
+    return getLoadingItemIds(state, ENTITY_KEY__FEATURE, feature_ids)
+}
+
+export function getSavingFeatureIds(state, feature_ids) {
+    return getSavingItemIds(ENTITY_KEY__FEATURE, state, feature_ids)
+}
+
+export function is_feature_invalidated(state, feature_id) {
+    return is_item_invalidated(ENTITY_KEY__FEATURE, state, feature_id)
+}
+
+
+function announceBulkCreatingFeatures(sprint_id) {
+    return {
+        type: ANNOUNCE_BULK_CREATING_FEATURES,
+        sprint_id: sprint_id
+    }
+}
+
+function announceBulkCreatedFeatures(sprint_id, new_feature_ids) {
+    return {
+        type: ANNOUNCE_BULK_CREATED_FEATURES,
+        sprint_id: sprint_id,
+        new_feature_ids: new_feature_ids
+    }
+}
+
+function announceBulkCreatingFeaturesFailed(sprint_id, error) {
+    return {
+        type: ANNOUNCE_BULK_CREATING_FEATURES_FAILED,
+        sprint_id: sprint_id,
+        error: error
+    }
+}
+
+export function bulkCreateFeatures(sprint_id, bulk_feature_text, on_done) {
+    return (dispatch, getState) => {
+        const state = getState()
+        dispatch(announceBulkCreatingFeatures(sprint_id))
+        let data = { sprint_id: sprint_id,
+                     bulk_feature_text: bulk_feature_text }
+        return impfetch( state, "imp/feature/bulk_create_features/", dispatch,
+                         {method: "POST",
+                          credentials: 'same-origin',
+                          data: data,
+                          headers: {"Content-type": "application/json; charset=UTF-8"},
+                          body: JSON.stringify(data)}
+        ).then(response => response.json())
+         .then(json => {
+             if ( json.status !== 'success' ) {
+                 console.log('Request failed with JSON response', json);
+                 dispatch(announceBulkCreatingFeaturesFailed(sprint_id, json.error))
+             } else {
+                 console.log('Request succeeded with JSON response', json);
+                 dispatch(announceBulkCreatedFeatures(sprint_id, json.payload.new_features_ids))
+                 if ( on_done ) {
+                     on_done(json.payload.new_feature_ids)
+                 }
+             }
+         })
+         .catch(function (error) {
+             console.log('Request failed', error);
+             dispatch(announceBulkCreatingFeaturesFailed(sprint_id, error))
+         })
+    }
+}
+
+export function addOrEditFeatureTag(tag_name, tag_category_name, feature_ids, tag_id) {
+    const url = "imp/" + ENTITY_KEY__TAG + "/add_to_feature/"
+    const field_name = "tags"
+    const field_value = tag_name
+    const method = "PUT"
+    const data = { feature_ids: feature_ids,
+                   tag_id: tag_id || null,
+                   tag_name: tag_name,
+                   tag_category_name: tag_category_name }
+    return itemPost(ENTITY_KEY__FEATURE, feature_ids, url, field_name, field_value, method, data)
+}
+
+export function deleteTagFromFeatures(tag_id, feature_ids) {
+    const url = "imp/" + ENTITY_KEY__TAG + "/" + tag_id + "/remove_from_features/"
+    const field_name = "tags"
+    const field_value = tag_id
+    const method = "DELETE"
+    const data = { feature_ids: feature_ids }
+    return itemPost(ENTITY_KEY__FEATURE, feature_ids, url, field_name, field_value, method, data)
+}
+
+export function updateFeatureMienHeaders(mien_id, headers) {
+    return updateMienHeaders(mien_id, HEADER_LIST_NAME__FEATURE, headers)
+}
+
+export function getFeatureHeaderListForMien(mien) {
+    return getHeaderListForMien(mien, HEADER_LIST_NAME__FEATURE) || getDefaultFeatureHeaders()
+}
+
+export function getFeatureHeaderListForCurrentMien(state) {
+    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__FEATURE) || getDefaultFeatureHeaders()
+}
+
+export function getDefaultFeatureHeaders() {
+    return DEFAULT_FEATURE_HEADERS
+}
+
+export function getAllAvailableFeatureHeaders() {
+    return ALL_AVAILABLE_FEATURE_HEADERS
+}

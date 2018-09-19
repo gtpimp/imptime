@@ -57,7 +57,6 @@ import {
     deleteIssues
 } from '../actions/Issues'
 import { ensureTagsLoaded } from '../actions/Tags'
-import IssueListHeader from '../components/IssueListHeader'
 import DeleteIssue from './DeleteIssue'
 import DivTableCell from './DivTableCell'
 // import { Shortcuts } from 'react-shortcuts'
@@ -112,7 +111,6 @@ class IssueList extends Component {
         this.ungroupTogether = this.ungroupTogether.bind(this)
         this.handleShortcuts = this.handleShortcuts.bind(this)
         this.onDeleteIssue = this.onDeleteIssue.bind(this)
-        this.renderHeader = this.renderHeader.bind(this)
     }
 
     componentDidMount() {
@@ -426,17 +424,6 @@ class IssueList extends Component {
                                   dispatch(invalidateList(list_key))
                                   dispatch(fetchIssuesIfNeeded(list_key))
                               }))
-    }
-
-    renderHeader() {
-        const { header_list, tag_category_names, sprint, logged_in_user_id } = this.props
-        
-        return <IssueListHeader
-                   header_list={header_list}
-                   tag_category_names={tag_category_names}
-                   sprint={sprint}
-                   logged_in_user_id={logged_in_user_id}
-               />
     }
 
     render_candidate_issue() {

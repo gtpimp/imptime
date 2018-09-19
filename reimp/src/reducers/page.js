@@ -57,10 +57,11 @@ export default function page(state = initialState, action) {
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
             state_copy[action.page_key] = Object.assign({}, l, {
-                      sprint_ids: action.sprint_ids || l.sprint_ids || null,
-                      project_ids: action.project_ids || l.project_ids || null,
-                      issue_ids: action.issue_ids || l.issue_ids || null,
-                      wiki_ids: action.wiki_ids || l.wiki_ids || null
+                sprint_ids: action.sprint_ids || l.sprint_ids || null,
+                project_ids: action.project_ids || l.project_ids || null,
+                issue_ids: action.issue_ids || l.issue_ids || null,
+                wiki_ids: action.wiki_ids || l.wiki_ids || null,
+                feature_ids: action.feature_ids || l.feature_ids || null
             })
             
             return state_copy;

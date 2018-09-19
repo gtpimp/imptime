@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.db.models import Case, When
+from django.db.models import Case, When, SET_NULL
 from django.db.models.query import QuerySet
 from lib.json_helper import json_dump
 from django.db import models
@@ -713,4 +713,187 @@ class SprintSnapshot(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
+    
+
+class FeatureQuerySet():
+    def order_by_project_id(self, project_id, parent_feature_id, descending=False):
+        if project_id:
+            direction = ("-" if descending else "") + "order"
+            feature_ids_in_order = ProjectFeatureOrder.objects.filter(project_id=project_id)\
+                                                              .order_by(direction)\
+                                                              .values_list("feature_id", flat=True)
+            if parent_feature_id is None:
+                feature_ids_in_order = feature_ids_in_order.filter(parent_id__isnull=True)
+            else:
+                feature_ids_in_order = feature_ids_in_order.filter(parent_id=parent_feature_id)
+                
+            if feature_ids_in_order.count() == 0:
+                return self
+            preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(feature_ids_in_order)])
+
+            return self.order_by(preserved)
+        else:
+            return self
+    
+            
+class Feature(BaseModel):
+    name = models.CharField(max_length=255, null=False, blank=False, db_index=True)
+    project = ProtectedForeignKey(Project, null=False, blank=False, related_name="features")
+    parent = ProtectedForeignKey("imptime.Feature", null=True, blank=True, related_name="children")
+    description = models.TextField(null=True)
+    issues = models.ManyToManyField(Issue, related_name="features")
+
+    objects = FeatureQuerySet().as_manager()
+
+class ProjectFeatureOrder(BaseModel):
+    order = models.FloatField()
+    feature = models.ForeignKey(Feature, related_name='project_feature_orders')
+    project = models.ForeignKey(Project)
+
+    class Meta:
+        unique_together = ('project', 'feature')
+
+    INCREMENT=10
+    MAX_ORDER=999999
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ProjectFeatureOrder, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    @classmethod
+    def renumber(self, project_id, parent_feature_id):
+        feature_ids = Feature.objects.filter(project_id=project_id)\
+                                     .order_by_project_id(project_id).values_list('pk', flat=True)
+                                     
+        if parent_feature_id is None:
+            feature_ids = feature_ids.filter(parent_id__isnull=True)
+        else:
+            feature_ids = feature_ids.filter(parent_id=parent_feature_id)
+                                             
+        order = 0
+        for feature_id in feature_ids:
+            pio = ProjectFeatureOrder.objects.get_or_create(project_id=project_id, feature_id=feature_id,
+                                                            defaults={'order':order})[0]
+            if pio.order != order:
+                pio.order = order
+                pio.save()
+            order += self.INCREMENT
+        ProjectFeatureOrder.objects.filter(project_id=project_id).exclude(feature__project_id=project_id).delete()
+
+    @classmethod
+    def insert_before(self, feature, set_before_this_feature):
+        if feature.project_id != set_before_this_feature.project_id:
+            raise Exception("Cannot reorder, must be in the same project")
+        self.renumber(feature.project_id, feature.parent_id)
+        pio = self.objects.get_or_create(project_id=set_before_this_feature.project_id,
+                                         feature_id=set_before_this_feature.id,
+                                         defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio.order-1
+        pio, is_new = self.objects.get_or_create(project_id=feature.project_id, feature_id=feature.id)
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(feature.project_id, feature.parent_id)
+
+    @classmethod
+    def insert_after(self, feature, set_after_this_feature):
+        if feature.project_id != set_after_this_feature.project_id:
+            raise Exception("Cannot reorder, must be in the same project")
+        self.renumber(feature.project_id, feature.parenT_id)
+        pio_target = self.objects.get_or_create(project_id=set_after_this_feature.project_id,
+                                                feature_id=set_after_this_feature.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio_target.order+1
+        pio, is_new = self.objects.get_or_create(project_id=feature.project_id,
+                                                 feature_id=feature.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(feature.project_id, feature.parent_id)
+
+    @classmethod
+    def insert_at_the_beginning(self, feature):
+        new_order = -1
+        pio, is_new = self.objects.get_or_create(project_id=feature.project_id,
+                                                 feature_id=feature.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(feature.project_id, feature.parent_id)
+
+    @classmethod
+    def insert_at_the_end(self, feature):
+        new_order = self.get_next_order(feature.project_id, feature.parent_id)
+        pio, is_new = self.objects.get_or_create(project_id=feature.project_id,
+                                                 feature_id=feature.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(feature.project_id, feature.parent_id)
+
+    @classmethod
+    def sort_these_feature_ids(self, project_id, unordered_feature_ids):
+        return ProjectFeatureOrder.objects.filter(project=project_id)\
+                                          .filter(feature_id__in=unordered_feature_ids)\
+                                          .order_by("order")\
+                                          .values_list("feature_id", flat=True)
+
+    @classmethod
+    def get_next_order(self, project_id, parent_feature_id, feature_qs=None):
+        self.renumber(project_id)
+        if feature_qs is None:
+            feature_qs = Feature.objects.filter(project_id=project_id)
+        if parent_feature_id is None:
+            feature_qs = feature_qs.filter(parent_id__isnull=True)
+        else:
+            feature_qs = feature_qs.filter(parent_id=parent_feature_id)
+        max_order = self.objects.filter(project_id=project_id, feature__in=feature_qs)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+
+    @classmethod
+    def get_previous_feature(self, feature):
+        feature_order = ProjectFeatureOrder.objects.filter(feature=feature,
+                                                           parent_id=feature.parent_id)\
+                                                   .values("order").first()
+        if feature_order is None:
+            return None
+        previous = ProjectFeatureOrder.objects.filter(project=feature.project_id,
+                                                      parent_id=feature.parent_id,
+                                                      order__lt=feature_order['order'])\
+                                              .values("feature")\
+                                              .order_by("-order").first()
+        if previous is None:
+            return None
+        return previous['feature']
+        
+
+    
+class FeatureHistory(BaseModel):
+    feature_id = models.IntegerField(blank=False, null=False, db_index=True)
+    original_feature = models.ForeignKey(Feature, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
+    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=False, null=False)
+    before = models.TextField(blank=True, null=True)
+    after = models.TextField(blank=True, null=True)
+
+    @classmethod
+    def add_history(self, user, feature, description, before, after):
+        FeatureHistory.objects.create(created_by=user,
+                                    original_feature=feature,
+                                    feature_id=feature.id,
+                                    description=description,
+                                    before=before, after=after)
+
+    @classmethod
+    def for_feature(self, feature):
+        return FeatureHistory.objects.filter(feature_id=feature.id).order_by("-created_at")
     
