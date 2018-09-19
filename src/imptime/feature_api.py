@@ -1,13 +1,10 @@
 import logging
-from feature_serializer import FeatureSerializer, FeatureShareSerializer
-from feature_attachment_serializer import FeatureAttachmentSerializer
-from feature_serializer import FeatureGeneralDetailsSerializer
+from feature_serializer import FeatureSerializer
 from markdown_enrichment import MarkdownEnrichment
 from project_api import ProjectViewSet
 from django.utils import timezone
 from lib import hours_helper
 from imptime.bulk_text_parser import BulkTextParser
-from feature_serializer import FeatureWithEstimatesSerializer
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
@@ -18,7 +15,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Feature, FeatureHistory, ProjectFeatureOrder
+from imptime.models import Feature, FeatureHistory, ProjectFeatureOrder
 from timepiece.models import Business as Project
 from timepiece.models import BusinessPermissions as ProjectPermissions
 
@@ -81,31 +78,31 @@ class FeatureViewSet(BaseViewSet):
                 feature = self.allowed_feature(feature_pk)
 
                 if field_name == "name":
-                    if self.logged_in_permissions(feature.project.business).has_edit_feature:
+                    if self.logged_in_permissions(feature.project).has_edit_feature:
                         old_name = feature.name
                         feature.name = new_value
                         FeatureHistory.add_history(
                             request.user, feature, "changed name",
                             old_name, feature.name)
                 elif field_name == "description":
-                    if self.logged_in_permissions(feature.project.business).has_edit_feature:
+                    if self.logged_in_permissions(feature.project).has_edit_feature:
                         old_description = feature.description
                         feature.description = new_value
                         feature.enriched_description = MarkdownEnrichment(request.user).enrich(feature.description,
-                                                                                               project_id=feature.project.business_id) #sic
+                                                                                               project_id=feature.project_id) #sic
                         FeatureHistory.add_history(
                             request.user, feature, "changed description",
                             old_description, feature.description)
                         
                 elif field_name == 'parent_feature_id':
-                    if self.logged_in_permissions(feature.project.business).has_edit_feature:
+                    if self.logged_in_permissions(feature.project).has_edit_feature:
                         new_parent = self.allowed_feature(field_name)
                         FeatureHistory.add_history(
                             request.user, feature, "moved feature",
                             feature.parent.name, new_parent.name)
 
                 elif field_name == 'feature_id_after':
-                    if self.logged_in_permissions(feature.project.business).has_edit_features:
+                    if self.logged_in_permissions(feature.project).has_edit_features:
                         if new_value is None:
                             ProjectFeatureOrder.insert_at_the_beginning(feature)
                         else:
@@ -133,7 +130,7 @@ class FeatureViewSet(BaseViewSet):
             parent_feature_id = params.get('parent_feature_id', None)
 
             project = self.allowed_project(project_id)
-            if not self.logged_in_permissions(project.business).has_add_feature:
+            if not self.logged_in_permissions(project).has_edit_feature:
                 raise Exception('Permission denied to create features')
 
             def create_feature():
@@ -147,8 +144,9 @@ class FeatureViewSet(BaseViewSet):
                 
                 feature = Feature.objects.create(project_id=project_id,
                                                  name=params['name'],
+                                                 number=Feature.get_next_feature_number(project),
                                                  parent=feature_parent,
-                                                 created_by=request.user)
+                                                 created=request.user)
 
                 FeatureHistory.add_history(request.user, feature,
                                            "created", "", feature.name)
@@ -173,7 +171,7 @@ class FeatureViewSet(BaseViewSet):
             project_id = params['project_id']
             bulk_feature_text = params['bulk_feature_text']
             project = self.allowed_project(project_id)
-            if not self.logged_in_permissions(project.business).has_add_feature:
+            if not self.logged_in_permissions(project).has_add_feature:
                 raise Exception("Can't add features")
             new_features = BulkTextParser(request.user).create_features(raw_text=bulk_feature_text, project=project)
             new_feature_ids = [ str(x.id) for x in new_features ]
@@ -197,7 +195,7 @@ class FeatureViewSet(BaseViewSet):
 
             for feature_pk in feature_pks:
                 feature = self.allowed_feature(feature_pk)
-                if self.logged_in_permissions(feature.project.business).has_edit_feature:
+                if self.logged_in_permissions(feature.project).has_edit_feature:
                     FeatureHistory.add_history(request.user, feature,
                                                "deleted", feature.name, "")
                     feature.delete()
@@ -214,6 +212,7 @@ class FeatureViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def apply_filter(self, qs, raw_filter_args):
+        raw_filter_args['__business_project_switch_filter_required'] = False        
         feature_any_field = raw_filter_args.pop('any_field', None)
         if feature_any_field is not None and len(feature_any_field)>1:
             qs = qs.filter(Q(name__icontains=feature_any_field)|Q(description__icontains=feature_any_field))

@@ -107,11 +107,11 @@ export function reorderFeature(moving_feature_ids, feature_id_after, list_key, i
     }
 }
 
-export function startCandidateFeature(sprint_id, feature_id_parent) {
+export function startCandidateFeature(project_id, feature_id_parent) {
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__FEATURE,
                                     { feature_id_parent: feature_id_parent,
-	                              sprint_id: sprint_id }))
+	                              project_id: project_id }))
     }
 }
 
@@ -156,34 +156,34 @@ export function is_feature_invalidated(state, feature_id) {
 }
 
 
-function announceBulkCreatingFeatures(sprint_id) {
+function announceBulkCreatingFeatures(project_id) {
     return {
         type: ANNOUNCE_BULK_CREATING_FEATURES,
-        sprint_id: sprint_id
+        project_id: project_id
     }
 }
 
-function announceBulkCreatedFeatures(sprint_id, new_feature_ids) {
+function announceBulkCreatedFeatures(project_id, new_feature_ids) {
     return {
         type: ANNOUNCE_BULK_CREATED_FEATURES,
-        sprint_id: sprint_id,
+        project_id: project_id,
         new_feature_ids: new_feature_ids
     }
 }
 
-function announceBulkCreatingFeaturesFailed(sprint_id, error) {
+function announceBulkCreatingFeaturesFailed(project_id, error) {
     return {
         type: ANNOUNCE_BULK_CREATING_FEATURES_FAILED,
-        sprint_id: sprint_id,
+        project_id: project_id,
         error: error
     }
 }
 
-export function bulkCreateFeatures(sprint_id, bulk_feature_text, on_done) {
+export function bulkCreateFeatures(project_id, bulk_feature_text, on_done) {
     return (dispatch, getState) => {
         const state = getState()
-        dispatch(announceBulkCreatingFeatures(sprint_id))
-        let data = { sprint_id: sprint_id,
+        dispatch(announceBulkCreatingFeatures(project_id))
+        let data = { project_id: project_id,
                      bulk_feature_text: bulk_feature_text }
         return impfetch( state, "imp/feature/bulk_create_features/", dispatch,
                          {method: "POST",
@@ -195,10 +195,10 @@ export function bulkCreateFeatures(sprint_id, bulk_feature_text, on_done) {
          .then(json => {
              if ( json.status !== 'success' ) {
                  console.log('Request failed with JSON response', json);
-                 dispatch(announceBulkCreatingFeaturesFailed(sprint_id, json.error))
+                 dispatch(announceBulkCreatingFeaturesFailed(project_id, json.error))
              } else {
                  console.log('Request succeeded with JSON response', json);
-                 dispatch(announceBulkCreatedFeatures(sprint_id, json.payload.new_features_ids))
+                 dispatch(announceBulkCreatedFeatures(project_id, json.payload.new_features_ids))
                  if ( on_done ) {
                      on_done(json.payload.new_feature_ids)
                  }
@@ -206,7 +206,7 @@ export function bulkCreateFeatures(sprint_id, bulk_feature_text, on_done) {
          })
          .catch(function (error) {
              console.log('Request failed', error);
-             dispatch(announceBulkCreatingFeaturesFailed(sprint_id, error))
+             dispatch(announceBulkCreatingFeaturesFailed(project_id, error))
          })
     }
 }

@@ -24,9 +24,9 @@ import {
     select_features,
     select_projects,
     get_selected_feature_ids,
-    setBrowserTitle
+    setBrowserTitle,
+    setGloballySelectedProjectId
 } from '../actions/Page'
-import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import {getCandidateFeature, getFeatureHeaderListForCurrentMien} from '../actions/Features'
 
 class FeaturesPage extends Component {
@@ -37,25 +37,22 @@ class FeaturesPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, filter, project_id, list_key, page_key} = this.props
+        const {dispatch, project_id, list_key, page_key} = this.props
         dispatch(set_toolbars(page_key, ['features']))
-
         const new_filter = { project_id: project_id }
-        if ( !filter.project_id || filter.project_id !== project_id ) {
-            new_filter.feature_status = 'open'
-        }
-        
         dispatch(update_list_filter(list_key, Object.assign({}, new_filter)))
+        dispatch(setGloballySelectedProjectId(project_id))
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
 
-        const { dispatch, list_key, filter, default_filter } = this.props
-        if ( new_props.project_id !== filter.project_id ) {
+        const { dispatch, list_key, default_filter } = new_props
+        if ( new_props.project_id !== this.props.project_id ) {
             dispatch(update_list_filter(list_key, Object.assign({},
                                                                 default_filter,
                                                                 {project_id: new_props.project_id})))
+            dispatch(setGloballySelectedProjectId(new_props.project_id))
         }
         
         if ( new_props.project !== this.props.project ||
@@ -96,8 +93,6 @@ class FeaturesPage extends Component {
                list_key, page_key} = this.props
         dispatch(selectItems(list_key, feature_ids))
         dispatch(select_features(page_key, feature_ids))
-        
-    dispatch(setActivelyAvailableAutoClockEntity(project_id, feature_ids && feature_ids.length > 0 && feature_ids[0]))
         
         if ( feature_ids && feature_ids.length === 1 ) {
             history.push('/projects/'+project_id+'/features/'+feature_ids[0]);

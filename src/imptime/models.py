@@ -715,7 +715,7 @@ class SprintSnapshot(BaseModel):
             RefreshNotifier().notify_model_update(self)
     
 
-class FeatureQuerySet():
+class FeatureQuerySet(QuerySet):
     def order_by_project_id(self, project_id, parent_feature_id, descending=False):
         if project_id:
             direction = ("-" if descending else "") + "order"
@@ -737,13 +737,26 @@ class FeatureQuerySet():
     
             
 class Feature(BaseModel):
+    number = models.IntegerField(null=True, blank=True, db_index=True)
     name = models.CharField(max_length=255, null=False, blank=False, db_index=True)
     project = ProtectedForeignKey(Project, null=False, blank=False, related_name="features")
     parent = ProtectedForeignKey("imptime.Feature", null=True, blank=True, related_name="children")
     description = models.TextField(null=True)
     issues = models.ManyToManyField(Issue, related_name="features")
 
-    objects = FeatureQuerySet().as_manager()
+    objects = FeatureQuerySet.as_manager()
+
+    @classmethod
+    def get_last_issue_number(self, project):
+        largest_number =  Feature.objects.filter(project=project)\
+                                         .filter(number__isnull=False)\
+                                         .aggregate(largest_number=Max("number"))['largest_number']
+        return largest_number or 0
+    
+    @classmethod
+    def get_next_feature_number(self, project):
+        return Feature.get_last_feature_number(project) +1
+
 
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()

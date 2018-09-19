@@ -24,6 +24,7 @@ import project_statement_api
 import work_summary_api
 import project_user_permission_api
 import release_note_api
+import feature_api
 import sprint_api
 import sprint_deadline_api
 import sprint_review_api
@@ -72,6 +73,8 @@ router.register(r'sprint_review', sprint_review_api.SprintReviewViewSet,
                 base_name='sprint_review')
 router.register(r'sprint', sprint_api.SprintViewSet,
                 base_name='sprint')
+router.register(r'feature', feature_api.FeatureViewSet,
+                base_name='feature')
 router.register(r'issue/comment', issue_comment_api.IssueCommentViewSet,
                 base_name='issue_comment')
 router.register(r'issue/attachment', issue_attachment_api.IssueAttachmentViewSet,

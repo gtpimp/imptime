@@ -163,6 +163,10 @@ export function setGloballySelectedProjectId(project_id) {
     return setGloballySelectedEntityIds({project_id: project_id})
 }
 
+export function getGloballySelectedProjectId(state) {
+    return getGloballySelectedEntityIds(state).project_id
+}
+
 export function setGloballySelectedEntityIds(entity_ids) {
     return setGlobalPageFlag("_selected_entity_ids_", entity_ids)
 }

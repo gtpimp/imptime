@@ -11,6 +11,7 @@ import ReleaseNotesToolbarPanel from './ReleaseNotesToolbarPanel'
 import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
 import SprintRateToolbarPanel from './SprintRateToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
+import FeaturesToolbarPanel from './FeaturesToolbarPanel'
 import NudgeToolbarPanel from './NudgeToolbarPanel'
 import CompanyProblemToolbarPanel from './CompanyProblemToolbarPanel'
 import ScheduleToolbarPanel from './ScheduleToolbarPanel'
@@ -48,6 +49,8 @@ class Toolbar extends Component {
         switch(id) {
             case 'company_problem':
                 return <CompanyProblemToolbarPanel key='company_problem' {...this.props} />
+            case 'features':
+                return <FeaturesToolbarPanel key="features-panel"/>
             case 'issue':
                 return <IssueToolbarPanel key="issue-panel"/>
             case 'issues':
