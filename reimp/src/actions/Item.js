@@ -269,7 +269,7 @@ export function saveCandidateItem(entity_key, on_done) {
 
     return (dispatch, getState) => {
         const state = getState()
-        dispatch(announceCandidateItemSaving(entity_key, ))
+        dispatch(announceCandidateItemSaving(entity_key))
         let data = {item: getCandidateItem(entity_key, state)}
 
         return impfetch(state, "imp/"+entity_key+"/", dispatch,
