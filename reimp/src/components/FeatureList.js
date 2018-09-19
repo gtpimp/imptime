@@ -228,11 +228,7 @@ class FeatureList extends Component {
 
     render_tree() {
 
-        const { is_mien_configurer_active, header_list, is_visible, feature_items, selected_ids } = this.props
-
-        if (!is_visible) {
-            return (<div></div>)
-        }
+        const { is_mien_configurer_active, header_list, feature_items, selected_ids } = this.props
 
         if ( is_mien_configurer_active ) {
             return this.renderListColumnConfigurer()
@@ -262,13 +258,6 @@ class FeatureList extends Component {
     }
 
     render() {
-
-        const {is_visible} = this.props
-
-        if (!is_visible) {
-            return (<div></div>)
-        }
-
         return this.render_tree()
     }
 }
@@ -283,7 +272,7 @@ const makeMapStateToProps = () => {
     const selFeatures = makeSelFeatures()
     const selFeatureObjectsToRender = makeSelFeatureObjectsToRender()
     const mapStateToProps = (state, props) => {
-        const {list_key, feature_header_list} = props
+        const {list_key, header_list} = props
         const filter = getListFilter(state, list_key)
         const project_id = filter.project_id || null
         const project = getProject(state, project_id) || {}
@@ -320,10 +309,9 @@ const makeMapStateToProps = () => {
             has_items: items && items.length > 0,
             is_loading: isLoading(state, list_key),
             last_updated: getLastUpdated(state, list_key),
-            is_visible: project_id || (visible_item_ids && visible_item_ids.length > 0) || false,
             candidate_feature: candidate_feature,
             is_creating_feature: is_creating_feature,
-            header_list: feature_header_list,
+            header_list: header_list,
             logged_in_user_id
         }
     }

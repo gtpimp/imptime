@@ -105,13 +105,11 @@ class FeaturesPage extends Component {
                list_key, feature_header_list } = this.props
         
         return (
-            <div className="list-layout__list">
-              <FeatureList list_key={list_key}
-                          project_id={project_id}
-                          header_list={feature_header_list}
-                          onSelectFeatures={this.onSelectFeatures}
-              />
-            </div>
+            <FeatureList list_key={list_key}
+                         project_id={project_id}
+                         header_list={feature_header_list}
+                         onSelectFeatures={this.onSelectFeatures}
+            />
         )
     }
 
@@ -150,23 +148,12 @@ class FeaturesPage extends Component {
 
         setBrowserTitle(project.name)
         
-        if ( show_sidebar ) {
-            return (
-                <Splitter name='features_page'>
-                  {this.renderLeftPane()}
-                  {this.renderRightPane()}
-                </Splitter>
-            )
-        }
-
-        if ( ! show_sidebar ) {
-            return (
-                <Splitter>
-                  {this.renderLeftPane()}
-                  {null}
-                </Splitter>
-            )
-        }
+        return (
+            <Splitter name="features_page">
+              {this.renderLeftPane()}
+              {(show_sidebar && this.renderRightPane()) || null}
+            </Splitter>
+        )
     }
 }
 

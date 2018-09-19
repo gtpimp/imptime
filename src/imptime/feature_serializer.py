@@ -8,6 +8,7 @@ class FeatureSerializer(BaseSerializer):
     id = serializers.CharField()
     number = serializers.CharField()
     name = serializers.CharField()
+    parent_id = serializers.CharField()
     project_id = serializers.CharField()
     description = serializers.CharField()
     created = serializers.DateTimeField()

@@ -747,7 +747,7 @@ class Feature(BaseModel):
     objects = FeatureQuerySet.as_manager()
 
     @classmethod
-    def get_last_issue_number(self, project):
+    def get_last_feature_number(self, project):
         largest_number =  Feature.objects.filter(project=project)\
                                          .filter(number__isnull=False)\
                                          .aggregate(largest_number=Max("number"))['largest_number']

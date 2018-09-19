@@ -111,6 +111,11 @@ export function setFeatureBreadcrumbsHelper(project, optional_feature) {
     const breadcrumbs = [{to: '/projects',
                           label: 'Projects',
                           type: 'projects'},
+                         {to: '/projects/'+project.id,
+                          label: project.name,
+                          type: 'project',
+                          selected_entities: {project: project}
+                         },
                          {to: '/projects/'+project.id+'/features',
                           type: 'features',
                           label: 'Features',
