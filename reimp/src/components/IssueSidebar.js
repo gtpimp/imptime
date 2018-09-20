@@ -25,7 +25,15 @@ import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
+
+import IssueSidebarContainer from './IssueSidebarContainer'
+import IssueSidebarProperty from './IssueSidebarProperty'
 import IssueSidebarSectionTitle from './IssueSidebarSectionTitle'
+import IssueSidebarTitle from './IssueSidebarTitle'
+import IssueSidebarFullscreenWidget from './IssueSidebarFullscreenWidget'
+import IssueSidebarAuthor from './IssueSidebarAuthor'
+import IssueSidebarDetail from './IssueSidebarDetail'
+
 import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
@@ -103,189 +111,142 @@ class IssueSidebar extends Component {
         setSidebarViewMode("right")
     }
     
-    renderEmacsHintSection() {
+    renderEmacsHintStack() {
         const {issue, sprint} = this.props
         const { emacs_hint_enabled } = this.state
         return (
-            <MienFeature feature_name="emacs">
-              <div>
-                <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
+            <IssueSidebarProperty key="emacshintstack">
+              <MienFeature feature_name="emacs">
+                <div>
+                  <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
 
-                { emacs_hint_enabled &&
-                  <div className="property-row">
-                    <div className="property-label">
-                      Emacs sprint
+                  { emacs_hint_enabled &&
+                    <div className="property-row">
+                      <div className="property-label">
+                        Emacs sprint
+                      </div>
+                      <div className="property-value">
+                        <input value={"** sprint" + sprint.id + " " + sprint.name}/>
+                      </div>
                     </div>
-                    <div className="property-value">
-                      <input value={"** sprint" + sprint.id + " " + sprint.name}/>
+                  }
+                  { emacs_hint_enabled &&
+                    <div className="property-row">
+                      <div className="property-label">
+                        Emacs issue
+                      </div>
+                      <div className="property-value">
+                        <input value={"*** issue" + issue.number + " " + issue.subject}/>
+                      </div>
                     </div>
-                  </div>
-                }
-                { emacs_hint_enabled &&
-                  <div className="property-row">
-                    <div className="property-label">
-                      Emacs issue
+                  }
+                  { emacs_hint_enabled &&
+                    <div className="property-row">
+                      <div className="property-label">
+                        Git commit
+                      </div>
+                      <div className="property-value">
+                        <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
+                      </div>
                     </div>
-                    <div className="property-value">
-                      <input value={"*** issue" + issue.number + " " + issue.subject}/>
-                    </div>
-                  </div>
-                }
-                { emacs_hint_enabled &&
-                  <div className="property-row">
-                    <div className="property-label">
-                      Git commit
-                    </div>
-                    <div className="property-value">
-                      <input value={"#" + issue.number + " (sprint " + sprint.name + ") " + issue.subject}/>
-                    </div>
-                  </div>
-                }
-              </div>
-            </MienFeature>
+                  }
+                </div>
+              </MienFeature>
+            </IssueSidebarProperty>
+        )
+    }
+
+    renderIssueNumberStack() {
+        const { issue } = this.props
+        return (
+            <IssueSidebarProperty key="issuenumberstack">
+              <IssueSidebarSectionTitle title={`Issue #${issue.number}`} />
+            </IssueSidebarProperty>
         )
     }
 
     renderTitleStack() {
         const { issue, full_screen_mode_available, sidebar_view_mode } = this.props
         return (
-            [
-                <IssueSidebarSectionTitle key={ 'able' }>Issue #{issue.number}</IssueSidebarSectionTitle>,
-                <PropertyStackComponent key="mexico">
-                  <div className="issue_sidebar__title">
-                    <EditableIssueTitle issue_id={issue.id}/>
-
-                    <div className="sidebar__context_menu">
-                      { full_screen_mode_available && sidebar_view_mode === 'fullscreen' && 
-                        <div className="icon--fullscreen-exit"
-                             onClick={this.onExitFullscreen}/>
-                      }
-                      { full_screen_mode_available && sidebar_view_mode !== 'fullscreen'  && 
-                        <div className="icon--fullscreen"
-                             onClick={this.onFullscreen}/>
-                      }
-                    </div>
-                    
-                  </div>
-
-                </PropertyStackComponent>
-            ]
+            <IssueSidebarProperty key="titlestack">
+              <IssueSidebarTitle issue_id={ issue.id }>
+                <IssueSidebarFullscreenWidget
+                    sidebar_view_mode={ sidebar_view_mode }
+                    full_screen_mode_available={ full_screen_mode_available }
+                    onExitFullscreen={ this.onExitFullscreen }
+                    onFullscreen={ this.onFullscreen } />
+              </IssueSidebarTitle>
+            </IssueSidebarProperty>
         )
     }
 
     renderCreationStack() {
         const { issue } = this.props
         return (
-            <PropertyStackComponent>
-              <div className="property-row">
-                <div className="property-cell">
-                  Created
-                </div>
-                <div className="property-cell">
-                  <Timestamp value={issue.created_at} format="from_now" />
-                </div>
-                { issue.created_by_id &&
-                  <div className="property-cell">by</div>
-                }
-                  { issue.created_by_id &&
-                    <div className="property-cell"><OtherUser user_id={issue.created_by_id} /></div>
-                  }
-              </div>
-
-              { this.renderEmacsHintSection() }
-
-            </PropertyStackComponent>
+            <IssueSidebarProperty key="issuenumberstack">
+              <IssueSidebarAuthor issue_id={ issue.id } />
+            </IssueSidebarProperty>
         )
     }
 
     renderInfoStack() {
         const { issue } = this.props
         return (
-            <PropertyStackComponent>
-
-              <div className="property-row">
-                <div className="property-label">
-                  Sprint
-                </div>
-                <div className="property-value">
-                  <div className="property-row">
+            <IssueSidebarProperty key="infostack">
+              <IssueSidebarDetail label="Sprint">
+                <EditableIssueInSprint issue_ids={[issue.id]}/>
+                {/* <div className="property-row">
                     <div className="property-value">
-                      <EditableIssueInSprint issue_ids={[issue.id]}/>
+                    
                     </div>
                     <div className="property-col-small">
-                      <EditableMoveIssueToSprint issue_ids={[issue.id]} />
+                    <EditableMoveIssueToSprint issue_ids={[issue.id]} />
                     </div>
                     <div className="property-col-small">
-                      <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                    <EditableCopyIssueToSprint issue_ids={[issue.id]} />
                     </div>
-                  </div>
-                </div>
-              </div>
+                    </div> */}
+              </IssueSidebarDetail>
 
-              <div className="property-row">
-                <div className="property-label">
-                  Parent feature
-                </div>
-                <div className="property-value">
-                  <EditableIssueParent issue_ids={[issue.id]}/>
-                </div>
-              </div>
+              <IssueSidebarDetail label="Parent Feature">
+                <EditableIssueParent issue_ids={[issue.id]}/>
+              </IssueSidebarDetail>
 
-              <div className="property-row">
-                <div className="property-label">
-                  Type
-                </div>
-                <div className="property-value">
-                  <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
-                </div>
-              </div>
+              <IssueSidebarDetail label="Type">
+                <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
+              </IssueSidebarDetail>
 
-              <div className="property-row">
-                <div className="property-label">
-                  Status
-                </div>
-                <div className="property-value">
-                  <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-                </div>
-              </div>
+              <IssueSidebarDetail label="Status">
+                <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
+              </IssueSidebarDetail>
 
-              <div className="property-row">
-                <div className="property-label">
-                  Assigned user
-                </div>
-                <div className="property-value">
-                  <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-                </div>
-              </div>
+              <IssueSidebarDetail label="Assigned to">
+                <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+              </IssueSidebarDetail>
 
-              <div className="property-row">
-                <div className="property-label">
-                  Risky
-                </div>
-                <div className="property-value">
-                  <EditableIssueRisky issue_ids={[issue.id]} project_id={issue.project_id}/>
-                </div>
-              </div>
-              
-              <div className="property-row">
-                <div className="property-label">
-                  Tags
-                </div>
-                <div className="property-value">
-                  <TagListFlat issue_ids={[issue.id]}/>
-                </div>
-              </div>
-
-            </PropertyStackComponent>
+              <IssueSidebarDetail label="Risky">
+                <EditableIssueRisky issue_ids={[issue.id]} project_id={issue.project_id}/>
+              </IssueSidebarDetail>
+            </IssueSidebarProperty>
         )
         
+    }
+
+    renderTagStack() {
+        const { issue } = this.props
+        return (
+            <IssueSidebarProperty key="tagstack">
+              <IssueSidebarSectionTitle title="Tags" />
+              <TagListFlat issue_ids={[issue.id]}/>
+            </IssueSidebarProperty>
+        )
     }
 
     renderDependancyStack() {
         const { issue } = this.props
         return (
-            <div>
-              <IssueSidebarSectionTitle>Dependancies</IssueSidebarSectionTitle>
+            <div key="dependancystack">
+              <IssueSidebarSectionTitle title="Dependancies" />
               <PropertyStackComponent>
                 <IssueDependancies issue_id={issue.id} />
               </PropertyStackComponent>
@@ -296,8 +257,8 @@ class IssueSidebar extends Component {
     renderDescriptionStack() {
         const { issue } = this.props
         return (
-            <div>
-              <IssueSidebarSectionTitle>Description</IssueSidebarSectionTitle>
+            <div key="descriptionstack">
+              <IssueSidebarSectionTitle title="Description" />
               <EditableIssueDescription issue_id={issue.id}/>
             </div>
         )
@@ -306,8 +267,8 @@ class IssueSidebar extends Component {
     renderTestablesStack() {
         const { issue, testables } = this.props
         return (
-            <PropertyStackComponent>
-              <IssueSidebarSectionTitle>Testables</IssueSidebarSectionTitle>
+            <PropertyStackComponent key="testablestack">
+              <IssueSidebarSectionTitle title="Testables" />
               { map(testables, function (testable, index) {
                     return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
                 })
@@ -320,8 +281,8 @@ class IssueSidebar extends Component {
     renderCommentsStack() {
         const { issue, comments } = this.props
         return (
-            <PropertyStackComponent>
-              <IssueSidebarSectionTitle>Comments</IssueSidebarSectionTitle>
+            <PropertyStackComponent key="commentsstack">
+              <IssueSidebarSectionTitle title="Comments" />
               { map(comments, function (comment, index) {
                     return <EditableIssueComment key={issue.id+"_"+comment.id} issue_id={issue.id} comment_id={comment.id}/>
                 })
@@ -334,8 +295,8 @@ class IssueSidebar extends Component {
     renderEstimatesStack() {
         const { issue } = this.props
         return (
-            <MienFeature feature_name="issue_estimates">
-              <IssueSidebarSectionTitle>Estimates</IssueSidebarSectionTitle>
+            <MienFeature key="estimatesstack" feature_name="issue_estimates">
+              <IssueSidebarSectionTitle title="Estimates" />
               <PropertyStackComponent>
                 <div>
                   <EditableIssueEstimate issue_id={issue.id} />
@@ -350,7 +311,7 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <PropertyStackComponent>
-              <IssueSidebarSectionTitle>Attachments</IssueSidebarSectionTitle>
+              <IssueSidebarSectionTitle title="Attachments" />
               <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                          issue_id={issue.id}
                                          allow_edit={false} />
@@ -364,8 +325,8 @@ class IssueSidebar extends Component {
         const { issue, project_id } = this.props
         const adding_visual_spec_doc = this.state.adding_visual_spec_doc
         return (
-            <PropertyStackComponent title="Attachments">
-              <IssueSidebarSectionTitle>Attachments</IssueSidebarSectionTitle>
+            <PropertyStackComponent key="attachmentstack">
+              <IssueSidebarSectionTitle title="Attachments" />
               <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                          issue_id={issue.id}
                                          allow_edit={false} />
@@ -395,7 +356,7 @@ class IssueSidebar extends Component {
             return null
         }
         return (
-            <PropertyStackComponent title="Feature">
+            <PropertyStackComponent key="featurestack" title="Feature">
               <div>
                 Bring this feature's issues
                 <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
@@ -409,8 +370,9 @@ class IssueSidebar extends Component {
     renderReviewsStack() {
         const { issue } = this.props
         return (
-            <MienFeature feature_name="issue_reviews">
-              <PropertyStackComponent title="Reviews">
+            <MienFeature key="reviewstack" feature_name="issue_reviews">
+              <PropertyStackComponent>
+                <IssueSidebarSectionTitle title="Reviews" />
                 <IssueReviewPanel issue_id={issue.id} />
               </PropertyStackComponent>
             </MienFeature>
@@ -418,34 +380,38 @@ class IssueSidebar extends Component {
     }
 
     renderNarrow() {
-
         const {issue, header_height, footer_height, toolbar_height } = this.props
-        const height_limit = "calc(100vh - " + (header_height + footer_height + toolbar_height + 1) +"px)"
-        const styles={maxHeight: height_limit}
 
         if (issue && issue.id) {
-
             return (
-
-                <div className="sidebar issue-sidebar" style={styles}>
-                  <PropertyStack>
-                    { issue.id &&
-                      <div>
-                        { this.renderTitleStack() }
-                        { this.renderCreationStack() }
-                        { this.renderInfoStack() }
-                        { this.renderDescriptionStack() }
-                        { this.renderTestablesStack() }
-                        { this.renderCommentsStack() }
-                        { this.renderEstimatesStack() }
-                        { this.renderDependancyStack() }
-                        { this.renderAttachmentsStack() }
-                        { this.renderFeatureStack() }
-                        { this.renderReviewsStack() }
-                      </div>
-                    }
-                  </PropertyStack>
-                </div>
+                <IssueSidebarContainer>
+                  { issue.id && 
+                    [
+                        this.renderIssueNumberStack(),
+                        this.renderTitleStack(),
+                        this.renderCreationStack(),
+                        this.renderEmacsHintStack(),
+                        this.renderInfoStack()
+                    ]
+                  }
+                  {/* { issue.id && 
+                      [
+                      this.renderIssueNumberStack(),
+                      this.renderTitleStack(),
+                      this.renderCreationStack(),
+                      this.renderInfoStack(),
+                      this.renderTagStack(),
+                      this.renderDescriptionStack(),
+                      this.renderTestablesStack(),
+                      this.renderCommentsStack(),
+                      this.renderEstimatesStack(),
+                      this.renderDependancyStack(),
+                      this.renderAttachmentsStack(),
+                      this.renderFeatureStack(),
+                      this.renderReviewsStack()
+                      ]
+                      } */}
+                </IssueSidebarContainer>
             )
         } else {
             return null

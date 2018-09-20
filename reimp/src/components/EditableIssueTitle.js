@@ -4,17 +4,26 @@ import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import classNames from 'classnames'
 import EditableProperty from './form/EditableProperty'
 import IssueTitleForm from './form/IssueTitleForm'
-import { updateIssueSubject, getIssue } from '../actions/Issues'
+import {
+    updateIssueSubject,
+    getIssue,
+    ensureIssuesLoaded
+} from '../actions/Issues'
 import { has_permission } from '../actions/Users'
 
 class EditableIssueTitle extends Component {
 
-    constructor(props) {
-        super(props)
-        this.onChange = this.onChange.bind(this)
+    componentDidMount() {
+        const { dispatch, issue_id } = this.props
+        dispatch(ensureIssuesLoaded([issue_id]))
     }
 
-    onChange(new_value) {
+    componentWillReceiveProps(new_props) {
+        const { dispatch, issue_id } = new_props
+        dispatch(ensureIssuesLoaded([issue_id]))
+    }
+
+    onChange = (new_value) => {
         const { dispatch, issue } = this.props
         dispatch(updateIssueSubject(issue.id, new_value.issue_title))
     }
@@ -26,6 +35,8 @@ class EditableIssueTitle extends Component {
             <PermissionInspectorHighlighter project_id={project_id}
                                             permission_name='has_edit_subject'>
               <EditableProperty property_key={'issue_title'+issue.id}
+                                edit_as_modal={true}
+                                variant="large"
                                 initial_value={issue.subject}
                                 onChange={this.onChange}
                                 can_edit={can_edit}
@@ -38,7 +49,7 @@ class EditableIssueTitle extends Component {
                       Low quality title: {issue.subject_quality_error}
                     </div>
                   }
-                    {issue.subject}
+                  {issue.subject}
                 </div>
                 <div className="text-component--empty">Title</div>
               </EditableProperty>

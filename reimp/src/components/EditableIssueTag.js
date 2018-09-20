@@ -67,30 +67,33 @@ class EditableIssueTag extends Component {
                                   modal_variant="large"
                                   onChange={this.onChange}
                                   can_edit={can_edit}
-                >
+                    >
                   <TagForm tag_id={tag_id} can_edit={can_edit} project_id={project_id}/>
                   <Tag tag_id={tag_id} can_edit={can_edit} onDelete={(ev) => this.onDelete(ev)} />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
-                { ! tag_id &&
-                  <EditableProperty property_key={'issue_tag_new'}
-                                    edit_as_modal={true}
-                                    initial_value=''
-                                    modal_variant="large"
-                                    action_label="Issue tags" 
-                                    onChange={this.onChange}
-                                    can_edit={can_edit}
-                  >
-                    <TagForm tag_id={tag_id} project_id={project_id} />
-                    <div className="text-component--readonly"></div>
-                    <div className="text-component--empty">
-                      { can_edit && 
-                        <div className="icon--add" data-tooltip="Create tag"></div>
-                      }
-                    </div>
-                  </EditableProperty>
-                }
+              { ! tag_id &&
+                <EditableProperty property_key={'issue_tag_new'}
+                                  edit_as_modal={true}
+                                  initial_value=''
+                                  modal_variant="large"
+                                  action_label="Issue tags" 
+                                  onChange={this.onChange}
+                                  can_edit={can_edit}
+                    >
+                  <TagForm tag_id={tag_id} project_id={project_id} />
+                  <div className="text-component--readonly"></div>
+                  <div className="text-component--empty">
+                    { can_edit && 
+                      [
+                          <div key="newtag" className="icon--add" data-tooltip="Create tag"></div>,
+                          <p key="newtaglabel">Add tag</p>
+                      ]
+                    }
+                  </div>
+                </EditableProperty>
+              }
             </PermissionInspectorHighlighter>
             
         )

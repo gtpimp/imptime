@@ -7,6 +7,7 @@ const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-seri
                     'bold-12': "normal normal 600 12px 'Fira Sans', sans-serif",
                     'bold-15': "normal normal 600 15px 'Fira Sans', sans-serif",
                     'semibold-20': "normal normal 500 20px 'Fira Sans', sans-serif",
+                    'bold-20': "normal normal 600 20px 'Fira Sans', sans-serif",
                     'regular-10': "normal normal 400 10px 'Fira Sans', sans-serif",
 }
 
@@ -39,6 +40,7 @@ export const default_theme = {
         regular_normal: fonts_raw['regular-12'],
         semibold_normal: fonts_raw['semibold-12'],
         bold_normal: fonts_raw['bold-12'],
+        bold_huge: fonts_raw['bold-20'],
         regular_large: fonts_raw['regular-15'],
         semibold_large: fonts_raw['semibold-15'],
         bold_large: fonts_raw['bold-15'],

@@ -5,17 +5,16 @@ import { default_theme as theme } from '../theme/default'
 const style = css`
 font: ${theme.fonts.regular_normal};
 color: ${theme.colours.normal_text};
-padding-bottom: ${theme.spacing.one};
+margin: 0;
+padding: 0;
 `
 
 class IssueSidebarSectionTitle extends Component {
 
     render() {
-        const { children } = this.props
+        const { title } = this.props
         return (
-            <div className={style}>
-                {children}
-            </div>
+            <p className={style}>{title}</p>
         )
     }
     

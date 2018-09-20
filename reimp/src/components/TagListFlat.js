@@ -30,7 +30,7 @@ class TagListFlat extends Component {
             <div className="tag_list">
               { tags.length === 0 &&
                 <div className="tag-list__empty">
-                  No tags
+                  
                 </div>
               }
 
