@@ -26,13 +26,13 @@ import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
 
-import IssueSidebarContainer from './IssueSidebarContainer'
-import IssueSidebarProperty from './IssueSidebarProperty'
-import IssueSidebarSectionTitle from './IssueSidebarSectionTitle'
-import IssueSidebarTitle from './IssueSidebarTitle'
-import IssueSidebarFullscreenWidget from './IssueSidebarFullscreenWidget'
-import IssueSidebarAuthor from './IssueSidebarAuthor'
-import IssueSidebarDetail from './IssueSidebarDetail'
+import SidebarContainer from './SidebarContainer'
+import SidebarProperty from './SidebarProperty'
+import SidebarSectionTitle from './SidebarSectionTitle'
+import SidebarTitle from './SidebarTitle'
+import SidebarFullscreenWidget from './SidebarFullscreenWidget'
+import SidebarAuthor from './SidebarAuthor'
+import SidebarDetail from './SidebarDetail'
 
 import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
@@ -115,7 +115,7 @@ class IssueSidebar extends Component {
         const {issue, sprint} = this.props
         const { emacs_hint_enabled } = this.state
         return (
-            <IssueSidebarProperty key="emacshintstack">
+            <SidebarProperty key="emacshintstack">
               <MienFeature feature_name="emacs">
                 <div>
                   <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
@@ -152,48 +152,48 @@ class IssueSidebar extends Component {
                   }
                 </div>
               </MienFeature>
-            </IssueSidebarProperty>
+            </SidebarProperty>
         )
     }
 
     renderIssueNumberStack() {
         const { issue } = this.props
         return (
-            <IssueSidebarProperty key="issuenumberstack">
-              <IssueSidebarSectionTitle title={`Issue #${issue.number}`} />
-            </IssueSidebarProperty>
+            <SidebarProperty key="issuenumberstack">
+              <SidebarSectionTitle title={`Issue #${issue.number}`} />
+            </SidebarProperty>
         )
     }
 
     renderTitleStack() {
         const { issue, full_screen_mode_available, sidebar_view_mode } = this.props
         return (
-            <IssueSidebarProperty key="titlestack">
-              <IssueSidebarTitle issue_id={ issue.id }>
-                <IssueSidebarFullscreenWidget
+            <SidebarProperty key="titlestack">
+              <SidebarTitle issue_id={ issue.id }>
+                <SidebarFullscreenWidget
                     sidebar_view_mode={ sidebar_view_mode }
                     full_screen_mode_available={ full_screen_mode_available }
                     onExitFullscreen={ this.onExitFullscreen }
                     onFullscreen={ this.onFullscreen } />
-              </IssueSidebarTitle>
-            </IssueSidebarProperty>
+              </SidebarTitle>
+            </SidebarProperty>
         )
     }
 
     renderCreationStack() {
         const { issue } = this.props
         return (
-            <IssueSidebarProperty key="issuenumberstack">
-              <IssueSidebarAuthor issue_id={ issue.id } />
-            </IssueSidebarProperty>
+            <SidebarProperty key="issuenumberstack">
+              <SidebarAuthor issue_id={ issue.id } />
+            </SidebarProperty>
         )
     }
 
     renderInfoStack() {
         const { issue } = this.props
         return (
-            <IssueSidebarProperty key="infostack">
-              <IssueSidebarDetail label="Sprint">
+            <SidebarProperty key="infostack">
+              <SidebarDetail label="Sprint">
                 <EditableIssueInSprint issue_ids={[issue.id]}/>
                 {/* <div className="property-row">
                     <div className="property-value">
@@ -206,28 +206,28 @@ class IssueSidebar extends Component {
                     <EditableCopyIssueToSprint issue_ids={[issue.id]} />
                     </div>
                     </div> */}
-              </IssueSidebarDetail>
+              </SidebarDetail>
 
-              <IssueSidebarDetail label="Parent Feature">
+              <SidebarDetail label="Parent Feature">
                 <EditableIssueParent issue_ids={[issue.id]}/>
-              </IssueSidebarDetail>
+              </SidebarDetail>
 
-              <IssueSidebarDetail label="Type">
+              <SidebarDetail label="Type">
                 <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
-              </IssueSidebarDetail>
+              </SidebarDetail>
 
-              <IssueSidebarDetail label="Status">
+              <SidebarDetail label="Status">
                 <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-              </IssueSidebarDetail>
+              </SidebarDetail>
 
-              <IssueSidebarDetail label="Assigned to">
+              <SidebarDetail label="Assigned to">
                 <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-              </IssueSidebarDetail>
+              </SidebarDetail>
 
-              <IssueSidebarDetail label="Risky">
+              <SidebarDetail label="Risky">
                 <EditableIssueRisky issue_ids={[issue.id]} project_id={issue.project_id}/>
-              </IssueSidebarDetail>
-            </IssueSidebarProperty>
+              </SidebarDetail>
+            </SidebarProperty>
         )
         
     }
@@ -235,10 +235,10 @@ class IssueSidebar extends Component {
     renderTagStack() {
         const { issue } = this.props
         return (
-            <IssueSidebarProperty key="tagstack">
-              <IssueSidebarSectionTitle title="Tags" />
+            <SidebarProperty key="tagstack">
+              <SidebarSectionTitle title="Tags" />
               <TagListFlat issue_ids={[issue.id]}/>
-            </IssueSidebarProperty>
+            </SidebarProperty>
         )
     }
 
@@ -246,7 +246,7 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <div key="dependancystack">
-              <IssueSidebarSectionTitle title="Dependancies" />
+              <SidebarSectionTitle title="Dependancies" />
               <PropertyStackComponent>
                 <IssueDependancies issue_id={issue.id} />
               </PropertyStackComponent>
@@ -258,7 +258,7 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <div key="descriptionstack">
-              <IssueSidebarSectionTitle title="Description" />
+              <SidebarSectionTitle title="Description" />
               <EditableIssueDescription issue_id={issue.id}/>
             </div>
         )
@@ -268,7 +268,7 @@ class IssueSidebar extends Component {
         const { issue, testables } = this.props
         return (
             <div key="testablestack">
-              <IssueSidebarSectionTitle title="Testables" />
+              <SidebarSectionTitle title="Testables" />
               { map(testables, function (testable, index) {
                     return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
                 })
@@ -282,7 +282,7 @@ class IssueSidebar extends Component {
         const { issue, comments } = this.props
         return (
             <PropertyStackComponent key="commentsstack">
-              <IssueSidebarSectionTitle title="Comments" />
+              <SidebarSectionTitle title="Comments" />
               { map(comments, function (comment, index) {
                     return <EditableIssueComment key={issue.id+"_"+comment.id} issue_id={issue.id} comment_id={comment.id}/>
                 })
@@ -296,7 +296,7 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <MienFeature key="estimatesstack" feature_name="issue_estimates">
-              <IssueSidebarSectionTitle title="Estimates" />
+              <SidebarSectionTitle title="Estimates" />
               <PropertyStackComponent>
                 <div>
                   <EditableIssueEstimate issue_id={issue.id} />
@@ -311,7 +311,7 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <PropertyStackComponent>
-              <IssueSidebarSectionTitle title="Attachments" />
+              <SidebarSectionTitle title="Attachments" />
               <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                          issue_id={issue.id}
                                          allow_edit={false} />
@@ -326,7 +326,7 @@ class IssueSidebar extends Component {
         const adding_visual_spec_doc = this.state.adding_visual_spec_doc
         return (
             <PropertyStackComponent key="attachmentstack">
-              <IssueSidebarSectionTitle title="Attachments" />
+              <SidebarSectionTitle title="Attachments" />
               <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                          issue_id={issue.id}
                                          allow_edit={false} />
@@ -372,7 +372,7 @@ class IssueSidebar extends Component {
         return (
             <MienFeature key="reviewstack" feature_name="issue_reviews">
               <PropertyStackComponent>
-                <IssueSidebarSectionTitle title="Reviews" />
+                <SidebarSectionTitle title="Reviews" />
                 <IssueReviewPanel issue_id={issue.id} />
               </PropertyStackComponent>
             </MienFeature>
@@ -384,7 +384,7 @@ class IssueSidebar extends Component {
 
         if (issue && issue.id) {
             return (
-                <IssueSidebarContainer>
+                <SidebarContainer>
                   { issue.id && 
                     [
                         this.renderIssueNumberStack(),
@@ -414,7 +414,7 @@ class IssueSidebar extends Component {
                       this.renderReviewsStack()
                       ]
                       } */}
-                </IssueSidebarContainer>
+                </SidebarContainer>
             )
         } else {
             return null

@@ -1,25 +1,24 @@
 import React, {Component} from 'react'
 import { css } from 'emotion'
-
 import { default_theme as theme } from '../theme/default'
-import EditableIssueTitle from './EditableIssueTitle'
 
 const style = css`
 display: flex;
 flex-direction: column;
-font: ${theme.fonts.bold_huge}
+position: relative;
+padding-top: ${theme.spacing.one};
+padding-bottom: ${theme.spacing.one};
 `
 
-class IssueSidebarTitle extends Component {
+class SidebarProperty extends Component {
 
     render() {
-        const { issue_id, children } = this.props
+        const { title, children } = this.props
         return (
             <div className={ style }>
-              <EditableIssueTitle issue_id={issue_id} />
-              { children }
+              {children}
             </div>
         )
     }
 }
-export default IssueSidebarTitle
+export default SidebarProperty

@@ -10,7 +10,7 @@ bottom: 0;
 right: 0;
 `
 
-class IssueSidebarFullscreenWidget extends Component {
+class SidebarFullscreenWidget extends Component {
 
     render() {
         const {
@@ -34,4 +34,4 @@ class IssueSidebarFullscreenWidget extends Component {
         )
     }
 }
-export default IssueSidebarFullscreenWidget
+export default SidebarFullscreenWidget

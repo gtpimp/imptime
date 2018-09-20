@@ -37,7 +37,7 @@ justify-content: flex-start;
 align-items: center;
 `
 
-class IssueSidebarDetail extends Component {
+class SidebarDetail extends Component {
 
     render() {
         const { label, children } = this.props
@@ -54,4 +54,4 @@ class IssueSidebarDetail extends Component {
         )
     }
 }
-export default IssueSidebarDetail
+export default SidebarDetail

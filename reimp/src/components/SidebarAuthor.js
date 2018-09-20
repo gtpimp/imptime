@@ -18,7 +18,7 @@ const cell = css`
 padding-right: 3px;
 `
 
-class IssueSidebarAuthor extends Component {
+class SidebarAuthor extends Component {
 
     componentDidMount() {
         const { dispatch, issue_id } = this.props
@@ -57,4 +57,4 @@ function mapStateToProps(state, props) {
         issue: issue
     }
 }
-export default connect(mapStateToProps)(IssueSidebarAuthor)
+export default connect(mapStateToProps)(SidebarAuthor)

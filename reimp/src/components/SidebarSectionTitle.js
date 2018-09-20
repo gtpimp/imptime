@@ -9,7 +9,7 @@ margin: 0;
 padding: 0;
 `
 
-class IssueSidebarSectionTitle extends Component {
+class SidebarSectionTitle extends Component {
 
     render() {
         const { title } = this.props
@@ -19,4 +19,4 @@ class IssueSidebarSectionTitle extends Component {
     }
     
 }
-export default IssueSidebarSectionTitle
+export default SidebarSectionTitle

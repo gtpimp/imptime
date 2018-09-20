@@ -4,21 +4,19 @@ import { default_theme as theme } from '../theme/default'
 
 const style = css`
 display: flex;
+padding: ${theme.spacing.three};
 flex-direction: column;
-position: relative;
-padding-top: ${theme.spacing.one};
-padding-bottom: ${theme.spacing.one};
+flex: 1;
 `
 
-class IssueSidebarProperty extends Component {
-
+class SidebarContainer extends Component {
     render() {
-        const { title, children } = this.props
+        const { children } = this.props
         return (
-            <div className={ style }>
+            <div className={style}>
               {children}
             </div>
         )
     }
 }
-export default IssueSidebarProperty
+export default SidebarContainer
