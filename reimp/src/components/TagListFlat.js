@@ -1,11 +1,27 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
+
+import { default_theme as theme } from '../theme/default'
 import { map, intersection } from 'lodash'
 import Tag from './Tag'
 import EditableIssueTag from './EditableIssueTag'
 import { getTags, ensureTagsLoaded } from '../actions/Tags'
 import { has_permission } from '../actions/Users'
 import { getIssues } from '../actions/Issues'
+
+const tag_list_container = css`
+display: flex;
+flex: 1;
+flex-wrap: wrap;
+`
+
+const new_tag_container = css`
+display: flex;
+flex: 1;
+padding: ${theme.spacing.two};
+padding-left: 0;
+`
 
 class TagListFlat extends Component {
 
@@ -35,24 +51,28 @@ class TagListFlat extends Component {
               }
 
               { !can_edit && (
-              <div>
-                { map(tags, function(tag) {
-                return (
-                <Tag key={tag.id} tag_id={tag.id}/>
-                  )
-                  })}
-              </div>
+                    <div>
+                      { map(tags, function(tag) {
+                            return (
+                                <Tag key={tag.id} tag_id={tag.id}/>
+                            )
+                        })}
+                    </div>
               )}
+              { can_edit &&
+                <div className={ new_tag_container }>
+                  <EditableIssueTag issue_ids={issue_ids} tag_id={null} project_id={project_id}/>
+                </div>
+              }
               { can_edit && (
-              <div>
-                { map(tags, function(tag) {
-                return (
-                <EditableIssueTag key={tag.id} issue_ids={issue_ids} tag_id={tag.id} project_id={project_id} />
-                )
-                })
-                }
-                <EditableIssueTag issue_ids={issue_ids} tag_id={null} project_id={project_id}/>
-              </div>
+                    <div className={ tag_list_container }>
+                      { map(tags, function(tag) {
+                            return (
+                                <EditableIssueTag key={tag.id} issue_ids={issue_ids} tag_id={tag.id} project_id={project_id} />
+                            )
+                        })
+                      }
+                    </div>
               )}
               
             </div>

@@ -6,6 +6,7 @@ import SelectSprintForm from './form/SelectSprintForm'
 import Blank from './form/Blank'
 import { moveIssuesToSprint, getIssues } from '../actions/Issues'
 import { has_permission } from '../actions/Users'
+import ToggleButton from './toolbar/ToggleButton'
 
 class EditableMoveIssueToSprint extends Component {
 
@@ -32,6 +33,9 @@ class EditableMoveIssueToSprint extends Component {
                                 actionLabel="Move to Sprint"
                                 can_edit={can_edit}
               >
+                <ToggleButton value={'asd'}
+                              on_label={"Sensitive"}
+                              off_label={"Safe"} />
                 <SelectSprintForm project_id={project_id} />
                 <div data-tip="Move this issue to a different sprint" className="issue_sidebar__issue_move_img" />
                 <Blank/>
