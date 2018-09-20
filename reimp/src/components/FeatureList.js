@@ -105,7 +105,7 @@ class FeatureList extends Component {
 
     onReorder = ({node, new_parent}) => {
         const { dispatch } = this.props
-        dispatch(updateFeatureParent(node.id, new_parent.id))
+        dispatch(updateFeatureParent(node.id, (new_parent && new_parent.id) || null))
     }
 
     onExpandCollapse = ({node, expanded}) => {
