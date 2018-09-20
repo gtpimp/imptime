@@ -77,7 +77,11 @@ export const default_theme = {
         mini_button_height: "24px",
         vertical_section_gap: "20px",
         horizontal_section_gap: "20px",
-        
+        one: '6px',
+        two: '12px',
+        three: '18px',
+        four: '24px',
+        five: '30px',
+        six: '36px'
     }
-    
 }

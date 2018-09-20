@@ -25,6 +25,7 @@ import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
+import IssueSidebarSectionTitle from './IssueSidebarSectionTitle'
 import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
 import Timestamp from './Timestamp'
@@ -148,27 +149,27 @@ class IssueSidebar extends Component {
     renderTitleStack() {
         const { issue, full_screen_mode_available, sidebar_view_mode } = this.props
         return (
-            <PropertyStackComponent>
-              <div className="issue_sidebar__title">
-                <div className="text-component--readonly issue_sidebar__title_number">
-                  #{issue.number}
-                </div>
-                <EditableIssueTitle issue_id={issue.id}/>
+            [
+                <IssueSidebarSectionTitle key={ 'able' }>Issue #{issue.number}</IssueSidebarSectionTitle>,
+                <PropertyStackComponent key="mexico">
+                  <div className="issue_sidebar__title">
+                    <EditableIssueTitle issue_id={issue.id}/>
 
-                <div className="sidebar__context_menu">
-                  { full_screen_mode_available && sidebar_view_mode === 'fullscreen' && 
-                    <div className="icon--fullscreen-exit"
-                         onClick={this.onExitFullscreen}/>
-                  }
-                  { full_screen_mode_available && sidebar_view_mode !== 'fullscreen'  && 
-                    <div className="icon--fullscreen"
-                         onClick={this.onFullscreen}/>
-                  }
-                </div>
-                
-              </div>
+                    <div className="sidebar__context_menu">
+                      { full_screen_mode_available && sidebar_view_mode === 'fullscreen' && 
+                        <div className="icon--fullscreen-exit"
+                             onClick={this.onExitFullscreen}/>
+                      }
+                      { full_screen_mode_available && sidebar_view_mode !== 'fullscreen'  && 
+                        <div className="icon--fullscreen"
+                             onClick={this.onFullscreen}/>
+                      }
+                    </div>
+                    
+                  </div>
 
-            </PropertyStackComponent>
+                </PropertyStackComponent>
+            ]
         )
     }
 
@@ -283,25 +284,30 @@ class IssueSidebar extends Component {
     renderDependancyStack() {
         const { issue } = this.props
         return (
-            <PropertyStackComponent title="Dependancies">
-              <IssueDependancies issue_id={issue.id} />
-            </PropertyStackComponent>
+            <div>
+              <IssueSidebarSectionTitle>Dependancies</IssueSidebarSectionTitle>
+              <PropertyStackComponent>
+                <IssueDependancies issue_id={issue.id} />
+              </PropertyStackComponent>
+            </div>
         )
     }
 
     renderDescriptionStack() {
         const { issue } = this.props
         return (
-            <PropertyStackComponent title="Description">
+            <div>
+              <IssueSidebarSectionTitle>Description</IssueSidebarSectionTitle>
               <EditableIssueDescription issue_id={issue.id}/>
-            </PropertyStackComponent>
+            </div>
         )
     }
 
     renderTestablesStack() {
         const { issue, testables } = this.props
         return (
-            <PropertyStackComponent title="Testables">
+            <PropertyStackComponent>
+              <IssueSidebarSectionTitle>Testables</IssueSidebarSectionTitle>
               { map(testables, function (testable, index) {
                     return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
                 })
@@ -314,7 +320,8 @@ class IssueSidebar extends Component {
     renderCommentsStack() {
         const { issue, comments } = this.props
         return (
-            <PropertyStackComponent title="Comments">
+            <PropertyStackComponent>
+              <IssueSidebarSectionTitle>Comments</IssueSidebarSectionTitle>
               { map(comments, function (comment, index) {
                     return <EditableIssueComment key={issue.id+"_"+comment.id} issue_id={issue.id} comment_id={comment.id}/>
                 })
@@ -328,7 +335,8 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <MienFeature feature_name="issue_estimates">
-              <PropertyStackComponent title="Estimates">
+              <IssueSidebarSectionTitle>Estimates</IssueSidebarSectionTitle>
+              <PropertyStackComponent>
                 <div>
                   <EditableIssueEstimate issue_id={issue.id} />
                 </div>
@@ -341,7 +349,8 @@ class IssueSidebar extends Component {
     renderAddAttachmentWidget() {
         const { issue } = this.props
         return (
-            <PropertyStackComponent title="Attachments">
+            <PropertyStackComponent>
+              <IssueSidebarSectionTitle>Attachments</IssueSidebarSectionTitle>
               <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
                                          issue_id={issue.id}
                                          allow_edit={false} />
@@ -355,27 +364,30 @@ class IssueSidebar extends Component {
         const { issue, project_id } = this.props
         const adding_visual_spec_doc = this.state.adding_visual_spec_doc
         return (
-            <PropertyStackComponent title="Attachments">
-              <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
-                                         issue_id={issue.id}
-                                         allow_edit={false} />
-              
-            { ! adding_visual_spec_doc && (
-                <div className="property-row">
-                  <div onClick={this.showAddVisualSpecDoc} className="icon--add icon--clickable" data-tooltip="Upload attachment"></div>
-                  <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
-                </div>
-            )}
-            { adding_visual_spec_doc && (
-                  <div>
-                    <VisualSpecDocumentForm issue_id={issue.id}
-                                            project_id={project_id}
-                                            onChange={this.hideAddVisualSpecDoc}
-                    />
-                    <button className="button button--primary" onClick={this.hideAddVisualSpecDoc}>Cancel</button>
-                  </div>
-            )}
-            </PropertyStackComponent>
+            [
+                <IssueSidebarSectionTitle>Attachments</IssueSidebarSectionTitle>,
+                <PropertyStackComponent title="Attachments">
+                  <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+                                             issue_id={issue.id}
+                                             allow_edit={false} />
+                  
+                  { ! adding_visual_spec_doc && (
+                        <div className="property-row">
+                          <div onClick={this.showAddVisualSpecDoc} className="icon--add icon--clickable" data-tooltip="Upload attachment"></div>
+                          <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
+                        </div>
+                  )}
+                  { adding_visual_spec_doc && (
+                        <div>
+                          <VisualSpecDocumentForm issue_id={issue.id}
+                                                  project_id={project_id}
+                                                  onChange={this.hideAddVisualSpecDoc}
+                          />
+                          <button className="button button--primary" onClick={this.hideAddVisualSpecDoc}>Cancel</button>
+                        </div>
+                  )}
+                </PropertyStackComponent>
+            ]
         )
     }
 
