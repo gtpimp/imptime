@@ -392,7 +392,8 @@ class IssueSidebar extends Component {
                         this.renderCreationStack(),
                         this.renderEmacsHintStack(),
                         this.renderInfoStack(),
-                        this.renderTagStack()
+                        this.renderTagStack(),
+                        this.renderDescriptionStack()
                     ]
                   }
                   {/* { issue.id && 

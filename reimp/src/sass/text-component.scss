@@ -24,14 +24,19 @@
     font: $font-1;
     line-height: 20px;
     white-space: pre-wrap;
-    border: 1px solid $color-26;
-    border-radius: 10px;
-    padding: 10px;
+    border-radius: 5px;
+    padding: 24px;
+    margin-top: 12px;
     min-height: 50px;
+    background-color: rgba(0, 22, 49, 0.05);
 }
 
 .text-component--rendered_markdown {
     white-space: pre-wrap;
     line-height: 20px;
     font: $font-1;
+
+    p {
+        margin: 0;
+    }
 }

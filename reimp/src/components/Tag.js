@@ -31,7 +31,7 @@ width: 18px;
 -webkit-mask: url(${delete_outline}) no-repeat center;
 mask: url(${delete_outline}) no-repeat center;
 background-color: ${theme.colours.normal_text};
-background-size: ${theme.spacing.three};
+background-size: ${theme.spacing.two};
 `
 
 class Tag extends Component {
