@@ -1,11 +1,10 @@
 import React, {Component} from 'react'
-import { concat, indexOf, union, difference, includes } from 'lodash'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { logged_in_user } from '../actions/Auth'
-import CommonTable from './CommonTable'
+import CommonTree from './CommonTree'
 import DivTableCell from './DivTableCell'
 import 'react-virtualized/styles.css';
 import {
@@ -16,13 +15,11 @@ import {
     makeSelSelectedFeatures,
     makeSelSavingFeatureIds, 
     makeSelFeatures,
-    makeSelFeatureObjectsToRender
+    makeSelFeatureObjectsToRender,
+    makeSelFeaturesAsStructuredTree
 } from '../selectors/FeatureListSelectors'
 import {
     initList,
-    invalidateList,
-    collapse_list,
-    expand_list,
     getVisibleItemIds,
     getSelectedItemIds,
     getHighlightedItemIds,
@@ -31,27 +28,14 @@ import {
     getListFilter
 } from '../actions/ItemList'
 import {
-    invalidateAllFeatures,
     fetchFeaturesIfNeeded,
-    reorderFeature,
-    cancelCandidateFeature,
     getCandidateFeature,
     getAllAvailableFeatureHeaders,
     updateFeatureMienHeaders,
-    getFeatureHeaderListForMien,
-    deleteFeatures
+    getFeatureHeaderListForMien
 } from '../actions/Features'
 
 class FeatureList extends Component {
-
-    constructor(props) {
-        super(props)
-        this.onRefresh = this.onRefresh.bind(this)
-        this.onChangePage = this.onChangePage.bind(this)
-        this.onClickedFeature = this.onClickedFeature.bind(this)
-        this.reorderFeature = this.reorderFeature.bind(this)
-        this.onDeleteFeature = this.onDeleteFeature.bind(this)
-    }
 
     componentDidMount() {
         const {dispatch, list_key, project_id} = this.props
@@ -72,147 +56,95 @@ class FeatureList extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
     }
 
-    handleShortcuts(action, event) {
-        const { dispatch } = this.props
-        switch(action) {
-            case 'NEW':
-                //alert("create new feature")
-                break
-            case 'CANCEL':
-                dispatch(cancelCandidateFeature())
-                break
-            default:
-                break
-        }
-    }
+    /* onClickedFeature(event, feature_id) {
+     *     const {dispatch, onSelectFeatures, selected_ids} = this.props
+     *     if ( event ) {
+     *         event.stopPropagation()
+     *     }
 
-    onDeleteFeature(feature_id) {
-        const {visible_item_ids} = this.props
-        const {onSelectFeatures} = this.props
-        const feature_index = indexOf(visible_item_ids, feature_id)
-        let next_index = feature_index - 1
-        if ( next_index < 0 ) {
-            next_index = visible_item_ids.length-1
-        }
-        onSelectFeatures([visible_item_ids[next_index]])
-    }
+     *     let selected_feature_ids = []
+     *     if (event.ctrlKey || event.metaKey) {
+     *         if (includes(selected_ids, feature_id)) {
+     *             selected_feature_ids = difference(selected_ids, [feature_id])
+     *         } else {
+     *             selected_feature_ids = union(selected_ids, [feature_id])
+     *         }
+     *     } else if (event.shiftKey) {
+     *         selected_feature_ids = concat(selected_ids, this.findFeaturesFromHereToAlreadySelected(feature_id))
+     *     }
+     *     if ( onSelectFeatures ) {
+     *         onSelectFeatures(selected_feature_ids)
+     *     }
+     *     dispatch(cancelCandidateFeature())
+     * }*/
 
-    onCollapse() {
-        const {dispatch, list_key} = this.props
-        dispatch(collapse_list(list_key))
-    }
+    /* findFeaturesFromHereToAlreadySelected(target_feature_id) {
+     *     window.alert("Not implemented yet")
+     *     return [target_feature_id]
+     * }*/
 
-    onExpand() {
-        const {dispatch, list_key} = this.props
-        dispatch(expand_list(list_key))
-    }
+    /* onDeleteFeature = (event, feature) => {
+     *     const { dispatch, onDelete } = this.props
+     *     event.stopPropagation()
 
-    onClickedFeature(event, feature_id) {
-        const {dispatch, onSelectFeatures, selected_ids} = this.props
-        if ( event ) {
-            event.stopPropagation()
-        }
+     *     if ( feature.actual_hours > 0 ) {
+     *         window.alert("This feature has time against it and so can't be deleted")
+     *         return
+     *     }
+     *     
+     *     if ( ! window.confirm( "Delete feature " + feature.number + " - " + feature.subject + "?") ) {
+     *         return
+     *     }
+     *     dispatch(deleteFeatures([feature.id]))
+     *     if ( onDelete ) {
+     *         onDelete(feature.id)
+     *     }
+     * }*/
 
-        let selected_feature_ids = []
-        if (event.ctrlKey || event.metaKey) {
-            if (includes(selected_ids, feature_id)) {
-                selected_feature_ids = difference(selected_ids, [feature_id])
-            } else {
-                selected_feature_ids = union(selected_ids, [feature_id])
-            }
-        } else if (event.shiftKey) {
-            selected_feature_ids = concat(selected_ids, this.findFeaturesFromHereToAlreadySelected(feature_id))
-        }
-        if ( onSelectFeatures ) {
-            onSelectFeatures(selected_feature_ids)
-        }
-        dispatch(cancelCandidateFeature())
-    }
+    /* reorderFeature(index_of_row_being_moved, index_of_destination) {
+     *     const {dispatch, list_key, feature_items} = this.props
 
-    findFeaturesFromHereToAlreadySelected(target_feature_id) {
-        window.alert("Not implemented yet")
-        return [target_feature_id]
-    }
+     *     // get feature being moved
+     *     const moving_feature_id = feature_items[index_of_row_being_moved].id
+     *     if ( ! moving_feature_id ) {
+     *         return
+     *     }
+     *     let selected_ids = this.props.selected_ids || []
+     *     if ( ! includes(selected_ids, moving_feature_id) ) {
+     *         selected_ids = [moving_feature_id]
+     *     }
 
-    onChangePage() {
-        const {dispatch, list_key} = this.props
-        dispatch(invalidateList(list_key))
-        dispatch(fetchFeaturesIfNeeded(list_key))
-    }
+     *     // get place to move it
+     *     let move_after_feature_id
+     *     if ( index_of_row_being_moved > index_of_destination ) {
+     *         move_after_feature_id = (index_of_destination>0 && feature_items[index_of_destination-1].id) || null
+     *     } else {
+     *         move_after_feature_id = feature_items[index_of_destination].id || null
+     *     }
 
-    onRefresh(event) {
-        const {dispatch, feature_ids, list_key} = this.props
-        dispatch(invalidateList(list_key))
-        dispatch(invalidateAllFeatures(feature_ids))
-        dispatch(cancelCandidateFeature())
-        dispatch(fetchFeaturesIfNeeded(list_key))
-        if (event) {
-            event.stopPropagation()
-        }
-    }
+     *     const target_feature_id = move_after_feature_id
 
-    onDeleteFeature = (event, feature) => {
-        const { dispatch, onDelete } = this.props
-        event.stopPropagation()
+     *     dispatch(reorderFeature(selected_ids, target_feature_id, list_key,
+     *                           index_of_destination,
+     *                           function () {
+     *                               dispatch(invalidateList(list_key))
+     *                               dispatch(fetchFeaturesIfNeeded(list_key))
+     *                           }))
+     * }*/
 
-        if ( feature.actual_hours > 0 ) {
-            window.alert("This feature has time against it and so can't be deleted")
-            return
-        }
-        
-        if ( ! window.confirm( "Delete feature " + feature.number + " - " + feature.subject + "?") ) {
-            return
-        }
-        dispatch(deleteFeatures([feature.id]))
-        if ( onDelete ) {
-            onDelete(feature.id)
-        }
-    }
+    /* renderCandidateFeature() {
 
-    reorderFeature(index_of_row_being_moved, index_of_destination) {
-        const {dispatch, list_key, feature_items} = this.props
+     *     const {list_key} = this.props
 
-        // get feature being moved
-        const moving_feature_id = feature_items[index_of_row_being_moved].id
-        if ( ! moving_feature_id ) {
-            return
-        }
-        let selected_ids = this.props.selected_ids || []
-        if ( ! includes(selected_ids, moving_feature_id) ) {
-            selected_ids = [moving_feature_id]
-        }
-
-        // get place to move it
-        let move_after_feature_id
-        if ( index_of_row_being_moved > index_of_destination ) {
-            move_after_feature_id = (index_of_destination>0 && feature_items[index_of_destination-1].id) || null
-        } else {
-            move_after_feature_id = feature_items[index_of_destination].id || null
-        }
-
-        const target_feature_id = move_after_feature_id
-
-        dispatch(reorderFeature(selected_ids, target_feature_id, list_key,
-                              index_of_destination,
-                              function () {
-                                  dispatch(invalidateList(list_key))
-                                  dispatch(fetchFeaturesIfNeeded(list_key))
-                              }))
-    }
-
-    render_candidate_feature() {
-
-        const {list_key} = this.props
-
-        return (
-            <div key={list_key + ".candidate_feature"}
-                 className="div-table__row feature_list__candidate_feature">
-              <div className="div-table__cell" colSpan="20">
-                Creating new feature here
-              </div>
-            </div>
-        )
-    }
+     *     return (
+     *         <div key={list_key + ".candidate_feature"}
+     *              className="div-table__row feature_list__candidate_feature">
+     *           <div className="div-table__cell" colSpan="20">
+     *             Creating new feature here
+     *           </div>
+     *         </div>
+     *     )
+     * }*/
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
         const { feature_items, header_list } = this.props
@@ -261,7 +193,8 @@ class FeatureList extends Component {
 
     render_tree() {
 
-        const { is_mien_configurer_active, header_list, feature_items, selected_ids } = this.props
+        const { is_mien_configurer_active, header_list,
+                feature_items, selected_ids, features_as_structured_tree } = this.props
 
         if ( is_mien_configurer_active ) {
             return this.renderListColumnConfigurer()
@@ -276,17 +209,18 @@ class FeatureList extends Component {
         }
 
         return (
-              <CommonTable getAvailableHeaders={getAllAvailableFeatureHeaders}
-                           getHeaderListForMien={getFeatureHeaderListForMien}
-                           onRowSelected={this.onClickedFeature}
-                           onRowReordered={this.reorderFeature}
-                           updateMienHeaders={updateFeatureMienHeaders}
-                           header_list_name="feature"
-                           items={feature_items}
-                           selected_item_ids={selected_ids}
-                           header_list={header_list}
-                           renderCell={this.renderCell}
-              />
+
+            <CommonTree items={features_as_structured_tree}
+                        onChange={this.onUpdateTree}
+                        getAvailableHeaders={getAllAvailableFeatureHeaders}
+                        getHeaderListForMien={getFeatureHeaderListForMien}
+                        updateMienHeaders={updateFeatureMienHeaders}
+                        header_list={header_list}
+                        header_list_name="feature"
+                        selected_item_ids={selected_ids}
+            >
+              {this.renderFeature}
+            </CommonTree>
         )
     }
 
@@ -304,6 +238,7 @@ const makeMapStateToProps = () => {
     const selSavingFeatureIds = makeSelSavingFeatureIds()
     const selFeatures = makeSelFeatures()
     const selFeatureObjectsToRender = makeSelFeatureObjectsToRender()
+    const selFeaturesAsStructuredTree = makeSelFeaturesAsStructuredTree()
     const mapStateToProps = (state, props) => {
         const {list_key, header_list} = props
         const filter = getListFilter(state, list_key)
@@ -323,6 +258,7 @@ const makeMapStateToProps = () => {
         const feature_items = selFeatureObjectsToRender(state, props)
         const logged_in_user_id = logged_in_user().user_id
         const feature_ids = selFeatureIds(state, props)
+        const features_as_structured_tree = selFeaturesAsStructuredTree(state, props)
 
         return {
             list_key: list_key,
@@ -330,6 +266,7 @@ const makeMapStateToProps = () => {
             project_id: project_id,
             project,
             features: items,
+            features_as_structured_tree,
             feature_items,
             features_by_id: items_by_id,
             feature_ids,

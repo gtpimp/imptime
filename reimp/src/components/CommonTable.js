@@ -156,6 +156,7 @@ class CommonTable extends Component {
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
+            renderCell,
             selected_item_ids, onRowSelected, onRowReordered, items, header_list } = props
 
     const mien_id = getCurrentMienId(state)
@@ -166,6 +167,7 @@ function mapStateToProps(state, props) {
         updateMienHeaders,
         onRowSelected,
         onRowReordered,
+        renderCell,
         header_list_name,
         items,
         selected_item_ids,

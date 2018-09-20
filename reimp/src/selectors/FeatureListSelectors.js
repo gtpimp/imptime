@@ -188,3 +188,28 @@ export const makeSelFeatureObjectsToRender = () => {
     )
 }
 
+const recursivelySetChildren = (feature, all_features_by_id) => {
+    if ( !feature ) {
+        return
+    }
+    feature.children = map(feature.children_ids, (children_id) => all_features_by_id[children_id])
+    map(feature.children, (child) => recursivelySetChildren(child, all_features_by_id))
+}
+
+export const makeSelFeaturesAsStructuredTree = () => {
+    return createSelector(
+        [ selGetAllFeaturesById, selGetVisibleFeatureIds ],
+        ( all_features_by_id ) => {
+
+            if ( ! all_features_by_id ) {
+                return []
+            }
+
+            const root_features = filter(all_features_by_id, (feature) => feature.is_root_node === true)
+            map(root_features, (root_feature) => recursivelySetChildren(root_feature, all_features_by_id))
+            return root_features
+            
+        }
+    )
+}
+
