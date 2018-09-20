@@ -10,7 +10,11 @@
 }
 
 .text-component--empty {
+}
 
+.text-component--testable {
+    padding: 12px;
+    padding-left: 0;
 }
 
 .text-component--title {
@@ -27,6 +31,7 @@
     border-radius: 5px;
     padding: 24px;
     margin-top: 12px;
+    margin-bottom: 12px;
     min-height: 50px;
     background-color: rgba(0, 22, 49, 0.05);
 }

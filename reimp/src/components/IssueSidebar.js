@@ -267,14 +267,14 @@ class IssueSidebar extends Component {
     renderTestablesStack() {
         const { issue, testables } = this.props
         return (
-            <PropertyStackComponent key="testablestack">
+            <div key="testablestack">
               <IssueSidebarSectionTitle title="Testables" />
               { map(testables, function (testable, index) {
                     return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
                 })
               }
               <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
-            </PropertyStackComponent>
+            </div>
         )
     }
 
@@ -393,7 +393,8 @@ class IssueSidebar extends Component {
                         this.renderEmacsHintStack(),
                         this.renderInfoStack(),
                         this.renderTagStack(),
-                        this.renderDescriptionStack()
+                        this.renderDescriptionStack(),
+                        this.renderTestablesStack()
                     ]
                   }
                   {/* { issue.id && 

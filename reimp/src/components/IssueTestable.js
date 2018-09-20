@@ -38,14 +38,18 @@ class IssueTestable extends Component {
                     }
                   </div>      
                 }
-                  { onDelete &&
-                    <div onClick={onDelete} className="icon--small-delete" />
+                <div className="issue-testable__options">
+                  { onPromoteToIssue &&
+                    <div onClick={onPromoteToIssue} className="issue-testable__options__left">
+                      Promote to issue
+                    </div>
                   }
-                    { onPromoteToIssue &&
-                      <div className="button button-secondary" onClick={onPromoteToIssue}>
-                        Promote to issue
-                      </div>
-                    }
+                  { onDelete &&
+                    <div onClick={onDelete} className="issue-testable__options__right">
+                      Remove
+                    </div>
+                  }
+                </div>
               </div>
             </div>
         )

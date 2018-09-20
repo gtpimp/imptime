@@ -13,6 +13,7 @@ import {
     promoteIssueTestableToIssue
 } from '../actions/Issues'
 import IssueTestableForm from './form/IssueTestableForm'
+import SidebarAddButton from './SidebarAddButton'
 import { has_permission } from '../actions/Users'
 import IssueTestable from './IssueTestable'
 
@@ -74,7 +75,7 @@ class EditableIssueTestable extends Component {
                                   initial_value={testable.steps}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
-                >
+                    >
                   <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
                                      issue_id={issue_id} testable={testable}/>
                   <IssueTestable issue_id={issue_id}
@@ -86,24 +87,26 @@ class EditableIssueTestable extends Component {
                 </EditableProperty>
               }
 
-                <div className="issue-testable__button-bar">
-                  { ! testable.id &&
-                    <div>
-                      <EditableProperty property_key={'issue_testable_'+issue_id}
-                                        initial_value=''
-                                        onChange={this.onChange}
-                                        can_edit={can_edit}
+              <div className="issue-testable__button-bar">
+                { ! testable.id &&
+                  <div className="issue-testable__button-bar__container">
+                    <EditableProperty property_key={'issue_testable_'+issue_id}
+                                      initial_value=''
+                                      onChange={this.onChange}
+                                      can_edit={can_edit}
                       >
-                        <IssueTestableForm form={'issue_testable_form_'+issue_id} issue_id={issue_id} />
-                        <div className="text-component--readonly"></div>
-                        <div className="text-component--empty">
-                          <div className="icon--add" data-tooltip="Create testable"></div>
+                      <IssueTestableForm form={'issue_testable_form_'+issue_id} issue_id={issue_id} />
+                      <div className="text-component--readonly"></div>
+                      <div className="text-component--empty">
+                        <div className="text-component--testable">
+                          <SidebarAddButton label="Add testable"o />
                         </div>
-                      </EditableProperty>
-                    </div>
-                  }
+                      </div>
+                    </EditableProperty>
+                  </div>
+                }
 
-                </div>
+              </div>
             </PermissionInspectorHighlighter>
         )
     }

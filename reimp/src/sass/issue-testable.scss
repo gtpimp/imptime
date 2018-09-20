@@ -1,7 +1,18 @@
 @import 'variables.scss';
 
+.issue-testable {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    color: $color-10;
+}
+
 .issue-testable__button-bar {
     display: flex;
+}
+
+.issue-testable__button-bar__container {
+    width: 100%;
 }
 
 .issue-testable__testable-name {
@@ -15,4 +26,25 @@
 .issue_testable__quality_error_reason {
     font: $bold-extra-large;
     color: $error-color;
+}
+
+.issue-testable__options {
+    display: flex;
+    flex-direction: row;
+    font: $plain;
+    color: $color-36;
+}
+
+.issue-testable__options__left {
+    display: flex;
+    flex: 5;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.issue-testable__options__right {
+    display: flex;
+    flex: 5;
+    justify-content: flex-end;
+    align-items: center;
 }

@@ -158,12 +158,16 @@ issue--grouped {
 }
 
 .issue-comment__text, .issue-testable__text {
-    padding: 5px;
-    border: 1px solid $color-26;
-    border-radius: 10px;
-    margin-right: 20px;
+    color: $color-10;
+    font: $font-1;
+    line-height: 20px;
+    white-space: pre-wrap;
+    border-radius: 5px;
+    padding: 24px;
+    margin-top: 12px;
+    margin-bottom: 6px;
     min-height: 50px;
-    width: 100%;
+    background-color: rgba(0, 22, 49, 0.05);
 }
 
 .issue-comment__info, .issue-testable__info {
