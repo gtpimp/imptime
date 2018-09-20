@@ -809,6 +809,8 @@ class ProjectFeatureOrder(BaseModel):
     def insert_before(self, feature, set_before_this_feature):
         if feature.project_id != set_before_this_feature.project_id:
             raise Exception("Cannot reorder, must be in the same project")
+        feature.parent = set_before_this_feature.parent
+        feature.save()
         self.renumber(feature.project_id, feature.parent_id)
         pio = self.objects.get_or_create(project_id=set_before_this_feature.project_id,
                                          feature_id=set_before_this_feature.id,
@@ -824,7 +826,9 @@ class ProjectFeatureOrder(BaseModel):
     def insert_after(self, feature, set_after_this_feature):
         if feature.project_id != set_after_this_feature.project_id:
             raise Exception("Cannot reorder, must be in the same project")
-        self.renumber(feature.project_id, feature.parenT_id)
+        feature.parent = set_after_this_feature.parent
+        feature.save()
+        self.renumber(feature.project_id, feature.parent_id)
         pio_target = self.objects.get_or_create(project_id=set_after_this_feature.project_id,
                                                 feature_id=set_after_this_feature.id,
                                                 defaults={'order':self.MAX_ORDER})[0]

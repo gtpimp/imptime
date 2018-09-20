@@ -97,10 +97,11 @@ class FeatureViewSet(BaseViewSet):
                         
                 elif field_name == 'parent_feature_id':
                     if self.logged_in_permissions(feature.project).has_edit_feature:
-                        new_parent = self.allowed_feature(field_name)
+                        new_parent = self.allowed_feature(new_value)
                         FeatureHistory.add_history(
-                            request.user, feature, "moved feature",
-                            feature.parent.name, new_parent.name)
+                            request.user, feature, "updated parent",
+                            feature.parent.name if feature.parent else "root", new_parent.name if new_parent else "root")
+                        feature.parent = new_parent
 
                 elif field_name == 'feature_id_after':
                     if self.logged_in_permissions(feature.project).has_edit_features:

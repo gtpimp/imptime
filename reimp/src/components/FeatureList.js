@@ -32,7 +32,8 @@ import {
     getCandidateFeature,
     getAllAvailableFeatureHeaders,
     updateFeatureMienHeaders,
-    getFeatureHeaderListForMien
+    getFeatureHeaderListForMien,
+    updateFeatureParent
 } from '../actions/Features'
 
 class FeatureList extends Component {
@@ -101,6 +102,11 @@ class FeatureList extends Component {
      *     }
      * }*/
 
+    onReorder = ({node, new_parent}) => {
+        const { dispatch } = this.props
+        dispatch(updateFeatureParent(node.id, new_parent.id))
+    }
+    
     /* reorderFeature(index_of_row_being_moved, index_of_destination) {
      *     const {dispatch, list_key, feature_items} = this.props
 
@@ -212,6 +218,7 @@ class FeatureList extends Component {
 
             <CommonTree items={features_as_structured_tree}
                         onChange={this.onUpdateTree}
+                        onReorder={this.onReorder}
                         getAvailableHeaders={getAllAvailableFeatureHeaders}
                         getHeaderListForMien={getFeatureHeaderListForMien}
                         updateMienHeaders={updateFeatureMienHeaders}

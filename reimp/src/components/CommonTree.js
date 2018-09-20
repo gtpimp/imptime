@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
 import SortableTree from 'react-sortable-tree'
@@ -8,12 +9,16 @@ import 'react-sortable-tree/style.css'
 class CommonTree extends Component {
 
     onNodeClicked = (args) => {
-        window.alert("clicked")
+        // window.alert("clicked")
         // onNodeSelected(event, rowData.id)
     }
 
     onNodeMoved = (args) => {
-        window.alert("moved")
+        const { onReorder } = this.props
+        const { node, nextParentNode } = args
+        if ( node.parent_id !== (nextParentNode && nextParentNode.id) || null ) {
+            onReorder({node:node, new_parent:nextParentNode})
+        }
     }
 
     render() {
@@ -27,7 +32,7 @@ class CommonTree extends Component {
                                         updateMienHeaders={updateMienHeaders}
                                         header_list_name={header_list_name}
             >
-                <div style={{height:300}}>
+                <div className={css`height:100%`}>
                   <SortableTree treeData={items}
                                 onChange={this.onNodeClicked}
                                 onMoveNode={this.onNodeMoved}
@@ -45,7 +50,7 @@ class CommonTree extends Component {
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
-            selected_item_ids, onNodeSelected, onNodesReordered, items, header_list, renderCell } = props
+            selected_item_ids, onNodeSelected, onReorder, items, header_list, renderCell } = props
 
     const mien_id = getCurrentMienId(state)
     
@@ -54,7 +59,7 @@ function mapStateToProps(state, props) {
         getHeaderListForMien,
         updateMienHeaders,
         onNodeSelected,
-        onNodesReordered,
+        onReorder,
         header_list_name,
         items,
         selected_item_ids,
