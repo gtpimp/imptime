@@ -4,6 +4,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { each, union, intersection, get, compact, map,
          includes, filter, keyBy, values } from 'lodash'
+import { getTreeFromFlatData } from 'react-sortable-tree'
 
 const selGetVisibleFeatureIds = (state, props) => {
     return get(state, ["item_list", props.list_key, "visible_item_ids"], null)
@@ -188,14 +189,6 @@ export const makeSelFeatureObjectsToRender = () => {
     )
 }
 
-const recursivelySetChildren = (feature, all_features_by_id) => {
-    if ( !feature ) {
-        return
-    }
-    feature.children = map(feature.children_ids, (children_id) => all_features_by_id[children_id])
-    map(feature.children, (child) => recursivelySetChildren(child, all_features_by_id))
-}
-
 export const makeSelFeaturesAsStructuredTree = () => {
     return createSelector(
         [ selGetAllFeaturesById, selGetVisibleFeatureIds ],
@@ -206,9 +199,16 @@ export const makeSelFeaturesAsStructuredTree = () => {
             }
 
             const root_features = filter(all_features_by_id, (feature) => feature.is_root_node === true)
-            map(root_features, (root_feature) => recursivelySetChildren(root_feature, all_features_by_id))
-            return root_features
+            root_features.push( {id: '0', number: '0', name:'root', parent_id: '0'} )
+
+            map(root_features, (feature) => feature.title = feature.name)
             
+            const tree = getTreeFromFlatData({flatData: values(all_features_by_id),
+                                              getKey: (node) => node.id,
+                                              getParentKey: (node) => node.parent_id,
+                                              rootKey: null})
+
+            return tree
         }
     )
 }

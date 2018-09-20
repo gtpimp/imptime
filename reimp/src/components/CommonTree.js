@@ -1,18 +1,19 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { AutoSizer } from 'react-virtualized'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
-import 'react-virtualized/styles.css';
-import 'react-virtualized-tree/lib/main.css'
-import 'material-icons/css/material-icons.css'
-import Tree from 'react-virtualized-tree'
+import SortableTree from 'react-sortable-tree'
+import 'react-sortable-tree/style.css'
 
 class CommonTree extends Component {
 
-    onNodeClicked = ({event, rowData}) => {
-        const { onNodeSelected } = this.props
-        onNodeSelected(event, rowData.id)
+    onNodeClicked = (args) => {
+        window.alert("clicked")
+        // onNodeSelected(event, rowData.id)
+    }
+
+    onNodeMoved = (args) => {
+        window.alert("moved")
     }
 
     render() {
@@ -26,16 +27,14 @@ class CommonTree extends Component {
                                         updateMienHeaders={updateMienHeaders}
                                         header_list_name={header_list_name}
             >
-              <div>
-                <AutoSizer>
-                  {({width, height}) => (
-                       <Tree nodes={items}
-                             onChange={this.onNodeClicked}>
-                         {renderNode}
-                       </Tree>
-                   )}
-                </AutoSizer>
-              </div>
+                <div style={{height:300}}>
+                  <SortableTree treeData={items}
+                                onChange={this.onNodeClicked}
+                                onMoveNode={this.onNodeMoved}
+                  >
+                    {renderNode}
+                  </SortableTree>
+                </div>
               
             </MienListColumnConfigurable>
         )        
