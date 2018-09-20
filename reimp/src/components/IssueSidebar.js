@@ -364,30 +364,28 @@ class IssueSidebar extends Component {
         const { issue, project_id } = this.props
         const adding_visual_spec_doc = this.state.adding_visual_spec_doc
         return (
-            [
-                <IssueSidebarSectionTitle>Attachments</IssueSidebarSectionTitle>,
-                <PropertyStackComponent title="Attachments">
-                  <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
-                                             issue_id={issue.id}
-                                             allow_edit={false} />
-                  
-                  { ! adding_visual_spec_doc && (
-                        <div className="property-row">
-                          <div onClick={this.showAddVisualSpecDoc} className="icon--add icon--clickable" data-tooltip="Upload attachment"></div>
-                          <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
-                        </div>
-                  )}
-                  { adding_visual_spec_doc && (
-                        <div>
-                          <VisualSpecDocumentForm issue_id={issue.id}
-                                                  project_id={project_id}
-                                                  onChange={this.hideAddVisualSpecDoc}
-                          />
-                          <button className="button button--primary" onClick={this.hideAddVisualSpecDoc}>Cancel</button>
-                        </div>
-                  )}
-                </PropertyStackComponent>
-            ]
+            <PropertyStackComponent title="Attachments">
+              <IssueSidebarSectionTitle>Attachments</IssueSidebarSectionTitle>
+              <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+                                         issue_id={issue.id}
+                                         allow_edit={false} />
+              
+              { ! adding_visual_spec_doc && (
+                    <div className="property-row">
+                      <div onClick={this.showAddVisualSpecDoc} className="icon--add icon--clickable" data-tooltip="Upload attachment"></div>
+                      <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
+                    </div>
+              )}
+              { adding_visual_spec_doc && (
+                    <div>
+                      <VisualSpecDocumentForm issue_id={issue.id}
+                                              project_id={project_id}
+                                              onChange={this.hideAddVisualSpecDoc}
+                      />
+                      <button className="button button--primary" onClick={this.hideAddVisualSpecDoc}>Cancel</button>
+                    </div>
+              )}
+            </PropertyStackComponent>
         )
     }
 
