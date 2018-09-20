@@ -42,6 +42,7 @@ class CommonTree extends Component {
                   <SortableTree treeData={items}
                                 onChange={this.onNodeClicked}
                                 onVisibilityToggle={this.onNodeVisiblityToggle}
+                                getNodeKey={({node}) => node.id || "root"}
                                 onMoveNode={this.onNodeMoved}
                   >
                     {renderNode}
