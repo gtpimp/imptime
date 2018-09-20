@@ -13,6 +13,12 @@ class CommonTree extends Component {
         // onNodeSelected(event, rowData.id)
     }
 
+    onNodeVisiblityToggle = (args) => {
+        const { onExpandCollapse } = this.props
+        const { node, expanded } = args
+        onExpandCollapse({node, expanded})
+    }
+
     onNodeMoved = (args) => {
         const { onReorder } = this.props
         const { node, nextParentNode } = args
@@ -35,6 +41,7 @@ class CommonTree extends Component {
                 <div className={css`height:100%`}>
                   <SortableTree treeData={items}
                                 onChange={this.onNodeClicked}
+                                onVisibilityToggle={this.onNodeVisiblityToggle}
                                 onMoveNode={this.onNodeMoved}
                   >
                     {renderNode}
@@ -50,6 +57,7 @@ class CommonTree extends Component {
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
+            onExpandCollapse,
             selected_item_ids, onNodeSelected, onReorder, items, header_list, renderCell } = props
 
     const mien_id = getCurrentMienId(state)
@@ -60,6 +68,7 @@ function mapStateToProps(state, props) {
         updateMienHeaders,
         onNodeSelected,
         onReorder,
+        onExpandCollapse,
         header_list_name,
         items,
         selected_item_ids,

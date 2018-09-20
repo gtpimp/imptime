@@ -34,7 +34,9 @@ import {
     is_item_invalidated,
     getInvalidatedItemIds,
     getSavingItemIds,
-    getLoadingItemIds
+    getLoadingItemIds,
+    getTransientItemValue,
+    setTransientItemValue
 } from '../actions/Item'
 
 export const SET_FEATURE_STORE_VALUE = 'SET_FEATURE_STORE_VALUE'
@@ -98,6 +100,17 @@ export function updateFeatureDescription(feature_id, value) {
 
 export function updateFeatureParent(feature_id, parent_feature_id) {
     return updateItem(ENTITY_KEY__FEATURE, [feature_id], "parent_feature_id", parent_feature_id)
+}
+
+export function expandFeatureInTree(feature_id, expanded) {
+    return setTransientItemValue(ENTITY_KEY__FEATURE, [feature_id], "expanded", expanded)
+}
+
+export function isFeatureExpanded(state, feature_id) {
+    return getTransientItemValue(state, ENTITY_KEY__FEATURE, feature_id, "expanded") || false
+}
+
+export function collapseFeatureInTree(feature_id, collapsed) {
 }
 
 export function reorderFeature(moving_feature_ids, feature_id_after, list_key, index_of_destination, on_done) {
