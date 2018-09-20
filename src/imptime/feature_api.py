@@ -97,7 +97,10 @@ class FeatureViewSet(BaseViewSet):
                         
                 elif field_name == 'parent_feature_id':
                     if self.logged_in_permissions(feature.project).has_edit_feature:
-                        new_parent = self.allowed_feature(new_value)
+                        if new_value is not None:
+                            new_parent = self.allowed_feature(new_value)
+                        else:
+                            new_parent = None
                         FeatureHistory.add_history(
                             request.user, feature, "updated parent",
                             feature.parent.name if feature.parent else "root", new_parent.name if new_parent else "root")
