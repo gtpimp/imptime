@@ -723,9 +723,9 @@ class FeatureQuerySet(QuerySet):
                                                               .order_by(direction)\
                                                               .values_list("feature_id", flat=True)
             if parent_feature_id is None:
-                feature_ids_in_order = feature_ids_in_order.filter(parent_id__isnull=True)
+                feature_ids_in_order = feature_ids_in_order.filter(feature__parent_id__isnull=True)
             else:
-                feature_ids_in_order = feature_ids_in_order.filter(parent_id=parent_feature_id)
+                feature_ids_in_order = feature_ids_in_order.filter(feature__parent_id=parent_feature_id)
                 
             if feature_ids_in_order.count() == 0:
                 return self
@@ -764,7 +764,6 @@ class Feature(BaseModel):
     @classmethod
     def get_root_feature(self, project_id):
         return Feature.objects.get(parent_id__isnull=True, project_id=project_id)
-
         
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -797,7 +796,8 @@ class ProjectFeatureOrder(BaseModel):
     @classmethod
     def renumber(self, project_id, parent_feature_id):
         feature_ids = Feature.objects.filter(project_id=project_id)\
-                                     .order_by_project_id(project_id).values_list('pk', flat=True)
+                                     .order_by_project_id(project_id, parent_feature_id)\
+                                     .values_list('pk', flat=True)
                                      
         if parent_feature_id is None:
             feature_ids = feature_ids.filter(parent_id__isnull=True)

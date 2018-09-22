@@ -33,7 +33,7 @@ import {
     getAllAvailableFeatureHeaders,
     updateFeatureMienHeaders,
     getFeatureHeaderListForMien,
-    updateFeatureParent,
+    updateFeaturePosition,
     expandFeatureInTree
 } from '../actions/Features'
 
@@ -103,9 +103,11 @@ class FeatureList extends Component {
      *     }
      * }*/
 
-    onReorder = ({node, new_parent}) => {
+    onReorder = ({node, new_parent, sibling_node_before}) => {
         const { dispatch } = this.props
-        dispatch(updateFeatureParent(node.id, (new_parent && new_parent.id) || null))
+        dispatch(updateFeaturePosition(node.id,
+                                       (new_parent && new_parent.id) || null,
+                                       (sibling_node_before && sibling_node_before.id) || null))
     }
 
     onExpandCollapse = ({node, expanded}) => {

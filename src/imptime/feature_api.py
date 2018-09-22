@@ -97,17 +97,33 @@ class FeatureViewSet(BaseViewSet):
                         FeatureHistory.add_history(
                             request.user, feature, "changed description",
                             old_description, feature.description)
-                        
-                elif field_name == 'parent_feature_id':
+
+                elif field_name == 'position':
                     if self.logged_in_permissions(feature.project).has_edit_feature:
-                        if new_value is not None:
-                            new_parent = self.allowed_feature(new_value)
+                        new_parent_id = new_value['parent_id']
+                        new_sibling_node_before_id = new_value['sibling_node_before_id']
+
+                        if new_parent_id != feature.parent_id:
+                            if new_parent_id is None:
+                                new_parent = Feature.get_root_feature(project)
+                            else:
+                                new_parent = self.allowed_feature(new_parent_id)
+                            FeatureHistory.add_history(
+                                request.user, feature, "updated parent",
+                                feature.parent.name, new_parent.name)
+                            feature.parent_id = new_parent.id
+
+                        if new_sibling_node_before_id is None:
+                            FeatureHistory.add_history(
+                                request.user, feature, "moved",
+                                None, "to top")
+                            ProjectFeatureOrder.insert_at_the_beginning(feature)
                         else:
-                            new_parent = Feature.get_root_feature(feature.project_id)
-                        FeatureHistory.add_history(
-                            request.user, feature, "updated parent",
-                            feature.parent.name if feature.parent else "root", new_parent.name)
-                        feature.parent = new_parent
+                            new_sibling_node_before = self.allowed_feature(new_sibling_node_before_id)
+                            FeatureHistory.add_history(
+                                request.user, feature, "moved",
+                                None, "after %s" % new_sibling_node_before.name)
+                            ProjectFeatureOrder.insert_after(feature, new_sibling_node_before)
 
                 elif field_name == 'feature_id_after':
                     if self.logged_in_permissions(feature.project).has_edit_features:

@@ -30,9 +30,7 @@ class CommonTree extends Component {
         }
         let node_before = this.getPreviousSibling(node, nextParentNode)
         
-        if ( node.parent_id !== (nextParentNode && nextParentNode.id) || null ) {
-            onReorder({node:node, new_parent:nextParentNode})
-        }
+        onReorder({node:node, new_parent:nextParentNode, sibling_node_before:node_before})
     }
 
     getPreviousSibling(node, new_parent_node) {

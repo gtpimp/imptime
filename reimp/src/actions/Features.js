@@ -98,8 +98,9 @@ export function updateFeatureDescription(feature_id, value) {
     return updateItem(ENTITY_KEY__FEATURE, [feature_id], "description", value)
 }
 
-export function updateFeatureParent(feature_id, parent_feature_id) {
-    return updateItem(ENTITY_KEY__FEATURE, [feature_id], "parent_feature_id", parent_feature_id)
+export function updateFeaturePosition(feature_id, parent_feature_id, sibling_node_before_id) {
+    return updateItem(ENTITY_KEY__FEATURE, [feature_id], "position",
+                      {parent_id:parent_feature_id, sibling_node_before_id})
 }
 
 export function expandFeatureInTree(feature_id, expanded) {
