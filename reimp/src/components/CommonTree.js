@@ -4,6 +4,7 @@ import { css } from 'emotion'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
 import SortableTree from 'react-sortable-tree'
+import { getVisibleNodeInfoAtIndex } from 'react-sortable-tree'
 import 'react-sortable-tree/style.css'
 
 class CommonTree extends Component {
@@ -21,10 +22,27 @@ class CommonTree extends Component {
 
     onNodeMoved = (args) => {
         const { onReorder } = this.props
-        const { node, nextParentNode } = args
+        const { node, nextParentNode, treeIndex } = args
+
+        let tree_index_previous_sibling = treeIndex - 1
+        if ( tree_index_previous_sibling < 0 ) {
+            tree_index_previous_sibling = null
+        }
+        let node_before = this.getNodeAtIndex(tree_index_previous_sibling)
+        if ( node_before.parent != node.parent ) {
+            node_before = null
+        }
+        
         if ( node.parent_id !== (nextParentNode && nextParentNode.id) || null ) {
             onReorder({node:node, new_parent:nextParentNode})
         }
+    }
+
+    getNodeAtIndex(treeIndex) {
+        const { items } = this.props
+        return getVisibleNodeInfoAtIndex({treeData: items,
+                                          index: treeIndex,
+                                          getNodeKey: (node) => node.id})
     }
 
     render() {
