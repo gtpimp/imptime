@@ -716,15 +716,13 @@ class SprintSnapshot(BaseModel):
     
 
 class FeatureQuerySet(QuerySet):
-    def order_by_project_id(self, project_id, parent_feature_id, descending=False):
+    def order_by_project_id(self, project_id, parent_feature_id=None, descending=False):
         if project_id:
             direction = ("-" if descending else "") + "order"
             feature_ids_in_order = ProjectFeatureOrder.objects.filter(project_id=project_id)\
                                                               .order_by(direction)\
                                                               .values_list("feature_id", flat=True)
-            if parent_feature_id is None:
-                feature_ids_in_order = feature_ids_in_order.filter(feature__parent_id__isnull=True)
-            else:
+            if parent_feature_id is not None:
                 feature_ids_in_order = feature_ids_in_order.filter(feature__parent_id=parent_feature_id)
                 
             if feature_ids_in_order.count() == 0:

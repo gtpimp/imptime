@@ -40,6 +40,11 @@ class FeatureViewSet(BaseViewSet):
             features = self.allowed_features()
             features = self.apply_filter(qs=features, raw_filter_args=filter_args)
 
+            if 'project_id' in filter_args:
+                features = features.order_by_project_id(project_id=filter_args['project_id'],
+                                                        parent_feature_id=None)
+                import pdb; pdb.set_trace()
+            
             features = self.apply_pagination(qs=features, pagination=pagination)
 
             if format_args.get('ids_only', None):
