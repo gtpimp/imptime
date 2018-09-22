@@ -34,6 +34,9 @@ class FeatureViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
+            if 'project_id' in filter_args:
+                Feature.ensure_root_feature_exists(filter_args['project_id'])
+                
             features = self.allowed_features()
             features = self.apply_filter(qs=features, raw_filter_args=filter_args)
 
@@ -100,10 +103,10 @@ class FeatureViewSet(BaseViewSet):
                         if new_value is not None:
                             new_parent = self.allowed_feature(new_value)
                         else:
-                            new_parent = None
+                            new_parent = Feature.get_root_feature(feature.project_id)
                         FeatureHistory.add_history(
                             request.user, feature, "updated parent",
-                            feature.parent.name if feature.parent else "root", new_parent.name if new_parent else "root")
+                            feature.parent.name if feature.parent else "root", new_parent.name)
                         feature.parent = new_parent
 
                 elif field_name == 'feature_id_after':

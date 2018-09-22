@@ -757,6 +757,15 @@ class Feature(BaseModel):
     def get_next_feature_number(self, project):
         return Feature.get_last_feature_number(project) +1
 
+    @classmethod
+    def ensure_root_feature_exists(self, project_id):
+        Feature.objects.get_or_create(name='root', number=1, project_id=project_id, parent_id=None)
+
+    @classmethod
+    def get_root_feature(self, project_id):
+        return Feature.objects.get(parent_id__isnull=True, project_id=project_id)
+
+        
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(Feature, self).save(*args, **kwargs)

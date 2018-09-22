@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { indexOf } from 'lodash'
 import { css } from 'emotion'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
 import SortableTree from 'react-sortable-tree'
-import { getVisibleNodeInfoAtIndex } from 'react-sortable-tree'
 import 'react-sortable-tree/style.css'
 
 class CommonTree extends Component {
@@ -28,21 +28,25 @@ class CommonTree extends Component {
         if ( tree_index_previous_sibling < 0 ) {
             tree_index_previous_sibling = null
         }
-        let node_before = this.getNodeAtIndex(tree_index_previous_sibling)
-        if ( node_before.parent != node.parent ) {
-            node_before = null
-        }
+        let node_before = this.getPreviousSibling(node, nextParentNode)
         
         if ( node.parent_id !== (nextParentNode && nextParentNode.id) || null ) {
             onReorder({node:node, new_parent:nextParentNode})
         }
     }
 
-    getNodeAtIndex(treeIndex) {
+    getPreviousSibling(node, new_parent_node) {
         const { items } = this.props
-        return getVisibleNodeInfoAtIndex({treeData: items,
-                                          index: treeIndex,
-                                          getNodeKey: (node) => node.id})
+
+        if ( new_parent_node === null ) {
+            new_parent_node = items
+        }
+        const pos_of_node = indexOf(new_parent_node.children, node)
+        const previous_sibling_pos = pos_of_node - 1
+        if ( previous_sibling_pos < 0 ) {
+            return null
+        }
+        return new_parent_node.children[previous_sibling_pos]
     }
 
     render() {
