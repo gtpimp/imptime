@@ -116,7 +116,7 @@ class FeatureViewSet(BaseViewSet):
                                 new_parent = self.allowed_feature(new_parent_id)
                             FeatureHistory.add_history(
                                 request.user, feature, "updated parent",
-                                feature.parent.name, new_parent.name)
+                                feature.parent.name if feature.parent else "root", new_parent.name)
                             feature.parent_id = new_parent.id
 
                         if new_sibling_node_before_id is None:
@@ -170,7 +170,7 @@ class FeatureViewSet(BaseViewSet):
                     if feature_parent.project_id != project_id:
                         raise Exception("Parent must belong to the same project")
                 else:
-                    feature_parent = None
+                    feature_parent = Feature.get_root_feature(project)
                 
                 feature = Feature.objects.create(project_id=project_id,
                                                  name=params['name'],
@@ -183,7 +183,7 @@ class FeatureViewSet(BaseViewSet):
                 return feature
 
             feature = create_feature()
-            feature = self._enrich_features_qs(Feature.objects.filter(pk=feature.id)).first()
+            feature = self._enrich_features_qs(Feature.objects.filter(pk=feature.id), project).first()
             context['item'] = FeatureSerializer(feature, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 

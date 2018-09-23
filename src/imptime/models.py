@@ -744,6 +744,8 @@ class Feature(BaseModel):
 
     objects = FeatureQuerySet.as_manager()
 
+    ROOT_NAME = "root"
+    
     @classmethod
     def get_last_feature_number(self, project):
         largest_number =  Feature.objects.filter(project=project)\
@@ -757,11 +759,11 @@ class Feature(BaseModel):
 
     @classmethod
     def ensure_root_feature_exists(self, project_id):
-        Feature.objects.get_or_create(name='root', number=1, project_id=project_id, parent_id=None)
+        Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None)
 
     @classmethod
     def get_root_feature(self, project_id):
-        return Feature.objects.get(parent_id__isnull=True, project_id=project_id)
+        return Feature.objects.get(name=self.ROOT_NAME, project_id=project_id)
         
     def save(self, *args, **kwargs):
         was_created = not self.id
