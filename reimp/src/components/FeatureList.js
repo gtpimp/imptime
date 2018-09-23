@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
+import { includes, difference, union } from 'lodash'
 import { default_theme as theme } from '../theme/default'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { logged_in_user } from '../actions/Auth'
@@ -34,7 +35,8 @@ import {
     updateFeatureMienHeaders,
     getFeatureHeaderListForMien,
     updateFeaturePosition,
-    expandFeatureInTree
+    expandFeatureInTree,
+    cancelCandidateFeature,
 } from '../actions/Features'
 
 class FeatureList extends Component {
@@ -103,6 +105,23 @@ class FeatureList extends Component {
      *     }
      * }*/
 
+    onSelectedFeature = (node) => {
+        const {dispatch, onSelectFeatures, selected_ids} = this.props
+        let selected_feature_ids = [node.id]
+        const feature_id = node.id
+        /* if (event.ctrlKey || event.metaKey) {
+         *     if (includes(selected_ids, feature_id)) {
+         *         selected_feature_ids = difference(selected_ids, [feature_id])
+         *     } else {
+         *         selected_feature_ids = union(selected_ids, [feature_id])
+         *     }
+         * }*/
+        if ( onSelectFeatures )  {
+            onSelectFeatures(selected_feature_ids)
+        }
+        dispatch(cancelCandidateFeature())
+    }
+   
     onReorder = ({node, new_parent, sibling_node_before}) => {
         const { dispatch } = this.props
         dispatch(updateFeaturePosition(node.id,
@@ -225,8 +244,9 @@ class FeatureList extends Component {
         return (
 
             <CommonTree items={features_as_structured_tree}
-                        onChange={this.onUpdateTree}
+                        //onChange={this.onUpdateTree}
                         onReorder={this.onReorder}
+                        onNodeSelected={this.onSelectedFeature}
                         onExpandCollapse={this.onExpandCollapse}
                         getAvailableHeaders={getAllAvailableFeatureHeaders}
                         getHeaderListForMien={getFeatureHeaderListForMien}
@@ -256,7 +276,7 @@ const makeMapStateToProps = () => {
     const selFeatureObjectsToRender = makeSelFeatureObjectsToRender()
     const selFeaturesAsStructuredTree = makeSelFeaturesAsStructuredTree()
     const mapStateToProps = (state, props) => {
-        const {list_key, header_list} = props
+        const {list_key, header_list, } = props
         const filter = getListFilter(state, list_key)
         const project_id = filter.project_id || null
         const project = getProject(state, project_id) || {}

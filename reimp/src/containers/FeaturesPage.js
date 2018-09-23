@@ -102,7 +102,7 @@ class FeaturesPage extends Component {
     renderLeftPane() {
 
         const {project_id,
-               list_key, feature_header_list } = this.props
+               list_key, feature_header_list, selected_feature_ids } = this.props
         
         return (
             <FeatureList list_key={list_key}

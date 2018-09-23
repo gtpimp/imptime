@@ -9,9 +9,9 @@ import 'react-sortable-tree/style.css'
 
 class CommonTree extends Component {
 
-    onNodeClicked = (args) => {
-        // window.alert("clicked")
-        // onNodeSelected(event, rowData.id)
+    onNodeClicked = (nodes) => {
+        const { onNodeSelected } = this.props
+        onNodeSelected(nodes[0].id)
     }
 
     onNodeVisiblityToggle = (args) => {
