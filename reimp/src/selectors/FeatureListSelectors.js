@@ -3,7 +3,7 @@ import {
     ENTITY_KEY__FEATURE,
 } from '../actions/ItemListKeyRegistry'
 import { each, union, intersection, get, compact, map,
-         includes, filter, keyBy, values } from 'lodash'
+         includes, filter, keyBy, values, sortBy } from 'lodash'
 import { getTreeFromFlatData } from 'react-sortable-tree'
 
 const selGetVisibleFeatureIds = (state, props) => {
@@ -198,13 +198,25 @@ export const makeSelFeaturesAsStructuredTree = () => {
                 return []
             }
             map(all_features_by_id, (feature) => feature.title = `${feature.name}_id${feature.id}__order${feature.order}`)
-            const tree = getTreeFromFlatData({flatData: values(all_features_by_id),
-                                              getKey: (node) => node.id,
-                                              getParentKey: (node) => node.parent_id,
-                                              rootKey: null})
-
+            let tree = getTreeFromFlatData({flatData: values(all_features_by_id),
+                                            getKey: (node) => node.id,
+                                            getParentKey: (node) => node.parent_id,
+                                            rootKey: null})
+            map(tree, (node) => recursivelySortTree(node))
             return tree
         }
     )
 }
 
+const recursivelySortTree = (node) => {
+
+    if ( ! node ) {
+        return node
+    }
+    if (! node.children ) {
+        return node
+    }
+    node.children = sortBy(node.children, (child_node) => (child_node && child_node.order) || 0)
+    map(node.children, (child_node) => recursivelySortTree(child_node))
+    return node
+}
