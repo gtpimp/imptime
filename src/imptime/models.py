@@ -787,9 +787,9 @@ class ProjectFeatureOrder(BaseModel):
         was_created = not self.id
         super(ProjectFeatureOrder, self).save(*args, **kwargs)
         if was_created:
-            RefreshNotifier().notify_model_create(self)
+            RefreshNotifier().notify_model_create(self, params={'feature_id':str(self.feature_id)})
         else:
-            RefreshNotifier().notify_model_update(self)
+            RefreshNotifier().notify_model_update(self, params={'feature_id':str(self.feature_id)})
 
     @classmethod
     def renumber(self, project_id, parent_feature_id):

@@ -111,7 +111,7 @@ class FeatureViewSet(BaseViewSet):
 
                         if new_parent_id != feature.parent_id:
                             if new_parent_id is None:
-                                new_parent = Feature.get_root_feature(project)
+                                new_parent = Feature.get_root_feature(feature.project)
                             else:
                                 new_parent = self.allowed_feature(new_parent_id)
                             FeatureHistory.add_history(
