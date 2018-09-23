@@ -43,7 +43,6 @@ class FeatureViewSet(BaseViewSet):
             if 'project_id' in filter_args:
                 features = features.order_by_project_id(project_id=filter_args['project_id'],
                                                         parent_feature_id=None)
-                import pdb; pdb.set_trace()
             
             features = self.apply_pagination(qs=features, pagination=pagination)
 
@@ -51,7 +50,9 @@ class FeatureViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in features.values_list(
                     'id', flat=True)]
             else:
-                features = self._enrich_features_qs(features)
+                if features.count() > 0:
+                    project_id = features[0].project_id
+                    features = self._enrich_features_qs(features, project_id)
                 s = FeatureSerializer(features, logged_in_user=request.user, many=True)
                 features_data = s.data
                 context['features'] = features_data
@@ -62,8 +63,8 @@ class FeatureViewSet(BaseViewSet):
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
 
-    def _enrich_features_qs(self, features):
-        features = features.prefetch_related('children')
+    def _enrich_features_qs(self, features, project_id):
+        features = features.prefetch_related('children', 'project_feature_orders')
         return features
 
     def update(self, request, pk):

@@ -197,7 +197,7 @@ export const makeSelFeaturesAsStructuredTree = () => {
             if ( ! all_features_by_id ) {
                 return []
             }
-            map(all_features_by_id, (feature) => feature.title = `${feature.name}_id${feature.id}`)
+            map(all_features_by_id, (feature) => feature.title = `${feature.name}_id${feature.id}__order${feature.order}`)
             const tree = getTreeFromFlatData({flatData: values(all_features_by_id),
                                               getKey: (node) => node.id,
                                               getParentKey: (node) => node.parent_id,

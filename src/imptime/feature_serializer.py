@@ -9,6 +9,7 @@ class FeatureSerializer(BaseSerializer):
     number = serializers.CharField()
     name = serializers.CharField()
     parent_id = serializers.CharField()
+    order = serializers.FloatField()
     children_ids = serializers.CharField()
     project_id = serializers.CharField()
     description = serializers.CharField()
@@ -21,6 +22,11 @@ class FeatureSerializer(BaseSerializer):
 
     def to_representation(self, feature, *args, **kwargs):
         feature.children_ids = [ x.id for x in feature.children.all() ]
+        project_feature_order = feature.project_feature_orders.first()
+        if project_feature_order is None:
+            feature.order = 0
+        else:
+            feature.order = project_feature_order.order
         feature.is_root_node = feature.parent_id is None
         return super(FeatureSerializer, self).to_representation(feature, *args, **kwargs)
     
