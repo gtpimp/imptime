@@ -11,7 +11,7 @@ class CommonTree extends Component {
 
     onNodeClicked = (nodes) => {
         const { onNodeSelected } = this.props
-        onNodeSelected(nodes[0].id)
+        onNodeSelected(nodes[0])
     }
 
     onNodeVisiblityToggle = (args) => {

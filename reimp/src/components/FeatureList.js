@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
-import { includes, difference, union } from 'lodash'
 import { default_theme as theme } from '../theme/default'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { logged_in_user } from '../actions/Auth'
@@ -106,9 +105,8 @@ class FeatureList extends Component {
      * }*/
 
     onSelectedFeature = (node) => {
-        const {dispatch, onSelectFeatures, selected_ids} = this.props
+        const {dispatch, onSelectFeatures} = this.props
         let selected_feature_ids = [node.id]
-        const feature_id = node.id
         /* if (event.ctrlKey || event.metaKey) {
          *     if (includes(selected_ids, feature_id)) {
          *         selected_feature_ids = difference(selected_ids, [feature_id])
@@ -276,7 +274,7 @@ const makeMapStateToProps = () => {
     const selFeatureObjectsToRender = makeSelFeatureObjectsToRender()
     const selFeaturesAsStructuredTree = makeSelFeaturesAsStructuredTree()
     const mapStateToProps = (state, props) => {
-        const {list_key, header_list, } = props
+        const {list_key, header_list, onSelectFeatures} = props
         const filter = getListFilter(state, list_key)
         const project_id = filter.project_id || null
         const project = getProject(state, project_id) || {}
@@ -318,7 +316,8 @@ const makeMapStateToProps = () => {
             candidate_feature: candidate_feature,
             is_creating_feature: is_creating_feature,
             header_list: header_list,
-            logged_in_user_id
+            logged_in_user_id,
+            onSelectFeatures
         }
     }
     return mapStateToProps

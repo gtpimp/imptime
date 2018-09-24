@@ -191,13 +191,16 @@ export const makeSelFeatureObjectsToRender = () => {
 
 export const makeSelFeaturesAsStructuredTree = () => {
     return createSelector(
-        [ selGetAllFeaturesById, selGetVisibleFeatureIds ],
-        ( all_features_by_id ) => {
+        [ selGetAllFeaturesById, selGetSelectedFeatureIds ],
+        ( all_features_by_id, selected_feature_ids ) => {
 
             if ( ! all_features_by_id ) {
                 return []
             }
-            map(all_features_by_id, (feature) => feature.title = `${feature.name}_id${feature.id}__order${feature.order}`)
+            map(all_features_by_id, function(feature) {
+                feature.selected = includes(selected_feature_ids, feature.id)
+                feature.title = `${feature.name}_id${feature.id}__order${feature.order}__selected${feature.selected}`
+            })
             let tree = getTreeFromFlatData({flatData: values(all_features_by_id),
                                             getKey: (node) => node.id,
                                             getParentKey: (node) => node.parent_id,
