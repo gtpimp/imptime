@@ -10,6 +10,7 @@ class FeatureSerializer(BaseSerializer):
     name = serializers.CharField()
     parent_id = serializers.CharField()
     order = serializers.FloatField()
+    project_id = serializers.CharField()
     children_ids = serializers.CharField()
     project_id = serializers.CharField()
     description = serializers.CharField()

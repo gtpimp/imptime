@@ -7,6 +7,7 @@ import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureFeaturesLoaded, getFeature} from '../actions/Features'
 import EditableFeatureName from '../components/EditableFeatureName'
+import EditableFeatureDescription from '../components/EditableFeatureDescription'
 
 class FeatureSidebar extends Component {
 
@@ -34,6 +35,10 @@ class FeatureSidebar extends Component {
     render() {
 
         const { feature_id, feature } = this.props
+
+        if (! feature_id ) {
+            return null
+        }
         
         return (
             <div className="sidebar feature-sidebar">
@@ -45,7 +50,8 @@ class FeatureSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
                 <PropertyStackComponent>
-                  <div className="property-text">{feature.description}
+                  <div className="property-text">
+                    <EditableFeatureDescription feature_id={feature_id} />
                   </div>
                 </PropertyStackComponent>
 

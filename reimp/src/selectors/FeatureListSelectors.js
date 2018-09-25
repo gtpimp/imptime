@@ -3,7 +3,7 @@ import {
     ENTITY_KEY__FEATURE,
 } from '../actions/ItemListKeyRegistry'
 import { each, union, intersection, get, compact, map,
-         includes, filter, keyBy, values, sortBy } from 'lodash'
+         take, includes, filter, keyBy, values, sortBy } from 'lodash'
 import { getTreeFromFlatData } from 'react-sortable-tree'
 
 const selGetVisibleFeatureIds = (state, props) => {
@@ -194,12 +194,15 @@ export const makeSelFeaturesAsStructuredTree = () => {
         [ selGetAllFeaturesById, selGetSelectedFeatureIds ],
         ( all_features_by_id, selected_feature_ids ) => {
 
+            const MAX_CHARS_FOR_SUBTITLE = 50
             if ( ! all_features_by_id ) {
                 return []
             }
             map(all_features_by_id, function(feature) {
                 feature.selected = includes(selected_feature_ids, feature.id)
-                feature.title = `${feature.name}_id${feature.id}__order${feature.order}__selected${feature.selected}`
+                // feature.title = `${feature.name}_id${feature.id}__order${feature.order}__selected${feature.selected}`
+                feature.title = feature.name
+                feature.subtitle = take(feature.description, MAX_CHARS_FOR_SUBTITLE)
             })
             let tree = getTreeFromFlatData({flatData: values(all_features_by_id),
                                             getKey: (node) => node.id,
