@@ -129,7 +129,9 @@ class FeatureList extends Component {
 
     onExpandCollapse = ({node, expanded}) => {
         const { dispatch } = this.props
-        dispatch(expandFeatureInTree(node.id, expanded))
+        if ( node ) {
+            dispatch(expandFeatureInTree(node.id, expanded))
+        }
     }
     
     /* reorderFeature(index_of_row_being_moved, index_of_destination) {

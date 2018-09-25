@@ -16,6 +16,24 @@ class CommonTree extends Component {
                        searchFoundCount: null }
     }
 
+    componentDidMount() {
+        const { items_by_id, onExpandCollapse, selected_item_ids } = this.props
+        map(selected_item_ids, function(item_id) {
+            const node = items_by_id[item_id]
+            onExpandCollapse({node, expanded:true})
+        })
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { items_by_id, onExpandCollapse } = new_props
+        if ( new_props.selected_item_ids !== this.props.selected_item_ids ) {
+            map(new_props.selected_item_ids, function(item_id) {
+                const node = items_by_id[item_id]
+                onExpandCollapse({node, expanded:true})
+            })
+        }
+    }
+
     selectPrevMatch = () => {
         const { searchFocusIndex, searchFoundCount } = this.state;
         this.setState({
