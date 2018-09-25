@@ -252,6 +252,9 @@ class BaseViewSet(viewsets.ViewSet):
                                       business__business_permissions__user=self.request.user,
                                       business__business_permissions__can_view_invoices=True)
 
+    def allowed_testables(self):
+        return Testable.objects.filter(project__in=self.allowd_projects())
+    
     def allowed_issue_histories(self): 
         non_sensitive = IssueHistory.objects.filter(money_sensitive=False,
                                                     original_issue__project__business__in=self.allowed_projects()\
