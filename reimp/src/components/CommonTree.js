@@ -88,7 +88,7 @@ class CommonTree extends Component {
         const { items } = this.props
 
         if ( new_parent_node === null ) {
-            new_parent_node = items
+            new_parent_node = { children:items }
         }
         const pos_of_node = indexOf(new_parent_node.children, node)
         const previous_sibling_pos = pos_of_node - 1
