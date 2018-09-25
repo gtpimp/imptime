@@ -5,6 +5,7 @@ import { default_theme as theme } from '../theme/default'
 const style = css`
 display: flex;
 flex-direction: column;
+flex: 1;
 position: relative;
 padding-top: ${theme.spacing.one};
 padding-bottom: ${theme.spacing.one};
