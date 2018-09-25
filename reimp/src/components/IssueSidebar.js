@@ -388,14 +388,15 @@ class IssueSidebar extends Component {
             return null
         }
         return (
-            <PropertyStackComponent key="featurestack" title="Feature">
+            <SidebarProperty key="featurestack">
+              <SidebarSectionTitle title="Features" />
               <div>
                 Bring this feature's issues
                 <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
                   together
                 </button>
               </div>
-            </PropertyStackComponent>
+            </SidebarProperty>
         )
     }
 
@@ -403,10 +404,10 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <MienFeature key="reviewstack" feature_name="issue_reviews">
-              <PropertyStackComponent>
+              <SidebarProperty key="featurestack">
                 <SidebarSectionTitle title="Reviews" />
                 <IssueReviewPanel issue_id={issue.id} />
-              </PropertyStackComponent>
+              </SidebarProperty>
             </MienFeature>
         )
     }
@@ -432,7 +433,7 @@ class IssueSidebar extends Component {
                         this.renderDependancyStack(),
                         this.renderAttachmentsStack(),
                         this.renderFeatureStack(),
-                        this.renderReviewsStack()
+                        this.renderReviewsStack(),
                     ]
                   }
                 </SidebarContainer>
