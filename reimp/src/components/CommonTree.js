@@ -162,7 +162,9 @@ class CommonTree extends Component {
                                                   style={{verticalAlign: 'middle'}}
                                                   onClick={() => this.onNodeClicked(rowInfo)}
                                           >
-                                            <input type="checkbox" checked={includes(selected_item_ids, rowInfo.node.id)} />
+                                            <input type="checkbox"
+                                                   readOnly={true}
+                                                   checked={includes(selected_item_ids, rowInfo.node.id)} />
                                           </button>,
                                       ],
                                   })}
