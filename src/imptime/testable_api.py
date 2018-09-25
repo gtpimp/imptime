@@ -142,7 +142,7 @@ class TestableViewSet(BaseViewSet):
 
             if issue:
                 testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
-                feature = testable.feature
+                feature = testable.features.all().first()
             elif feature:
                 testable = Testable.objects.filter(features=feature).get(pk=testable_id)
                 issue = testable.issue

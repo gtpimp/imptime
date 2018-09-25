@@ -39,9 +39,9 @@ class EditableIssueTestable extends Component {
     onChange(new_value) {
         const { dispatch, issue_id, testable_id } = this.props
         if ( testable_id ) {
-            dispatch(updateIssueTestable(issue_id, testable_id, new_value.testable))
+            dispatch(updateIssueTestable(issue_id, testable_id, new_value.testable, new_value.name))
         } else {
-            dispatch(createIssueTestable(issue_id, new_value.testable))
+            dispatch(createIssueTestable(issue_id, new_value.testable, new_value.name))
         }
     }
 
