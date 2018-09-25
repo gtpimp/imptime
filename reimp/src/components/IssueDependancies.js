@@ -131,12 +131,25 @@ class IssueDependancies extends Component {
         )
     }
 
+    renderDependantIssueRow = (issue_id) => {
+        return (
+            <div key={issue_id}>
+              <div className={ issue_link }>
+                <IssueName issue_id={issue_id} /> (<IssueStatus issue_id={issue_id} />)
+            <div className={ remove_link } onClick={() => this.onDeleteIssueNeedingUs(issue_id)}>
+              Remove
+            </div>
+              </div>
+            </div>
+        )
+    }
+
     renderPredecessorIssues = () => {
         const { issue } = this.props
         return (
             <SidebarProperty key="predecessorissues">
               <div className={ info_tip }>
-                Predecessor issues are issues required in order to complete this issue.
+                Predecessor issues - required in order to complete this issue.
               </div>
               <div>
                 { map(issue.needs_issue_ids, (issue_id) =>
@@ -155,11 +168,11 @@ class IssueDependancies extends Component {
         return (
             <SidebarProperty key="dependantissues">
               <div className={ info_tip }>
-                Dependant issues are issues that can only be done after this issue.
+                Dependant issues - can only be done after this issue.
               </div>
               <div>
                 { map(issue.issue_ids_needing_us, (issue_id) =>
-                    this.renderIssueRow(issue_id)
+                    this.renderDependantIssueRow(issue_id)
                 )}
               </div>
               <SidebarAddButton

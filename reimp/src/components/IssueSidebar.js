@@ -293,13 +293,11 @@ class IssueSidebar extends Component {
         const { issue } = this.props
         return (
             <MienFeature key="estimatesstack" feature_name="issue_estimates">
-              <SidebarSectionTitle title="Estimates" />
-              <PropertyStackComponent>
-                <div>
-                  <EditableIssueEstimate issue_id={issue.id} />
-                </div>
+              <SidebarProperty key="estimatesstackproperty">
+                <SidebarSectionTitle title="Estimates" />
+                <EditableIssueEstimate issue_id={issue.id} />
                 <IssueEstimatesSummary issue_id={issue.id} />
-              </PropertyStackComponent>
+              </SidebarProperty>
             </MienFeature>
         )
     }
@@ -384,7 +382,6 @@ class IssueSidebar extends Component {
                 <SidebarContainer>
                   { issue.id && 
                     [
-                        this.renderEstimatesStack(),
                         this.renderIssueNumberStack(),
                         this.renderTitleStack(),
                         this.renderCreationStack(),
@@ -394,6 +391,7 @@ class IssueSidebar extends Component {
                         this.renderDescriptionStack(),
                         this.renderTestablesStack(),
                         this.renderCommentsStack(),
+                        this.renderEstimatesStack(),
                         this.renderDependancyStack(),
                         this.renderAttachmentsStack(),
                         this.renderFeatureStack(),

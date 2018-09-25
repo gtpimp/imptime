@@ -7,6 +7,7 @@ font: ${theme.fonts.regular_normal};
 color: ${theme.colours.normal_text};
 margin: 0;
 padding: 0;
+padding-top: ${theme.spacing.two};
 `
 
 class SidebarSectionTitle extends Component {
