@@ -5,7 +5,7 @@ import PropertyStack from '../components/PropertyStack'
 import PropertyStackComponent from '../components/PropertyStackComponent'
 import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import {ensureFeaturesLoaded, getFeature} from '../actions/Features'
+import {ensureFeaturesLoaded, getFeature, deleteFeatures} from '../actions/Features'
 import EditableFeatureName from '../components/EditableFeatureName'
 import EditableFeatureDescription from '../components/EditableFeatureDescription'
 
@@ -30,6 +30,14 @@ class FeatureSidebar extends Component {
 	if ( feature_id ) {
 	    dispatch(ensureFeaturesLoaded([feature_id]))
 	}
+    }
+
+    onDeleteFeature = () => {
+        const { dispatch, feature_id } = this.props
+        if (! window.confirm("Are you sure you want to delete this feature?") ) {
+            return false
+        }
+        dispatch(deleteFeatures([feature_id]))
     }
 
     render() {
@@ -60,6 +68,10 @@ class FeatureSidebar extends Component {
                     <div className="named-property__name">Created</div>
                     <div className="named-property__value"><Timestamp format="short-date" value={moment(feature.created)}/></div>
                   </div>
+                </PropertyStackComponent>
+
+                <PropertyStackComponent>
+                  <div onClick={this.onDeleteFeature} className="icon--small-delete" />
                 </PropertyStackComponent>
                 
               </PropertyStack>

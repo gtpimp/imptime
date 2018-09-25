@@ -716,6 +716,7 @@ class SprintSnapshot(BaseModel):
     
 
 class FeatureQuerySet(QuerySet):
+
     def order_by_project_id(self, project_id, parent_feature_id=None, descending=False):
         if project_id:
             direction = ("-" if descending else "") + "order"
@@ -776,8 +777,11 @@ class Feature(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
-    
 
+    def delete(self):
+        super(Feature, self).soft_delete()
+        
+            
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()
     feature = models.ForeignKey(Feature, related_name='project_feature_orders')
@@ -922,7 +926,7 @@ class FeatureHistory(BaseModel):
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
     after = models.TextField(blank=True, null=True)
-
+    
     @classmethod
     def add_history(self, user, feature, description, before, after):
         FeatureHistory.objects.create(created_by=user,

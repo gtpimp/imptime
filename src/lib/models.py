@@ -48,3 +48,8 @@ class BaseModel(models.Model):
             return None
         return self.share_ref_created_at + timezone.timedelta(days=settings.SHARE_REF_EXPIRY_DAYS)
  
+    def soft_delete(self):
+        self.deleted = True
+        self.save()
+        
+        

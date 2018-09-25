@@ -168,7 +168,7 @@ class BaseViewSet(viewsets.ViewSet):
         return IssueReview.objects.filter(issue__in=self.allowed_issues())
 
     def allowed_features(self):
-        return Feature.objects.filter(project__in=self.allowed_projects())
+        return Feature.objects.filter(project__in=self.allowed_projects(), deleted=False)
 
     def allowed_feature(self, pk):
         return self.allowed_features().get(pk=pk)
