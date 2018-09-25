@@ -17,6 +17,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueStatus
+from imptime.models import FeatureHistory
 from testable.models import Testable
 
 logger = logging.getLogger(__name__)
@@ -28,27 +29,41 @@ class TestableViewSet(BaseViewSet):
     def create(self, request):
         try:
             params = request.data
-            issue_pk = params['issue_id']
+            issue_pk = params.get('issue_id')
+            feature_pk = params.get('feature_id')
             testable_value = params['testable']
-            issue = self.allowed_issue(issue_pk)
+            issue = self.allowed_issue(issue_pk) if issue_pk else None
+            feature = self.allowed_feature(feature_pk) if feature_pk else None
             testables = issue.testables.all().order_by('order').values_list('order', flat=True)
             max_order = 0
             if testables:
                 max_order = max(testables)
 
-            if not self.logged_in_permissions(issue.project.business).has_edit_description:
-                raise Exception("Can't edit testables")
+            project = issue.project.business if issue else feature.project
+                
+            if issue and not self.logged_in_permissions(project).has_edit_description:
+                raise Exception("Can't edit testables for issues")
+            if feature and not self.logged_in_permissions(project).has_edit_feature:
+                raise Exception("Can't edit testables for features")
                 
             testable = Testable.objects.get_or_create(issue=issue,
+                                                      feature=feature,
                                                       steps=testable_value,
-                                                      project_id=issue.project.business_id,
+                                                      project=project,
                                                       enriched_steps=MarkdownEnrichment(request.user)\
                                                                        .enrich(testable_value,
-                                                                               project_id=issue.project.business_id), #sic
+                                                                               project_id=project.id), #sic
                                                       order=max_order+1)[0]
-            issue.save()
-            IssueHistory.add_history(request.user, issue,
-                                     "added testable", "", testable.steps)
+
+            if issue:
+                issue.save()
+                IssueHistory.add_history(request.user, issue,
+                                         "added testable", "", testable.steps)
+            if feature:
+                feature.save()
+                FeatureHistory.add_history(request.user, feature,
+                                           "added testable", "", testable.steps)
+                
             data = {'status': 'success'}
 
         except Exception, ex:
@@ -60,26 +75,42 @@ class TestableViewSet(BaseViewSet):
     def update(self, request, pk):
         try:
             params = request.data
-            issue_pk = params['issue_id']
+            issue_pk = params.get('issue_id')
+            feature_pk = params.get('feature_id')
             testable_id = params['testable_id']
             testable_value = params['testable']
 
-            issue = self.allowed_issue(issue_pk)
+            issue = self.allowed_issue(issue_pk) if issue_pk else None
+            feature = self.allowed_feature(feature_pk) if feature_pk else None
+            project = issue.project.business if issue else feature.project
 
-            if not self.logged_in_permissions(issue.project.business).has_edit_description:
-                raise Exception("Can't edit testables")
-            
-            testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
+            if issue and not self.logged_in_permissions(project).has_edit_description:
+                raise Exception("Can't edit testables for issues")
+            if feature and not self.logged_in_permissions(project).has_edit_feature:
+                raise Exception("Can't edit testables for features")
+
+            if issue:
+                testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
+                feature = testable.feature
+            elif feature:
+                testable = Testable.objects.filter(feature=feature).get(pk=testable_id)
+                issue = testable.issue
+                
             old_testable_value = testable.steps
             testable.steps = testable_value
             testable.enriched_steps = MarkdownEnrichment(request.user)\
                                                 .enrich(testable.steps,
-                                                        project_id=issue.project.business_id) #sic
+                                                        project_id=project.id) #sic
 
-            IssueHistory.add_history(request.user, issue, "edited testable",
-                                     old_testable_value, testable.steps)
+            if issue:
+                IssueHistory.add_history(request.user, issue, "edited testable",
+                                         old_testable_value, testable.steps)
+                issue.save()
+            if feature:
+                FeatureHistory.add_history(request.user, issue, "edited testable",
+                                         old_testable_value, testable.steps)
+                feature.save()
             testable.save()
-            issue.save()
             data = {'status': 'success'}
 
         except Exception, ex:

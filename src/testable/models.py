@@ -7,11 +7,12 @@ from django.db import models
 from lib.quality_helper import Quality
 from lib.fields import ProtectedForeignKey
 from timepiece.models import Issue, Business
-import re
+from imptime.models import Feature
 
 class Testable(models.Model):
     include_in_regression_test = models.BooleanField(default=True, blank=True)
-    issue = models.ForeignKey(Issue, blank=True, null=False, related_name='testables')
+    issue = models.ForeignKey(Issue, blank=True, null=True, related_name='testables')
+    features = models.ManyToManyField(Feature, blank=True, null=True, related_name='testables')
     steps = models.TextField(null=False)
     enriched_steps = models.TextField(null=True)
     order = models.IntegerField(null=False, default=0)

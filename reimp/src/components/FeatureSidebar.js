@@ -1,13 +1,15 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import Timestamp from '../components/Timestamp'
-import PropertyStack from '../components/PropertyStack'
-import PropertyStackComponent from '../components/PropertyStackComponent'
+import { map } from 'lodash'
+import Timestamp from './Timestamp'
+import PropertyStack from './PropertyStack'
+import PropertyStackComponent from './PropertyStackComponent'
 import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureFeaturesLoaded, getFeature, deleteFeatures} from '../actions/Features'
-import EditableFeatureName from '../components/EditableFeatureName'
-import EditableFeatureDescription from '../components/EditableFeatureDescription'
+import EditableFeatureName from './EditableFeatureName'
+import EditableFeatureDescription from './EditableFeatureDescription'
+import EditableFeatureTestable from './EditableFeatureTestable'
 
 class FeatureSidebar extends Component {
 
@@ -40,6 +42,19 @@ class FeatureSidebar extends Component {
         dispatch(deleteFeatures([feature_id]))
     }
 
+    renderTestablesStack() {
+        const { feature, testables } = this.props
+        return (
+            <PropertyStackComponent title="Testables">
+              { map(testables, function (testable, index) {
+                    return <EditableFeatureTestable key={feature.id+"_"+testable.id} feature_id={feature.id} testable_id={testable.id}/>
+                })
+              }
+              <EditableFeatureTestable feature_id={feature.id} testable_id={null}/>
+            </PropertyStackComponent>
+        )
+    }
+
     render() {
 
         const { feature_id, feature } = this.props
@@ -70,6 +85,8 @@ class FeatureSidebar extends Component {
                   </div>
                 </PropertyStackComponent>
 
+                { this.renderTestablesStack() }
+                
                 <PropertyStackComponent>
                   <div onClick={this.onDeleteFeature} className="icon--small-delete" />
                 </PropertyStackComponent>

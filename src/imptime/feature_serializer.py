@@ -1,6 +1,7 @@
 import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer
+from testable_serializer import TestableSerializer
 logger = logging.getLogger(__name__)
 
 class FeatureSerializer(BaseSerializer):
@@ -17,6 +18,7 @@ class FeatureSerializer(BaseSerializer):
     description = serializers.CharField()
     created = serializers.DateTimeField()
     is_root_node = serializers.BooleanField()
+    testables = TestableSerializer(many=True, source="testables_in_order")
     
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')

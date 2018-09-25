@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import Textarea from 'react-expanding-textarea'
 
-class IssueTestableForm extends Component {
+class TestableForm extends Component {
 
     constructor(props) {
         super(props)
@@ -77,4 +77,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'issue_testable_form'})(IssueTestableForm))
+export default connect(mapStateToProps)(reduxForm({form:'testable_form'})(TestableForm))

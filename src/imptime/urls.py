@@ -93,6 +93,8 @@ router.register(r'auto_clock', clock_api.ClockViewSet,
                 base_name='auto_clock') #duplicate of /clock, maybe to be resolved, unclear right not if they'll diverge
 router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
+router.register(r'feature/testable', testable_api.TestableViewSet,
+                base_name='testable')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
                 base_name='visual_spec_document')
 router.register(r'visual_spec_issue', visual_spec_issue_api.VisualSpecIssueViewSet,
