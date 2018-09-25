@@ -77,9 +77,13 @@ class TestableViewSet(BaseViewSet):
             issue_pk = params.get('issue_id')
             feature_pk = params.get('feature_id')
             testable_value = params['testable']
+            name = params.get('name', None)
             issue = self.allowed_issue(issue_pk) if issue_pk else None
             feature = self.allowed_feature(feature_pk) if feature_pk else None
-            testables = issue.testables.all().order_by('order').values_list('order', flat=True)
+            if issue:
+                testables = issue.testables.all().order_by('order').values_list('order', flat=True)
+            elif feature:
+                testables = feature.testables.all().order_by('order').values_list('order', flat=True)
             max_order = 0
             if testables:
                 max_order = max(testables)
@@ -92,19 +96,20 @@ class TestableViewSet(BaseViewSet):
                 raise Exception("Can't edit testables for features")
                 
             testable = Testable.objects.get_or_create(issue=issue,
-                                                      feature=feature,
+                                                      name=name,
                                                       steps=testable_value,
                                                       project=project,
                                                       enriched_steps=MarkdownEnrichment(request.user)\
                                                                        .enrich(testable_value,
                                                                                project_id=project.id), #sic
                                                       order=max_order+1)[0]
-
             if issue:
                 issue.save()
                 IssueHistory.add_history(request.user, issue,
                                          "added testable", "", testable.steps)
             if feature:
+                testable.features.add(feature)
+                testable.save()
                 feature.save()
                 FeatureHistory.add_history(request.user, feature,
                                            "added testable", "", testable.steps)
@@ -124,6 +129,7 @@ class TestableViewSet(BaseViewSet):
             feature_pk = params.get('feature_id')
             testable_id = params['testable_id']
             testable_value = params['testable']
+            name = params.get('name', None)
 
             issue = self.allowed_issue(issue_pk) if issue_pk else None
             feature = self.allowed_feature(feature_pk) if feature_pk else None
@@ -138,22 +144,33 @@ class TestableViewSet(BaseViewSet):
                 testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
                 feature = testable.feature
             elif feature:
-                testable = Testable.objects.filter(feature=feature).get(pk=testable_id)
+                testable = Testable.objects.filter(features=feature).get(pk=testable_id)
                 issue = testable.issue
                 
             old_testable_value = testable.steps
+            old_name = testable.name
             testable.steps = testable_value
+            if name:
+                testable.name = name
             testable.enriched_steps = MarkdownEnrichment(request.user)\
                                                 .enrich(testable.steps,
                                                         project_id=project.id) #sic
 
             if issue:
-                IssueHistory.add_history(request.user, issue, "edited testable",
-                                         old_testable_value, testable.steps)
+                if old_testable_value != testable.steps:
+                    IssueHistory.add_history(request.user, issue, "edited testable steps",
+                                            old_testable_value, testable.steps)
+                if old_name != testable.name:
+                    IssueHistory.add_history(request.user, issue, "edited testable name",
+                                             old_name, testable.name)
                 issue.save()
             if feature:
-                FeatureHistory.add_history(request.user, issue, "edited testable",
-                                         old_testable_value, testable.steps)
+                if old_testable_value != testable.steps:
+                    FeatureHistory.add_history(request.user, feature, "edited testable steps",
+                                            old_testable_value, testable.steps)
+                if old_name != testable.name:
+                    FeatureHistory.add_history(request.user, feature, "edited testable name",
+                                             old_name, testable.name)
                 feature.save()
             testable.save()
             data = {'status': 'success'}
@@ -167,14 +184,24 @@ class TestableViewSet(BaseViewSet):
     def delete(self, request, pk):
         try:
             params = request.data
-            issue_pk = params['issue_id']
+            issue_pk = params.get('issue_id')
+            feature_pk = params.get('feature_id')
             testable_id = params['testable_id']
-            issue = self.allowed_issue(issue_pk)
-            testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
-            IssueHistory.add_history(request.user, issue, "deleted testable", testable.steps, "")
+            if issue_pk:
+                issue = self.allowed_issue(issue_pk)
+                testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
+                IssueHistory.add_history(request.user, issue, "deleted testable", testable.steps, "")
+            if feature_pk:
+                feature = self.allowed_feature(feature_pk)
+                testable = Testable.objects.filter(features=feature).get(pk=testable_id)
             testable.delete()
-            Testable.renumber(issue.id)
-            issue.save()
+
+            if issue_pk:
+                Testable.renumber_for_issue(issue.id)
+                issue.save()
+            if feature_pk:
+                Testable.renumber_for_feature(feature.id)
+                feature.save()
 
             data = {'status': 'success'}
 

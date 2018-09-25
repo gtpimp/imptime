@@ -11,6 +11,9 @@ class Testable extends Component {
         return (
             <div className="issue-testable">
 
+              <div>
+                {testable.name}
+              </div>
               <div className="issue-testable__text" >
                 <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
               </div>

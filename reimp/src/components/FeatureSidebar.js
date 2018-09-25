@@ -107,6 +107,7 @@ export function mapStateToProps(state, props) {
         feature,
         project_id,
         project,
+        testables: feature && feature.testables
     }
 }
 

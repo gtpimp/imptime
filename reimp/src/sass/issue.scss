@@ -151,7 +151,7 @@ issue--grouped {
 
 .issue-comment, .issue-testable {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     margin-bottom: 10px;
     color: $color-10;

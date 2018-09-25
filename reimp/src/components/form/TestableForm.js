@@ -8,6 +8,7 @@ class TestableForm extends Component {
     constructor(props) {
         super(props)
         this.renderTextarea = this.renderTextarea.bind(this)
+        this.renderName = this.renderName.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
         this.keyDown = this.keyDown.bind(this)
     }
@@ -30,10 +31,25 @@ class TestableForm extends Component {
             <Textarea
                 rows="1"
                 className="textarea textarea--text-component textarea--testable"
-                placeholder="Testable"
+                placeholder="Testable steps"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
                 onKeyDown={this.keyDown}
+            />
+        )
+    }
+
+    renderName(field) {
+        const {input} = field
+        return (
+            <input
+                onKeyDown={this.keyDown}
+                maxLength="300"
+                className="textarea textarea--text-component textarea--testable"
+                placeholder="Testable name (optional)"
+                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
+                value={input.value}
+                ref={(ref)=> this.title_el=ref}
             />
         )
     }
@@ -50,6 +66,10 @@ class TestableForm extends Component {
               }
               <form onSubmit={handleSubmit}>
                 <div>
+                  <div className="issue_sidebar--textarea">
+                    <Field name="name"
+                           component={this.renderName} />
+                  </div>
                   <div className="issue_sidebar--textarea">
                     <Field name="testable"
                            component={this.renderTextarea} />
@@ -70,7 +90,7 @@ function mapStateToProps(state, props) {
 
     return {
         testable: testable,
-        initialValues: {testable:props.initial_value},
+        initialValues: {testable:props.initial_value.steps, name:props.initial_value.name},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel

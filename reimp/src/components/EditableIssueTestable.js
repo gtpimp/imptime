@@ -71,7 +71,7 @@ class EditableIssueTestable extends Component {
                                             permission_name='has_edit_description'>
               { testable.id &&
                 <EditableProperty property_key={'issue_testable_'+issue_id+'_'+testable.id}
-                                  initial_value={testable.steps}
+                                  initial_value={testable}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                 >

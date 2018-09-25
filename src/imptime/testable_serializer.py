@@ -18,7 +18,7 @@ class TestableSerializer(BaseSerializer):
     testable_steps = serializers.ListField(TestableStepSerializer, source="testable_steps_in_order")
 
     def to_representation(self, obj, *args, **kwargs):
-        obj.name = "Testable %s" % obj.order
+        obj.name = obj.name or "Testable %s" % obj.order
         obj.steps = self.convert_list_to_numbered_list(obj.steps)
         return super(TestableSerializer, self).to_representation(obj, *args, **kwargs)
 

@@ -37,9 +37,9 @@ class EditableFeatureTestable extends Component {
     onChange(new_value) {
         const { dispatch, feature_id, testable_id } = this.props
         if ( testable_id ) {
-            dispatch(updateFeatureTestable(feature_id, testable_id, new_value.testable))
+            dispatch(updateFeatureTestable(feature_id, testable_id, new_value.testable, new_value.name))
         } else {
-            dispatch(createFeatureTestable(feature_id, new_value.testable))
+            dispatch(createFeatureTestable(feature_id, new_value.testable, new_value.name))
         }
     }
 
@@ -60,7 +60,7 @@ class EditableFeatureTestable extends Component {
                                             permission_name='has_edit_feature'>
               { testable.id &&
                 <EditableProperty property_key={'feature_testable_'+feature_id+'_'+testable.id}
-                                  initial_value={testable.steps}
+                                  initial_value={testable}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                 >

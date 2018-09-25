@@ -759,7 +759,7 @@ class Feature(BaseModel):
         return Feature.get_last_feature_number(project) +1
 
     @property
-    def is_root(self, feature):
+    def is_root(self):
         return self.name == self.ROOT_NAME
     
     @classmethod
@@ -783,7 +783,8 @@ class Feature(BaseModel):
 
     def testables_in_order(self):
         return self.testables.all().order_by("order")
-            
+
+
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()
     feature = models.ForeignKey(Feature, related_name='project_feature_orders')

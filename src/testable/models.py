@@ -62,7 +62,7 @@ class Testable(models.Model):
         return self.testable_results.order_by("-checked_at").first()
 
     @classmethod
-    def renumber(self, issue_id):
+    def renumber_for_issue(self, issue_id):
         c = 1
         for t in Testable.objects.filter(issue_id=issue_id).order_by("order"):
             if t.order != c:
@@ -70,6 +70,16 @@ class Testable(models.Model):
                 t.save()
             c += 1
 
+    @classmethod
+    def renumber_for_feature(self, feature_id):
+        c = 1
+        for t in Testable.objects.filter(features=feature_id).order_by("order"):
+            if t.order != c:
+                t.order = c
+                t.save()
+            c += 1
+
+            
 class TestableStep(models.Model):
     instruction = models.TextField(null=False)
     testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_steps')

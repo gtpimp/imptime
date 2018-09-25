@@ -266,29 +266,31 @@ export function getAllAvailableFeatureHeaders() {
     return ALL_AVAILABLE_FEATURE_HEADERS
 }
 
-export function updateFeatureTestable(feature_id, testable_id, new_testable) {
-    const url = "imp/feature/testable/0/"
+export function updateFeatureTestable(feature_id, testable_id, new_testable, name) {
+    const url = "imp/issue/testable/0/"
     const field_name = "testable"
     const field_value = new_testable
     const method = "PUT"
     const data = { feature_id: feature_id,
                    testable_id: testable_id,
-                   testable: new_testable }
+                   testable: new_testable,
+                   name: name }
     return itemPost(ENTITY_KEY__FEATURE, [feature_id], url, field_name, field_value, method, data)
 }
 
-export function createFeatureTestable(feature_id, new_testable) {
-    const url = "imp/feature/testable/"
+export function createFeatureTestable(feature_id, new_testable, name) {
+    const url = "imp/issue/testable/"
     const field_name = "testable"
     const field_value = new_testable
     const method = "POST"
     const data = { feature_id: feature_id,
-                   testable: new_testable }
+                   testable: new_testable,
+                   name: name }
     return itemPost(ENTITY_KEY__FEATURE, [feature_id], url, field_name, field_value, method, data)
 }
 
 export function deleteFeatureTestable(feature_id, testable_id) {
-    const url = "imp/feature/testable/0/"
+    const url = "imp/issue/testable/0/"
     const field_name = "testable"
     const field_value = testable_id
     const method = "DELETE"
