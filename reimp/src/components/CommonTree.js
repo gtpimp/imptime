@@ -9,6 +9,25 @@ import 'react-sortable-tree/style.css'
 
 class CommonTree extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = { searchString: '',
+                       searchFocusIndex: 0,
+                       searchFoundCount: null }
+    }
+
+    selectPrevMatch() {
+        const { searchFocusIndex, searchFoundCount } = this.state;
+        this.setState({
+            searchFocusIndex: searchFocusIndex !== null ? (searchFoundCount + searchFocusIndex - 1) % searchFoundCount : searchFoundCount - 1,
+        })
+    }
+
+    selectNextMatch() {
+        const { searchFocusIndex, searchFoundCount } = this.state;
+        this.setState({searchFocusIndex: searchFocusIndex !== null ? (searchFocusIndex + 1) % searchFoundCount : 0,})
+    }
+    
     onNodeClicked = (nodes) => {
         const { onNodeSelected } = this.props
         onNodeSelected(nodes[0])
@@ -47,9 +66,64 @@ class CommonTree extends Component {
         return new_parent_node.children[previous_sibling_pos]
     }
 
+    onSearched = (matches) => {
+        this.setState({searchFoundCount: matches.length,
+                       searchFocusIndex: matches.length > 0 ? searchFocusIndex % matches.length : 0})
+    }
+
+    renderSearchForm() {
+        const { searchString, searchFocusIndex, searchFoundCount } = this.state
+        return (
+            <form
+                style={{ display: 'inline-block' }}
+                onSubmit={event => {
+                        event.preventDefault();
+                }}
+            >
+              <label htmlFor="find-box">
+                Search:&nbsp;
+                <input
+                    id="find-box"
+                    type="text"
+                    value={searchString}
+                    onChange={event =>
+                        this.setState({ searchString: event.target.value })
+                    }
+                />
+              </label>
+
+              <button
+                  className="btn btn-info"
+                  type="button"
+                  disabled={!searchFoundCount}
+                  onClick={this.selectPrevMatch}
+              >
+            &lt;
+              </button>
+
+              <button
+                  className="btn btn-info"
+                  type="submit"
+                  disabled={!searchFoundCount}
+                  onClick={this.selectNextMatch}
+              >
+            &gt;
+              </button>
+
+              <span>
+            &nbsp;
+            {searchFoundCount > 0 ? searchFocusIndex + 1 : 0}
+            {' / '}
+            {searchFoundCount || 0}
+              </span>
+            </form>
+        )
+    }
+    
     render() {
         const { renderNode, getAvailableHeaders,
                 getHeaderListForMien, updateMienHeaders, header_list_name, items } = this.props
+        const { searchString, searchFocusIndex } = this.state
 
         return (
 
@@ -58,16 +132,20 @@ class CommonTree extends Component {
                                         updateMienHeaders={updateMienHeaders}
                                         header_list_name={header_list_name}
             >
-                <div className={css`height:100%`}>
-                  <SortableTree treeData={items}
-                                onChange={this.onNodeClicked}
-                                onVisibilityToggle={this.onNodeVisiblityToggle}
-                                getNodeKey={({node}) => node.id || "root"}
-                                onMoveNode={this.onNodeMoved}
-                  >
-                    {renderNode}
-                  </SortableTree>
-                </div>
+              <div className={css`height:100%`}>
+                { this.renderSearchForm() }
+                <SortableTree treeData={items}
+                              onChange={this.onNodeClicked}
+                              onVisibilityToggle={this.onNodeVisiblityToggle}
+                              getNodeKey={({node}) => node.id || "root"}
+                              onMoveNode={this.onNodeMoved}
+                              searchQuery={searchString}
+                              searchFocusOffset={searchFocusIndex}
+                              searchFinishCallback={this.onSearched}
+                >
+                  {renderNode}
+                </SortableTree>
+              </div>
               
             </MienListColumnConfigurable>
         )        
