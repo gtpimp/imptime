@@ -99,7 +99,7 @@ class EditableIssueTestable extends Component {
                       <div className="text-component--readonly"></div>
                       <div className="text-component--empty">
                         <div className="text-component--testable">
-                          <SidebarAddButton label="Add testable"o />
+                          <SidebarAddButton label="Add testable" />
                         </div>
                       </div>
                     </EditableProperty>

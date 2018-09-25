@@ -12,6 +12,7 @@ import {
     is_issue_invalidated
 } from '../actions/Issues'
 import IssueCommentForm from './form/IssueCommentForm'
+import SidebarAddButton from './SidebarAddButton'
 import { has_permission } from '../actions/Users'
 import IssueComment from './IssueComment'
 
@@ -65,7 +66,7 @@ class EditableIssueComment extends Component {
                                   initial_value={comment.comment}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
-                >
+                    >
                   <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
                                     issue_id={issue_id} comment={comment}/>
                   <IssueComment issue_id={issue_id}
@@ -81,11 +82,13 @@ class EditableIssueComment extends Component {
                                     initial_value=''
                                     onChange={this.onChange}
                                     can_edit={can_edit}
-                  >
+                    >
                     <IssueCommentForm form={'issue_comment_form_'+issue_id} issue_id={issue_id} />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">
-                      <div className="icon--add" data-tooltip="Create comment"></div>
+                      <div className="text-component--comment">
+                        <SidebarAddButton label="Add comment" />
+                      </div>
                     </div>
                   </EditableProperty>
                 </div>

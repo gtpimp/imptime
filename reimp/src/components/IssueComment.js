@@ -92,29 +92,38 @@ class IssueComment extends Component {
         return (
             <div className="issue-comment">
               { show_share_link && this.renderShareModal() }
-              
-              <div className="issue-comment__text" >
-                <RenderedMarkdown content={comment.enriched_comment || comment.comment} />
-              </div>
-              <div className="issue-comment__info" >
-                <div className="issue_sidebar--comment_type">
-                  <div className={"icon--comment-type--"+comment.comment_type} />
-                </div>
+              <div className="issue-comment__info">
                 <div className="issue_sidebar--comment_author">
-                  <OtherUser user_id={comment.author_id} />
+                  <div className="issue_sidebar--comment_author__name">
+                    <span>Comment by:</span>
+                    <OtherUser user_id={comment.author_id} />
+                  </div>
+                  <div className="issue_sidebar--comment_modified_date">
+                    {comment.modified}
+                  </div>
                 </div>
-                <div>
-                  {comment.modified}
+                <div className="issue-comment__text" >
+                  <RenderedMarkdown content={comment.enriched_comment || comment.comment} />
                 </div>
-                { onDelete &&
-                  <div onClick={onDelete} className="icon--small-delete" />
-                }
-                { can_annotate &&
-                  <div onClick={this.onAnnotate} className="icon--comment-annotate" />
-                }
-                { can_share &&
-                  <div onClick={this.onShare} className="icon--comment-share" />
-                }
+                <div className="issue_sidebar__options">
+                  { can_share &&
+                    <div onClick={this.onShare} className="issue_sidebar__options__left">
+                      Share
+                      <span className="issue_sidebar__options__spacer">|</span>
+                    </div>
+                  }
+                  { can_annotate &&
+                    <div onClick={this.onAnnotate} className="issue_sidebar__options__left">
+                      Annotate
+                      <span className="issue_sidebar__options__spacer">|</span>
+                    </div>
+                  }
+                  { onDelete &&
+                    <div onClick={onDelete} className="issue_sidebar__options__left">
+                      Remove
+                    </div>
+                  }
+                </div>
               </div>
             </div>
         )

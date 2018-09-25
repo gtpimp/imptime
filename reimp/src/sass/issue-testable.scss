@@ -37,14 +37,11 @@
 
 .issue-testable__options__left {
     display: flex;
-    flex: 5;
     justify-content: flex-start;
     align-items: center;
 }
 
-.issue-testable__options__right {
-    display: flex;
-    flex: 5;
-    justify-content: flex-end;
-    align-items: center;
+.issue-testable__options__spacer {
+    padding: 0 5px 0 5px;
+    color: #7b7b7b;
 }

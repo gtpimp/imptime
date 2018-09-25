@@ -35,7 +35,26 @@
 }
 
 .issue_sidebar--comment_author {
-    display: inline-block;
+    display: flex;
+    flex-direction: row;
+}
+
+.issue_sidebar--comment_author__name {
+    display: flex;
+    flex: 5;
+    justify-content: flex-start;
+    align-items: center;
+
+    span {
+        padding-right: 5px;
+    }
+}
+
+.issue_sidebar--comment_modified_date {
+    display: flex;
+    flex: 5;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .issue_sidebar--testable_date {
@@ -65,4 +84,22 @@
 
 .issue_sidebar__button_row {
     display: flex;
+}
+
+.issue_sidebar__options {
+    display: flex;
+    flex-direction: row;
+    font: $plain;
+    color: $color-36;
+}
+
+.issue_sidebar__options__left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.issue_sidebar__options__spacer {
+    padding: 0 5px 0 5px;
+    color: #7b7b7b;
 }

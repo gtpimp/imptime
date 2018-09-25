@@ -38,14 +38,15 @@ class IssueTestable extends Component {
                     }
                   </div>      
                 }
-                <div className="issue-testable__options">
+                <div className="issue_sidebar__options">
                   { onPromoteToIssue &&
-                    <div onClick={onPromoteToIssue} className="issue-testable__options__left">
+                    <div onClick={onPromoteToIssue} className="issue_sidebar__options__left">
                       Promote to issue
                     </div>
                   }
                   { onDelete &&
-                    <div onClick={onDelete} className="issue-testable__options__right">
+                    <div onClick={onDelete} className="issue_sidebar__options__left">
+                      <span className="issue_sidebar__options__spacer">|</span>
                       Remove
                     </div>
                   }

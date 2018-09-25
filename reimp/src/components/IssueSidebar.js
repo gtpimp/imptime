@@ -281,14 +281,14 @@ class IssueSidebar extends Component {
     renderCommentsStack() {
         const { issue, comments } = this.props
         return (
-            <PropertyStackComponent key="commentsstack">
+            <div key="commentsstack">
               <SidebarSectionTitle title="Comments" />
               { map(comments, function (comment, index) {
                     return <EditableIssueComment key={issue.id+"_"+comment.id} issue_id={issue.id} comment_id={comment.id}/>
                 })
               }
               <EditableIssueComment issue_id={issue.id} comment_id={null}/>
-            </PropertyStackComponent>
+            </div>
         )
     }
 
@@ -394,7 +394,8 @@ class IssueSidebar extends Component {
                         this.renderInfoStack(),
                         this.renderTagStack(),
                         this.renderDescriptionStack(),
-                        this.renderTestablesStack()
+                        this.renderTestablesStack(),
+                        this.renderCommentsStack()
                     ]
                   }
                   {/* { issue.id && 
