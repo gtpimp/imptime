@@ -7,6 +7,7 @@ import Floater from "react-floater"
 import {connect} from 'react-redux'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
+import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import CommonTable from './CommonTable'
 import 'react-virtualized/styles.css';
 import {
@@ -19,7 +20,7 @@ import {
     makeSelSelectedIssues,
     makeSelFeatureIssueIds,
     makeSelFeatureIssuesById,
-    makeSelSavingIssueIds,
+    makeSelSavingIssueIds, 
     makeSelIssues,
     makeSelIssueObjectsToRender
 } from '../selectors/IssueListSelectors'
@@ -263,6 +264,7 @@ class IssueList extends Component {
             selected_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(issue_id)
         }
         dispatch(setGloballySelectedIssueId(project_id, sprint_id, issue_id))
+        dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue_id))
         if ( onSelectIssues ) {
             onSelectIssues(selected_issue_ids)
         }
@@ -450,38 +452,6 @@ class IssueList extends Component {
             </div>
         )
     }
-
-    /* renderIssue(issue, index) {
-     *     const {
-     *         list_key,
-     *         saving_issue_ids,
-     *         invalidated_issue_ids,
-     *         selected_ids, highlighted_ids, loading_item_ids, expanded_issues,
-     *         header_list, cursor_item_id, tag_category_names
-     *     } = this.props
-     *     const key = issue.id + "_" + index
-     *     const issue_id = issue.id
-     *     const that = this
-
-     *     return <Issue
-     *                key={key}
-     *                list_key={list_key}
-     *                is_collapsed={false}
-     *                show_children={includes(expanded_issues, issue.id)}
-     *                onClickedIssue={that.onClickedIssue}
-     *                is_loading={loading_item_ids.indexOf(issue_id) !== -1}
-     *                is_selected={selected_ids.indexOf(issue_id) !== -1}
-     *                is_highlighted={highlighted_ids && highlighted_ids.indexOf(issue_id) !== -1}
-     *                is_cursor_item={""+issue.id===""+cursor_item_id}
-     *                is_invalidated={invalidated_issue_ids.indexOf(issue_id) !== -1}
-     *                is_saving={saving_issue_ids.indexOf(issue_id) !== -1}
-     *                issue_id={issue_id}
-     *                header_list={header_list}
-     *                onDelete={that.onDeleteIssue}
-     *                tag_category_names={tag_category_names}
-     *                is_fake={false}
-     *     />
-     * }*/
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
         const { sprint, issue_items, header_list, logged_in_user_id, selected_items,
