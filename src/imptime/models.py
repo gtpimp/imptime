@@ -757,6 +757,10 @@ class Feature(BaseModel):
     def get_next_feature_number(self, project):
         return Feature.get_last_feature_number(project) +1
 
+    @property
+    def is_root(self, feature):
+        return self.name == self.ROOT_NAME
+    
     @classmethod
     def ensure_root_feature_exists(self, project_id):
         Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None)

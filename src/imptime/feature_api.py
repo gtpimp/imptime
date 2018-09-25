@@ -89,6 +89,10 @@ class FeatureViewSet(BaseViewSet):
 
                 if field_name == "name":
                     if self.logged_in_permissions(feature.project).has_edit_feature:
+
+                        if feature.is_root:
+                            raise Exception("Can't edit root feature name")
+                        
                         old_name = feature.name
                         feature.name = new_value
                         FeatureHistory.add_history(
