@@ -13,24 +13,33 @@ class CommonTree extends Component {
         super(props)
         this.state = { searchString: '',
                        searchFocusIndex: 0,
-                       searchFoundCount: null }
+                       searchFoundCount: null,
+                       initial_expansion_done: false }
     }
 
     componentDidMount() {
-        const { items_by_id, onExpandCollapse, selected_item_ids } = this.props
-        map(selected_item_ids, function(item_id) {
-            const node = items_by_id[item_id]
-            onExpandCollapse({node, expanded:true})
-        })
+        this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { items_by_id, onExpandCollapse } = new_props
-        if ( new_props.selected_item_ids !== this.props.selected_item_ids ) {
-            map(new_props.selected_item_ids, function(item_id) {
-                const node = items_by_id[item_id]
-                onExpandCollapse({node, expanded:true})
+        this.refresh(new_props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { items_by_id, onExpandCollapse } = props
+        const { initial_expansion_done } = this.state
+        let node
+        if ( props.selected_item_ids !== this.props.selected_item_ids || !initial_expansion_done ) {
+            map(props.selected_item_ids, function(item_id) {
+                node = items_by_id[items_by_id[item_id].parent_id]
+                if ( node && !node.expanded ) {
+                    onExpandCollapse({node, expanded:true})
+                }
             })
+        }
+        if ( node && node.loaded !== false ){
+            this.setState({initial_expansion_done:true})
         }
     }
 

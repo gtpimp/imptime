@@ -114,6 +114,9 @@ class FeatureViewSet(BaseViewSet):
                         new_parent_id = new_value['parent_id']
                         new_sibling_node_before_id = new_value['sibling_node_before_id']
 
+                        if new_parent_id is None:
+                            new_parent_id = Feature.get_root_feature(feature.project).id
+                            
                         if new_parent_id != feature.parent_id:
                             if new_parent_id is None:
                                 new_parent = Feature.get_root_feature(feature.project)

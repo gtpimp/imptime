@@ -209,7 +209,7 @@ export const makeSelFeaturesAsStructuredTree = () => {
              *                                 getParentKey: (node) => node.parent_id,
              *                                 rootKey: null})*/
             const tree = createTree(all_features_by_id)
-            map(tree, (node) => recursivelySortTree(node))
+            recursivelySortTree(tree)
             return tree
         }
     )
@@ -245,15 +245,10 @@ const createTree = (items_by_id) => {
     return root_nodes
 }
 
-const recursivelySortTree = (node) => {
-
-    if ( ! node ) {
-        return node
-    }
-    if (! node.children ) {
-        return node
-    }
-    node.children = sortBy(node.children, (child_node) => (child_node && child_node.order) || 0)
-    map(node.children, (child_node) => recursivelySortTree(child_node))
-    return node
+const recursivelySortTree = (nodes) => {
+    nodes = sortBy(nodes, (node) => (node && node.order) || 0)
+    map(nodes, (node) => {
+        node.children = recursivelySortTree(node.children)
+    })
+    return nodes
 }
