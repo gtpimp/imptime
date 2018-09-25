@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { indexOf } from 'lodash'
+import { indexOf, map, initial } from 'lodash'
 import { css } from 'emotion'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
@@ -16,14 +16,14 @@ class CommonTree extends Component {
                        searchFoundCount: null }
     }
 
-    selectPrevMatch() {
+    selectPrevMatch = () => {
         const { searchFocusIndex, searchFoundCount } = this.state;
         this.setState({
             searchFocusIndex: searchFocusIndex !== null ? (searchFoundCount + searchFocusIndex - 1) % searchFoundCount : searchFoundCount - 1,
         })
     }
 
-    selectNextMatch() {
+    selectNextMatch = () =>  {
         const { searchFocusIndex, searchFoundCount } = this.state;
         this.setState({searchFocusIndex: searchFocusIndex !== null ? (searchFocusIndex + 1) % searchFoundCount : 0,})
     }
@@ -67,6 +67,14 @@ class CommonTree extends Component {
     }
 
     onSearched = (matches) => {
+        const { onExpandCollapse, items_by_id } = this.props
+        const { searchFocusIndex } = this.state
+
+        if ( matches.length > 0 && matches[searchFocusIndex] ) {
+            const match = matches[searchFocusIndex]
+            map(initial(match.path), (id) => onExpandCollapse({node:items_by_id[id], expanded:true}))
+        }
+        
         this.setState({searchFoundCount: matches.length,
                        searchFocusIndex: matches.length > 0 ? searchFocusIndex % matches.length : 0})
     }
@@ -156,7 +164,7 @@ class CommonTree extends Component {
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
-            onExpandCollapse,
+            onExpandCollapse, items_by_id, 
             selected_item_ids, onNodeSelected, onReorder, items, header_list, renderCell } = props
 
     const mien_id = getCurrentMienId(state)
@@ -170,6 +178,7 @@ function mapStateToProps(state, props) {
         onExpandCollapse,
         header_list_name,
         items,
+        items_by_id,
         selected_item_ids,
         header_list,
         mien_id,

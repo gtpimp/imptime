@@ -224,7 +224,7 @@ class FeatureList extends Component {
 
     render_tree() {
 
-        const { is_mien_configurer_active, header_list,
+        const { is_mien_configurer_active, header_list, features_by_id,
                 feature_items, selected_ids, features_as_structured_tree } = this.props
 
         if ( is_mien_configurer_active ) {
@@ -242,6 +242,7 @@ class FeatureList extends Component {
         return (
 
             <CommonTree items={features_as_structured_tree}
+                        items_by_id={features_by_id}
                         //onChange={this.onUpdateTree}
                         onReorder={this.onReorder}
                         onNodeSelected={this.onSelectedFeature}

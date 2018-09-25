@@ -75,7 +75,7 @@ class CommonTable extends Component {
         const content = renderCell(args)
         if (this.isRowSortable(rowIndex)) {
             return <DragHandle label={content} />
-        } else {
+        } else { 
             return content
         }
     }
