@@ -41,6 +41,7 @@ class TestableViewSet(BaseViewSet):
                 
             testable = Testable.objects.get_or_create(issue=issue,
                                                       steps=testable_value,
+                                                      project_id=issue.project.business_id,
                                                       enriched_steps=MarkdownEnrichment(request.user)\
                                                                        .enrich(testable_value,
                                                                                project_id=issue.project.business_id), #sic

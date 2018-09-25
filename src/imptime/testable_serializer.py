@@ -3,12 +3,19 @@ from base_serializer import BaseSerializer
 from rest_framework import serializers
 logger = logging.getLogger(__name__)
 
+class TestableStepSerializer(BaseSerializer):
+    id = serializers.CharField(source="pk")
+    instruction = serializers.CharField()
+    order = serializers.IntegerField()
+    refers_to_testable_id = serializers.CharField()
+
 class TestableSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")
     steps = serializers.CharField()
     enriched_steps = serializers.CharField()
     name = serializers.CharField()
     quality_error = serializers.CharField()
+    testable_steps = serializers.ListField(TestableStepSerializer, source="testable_steps_in_order")
 
     def to_representation(self, obj, *args, **kwargs):
         obj.name = "Testable %s" % obj.order

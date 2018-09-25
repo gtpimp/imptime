@@ -38,6 +38,10 @@ class Testable(models.Model):
             super(Testable, self).save()
 
     @property
+    def testable_steps_in_order(self):
+        return self.testable_steps.all().order_by("order")
+            
+    @property
     def clean_steps(self):
         s = self.steps.strip()
         if not s:
@@ -60,7 +64,13 @@ class Testable(models.Model):
                 t.order = c
                 t.save()
             c += 1
-    
+
+class TestableStep(models.Model):
+    instruction = models.TextField(null=False)
+    testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_steps')
+    refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='referred_by_testable_steps')
+    order = models.IntegerField(null=False, default=0)
+
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
