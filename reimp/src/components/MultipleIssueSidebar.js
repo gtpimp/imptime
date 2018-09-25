@@ -18,6 +18,11 @@ import {
     deleteIssues
 } from '../actions/Issues'
 
+import SidebarContainer from './SidebarContainer'
+import SidebarProperty from './SidebarProperty'
+import SidebarDetail from './SidebarDetail'
+import SidebarSectionTitle from './SidebarSectionTitle'
+
 class MultipleIssueSidebar extends Component {
 
     constructor(props) {
@@ -44,106 +49,98 @@ class MultipleIssueSidebar extends Component {
         dispatch(deleteIssues(issue_ids))
     }
 
-    render() {
-
+    renderInfoStack() {
         const {issues, issue_ids, project_id} = this.props
-
         return (
+            <SidebarProperty key="infostack">
+              <SidebarDetail label="Sprint">
+                <EditableIssueInSprint issue_ids={issue_ids}/>
+                {/* <div className="property-row">
+                    <div className="property-value">
+                    
+                    </div>
+                    <div className="property-col-small">
+                    <EditableMoveIssueToSprint issue_ids={issue_ids} />
+                    </div>
+                    <div className="property-col-small">
+                    <EditableCopyIssueToSprint issue_ids={issue_ids} />
+                    </div>
+                    </div> */}
+              </SidebarDetail>
 
-            <div className="sidebar issue-sidebar">
+              <SidebarDetail label="Parent Feature">
+                <EditableIssueParent issue_ids={issue_ids}/>
+              </SidebarDetail>
 
-              <PropertyStack>
+              <SidebarDetail label="Type">
+                <EditableIssueType issue_ids={issue_ids} project_id={project_id}/>
+              </SidebarDetail>
 
+              <SidebarDetail label="Status">
+                <EditableIssueStatus issue_ids={issue_ids} project_id={project_id}/>
+              </SidebarDetail>
+
+              <SidebarDetail label="Assigned to">
+                <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id}/>
+              </SidebarDetail>
+
+              <SidebarDetail label="Risky">
+                <EditableIssueRisky issue_ids={issue_ids} project_id={project_id}/>
+              </SidebarDetail>
+            </SidebarProperty>
+        )
+    }
+
+    renderIssueCount = () => {
+        const {issues, issue_ids, project_id} = this.props
+        return (
+            <SidebarProperty key="issuecountstack">
+              <SidebarSectionTitle title={`${issues.length} issues selected`} />
+            </SidebarProperty>
+        )
+    }
+
+    renderTagStack = () => {
+        const {issue_ids} = this.props
+        return (
+            <SidebarProperty key="tagstack">
+              <SidebarSectionTitle title="Common tags" />
+              <TagListFlat issue_ids={issue_ids}/>
+            </SidebarProperty>
+        )
+    }
+
+    renderButtons = () => {
+        const {issues, issue_ids, project_id} = this.props
+        return (
+            <div>
+              <PropertyStackComponent>
+                <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
+                  delete issues
+                </button>
+              </PropertyStackComponent>
+              
+              <MienFeature feature_name="multiple_issue_summary">
                 <PropertyStackComponent>
-                  { issues.length } issues selected
+                  <MultipleIssueSummary filter={{issue_ids:issue_ids}} project_id={project_id} auto_load={false} />
                 </PropertyStackComponent>
-
-                <PropertyStackComponent>
-
-                  <div className="property-row">
-                    <div className="property-label">
-                      Sprint
-                    </div>
-                    <div className="property-value">
-                      <div className="property-row">
-                        <div className="property-value">
-                          <EditableIssueInSprint issue_ids={issue_ids} />
-                        </div>
-                        <div className="property-col">
-                          <EditableCopyIssueToSprint issue_ids={issue_ids} />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="property-row">
-                    <div className="property-label">
-                      Parent feature
-                    </div>
-                    <div className="property-value">
-                      <EditableIssueParent issue_ids={issue_ids}/>
-                    </div>
-                  </div>
-
-                  <div className="property-row">
-                    <div className="property-label">
-                      Type
-                    </div>
-                    <div className="property-value">
-                      <EditableIssueType issue_ids={issue_ids} project_id={project_id} />
-                    </div>
-                  </div>
-
-                  <div className="property-row">
-                    <div className="property-label">
-                      Status
-                    </div>
-                    <div className="property-value">
-                      <EditableIssueStatus issue_ids={issue_ids} project_id={project_id} />
-                    </div>
-                  </div>
-
-                  <div className="property-row">
-                    <div className="property-label">
-                      Risky
-                    </div>
-                    <div className="property-value">
-                      <EditableIssueRisky issue_ids={issue_ids} project_id={project_id}/>
-                    </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-label">
-                      Assigned user
-                    </div>
-                    <div className="property-value">
-                      <EditableIssueAssignedUser issue_ids={issue_ids} project_id={project_id} />
-                    </div>
-                  </div>
-
-                </PropertyStackComponent>
-
-                <PropertyStackComponent>
-                  <div>
-                    Common tags:
-                    <TagListFlat issue_ids={issue_ids}/>
-                  </div>
-                </PropertyStackComponent>
-
-                <PropertyStackComponent>
-                  <button className="button button--danger issue_sidebar--button" onClick={this.onDelete}>
-                    delete issues
-                  </button>
-                </PropertyStackComponent>
-
-                <MienFeature feature_name="multiple_issue_summary">
-                  <PropertyStackComponent>
-                    <MultipleIssueSummary filter={{issue_ids:issue_ids}} project_id={project_id} auto_load={false} />
-                  </PropertyStackComponent>
-                </MienFeature>
-                
-              </PropertyStack>
+              </MienFeature>
             </div>
+        )
+    }
+
+    render() {
+        return (
+            <SidebarContainer>
+              {
+                  [
+                      this.renderIssueCount(),
+                      this.renderInfoStack(),
+                      this.renderTagStack(),
+                      this.renderButtons()
+                  ]
+              }
+            </SidebarContainer>
         )
     }
 }

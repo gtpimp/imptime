@@ -158,7 +158,7 @@ class IssueSidebar extends Component {
         )
     }
 
-    renderIssueNumberStack(key) {
+    renderIssueNumberStack = () => {
         const { issue } = this.props
         return (
             <SidebarProperty key="issuenumberstack">
