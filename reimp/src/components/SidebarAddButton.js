@@ -8,6 +8,7 @@ import add_icon from '../images/icon_add.svg'
 const new_tag_container = css`
 display: flex;
 flex-direction: row;
+cursor: pointer;
 
 & p {
 display: flex;
@@ -30,8 +31,23 @@ background-size: ${theme.spacing.three};
 `
 
 class SidebarAddButton extends Component {
+
+    renderClickableButton = () => {
+        const { label, onButtonClick } = this.props
+        return (
+            <div onClick={ onButtonClick } className={new_tag_container}>
+              <div className={icon_add} data-tooltip={label}></div>
+              <p key="newbuttonlabel">{ label }</p>
+            </div>
+        )
+    }
+
     render() {
-        const { label } = this.props
+        const { label, onButtonClick } = this.props
+
+        if (onButtonClick) {
+            return this.renderClickableButton()
+        }
 
         return (
             <div className={new_tag_container}>

@@ -1,6 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import map from 'lodash/map'
+
+import { default_theme as theme } from '../theme/default'
 import PropertyStackComponent from './PropertyStackComponent'
 import {
     ensureIssuesLoaded,
@@ -13,6 +16,30 @@ import IssueStatus from './IssueStatus'
 import IssueSelectorForm from './form/IssueSelectorForm'
 import ModalDialog from './ModalDialog'
 import PopupPanelHeading from './PopupPanelHeading'
+
+import SidebarProperty from './SidebarProperty'
+import SidebarAddButton from './SidebarAddButton'
+
+const info_tip = css`
+color: ${theme.colours.normal_text};
+padding: ${theme.spacing.one} 0 ${theme.spacing.one} 0;
+font-size: 12px;
+}
+`
+
+const issue_link = css`
+width: 100%;
+color: ${theme.colours.strong_text};
+padding: ${theme.spacing.one} 0 ${theme.spacing.one} 0;
+}
+`
+
+const remove_link = css`
+display: inline-block;
+color: ${theme.colours.notok};
+padding-left: 5px;
+cursor: pointer;
+`
 
 class IssueDependancies extends Component {
 
@@ -90,40 +117,63 @@ class IssueDependancies extends Component {
             dispatch(ensureIssuesLoaded(issue.needs_issue_ids))
         }
     }
-    
-    render() {
+
+    renderIssueRow = (issue_id) => {
+        return (
+            <div key={issue_id}>
+              <div className={ issue_link }>
+                <IssueName issue_id={issue_id} /> (<IssueStatus issue_id={issue_id} />)
+            <div className={ remove_link } onClick={() => this.onDeleteNeedsIssue(issue_id)}>
+              Remove
+            </div>
+              </div>
+            </div>
+        )
+    }
+
+    renderPredecessorIssues = () => {
+        const { issue } = this.props
+        return (
+            <SidebarProperty key="predecessorissues">
+              <div className={ info_tip }>
+                Predecessor issues are issues required in order to complete this issue.
+              </div>
+              <div>
+                { map(issue.needs_issue_ids, (issue_id) =>
+                    this.renderIssueRow(issue_id)
+                )}
+                <SidebarAddButton
+                    onButtonClick={this.onStartAddingNeedsIssue}
+                    label="Add predecessor issue" />
+              </div>
+            </SidebarProperty>
+        )
+    }
+
+    renderDependantIssues = () => {
+        const { issue } = this.props
+        return (
+            <SidebarProperty key="dependantissues">
+              <div className={ info_tip }>
+                Dependant issues are issues that can only be done after this issue.
+              </div>
+              <div>
+                { map(issue.issue_ids_needing_us, (issue_id) =>
+                    this.renderIssueRow(issue_id)
+                )}
+              </div>
+              <SidebarAddButton
+                  onButtonClick={this.onStartAddingIssueNeedingUs}
+                  label="Add dependant issue" />
+            </SidebarProperty>
+        )
+    }
+
+    renderModals = () => {
         const { issue } = this.props
         const { adding_issue_needs_us, adding_needs_issue } = this.state
         return (
-            <PropertyStackComponent>
-              <div className="property-label">
-                Other issues needed by this issue
-              </div>
-              <div className="property-value">
-                { map(issue.needs_issue_ids, (issue_id) =>
-                    <div className="property-row" key={issue_id}>
-                      <IssueName issue_id={issue_id} />
-                      &nbsp;(<IssueStatus issue_id={issue_id} />)
-                      <div onClick={() => this.onDeleteNeedsIssue(issue_id)}
-                           className="icon--small-delete" />
-                    </div>
-                  )}
-                    <div className="icon--add" onClick={this.onStartAddingNeedsIssue}></div>
-              </div>
-              <div className="property-label">
-                Other issues that need this issue
-              </div>
-              <div className="property-value">
-                { map(issue.issue_ids_needing_us, (issue_id) =>
-                    <div className="property-row" key={issue_id}>
-                      <IssueName issue_id={issue_id} />
-                      &nbsp;(<IssueStatus issue_id={issue_id} />)
-                      <div onClick={() => this.onDeleteIssueNeedingUs(issue_id)}
-                           className="icon--small-delete" />
-                    </div>
-                  )}
-              </div>
-              <div className="icon--add" onClick={this.onStartAddingIssueNeedingUs}></div>
+            <div key="issuedependencymodals">
               { adding_needs_issue &&
                 <ModalDialog isOpen={true}
                              onClose={this.onStopAddingIssueDependancy}
@@ -148,7 +198,17 @@ class IssueDependancies extends Component {
                   <IssueSelectorForm onSubmitted={this.onCreateIssueNeedingUs} />
                 </ModalDialog>
               }
-            </PropertyStackComponent>
+            </div>
+        )
+    }
+    
+    render() {
+        return (
+            [
+                this.renderPredecessorIssues(),
+                this.renderDependantIssues(),
+                this.renderModals()
+            ]
         )
     }  
 }

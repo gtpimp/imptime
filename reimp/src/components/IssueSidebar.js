@@ -229,7 +229,6 @@ class IssueSidebar extends Component {
               </SidebarDetail>
             </SidebarProperty>
         )
-        
     }
 
     renderTagStack() {
@@ -247,9 +246,7 @@ class IssueSidebar extends Component {
         return (
             <div key="dependancystack">
               <SidebarSectionTitle title="Dependancies" />
-              <PropertyStackComponent>
-                <IssueDependancies issue_id={issue.id} />
-              </PropertyStackComponent>
+              <IssueDependancies issue_id={issue.id} />
             </div>
         )
     }
@@ -387,6 +384,7 @@ class IssueSidebar extends Component {
                 <SidebarContainer>
                   { issue.id && 
                     [
+                        this.renderEstimatesStack(),
                         this.renderIssueNumberStack(),
                         this.renderTitleStack(),
                         this.renderCreationStack(),
@@ -395,26 +393,13 @@ class IssueSidebar extends Component {
                         this.renderTagStack(),
                         this.renderDescriptionStack(),
                         this.renderTestablesStack(),
-                        this.renderCommentsStack()
+                        this.renderCommentsStack(),
+                        this.renderDependancyStack(),
+                        this.renderAttachmentsStack(),
+                        this.renderFeatureStack(),
+                        this.renderReviewsStack()
                     ]
                   }
-                  {/* { issue.id && 
-                      [
-                      this.renderIssueNumberStack(),
-                      this.renderTitleStack(),
-                      this.renderCreationStack(),
-                      this.renderInfoStack(),
-                      this.renderTagStack(),
-                      this.renderDescriptionStack(),
-                      this.renderTestablesStack(),
-                      this.renderCommentsStack(),
-                      this.renderEstimatesStack(),
-                      this.renderDependancyStack(),
-                      this.renderAttachmentsStack(),
-                      this.renderFeatureStack(),
-                      this.renderReviewsStack()
-                      ]
-                      } */}
                 </SidebarContainer>
             )
         } else {

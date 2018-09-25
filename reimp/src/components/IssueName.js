@@ -36,12 +36,12 @@ class IssueName extends Component {
               { is_loading && "..." }
               { ! is_loading && open_on_click &&
                 <Link to={'/projects/' + issue.project_id + "/sprints/" + issue.sprint_id + "/issues/" + issue.id}>
-                  {issue.number } {issue.subject}
+                  #{issue.number } {issue.subject}
                 </Link>
               }
               { ! is_loading && !open_on_click &&
                 <div className="issue-name__link" onClick={this.on_clicked}>
-                  {issue.number } {issue.subject}
+                  #{issue.number } {issue.subject}
                 </div>
               }
             </div>
