@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from lib.quality_helper import Quality
+from lib.fields import ProtectedForeignKey
 from timepiece.models import Issue, Business
 import re
 

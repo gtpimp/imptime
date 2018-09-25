@@ -64,7 +64,7 @@ class FeatureViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def _enrich_features_qs(self, features, project_id):
-        features = features.prefetch_related('children', 'project_feature_orders')
+        features = features.prefetch_related('children', 'project_feature_orders', 'issues')
         return features
 
     def update(self, request, pk):
