@@ -26,6 +26,51 @@ logger = logging.getLogger(__name__)
 @permission_classes((IsAuthenticated,))
 class TestableViewSet(BaseViewSet):
 
+    def list(self, request):
+
+        try:
+            context = {}
+            params = request.GET.get('params', '{}')
+            params = json.loads(params)
+            pagination = params.get('pagination', {})
+            filter_args = params.get('filter', {})
+            format_args = params.get('format', {})
+
+            testables = self.allowed_testables()
+            testables = self.apply_filter(qs=testables, raw_filter_args=filter_args)
+
+            if 'sprint_id' in filter_args:
+                testables = testables.order_by_project_id(project_id=filter_args['sprint_id']) #sic
+            if 'copy_sprint_id' in filter_args:
+                testables = testables.order_by_project_id(project_id=filter_args['copy_sprint_id']) #sic
+
+            testables = self.apply_pagination(qs=testables, pagination=pagination)
+
+            if format_args.get('ids_only', None):
+                context['ids'] = [str(x) for x in testables.values_list(
+                    'id', flat=True)]
+            else:
+
+                detail_levels = format_args.get('detail_level', '').split(",")
+                if len(detail_levels) == 0:
+                    s = TestableSerializer(testables, logged_in_user=request.user, many=True)
+                elif 'estimates' in detail_levels:
+                    s = TestableWithEstimatesSerializer(testables, many=True)
+                elif 'general' in detail_levels:
+                    s = TestableGeneralDetailsSerializer(testables, many=True)
+                else:
+                    testables = self._enrich_testables_qs(testables)
+                    s = TestableSerializer(testables, logged_in_user=request.user, many=True)
+
+                testables_data = s.data
+                context['testables'] = testables_data
+            context['pagination'] = pagination
+            data = {'status': 'success', 'payload': context}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+        return HttpResponse(JSONRenderer().render(data))
+    
     def create(self, request):
         try:
             params = request.data
