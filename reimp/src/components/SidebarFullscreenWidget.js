@@ -1,9 +1,6 @@
 import React, {Component} from 'react'
 import { css } from 'emotion'
 
-import { default_theme as theme } from '../theme/default'
-import EditableIssueTitle from './EditableIssueTitle'
-
 const style = css`
 position: absolute;
 bottom: 0;

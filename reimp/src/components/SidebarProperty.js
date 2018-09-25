@@ -14,7 +14,7 @@ padding-bottom: ${theme.spacing.one};
 class SidebarProperty extends Component {
 
     render() {
-        const { title, children } = this.props
+        const { children } = this.props
         return (
             <div className={ style }>
               {children}

@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
 import { css } from 'emotion'
 
 import { default_theme as theme } from '../theme/default'

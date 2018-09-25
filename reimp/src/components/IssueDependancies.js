@@ -4,7 +4,6 @@ import { css } from 'emotion'
 import map from 'lodash/map'
 
 import { default_theme as theme } from '../theme/default'
-import PropertyStackComponent from './PropertyStackComponent'
 import {
     ensureIssuesLoaded,
     getIssue,

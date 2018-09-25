@@ -1,11 +1,7 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
 import { css } from 'emotion'
 
 import { default_theme as theme } from '../theme/default'
-import { getIssue } from '../actions/Issues'
-import Timestamp from './Timestamp'
-import OtherUser from './OtherUser'
 
 const main = css`
 display: flex;

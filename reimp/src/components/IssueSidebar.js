@@ -4,7 +4,6 @@ import map from 'lodash/map'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
-import EditableIssueTitle from './EditableIssueTitle'
 import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueRisky from './EditableIssueRisky'
@@ -15,8 +14,6 @@ import TagListFlat from './TagListFlat'
 //import EditableIssueAttachment from './EditableIssueAttachment'
 import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueParent from './EditableIssueParent'
-import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
-import EditableMoveIssueToSprint from './EditableMoveIssueToSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueType from './EditableIssueType'
 //import EditableIssueVisualSpecDocument from './visual_spec/EditableIssueVisualSpecDocument'
@@ -36,9 +33,7 @@ import SidebarDetail from './SidebarDetail'
 import SidebarAddButton from './SidebarAddButton'
 import SidebarManageButton from './SidebarManageButton'
 
-import OtherUser from './OtherUser'
 // import IssueDescription from './IssueDescription'
-import Timestamp from './Timestamp'
 //import moment from 'moment'
 import {
     ensureIssuesLoaded,
@@ -413,7 +408,7 @@ class IssueSidebar extends Component {
     }
 
     renderNarrow() {
-        const {issue, header_height, footer_height, toolbar_height } = this.props
+        const {issue} = this.props
 
         if (issue && issue.id) {
             return (

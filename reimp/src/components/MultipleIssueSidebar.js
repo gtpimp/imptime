@@ -1,11 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import MienFeature from './MienFeature'
 import EditableIssueAssignedUser from '../components/EditableIssueAssignedUser'
 import EditableIssueInSprint from '../components/EditableIssueInSprint'
-import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import EditableIssueStatus from '../components/EditableIssueStatus'
 import EditableIssueType from '../components/EditableIssueType'
 import EditableIssueParent from './EditableIssueParent'
@@ -50,7 +48,7 @@ class MultipleIssueSidebar extends Component {
     }
 
     renderInfoStack() {
-        const {issues, issue_ids, project_id} = this.props
+        const {issue_ids, project_id} = this.props
         return (
             <SidebarProperty key="infostack">
               <SidebarDetail label="Sprint">
@@ -92,7 +90,7 @@ class MultipleIssueSidebar extends Component {
     }
 
     renderIssueCount = () => {
-        const {issues, issue_ids, project_id} = this.props
+        const {issues} = this.props
         return (
             <SidebarProperty key="issuecountstack">
               <SidebarSectionTitle title={`${issues.length} issues selected`} />
@@ -111,7 +109,7 @@ class MultipleIssueSidebar extends Component {
     }
 
     renderButtons = () => {
-        const {issues, issue_ids, project_id} = this.props
+        const {issue_ids, project_id} = this.props
         return (
             <div>
               <PropertyStackComponent>
