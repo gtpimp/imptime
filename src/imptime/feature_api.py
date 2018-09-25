@@ -38,6 +38,7 @@ class FeatureViewSet(BaseViewSet):
                 Feature.ensure_root_feature_exists(filter_args['project_id'])
                 
             features = self.allowed_features()
+            features = features.filter(parent_id__isnull=False)
             features = self.apply_filter(qs=features, raw_filter_args=filter_args)
 
             if 'project_id' in filter_args:

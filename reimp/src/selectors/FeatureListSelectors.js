@@ -4,7 +4,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { each, union, intersection, get, compact, map,
          take, includes, filter, keyBy, values, sortBy } from 'lodash'
-import { getTreeFromFlatData } from 'react-sortable-tree'
+// import { getTreeFromFlatData } from 'react-sortable-tree'
 
 const selGetVisibleFeatureIds = (state, props) => {
     return get(state, ["item_list", props.list_key, "visible_item_ids"], null)
@@ -204,14 +204,45 @@ export const makeSelFeaturesAsStructuredTree = () => {
                 feature.title = feature.name
                 feature.subtitle = take(feature.description, MAX_CHARS_FOR_SUBTITLE)
             })
-            let tree = getTreeFromFlatData({flatData: values(all_features_by_id),
-                                            getKey: (node) => node.id,
-                                            getParentKey: (node) => node.parent_id,
-                                            rootKey: null})
+            /* let tree = getTreeFromFlatData({flatData: all_features_by_id,
+             *                                 getKey: (node) => node.id,
+             *                                 getParentKey: (node) => node.parent_id,
+             *                                 rootKey: null})*/
+            const tree = createTree(all_features_by_id)
             map(tree, (node) => recursivelySortTree(node))
             return tree
         }
     )
+}
+
+const createTree = (items_by_id) => {
+
+    if (! items_by_id ) {
+        return []
+    }
+    let parent_item
+    const root_nodes = []
+    map(values(items_by_id), (item) => item.children = [])
+    map(values(items_by_id), (item) => {
+        parent_item = items_by_id[item.parent_id]
+        if ( parent_item ) {
+            if ( ! parent_item.children ) {
+                parent_item.children = []
+            }
+            parent_item.children.push(item)
+        } else {
+            root_nodes.push(item)
+        }
+    })
+
+    const injectChildren = (node) => {
+        map(node.children, (child) => {
+            child.children = injectChildren(child)
+        })
+    }
+    map(root_nodes, (node) => injectChildren(node))
+    
+    return root_nodes
 }
 
 const recursivelySortTree = (node) => {
