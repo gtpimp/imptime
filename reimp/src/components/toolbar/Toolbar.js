@@ -26,22 +26,40 @@ import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
-import styled from 'react-emotion'
+import { css } from 'react-emotion'
 import { default_theme as theme } from '../../theme/default'
 
-const ToolbarDiv = styled('div')(props => ({display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            height: "36px",
-                                            color: theme.colours.strong_text,
-                                            backgroundColor: theme.colours.left_panel_background,
-                                            fontSize: "15px",
-                                            width: "100%"}))
+const ToolbarDiv = css`
+display: flex;
+justify-content: space-between;
+height: 40px;
+background-color: ${theme.colours.left_panel_background};
+font-size: 15px;
+width: 100%;
+border-bottom: 1px solid #dcdcdc;
+`
 
-const ToolbarSideDiv = styled('div')(props => ({alignItems: "center",
-                                                display: "flex",
-                                                flexGrow: "1",
-                                                justifyContent: props.side === 'left' ?  'flex-start' : 'flex-end'}))
+const left_toolbar = css`
+display: flex;
+flex: 4;
+justify-content: flex-start;
+align-items: center;
+`
+
+const right_toolbar = css`
+display: flex;
+flex: 4;
+justify-content: flex-end;
+align-items: center;
+`
+
+const menu_header = css`
+font: ${theme.fonts.regular_large};
+color: ${theme.colours.strong_text};
+margin: 0;
+padding: 0;
+padding-left: 24px;
+`
 
 class Toolbar extends Component {
     
@@ -105,22 +123,27 @@ class Toolbar extends Component {
     }
 
     render() {
-        const {panelIds} = this.props
+        const {panelIds, page_name} = this.props
         return (
-            <ToolbarDiv>
-              <ToolbarSideDiv side="right">
+            <div className={ ToolbarDiv }>
+              <div className={left_toolbar}>
+                <p className={ menu_header }>{ page_name }</p>
+              </div>
+              <div side="right" className={right_toolbar}>
                 {panelIds.map((panelId) => this.renderPanel(panelId))}
-              </ToolbarSideDiv>
-            </ToolbarDiv>
+              </div>
+            </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
     const page_toolbars = state.page.toolbar_names || []
+    const page_name = state.page.page_name
 
     return {
-        panelIds: page_toolbars
+        panelIds: page_toolbars,
+        page_name: page_name
     }
 }
 

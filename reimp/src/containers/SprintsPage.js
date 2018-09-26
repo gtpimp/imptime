@@ -39,7 +39,7 @@ class SprintsPage extends Component {
 
     componentDidMount() {
         const {dispatch, filter, project_id, list_key, page_key} = this.props
-        dispatch(set_toolbars(page_key, ['sprints']))
+        dispatch(set_toolbars(page_key, ['sprints'], "Sprint list"))
 
         const new_filter = { project_id: project_id }
         if ( !filter.project_id || filter.project_id !== project_id ) {

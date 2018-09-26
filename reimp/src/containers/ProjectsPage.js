@@ -34,7 +34,7 @@ class ProjectsPage extends Component {
 
     componentDidMount() {
         const {dispatch, default_project_id} = this.props
-        dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects']))
+        dispatch(set_toolbars(PAGE_KEY__PROJECTS_PAGE, ['projects'], "Project list"))
         dispatch(initList(LIST_KEY__PROJECT_LIST))        
         dispatch(update_list_pagination(LIST_KEY__PROJECT_LIST, {page_size:20}))
         if ( default_project_id !== undefined ) {

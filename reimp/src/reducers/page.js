@@ -43,6 +43,7 @@ export default function page(state = initialState, action) {
                 toolbar_names: action.toolbar_names
             })
             state_copy.toolbar_names = action.toolbar_names // use the last toolbar list as the global setting
+            state_copy.page_name = action.page_name
             return state_copy
         case UPDATE_PAGE_SIDEBAR:
             state_copy = Object.assign({}, state)

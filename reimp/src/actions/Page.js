@@ -31,12 +31,13 @@ export function hide_sidebar(page_key, sidebar_name) {
     }
 }
 
-export function set_toolbars(page_key, toolbar_names) {
+export function set_toolbars(page_key, toolbar_names, page_name="") {
 
     return {
         type: SET_PAGE_TOOLBARS,
         page_key: page_key,
-        toolbar_names: toolbar_names
+        toolbar_names: toolbar_names,
+        page_name: page_name
     }
 }
 
