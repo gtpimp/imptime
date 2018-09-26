@@ -32,9 +32,12 @@ class CommonTree extends Component {
         let node
         if ( props.selected_item_ids !== this.props.selected_item_ids || !initial_expansion_done ) {
             map(props.selected_item_ids, function(item_id) {
-                node = items_by_id[items_by_id[item_id].parent_id]
-                if ( node && !node.expanded ) {
-                    onExpandCollapse({node, expanded:true})
+                const node = items_by_id[item_id]
+                if ( node ) {
+                    const parent_node = items_by_id[node.parent_id]
+                    if ( parent_node && !parent_node.expanded ) {
+                        onExpandCollapse({parent_node, expanded:true})
+                    }
                 }
             })
         }

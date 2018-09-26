@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import { css, cx } from 'emotion'
 
 import { default_theme as theme } from '../theme/default'
-import add_icon from '../images/icon_add.svg'
 
 const icon_button = css`
 display: flex;

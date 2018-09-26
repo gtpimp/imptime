@@ -20,7 +20,6 @@ import {
     setPageFlag,
     getPageFlag
 } from '../../actions/Page'
-import ToggleButton from './ToggleButton'
 import IconButton from '../IconButton'
 import delete_icon from '../../images/delete_outline.svg'
 import show_icon from '../../images/icon_show.svg'
