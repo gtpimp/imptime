@@ -3355,48 +3355,11 @@ def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_busine
     #         per_user_issue_data["can_estimate"] = False
     #         issue.add_user_to_representation(user, per_user_issue_data)
 
-@csrf_exempt
-@login_required
-def add_feature(request, business_id):
-
-    business = timepiece.Business.objects.get(pk=business_id)
-    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
-    if not has_edit_feature:
-        raise PermissionDenied
-
-    try:
-        new_name = request.POST['new_value']
-        current_issue = int(request.POST['item_id'])
-        issue = timepiece.Issue.objects.get(pk=current_issue)
-        feature = timepiece.Feature.objects.create(name=new_name, business=business)
-        issue.feature = feature
-        issue.save()
-    except (KeyError, ValueError):
-        pass
-
-    return HttpResponse("")
-
-
-@login_required
-def business_features(request, business_id):
-    business = timepiece.Business.objects.get(pk=business_id)
-    data = [ (feature.id, feature.name) for feature in business.features.all() ]
-    return HttpResponse(json.dumps(data),
-                        content_type='application/json')
-
 @login_required
 def status_filter(request, project_id, template="timepiece/project/status_filter_popup.html"):
     context = {}
     stati = timepiece.Issue.objects.filter(project_id=project_id).order_by('status2__name').values_list('status2__name', flat=True).distinct()
     context['stati'] = stati
-    context['project_id'] = project_id
-    return render(request, template, context)
-
-@login_required
-def feature_filter(request, project_id, template="timepiece/project/feature_filter_popup.html"):
-    context = {}
-    features = timepiece.Issue.objects.filter(project_id=project_id).order_by('feature__name').values('feature__name').distinct()
-    context['features'] = features
     context['project_id'] = project_id
     return render(request, template, context)
 
@@ -3492,7 +3455,7 @@ def get_project_detail(request, project_id, context=None):
 
     business = project.business
 
-    queryset = project.get_ordered_issues().select_related("feature", "assigned_to")
+    queryset = project.get_ordered_issues().select_related("assigned_to")
     issues_forms = None
 
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
@@ -3761,39 +3724,6 @@ def issue_status_update(request,  template="timepiece/project/issue_detail.html"
     get_interface_plugin(request, project.business).update_issue_status(edited_issue)
 
     return HttpResponse(json.dumps({ 'new_value': str(new_status) }), content_type='application/json')
-
-@csrf_exempt
-@login_required
-def update_issue_with_feature(request):
-
-    issue = timepiece.Issue.objects.get(pk=request.POST['issue_id'])
-    feature_id = request.POST.get('selected_value', None)
-    created_value = request.POST['created_value']
-
-    business = issue.project.business
-
-    has_edit_feature = timepiece.BusinessPermissions.objects.get_or_create(business=business, user=request.user)[0].has_edit_feature
-    if not has_edit_feature:
-        raise PermissionDenied
-
-    old_feature = issue.feature
-    if created_value and len(created_value)>0:
-        new_feature = timepiece.Feature.objects.get_or_create(business=business, name=created_value)[0]
-        issue.feature = new_feature;
-    else:
-        try:
-            feature = timepiece.Feature.objects.get(pk=feature_id, business=business)
-        except timepiece.Feature.DoesNotExist:
-            feature = None
-        except ValueError:
-            feature = None
-        issue.feature = feature;
-
-    issue.save()
-
-    timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, issue.feature)
-
-    return HttpResponse(json.dumps({ 'new_value': issue.feature.name if issue.feature else None }), content_type='application/json')
 
 @csrf_exempt
 @login_required
@@ -4396,7 +4326,6 @@ def get_issue_row(request,issue_id):
     context['project'] = project
     context['business_permissions_by_user'] = timepiece.BusinessPermissions.by_user(business)
     context['users_with_time_but_no_estimates_in_this_project'] = project.get_users_with_time_but_no_estimates_in_this_project()
-    context['features'] = ( (f.id, f.name) for f in timepiece.Feature.objects.filter(business=business) )
     context['assign_user_form'] = timepiece_forms.AssignUserToIssueForm()
     refresh_issue =timepiece.Issue.objects.get(id=issue.id)
     refresh_issue.representation = issue.representation
@@ -5020,7 +4949,6 @@ def issue_checkbox_context_menu(request, project_id, template="timepiece/project
 
     context['state_select_form'] = timepiece_forms.IssueCheckboxContextMenuSelectByStateForm(from_project)
     context['state_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeStateForm(from_project)
-    context['feature_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(from_project)
     context['assignee_change_form'] = timepiece_forms.IssueCheckboxContextMenuChangeAssigneeForm(from_project)
     context['move_above_issue_form'] = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(from_project, "Move above")
     context['move_below_issue_form'] = timepiece_forms.IssueCheckboxContextMenuActiveIssueForm(from_project, "Move below")
@@ -5111,31 +5039,6 @@ def bulk_change_issue_state(request, context=None):
             get_interface_plugin(request, selected_project.business).update_issue_status(issue)
 
     messages.info(request, "%d issues changed state to %s" % (len(selected_issue_ids), new_status))
-    return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
-
-@login_required
-@csrf_exempt
-def bulk_change_issue_feature(request, context=None):
-    selected_issue_ids = request.session['selected_issue_ids_for_context_menu']
-    selected_project = timepiece.Project.objects.get(pk=request.session['selected_issue_project_id'])
-
-    form = timepiece_forms.IssueCheckboxContextMenuChangeFeatureForm(selected_project, request.GET or None)
-    if not form.is_valid():
-        return HttpResponse("No feature chosen: %s" % form.errors)
-
-    bp = timepiece.BusinessPermissions.for_user(request.user, selected_project.business)
-    if not bp.has_edit_feature:
-        return HttpResponse("No permission")
-
-    new_feature = timepiece.Feature.objects.get(pk=form.cleaned_data['feature'])
-    for selected_issue_id in selected_issue_ids:
-        issue = timepiece.Issue.objects.get(pk=selected_issue_id)
-        if new_feature != issue.feature:
-            old_feature = issue.feature
-            issue.feature = new_feature
-            issue.save()
-            timepiece.IssueHistory.add_history(request.user, issue, "changed feature", old_feature, new_feature)
-    messages.info(request, "%d issues changed feature to %s" % (len(selected_issue_ids), new_feature))
     return HttpResponseRedirect(reverse('project_list', args=[selected_project.id]))
 
 @login_required

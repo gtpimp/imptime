@@ -106,6 +106,31 @@ export function setIssueBreadcrumbsHelper(project, sprint, optional_issue) {
     return setBreadcrumbs(breadcrumbs)
 }
 
+export function setFeatureBreadcrumbsHelper(project, optional_feature) {
+    const feature = optional_feature || {}
+    const breadcrumbs = [{to: '/projects',
+                          label: 'Projects',
+                          type: 'projects'},
+                         {to: '/projects/'+project.id,
+                          label: project.name,
+                          type: 'project',
+                          selected_entities: {project: project}
+                         },
+                         {to: '/projects/'+project.id+'/features',
+                          type: 'features',
+                          label: 'Features',
+                          selected_entities: {project:project}}]
+    if ( feature.id ) {
+        breadcrumbs.push({to: '/projects/'+project.id+'/features/' + feature.id,
+                          type: 'feature',
+                          label: feature.name,
+                          selected_entities: {project:project,
+                                              feature: feature}})
+    }
+    return setBreadcrumbs(breadcrumbs)
+}
+
+
 export function setBreadcrumbs(breadcrumbs) {
     return {
         type: SET_BREADCRUMBS,

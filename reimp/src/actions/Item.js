@@ -15,6 +15,7 @@ export const ANNOUNCE_ITEMS_LOAD_FAILED = 'ANNOUNCE_ITEMS_LOAD_FAILED'
 export const ANNOUNCE_LOADING_ITEMS = 'ANNOUNCE_LOADING_ITEMS'
 export const INVALIDATE_ITEMS = 'INVALIDATE_ITEMS'
 export const INVALIDATE_ALL_ITEMS = 'INVALIDATE_ALL_ITEMS'
+export const SET_TRANSIENT_ITEM_VALUE = 'SET_TRANSIENT_ITEM_VALUE'
 
 export const ANNOUNCE_CAPTURING_NEW_ITEM = 'ANNOUNCE_CAPTURING_NEW_ITEM'
 export const UPDATE_NEW_ITEM_DETAILS = 'UPDATE_NEW_ITEM_DETAILS'
@@ -205,6 +206,20 @@ function announceItemsDeleteFailed(entity_key, item_ids, error) {
         deleting_item_ids: item_ids,
         error: error
     }
+}
+
+export function setTransientItemValue(entity_key, item_ids, field_name, new_value) {
+    return {
+        type: SET_TRANSIENT_ITEM_VALUE,
+        entity_key: entity_key,
+        item_ids: item_ids,
+        field_name: field_name,
+        new_value: new_value
+    }
+}
+
+export function getTransientItemValue(state, entity_key, item_id, field_name) {
+    return get(state, ["item", entity_key, "transient_values_by_id", field_name], null)
 }
 
 export function updateItem(entity_key, item_ids, field_name, new_value, on_done, extra_post_data) {

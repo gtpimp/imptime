@@ -25,7 +25,8 @@ import {
     ANNOUNCE_ITEMS_SAVING,
     ANNOUNCE_DELETE_ITEMS_FAILED,
     SET_GLOBAL_ENTITY_FLAG,
-    UPDATE_ENTIRE_ITEM_FIELD_NAME
+    UPDATE_ENTIRE_ITEM_FIELD_NAME,
+    SET_TRANSIENT_ITEM_VALUE
 } from '../actions/Item.js'
 
 const initialState = {
@@ -38,6 +39,24 @@ function cloneItemState(state, action) {
 function setItemState(state, action, item_state) {
     const s = Object.assign({}, state || {})
     s[action.entity_key] = item_state
+    return s
+}
+
+function updateMultipleItemValues(state, action) {
+    const item_ids = action.item_ids
+    const s = cloneItemState(state, action)
+    s.items_by_id = Object.assign({}, s.items_by_id)
+
+    let new_item_props = {}
+    if ( action.field_name === UPDATE_ENTIRE_ITEM_FIELD_NAME ) {
+        new_item_props = Object.assign({}, action.new_value)
+    } else {
+        new_item_props[action.field_name] = action.new_value
+    }
+    map(item_ids, function(item_id, index) {
+        s.items_by_id[item_id] = Object.assign({}, s.items_by_id[item_id],
+                                               new_item_props)
+    })
     return s
 }
 
@@ -78,22 +97,20 @@ export default function item(state = initialState, action) {
         case ANNOUNCE_ITEMS_LOAD_FAILED:
             return state;
 
-        case ANNOUNCE_ITEMS_SAVING:
-            const item_ids = action.item_ids
-            s = cloneItemState(state, action)
-            s.items_by_id = Object.assign({}, s.items_by_id)
-            s.saving_item_ids = union(s.saving_item_ids, item_ids)
-
-            let new_item_props = {}
-            if ( action.field_name === UPDATE_ENTIRE_ITEM_FIELD_NAME ) {
-                new_item_props = Object.assign({}, action.new_value)
-            } else {
-                new_item_props[action.field_name] = action.new_value
-            }
-            map(item_ids, function(item_id, index) {
-                s.items_by_id[item_id] = Object.assign({}, s.items_by_id[item_id],
-                                                       new_item_props)
+        case SET_TRANSIENT_ITEM_VALUE:
+            s = updateMultipleItemValues(state, action)
+            s.transient_values_by_id = Object.assign(s.transient_values_by_id || {}, {})
+            let new_transient_item_values
+            map(action.items_ids, function(item_id) {
+                new_transient_item_values = Object.assign(s.transient_values_by_id[item_id],
+                                                          {[action.field_name]: action.new_value})
+                s.transient_values_by_id[item_id] = new_transient_item_values
             })
+            return setItemState(state, action, s)
+            
+        case ANNOUNCE_ITEMS_SAVING:
+            s = updateMultipleItemValues(state, action)
+            s.saving_item_ids = union(s.saving_item_ids, action.item_ids)
             return setItemState(state, action, s)
 
         case ANNOUNCE_ITEMS_SAVED:

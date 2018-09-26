@@ -86,6 +86,14 @@ export function select_wikis(page_key, wiki_ids) {
     }
 }
 
+export function select_features(page_key, feature_ids) {
+    return {
+        type: UPDATE_PAGE_SELECTION,
+        page_key: page_key,
+        feature_ids: feature_ids
+    }
+}
+
 export function get_header_list(state, page_key) {
     return (state.page[page_key] || {}).header_list || [];
 }
@@ -108,6 +116,10 @@ export function get_selected_user_ids(state, page_key) {
 
 export function get_selected_wiki_ids(state, page_key) {
     return (((state ||{}).page || {})[page_key] || {}).wiki_ids || []
+}
+
+export function get_selected_feature_ids(state, page_key) {
+    return (((state ||{}).page || {})[page_key] || {}).feature_ids || []
 }
 
 export function setPageFlag(page_key, flag_name, value) {
@@ -149,6 +161,10 @@ export function setGloballySelectedSprintId(project_id, sprint_id) {
 
 export function setGloballySelectedProjectId(project_id) {
     return setGloballySelectedEntityIds({project_id: project_id})
+}
+
+export function getGloballySelectedProjectId(state) {
+    return getGloballySelectedEntityIds(state).project_id
 }
 
 export function setGloballySelectedEntityIds(entity_ids) {

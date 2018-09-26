@@ -11,7 +11,7 @@ from django.db import transaction
 from datetime import datetime
 from django.contrib.auth.models import User
 from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, CalendarEvent
-from timepiece.models import Issue, Feature, IssueStatus, ProjectIssueOrder, IssueComment, IssuePoints
+from timepiece.models import Issue, IssueStatus, ProjectIssueOrder, IssueComment, IssuePoints
 from imptime.bulk_text_parser import BulkTextParser
 from timepiece.models import BusinessPermissions
 import logging
@@ -168,7 +168,7 @@ class Extractor(object):
                                          (issue.number, issue.project.name, issue.project.id, project.name, project.id, issue.project.id))
             return
                 
-        feature, subject = self._unpack_subject(orgnode.Heading(), project.business)
+        subject = self._unpack_subject(orgnode.Heading(), project.business)
 
         description = (orgnode.CleanBody() or "").strip()
         bulk_text_parser = BulkTextParser(timesheet_user)
@@ -185,7 +185,6 @@ class Extractor(object):
                                                                             'issue_type':meta_info['attributes'].get('type', 'adhoc'),
                                                                             'status2':IssueStatus.objects.get_or_create(name=meta_info['attributes'].get('status','dev done'),
                                                                                                                         business=business)[0],
-                                                                            'feature':feature,
                                                                             'assigned_to':timesheet_user,
                                                                             'number':Issue.get_next_issue_number(project.business),
                                                                             'description':description,
@@ -251,10 +250,4 @@ class Extractor(object):
             self.status['num_entries_refreshed'] += 1
 
     def _unpack_subject(self, raw_subject, business):
-        if "|" in raw_subject:
-            feature_name, subject = raw_subject.split("|")
-            feature = Feature.objects.get_or_create(name=feature_name, business=business)[0]
-        else:
-            feature, subject = None, raw_subject
-        return feature, subject
-    
+        return raw_subject

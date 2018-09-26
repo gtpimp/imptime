@@ -12,7 +12,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole
+from timepiece.models import Issue, IssueHistory, Entry, ProjectRole
 from clock_entry_serializer import ClockEntrySerializer, ClockEntryUpdateSerializer, ClockEntryCreateSerializer
 from timepiece.models import BusinessPermissions as ProjectPermissions
 

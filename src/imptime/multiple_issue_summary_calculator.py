@@ -1,4 +1,4 @@
-from timepiece.models import Issue, IssueHistory, Feature, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
+from timepiece.models import Issue, IssueHistory, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from django.db.models import Count, Sum, FloatField

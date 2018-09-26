@@ -64,7 +64,7 @@ class VisualSpecIssueViewSet(BaseViewSet):
                 if not parent_issue.can_group_issues:
                     parent_issue.can_group_issues = True
                     parent_issue.save()
-                    IssueHistory.add_history(request.user, parent_issue, "auto change to feature for visual speccing", "", "1")
+                    IssueHistory.add_history(request.user, parent_issue, "issue can group", "", "1")
                 new_issue_order=parent_issue.get_next_child_order()
                 issue = Issue.objects.create(project=parent_issue.project,
                                              subject="",

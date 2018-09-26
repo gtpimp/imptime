@@ -1,5 +1,6 @@
 export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
+export const LIST_KEY__FEATURE_LIST = 'features'
 export const LIST_KEY__ISSUE_LIST = 'issues'
 export const LIST_KEY__INVOICE_LIST = 'invoices'
 export const LIST_KEY__ISSUE_HISTORY_LIST = 'issue_history'
@@ -35,6 +36,7 @@ export const ENTITY_KEY__INVOICE = 'invoice'
 export const ENTITY_KEY__ISSUE_HISTORY = 'issue_history'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
+export const ENTITY_KEY__FEATURE = 'feature'
 export const ENTITY_KEY__ISSUE = 'issue'
 export const ENTITY_KEY__ISSUE_GENERAL_DETAILS = 'issue_general_details'
 export const ENTITY_KEY__ISSUE_REVIEW = 'issue_review'
@@ -72,6 +74,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__MIEN,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE,
+                                  ENTITY_KEY__FEATURE,
                                   ENTITY_KEY__CALENDAR_EVENT,
                                   ENTITY_KEY__SPRINT_COST_SUMMARY,
                                   ENTITY_KEY__SPRINT_SNAPSHOT ]
@@ -85,6 +88,7 @@ export const PAGE_KEY__PROJECT_DASHBOARD_PAGE = 'project_dashboard_page'
 export const PAGE_KEY__PROJECT_ROADMAP_PAGE = 'project_roadmap_page'
 export const PAGE_KEY__PROJECT_USER_PAGE = 'project_user_page'
 export const PAGE_KEY__SPRINTS_PAGE = 'sprints_page'
+export const PAGE_KEY__FEATURES_PAGE = 'features_page'
 export const PAGE_KEY__SPRINT_TEMPLATES_PAGE = 'sprint_templates_page'
 export const PAGE_KEY__SPRINTS_TOOLBAR = 'sprints_toolbar'
 export const PAGE_KEY__SPRINT_TEMPLATES_TOOLBAR = 'sprint_templates_toolbar'
@@ -108,6 +112,7 @@ export const PAGE_KEY__CLOCK_HISTORY_PAGE = 'clock_history_page'
 
 export const HEADER_LIST_NAME__ISSUE = "issue"
 export const HEADER_LIST_NAME__SPRINT = "sprint"
+export const HEADER_LIST_NAME__FEATURE = "feature"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
@@ -115,6 +120,7 @@ export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
 
 export const SELECTOR__PROJECTS = 'selector_projects'
 export const SELECTOR__SPRINTS = 'selector_sprints'
+export const SELECTOR__FEATURES = 'selector_features'
 export const SELECTOR__ISSUES = 'selector_issues'
 export const SELECTOR__ISSUE_GROUPS = 'selector_issue_groups'
 export const FILTER_KEY__GLOBAL = 'global_filter'

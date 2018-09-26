@@ -68,39 +68,6 @@ class SprintSidebar extends Component {
             </PropertyStackComponent>
         )
     }
-
-    /* renderCostSummary() {
-     *     const { cost_summary } = this.props
-     *     return (
-     *         { cost_summary &&
-     *           <PropertyStackComponent>
-     *             <div className="property--title">
-     *               Experimental, do not trust these numbers
-     *             </div>
-     *             <div className="named-property">
-     *               <div className="named-property__name">Estimated dev hours (original velocity)</div>
-     *               <div className="named-property__value"><Hours hours={cost_summary.projections.original_dev_hours}/></div>
-     *             </div>
-     *             { can_view_costs && 
-     *               <div className="named-property">
-     *                 <div className="named-property__name">Estimated dev cost (original velocity)</div>
-     *                 <div className="named-property__value"><CurrencyValue value={cost_summary.projections.original_dev_commission_cost}/></div>
-     *               </div>
-     *             }
-     *               <div className="named-property">
-     *                 <div className="named-property__name">Estimated dev hours (actual velocity)</div>
-     *                 <div className="named-property__value"><Hours hours={cost_summary.projections.revised_dev_hours}/></div>
-     *               </div>
-     *               { can_view_costs && 
-     *                 <div className="named-property">
-     *                   <div className="named-property__name">Estimated dev cost (actual velocity)</div>
-     *                   <div className="named-property__value"><CurrencyValue value={cost_summary.projections.revised_dev_commission_cost}/></div>
-     *                 </div>
-     *               }
-     *           </PropertyStackComponent>
-     *         }
-     *     )
-     * }*/
     
     render() {
 

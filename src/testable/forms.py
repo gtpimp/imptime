@@ -7,7 +7,7 @@ from django.db.models import Count, Q
 from datetime import datetime
 from django.conf import settings
 from testable.models import Testable, TestableSession, TestableResult
-from timepiece.models import Feature, IssueStatus, Project
+from timepiece.models import IssueStatus, Project
 
 class TestableFilterForm(forms.Form):
 
@@ -18,9 +18,6 @@ class TestableFilterForm(forms.Form):
                                               widget=forms.CheckboxSelectMultiple())
     statuses = forms.ModelMultipleChoiceField(required=False,
                                               queryset=IssueStatus.objects.none(),
-                                              widget=forms.CheckboxSelectMultiple())
-    features = forms.ModelMultipleChoiceField(required=False,
-                                              queryset=Feature.objects.none(),
                                               widget=forms.CheckboxSelectMultiple())
     only_included_in_regression_test = forms.BooleanField(initial=False, required=False,
                                                           label="Exclude obsolete testables")
@@ -39,11 +36,6 @@ class TestableFilterForm(forms.Form):
         self.fields['projects'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_projects.order_by("name") ]
         self.fields['projects'].widget.initial = ["",]
 
-        available_features = Feature.objects.filter(issues__project__business=self.business).distinct()
-        self.fields['features'].queryset = available_features
-        self.fields['features'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_features.order_by("name") ]
-        self.fields['features'].widget.initial = ["",]
-
         available_statuses = IssueStatus.objects.filter(issues__project__business=self.business).distinct()
         self.fields['statuses'].queryset = available_statuses
         self.fields['statuses'].widget.choices = [ ('', 'All') ] + [ (x.id, str(x)) for x in available_statuses.order_by("name") ]
@@ -56,8 +48,6 @@ class TestableFilterForm(forms.Form):
             qs = qs.filter(issue__project__in=f['projects'])
         if 'statuses' in f and f['statuses'].count() > 0:
             qs = qs.filter(issue__status2__in=f['statuses'])
-        if 'features' in f and f['features'].count() > 0:
-            qs = qs.filter(issue__feature__in=f['features'])
         if f.get('only_included_in_regression_test', True):
             qs = qs.filter(include_in_regression_test=True)
         if 'testable_result_status' in f and f['testable_result_status']:

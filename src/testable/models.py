@@ -5,12 +5,17 @@ from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.db import models
 from lib.quality_helper import Quality
-from timepiece.models import Issue, Business
+from timepiece.models import Issue
+from timepiece.models import Business as Project
+from lib.fields import ProtectedForeignKey
 import re
 
 class Testable(models.Model):
     include_in_regression_test = models.BooleanField(default=True, blank=True)
-    issue = models.ForeignKey(Issue, blank=True, null=False, related_name='testables')
+    issue = ProtectedForeignKey(Issue, blank=True, null=True, related_name='testables')
+    project = ProtectedForeignKey(Project, blank=True, null=False, related_name='testables')
+    features = models.ManyToManyField("imptime.Feature", related_name="testables")
+    name = models.TextField(null=True)
     steps = models.TextField(null=False)
     enriched_steps = models.TextField(null=True)
     order = models.IntegerField(null=False, default=0)
@@ -38,6 +43,10 @@ class Testable(models.Model):
             super(Testable, self).save()
 
     @property
+    def testable_steps_in_order(self):
+        return self.testable_steps.all().order_by("order")
+            
+    @property
     def clean_steps(self):
         s = self.steps.strip()
         if not s:
@@ -53,20 +62,37 @@ class Testable(models.Model):
         return self.testable_results.order_by("-checked_at").first()
 
     @classmethod
-    def renumber(self, issue_id):
+    def renumber_for_issue(self, issue_id):
         c = 1
         for t in Testable.objects.filter(issue_id=issue_id).order_by("order"):
             if t.order != c:
                 t.order = c
                 t.save()
             c += 1
-    
+
+    @classmethod
+    def renumber_for_feature(self, feature_id):
+        c = 1
+        for t in Testable.objects.filter(features=feature_id).order_by("order"):
+            if t.order != c:
+                t.order = c
+                t.save()
+            c += 1
+
+            
+class TestableStep(models.Model):
+    instruction = models.TextField(null=False)
+    testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_steps')
+    refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='referred_by_testable_steps')
+    order = models.IntegerField(null=False, default=0)
+
+
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='testable_sessions', blank=False, null=False)
     modified_at = models.DateTimeField(null=False, auto_now=True)
-    business = models.ForeignKey(Business, blank=True, null=False, related_name='test_sessions')
+    business = models.ForeignKey(Project, blank=True, null=False, related_name='test_sessions')
 
     def __unicode__(self):
         return self.name

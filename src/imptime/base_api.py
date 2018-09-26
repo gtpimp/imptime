@@ -17,7 +17,7 @@ from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 from imptime.models import VisualSpecIssueAnnotation, WikiPage
 from imptime.models import Mien, CompanyProblem, SprintSnapshot
-from imptime.models import Mien, Schedule, ScheduleItem, IssueHistory
+from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature
 from invoicing.models import Invoice
 
 class PermissionHelper():
@@ -166,6 +166,12 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_issue_reviews(self):
         return IssueReview.objects.filter(issue__in=self.allowed_issues())
+
+    def allowed_features(self):
+        return Feature.objects.filter(project__in=self.allowed_projects(), deleted=False)
+
+    def allowed_feature(self, pk):
+        return self.allowed_features().get(pk=pk)
     
     def allowed_timesheet_entries(self):
         users_timesheet_entries = TimesheetEntry.objects\
@@ -246,6 +252,9 @@ class BaseViewSet(viewsets.ViewSet):
                                       business__business_permissions__user=self.request.user,
                                       business__business_permissions__can_view_invoices=True)
 
+    def allowed_testables(self):
+        return Testable.objects.filter(project__in=self.allowd_projects())
+    
     def allowed_issue_histories(self): 
         non_sensitive = IssueHistory.objects.filter(money_sensitive=False,
                                                     original_issue__project__business__in=self.allowed_projects()\

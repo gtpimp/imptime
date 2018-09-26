@@ -18,7 +18,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory, Feature
+from timepiece.models import Issue, IssueHistory
 from imptime.models import VisualSpecIssue
 from timepiece.models import TagCategory, Tag, Entry, IssueStatus, IssuePoints
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
@@ -83,7 +83,6 @@ class IssueViewSet(BaseViewSet):
         issues = issues.select_related('parent_group')\
                        .select_related('project__business')\
                        .select_related('assigned_to')\
-                       .select_related('feature')\
                        .select_related('status2')\
                        .prefetch_related('comments')\
                        .prefetch_related('attachments')\
@@ -167,14 +166,6 @@ class IssueViewSet(BaseViewSet):
                         issue.issue_type = new_value
                         IssueHistory.add_history(request.user, issue, "changed type", old_value, new_value)
 
-                elif field_name == "feature_name":
-                    if self.logged_in_permissions(issue.project.business).has_edit_feature:
-                        old_feature_name = issue.feature.name if issue.feature else "none"
-                        issue.feature = Feature.objects.get_or_create(
-                            business=issue.project.business, name=new_value)[0]
-                        IssueHistory.add_history(
-                            request.user, issue, "changed feature",
-                            old_feature_name, issue.feature.name)
                 elif field_name == 'issue_id_after':
                     if self.logged_in_permissions(issue.project.business).has_edit_issues:
                         if new_value is None:

@@ -1,20 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
 import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
 
-class IssueTestable extends Component {
-
-    componentDidMount() {
-        const { dispatch, issue_id } = this.props
-        dispatch(ensureIssuesLoaded([issue_id]))
-    }
-
-    componentWillReceiveProps(new_props) {
-        const { dispatch, issue_id } = new_props
-        dispatch(ensureIssuesLoaded([issue_id]))
-    }
+class Testable extends Component {
 
     render() {
         const { testable, onDelete, onPromoteToIssue } = this.props
@@ -22,6 +11,9 @@ class IssueTestable extends Component {
         return (
             <div className="issue-testable">
 
+              <div>
+                {testable.name}
+              </div>
               <div className="issue-testable__text" >
                 <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
               </div>
@@ -59,15 +51,13 @@ class IssueTestable extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { issue_id, testable, onDelete } = props
-    const issue = getIssue(state, issue_id)
+    const { testable, onDelete, onPromoteToIssue } = props
     
     return {
-        issue,
         testable,
-        onDelete
+        onDelete,
+        onPromoteToIssue
     }
 }
 
-
-export default connect(mapStateToProps)(IssueTestable)
+export default connect(mapStateToProps)(Testable)

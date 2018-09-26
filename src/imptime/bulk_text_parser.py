@@ -1,5 +1,5 @@
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
-from timepiece.models import Activity, Entry, Location, Attribute, Issue, Feature, IssueStatus, IssueComment, IssueAttachment
+from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssuePoints
 from django.utils import timezone
@@ -21,15 +21,10 @@ class BulkTextParser(object):
         for orgnode in orgnodes:
             if orgnode.Level() == 3:
                 subject = orgnode.Heading()
-                if '|' in subject:
-                    feature_name, subject = subject.split('|')
-                    feature = Feature.objects.get_or_create(name=feature_name, business=sprint.business)[0] #sic
-                else:
-                    feature = None
                 description = orgnode.CleanBody()
 
                 meta_info = self.parse_meta_info(description)
-                issue = self.create_issue(sprint, subject, meta_info, feature)
+                issue = self.create_issue(sprint, subject, meta_info)
                 issues.append(issue)
                 for testable in meta_info['testables']:
                     testable.issue = issue
@@ -79,13 +74,12 @@ class BulkTextParser(object):
                     attributes[attribute_name] = value
         return description, attributes
     
-    def create_issue(self, sprint, subject, meta_info, feature):
+    def create_issue(self, sprint, subject, meta_info):
         issue, is_new = Issue.objects.get_or_create(project=sprint,
                                                     subject=subject,
                                                     defaults={'auto_created_during_import':True,
                                                               'issue_type':meta_info['attributes'].get('type', 'issue'),
                                                               'status2':IssueStatus.objects.get_or_create(name=meta_info['attributes'].get('status', 'new'), business=sprint.business)[0], #sic
-                                                              'feature':feature,
                                                               'assigned_to':self.logged_in_user,
                                                               'number':Issue.get_next_issue_number(sprint.business), #sic
                                                               'description':meta_info['description'][0:settings.ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH],

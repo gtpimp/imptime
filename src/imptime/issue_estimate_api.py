@@ -12,7 +12,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory, Feature, IssuePoints
+from timepiece.models import Issue, IssueHistory, IssuePoints
 
 logger = logging.getLogger(__name__)
 

@@ -12,10 +12,11 @@ import {
     is_issue_invalidated,
     promoteIssueTestableToIssue
 } from '../actions/Issues'
-import IssueTestableForm from './form/IssueTestableForm'
+
 import SidebarAddButton from './SidebarAddButton'
+import TestableForm from './form/TestableForm'
 import { has_permission } from '../actions/Users'
-import IssueTestable from './IssueTestable'
+import Testable from './Testable'
 
 class EditableIssueTestable extends Component {
 
@@ -40,9 +41,9 @@ class EditableIssueTestable extends Component {
     onChange(new_value) {
         const { dispatch, issue_id, testable_id } = this.props
         if ( testable_id ) {
-            dispatch(updateIssueTestable(issue_id, testable_id, new_value.testable))
+            dispatch(updateIssueTestable(issue_id, testable_id, new_value.testable, new_value.name))
         } else {
-            dispatch(createIssueTestable(issue_id, new_value.testable))
+            dispatch(createIssueTestable(issue_id, new_value.testable, new_value.name))
         }
     }
 
@@ -72,16 +73,15 @@ class EditableIssueTestable extends Component {
                                             permission_name='has_edit_description'>
               { testable.id &&
                 <EditableProperty property_key={'issue_testable_'+issue_id+'_'+testable.id}
-                                  initial_value={testable.steps}
+                                  initial_value={testable}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
-                    >
-                  <IssueTestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
-                                     issue_id={issue_id} testable={testable}/>
-                  <IssueTestable issue_id={issue_id}
-                                 testable={testable}
-                                 onDelete={this.onDelete}
-                                 onPromoteToIssue={this.onPromoteToIssue}
+                >
+                  <TestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
+                                testable={testable}/>
+                  <Testable testable={testable}
+                            onDelete={this.onDelete}
+                            onPromoteToIssue={this.onPromoteToIssue}
                   />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
@@ -95,7 +95,7 @@ class EditableIssueTestable extends Component {
                                       onChange={this.onChange}
                                       can_edit={can_edit}
                       >
-                      <IssueTestableForm form={'issue_testable_form_'+issue_id} issue_id={issue_id} />
+                      <TestableForm form={'issue_testable_form_'+issue_id} />
                       <div className="text-component--readonly"></div>
                       <div className="text-component--empty">
                         <div className="text-component--testable">

@@ -65,15 +65,6 @@ class SprintSnapshotViewSet(BaseViewSet):
                 sprint_snapshot = self.allowed_sprint_snapshots().get(pk=sprint_snapshot_pk)
                 if field_name == 'description':
                     sprint_snapshot.description = new_value
-                elif field_name == 'feature':
-                    features = json.loads(sprint_snapshot.features or "[]")
-                    feature_name = new_value['feature_name']
-                    is_enabled = new_value['is_enabled']
-                    if not is_enabled and feature_name in features:
-                        features.remove(feature_name)
-                    elif is_enabled and feature_name not in features:
-                        features.append(feature_name)
-                    sprint_snapshot.features = json.dumps(features)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 sprint_snapshot.save()

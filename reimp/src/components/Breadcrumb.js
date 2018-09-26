@@ -5,9 +5,9 @@ import { map, get, filter } from 'lodash'
 import { startCandidateProject } from '../actions/Projects'
 import { startCandidateSprint } from '../actions/Sprints'
 import { startMinutesEditor } from '../actions/Issues'
+import { startCandidateFeature } from '../actions/Features'
 import {
     startCandidateIssue,
-    startCandidateFeature,
     deleteIssues,
     updateIssueToggleAsFeature,
     expandAllFeatures,
@@ -52,6 +52,9 @@ const menu_buttons = {
         { label: (objs) => 'Sprints',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints'
         },
+        { label: (objs) => 'Features',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/features'
+        },
         { label: (objs) => 'Wiki',
           nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/',
           perms: (objs) => ['has_view_business_comments']
@@ -89,8 +92,17 @@ const menu_buttons = {
           perms: (objs) => ['has_view_permissions']
         }
     ],
+    'features': [
+        { label: (objs) => '+ New top level feature',
+          type: "button",
+          generic_action: function(objs, props) {
+              props.dispatch(startCandidateFeature(objs.project.id, (objs.feature && objs.feature.id) || null))
+              props.history.push('/projects/' + objs.project.id + '/features/')
+          }
+        }
+    ],
     'sprints': [
-        { label: (objs) => '+ New Sprint',
+        { label: (objs) => '+ New sprint',
           type: "button",
           generic_action: function(objs, props) {
               props.dispatch(startCandidateSprint(objs.project.id, (objs.sprint && objs.sprint.id) || null))
@@ -139,10 +151,6 @@ const menu_buttons = {
         { label: (objs) => '+ New Issue',
           type: "button",
           dispatch_action: (objs) => startCandidateIssue(objs.sprint.id, objs.issue.id)
-        },
-        { label: (objs) => '+ New Feature',
-          type: "button",
-          dispatch_action: (objs) => startCandidateFeature(objs.sprint.id, objs.issue.id)
         },
     ],
     'issue': [

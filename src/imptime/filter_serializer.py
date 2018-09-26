@@ -51,7 +51,6 @@ class IssueResultSerializer(BaseResultSerializer):
         issue.assigned_to_quick_name = \
             issue.assigned_to.username if issue.assigned_to_id else None
 
-        issue.feature_name = issue.feature.name if issue.feature_id else None
         issue.status2_name = issue.status2.name if issue.status2_id else None
         issue.sprint_id = str(issue.project_id)  # sic
         issue.sprint_name = issue.project.name
