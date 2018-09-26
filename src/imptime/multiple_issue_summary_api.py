@@ -196,14 +196,15 @@ class MultipleIssueSummaryViewSet(BaseViewSet):
             
         writer.writerow([""])
         writer.writerow(["Issues"])
-        header2 = ["Number", "Subject", "Status"]
+        header2 = ["Number", "Subject", "Status", "Description", "Comments"]
         
         for tag_category_id, tag_category in data['tag_categories_by_id'].items():
             header2.append(tag_category['category__name'])
         writer.writerow(header2)
             
         for issue in issues:
-            row = [issue.number, issue.subject, issue.status2.name]
+            comments = "\n".join([x.comment for x in issue.comments.all().order_by("created")])
+            row = [issue.number, issue.subject, issue.status2.name, issue.description, comments]
             issue_tag_names_by_category_id = dict([(x.category_id, x.name) for x in issue.tags.all()])
             for tag_category_id, tag_category in data['tag_categories_by_id'].items():
                 row.append(issue_tag_names_by_category_id.get(tag_category_id, ""))
