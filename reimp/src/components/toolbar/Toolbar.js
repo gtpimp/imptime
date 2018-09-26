@@ -42,14 +42,14 @@ border-bottom: 1px solid #dcdcdc;
 
 const left_toolbar = css`
 display: flex;
-flex: 4;
+flex: 2;
 justify-content: flex-start;
 align-items: center;
 `
 
 const right_toolbar = css`
 display: flex;
-flex: 4;
+flex: 8;
 justify-content: flex-end;
 align-items: center;
 `

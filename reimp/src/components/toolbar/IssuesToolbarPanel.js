@@ -19,6 +19,9 @@ import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import ModalDialog from '../ModalDialog'
 import EditableIssueStateFilter from '../EditableIssueStateFilter'
 import PopupPanelButton from '../PopupPanelButton'
+import IconButton from '../IconButton'
+import add_icon from '../../images/icon_add.svg'
+import filter_icon from '../../images/icon_filter.svg'
 
 class IssuesToolbarPanel extends Component {
 
@@ -79,15 +82,17 @@ class IssuesToolbarPanel extends Component {
         const { editing_filter } = this.state
         
         return (
-            <div className="toolbar-panel">
-              <div className="button toolbar-button--small button--large button--primary"
-                   onClick={this.onNewIssueClick}>
-                + New Issue
-              </div>
-              <div className="button toolbar-button--small button--large button--primary"
-                   onClick={this.startEditingFilter}>
-                Filter
-              </div>
+            <div className="toolbar_container">
+              <IconButton
+                  icon={ add_icon }
+                  label="New&nbsp;issue"
+                  onButtonClick={this.onNewIssueClick}/>
+
+              <IconButton
+                  icon={ filter_icon }
+                  label="Filter"
+                  onButtonClick={this.startEditingFilter}/>
+
               { editing_filter && this.renderEditingFilter() }
             </div>
         )

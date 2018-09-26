@@ -21,6 +21,10 @@ import {
     getPageFlag
 } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
+import IconButton from '../IconButton'
+import delete_icon from '../../images/delete_outline.svg'
+import show_icon from '../../images/icon_show.svg'
+import hide_icon from '../../images/icon_hide.svg'
 
 class IssueToolbarPanel extends Component {
 
@@ -131,38 +135,47 @@ class IssueToolbarPanel extends Component {
             return null
         }
 
+        console.log("show_sidebar", show_sidebar)
+
         return (
-            <div className="toolbar-panel">
-              <ToggleButton value={show_sidebar}
-                            onChange={this.onIssueSidebarToggleClick}
-                            on_label={"Sidebar"}
-                            off_label={"No sidebar"}
-              />
+            <div className="toolbar_container">
+              {show_sidebar &&
+               <IconButton
+                   icon={ hide_icon }
+                   label="Hide&nbsp;sidebar"
+                   onButtonClick={() => this.onIssueSidebarToggleClick(!show_sidebar) }/>
+              }
 
-              <ToolbarButton tooltip="Toggle as feature"
-                             flavour='toggle'
-                             isEnabled={issue.can_group_issues}
-                             onEnable={this.onMakeFeatureClick}
-                             onDisable={this.onUnmakeFeatureClick}>
-                <div className="icon--toggle_feature"></div>
-              </ToolbarButton>
+              {!show_sidebar &&
+               <IconButton
+                   icon={ show_icon }
+                   label="Show&nbsp;sidebar"
+                   onButtonClick={() => this.onIssueSidebarToggleClick(!show_sidebar) }/>
+              }
 
-              <ToolbarButton onClick={this.onGroupClick}
-                             tooltip="Merge into the feature">
-                <div className="icon--merge_feature"/>
-              </ToolbarButton>
+              {/* <ToolbarButton tooltip="Toggle as feature"
+                  flavour='toggle'
+                  isEnabled={issue.can_group_issues}
+                  onEnable={this.onMakeFeatureClick}
+                  onDisable={this.onUnmakeFeatureClick}>
+                  <div className="icon--toggle_feature"></div>
+                  </ToolbarButton>
 
-              <ToolbarButton onClick={this.onUngroupClick}
-                             tooltip="Remove from feature"
-              >
-                <div className="icon--unmerge_feature" />
-              </ToolbarButton>
+                  <ToolbarButton onClick={this.onGroupClick}
+                  tooltip="Merge into the feature">
+                  <div className="icon--merge_feature"/>
+                  </ToolbarButton>
 
-              <ToolbarButton onClick={this.onDeleteClick}
-                             tooltip="Delete"
-              >
-                <div className="icon--delete" />
-              </ToolbarButton>
+                  <ToolbarButton onClick={this.onUngroupClick}
+                  tooltip="Remove from feature"
+                  >
+                  <div className="icon--unmerge_feature" />
+                  </ToolbarButton> */}
+
+              <IconButton
+                  icon={ delete_icon }
+                  label="Delete"
+                  onButtonClick={this.onDeleteClick}/>
 
 
               { false &&

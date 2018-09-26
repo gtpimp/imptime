@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import { PAGE_KEY__PROJECTS_PAGE } from '../../actions/ItemListKeyRegistry'
+import IconButton from '../IconButton'
+import summary_icon from '../../images/icon_summary.svg'
 
 class ProjectsToolbarPanel extends Component {
 
@@ -21,10 +23,10 @@ class ProjectsToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               { project_id && 
-                <div className="button toolbar-button--small button--large button--primary"
-                     onClick={this.onSummaryClicked}>
-                  Summary
-                </div>
+                <IconButton
+                    icon={ summary_icon }
+                    label="Summary"
+                    onButtonClick={this.onSummaryClicked}/>
               }
             </div>
         )
