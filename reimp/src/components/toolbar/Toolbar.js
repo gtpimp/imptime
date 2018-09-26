@@ -28,6 +28,7 @@ import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 import { css } from 'react-emotion'
 import { default_theme as theme } from '../../theme/default'
+import { getPageName } from '../../actions/Page'
 
 const ToolbarDiv = css`
 display: flex;
@@ -139,11 +140,9 @@ class Toolbar extends Component {
 
 function mapStateToProps(state, props) {
     const page_toolbars = state.page.toolbar_names || []
-    const page_name = state.page.page_name
-
     return {
         panelIds: page_toolbars,
-        page_name: page_name
+        page_name: getPageName(state)
     }
 }
 

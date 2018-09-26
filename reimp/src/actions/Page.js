@@ -202,3 +202,7 @@ export function setBrowserTitle(title) {
     }
     
 }
+
+export function getPageName(state) {
+    return state.page.page_name
+}
