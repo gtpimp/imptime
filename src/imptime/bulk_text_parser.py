@@ -68,8 +68,9 @@ class BulkTextParser(object):
             previous_feature = feature
 
             for testable in meta_info['testables']:
-                testable.feature = feature
                 testable.project = project
+                testable.save()
+                testable.features.add(feature)
                 testable.save()
         return features
             
