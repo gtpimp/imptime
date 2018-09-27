@@ -62,7 +62,8 @@ class BulkFeatureCreatorForm extends Component {
                   - do something
                   - confirm it worked
 
-                  Testable: a testable name
+                  Testable: 
+                  name: a testable name
                   - do something else
                   - confirm it also worked
                   

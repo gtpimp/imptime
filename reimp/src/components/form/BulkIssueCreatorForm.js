@@ -63,6 +63,7 @@ class BulkIssueCreatorForm extends Component {
                   - confirm it worked
 
                   Testable:
+                  name: some testable name
                   - do something else
                   - confirm it also worked
 

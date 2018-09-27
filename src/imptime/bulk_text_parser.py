@@ -88,17 +88,20 @@ class BulkTextParser(object):
         groups = re.split("testable:", description, flags=re.IGNORECASE)
         if len(groups) <= 1:
             return description, []
-        step_groups = groups[1:]
         description = groups[0]
+        step_groups = groups[1:]
         order_count = 1
         testables = []
         for step_group in step_groups:
-            testables.append(Testable(steps=step_group, order=order_count))
+            step_group, meta_info = self._parse_attributes(step_group.strip())
+            testables.append(Testable(name=meta_info.get('name', None),
+                                      steps=step_group,
+                                      order=order_count))
             order_count += 1
         return description, testables
 
     def _parse_attributes(self, description):
-        attribute_names = [ "type", "status", "estimate" ]
+        attribute_names = [ "type", "status", "estimate", "name" ]
         attributes = {}
         for i in range(len(attribute_names)):
             for attribute_name in attribute_names:
