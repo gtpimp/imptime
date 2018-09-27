@@ -764,11 +764,14 @@ class Feature(BaseModel):
     
     @classmethod
     def ensure_root_feature_exists(self, project_id):
-        Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None)
+        return Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None)[0]
 
     @classmethod
     def get_root_feature(self, project_id):
-        return Feature.objects.get(name=self.ROOT_NAME, project_id=project_id)
+        res = Feature.objects.filter(name=self.ROOT_NAME, project_id=project_id).first()
+        if res is None:
+            res = self.ensure_root_feature_exists(project_id)
+        return res
         
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -892,7 +895,7 @@ class ProjectFeatureOrder(BaseModel):
 
     @classmethod
     def get_next_order(self, project_id, parent_feature_id, feature_qs=None):
-        self.renumber(project_id)
+        self.renumber(project_id, parent_feature_id)
         if feature_qs is None:
             feature_qs = Feature.objects.filter(project_id=project_id)
         if parent_feature_id is None:

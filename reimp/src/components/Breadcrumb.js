@@ -93,7 +93,12 @@ const menu_buttons = {
         }
     ],
     'features': [
+        { label: (objs) => 'Bulk Create Features',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/bulkCreateFeatures',
+          perms: (objs) => ['has_edit_feature']
+        },
         { label: (objs) => '+ New top level feature',
+          perms: (objs) => ['has_edit_feature'],
           type: "button",
           generic_action: function(objs, props) {
               props.dispatch(startCandidateFeature(objs.project.id, (objs.feature && objs.feature.id) || null))

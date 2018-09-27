@@ -208,7 +208,7 @@ class FeatureViewSet(BaseViewSet):
             project_id = params['project_id']
             bulk_feature_text = params['bulk_feature_text']
             project = self.allowed_project(project_id)
-            if not self.logged_in_permissions(project).has_add_feature:
+            if not self.logged_in_permissions(project).has_edit_feature:
                 raise Exception("Can't add features")
             new_features = BulkTextParser(request.user).create_features(raw_text=bulk_feature_text, project=project)
             new_feature_ids = [ str(x.id) for x in new_features ]

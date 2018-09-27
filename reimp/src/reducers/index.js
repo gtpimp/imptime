@@ -4,6 +4,7 @@ import breadcrumbs from './breadcrumbs'
 import estimate_summary from './estimate_summary'
 import editable_property from './editable_property'
 import filter from './filter'
+import feature from './feature'
 import global_comment_annotation from './global_comment_annotation'
 import issue from './issue'
 import issue_general_details from './issue_general_details'
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
     breadcrumbs,
     editable_property,
     estimate_summary,
+    feature,
     filter,
     form: redux_form_reducer,
     global_comment_annotation,

@@ -5,6 +5,7 @@ from timepiece.models import IssuePoints
 from django.utils import timezone
 from django.conf import settings
 from testable.models import Testable
+from imptime.models import ProjectFeatureOrder, Feature
 import logging
 import re
 logger = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ class BulkTextParser(object):
                 issues.append(issue)
                 for testable in meta_info['testables']:
                     testable.issue = issue
+                    testable.project = sprint.business #sic
                     testable.save()
 
                 estimate = meta_info['attributes'].get('estimate', None)
@@ -39,6 +41,39 @@ class BulkTextParser(object):
                     
         return issues
 
+    def create_features(self, raw_text, project):
+        orgnodes = makelist_from_string(raw_text)
+        features = []
+        running_parents = [Feature.get_root_feature(project.id)]
+        previous_feature = None
+        running_level = None
+        for orgnode in orgnodes:
+            level = orgnode.Level()
+            if running_level is None:
+                running_level = level
+
+            name = orgnode.Heading()
+            description = orgnode.CleanBody()
+            meta_info = self.parse_meta_info(description)
+                
+            if level > running_level:
+                running_parents.append(previous_feature)
+                running_level += 1
+            elif level < running_level:
+                running_parents = running_parents[:-1]
+                running_level -= 1
+            parent = running_parents[-1]
+            feature = self.create_feature(project, name, meta_info, parent)
+            features.append(feature)
+            previous_feature = feature
+
+            for testable in meta_info['testables']:
+                testable.feature = feature
+                testable.project = project
+                testable.save()
+        return features
+            
+    
     def parse_meta_info(self, description):
         description = description.strip()
         description, attributes = self._parse_attributes(description)
@@ -90,3 +125,16 @@ class BulkTextParser(object):
 
         logger.debug("Created issue %s %s" % (issue.id, issue.subject))
         return issue
+
+    def create_feature(self, project, name, meta_info, parent):
+        feature, is_new = Feature.objects.get_or_create(project=project,
+                                                        name=name,
+                                                        parent=parent,
+                                                        defaults={'number':Feature.get_next_feature_number(project),
+                                                                  'description':meta_info['description'],
+                                                                  'created':timezone.now(),
+                                                                  'modified':timezone.now()})
+        ProjectFeatureOrder.insert_at_the_end(feature)
+        return feature
+        
+        

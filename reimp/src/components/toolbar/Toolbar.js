@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import BillableHoursStatementToolbarPanel from './BillableHoursStatementToolbarPanel'
 import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
+import BulkCreateFeaturesToolbarPanel from './BulkCreateFeaturesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'
 import ClockHistoryToolbarPanel from './ClockHistoryToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
@@ -100,6 +101,8 @@ class Toolbar extends Component {
                 return <VisualSpecDocumentToolbarPanel key='visual-spec-document' {...this.props}/>
             case 'bulk-issue-creator':
                 return <BulkCreateIssuesToolbarPanel key='bulk-issue-creator' {...this.props}/>
+            case 'bulk-feature-creator':
+                return <BulkCreateFeaturesToolbarPanel key='bulk-feature-creator' {...this.props}/>
             case 'release-notes':
                 return <ReleaseNotesToolbarPanel key='release-notes' {...this.props}/>
             case 'project-roadmap':

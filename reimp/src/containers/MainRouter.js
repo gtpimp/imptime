@@ -6,6 +6,7 @@ import AccountCreatePage from './AccountCreatePage'
 import AccountCreatedPage from './AccountCreatedPage'
 import BillableHoursStatementPage from './BillableHoursStatementPage'
 import BulkIssueCreatorPage from './BulkIssueCreatorPage'
+import BulkFeatureCreatorPage from './BulkFeatureCreatorPage'
 import CalendarPage from './CalendarPage'
 import ChangePasswordPage from './ChangePasswordPage'
 import ClockHistoryPage from './ClockHistoryPage'
@@ -76,6 +77,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/projectStatement" component={ProjectStatementPage}/>
               <Route exact path="/projects/:projectId/sprints" component={SprintsPage}/>
               <Route exact path="/projects/:projectId/features" component={FeaturesPage}/>
+              <Route exact path="/projects/:projectId/bulkCreateFeatures" component={BulkFeatureCreatorPage}/>
               <Route exact path="/projects/:projectId/features/:featureId" component={FeaturesPage}/>
               <Route exact path="/projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
               <Route exact path="/projects/:projectId/executiveSummary" component={ProjectRoadmapPage}/>
