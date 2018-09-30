@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
+import { map, size } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
@@ -293,6 +293,9 @@ class IssueSidebar extends Component {
 
     renderFeaturesStack() {
         const { feature_testables } = this.props
+        if (size(feature_testables) === 0 ) {
+            return null
+        }
         return (
             <div key="featuresstack">
               <SidebarSectionTitle title="Feature testables" />
