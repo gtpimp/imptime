@@ -15,7 +15,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from imptime.models import Feature, FeatureHistory, ProjectFeatureOrder
+from imptime.models import Feature, FeatureHistory, ProjectFeatureOrder, VisualSpecIssue
 from timepiece.models import IssueHistory
 from timepiece.models import Business as Project
 from timepiece.models import BusinessPermissions as ProjectPermissions
@@ -243,6 +243,7 @@ class FeatureViewSet(BaseViewSet):
             testable.implementing_issues.add(issue)
             testable.save()
 
+            
             FeatureHistory.add_history(request.user, feature,
                                        "added implementing issue for testable %s" % testable.name,
                                        "", "%s %s" % (issue.number, issue.subject))
@@ -251,6 +252,14 @@ class FeatureViewSet(BaseViewSet):
                                      "added as implementing issue",
                                      "", "for feature %s %s" % (feature.number, feature.name))
 
+            for vsf in feature.visual_spec_features.all():
+                vsd = vsf.visual_spec_document
+                _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
+                                                                   issue=issue,
+                                                                   defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
+                if created:
+                    IssueHistory.add_history(request.user, issue, "linked attachment from feature %s %s" % (feature.number, feature.name), "", vsd.name)
+            
             issue.save()
             feature.save()
             data = {'status': 'success'}
