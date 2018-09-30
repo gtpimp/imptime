@@ -35,7 +35,9 @@ class VisualSpecDocumentGallery extends Component {
 
     reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id) {
         const {reorderDocuments} = this.props
-        reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id)
+        if ( reorderDocuments ) {
+            reorderDocuments(moving_visual_spec_document_id, move_after_visual_spec_document_id)
+        }
     }
 
     selectDocument(event, visual_spec_document) {

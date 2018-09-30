@@ -2,6 +2,8 @@ import logging
 from rest_framework import serializers
 from base_serializer import BaseSerializer
 from testable_serializer import TestableSerializer
+from drf_compound_fields.fields import ListField
+from imptime.models import VisualSpecDocument
 logger = logging.getLogger(__name__)
 
 class FeatureSerializer(BaseSerializer):
@@ -19,6 +21,7 @@ class FeatureSerializer(BaseSerializer):
     created = serializers.DateTimeField()
     is_root_node = serializers.BooleanField()
     testables = TestableSerializer(many=True, source="testables_in_order")
+    visual_spec_document_ids = ListField()
     
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -33,6 +36,10 @@ class FeatureSerializer(BaseSerializer):
         else:
             feature.order = project_feature_orders[0].order
         feature.is_root_node = feature.parent_id is None
+
+        feature.visual_spec_document_ids = VisualSpecDocument.objects.filter(visual_spec_features__feature=feature)\
+                                                                     .order_by("visual_spec_features__order")\
+                                                                     .values_list('id', flat=True)
 
         testables = [x for x in feature.testables.all()]
         testables.sort(key=lambda x: x.order)

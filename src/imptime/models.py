@@ -55,7 +55,7 @@ class VisualSpecDocument(BaseModel):
         return hash_md5.hexdigest()
 
     @classmethod
-    def create_for_doc(self, user, project, doc, name, content_type, issue=None):
+    def create_for_doc(self, user, project, doc, name, content_type, issue=None, feature=None):
         d_file = doc
         is_image = content_type.startswith('image')
         if is_image:
@@ -90,8 +90,17 @@ class VisualSpecDocument(BaseModel):
                                                                defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
             if created:
                 issue.save()
-                IssueHistory.add_history(user, issue, "added visual spec document", "", name)
+                IssueHistory.add_history(user, issue, "added attachment", "", name)
 
+        if feature is not None:
+            _, created = VisualSpecFeature.objects.get_or_create(visual_spec_document=vsd,
+                                                                 feature=feature,
+                                                                 defaults={'order':VisualSpecFeature.get_next_order(feature.id)})
+            if created:
+                feature.save()
+                FeatureHistory.add_history(user, feature, "added attachment", "", name)
+
+                
     def height_and_width(self):
         max_size = settings.QUOTE_IMAGE_MAX_SIZE
         height = self.hires_height
@@ -234,6 +243,66 @@ class VisualSpecIssue(BaseModel):
                                 .aggregate(max_order=Max('order'))['max_order'] or 0
         return max_order + self.INCREMENT
 
+
+class VisualSpecFeature(BaseModel):
+    visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_features')
+    feature = ProtectedForeignKey("imptime.Feature", related_name='visual_spec_features')
+    order = models.IntegerField(default=1)
+
+    INCREMENT=10
+    MAX_ORDER=999999
+
+    class Meta:
+        unique_together = ('feature', 'visual_spec_document')
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(VisualSpecFeature, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    @classmethod
+    def renumber(self, feature_id):
+        vsis = self.objects.filter(feature_id=feature_id).order_by("order")
+        order = 0
+        for vsi in vsis:
+            if vsi.order != order:
+                vsi.order = order
+                vsi.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def insert_after(self, feature_id, visual_spec_document, set_after_this_visual_spec_document):
+        self.renumber(feature_id)
+        vsi_target = self.objects.get_or_create(feature_id=feature_id,
+                                                visual_spec_document_id=set_after_this_visual_spec_document.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = vsi_target.order+1
+        vsi, is_new = self.objects.get_or_create(feature_id=feature_id,
+                                                 visual_spec_document_id=visual_spec_document.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            vsi.order = new_order
+            vsi.save()
+        self.renumber(feature_id)
+
+    @classmethod
+    def insert_at_the_end(self, feature_id, visual_spec_document_id):
+        new_order = self.get_next_order(feature_id)
+        self.objects.get_or_create(feature_id=feature_id,
+                                   visual_spec_document_id=visual_spec_document_id,
+                                   defaults={'order':new_order})
+        self.renumber(feature_id)
+
+    @classmethod
+    def get_next_order(self, feature_id):
+        self.renumber(feature_id)
+        max_order = self.objects.filter(feature_id=feature_id)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+    
 
 class VisualSpecIssueAnnotation(BaseModel):
 

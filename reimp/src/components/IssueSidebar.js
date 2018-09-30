@@ -4,7 +4,6 @@ import { css } from 'emotion'
 import { map, size } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
-import PropertyStackComponent from './PropertyStackComponent'
 import FeatureName from './FeatureName'
 import Floater from "react-floater"
 import Testable from './Testable'
@@ -340,19 +339,19 @@ class IssueSidebar extends Component {
         )
     }
 
-    renderAddAttachmentWidget() {
-        const { issue } = this.props
-        return (
-            <PropertyStackComponent>
-              <SidebarSectionTitle title="Attachments" />
-              <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
-                                         issue_id={issue.id}
-                                         allow_edit={false} />
-              <button className="button button--primary" onClick={this.showAddVisualSpecDoc}>Add</button>
-              <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
-            </PropertyStackComponent>
-        )
-    }
+    /* renderAddAttachmentWidget() {
+     *     const { issue } = this.props
+     *     return (
+     *         <PropertyStackComponent>
+     *           <SidebarSectionTitle title="Attachments" />
+     *           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+     *                                      issue_id={issue.id}
+     *                                      allow_edit={false} />
+     *           <button className="button button--primary" onClick={this.showAddVisualSpecDoc}>Add</button>
+     *           { false && <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button> }
+     *         </PropertyStackComponent>
+     *     )
+     * }*/
 
     renderAttachmentsStack() {
         const { issue, project_id } = this.props
@@ -370,7 +369,7 @@ class IssueSidebar extends Component {
                         onButtonClick={this.showAddVisualSpecDoc}
                         label="Add attachment" />
               )}
-              { ! adding_visual_spec_doc && (
+              { false && ! adding_visual_spec_doc && (
                     <SidebarManageButton
                         data-tooltip="Upload attachment"
                         onButtonClick={this.showIssueVisualSpecGallery}

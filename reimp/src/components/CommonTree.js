@@ -4,7 +4,7 @@ import { indexOf, map, initial, includes } from 'lodash'
 import { css } from 'emotion'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
-import SortableTree from 'react-sortable-tree'
+import { SortableTreeWithoutDndContext as SortableTree } from 'react-sortable-tree'
 import 'react-sortable-tree/style.css'
 
 class CommonTree extends Component {

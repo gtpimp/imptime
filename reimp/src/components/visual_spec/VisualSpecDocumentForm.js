@@ -8,7 +8,7 @@ import { UPLOAD_RELATIVE_URL } from '../../actions/VisualSpecDocuments'
 class VisualSpecDocumentForm extends Component {
 
     render() {
-        const { issue_id, project_id,
+        const { issue_id, feature_id, project_id,
                 onChange, onDelete, onCancel, visual_spec_document } = this.props
 
         const upload_params = {project_id: project_id}
@@ -17,6 +17,9 @@ class VisualSpecDocumentForm extends Component {
         
         if ( issue_id ) {
             upload_params.issue_id = issue_id
+            extra_buttons.push(<button onClick={onDelete}>remove</button>)
+        } else if ( feature_id ) {
+            upload_params.feature_id = feature_id
             extra_buttons.push(<button onClick={onDelete}>remove</button>)
         } else {
             extra_buttons.push(<button onClick={onDelete}>delete</button>)
@@ -40,13 +43,14 @@ class VisualSpecDocumentForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onChange, issue_id, project_id, onDelete,
+    const { onChange, issue_id, feature_id, project_id, onDelete,
             onOpen, onCancel, visual_spec_document } = props
     
     return {
         onSubmit: onChange,
         visual_spec_document,
         issue_id,
+        feature_id, 
         project_id,
         onDelete,
         onOpen,
@@ -54,4 +58,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'issue_visual_spec_document_form'})(VisualSpecDocumentForm))
+export default connect(mapStateToProps)(reduxForm({form:'visual_spec_document_form'})(VisualSpecDocumentForm))

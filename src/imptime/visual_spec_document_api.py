@@ -65,14 +65,19 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             project_pk = request.POST['project_id']
             project = self.allowed_project(project_pk)
             issue_pk = request.POST.get('issue_id', None)
+            feature_pk = request.POST.get('feature_id', None)
+
             issue = self.allowed_issue(issue_pk) if issue_pk else None
+            feature = self.allowed_feature(feature_pk) if feature_pk else None
+                
             for name, f in request.FILES.items():
                 VisualSpecDocument.create_for_doc(user=request.user,
                                                   project=project,
                                                   doc=f,
                                                   name=f.name,
                                                   content_type=f.content_type,
-                                                  issue=issue)
+                                                  issue=issue,
+                                                  feature=feature)
             data = {'status': 'success'}
 
         except Exception, ex:
