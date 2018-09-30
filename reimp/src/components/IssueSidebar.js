@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import { map, size } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
@@ -303,7 +304,7 @@ class IssueSidebar extends Component {
                     const feature_id = testable.feature_ids[0]
                     return (
                         <Floater key={`feature_testable_${feature_id}`}
-                                 title={"Testable for feature"}
+                                 title={<div>This issue implements part of feature <FeatureName feature_id={feature_id} /></div>}
                                  disableHoverToClick
                                  event="hover"
                                  eventDelay={0}
@@ -315,7 +316,9 @@ class IssueSidebar extends Component {
                                                     />
                                          }
                         >
-                          <FeatureName feature_id={feature_id} />
+                                     <div className={css`display: flex`}>
+                                       <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{Testable.name}
+                                     </div>
                         </Floater>
                     )
                 })

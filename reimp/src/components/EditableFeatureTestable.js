@@ -87,7 +87,7 @@ class EditableFeatureTestable extends Component {
         const that = this
         const actions = [
             {onClick: this.createIssueForTestable,
-             label: "Create issue"}
+             label: "Link issue"}
         ]
         map(testable.implementing_issue_ids, (issue_id) => {
             actions.push({onClick: null,

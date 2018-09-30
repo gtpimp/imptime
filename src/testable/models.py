@@ -12,7 +12,7 @@ import re
 
 class Testable(models.Model):
     include_in_regression_test = models.BooleanField(default=True, blank=True)
-    issue = ProtectedForeignKey(Issue, blank=True, null=True, related_name='testables')
+    issue = models.ForeignKey(Issue, blank=True, null=True, related_name='testables')
     project = ProtectedForeignKey(Project, blank=True, null=False, related_name='testables')
     features = models.ManyToManyField("imptime.Feature", related_name="testables")
     name = models.TextField(null=True)
