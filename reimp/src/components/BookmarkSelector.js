@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { getBreadcrumbs } from '../actions/Breadcrumbs'
 import {withRouter} from 'react-router-dom'
 import { getBookmarks, addBookmark, removeBookmark, pushBookmarkToTop } from '../actions/Bookmarks'
 import { css } from 'emotion'
-import { map } from 'lodash'
+import { join, map } from 'lodash'
 import PopupPanelButton from './PopupPanelButton'
 import PopupPanelLink from './PopupPanelLink'
 import PopupPanelHeading from './PopupPanelHeading'
@@ -19,9 +20,13 @@ class BookmarkSelector extends Component {
     }
 
     onAddBookmark = (evt) => {
+        const { breadcrumbs } = this.props
         evt.preventDefault()
         const url = window.location.pathname
-        const name = url
+
+        const name_parts = []
+        map(breadcrumbs, (breadcrumb) => name_parts.push(breadcrumb.label))
+        const name = join(name_parts, " > ")
         addBookmark(name, url)
     }
 
@@ -81,9 +86,11 @@ class BookmarkSelector extends Component {
 function mapStateToProps(state, props) {
 
     const bookmarks = getBookmarks()
+    const breadcrumbs = getBreadcrumbs(state)
 
     return {
-        bookmarks
+        bookmarks,
+        breadcrumbs
     }
 }
 
