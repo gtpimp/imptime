@@ -27,11 +27,16 @@ class FeatureSerializer(BaseSerializer):
     def to_representation(self, feature, *args, **kwargs):
         feature.children_ids = [ x.id for x in feature.children.all() ]
         feature.issue_ids = [ x.id for x in feature.issues.all() ]
-        project_feature_order = feature.project_feature_orders.first()
-        if project_feature_order is None:
+        project_feature_orders = feature.project_feature_orders.all()
+        if len(project_feature_orders) == 0:
             feature.order = 0
         else:
-            feature.order = project_feature_order.order
+            feature.order = project_feature_orders[0].order
         feature.is_root_node = feature.parent_id is None
+
+        testables = [x for x in feature.testables.all()]
+        testables.sort(key=lambda x: x.order)
+        feature.testables_in_order = testables
+        
         return super(FeatureSerializer, self).to_representation(feature, *args, **kwargs)
     

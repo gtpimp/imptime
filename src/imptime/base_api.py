@@ -18,6 +18,7 @@ from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nud
 from imptime.models import VisualSpecIssueAnnotation, WikiPage
 from imptime.models import Mien, CompanyProblem, SprintSnapshot
 from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature
+from testable.models import Testable
 from invoicing.models import Invoice
 
 class PermissionHelper():
@@ -253,7 +254,7 @@ class BaseViewSet(viewsets.ViewSet):
                                       business__business_permissions__can_view_invoices=True)
 
     def allowed_testables(self):
-        return Testable.objects.filter(project__in=self.allowd_projects())
+        return Testable.objects.filter(project__in=self.allowed_projects()) 
     
     def allowed_issue_histories(self): 
         non_sensitive = IssueHistory.objects.filter(money_sensitive=False,

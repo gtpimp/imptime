@@ -1,12 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
 
 class Testable extends Component {
 
     render() {
-        const { testable, onDelete, onPromoteToIssue } = this.props
+        const { testable, onDelete, onPromoteToIssue, extraActions } = this.props
 
         return (
             <div className="issue-testable">
@@ -42,6 +43,17 @@ class Testable extends Component {
                       Remove
                     </div>
                   }
+                  { extraActions && map(extraActions, (extraAction, index) => {
+                      return (
+                          <div key={`testable_extra_actions_${testable.id}_${index}`}
+                               onClick={extraAction.onClick}
+                               className="issue_sidebar__options__left">
+                            <span className="issue_sidebar__options__spacer">|</span>
+                            {extraAction.label}
+                          </div>
+                          )
+                    }
+                  )}
                 </div>
               </div>
             </div>
@@ -51,12 +63,13 @@ class Testable extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { testable, onDelete, onPromoteToIssue } = props
+    const { testable, onDelete, onPromoteToIssue, extraActions } = props
     
     return {
         testable,
         onDelete,
-        onPromoteToIssue
+        onPromoteToIssue,
+        extraActions
     }
 }
 

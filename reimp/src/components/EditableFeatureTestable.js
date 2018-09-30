@@ -9,11 +9,16 @@ import {
     deleteFeatureTestable,
     ensureFeaturesLoaded,
     getFeature,
-    is_feature_invalidated
+    is_feature_invalidated,
+    addIssueToFeatureTestable,
+    removeIssueToFeatureTestable
 } from '../actions/Features'
 import TestableForm from './form/TestableForm'
 import { has_permission } from '../actions/Users'
 import Testable from './Testable'
+import IssueName from './IssueName'
+import IssueSelectorForm from './form/IssueSelectorForm'
+import ModalDialog from './ModalDialog'
 
 class EditableFeatureTestable extends Component {
 
@@ -21,6 +26,7 @@ class EditableFeatureTestable extends Component {
         super(props)
         this.onChange = this.onChange.bind(this)
         this.onDelete = this.onDelete.bind(this)
+        this.state = {creatingIssueForTestable: false}
     }
 
     componentWillMount() {
@@ -43,21 +49,96 @@ class EditableFeatureTestable extends Component {
         }
     }
 
-    onDelete(event) {
+    onDelete(evt) {
         const { dispatch, feature_id, testable_id } = this.props
-        event.stopPropagation()
+        evt.stopPropagation()
         if (! window.confirm("Are you sure you want to delete this testable?" ) ) {
             return false;
         }
         dispatch(deleteFeatureTestable(feature_id, testable_id))
     }
 
+    onCancelCreateIssueForTestable = () => {
+        this.setState({creatingIssueForTestable: false})
+    }
+
+    createIssueForTestable = (evt) => {
+        evt.stopPropagation()
+        this.setState({creatingIssueForTestable: true})
+    }
+
+    onCreatedIssueForTestable = (new_values) => {
+        const { dispatch, feature_id, testable } = this.props
+        const { issue_id } = new_values
+        this.setState({creatingIssueForTestable: false})
+        dispatch(addIssueToFeatureTestable(feature_id, testable.id, issue_id))
+    }
+
+    onRemoveIssueFromFeature = (evt, issue_id) => {
+        const { dispatch, feature_id, testable } = this.props
+        evt.stopPropagation()
+        if ( ! window.confirm("Unassociate this issue from this testable?\n(The issue won't be deleted)") ) {
+            return
+        }
+        dispatch(removeIssueToFeatureTestable(feature_id, testable.id, issue_id))
+    }
+
+    getExtraActions = (testable) => {
+        const that = this
+        const actions = [
+            {onClick: this.createIssueForTestable,
+             label: "create issue"}
+        ]
+        map(testable.implementing_issue_ids, (issue_id) => {
+            actions.push({onClick: null,
+                          label: (
+                              <div>
+                                <IssueName issue_id={issue_id}/>
+                                <div className="issue__small-delete-image"
+                                     onClick={(evt) => that.onRemoveIssueFromFeature(evt, issue_id)} />
+                              </div>
+                          )})
+        })
+        return actions
+    }
+
+    renderCreateIssueForTestable() {
+        const { testable } = this.props
+        return (
+            <ModalDialog isOpen={true}
+                         onClose={this.onCancelCreateIssueForTestable}
+                         title={`Select issue for testable`}
+                         variant="large">
+              <div className="editable-property-modal__row editable-property-modal__row--header">
+                <label className="editable-property-modal__title">
+                  Select or create an issue for testable {testable.name}
+                </label>
+              </div>
+              <IssueSelectorForm optional_default_issue_values={{issue_type:'issue'}}
+                                 onSubmitted={this.onCreatedIssueForTestable}/>
+            </ModalDialog>
+        )
+    }
+
+    renderTestable = (testable) => {
+        return (
+            <div>
+              <Testable testable={testable}
+                        onDelete={this.onDelete}
+                        extraActions={this.getExtraActions(testable)}
+              />
+            </div>
+        )
+    }
+
     render() {
         const {testable, can_edit, feature_id, project_id} = this.props
+        const { creatingIssueForTestable } = this.state
         return (
 
             <PermissionInspectorHighlighter project_id={project_id}
                                             permission_name='has_edit_feature'>
+              { creatingIssueForTestable && this.renderCreateIssueForTestable() }
               { testable.id &&
                 <EditableProperty property_key={'feature_testable_'+feature_id+'_'+testable.id}
                                   initial_value={testable}
@@ -66,31 +147,29 @@ class EditableFeatureTestable extends Component {
                 >
                   <TestableForm form={'feature_testable_form_'+feature_id+'_'+testable.id}
                                 testable={testable}/>
-                  <Testable testable={testable}
-                            onDelete={this.onDelete}
-                  />
+                  { this.renderTestable(testable) }
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
 
-                <div className="feature-testable__button-bar">
-                  { ! testable.id &&
-                    <div>
-                      <EditableProperty property_key={'feature_testable_'+feature_id}
-                                        initial_value=''
-                                        onChange={this.onChange}
-                                        can_edit={can_edit}
-                      >
-                        <TestableForm form={'feature_testable_form_'+feature_id} />
-                        <div className="text-component--readonly"></div>
-                        <div className="text-component--empty">
-                          <div className="icon--add" data-tooltip="Create testable"></div>
-                        </div>
-                      </EditableProperty>
-                    </div>
-                  }
+              <div className="feature-testable__button-bar">
+                { ! testable.id &&
+                  <div>
+                    <EditableProperty property_key={'feature_testable_'+feature_id}
+                                      initial_value=''
+                                      onChange={this.onChange}
+                                      can_edit={can_edit}
+                    >
+                      <TestableForm form={'feature_testable_form_'+feature_id} />
+                      <div className="text-component--readonly"></div>
+                      <div className="text-component--empty">
+                        <div className="icon--add" data-tooltip="Create testable"></div>
+                      </div>
+                    </EditableProperty>
+                  </div>
+                }
 
-                </div>
+              </div>
             </PermissionInspectorHighlighter>
         )
     }

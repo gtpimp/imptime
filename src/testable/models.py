@@ -20,6 +20,7 @@ class Testable(models.Model):
     enriched_steps = models.TextField(null=True)
     order = models.IntegerField(null=False, default=0)
     quality_error = models.CharField(max_length=255, null=True)
+    implementing_issues = models.ManyToManyField(Issue, related_name="implements_testables")
 
     def __init__(self, *args, **kwargs):
         super(Testable, self).__init__(*args, **kwargs)
@@ -42,10 +43,6 @@ class Testable(models.Model):
             self.quality_error = quality_error
             super(Testable, self).save()
 
-    @property
-    def testable_steps_in_order(self):
-        return self.testable_steps.all().order_by("order")
-            
     @property
     def clean_steps(self):
         s = self.steps.strip()

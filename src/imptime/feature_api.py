@@ -16,6 +16,7 @@ import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.models import Feature, FeatureHistory, ProjectFeatureOrder
+from timepiece.models import IssueHistory
 from timepiece.models import Business as Project
 from timepiece.models import BusinessPermissions as ProjectPermissions
 
@@ -64,7 +65,12 @@ class FeatureViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     def _enrich_features_qs(self, features, project_id):
-        features = features.prefetch_related('children', 'project_feature_orders', 'issues')
+        features = features.prefetch_related('children')\
+                           .prefetch_related('project_feature_orders')\
+                           .prefetch_related('issues')\
+                           .prefetch_related('testables')\
+                           .prefetch_related('testables__implementing_issues')\
+                           .prefetch_related('testables__testable_steps')
         return features
 
     def update(self, request, pk):
@@ -220,6 +226,77 @@ class FeatureViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    @detail_route(methods=['PUT'])
+    def addIssueToFeatureTestable(self, request, pk):
+        try:
+            params = request.data
+            feature_id = params['feature_id']
+            testable_id = params['testable_id']
+            issue_id = params['issue_id']
+
+            feature = self.allowed_feature(feature_id)
+            testable = self.allowed_testables().get(pk=testable_id)
+            if feature not in testable.features.all():
+                raise Exception("Testable doesn't belong to this feature")
+            issue = self.allowed_issue(issue_id)
+            
+            testable.implementing_issues.add(issue)
+            testable.save()
+
+            FeatureHistory.add_history(request.user, feature,
+                                       "added implementing issue for testable %s" % testable.name,
+                                       "", "%s %s" % (issue.number, issue.subject))
+
+            IssueHistory.add_history(request.user, issue,
+                                     "added as implementing issue",
+                                     "", "for feature %s %s" % (feature.number, feature.name))
+
+            issue.save()
+            feature.save()
+            data = {'status': 'success'}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+    @detail_route(methods=['PUT'])
+    def removeIssueFromFeatureTestable(self, request, pk):
+        try:
+            params = request.data
+            feature_id = params['feature_id']
+            testable_id = params['testable_id']
+            issue_id = params['issue_id']
+
+            feature = self.allowed_feature(feature_id)
+            testable = self.allowed_testables().get(pk=testable_id)
+            if feature not in testable.features.all():
+                raise Exception("Testable doesn't belong to this feature")
+            issue = self.allowed_issue(issue_id)
+            
+            testable.implementing_issues.remove(issue)
+            testable.save()
+
+            FeatureHistory.add_history(request.user, feature,
+                                       "removed implementing issue for testable %s" % testable.name,
+                                       "%s %s" % (issue.number, issue.subject), "")
+
+            IssueHistory.add_history(request.user, issue,
+                                     "removed as implementing issue",
+                                     "for feature %s %s" % (feature.number, feature.name), "")
+
+            issue.save()
+            feature.save()
+            data = {'status': 'success'}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+    
+    
     def delete(self, request, pk):
         try:
             params = request.data

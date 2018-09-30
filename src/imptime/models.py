@@ -784,10 +784,6 @@ class Feature(BaseModel):
     def delete(self):
         super(Feature, self).soft_delete()
 
-    def testables_in_order(self):
-        return self.testables.all().order_by("order")
-
-
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()
     feature = models.ForeignKey(Feature, related_name='project_feature_orders')
