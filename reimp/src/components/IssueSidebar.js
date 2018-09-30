@@ -292,14 +292,15 @@ class IssueSidebar extends Component {
     }
 
     renderFeaturesStack() {
-        const { issue, feature_testables } = this.props
+        const { feature_testables } = this.props
         return (
             <div key="featuresstack">
               <SidebarSectionTitle title="Feature testables" />
               { map(feature_testables, function (testable, index) {
                     const feature_id = testable.feature_ids[0]
                     return (
-                        <Floater title={"Testable for feature"}
+                        <Floater key={`feature_testable_${feature_id}`}
+                                 title={"Testable for feature"}
                                  disableHoverToClick
                                  event="hover"
                                  eventDelay={0}

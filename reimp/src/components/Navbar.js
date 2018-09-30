@@ -7,6 +7,7 @@ import { getLoggedInUser } from '../actions/Users'
 import '../sass/navbar.css'
 import NavTab from './NavTab'
 import MienSelector from './MienSelector'
+import BookmarkSelector from './BookmarkSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
 import { css } from 'emotion'
 import styled from 'react-emotion'
@@ -123,6 +124,11 @@ class Navbar extends Component {
                   </PopupPanelLink>
 
                 </NavTab>
+
+                <NavTab variant="dashboard-toggle" label="Bookmarks">
+                  <BookmarkSelector/>
+                </NavTab>
+                
                 <NavTab>
                   <SearchBox/>
                 </NavTab>

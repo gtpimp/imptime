@@ -198,6 +198,10 @@
     @include icon(24px, 24px, 'unresolved_dependancy.png');
 }
 
+.icon--bookmarks {
+    @include icon(24px, 24px, 'bookmarks_icon.png');
+}
+
 .icon__status--unresolved {
     height: 15px;
     width: 15px;
