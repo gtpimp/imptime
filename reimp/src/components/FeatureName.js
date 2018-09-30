@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { includes } from 'lodash'
 import {
     ensureFeaturesLoaded, getFeature
 } from '../actions/Features'
@@ -24,7 +23,7 @@ class FeatureName extends Component {
     }
 
     render_inline_small() {
-	const { feature, display_mode } = this.props
+	const { feature } = this.props
 
 	return (
 	    <Link className="feature_name--inline-small"

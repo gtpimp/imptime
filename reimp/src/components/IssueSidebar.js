@@ -4,6 +4,9 @@ import map from 'lodash/map'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
+import FeatureName from './FeatureName'
+import Floater from "react-floater"
+import Testable from './Testable'
 import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueRisky from './EditableIssueRisky'
@@ -205,9 +208,11 @@ class IssueSidebar extends Component {
                     </div> */}
               </SidebarDetail>
 
-              <SidebarDetail label="Parent Feature">
+              { false && 
+              <SidebarDetail label="Grouping issue">
                 <EditableIssueParent issue_ids={[issue.id]}/>
               </SidebarDetail>
+              }
 
               <SidebarDetail label="Type">
                 <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>
@@ -282,6 +287,35 @@ class IssueSidebar extends Component {
                 })
               }
               <EditableIssueComment issue_id={issue.id} comment_id={null}/>
+            </div>
+        )
+    }
+
+    renderFeaturesStack() {
+        const { issue, feature_testables } = this.props
+        return (
+            <div key="featuresstack">
+              <SidebarSectionTitle title="Feature testables" />
+              { map(feature_testables, function (testable, index) {
+                    const feature_id = testable.feature_ids[0]
+                    return (
+                        <Floater title={"Testable for feature"}
+                                 disableHoverToClick
+                                 event="hover"
+                                 eventDelay={0}
+                                 placement="bottom"
+                                 content={
+                                     <Testable key={`feature_testable_${testable.id}`}
+                                               testable={testable}
+                                               feature_id={feature_id.id}
+                                                    />
+                                         }
+                        >
+                          <FeatureName feature_id={feature_id} />
+                        </Floater>
+                    )
+                })
+              }
             </div>
         )
     }
@@ -424,6 +458,7 @@ class IssueSidebar extends Component {
                         this.renderDescriptionStack(),
                         this.renderTestablesStack(),
                         this.renderCommentsStack(),
+                        this.renderFeaturesStack(),
                         this.renderEstimatesStack(),
                         this.renderDependancyStack(),
                         this.renderAttachmentsStack(),
@@ -504,6 +539,7 @@ function mapStateToProps(state, props) {
         issue_id: issue_id,
         comments: issue.comments,
         testables: issue.testables,
+        feature_testables: issue.feature_testables,
         attachments: issue.attachments,
         visual_spec_documents: issue.visual_spec_documents,
         sprint_id: sprint_id,

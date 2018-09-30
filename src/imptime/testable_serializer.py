@@ -17,6 +17,7 @@ class TestableSerializer(BaseSerializer):
     quality_error = serializers.CharField()
     testable_steps = serializers.ListField(TestableStepSerializer, source="testable_steps_in_order")
     implementing_issue_ids = serializers.ListField(serializers.CharField())
+    feature_ids = serializers.ListField(serializers.CharField())
 
     def to_representation(self, obj, *args, **kwargs):
         obj.name = obj.name or "Testable %s" % obj.order
@@ -26,6 +27,7 @@ class TestableSerializer(BaseSerializer):
         steps = [x for x in obj.testable_steps.all()]
         steps.sort(key=lambda x: x.order)
         obj.testable_steps_in_order = steps
+        obj.feature_ids = [x.id for x in obj.features.all()]
         
         return super(TestableSerializer, self).to_representation(obj, *args, **kwargs)
 

@@ -42,6 +42,7 @@ class IssueSerializer(BaseSerializer):
     group_children = ListField(source="group_children_ids")
     comments = IssueCommentSerializer(many=True)
     testables = TestableSerializer(many=True, source="testables_in_order")
+    feature_testables = TestableSerializer(many=True)
     needs_testables = serializers.BooleanField()
     needs_estimate = serializers.BooleanField()
     needs_issue_ids = serializers.ListField(child=serializers.CharField())
@@ -123,7 +124,8 @@ class IssueSerializer(BaseSerializer):
         issue.needs_issue_ids = [ x.id for x in issue.needs_issues.all() ]
         issue.issue_ids_needing_us = [ x.id for x in issue.issues_needing_us.all() ]
         issue.needs_open_issues_ids = [ x.id for x in issue.needs_issues.all() if x.status2.name in Issue.STATUSES_INDICATING_INCOMPLETE['developer'] ]
-            
+        issue.feature_testables = [ x for x in issue.implements_testables.all() ]
+        
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 
 class IssueGeneralDetailsSerializer(BaseSerializer):

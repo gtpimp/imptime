@@ -92,6 +92,8 @@ class IssueViewSet(BaseViewSet):
                        .prefetch_related('issues_needing_us')\
                        .prefetch_related('needs_issues')\
                        .prefetch_related('reviews')\
+                       .prefetch_related('implements_testables')\
+                       .prefetch_related('implements_testables__features')\
                        .prefetch_related('tags')\
                        .prefetch_related(Prefetch('entries', to_attr='active_clocks',
                                                   queryset=Entry.objects.select_related('user').filter(end_time__isnull=False)))\
