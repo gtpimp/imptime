@@ -103,7 +103,6 @@ class BulkTextParser(object):
                                        code=Sprint.get_code_from_name(name))
         for feature in features:
             for testable in feature.testables.all():
-                testable_name = testable.name or "Testable %d" % testable.order
                 issue = Issue.objects.create(project_id=sprint.id, #sic,
                                              status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
                                              number=Issue.get_next_issue_number(sprint.business),
@@ -111,13 +110,6 @@ class BulkTextParser(object):
                                              subject="%s %s" % (feature.name, testable_name),
                                              created_by=self.logged_in_user)
 
-                Testable.objects.create(issue=issue,
-                                        project=issue.project.business, #sic
-                                        name=testable_name,
-                                        steps=testable.steps,
-                                        enriched_steps=testable.enriched_steps,
-                                        order=1)
-                
                 feature.link_issue_to_testable(self.logged_in_user, issue.id, testable.id)
     
     def parse_meta_info(self, description):

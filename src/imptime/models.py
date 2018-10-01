@@ -15,6 +15,7 @@ from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueHistory
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions as ProjectPermissions
+from testable.models import Testable
 from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from project_statement_calculator import ProjectStatementCalculator
 from time_summary_calculator import TimeSummaryCalculator
@@ -860,6 +861,15 @@ class Feature(BaseModel):
             raise Exception("Can't edit issues")
         issue = Issue.objects.get(pk=issue_id, project__business=self.project) #sic
 
+        testable_name = testable.name or "Testable %d" % testable.order
+        Testable.objects.create(issue=issue,
+                                project=self.project, #sic
+                                name=testable_name,
+                                steps=testable.steps,
+                                enriched_steps=testable.enriched_steps,
+                                order=99)
+        Testable.renumber_for_issue(issue.id)
+        
         testable.implementing_issues.add(issue)
         testable.save()
 
