@@ -103,6 +103,7 @@ class BulkTextParser(object):
                                        code=Sprint.get_code_from_name(name))
         for feature in features:
             for testable in feature.testables.all():
+                testable_name = testable.name or "Testable %d" % testable.order
                 issue = Issue.objects.create(project_id=sprint.id, #sic,
                                              status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
                                              number=Issue.get_next_issue_number(sprint.business),
@@ -193,7 +194,7 @@ class BulkTextParser(object):
             vsd = VisualSpecDocument.objects.filter(visual_spec_projects__project=project,
                                                     name=attachment_name).first()
             if not vsd:
-                raise Exception("No document found with name %s" % meta_info["attachment"])
+                raise Exception("No document found with name %s" % meta_info["attributes"]["attachment"])
             VisualSpecFeature.objects.get_or_create(visual_spec_document=vsd,
                                                     feature=feature,
                                                     defaults={'order':VisualSpecFeature.get_next_order(feature.id)})

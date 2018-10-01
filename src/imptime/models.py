@@ -834,14 +834,11 @@ class Feature(BaseModel):
     
     @classmethod
     def ensure_root_feature_exists(self, project_id):
-        return Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None)[0]
+        return Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None, deleted=False)[0]
 
     @classmethod
     def get_root_feature(self, project_id):
-        res = Feature.objects.filter(name=self.ROOT_NAME, project_id=project_id).first()
-        if res is None:
-            res = self.ensure_root_feature_exists(project_id)
-        return res
+        return self.ensure_root_feature_exists(project_id)
         
     def save(self, *args, **kwargs):
         was_created = not self.id
