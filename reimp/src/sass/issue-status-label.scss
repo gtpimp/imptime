@@ -3,3 +3,8 @@
 .issue-status-label {
 
 }
+
+.issue-status-label:hover {
+    color: $color-36;
+    text-decoration: underline;
+}

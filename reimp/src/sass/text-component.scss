@@ -12,6 +12,11 @@
 .text-component--empty {
 }
 
+.text-component--empty:hover {
+    color: $color-36;
+    text-decoration: underline;
+}
+
 .text-component--testable {
     padding: 12px;
     padding-left: 0;

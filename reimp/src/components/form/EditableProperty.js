@@ -54,7 +54,7 @@ class EditableProperty extends Component {
             return
         }
         const mouse_moved = Math.abs(this.state.mouse_pos_x-event.clientX) > MOUSE_MOVE_THRESHOLD ||
-                             Math.abs(this.state.mouse_pos_y-event.clientY) > MOUSE_MOVE_THRESHOLD
+                            Math.abs(this.state.mouse_pos_y-event.clientY) > MOUSE_MOVE_THRESHOLD
         
         if ( can_edit && ! mouse_moved ) {
             dispatch(setEditing(property_key))

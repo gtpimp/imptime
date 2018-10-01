@@ -134,8 +134,6 @@ class IssueToolbarPanel extends Component {
             return null
         }
 
-        console.log("show_sidebar", show_sidebar)
-
         return (
             <div className="toolbar_container">
               {show_sidebar &&
