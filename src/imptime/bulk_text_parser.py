@@ -5,7 +5,7 @@ from timepiece.models import IssuePoints
 from django.utils import timezone
 from django.conf import settings
 from testable.models import Testable
-from imptime.models import ProjectFeatureOrder, Feature, VisualSpecFeature, VisualSpecDocument
+from imptime.models import ProjectFeatureOrder, Feature, VisualSpecFeature, VisualSpecDocument, VisualSpecIssue
 import logging
 import re
 logger = logging.getLogger(__name__)
@@ -131,6 +131,17 @@ class BulkTextParser(object):
                                                               'modified':timezone.now()})
         SprintIssueOrder.insert_at_the_end(issue)
 
+        if "attachment" in meta_info['attributes']:
+            attachment_name = meta_info['attributes']["attachment"]
+            vsd = VisualSpecDocument.objects.filter(visual_spec_projects__project=sprint.business, #sic
+                                                    name=attachment_name).first()
+            if not vsd:
+                raise Exception("No document found with name %s" % meta_info["attachment"])
+            VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
+                                                    issue=issue,
+                                                    defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
+
+        
         logger.debug("Created issue %s %s" % (issue.id, issue.subject))
         return issue
 

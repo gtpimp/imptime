@@ -64,6 +64,7 @@ class BulkFeatureCreatorForm extends Component {
 
                   Testable: 
                   name: a testable name
+                  attachment: name_of_an_existing_project_attachment
                   - do something else
                   - confirm it also worked
                   
