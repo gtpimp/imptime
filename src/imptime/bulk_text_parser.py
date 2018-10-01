@@ -5,7 +5,7 @@ from timepiece.models import IssuePoints
 from django.utils import timezone
 from django.conf import settings
 from testable.models import Testable
-from imptime.models import ProjectFeatureOrder, Feature
+from imptime.models import ProjectFeatureOrder, Feature, VisualSpecFeature, VisualSpecDocument
 import logging
 import re
 logger = logging.getLogger(__name__)
@@ -55,10 +55,14 @@ class BulkTextParser(object):
             name = orgnode.Heading()
             description = orgnode.CleanBody()
             meta_info = self.parse_meta_info(description)
-                
+
+            if previous_feature:
+                previous_feature.is_leaf = True
             if level > running_level:
                 running_parents.append(previous_feature)
                 running_level += 1
+                if previous_feature:
+                    previous_feature.is_leaf = False
             elif level < running_level:
                 running_parents = running_parents[:-1]
                 running_level -= 1
@@ -101,7 +105,7 @@ class BulkTextParser(object):
         return description, testables
 
     def _parse_attributes(self, description):
-        attribute_names = [ "type", "status", "estimate", "name" ]
+        attribute_names = [ "type", "status", "estimate", "name", "attachment" ]
         attributes = {}
         for i in range(len(attribute_names)):
             for attribute_name in attribute_names:
@@ -139,6 +143,17 @@ class BulkTextParser(object):
                                                                   'created':timezone.now(),
                                                                   'modified':timezone.now()})
         ProjectFeatureOrder.insert_at_the_end(feature)
+
+        if "attachment" in meta_info['attributes']:
+            attachment_name = meta_info['attributes']["attachment"]
+            vsd = VisualSpecDocument.objects.filter(visual_spec_projects__project=project,
+                                                    name=attachment_name).first()
+            if not vsd:
+                raise Exception("No document found with name %s" % meta_info["attachment"])
+            VisualSpecFeature.objects.get_or_create(visual_spec_document=vsd,
+                                                    feature=feature,
+                                                    defaults={'order':VisualSpecFeature.get_next_order(feature.id)})
+        
         return feature
         
         
