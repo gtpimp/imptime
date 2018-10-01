@@ -1,11 +1,14 @@
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
 from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment, IssueAttachment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
+from datetime import datetime
 from timepiece.models import IssuePoints
 from django.utils import timezone
 from django.conf import settings
 from testable.models import Testable
 from imptime.models import ProjectFeatureOrder, Feature, VisualSpecFeature, VisualSpecDocument, VisualSpecIssue
+from timepiece.models import Project as Sprint
+from timepiece.models import ProjectStatus as SprintStatus
 import logging
 import re
 logger = logging.getLogger(__name__)
@@ -41,12 +44,13 @@ class BulkTextParser(object):
                     
         return issues
 
-    def create_features(self, raw_text, project):
+    def create_features(self, raw_text, project, auto_create_issues_for_leaf_nodes):
         orgnodes = makelist_from_string(raw_text)
         features = []
         running_parents = [Feature.get_root_feature(project.id)]
         previous_feature = None
         running_level = None
+        leaf_features = []
         for orgnode in orgnodes:
             level = orgnode.Level()
             if running_level is None:
@@ -69,15 +73,52 @@ class BulkTextParser(object):
             parent = running_parents[-1]
             feature = self.create_feature(project, name, meta_info, parent)
             features.append(feature)
-            previous_feature = feature
 
             for testable in meta_info['testables']:
                 testable.project = project
                 testable.save()
                 testable.features.add(feature)
                 testable.save()
+
+            if previous_feature and previous_feature.is_leaf:
+                leaf_features.append(previous_feature)
+
+            previous_feature = feature
+
+                
+        # last feature inserted is always a leaf
+        leaf_features.append(feature)
+
+        if auto_create_issues_for_leaf_nodes:
+            self.auto_create_issues_for_leaf_features(project, leaf_features)
+
         return features
             
+    def auto_create_issues_for_leaf_features(self, project, features):
+        name="bulk_import_issues_%s" % datetime.now().strftime("%d%b%Y_%H%M")
+        sprint = Sprint.objects.create(name=name,
+                                       business=project, #sic,
+                                       status3=SprintStatus.objects.get_or_create(business_id=project.id,
+                                                                                  name='pending')[0],
+                                       code=Sprint.get_code_from_name(name))
+        for feature in features:
+            for testable in feature.testables.all():
+                testable_name = testable.name or "Testable %d" % testable.order
+                issue = Issue.objects.create(project_id=sprint.id, #sic,
+                                             status2 = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0],
+                                             number=Issue.get_next_issue_number(sprint.business),
+                                             issue_type="issue",
+                                             subject="%s %s" % (feature.name, testable_name),
+                                             created_by=self.logged_in_user)
+
+                Testable.objects.create(issue=issue,
+                                        project=issue.project.business, #sic
+                                        name=testable_name,
+                                        steps=testable.steps,
+                                        enriched_steps=testable.enriched_steps,
+                                        order=1)
+                
+                feature.link_issue_to_testable(self.logged_in_user, issue.id, testable.id)
     
     def parse_meta_info(self, description):
         description = description.strip()

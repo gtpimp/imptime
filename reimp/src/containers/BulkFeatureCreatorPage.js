@@ -57,7 +57,9 @@ class BulkFeatureCreatorPage extends Component {
     
     onSubmitBulkCreate(new_values) {
         const { dispatch, project_id } = this.props
-        dispatch(bulkCreateFeatures(project_id, new_values.bulk_feature_text, this.onFeaturesCreated))
+        dispatch(bulkCreateFeatures(project_id, new_values.bulk_feature_text,
+                                    {auto_create_issues: new_values.auto_create_issues},
+                                    this.onFeaturesCreated))
     }
 
     refresh(project) {

@@ -853,6 +853,56 @@ class Feature(BaseModel):
     def delete(self):
         super(Feature, self).soft_delete()
 
+    def link_issue_to_testable(self, logged_in_user, issue_id, testable_id):
+        testable = self.testables.get(pk=testable_id)
+        bp = ProjectPermissions.for_user(logged_in_user, self.project)  # sic
+        if not bp.has_edit_issues:
+            raise Exception("Can't edit issues")
+        issue = Issue.objects.get(pk=issue_id, project__business=self.project) #sic
+
+        testable.implementing_issues.add(issue)
+        testable.save()
+
+        FeatureHistory.add_history(logged_in_user, self,
+                                   "added implementing issue for testable %s" % testable.name,
+                                   "", "%s %s" % (issue.number, issue.subject))
+
+        IssueHistory.add_history(logged_in_user, issue,
+                                 "added as implementing issue",
+                                 "", "for feature %s %s" % (self.number, self.name))
+
+        for vsf in self.visual_spec_features.all():
+            vsd = vsf.visual_spec_document
+            _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
+                                                               issue=issue,
+                                                               defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
+            if created:
+                IssueHistory.add_history(logged_in_user, issue, "linked attachment from feature %s %s" % (self.number, self.name), "", vsd.name)
+
+        issue.save()
+        self.save()
+
+    def unlink_issue_from_testable(self, logged_in_user, testable_id, issue_id):
+        testable = self.testables.get(pk=testable_id)
+        bp = ProjectPermissions.for_user(logged_in_user, self.project)  # sic
+        if not bp.has_edit_issues:
+            raise Exception("Can't edit issues")
+        issue = Issue.objects.get(pk=issue_id, project__business=self.project) #sic
+
+        testable.implementing_issues.remove(issue)
+        testable.save()
+
+        FeatureHistory.add_history(logged_in_user, self,
+                                   "removed implementing issue for testable %s" % testable.name,
+                                   "%s %s" % (issue.number, issue.subject), "")
+
+        IssueHistory.add_history(logged_in_user, issue,
+                                 "removed as implementing issue",
+                                 "for feature %s %s" % (self.number, self.name), "")
+
+        issue.save()
+        self.save()
+        
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()
     feature = models.ForeignKey(Feature, related_name='project_feature_orders')

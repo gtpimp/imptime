@@ -193,12 +193,14 @@ function announceBulkCreatingFeaturesFailed(project_id, error) {
     }
 }
 
-export function bulkCreateFeatures(project_id, bulk_feature_text, on_done) {
+export function bulkCreateFeatures(project_id, bulk_feature_text, opts, on_done) {
     return (dispatch, getState) => {
         const state = getState()
         dispatch(announceBulkCreatingFeatures(project_id))
         let data = { project_id: project_id,
-                     bulk_feature_text: bulk_feature_text }
+                     bulk_feature_text: bulk_feature_text,
+                     ...opts
+        }
         return impfetch( state, "imp/feature/bulk_create_features/", dispatch,
                          {method: "POST",
                           credentials: 'same-origin',

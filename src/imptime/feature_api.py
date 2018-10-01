@@ -213,10 +213,12 @@ class FeatureViewSet(BaseViewSet):
             params = request.data
             project_id = params['project_id']
             bulk_feature_text = params['bulk_feature_text']
+            auto_create_issues = params.get('auto_create_issues', False)
             project = self.allowed_project(project_id)
             if not self.logged_in_permissions(project).has_edit_feature:
                 raise Exception("Can't add features")
-            new_features = BulkTextParser(request.user).create_features(raw_text=bulk_feature_text, project=project)
+            new_features = BulkTextParser(request.user).create_features(raw_text=bulk_feature_text, project=project,
+                                                                        auto_create_issues_for_leaf_nodes=auto_create_issues)
             new_feature_ids = [ str(x.id) for x in new_features ]
             data = {'status': 'success', 'payload': {'new_feature_ids': new_feature_ids}}
 
@@ -233,35 +235,8 @@ class FeatureViewSet(BaseViewSet):
             feature_id = params['feature_id']
             testable_id = params['testable_id']
             issue_id = params['issue_id']
-
             feature = self.allowed_feature(feature_id)
-            testable = self.allowed_testables().get(pk=testable_id)
-            if feature not in testable.features.all():
-                raise Exception("Testable doesn't belong to this feature")
-            issue = self.allowed_issue(issue_id)
-            
-            testable.implementing_issues.add(issue)
-            testable.save()
-
-            
-            FeatureHistory.add_history(request.user, feature,
-                                       "added implementing issue for testable %s" % testable.name,
-                                       "", "%s %s" % (issue.number, issue.subject))
-
-            IssueHistory.add_history(request.user, issue,
-                                     "added as implementing issue",
-                                     "", "for feature %s %s" % (feature.number, feature.name))
-
-            for vsf in feature.visual_spec_features.all():
-                vsd = vsf.visual_spec_document
-                _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
-                                                                   issue=issue,
-                                                                   defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
-                if created:
-                    IssueHistory.add_history(request.user, issue, "linked attachment from feature %s %s" % (feature.number, feature.name), "", vsd.name)
-            
-            issue.save()
-            feature.save()
+            feature.link_issue_to_testable(request.user, issue_id, testable_id)
             data = {'status': 'success'}
             
         except Exception, ex:
@@ -279,24 +254,7 @@ class FeatureViewSet(BaseViewSet):
             issue_id = params['issue_id']
 
             feature = self.allowed_feature(feature_id)
-            testable = self.allowed_testables().get(pk=testable_id)
-            if feature not in testable.features.all():
-                raise Exception("Testable doesn't belong to this feature")
-            issue = self.allowed_issue(issue_id)
-            
-            testable.implementing_issues.remove(issue)
-            testable.save()
-
-            FeatureHistory.add_history(request.user, feature,
-                                       "removed implementing issue for testable %s" % testable.name,
-                                       "%s %s" % (issue.number, issue.subject), "")
-
-            IssueHistory.add_history(request.user, issue,
-                                     "removed as implementing issue",
-                                     "for feature %s %s" % (feature.number, feature.name), "")
-
-            issue.save()
-            feature.save()
+            feature.unlink_issue_from_testable(request.user, testable_id, issue_id)
             data = {'status': 'success'}
             
         except Exception, ex:
