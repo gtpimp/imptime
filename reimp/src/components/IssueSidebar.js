@@ -169,7 +169,7 @@ class IssueSidebar extends Component {
         const { issue, full_screen_mode_available, sidebar_view_mode } = this.props
         return (
             <SidebarProperty key="titlestack">
-              <SidebarTitle issue_id={ issue.id }>
+              <SidebarTitle variant="issue" variant_id={ issue.id }>
                 <SidebarFullscreenWidget
                     sidebar_view_mode={ sidebar_view_mode }
                     full_screen_mode_available={ full_screen_mode_available }

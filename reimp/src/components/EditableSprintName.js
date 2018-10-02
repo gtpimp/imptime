@@ -25,6 +25,8 @@ class EditableSprintName extends Component {
             <PermissionInspectorHighlighter project_id={sprint.project_id}
                                             permission_name='has_edit_sprint'>
               <EditableProperty property_key={'sprint_name'+sprint.id}
+                                edit_as_modal={true}
+                                variant="large"
                                 initial_value={sprint.name}
                                 onChange={this.onChange}
                                 can_edit={can_edit}
