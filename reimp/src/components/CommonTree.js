@@ -5,8 +5,7 @@ import { css } from 'emotion'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
 import { SortableTreeWithoutDndContext as SortableTree } from 'react-sortable-tree'
-import 'react-sortable-tree/style.css'
-// import FileExplorerTheme from 'react-sortable-tree-theme-file-explorer'
+// import 'react-sortable-tree/style.css'
 import CommonTreeTheme from './CommonTreeTheme'
 
 class CommonTree extends Component {
@@ -182,7 +181,7 @@ class CommonTree extends Component {
                 { this.renderSearchForm() }
                 <SortableTree theme={CommonTreeTheme}
                               treeData={items}
-                              rowHeight={60}
+                              rowHeight={50}
                               onChange={this.onNodeChanged}
                               onVisibilityToggle={this.onNodeVisiblityToggle}
                               getNodeKey={({node}) => node.id || "root"}
