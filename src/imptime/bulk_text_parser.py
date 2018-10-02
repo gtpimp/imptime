@@ -112,6 +112,7 @@ class BulkTextParser(object):
                                              created_by=self.logged_in_user)
 
                 feature.link_issue_to_testable(self.logged_in_user, issue.id, testable.id)
+                SprintIssueOrder.insert_at_the_end(issue)
     
     def parse_meta_info(self, description):
         description = description.strip()
