@@ -17,6 +17,7 @@ import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
 import MultipleIssueSummary from './MultipleIssueSummary'
+import EditableSprintName from '../components/EditableSprintName'
 
 import SidebarContainer from './SidebarContainer'
 import SidebarProperty from './SidebarProperty'
@@ -78,7 +79,9 @@ class SprintSidebar extends Component {
         const { sprint_id } = this.props
         return (
             <SidebarProperty key="titlestack">
-              <SidebarTitle variant="sprint" variant_id={ sprint_id } />
+              <SidebarTitle>
+                <EditableSprintName sprint_id={sprint_id} />
+              </SidebarTitle>
             </SidebarProperty>
         )
     }
@@ -155,13 +158,23 @@ class SprintSidebar extends Component {
         const { sprint, sprint_id } = this.props
         return (
             <SidebarProperty key="multisummarystack">
-              <MienFeature feature_name="multiple_issue_summary">
-                <SidebarSectionTitle title="Multiple Issue Summary" />
-                <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} auto_load={false} />
-              </MienFeature>
+              <SidebarSectionTitle title="Multiple Issue Summary" />
+              <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} auto_load={false} />
             </SidebarProperty>
         )
     }
+
+    /* renderMultiSummerStack() {
+     *     const { sprint, sprint_id } = this.props
+     *     return (
+     *         <SidebarProperty key="multisummarystack">
+     *           <MienFeature feature_name="multiple_issue_summary">
+     *             <SidebarSectionTitle title="Multiple Issue Summary" />
+     *             <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} auto_load={false} />
+     *           </MienFeature>
+     *         </SidebarProperty>
+     *     )
+     * } */
     
     render() {
         return (
@@ -173,12 +186,12 @@ class SprintSidebar extends Component {
                       this.renderDescriptionStack(),
                       this.renderInfoStack(),
                       this.renderReviewStack(),
-                      this.renderDeadlineStack()
+                      this.renderDeadlineStack(),
+                      this.renderMultiSummerStack()
                   ]
               }
             </SidebarContainer>
         )
-        {/* { false && this.renderCostSummary() } */}
     }
 }
 
@@ -186,18 +199,14 @@ export function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
-    // const cost_summary = getCostSummary(state, sprint_id)
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
-    // const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
     
     return {
         sprint_id,
         sprint,
-        // cost_summary,
         project_id,
         project,
-        has_view_review_cycle_permission,
-        // can_view_costs
+        has_view_review_cycle_permission
     }
 }
 

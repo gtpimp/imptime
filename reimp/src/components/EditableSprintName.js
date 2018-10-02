@@ -30,7 +30,6 @@ class EditableSprintName extends Component {
                                 initial_value={sprint.name}
                                 onChange={this.onChange}
                                 can_edit={can_edit}
-                                edit_as_modal={false}
                                 actionLabel="Edit Sprint Name"
               >
                 <SprintNameForm />

@@ -25,6 +25,7 @@ import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
+import EditableIssueTitle from './EditableIssueTitle'
 
 import SidebarContainer from './SidebarContainer'
 import SidebarProperty from './SidebarProperty'
@@ -170,6 +171,7 @@ class IssueSidebar extends Component {
         return (
             <SidebarProperty key="titlestack">
               <SidebarTitle variant="issue" variant_id={ issue.id }>
+                <EditableIssueTitle issue_id={issue.id} />
                 <SidebarFullscreenWidget
                     sidebar_view_mode={ sidebar_view_mode }
                     full_screen_mode_available={ full_screen_mode_available }

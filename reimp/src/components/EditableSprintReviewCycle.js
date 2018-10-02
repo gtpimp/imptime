@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import EditableProperty from './form/EditableProperty'
 import SprintReviewForm from './form/SprintReviewForm'
 import { getSprint } from '../actions/Sprints'
@@ -13,6 +14,13 @@ import {
     getSprintReview
 } from '../actions/SprintReviews'
 import SprintReview from './SprintReview'
+
+import SidebarPrimaryButton from './SidebarPrimaryButton'
+import SidebarDangerButton from './SidebarDangerButton'
+
+const button_block = css`
+padding: 12px 0 12px 0;
+`
 
 class EditableSprintReviewCycle extends Component {
 
@@ -75,32 +83,36 @@ class EditableSprintReviewCycle extends Component {
                                     can_edit={can_edit}
                                     edit_as_modal={true}
                                     actionLabel="Edit Sprint Review Cycle Days"
-                  >
+                      >
                     <SprintReviewForm form={'sprint_review_form_'+sprint_id+'_'+sprint_review_id}
                                       sprint_id={sprint_id}
                                       sprint_review={sprint_review}/>
                     <div className="sprint-review__card">
                       <SprintReview sprint_review_id={sprint_review.id} />
-                      <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
+                      <div className={ button_block }>
+                        <SidebarDangerButton onButtonClick={this.onDelete} label="Delete" />
+                      </div>
                     </div>
                   </EditableProperty>
                 }
-                  { ! sprint_review_id && can_edit &&
-                    <EditableProperty property_key={'sprint_review_'+sprint_id}
-                                      initial_value=''
-                                      onChange={this.onChange}
-                                      can_edit={can_edit}
-                                      edit_as_modal={true}
-                                      actionLabel="Edit Sprint Review Cycle Days"
-                    >
-                      <SprintReviewForm form={'sprint_review_form_'+sprint_id}
-                                        sprint_id={sprint_id} />
-                      <div className="text-component--readonly"></div>
-                      <div className="text-component--empty">
-                        <button className="button button--primary sprint_sidebar--button">Create review</button>
+                { ! sprint_review_id && can_edit &&
+                  <EditableProperty property_key={'sprint_review_'+sprint_id}
+                                    initial_value=''
+                                    onChange={this.onChange}
+                                    can_edit={can_edit}
+                                    edit_as_modal={true}
+                                    actionLabel="Edit Sprint Review Cycle Days"
+                      >
+                    <SprintReviewForm form={'sprint_review_form_'+sprint_id}
+                                      sprint_id={sprint_id} />
+                    <div className="text-component--readonly"></div>
+                    <div className="text-component--empty">
+                      <div className={ button_block }>
+                        <SidebarPrimaryButton label="Create Review" />
                       </div>
-                    </EditableProperty>
-                  }
+                    </div>
+                  </EditableProperty>
+                }
               </PermissionInspectorHighlighter>
             </PermissionInspectorHighlighter>
         )

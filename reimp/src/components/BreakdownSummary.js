@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
 import { map, keys, get } from 'lodash'
@@ -14,6 +15,12 @@ import { ensureIssuesLoaded } from '../actions/Issues'
 import { ensureUsersLoaded } from '../actions/Users'
 import Tag from './Tag'
 import { showMoney } from '../actions/Mien'
+
+import SidebarPrimaryButton from './SidebarPrimaryButton'
+
+const download_button_block = css`
+padding: 12px 0 12px 0;
+`
 
 class BreakdownSummary extends Component {
     // Renders any cost summary object, either snapshot or current
@@ -99,7 +106,7 @@ class BreakdownSummary extends Component {
                           </td>
                         }
                       </tr>
-                   )}
+                  )}
                 </tbody>
               </table>
             </PropertyStackComponent>
@@ -155,7 +162,7 @@ class BreakdownSummary extends Component {
                           </td>
                         }
                       </tr>
-                   )}
+                  )}
                 </tbody>
               </table>
             </PropertyStackComponent>
@@ -211,7 +218,7 @@ class BreakdownSummary extends Component {
                           </td>
                         }
                       </tr>
-                   )}
+                  )}
                 </tbody>
               </table>
             </PropertyStackComponent>
@@ -271,9 +278,9 @@ class BreakdownSummary extends Component {
                             <CurrencyValue value={summary.revised_estimates_by_user[user_id].velocity_commission_cost} />
                           </td>
                         }
-                          
+                        
                       </tr>
-                   )}
+                  )}
                 </tbody>
               </table>
             </PropertyStackComponent>
@@ -330,17 +337,17 @@ class BreakdownSummary extends Component {
                                                   </td>
                                                 }
                                               </tr>
-                                           )}
+                                          )}
                                         </tbody>
                                       </table>
                                     </PropertyStackComponent>
                                 )
                             }
-                            )}
+                          )}
                         </PropertyStackComponent>
                     )
                 }
-                )}
+              )}
             </div>
         )
     }
@@ -388,7 +395,7 @@ class BreakdownSummary extends Component {
                                                   </td>
                                                 }
                                               </tr>
-                                           )}
+                                          )}
                                         </tbody>
                                       </table>
                                     </PropertyStackComponent>
@@ -399,7 +406,7 @@ class BreakdownSummary extends Component {
                         </PropertyStackComponent>
                     )
                 }
-                )}
+              )}
             </div>
         )
     }
@@ -410,11 +417,12 @@ class BreakdownSummary extends Component {
             <div>
               <PropertyStack>
                 <PropertyStackComponent>
-                  <h1>Breakdown by user, tags and issues
-                    { onDownload &&
-                      <button onClick={onDownload}>Download</button>
-                    }
-                  </h1>
+                  <h1>Breakdown by user, tags and issues</h1>
+                  { onDownload &&
+                    <div className={ download_button_block }>
+                      <SidebarPrimaryButton onButtonClick={onDownload} label="Download Summary" />
+                    </div>
+                  }
                 </PropertyStackComponent>
                 {this.renderActualsBySprint(summary)}
                 {this.renderActualsByUser(summary)}
