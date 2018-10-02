@@ -122,7 +122,6 @@ class IssueViewSet(BaseViewSet):
             field_name = params['field_name']
             new_value = params.get('value', None)
 
-            import pdb; pdb.set_trace()
             if 'item_ids' in params:
                 issue_pks = params['item_ids']
                 project_id = Issue.objects.filter(pk=issue_pks[0]).values_list('project_id', flat=True)[0]
