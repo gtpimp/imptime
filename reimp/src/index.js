@@ -1,12 +1,14 @@
 import './sass/imptime.css'
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Route, Switch } from 'react-router-dom'
 import configureStore from './store/configureStore'
 import {Provider} from 'react-redux'
 import Raven from 'raven-js'
 import { BrowserRouter } from 'react-router-dom'
 import MainLayout from './containers/MainLayout'
 import Modal from 'react-modal';
+import ExecutiveSummaryPage from './containers/mobile/ExecutiveSummaryPage'
 
 const store = configureStore({})
 
@@ -18,7 +20,10 @@ if (RAVEN_DSN) {
 ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <MainLayout />
+        <Switch>
+          <Route exact path="/executiveSummary" component={ExecutiveSummaryPage}/>
+          <MainLayout />
+        </Switch>
       </BrowserRouter>
     </Provider>,
     document.getElementById('root')
