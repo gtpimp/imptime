@@ -208,27 +208,32 @@ class VisualSpecDocumentPage extends Component {
     render() {
 
         const { visual_spec_document_ids,
+                visual_spec_document_ids_for_project,
                 active_visual_spec_document_id,
                 issue, issue_id, project_id,
                 issue_header_list } = this.props
 
         if ( ! issue.id ) {
             return (
-                <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
-                           issue_header_list={issue_header_list}
-                           onSelectIssues={this.onSelectIssues}
-                           onDelete={this.onDeleteIssue}
+                <VisualSpecDocumentGallery visual_spec_document_ids={visual_spec_document_ids_for_project}
+                                           active_visual_spec_document_id={active_visual_spec_document_id}
+                                           reorderDocuments={this.reorderDocuments}
+                                           onDeleteDocument={this.unassociateDocumentWithProject}
+                                           project_id={project_id}
+                                           onSelect={this.onSelectDocument}
                 />
             )
         }
         
         return (
             <Splitter name="visual_spec_document_page">
+              { false && 
               <IssueList list_key={LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST}
                          issue_header_list={issue_header_list}
                          onSelectIssues={this.onSelectIssues}
                          onDelete={this.onDeleteIssue}
               />
+              }
               <Splitter name="visual_spec_document_page_doc">
                 <div className="list-layout__sidebar visual_spec_document_page__issue_sidebar">
                   <div className="visual_spec_document_page__gallery">

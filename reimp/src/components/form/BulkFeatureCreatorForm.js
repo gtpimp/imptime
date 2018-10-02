@@ -37,6 +37,16 @@ class BulkFeatureCreatorForm extends Component {
             />
         )
     }
+
+    renderAutoCreateCheckbox = (field) => {
+        const { input, label } = field
+        return <input type="checkbox"
+                      label={label}
+                      key={label}
+                      checked={input.value}
+                      onChange={(e) => this.onChange(e, input.onChange, input.name)}
+               />
+    }
     
     render() {
         const { handleSubmit } = this.props
@@ -64,6 +74,7 @@ class BulkFeatureCreatorForm extends Component {
 
                   Testable: 
                   name: a testable name
+                  attachment: name_of_an_existing_project_attachment
                   - do something else
                   - confirm it also worked
                   
@@ -75,6 +86,11 @@ class BulkFeatureCreatorForm extends Component {
                 </div>
               </div>
               <div className="bulk-feature-creator-form__actions">
+                <label>
+                  Auto create issues for leaf features
+                  <Field name="auto_create_issues"
+                         component={this.renderAutoCreateCheckbox} />
+                </label>
                 <button className="button feature_sidebar--textarea" type="submit">Create</button>
               </div>
             </form>

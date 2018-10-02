@@ -15,6 +15,7 @@ from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueHistory
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions as ProjectPermissions
+from testable.models import Testable
 from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from project_statement_calculator import ProjectStatementCalculator
 from time_summary_calculator import TimeSummaryCalculator
@@ -833,14 +834,11 @@ class Feature(BaseModel):
     
     @classmethod
     def ensure_root_feature_exists(self, project_id):
-        return Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None)[0]
+        return Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None, deleted=False)[0]
 
     @classmethod
     def get_root_feature(self, project_id):
-        res = Feature.objects.filter(name=self.ROOT_NAME, project_id=project_id).first()
-        if res is None:
-            res = self.ensure_root_feature_exists(project_id)
-        return res
+        return self.ensure_root_feature_exists(project_id)
         
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -853,6 +851,65 @@ class Feature(BaseModel):
     def delete(self):
         super(Feature, self).soft_delete()
 
+    def link_issue_to_testable(self, logged_in_user, issue_id, testable_id):
+        testable = self.testables.get(pk=testable_id)
+        bp = ProjectPermissions.for_user(logged_in_user, self.project)  # sic
+        if not bp.has_edit_issues:
+            raise Exception("Can't edit issues")
+        issue = Issue.objects.get(pk=issue_id, project__business=self.project) #sic
+
+        testable_name = testable.name or "Testable %d" % testable.order
+        Testable.objects.create(issue=issue,
+                                project=self.project, #sic
+                                name=testable_name,
+                                steps=testable.steps,
+                                enriched_steps=testable.enriched_steps,
+                                order=99)
+        Testable.renumber_for_issue(issue.id)
+        
+        testable.implementing_issues.add(issue)
+        testable.save()
+
+        FeatureHistory.add_history(logged_in_user, self,
+                                   "added implementing issue for testable %s" % testable.name,
+                                   "", "%s %s" % (issue.number, issue.subject))
+
+        IssueHistory.add_history(logged_in_user, issue,
+                                 "added as implementing issue",
+                                 "", "for feature %s %s" % (self.number, self.name))
+
+        for vsf in self.visual_spec_features.all():
+            vsd = vsf.visual_spec_document
+            _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
+                                                               issue=issue,
+                                                               defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
+            if created:
+                IssueHistory.add_history(logged_in_user, issue, "linked attachment from feature %s %s" % (self.number, self.name), "", vsd.name)
+
+        issue.save()
+        self.save()
+
+    def unlink_issue_from_testable(self, logged_in_user, testable_id, issue_id):
+        testable = self.testables.get(pk=testable_id)
+        bp = ProjectPermissions.for_user(logged_in_user, self.project)  # sic
+        if not bp.has_edit_issues:
+            raise Exception("Can't edit issues")
+        issue = Issue.objects.get(pk=issue_id, project__business=self.project) #sic
+
+        testable.implementing_issues.remove(issue)
+        testable.save()
+
+        FeatureHistory.add_history(logged_in_user, self,
+                                   "removed implementing issue for testable %s" % testable.name,
+                                   "%s %s" % (issue.number, issue.subject), "")
+
+        IssueHistory.add_history(logged_in_user, issue,
+                                 "removed as implementing issue",
+                                 "for feature %s %s" % (self.number, self.name), "")
+
+        issue.save()
+        self.save()
+        
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()
     feature = models.ForeignKey(Feature, related_name='project_feature_orders')
