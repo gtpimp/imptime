@@ -38,6 +38,8 @@
 
 .visual_spec_document_gallery__image--fullsize {
     cursor: pointer;
+    max-width: 1000px;
+    max-height: 1000px;
 }
 
 .visual_spec_document_gallery__image--no-preview {

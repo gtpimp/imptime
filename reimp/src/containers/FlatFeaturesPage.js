@@ -19,6 +19,7 @@ import {
     setGloballySelectedProjectId
 } from '../actions/Page'
 import FlatFeatureList from '../components/FlatFeatureList'
+import ReactToPrint from "react-to-print";
 
 class FlatFeaturesPage extends Component {
 
@@ -70,8 +71,15 @@ class FlatFeaturesPage extends Component {
         
         return (
             <div>
+
+              <ReactToPrint
+                  trigger={() => <a href="#">Print</a>}
+                  content={() => this.componentRef}
+              />
+              
               <FlatFeatureList list_key={list_key}
-                               project_id={project_id} />
+                               project_id={project_id}
+                               ref={el=>(this.componentRef=el)} />
             </div>
         )
     }
