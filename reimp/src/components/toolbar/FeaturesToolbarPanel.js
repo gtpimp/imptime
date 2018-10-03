@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { includes } from 'lodash'
+import {withRouter} from 'react-router-dom'
 import { startCandidateFeature } from '../../actions/Features'
-import { getGloballySelectedProjectId, get_selected_feature_ids } from '../../actions/Page'
-import { PAGE_KEY__FEATURES_PAGE } from '../../actions/ItemListKeyRegistry'
+import { getGloballySelectedProjectId } from '../../actions/Page'
+import ToggleButton from './ToggleButton'
 
 class FeaturesToolbarPanel extends Component {
 
@@ -10,14 +12,29 @@ class FeaturesToolbarPanel extends Component {
         const { dispatch, last_selected_feature_id, project_id } = this.props
         dispatch(startCandidateFeature(project_id, last_selected_feature_id))
     }
+
+    onToggleFlat = (tree_view) => {
+        const { project_id, history } = this.props
+        if ( tree_view ) {
+            history.push('/projects/' + project_id + '/features')
+        } else {
+            history.push('/projects/' + project_id + '/features/flat')
+        }
+    }
     
     render() {
+        const { is_tree_view } = this.props
         return (
             <div className="toolbar-panel">
               <div className="button toolbar-button--small button--large button--primary"
                    onClick={this.onNewFeatureClick}>
                 + New Feature
               </div>
+              <ToggleButton value={is_tree_view}
+                            onChange={this.onToggleFlat}
+                            on_label={"Tree"}
+                            off_label={"Flat"}
+              />
             </div>
         )
     }
@@ -25,13 +42,12 @@ class FeaturesToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
     const project_id = getGloballySelectedProjectId(state)
-    const selected_feature_ids = get_selected_feature_ids(state, PAGE_KEY__FEATURES_PAGE)
-    const last_selected_feature_id = (selected_feature_ids && selected_feature_ids[0]) || null
-
+    const is_tree_view = !includes(window.location.pathname, "flat") // hack, should be handled by router, don't have time now to fix.
+    
     return {
         project_id,
-        last_selected_feature_id
+        is_tree_view
     }
 }
 
-export default connect(mapStateToProps)(FeaturesToolbarPanel)
+export default withRouter(connect(mapStateToProps)(FeaturesToolbarPanel))

@@ -37,6 +37,7 @@ import ReadOnlyPage from './ReadOnlyPage'
 import ReleaseNotesPage from './ReleaseNotesPage'
 import SprintsPage from './SprintsPage'
 import FeaturesPage from './FeaturesPage'
+import FlatFeaturesPage from './FlatFeaturesPage'
 import VisualSpecDocumentPage from '../components/visual_spec/VisualSpecDocumentPage'
 import WelcomePage from './WelcomePage'
 import { setBrowserTitle } from '../actions/Page'
@@ -76,6 +77,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/dashboard" component={ProjectDashboardPage}/>
               <Route exact path="/projects/:projectId/projectStatement" component={ProjectStatementPage}/>
               <Route exact path="/projects/:projectId/sprints" component={SprintsPage}/>
+              <Route exact path="/projects/:projectId/features/flat" component={FlatFeaturesPage}/>
               <Route exact path="/projects/:projectId/features" component={FeaturesPage}/>
               <Route exact path="/projects/:projectId/bulkCreateFeatures" component={BulkFeatureCreatorPage}/>
               <Route exact path="/projects/:projectId/features/:featureId" component={FeaturesPage}/>
