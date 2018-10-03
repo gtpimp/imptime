@@ -8,7 +8,6 @@ import Raven from 'raven-js'
 import { BrowserRouter } from 'react-router-dom'
 import MainLayout from './containers/MainLayout'
 import Modal from 'react-modal';
-import ExecutiveSummaryPage from './containers/mobile/ExecutiveSummaryPage'
 
 const store = configureStore({})
 
@@ -21,12 +20,10 @@ ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
         <Switch>
-          <Route exact path="/executiveSummary" component={ExecutiveSummaryPage}/>
           <MainLayout />
         </Switch>
       </BrowserRouter>
     </Provider>,
     document.getElementById('root')
 )
-
 Modal.setAppElement("#app")

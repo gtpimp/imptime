@@ -471,7 +471,7 @@ class IssueSidebar extends Component {
                         this.renderDependancyStack(),
                         this.renderAttachmentsStack(),
                         this.renderFeatureStack(),
-                        this.renderReviewsStack(),
+                        this.renderReviewsStack()
                     ]
                   }
                 </SidebarContainer>

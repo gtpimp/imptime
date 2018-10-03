@@ -39,7 +39,6 @@ import SprintsPage from './SprintsPage'
 import FeaturesPage from './FeaturesPage'
 import VisualSpecDocumentPage from '../components/visual_spec/VisualSpecDocumentPage'
 import WelcomePage from './WelcomePage'
-import ExecutiveSummaryPage from './mobile/ExecutiveSummaryPage'
 import { setBrowserTitle } from '../actions/Page'
 
 class MainRouter extends Component {
