@@ -63,7 +63,7 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     resolveThumbnailElement(preview_image_url) {
-        const { visual_spec_document, img_element_unique_id } = this.props
+        const { visual_spec_document, img_element_unique_id, render_full_size } = this.props
         if ( ! preview_image_url ) {
             return (
                 <div id={img_element_unique_id}
@@ -89,9 +89,10 @@ class VisualSpecDocumentGalleryImage extends Component {
                 </div>
             )
         } else {
+            const class_name = (render_full_size && "visual_spec_document_gallery__image--fullsize") || "visual_spec_document_gallery__image"
             return (
                 <img id={img_element_unique_id}
-                     className="visual_spec_document_gallery__image"
+                     className={class_name}
                      src={preview_image_url}
                      onClick={this.onClickPreview}
                      onLoad={this.onVisualSpecDocumentImageLoaded}
@@ -146,16 +147,19 @@ class VisualSpecDocumentGalleryImage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_document_id, is_active, onSelected, issue_id_for_annotations } = props
+    const { visual_spec_document_id, is_active, onSelected, issue_id_for_annotations, render_quality } = props
     const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || []
     const issue = (issue_id_for_annotations && getIssue(state, issue_id_for_annotations)) || {}
     const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
     const visual_spec_issue_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
     const visual_spec_issue_annotations = getVisualSpecIssueAnnotations(state, visual_spec_issue_annotation_ids) || []
     const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + issue_id_for_annotations + "_" + visual_spec_document_id
+
+    const preview_url = (render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url
+    const render_full_size = render_quality === 'hires'
     
     return {
-        preview_image_url: visual_spec_document.preview_url,
+        preview_image_url: preview_url,
         hires_url: visual_spec_document.hires_url,
         download_url: visual_spec_document.download_url,
         visual_spec_document: visual_spec_document,
@@ -164,7 +168,8 @@ function mapStateToProps(state, props) {
         onSelected,
         visual_spec_issue_annotation_ids,
         visual_spec_issue_annotations,
-        img_element_unique_id
+        img_element_unique_id,
+        render_full_size
     }
 }
 

@@ -73,20 +73,6 @@ class FeatureSidebar extends Component {
         this.setState({adding_visual_spec_doc:false})
     }
 
-    renderAddAttachmentWidget() {
-        const { issue } = this.props
-        return (
-            <PropertyStackComponent>
-              <SidebarSectionTitle title="Attachments" />
-              <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
-                                         issue_id={issue.id}
-                                         allow_edit={false} />
-              <button className="button button--primary" onClick={this.showAddVisualSpecDoc}>Add</button>
-              <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
-            </PropertyStackComponent>
-        )
-    }
-
     renderAttachmentsStack() {
         const { feature, project_id } = this.props
         const adding_visual_spec_doc = this.state.adding_visual_spec_doc

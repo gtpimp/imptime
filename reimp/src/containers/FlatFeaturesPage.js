@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import {setFeatureBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {
@@ -8,7 +7,6 @@ import {
     PAGE_KEY__FEATURES_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    selectItems,
     update_list_filter,
     invalidateList,
     getListFilter
@@ -16,12 +14,11 @@ import {
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
-    select_features,
     select_projects,
-    get_selected_feature_ids,
     setBrowserTitle,
     setGloballySelectedProjectId
 } from '../actions/Page'
+import FlatFeatureList from '../components/FlatFeatureList'
 
 class FlatFeaturesPage extends Component {
 
@@ -54,8 +51,7 @@ class FlatFeaturesPage extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, project_id, list_key, page_key,
-               default_feature_id, project} = props
+        const {dispatch, project_id, list_key, page_key, project} = props
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
         }
@@ -68,28 +64,26 @@ class FlatFeaturesPage extends Component {
 
     render() {
 
-        const {show_sidebar, project } = this.props
+        const {list_key, project_id, project } = this.props
 
         setBrowserTitle(project.name)
         
         return (
             <div>
-              Flat features
+              <FlatFeatureList list_key={list_key}
+                               project_id={project_id} />
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const {feature} = state
     const default_filter = props.default_filter || {}
     let list_key = props.list_key || LIST_KEY__FEATURE_LIST
     let page_key = props.page_key || PAGE_KEY__FEATURES_PAGE
     const filter = getListFilter(state, list_key)
-    const items_by_id = (feature && feature.items_by_id) || {}
 
     const project_id = props.match.params.projectId
-    const default_feature_id = props.match.params.featureId
     const project = getProject(state, project_id) || {}
     const project_name = project.name
 
