@@ -73,8 +73,9 @@ class FlatFeaturesPage extends Component {
             <div>
 
               <ReactToPrint
-                  trigger={() => <a href="#">Print</a>}
+                  trigger={() => <button>Print</button>}
                   content={() => this.componentRef}
+                  debug={true}
               />
               
               <FlatFeatureList list_key={list_key}

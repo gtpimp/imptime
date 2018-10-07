@@ -19,7 +19,6 @@ import {
     makeSelFeaturesAsStructuredTree
 } from '../selectors/FeatureListSelectors'
 import {
-    initList,
     getVisibleItemIds,
     getSelectedItemIds,
     getHighlightedItemIds,

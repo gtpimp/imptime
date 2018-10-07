@@ -35,21 +35,25 @@ class FeatureViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
 
-            if 'project_id' in filter_args:
-                Feature.ensure_root_feature_exists(filter_args['project_id'])
-            else:
-                raise Exception("Must filter by project_id") # for the moment, this is just a sanity check
+            project_id = filter_args.get('project_id', None)
+            if project_id:
+                Feature.ensure_root_feature_exists(project_id)
                 
             features = self.allowed_features()
             features = self.apply_filter(qs=features, raw_filter_args=filter_args)
 
-            if 'project_id' in filter_args:
-                features = features.order_by_project_id(project_id=filter_args['project_id'],
+            if project_id:
+                features = features.order_by_project_id(project_id=project_id,
                                                         parent_feature_id=None)
             
             features = self.apply_pagination(qs=features, pagination=pagination)
 
             if format_args.get('ids_only', None):
+
+                if not project_id:
+                    raise Exception("Must filter by project_id") # for the moment, this is just a sanity check
+
+                
                 context['ids'] = [str(x) for x in features.values_list(
                     'id', flat=True)]
             else:
