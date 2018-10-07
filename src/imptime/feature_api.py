@@ -37,6 +37,8 @@ class FeatureViewSet(BaseViewSet):
 
             if 'project_id' in filter_args:
                 Feature.ensure_root_feature_exists(filter_args['project_id'])
+            else:
+                raise Exception("Must filter by project_id") # for the moment, this is just a sanity check
                 
             features = self.allowed_features()
             features = self.apply_filter(qs=features, raw_filter_args=filter_args)
