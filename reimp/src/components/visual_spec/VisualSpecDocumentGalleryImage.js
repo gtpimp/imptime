@@ -133,20 +133,22 @@ class VisualSpecDocumentGalleryImage extends Component {
               <div className={css`background: linear-gradient(${theme.colours.nav_bar_gradient1}, ${theme.colours.nav_bar_gradient2});
                                   height: 36px;
                                   position: fixed;
+                                  padding-left: 12px;
+                                  padding-right: 3px;
                                   display: flex;
                                   justify-content: space-between;
                                   align-items: center;
                                   top: 0px;
                                   color: #ffffff;
                                   width:100%;`}>
-                <div>
-                  {visual_spec_document.name}
-                </div>
-                <div className={cx("icon--large-cross",
-                                   css`float: right;
+                  <div>
+                    {visual_spec_document.name}
+                  </div>
+                  <div className={cx("icon--large-cross",
+                                     css`float: right;
                                        cursor: pointer;`
-                                )}
-                     onClick={this.setInlineMode} />
+                      )}
+                       onClick={this.setInlineMode} />
               </div>
               <div className={css`width: 100%; 
                                   height: 100%;
