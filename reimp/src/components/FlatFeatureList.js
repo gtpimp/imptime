@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map, size, slice } from 'lodash'
-import { css } from 'emotion'
+import { cx, css } from 'emotion'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { default_theme as theme } from '../theme/default'
 import { logged_in_user } from '../actions/Auth'
@@ -44,14 +44,19 @@ class FlatFeatureList extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
     }
 
-    renderFeatureDescription(feature) {
-        if (size(feature.description) === 0 ) {
-            return null
-        }
-        
+    renderFeatureDescription(parent_features, feature) {
         return (
-            <div className="text-component--readonly text-component--description">
-              <RenderedMarkdown content={feature.enriched_description || feature.description} />
+            <div className={cx("text-component--readonly text-component--description", css`background-color: ${theme.colours.sub_nav_bar}`)}>
+              <h2 className={css`display:flex;`}>
+                <div className={css`display:flex;`}>
+                  { map(slice(parent_features, 1), (parent) => <div key={`feature_${feature.id}_parent_${parent.id}`}>{parent.name} > </div>)}
+                </div>
+                <div>{feature.name}</div>
+              </h2>
+
+              { size(feature.description) !== 0 && 
+                <RenderedMarkdown content={feature.enriched_description || feature.description} />
+              }
             </div>
         )
     }
@@ -92,15 +97,7 @@ class FlatFeatureList extends Component {
         
         return (
             <div className={css`margin-bottom: 50px; border-bottom: 2px solid ${theme.colours.cell_separator}`}>
-              <div className={css`display:flex; font: ${theme.fonts.header}`}>
-                <div className={css`display:flex;`}>
-                  { map(slice(parent_features, 1), (parent) => <div key={`feature_${feature.id}_parent_${parent.id}`}>{parent.name} > </div>)}
-                </div>
-                <div className={css`display:flex;`}>
-                  {feature.name}
-                </div>
-              </div>
-              <div>{this.renderFeatureDescription(feature)}</div>
+              <div>{this.renderFeatureDescription(parent_features, feature)}</div>
               <div>{this.renderFeatureImages(feature)}</div>
               <div>{this.renderFeatureTestables(feature)}</div>
             </div>
