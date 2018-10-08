@@ -35,7 +35,8 @@ export const default_theme = {
                card_background: '#ffffff',
                button_background: '#D8DDE1',
                button_background_hover: '#C7CCD0',
-               cell_separator: '#ededed'
+               cell_separator: '#ededed',
+               border_strong: '#888888'
     },
 
     fonts: {

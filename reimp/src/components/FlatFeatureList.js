@@ -46,7 +46,9 @@ class FlatFeatureList extends Component {
 
     renderFeatureDescription(parent_features, feature) {
         return (
-            <div className={cx("text-component--readonly text-component--description", css`background-color: ${theme.colours.sub_nav_bar}`)}>
+            <div className={cx("text-component--readonly text-component--description",
+                               css`background-color: ${theme.colours.sub_nav_bar};
+                                   border-top: 1px solid ${theme.colours.border_strong}`)}>
               <h2 className={css`display:flex;`}>
                 <div className={css`display:flex;`}>
                   { map(slice(parent_features, 1), (parent) => <div key={`feature_${feature.id}_parent_${parent.id}`}>{parent.name} > </div>)}
@@ -96,7 +98,7 @@ class FlatFeatureList extends Component {
         }
         
         return (
-            <div className={css`margin-bottom: 50px; border-bottom: 2px solid ${theme.colours.cell_separator}`}>
+            <div className={css`margin-bottom: 50px;`}>
               <div>{this.renderFeatureDescription(parent_features, feature)}</div>
               <div>{this.renderFeatureImages(feature)}</div>
               <div>{this.renderFeatureTestables(feature)}</div>
