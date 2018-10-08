@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map, size } from 'lodash'
+import { map, size, slice } from 'lodash'
 import { css } from 'emotion'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { default_theme as theme } from '../theme/default'
@@ -80,13 +80,23 @@ class FlatFeatureList extends Component {
     }    
 
     renderFeature(parent_features, feature) {
+
+        const is_root_element = size(parent_features) === 1
+        if ( is_root_element ) {
+            return null
+        }
+        const is_empty = size(feature.testables) === 0 && size(feature.description) === 0 && size(feature.visual_spec_document_ids) === 0
+        if ( is_empty ) {
+            return null
+        }
+        
         return (
             <div className={css`margin-bottom: 50px; border-bottom: 2px solid ${theme.colours.cell_separator}`}>
-              <div className={css`display:flex;`}>
+              <div className={css`display:flex; font: ${theme.fonts.header}`}>
                 <div className={css`display:flex;`}>
-                  { map(parent_features, (parent) => <div key={`feature_${feature.id}_parent_${parent.id}`}>{parent.name} > </div>)}
+                  { map(slice(parent_features, 1), (parent) => <div key={`feature_${feature.id}_parent_${parent.id}`}>{parent.name} > </div>)}
                 </div>
-                <div className={css`display:flex; font: ${theme.fonts.header}`}>
+                <div className={css`display:flex;`}>
                   {feature.name}
                 </div>
               </div>
