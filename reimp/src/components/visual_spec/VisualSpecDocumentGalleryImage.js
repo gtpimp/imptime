@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
+import { cx, css } from 'emotion'
 import classNames from 'classnames'
 import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
+import {default_theme as theme} from '../../theme/default'
 import {DragSource, DropTarget} from 'react-dnd';
 import {DndTypes} from '../../actions/Dnd'
 import '../../sass/visual-spec-document-gallery.scss'
@@ -20,6 +22,8 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.hideVisualSpecDocumentImageLoadingImage = this.hideVisualSpecDocumentImageLoadingImage.bind(this)
         this.onClickDownload = this.onClickDownload.bind(this)
         this.onClickPreview = this.onClickPreview.bind(this)
+        this.state = { display_mode: 'inline',
+                       visual_spec_document_image_loaded: false }
     }
 
     componentDidMount() {
@@ -42,6 +46,14 @@ class VisualSpecDocumentGalleryImage extends Component {
         }
     }
 
+    setFullScreenMode = () => {
+        this.setState({display_mode:'fullscreen'})
+    }
+
+    setInlineMode = () => {
+        this.setState({display_mode:'inline'})
+    }
+
     onVisualSpecDocumentImageLoaded() {
         this.hideVisualSpecDocumentImageLoadingImage()
     }
@@ -57,9 +69,15 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     onClickPreview(event) {
-        const { hires_url } = this.props
         event.stopPropagation()
-        window.open(hires_url)
+        this.setFullScreenMode()
+    }
+
+    onKeyPressFullScreen = (evt) => {
+        if (evt.keyCode === 27) {
+            evt.preventDefault()
+            this.setInlineMode()
+        }
     }
 
     resolveThumbnailElement(preview_image_url) {
@@ -102,17 +120,63 @@ class VisualSpecDocumentGalleryImage extends Component {
         }
     }
 
+    renderFullScreen() {
+        const { visual_spec_document, visual_spec_document_id, hires_url, img_element_unique_id } = this.props
+        return (
+            <div className={css`position: absolute;
+                                top: 0px;
+                                left: 0px;
+                            `}
+                 onKeyDown={this.onKeyPressFullScreen}
+                 tabIndex="0"
+                 key={visual_spec_document_id}>
+              <div className={css`background: linear-gradient(${theme.colours.nav_bar_gradient1}, ${theme.colours.nav_bar_gradient2});
+                                  height: 36px;
+                                  position: fixed;
+                                  display: flex;
+                                  justify-content: space-between;
+                                  align-items: center;
+                                  top: 0px;
+                                  color: #ffffff;
+                                  width:100%;`}>
+                <div>
+                  {visual_spec_document.name}
+                </div>
+                <div className={cx("icon--large-cross",
+                                   css`float: right;
+                                       cursor: pointer;`
+                                )}
+                     onClick={this.setInlineMode} />
+              </div>
+              <div className={css`width: 100%; 
+                                  height: 100%;
+                                  margin-top: 36px;
+                                  overflow: auto;
+                              `}>
+                <img id={img_element_unique_id}
+                     src={hires_url}
+                     alt=""
+                />
+              </div>
+            </div>
+        )
+    }
+
     render() {
         const { visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
                 connectDragSource, connectDropTarget, visual_spec_issue_annotation_ids,
                 img_element_unique_id} = this.props
-        const { visual_spec_document_image_loaded } = this.state || {}
+        const { display_mode, visual_spec_document_image_loaded } = this.state
 
         if ( isDragging ) {
             return null
         }
 
         const thumbnail_element = this.resolveThumbnailElement(preview_image_url)
+
+        if ( display_mode === 'fullscreen' ) {
+            return this.renderFullScreen()
+        }
         
         return connectDragSource(connectDropTarget(
             <div className="visual-spec-document-gallery-image__container" key={visual_spec_document_id}>

@@ -102,6 +102,10 @@
     @include icon(10px, 10px, 'cross.png');
 }
 
+.icon--large-cross {
+    @include icon(24px, 24px, 'cross.png');
+}
+
 .icon--add {
     @include icon(24px, 24px, 'plus.png');
 }

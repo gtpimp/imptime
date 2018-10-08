@@ -79,7 +79,7 @@ class FlatFeatureList extends Component {
         return (
             <div className={css`display: flex; flex-wrap: wrap;`}>
               { map(feature.testables, (testable) =>
-                  <div className={css`max-width:25%; margin-left: 30px; margin-right: 30px;`}>
+                  <div key={`feature_testable_${testable.id}`} className={css`max-width:25%; margin-left: 30px; margin-right: 30px;`}>
                     <Testable key={`testable_${testable.id}`} testable={testable} />
                   </div>
                 ) }
