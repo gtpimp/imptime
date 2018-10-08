@@ -55,7 +55,7 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     render() {
-        const { image_set, active_visual_spec_document_id, render_quality, 
+        const { image_set, active_visual_spec_document_id, render_quality, image_class, 
                 issue_id, project_id, allow_edit, onDeleteDocument } = this.props
         const that = this
         return (
@@ -64,6 +64,7 @@ class VisualSpecDocumentGallery extends Component {
                    return (
                        <div key={image.visual_spec_document.id} className="visual_spec_document_gallery__card">
                          <VisualSpecDocumentGalleryImage visual_spec_document_id={image.visual_spec_document.id}
+                                                         image_class={image_class}
                                                          issue_id_for_annotations={issue_id}
                                                          onReorder={that.reorderDocuments}
                                                          render_quality={render_quality}
@@ -91,7 +92,8 @@ class VisualSpecDocumentGallery extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { visual_spec_document_ids, active_visual_spec_document_id, reorderDocuments, render_quality,
+    const { visual_spec_document_ids, active_visual_spec_document_id, reorderDocuments,
+            render_quality, image_class,
             issue_id, project_id, allow_edit, onSelect, onDeleteDocument } = props
 
     const issue = getIssue(state, issue_id) || {}
@@ -112,7 +114,8 @@ function mapStateToProps(state, props) {
         visual_spec_document_ids,
         reorderDocuments,
         project_id,
-        render_quality, 
+        render_quality,
+        image_class,
         allow_edit: allow_edit !== false,
         onSelect,
         onDeleteDocument

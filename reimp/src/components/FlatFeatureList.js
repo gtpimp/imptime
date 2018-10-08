@@ -69,6 +69,7 @@ class FlatFeatureList extends Component {
               <VisualSpecDocumentGallery visual_spec_document_ids={feature.visual_spec_document_ids}
                                          feature_id={feature.id}
                                          render_quality="hires"
+                                         image_class="visual_spec_document_gallery__image--large_preview"
                                          allow_edit={false} />
             </div>
         )
