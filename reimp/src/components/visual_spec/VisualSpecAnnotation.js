@@ -5,13 +5,8 @@ import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
 import ToolTip from 'react-portal-tooltip'
-import {
-    ensureVisualSpecIssueAnnotationsLoaded,
-    is_visual_spec_issue_annotation_invalidated,
-    getVisualSpecIssueAnnotation
-} from '../../actions/VisualSpecIssueAnnotations'
 
-class VisualSpecIssueAnnotationDragLayer extends Component {
+class VisualSpecAnnotationDragLayer extends Component {
     render() {
         return (
             <div>Dragging</div>
@@ -19,7 +14,7 @@ class VisualSpecIssueAnnotationDragLayer extends Component {
     }
 }
 
-class VisualSpecIssueAnnotation extends Component {
+class VisualSpecAnnotation extends Component {
 
     state = {
         isTooltipActive: false
@@ -40,9 +35,6 @@ class VisualSpecIssueAnnotation extends Component {
     }
 
     refresh(these_props) {
-        const props = these_props || this.props
-        const { dispatch, visual_spec_issue_annotation_id } = props
-        dispatch(ensureVisualSpecIssueAnnotationsLoaded([visual_spec_issue_annotation_id]))
     }
 
     showTooltip() {
@@ -60,30 +52,30 @@ class VisualSpecIssueAnnotation extends Component {
     }
 
     render() {
-        const { visual_spec_issue_annotation, isDragging, connectDragSource,
+        const { visual_spec_annotation, isDragging, connectDragSource,
                 shape, tooltips_enabled, annotation_size_px,
                 container_img_size} = this.props
         const { isTooltipActive } = this.state
 
         let offset = { width: 0, height: 0 }
-        if ( visual_spec_issue_annotation.id && container_img_size ) {
+        if ( visual_spec_annotation.id && container_img_size ) {
             if ( container_img_size.width > 0 && container_img_size.height > 0 ) {
-                offset = { x:(annotation_size_px * visual_spec_issue_annotation.x_offset_to_target / container_img_size.width),
-                           y: (annotation_size_px * visual_spec_issue_annotation.y_offset_to_target / container_img_size.height) }
+                offset = { x:(annotation_size_px * visual_spec_annotation.x_offset_to_target / container_img_size.width),
+                           y: (annotation_size_px * visual_spec_annotation.y_offset_to_target / container_img_size.height) }
             }
         }
 
         const container_style = {}
-        if ( !isDragging && visual_spec_issue_annotation.x_pos ) {
-            if ( visual_spec_issue_annotation.y_pos > 100 ) {
-                visual_spec_issue_annotation.y_pos = 90
+        if ( !isDragging && visual_spec_annotation.x_pos ) {
+            if ( visual_spec_annotation.y_pos > 100 ) {
+                visual_spec_annotation.y_pos = 90
             }
-            if ( visual_spec_issue_annotation.x_pos > 100 ) {
-                visual_spec_issue_annotation.x_pos = 90
+            if ( visual_spec_annotation.x_pos > 100 ) {
+                visual_spec_annotation.x_pos = 90
             }
 
-            container_style.left = (visual_spec_issue_annotation.x_pos - offset.x) + "%"
-            container_style.top = (visual_spec_issue_annotation.y_pos - offset.y) + "%"
+            container_style.left = (visual_spec_annotation.x_pos - offset.x) + "%"
+            container_style.top = (visual_spec_annotation.y_pos - offset.y) + "%"
 
         }
         const annotation_style = {}
@@ -91,28 +83,28 @@ class VisualSpecIssueAnnotation extends Component {
         annotation_style.width = annotation_size_px + "px"
         annotation_style.height = annotation_size_px + "px"
 
-        const tooltip_target_id = (tooltips_enabled && "visual_spec_issue_annotation_"+visual_spec_issue_annotation.id) || "dummy_vsia_"+visual_spec_issue_annotation.id
+        const tooltip_target_id = (tooltips_enabled && "visual_spec_annotation_"+visual_spec_annotation.id) || "dummy_vsia_"+visual_spec_annotation.id
 
         return (
             <div>
 
               {connectDragSource(
                    <div id={tooltip_target_id}
-                        key={visual_spec_issue_annotation.id || "empty"}
+                        key={(visual_spec_annotation.id) || "empty"}
                         ref={(element) => { this.tooltip_parent = element }}
                         className={classNames("visual-spec-issue",
                                               {"visual-spec-issue--dragging": isDragging,
-                                               "visual-spec-issue--empty": !visual_spec_issue_annotation.id})}
+                                               "visual-spec-issue--empty": !visual_spec_annotation.id})}
                         style={container_style}
                    >
-                     { ! visual_spec_issue_annotation.id &&
+                     { ! visual_spec_annotation.id &&
                        <div className={classNames("visual-spec-issue__image--"+shape)}
                             style={annotation_style}
                        >
                        </div>
                      }
 
-                     { visual_spec_issue_annotation.id &&
+                     { visual_spec_annotation.id &&
                        <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
                          <div className={classNames("visual-spec-issue__image--"+shape)}
                               style={annotation_style}
@@ -123,7 +115,7 @@ class VisualSpecIssueAnnotation extends Component {
                    </div>
                )}
 
-               { visual_spec_issue_annotation.id && !isDragging && tooltips_enabled &&
+               { visual_spec_annotation.id && !isDragging && tooltips_enabled &&
                  <ToolTip active={isTooltipActive}
                           position="right"
                           arrow="center"
@@ -138,7 +130,7 @@ class VisualSpecIssueAnnotation extends Component {
                  </ToolTip>
                }
 
-            { false && isDragging && <VisualSpecIssueAnnotationDragLayer {...this.props} /> }
+            { false && isDragging && <VisualSpecAnnotationDragLayer {...this.props} /> }
 
             </div>
         )
@@ -146,21 +138,20 @@ class VisualSpecIssueAnnotation extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_issue_annotation_id, default_shape,
+    const { visual_spec_annotation, default_shape,
             onUpdate, onCreate, can_edit, annotation_size_px, tooltips_enabled,
             container_img_element_unique_id } = props
-    const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
-    const is_invalidated = is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
+    // const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
+    const is_invalidated = false // is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
     const container_img_element = (container_img_element_unique_id && document.getElementById(container_img_element_unique_id)) || null
     const container_img_size = (container_img_element && container_img_element.getBoundingClientRect()) || { width:0, height:0 }
 
     return {
-        visual_spec_issue_annotation_id,
-        visual_spec_issue_annotation,
+        visual_spec_annotation: visual_spec_annotation || {},
         is_invalidated: is_invalidated || false,
         onUpdate,
         onCreate,
-        shape: visual_spec_issue_annotation.shape || default_shape || "circle",
+        shape: (visual_spec_annotation && visual_spec_annotation.shape) || default_shape || "circle",
         can_edit: can_edit !== false,
         annotation_size_px: annotation_size_px || 60,
         tooltips_enabled: tooltips_enabled !== false,
@@ -171,31 +162,31 @@ function mapStateToProps(state, props) {
 const headingSource = {
     beginDrag(props, monitor, component) {
         return {
-            id: props.visual_spec_issue_annotation_id || "new"
+            id: (props.visual_spec_annotation && props.visual_spec_annotation.id) || "new"
         }
     },
     endDrag(props, monitor, component) {
-        const { visual_spec_issue_annotation,
+        const { visual_spec_annotation,
                 onUpdate, onCreate, onDelete, shape, can_edit } = props
         if ( ! can_edit ) {
             return
         }
         const drop_result = monitor.getDropResult()
         if ( drop_result === null ) {
-            if ( visual_spec_issue_annotation.id && onDelete ) {
-                onDelete(visual_spec_issue_annotation.id)
+            if ( visual_spec_annotation.id && onDelete ) {
+                onDelete(visual_spec_annotation.id)
             }
             return
         }
         const { child_pos, parent_pos, distance_moved } = drop_result
         let x_pos
         let y_pos
-        if ( props.visual_spec_issue_annotation_id ) {
-            x_pos = visual_spec_issue_annotation.x_pos + (100*distance_moved.x / parent_pos.width) //-
-                    //(annotation_size_px * visual_spec_issue_annotation.x_offset_to_target / parent_pos.width)
-            y_pos = visual_spec_issue_annotation.y_pos + (100*distance_moved.y / parent_pos.height) //-
-                    //(annotation_size_px * visual_spec_issue_annotation.y_offset_to_target / parent_pos.height)
-            onUpdate([props.visual_spec_issue_annotation_id], {shape:shape,
+        if ( props.visual_spec_annotation && props.visual_spec_annotation.id ) {
+            x_pos = visual_spec_annotation.x_pos + (100*distance_moved.x / parent_pos.width) //-
+                    //(annotation_size_px * visual_spec_annotation.x_offset_to_target / parent_pos.width)
+            y_pos = visual_spec_annotation.y_pos + (100*distance_moved.y / parent_pos.height) //-
+                    //(annotation_size_px * visual_spec_annotation.y_offset_to_target / parent_pos.height)
+            onUpdate([props.visual_spec_annotation.id], {shape:shape,
                                                                x_pos:x_pos,
                                                                y_pos:y_pos})
         } else {
@@ -216,5 +207,5 @@ function collect(connect, monitor) {
     }
 }
 
-//export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingSource, collect)(DragLayer(dragLayer)(VisualSpecIssueAnnotation)))
-export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingSource, collect)(VisualSpecIssueAnnotation))
+//export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ANNOTATION, headingSource, collect)(DragLayer(dragLayer)(VisualSpecIssueAnnotation)))
+export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ANNOTATION, headingSource, collect)(VisualSpecAnnotation))

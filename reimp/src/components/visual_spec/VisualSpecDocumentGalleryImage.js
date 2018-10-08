@@ -1,19 +1,22 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import { cx, css } from 'emotion'
+import { css } from 'emotion'
 import classNames from 'classnames'
 import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
 import {default_theme as theme} from '../../theme/default'
 import {DragSource, DropTarget} from 'react-dnd';
 import {DndTypes} from '../../actions/Dnd'
 import '../../sass/visual-spec-document-gallery.scss'
-import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
-import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
-import {
-    ensureVisualSpecIssueAnnotationsLoaded,
-    getVisualSpecIssueAnnotations,
-} from '../../actions/VisualSpecIssueAnnotations'
+// import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
+import VisualSpecAnnotation from './VisualSpecAnnotation'
+import VisualSpecDocumentGalleryFullScreenImage from './VisualSpecDocumentGalleryFullScreenImage'
+// import {
+//     ensureVisualSpecIssueAnnotationsLoaded,
+//     getVisualSpecIssueAnnotations,
+// } from '../../actions/VisualSpecIssueAnnotations'
+
+const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
 
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
@@ -36,14 +39,16 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, visual_spec_document_id, issue_id_for_annotations, visual_spec_issue_annotation_ids } = props
+        const { dispatch, visual_spec_document_id,
+                // issue_id_for_annotations, visual_spec_annotation_ids
+        } = props
         dispatch(ensureVisualSpecDocumentsLoaded([visual_spec_document_id]))
-        if ( issue_id_for_annotations ) {
-            dispatch(ensureIssuesLoaded(issue_id_for_annotations))
-        }
-        if ( visual_spec_issue_annotation_ids ) {
-            dispatch(ensureVisualSpecIssueAnnotationsLoaded(visual_spec_issue_annotation_ids))
-        }
+        /* if ( issue_id_for_annotations ) {
+         *     dispatch(ensureIssuesLoaded(issue_id_for_annotations))
+         * }
+         * if ( visual_spec_annotation_ids ) {
+         *     dispatch(ensureVisualSpecIssueAnnotationsLoaded(visual_spec_annotation_ids))
+         * }*/
     }
 
     setFullScreenMode = () => {
@@ -77,6 +82,27 @@ class VisualSpecDocumentGalleryImage extends Component {
         if (evt.keyCode === 27) {
             evt.preventDefault()
             this.setInlineMode()
+        }
+    }
+
+    createVisualSpecAnnotation(params) {
+        const { onCreateAnnotation, visual_spec_document_id } = this.props
+        if ( onCreateAnnotation ) {
+            onCreateAnnotation(visual_spec_document_id, params)
+        }
+    }
+
+    updateVisualSpecAnnotation(visual_spec_annotation_id, params) {
+        const { onUpdateAnnotation, visual_spec_document_id } = this.props
+        if ( onUpdateAnnotation ) {
+            onUpdateAnnotation(visual_spec_document_id, [visual_spec_annotation_id], params)
+        }
+    }
+
+    deleteVisualSpecAnnotation(visual_spec_annotation_id) {
+        const { onDeleteAnnotation } = this.props
+        if ( onDeleteAnnotation ) {
+            onDeleteAnnotation(visual_spec_annotation_id)
         }
     }
 
@@ -120,53 +146,32 @@ class VisualSpecDocumentGalleryImage extends Component {
         }
     }
 
-    renderFullScreen() {
-        const { visual_spec_document, visual_spec_document_id, hires_url, img_element_unique_id } = this.props
+    renderFullScreenAnnotationToolbar() {
         return (
-            <div className={css`position: absolute;
-                                top: 0px;
-                                left: 0px;
-                            `}
-                 onKeyDown={this.onKeyPressFullScreen}
-                 tabIndex="0"
-                 key={visual_spec_document_id}>
-              <div className={css`background: linear-gradient(${theme.colours.nav_bar_gradient1}, ${theme.colours.nav_bar_gradient2});
-                                  height: 36px;
-                                  position: fixed;
-                                  padding-left: 12px;
-                                  padding-right: 3px;
-                                  display: flex;
-                                  justify-content: space-between;
-                                  align-items: center;
-                                  top: 0px;
-                                  color: #ffffff;
-                                  width:100%;`}>
-                  <div>
-                    {visual_spec_document.name}
-                  </div>
-                  <div className={cx("icon--large-cross",
-                                     css`float: right;
-                                       cursor: pointer;`
-                      )}
-                       onClick={this.setInlineMode} />
-              </div>
-              <div className={css`width: 100%; 
-                                  height: 100%;
-                                  margin-top: 36px;
-                                  overflow: auto;
-                              `}>
-                <img id={img_element_unique_id}
-                     src={hires_url}
-                     alt=""
-                />
-              </div>
+            <div className={css`display: flex; 
+                                cursor: pointer; 
+                                margin-right: ${theme.spacing.horizontal_section_gap}`} >
+              {map(ANNOTATION_SHAPES, (shape) => (
+                   <VisualSpecAnnotation
+                       key={shape}
+                       visual_spec_annotation={null}
+                       default_shape={shape}
+                       container_img_element_unique_id={null}
+                       annotation_size_px={25}
+                       tooltips_enabled={false}
+                       onUpdate={this.updateVisualSpecAnnotation}
+                       onCreate={this.createVisualSpecAnnotation}
+                   />
+               ))}
             </div>
         )
     }
 
     render() {
         const { visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
-                connectDragSource, connectDropTarget, visual_spec_issue_annotation_ids,
+                visual_spec_annotations_by_doc_id, show_annotations,
+                onCreateAnnotation, onUpdateAnnotation, onDeleteAnnotation,
+                connectDragSource, connectDropTarget, visual_spec_annotation_ids,
                 img_element_unique_id} = this.props
         const { display_mode, visual_spec_document_image_loaded } = this.state
 
@@ -177,7 +182,16 @@ class VisualSpecDocumentGalleryImage extends Component {
         const thumbnail_element = this.resolveThumbnailElement(preview_image_url)
 
         if ( display_mode === 'fullscreen' ) {
-            return this.renderFullScreen()
+            return (
+                <VisualSpecDocumentGalleryFullScreenImage visual_spec_document_id={visual_spec_document_id}
+                                                          onCancelFullScreen={this.setInlineMode}
+                                                          visual_spec_annotations_by_doc_id={visual_spec_annotations_by_doc_id}
+                                                          show_annotations={show_annotations}
+                                                          onCreateAnnotation={onCreateAnnotation}
+                                                          onUpdateAnnotation={onUpdateAnnotation}
+                                                          onDeleteAnnotation={onDeleteAnnotation}
+                />
+            )
         }
         
         return connectDragSource(connectDropTarget(
@@ -187,16 +201,16 @@ class VisualSpecDocumentGalleryImage extends Component {
                                           "visual_spec_document_gallery__image--dnd-target": isOver
                                          })}>
                 {thumbnail_element}
-                { visual_spec_document_image_loaded && map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
+                { visual_spec_document_image_loaded && map(visual_spec_annotation_ids, (visual_spec_annotation_id) => {
                       return (
-                          <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
-                                                     can_edit={false}
-                                                     container_img_element_unique_id={img_element_unique_id}
-                                                     annotation_size_px={25}
-                                                     tooltips_enabled={false}
-                                                     visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
+                          <VisualSpecAnnotation key={visual_spec_annotation_id}
+                                                can_edit={false}
+                                                container_img_element_unique_id={img_element_unique_id}
+                                                annotation_size_px={25}
+                                                tooltips_enabled={false}
+                                                visual_spec_annotation_id={visual_spec_annotation_id} />
                       )
-                })
+                  })
                 }
               </div>
 
@@ -213,14 +227,19 @@ class VisualSpecDocumentGalleryImage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_document_id, is_active, onSelected, issue_id_for_annotations, render_quality, image_class } = props
+    const { visual_spec_document_id, is_active, onSelected,
+            // issue_id_for_annotations,
+            visual_spec_annotations_by_doc_id,
+            render_quality, image_class, show_annotations,
+            onCreateAnnotation, onUpdateAnnotation, onDeleteAnnotation } = props
     const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || []
-    const issue = (issue_id_for_annotations && getIssue(state, issue_id_for_annotations)) || {}
-    const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
-    const visual_spec_issue_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
-    const visual_spec_issue_annotations = getVisualSpecIssueAnnotations(state, visual_spec_issue_annotation_ids) || []
-    const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + issue_id_for_annotations + "_" + visual_spec_document_id
+    // const issue = (issue_id_for_annotations && getIssue(state, issue_id_for_annotations)) || {}
+    // const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
+    // const visual_spec_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
+    // const visual_spec_annotations = getVisualSpecIssueAnnotations(state, visual_spec_annotation_ids) || []
 
+    const visual_spec_annotations = visual_spec_annotations_by_doc_id[visual_spec_document_id]
+    const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + visual_spec_document_id
     const preview_url = (render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url
     
     return {
@@ -228,13 +247,17 @@ function mapStateToProps(state, props) {
         hires_url: visual_spec_document.hires_url,
         download_url: visual_spec_document.download_url,
         visual_spec_document: visual_spec_document,
+        visual_spec_annotations,
         visual_spec_document_id,
         is_active,
         onSelected,
-        visual_spec_issue_annotation_ids,
-        visual_spec_issue_annotations,
+        //visual_spec_annotation_ids,
         img_element_unique_id,
-        image_class
+        image_class,
+        show_annotations,
+        onCreateAnnotation,
+        onUpdateAnnotation,
+        onDeleteAnnotation
     }
 }
 

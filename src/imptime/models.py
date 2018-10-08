@@ -336,6 +336,29 @@ class VisualSpecIssueAnnotation(BaseModel):
         return 'images/visual_spec_issue__%s.png' % self.shape
 
 
+class VisualSpecFeatureAnnotation(BaseModel):
+
+    visual_spec_feature = models.ForeignKey(VisualSpecFeature, related_name='visual_spec_feature_annotations')
+    shape = models.CharField(max_length=50, choices=VisualSpecIssueAnnotation.SHAPES, default='circle')
+    x_pos = models.FloatField()
+    y_pos = models.FloatField()
+    x_offset_to_target = models.FloatField()
+    y_offset_to_target = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        self.x_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['x']
+        self.y_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['y']
+        super(VisualSpecIssueAnnotation, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    def shape_url(self):
+        return 'images/visual_spec_issue__%s.png' % self.shape
+    
+
 class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)
     clones = models.ManyToManyField(Sprint, related_name='parent_sprint_templates')

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { map } from 'lodash'
 import { connect } from 'react-redux'
 import {DndTypes} from '../../actions/Dnd'
 import {DropTarget} from 'react-dnd';
@@ -8,7 +7,7 @@ import {
 } from '../../actions/VisualSpecDocuments'
 import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import '../../sass/visual-spec-document-editor.scss'
-import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
+// import VisualSpecIssueAnnotation from './VisualSpecIssueAnnotation'
 import {
     ensureVisualSpecIssueAnnotationsLoaded,
     getVisualSpecIssueAnnotations,
@@ -17,7 +16,7 @@ import {
     deleteVisualSpecIssueAnnotation
 } from '../../actions/VisualSpecIssueAnnotations'
 
-const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
+// const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
 
 class VisualSpecDocumentEditor extends Component {
 
@@ -76,29 +75,30 @@ class VisualSpecDocumentEditor extends Component {
         dispatch(deleteVisualSpecIssueAnnotation(visual_spec_issue_annotation_id))
     }
 
-    renderAnnotationToolbar() {
-        return (
-            <div className="vsd-editor__annotation_toolbar">
-              <h1 className="vsd-editor__annotation_toolbar__title">Annotations</h1>
-              {map(ANNOTATION_SHAPES, (shape) => (
-                   <VisualSpecIssueAnnotation
-                       key={shape}
-                       visual_spec_issue_annotation_id={null}
-                       default_shape={shape}
-                       container_img_element_unique_id={null}
-                       annotation_size_px={60}
-                       tooltips_enabled={false}
-                       onUpdate={this.updateVisualSpecAnnotation}
-                       onCreate={this.createVisualSpecAnnotation}
-                   />
-               ))}
-            </div>
-        )
-    }
+    /* renderAnnotationToolbar() {
+     *     return (
+     *         <div className="vsd-editor__annotation_toolbar">
+     *           <h1 className="vsd-editor__annotation_toolbar__title">Annotations</h1>
+     *           {map(ANNOTATION_SHAPES, (shape) => (
+     *                <VisualSpecIssueAnnotation
+     *                    key={shape}
+     *                    visual_spec_issue_annotation_id={null}
+     *                    default_shape={shape}
+     *                    container_img_element_unique_id={null}
+     *                    annotation_size_px={60}
+     *                    tooltips_enabled={false}
+     *                    onUpdate={this.updateVisualSpecAnnotation}
+     *                    onCreate={this.createVisualSpecAnnotation}
+     *                />
+     *            ))}
+     *         </div>
+     *     )
+     * }*/
 
     render() {
         const { visual_spec_document_id, visual_spec_document,
-                connectDropTarget, visual_spec_issue_annotation_ids,
+                connectDropTarget,
+                // visual_spec_issue_annotation_ids,
                 img_element_unique_id } = this.props
         const { visual_spec_document_image_loaded } = this.state || {}
         
@@ -109,7 +109,7 @@ class VisualSpecDocumentEditor extends Component {
         return (
             <div className="vsd-editor">
 
-              { this.renderAnnotationToolbar() }
+              { /*this.renderAnnotationToolbar()*/ }
               {connectDropTarget(
                    <div className="vsd-editor__doc_image_container">
                      { visual_spec_document.preview_url &&
@@ -128,7 +128,7 @@ class VisualSpecDocumentEditor extends Component {
                        </div>
                      }
 
-                     { visual_spec_document_image_loaded &&
+                     { /*visual_spec_document_image_loaded &&
                        map(visual_spec_issue_annotation_ids, (visual_spec_issue_annotation_id) => {
                            return (
                                <VisualSpecIssueAnnotation key={visual_spec_issue_annotation_id}
@@ -141,7 +141,7 @@ class VisualSpecDocumentEditor extends Component {
                                                           visual_spec_issue_annotation_id={visual_spec_issue_annotation_id} />
                            )
                        })
-                     }
+                     */}
 
                    </div>
 
@@ -200,4 +200,4 @@ function collectDrop(connect, monitor) {
     }
 }
 
-export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingTarget, collectDrop)(VisualSpecDocumentEditor))
+export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ANNOTATION, headingTarget, collectDrop)(VisualSpecDocumentEditor))

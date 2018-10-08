@@ -56,7 +56,9 @@ class VisualSpecDocumentGallery extends Component {
 
     render() {
         const { image_set, active_visual_spec_document_id, render_quality, image_class, 
-                issue_id, project_id, allow_edit, onDeleteDocument } = this.props
+                issue_id, project_id, allow_edit, onDeleteDocument, show_annotations,
+                visual_spec_annotations_by_doc_id,
+                onCreateAnnotation, onUpdateAnnotation, onDeleteAnnotation } = this.props
         const that = this
         return (
             <div className="visual_spec_document_gallery">
@@ -64,13 +66,18 @@ class VisualSpecDocumentGallery extends Component {
                    return (
                        <div key={image.visual_spec_document.id} className="visual_spec_document_gallery__card">
                          <VisualSpecDocumentGalleryImage visual_spec_document_id={image.visual_spec_document.id}
+                                                         visual_spec_annotations_by_doc_id={visual_spec_annotations_by_doc_id}
                                                          image_class={image_class}
-                                                         issue_id_for_annotations={issue_id}
+                                                         /*issue_id_for_annotations={issue_id}*/
                                                          onReorder={that.reorderDocuments}
                                                          render_quality={render_quality}
+                                                         show_annotations={show_annotations}
+                                                         onCreateAnnotation={onCreateAnnotation}
+                                                         onUpdateAnnotation={onUpdateAnnotation}
+                                                         onDeleteAnnotation={onDeleteAnnotation}
                                                          is_active={active_visual_spec_document_id===image.visual_spec_document.id}
                                                          onSelected={(event) => that.selectDocument(event, image.visual_spec_document)} />
-                         { allow_edit &&
+                         { false && allow_edit &&
                            <EditableIssueVisualSpecDocument issue_id={issue_id}
                                                             project_id={project_id}
                                                             onDeleteDocument={onDeleteDocument}
@@ -93,7 +100,9 @@ class VisualSpecDocumentGallery extends Component {
 function mapStateToProps(state, props) {
 
     const { visual_spec_document_ids, active_visual_spec_document_id, reorderDocuments,
-            render_quality, image_class,
+            render_quality, image_class, show_annotations,
+            visual_spec_annotations_by_doc_id,
+            onCreateAnnotation, onUpdateAnnotation, onDeleteAnnotation,
             issue_id, project_id, allow_edit, onSelect, onDeleteDocument } = props
 
     const issue = getIssue(state, issue_id) || {}
@@ -118,7 +127,12 @@ function mapStateToProps(state, props) {
         image_class,
         allow_edit: allow_edit !== false,
         onSelect,
-        onDeleteDocument
+        onDeleteDocument,
+        visual_spec_annotations_by_doc_id,
+        show_annotations: show_annotations || true,
+        onCreateAnnotation,
+        onUpdateAnnotation,
+        onDeleteAnnotation
     }
 }
 

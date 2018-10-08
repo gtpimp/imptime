@@ -5,7 +5,7 @@ export const DndTypes = {
     SPRINT: 'sprint',
     USER: 'user',
     VISUAL_SPEC_ISSUE: 'visual_spec_issue',
-    VISUAL_SPEC_ISSUE_ANNOTATION: 'visual_spec_issue_annotation',
+    VISUAL_SPEC_ANNOTATION: 'visual_spec_annotation',
     VISUAL_SPEC_DOCUMENT: 'visual_spec_document'
 };
 
