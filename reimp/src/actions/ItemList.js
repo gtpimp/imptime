@@ -44,18 +44,24 @@ export function update_list_pagination(list_key, pagination) {
 }
 
 export function update_list_filter(list_key, filter) {
-    return {
-        type: UPDATE_LIST_FILTER,
-        list_key: list_key,
-        filter: filter
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_LIST_FILTER,
+            list_key: list_key,
+            filter: filter
+        })
+        dispatch(invalidateList(list_key))
     }
 }
 
 export function clear_list_filter_option(list_key, filter_option) {
-    return {
-        type: CLEAR_LIST_FILTER_OPTION,
-        list_key: list_key,
-        filter_option: filter_option
+    return (dispatch, getState) => {
+        dispatch({
+            type: CLEAR_LIST_FILTER_OPTION,
+            list_key: list_key,
+            filter_option: filter_option
+        })
+        dispatch(invalidateList(list_key))
     }
 }
 
@@ -68,10 +74,13 @@ export function getListPagination(state, list_key) {
 }
 
 export function update_list_ordering(list_key, ordering) {
-    return {
-        type: UPDATE_LIST_ORDERING,
-        list_key: list_key,
-        ordering: ordering
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_LIST_ORDERING,
+            list_key: list_key,
+            ordering: ordering
+        })
+        dispatch(invalidateList(list_key))
     }
 }
 
@@ -80,10 +89,13 @@ export function get_list_ordering(state, list_key) {
 }
 
 export function update_list_format(list_key, format) {
-    return {
-        type: UPDATE_LIST_FORMAT,
-        list_key: list_key,
-        format: format
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_LIST_FORMAT,
+            list_key: list_key,
+            format: format
+        })
+        dispatch(invalidateList(list_key))
     }
 }
 
