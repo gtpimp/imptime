@@ -56,7 +56,7 @@ class IssueSerializer(BaseSerializer):
     risky = serializers.BooleanField()
 
     def get_has_attachment(self, issue):
-        if len(issue.visual_spec_document_ids) > 0:
+        if len(issue.annotated_visual_spec_document_ids) > 0:
             return True
         return False
 

@@ -3,18 +3,16 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import { css } from 'emotion'
 import classNames from 'classnames'
-import { getVisualSpecDocument, ensureVisualSpecDocumentsLoaded } from '../../actions/VisualSpecDocuments'
 import {default_theme as theme} from '../../theme/default'
 import {DragSource, DropTarget} from 'react-dnd';
 import {DndTypes} from '../../actions/Dnd'
 import '../../sass/visual-spec-document-gallery.scss'
-// import { ensureIssuesLoaded, getIssue } from '../../actions/Issues'
 import VisualSpecAnnotation from './VisualSpecAnnotation'
 import VisualSpecDocumentGalleryFullScreenImage from './VisualSpecDocumentGalleryFullScreenImage'
-// import {
-//     ensureVisualSpecIssueAnnotationsLoaded,
-//     getVisualSpecIssueAnnotations,
-// } from '../../actions/VisualSpecIssueAnnotations'
+import {
+    ensureAnnotatedVisualSpecDocumentsLoaded,
+    getAnnotatedVisualSpecDocument
+} from '../../actions/AnnotatedVisualSpecDocuments'
 
 const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
 
@@ -39,16 +37,8 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, visual_spec_document_id,
-                // issue_id_for_annotations, visual_spec_annotation_ids
-        } = props
-        dispatch(ensureVisualSpecDocumentsLoaded([visual_spec_document_id]))
-        /* if ( issue_id_for_annotations ) {
-         *     dispatch(ensureIssuesLoaded(issue_id_for_annotations))
-         * }
-         * if ( visual_spec_annotation_ids ) {
-         *     dispatch(ensureVisualSpecIssueAnnotationsLoaded(visual_spec_annotation_ids))
-         * }*/
+        const { dispatch, annotated_visual_spec_document_id } = props
+        dispatch(ensureAnnotatedVisualSpecDocumentsLoaded([annotated_visual_spec_document_id]))
     }
 
     setFullScreenMode = () => {
@@ -168,10 +158,9 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     render() {
-        const { visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
-                visual_spec_annotations_by_doc_id, show_annotations,
-                onCreateAnnotation, onUpdateAnnotation, onDeleteAnnotation,
-                connectDragSource, connectDropTarget, visual_spec_annotation_ids,
+        const { annotated_visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
+                show_annotations, visual_spec_annotations,
+                connectDragSource, connectDropTarget,
                 img_element_unique_id} = this.props
         const { display_mode, visual_spec_document_image_loaded } = this.state
 
@@ -183,32 +172,28 @@ class VisualSpecDocumentGalleryImage extends Component {
 
         if ( display_mode === 'fullscreen' ) {
             return (
-                <VisualSpecDocumentGalleryFullScreenImage visual_spec_document_id={visual_spec_document_id}
+                <VisualSpecDocumentGalleryFullScreenImage annotated_visual_spec_document_id={annotated_visual_spec_document_id}
                                                           onCancelFullScreen={this.setInlineMode}
-                                                          visual_spec_annotations_by_doc_id={visual_spec_annotations_by_doc_id}
                                                           show_annotations={show_annotations}
-                                                          onCreateAnnotation={onCreateAnnotation}
-                                                          onUpdateAnnotation={onUpdateAnnotation}
-                                                          onDeleteAnnotation={onDeleteAnnotation}
                 />
             )
         }
         
         return connectDragSource(connectDropTarget(
-            <div className="visual-spec-document-gallery-image__container" key={visual_spec_document_id}>
+            <div className="visual-spec-document-gallery-image__container" key={annotated_visual_spec_document_id}>
               <div className={classNames("visual-spec-document-gallery-image__img_container",
                                          {"visual_spec_document_gallery__image--selected": is_active,
                                           "visual_spec_document_gallery__image--dnd-target": isOver
                                          })}>
                 {thumbnail_element}
-                { visual_spec_document_image_loaded && map(visual_spec_annotation_ids, (visual_spec_annotation_id) => {
+                { visual_spec_document_image_loaded && map(visual_spec_annotations, (visual_spec_annotation) => {
                       return (
-                          <VisualSpecAnnotation key={visual_spec_annotation_id}
+                          <VisualSpecAnnotation key={visual_spec_annotation.id}
                                                 can_edit={false}
                                                 container_img_element_unique_id={img_element_unique_id}
                                                 annotation_size_px={25}
                                                 tooltips_enabled={false}
-                                                visual_spec_annotation_id={visual_spec_annotation_id} />
+                                                visual_spec_annotation_id={visual_spec_annotation.id} />
                       )
                   })
                 }
@@ -227,20 +212,14 @@ class VisualSpecDocumentGalleryImage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { visual_spec_document_id, is_active, onSelected,
-            // issue_id_for_annotations,
-            visual_spec_annotations_by_doc_id,
-            render_quality, image_class, show_annotations,
-            onCreateAnnotation, onUpdateAnnotation, onDeleteAnnotation } = props
-    const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || []
-    // const issue = (issue_id_for_annotations && getIssue(state, issue_id_for_annotations)) || {}
-    // const visual_spec_annotation_ids_by_doc_id = issue.visual_spec_annotation_ids_by_doc_id || {}
-    // const visual_spec_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
-    // const visual_spec_annotations = getVisualSpecIssueAnnotations(state, visual_spec_annotation_ids) || []
+    const { annotated_visual_spec_document_id, is_active, onSelected,
+            render_quality, image_class, show_annotations } = props
 
-    const visual_spec_annotations = visual_spec_annotations_by_doc_id && visual_spec_annotations_by_doc_id[visual_spec_document_id]
-    const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + visual_spec_document_id
-    const preview_url = (render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url
+    const annotated_visual_spec_document = getAnnotatedVisualSpecDocument(state, annotated_visual_spec_document_id)
+    const visual_spec_document = annotated_visual_spec_document && annotated_visual_spec_document.visual_spec_document || {}
+    const visual_spec_annotations = annotated_visual_spec_document && annotated_visual_spec_document.annotations
+    const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + annotated_visual_spec_document_id
+    const preview_url = visual_spec_document && ((render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url) || null
     
     return {
         preview_image_url: preview_url,
@@ -248,45 +227,40 @@ function mapStateToProps(state, props) {
         download_url: visual_spec_document.download_url,
         visual_spec_document: visual_spec_document,
         visual_spec_annotations,
-        visual_spec_document_id,
+        annotated_visual_spec_document_id,
         is_active,
         onSelected,
-        //visual_spec_annotation_ids,
         img_element_unique_id,
         image_class,
-        show_annotations,
-        onCreateAnnotation,
-        onUpdateAnnotation,
-        onDeleteAnnotation
+        show_annotations
     }
 }
 
 const headingSource = {
     beginDrag(props) {
-        return {id: props.visual_spec_document_id}
+        return {id: props.annotated_visual_spec_document_id}
     }
 }
 
 const headingTarget = {
     drop: (props, monitor, component) => {
-        const {visual_spec_document_id} = props
+        const {annotated_visual_spec_document_id} = props
         const dragging_item = monitor.getItem()
         if (!dragging_item) {
             return;
         }
-        const dragging_visual_spec_document_id = dragging_item.id
-        if (visual_spec_document_id === dragging_visual_spec_document_id) {
-            console.log("ignoring dnd on the same element: " + visual_spec_document_id)
+        const dragging_annotated_visual_spec_document_id = dragging_item.id
+        if (annotated_visual_spec_document_id === dragging_annotated_visual_spec_document_id) {
+            console.log("ignoring dnd on the same element: " + annotated_visual_spec_document_id)
             return;
         }
-        props.onReorder(dragging_visual_spec_document_id, visual_spec_document_id)
+        props.onReorder(dragging_annotated_visual_spec_document_id, annotated_visual_spec_document_id)
     },
     hover: (props, monitor, component) => {
     },
     canDrop: (props, monitor) => {
         return true;
     }
-
 }
 
 function collect(connect, monitor) {

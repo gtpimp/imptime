@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+import annotated_visual_spec_document_api
 import auth_api
 import billable_hours_statement_api
 import cost_summary_api
@@ -97,6 +98,8 @@ router.register(r'feature/testable', testable_api.TestableViewSet,
                 base_name='testable')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
                 base_name='visual_spec_document')
+router.register(r'annotated_visual_spec_document', annotated_visual_spec_document_api.AnnotatedVisualSpecDocumentViewSet,
+                base_name='annotated_visual_spec_document')
 router.register(r'visual_spec_issue', visual_spec_issue_api.VisualSpecIssueViewSet,
                 base_name='visual_spec_issue')
 router.register(r'visual_spec_annotation', visual_spec_annotation_api.VisualSpecAnnotationViewSet,

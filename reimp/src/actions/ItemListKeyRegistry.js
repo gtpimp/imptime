@@ -44,6 +44,7 @@ export const ENTITY_KEY__USER = 'user'
 export const ENTITY_KEY__PROJECT_USER_PERMISSION = 'user'
 export const ENTITY_KEY__PROJECT_DASHBOARD = 'project_dashboard'
 export const ENTITY_KEY__USER_TIMESHEET = 'user_timesheet'
+export const ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT = 'annotated_visual_spec_document'
 export const ENTITY_KEY__VISUAL_SPEC_DOCUMENT = 'visual_spec_document'
 export const ENTITY_KEY__VISUAL_SPEC_ISSUE = 'visual_spec_issue'
 export const ENTITY_KEY__VISUAL_SPEC_ANNOTATION = 'visual_spec_annotation'
@@ -76,6 +77,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__SPRINT_USER_RATE,
                                   ENTITY_KEY__FEATURE,
                                   ENTITY_KEY__CALENDAR_EVENT,
+                                  ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT,
                                   ENTITY_KEY__SPRINT_COST_SUMMARY,
                                   ENTITY_KEY__SPRINT_SNAPSHOT ]
 

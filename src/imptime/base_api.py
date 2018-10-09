@@ -17,7 +17,7 @@ from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
 from imptime.models import WikiPage, VisualSpecAnnotation
 from imptime.models import Mien, CompanyProblem, SprintSnapshot
-from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature
+from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature, AnnotatedVisualSpecDocument
 from testable.models import Testable
 from invoicing.models import Invoice
 
@@ -202,7 +202,7 @@ class BaseViewSet(viewsets.ViewSet):
                                                  Q(visual_spec_issues__issue__in=self.allowed_issues())).distinct()
 
     def allowed_annotated_visual_spec_documents(self):
-        return AnnotatedVisualSpecDocument.objects.filter(visual_spec_document__in=self.allowed_visual_spec_documents)
+        return AnnotatedVisualSpecDocument.objects.filter(visual_spec_document__in=self.allowed_visual_spec_documents())
     
     def allowed_visual_spec_issues(self):
         return VisualSpecIssue.objects.filter(issue__in=self.allowed_issues())
