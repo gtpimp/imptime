@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { indexOf, map, initial, includes } from 'lodash'
+import { indexOf, map, initial } from 'lodash'
 import { css } from 'emotion'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import { getCurrentMienId } from '../actions/Mien'
 import { SortableTreeWithoutDndContext as SortableTree } from 'react-sortable-tree'
-import 'react-sortable-tree/style.css'
+// import 'react-sortable-tree/style.css'
+import CommonTreeTheme from './CommonTreeTheme'
 
 class CommonTree extends Component {
 
@@ -63,8 +64,9 @@ class CommonTree extends Component {
         onNodeSelected(nodes[0])
     }
 
-    onNodeClicked = (rowInfo) => {
+    onNodeClicked = (evt, rowInfo) => {
         const { onNodeSelected } = this.props
+        evt.stopPropagation()
         onNodeSelected(rowInfo.node)
     }
 
@@ -164,7 +166,7 @@ class CommonTree extends Component {
     }
     
     render() {
-        const { renderNode, getAvailableHeaders, selected_item_ids,
+        const { renderNode, getAvailableHeaders,
                 getHeaderListForMien, updateMienHeaders, header_list_name, items } = this.props
         const { searchString, searchFocusIndex } = this.state
 
@@ -177,7 +179,9 @@ class CommonTree extends Component {
             >
               <div className={css`height:100%`}>
                 { this.renderSearchForm() }
-                <SortableTree treeData={items}
+                <SortableTree theme={CommonTreeTheme}
+                              treeData={items}
+                              rowHeight={50}
                               onChange={this.onNodeChanged}
                               onVisibilityToggle={this.onNodeVisiblityToggle}
                               getNodeKey={({node}) => node.id || "root"}
@@ -187,16 +191,7 @@ class CommonTree extends Component {
                               searchFinishCallback={this.onSearched}
 
                               generateNodeProps={rowInfo => ({
-                                      buttons: [
-                                          <button className="btn btn-outline-success"
-                                                  style={{verticalAlign: 'middle'}}
-                                                  onClick={() => this.onNodeClicked(rowInfo)}
-                                          >
-                                            <input type="checkbox"
-                                                   readOnly={true}
-                                                   checked={includes(selected_item_ids, rowInfo.node.id)} />
-                                          </button>,
-                                      ],
+                                      onClick: (evt) => this.onNodeClicked(evt, rowInfo),
                                   })}
                 >
                   {renderNode}

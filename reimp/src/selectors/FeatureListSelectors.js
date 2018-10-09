@@ -194,7 +194,7 @@ export const makeSelFeaturesAsStructuredTree = () => {
         [ selGetAllFeaturesById, selGetSelectedFeatureIds ],
         ( all_features_by_id, selected_feature_ids ) => {
 
-            const MAX_CHARS_FOR_SUBTITLE = 50
+            const MAX_CHARS_FOR_SUBTITLE = 100
             if ( ! all_features_by_id ) {
                 return []
             }

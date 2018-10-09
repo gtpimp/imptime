@@ -830,11 +830,15 @@ class Feature(BaseModel):
 
     @property
     def is_root(self):
-        return self.name == self.ROOT_NAME
+        return self.name == self.project.name and self.parent_id is None
     
     @classmethod
     def ensure_root_feature_exists(self, project_id):
-        return Feature.objects.get_or_create(name=self.ROOT_NAME, number=1, project_id=project_id, parent_id=None, deleted=False)[0]
+        root_node = Feature.objects.filter(number=1, project_id=project_id, parent_id=None, deleted=False).first()
+        if root_node is None:
+            project = Project.objects.get(pk=project_id)
+            root_node = Feature.objects.get_or_create(name=project.name, number=1, project_id=project_id, parent_id=None, deleted=False)[0]
+        return root_node
 
     @classmethod
     def get_root_feature(self, project_id):

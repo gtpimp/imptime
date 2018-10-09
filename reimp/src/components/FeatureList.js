@@ -19,7 +19,6 @@ import {
     makeSelFeaturesAsStructuredTree
 } from '../selectors/FeatureListSelectors'
 import {
-    initList,
     getVisibleItemIds,
     getSelectedItemIds,
     getHighlightedItemIds,
@@ -43,7 +42,6 @@ class FeatureList extends Component {
     componentDidMount() {
         const {dispatch, list_key, project_id} = this.props
         if (project_id) {
-            dispatch(initList(list_key))
             dispatch(fetchFeaturesIfNeeded(list_key))
             dispatch(ensureProjectsLoaded([project_id]))
         }

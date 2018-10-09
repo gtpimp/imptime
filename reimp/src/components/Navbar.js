@@ -6,6 +6,7 @@ import SearchBox from '../components/SearchBox'
 import { getLoggedInUser } from '../actions/Users'
 import '../sass/navbar.css'
 import NavTab from './NavTab'
+import {default_theme as theme} from '../theme/default'
 import MienSelector from './MienSelector'
 import BookmarkSelector from './BookmarkSelector'
 import { showFloatingCalendar } from '../actions/CalendarEvents'
@@ -17,7 +18,7 @@ import QuickIssueCreator from './QuickIssueCreator'
 
 const NavbarDiv = styled('div')(props => ({display: "flex",
                                            color: "#ffffff",
-                                           background: "linear-gradient(#0b8bb2, #056a86)",
+                                           background: `linear-gradient(${theme.colours.nav_bar_gradient1}, ${theme.colours.nav_bar_gradient2})`,
                                            justifyContent: "space-between",
                                            alignItems: "center",
                                            height: "36px",
