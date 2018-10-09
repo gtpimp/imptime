@@ -1,19 +1,24 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import '../../sass/icon.css'
 import {
     startCandidateIssue,
     ensureIssuesLoaded,
-    getIssue
+    getIssue,
+    saveCandidateIssue,
+    updateCandidateSubject,
+    updateCandidateSprint
 } from '../../actions/Issues'
+
 import {
     PAGE_KEY__ISSUES_PAGE,
     LIST_KEY__ISSUE_LIST
 } from '../../actions/ItemListKeyRegistry'
 import {
     get_selected_issue_ids,
-    get_selected_sprint_ids
+    get_selected_sprint_ids,
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import ModalDialog from '../ModalDialog'
@@ -22,6 +27,7 @@ import PopupPanelButton from '../PopupPanelButton'
 import IconButton from '../IconButton'
 import add_icon from '../../images/icon_add.svg'
 import filter_icon from '../../images/icon_filter.svg'
+import NewIssueForm from '../form/NewIssueForm'
 
 class IssuesToolbarPanel extends Component {
 
@@ -30,7 +36,8 @@ class IssuesToolbarPanel extends Component {
         this.onNewIssueClick = this.onNewIssueClick.bind(this)
         this.startEditingFilter = this.startEditingFilter.bind(this)
         this.stopEditingFilter = this.stopEditingFilter.bind(this)
-        this.state = { 'editing_filter': false }
+        this.state = { editing_filter: false,
+                       creating_issue: false }
     }
 
     componentDidMount() {
@@ -48,8 +55,23 @@ class IssuesToolbarPanel extends Component {
     }
 
     onNewIssueClick() {
-        const { dispatch, last_selected_issue_id, sprint_id, selected_issue_ids } = this.props
-        dispatch(startCandidateIssue(sprint_id, last_selected_issue_id, selected_issue_ids))
+        this.setState({creating_issue:true})
+    }
+
+    onStopCreateIssue = () => {
+        this.setState({creating_issue:false})
+    }
+
+    onCreateIssue = (new_values) => {
+        const {dispatch, history, project_id, sprint_id, last_selected_issue_id} = this.props
+        dispatch(startCandidateIssue(sprint_id, last_selected_issue_id))
+        dispatch(updateCandidateSubject(new_values.issue_title))
+        dispatch(updateCandidateSprint(sprint_id))
+        const onDone = (issue_id) => {
+            history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_id)
+        }
+        this.onStopCreateIssue()
+        dispatch(saveCandidateIssue(onDone))
     }
 
     startEditingFilter() {
@@ -76,10 +98,21 @@ class IssuesToolbarPanel extends Component {
             </ModalDialog>
         )
     }
+
+    renderCreatingIssue() {
+        return (
+            <ModalDialog isOpen={true}
+                         onClose={this.onStopCreateIssue}
+                         title="New Issue" >
+              <NewIssueForm onSubmitted={this.onCreateIssue}
+                            onStopCreateIssue={this.onStopCreateIssue} />
+            </ModalDialog>
+        )
+    }
     
     render() {
 
-        const { editing_filter } = this.state
+        const { creating_issue, editing_filter } = this.state
         
         return (
             <div className="toolbar_container">
@@ -94,6 +127,9 @@ class IssuesToolbarPanel extends Component {
                   onButtonClick={this.startEditingFilter}/>
 
               { editing_filter && this.renderEditingFilter() }
+
+              { creating_issue && this.renderCreatingIssue() }
+              
             </div>
         )
     }
@@ -114,4 +150,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(IssuesToolbarPanel)
+export default withRouter(connect(mapStateToProps)(IssuesToolbarPanel))

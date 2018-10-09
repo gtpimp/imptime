@@ -18,15 +18,25 @@ class NewIssueForm extends Component {
         this.setState({project_id:new_project_id})
     }
 
+    keyDown = (event) => {
+        const { onCancelCreateIssue } = this.props
+        if (event.keyCode === 27) {
+            event.preventDefault()
+            if ( onCancelCreateIssue ) {
+                onCancelCreateIssue()
+            }
+        }
+    }
+
     render() {
-        const { handleSubmit, onKeyDown } = this.props
+        const { handleSubmit } = this.props
 
         return (
             <form onSubmit={handleSubmit}>
               <div>
                 <div className="issue_sidebar--textarea">
                   <PropertyStackComponent title="Title">
-                    <IssueTitleField onKeyDown={onKeyDown} />
+                    <IssueTitleField onKeyDown={this.keyDown} />
                   </PropertyStackComponent>
                 </div>
                 <button className="button issue_sidebar--textarea" type="submit">Submit</button>
@@ -38,14 +48,14 @@ class NewIssueForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted, onKeyDown } = props
+    const { onSubmitted, onCancelCreateIssue } = props
     
     return {
         initialValues: Object.assign({},
                                      {title:''}),
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        onKeyDown
+        onCancelCreateIssue
     }
 }
 

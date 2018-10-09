@@ -17,15 +17,11 @@ class NewIssueSidebar extends Component {
     constructor(props) {
         super(props)
         this.onSaveCandidateIssue = this.onSaveCandidateIssue.bind(this)
-        this.keyDown = this.keyDown.bind(this)
     }
 
-    keyDown(event) {
+    onCancelCreateIssue = () => {
         const { dispatch } = this.props
-        if (event.keyCode === 27) {
-            event.preventDefault()
-            dispatch(cancelCandidateIssue())
-        }
+        dispatch(cancelCandidateIssue())
     }
 
     onSaveCandidateIssue(new_value) {
@@ -51,6 +47,7 @@ class NewIssueSidebar extends Component {
                 <div onKeyDown={this.keyDown}>
                   <div>
                     <NewIssueForm onSubmitted={this.onSaveCandidateIssue}
+                                  onCancelCreateIssue={this.onCancelCreateIssue}
                                   default_project_id={project_id}
                                   default_sprint_id={sprint_id}
                                   optional_default_issue_values={default_issue_values}/>
