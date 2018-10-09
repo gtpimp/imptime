@@ -1,12 +1,15 @@
+import { css } from 'emotion'
 
 const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-serif",
                     'semibold-12': "normal normal 500 12px 'Fira Sans', sans-serif",
                     'semibold-15': "normal normal 500 15px 'Fira Sans', sans-serif",
                     'regular-13': "normal normal 400 13px 'Fira Sans', sans-serif",
                     'regular-15': "normal normal 400 15px 'Fira Sans', sans-serif",
+                    'regular-18': "normal normal 400 18px 'Fira Sans', sans-serif",
                     'bold-12': "normal normal 600 12px 'Fira Sans', sans-serif",
                     'bold-15': "normal normal 600 15px 'Fira Sans', sans-serif",
                     'semibold-20': "normal normal 500 20px 'Fira Sans', sans-serif",
+                    'semibold-26': "normal normal 500 26px 'Fira Sans', sans-serif",
                     'bold-20': "normal normal 600 20px 'Fira Sans', sans-serif",
                     'regular-10': "normal normal 400 10px 'Fira Sans', sans-serif",
 }
@@ -38,6 +41,13 @@ export const default_theme = {
                button_background: '#D8DDE1',
                button_background_hover: '#C7CCD0',
                cell_separator: '#ededed',
+               button_background: '#E9EEF2',
+               button_hover_background: 'rgba(11,139,178,0.10)',
+               danger_button_background: '#E25A50',
+               danger_button_hover_background: '#e04b40',
+               white: '#FFFFFF',
+               black: '#000000',
+               red: '#E25A50',
                border_strong: '#888888'
     },
 
@@ -50,7 +60,9 @@ export const default_theme = {
         semibold_large: fonts_raw['semibold-15'],
         bold_large: fonts_raw['bold-15'],
         regular_larger: fonts_raw['regular-13'],
+        regular_huge: fonts_raw['regular-18'],
         semibold_huge: fonts_raw['semibold-20'],
+        semibold_massive: fonts_raw['semibold-26'],
         
         list_items: fonts_raw['regular-12'],
         descriptions: fonts_raw['regular-12'],
@@ -90,5 +102,13 @@ export const default_theme = {
         four: '24px',
         five: '30px',
         six: '36px'
+    },
+
+    box_shadows: {
+        main: '0 4px 12px 0 rgba(0,0,0,0.3)'
+    },
+
+    circles: {
+        red: css`width: 21px; height: 21px; border-radius: 50%; background-color: #E25A50`
     }
 }

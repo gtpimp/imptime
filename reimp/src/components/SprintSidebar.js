@@ -9,7 +9,6 @@ import moment from 'moment'
 // import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import EditableSprintName from '../components/EditableSprintName'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType from '../components/EditableSprintType'
 import EditableSprintDeadline from '../components/EditableSprintDeadline'
@@ -18,6 +17,13 @@ import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
 import { has_permission } from '../actions/Users'
 import MultipleIssueSummary from './MultipleIssueSummary'
+import EditableSprintName from '../components/EditableSprintName'
+
+import SidebarContainer from './SidebarContainer'
+import SidebarProperty from './SidebarProperty'
+import SidebarDetail from './SidebarDetail'
+import SidebarTitle from './SidebarTitle'
+import SidebarSectionTitle from './SidebarSectionTitle'
 
 class SprintSidebar extends Component {
 
@@ -59,105 +65,132 @@ class SprintSidebar extends Component {
         const { sprint } = this.props
         
         return (
-            <PropertyStackComponent>
+            <SidebarProperty key="clonestack">
               { sprint.sprint_template_id &&
                 <div className="property-text">
                   Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
                 </div>
               }
-            </PropertyStackComponent>
+            </SidebarProperty>
         )
     }
+
+    renderTitleStack = () => {
+        const { sprint_id } = this.props
+        return (
+            <SidebarProperty key="titlestack">
+              <SidebarTitle>
+                <EditableSprintName sprint_id={sprint_id} />
+              </SidebarTitle>
+            </SidebarProperty>
+        )
+    }
+
+    renderDescriptionStack = () => {
+        const { sprint } = this.props
+        return (
+            <SidebarProperty key="descriptionstack">
+              <div className="property-text">{sprint.description}</div>
+            </SidebarProperty>
+        )
+    }
+
+    renderReviewStack = () => {
+        const { sprint, has_view_review_cycle_permission } = this.props
+        return (
+            <div key="reviewstack">
+              { has_view_review_cycle_permission &&
+                <SidebarProperty>
+                  <SidebarSectionTitle title="Reviews" />
+                  <MienFeature feature_name="review_schedule">
+                    <SprintReviewPanel sprint_id={sprint.id} />
+                  </MienFeature>
+                </SidebarProperty>
+              }
+            </div>
+        )
+    }
+
+    renderInfoStack() {
+        const { sprint } = this.props
+        return (
+            <SidebarProperty key="infostack">
+              <SidebarDetail label="Status">
+                <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+              </SidebarDetail>
+
+              <SidebarDetail label="Type">
+                <EditableSprintType sprint_ids={[sprint.id]} project_id={sprint.project_id} />
+              </SidebarDetail>
+
+              <SidebarDetail label="Created">
+                <Timestamp format="short-date" value={moment(sprint.created)}/>
+              </SidebarDetail>
+
+              <SidebarDetail label="First Activity">
+                <Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/>
+              </SidebarDetail>
+
+              <SidebarDetail label="Last Activity">
+                <Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/>
+              </SidebarDetail>
+            </SidebarProperty>
+        )
+    }
+
+    renderDeadlineStack() {
+        const { sprint } = this.props
+        return (
+            <SidebarProperty key="deadlinestack">
+              <MienFeature feature_name="deadlines">
+                <SidebarSectionTitle title="Deadlines" />
+                { map(sprint.deadline_ids, function (deadline_id, index) {
+                      return <EditableSprintDeadline key={sprint.id} sprint_id={sprint.id} deadline_id={deadline_id}/>
+                  })
+                }
+                <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
+              </MienFeature>
+            </SidebarProperty>
+        )
+    }
+
+    renderMultiSummerStack() {
+        const { sprint, sprint_id } = this.props
+        return (
+            <SidebarProperty key="multisummarystack">
+              <SidebarSectionTitle title="Multiple Issue Summary" />
+              <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} auto_load={false} />
+            </SidebarProperty>
+        )
+    }
+
+    /* renderMultiSummerStack() {
+     *     const { sprint, sprint_id } = this.props
+     *     return (
+     *         <SidebarProperty key="multisummarystack">
+     *           <MienFeature feature_name="multiple_issue_summary">
+     *             <SidebarSectionTitle title="Multiple Issue Summary" />
+     *             <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} auto_load={false} />
+     *           </MienFeature>
+     *         </SidebarProperty>
+     *     )
+     * } */
     
     render() {
-
-        const { sprint_id, sprint, has_view_review_cycle_permission,
-                // cost_summary,
-                // can_view_costs
-        } = this.props
-        
         return (
-            <div className="sidebar sprint-sidebar">
-              <PropertyStack>
-
-                { this.renderCloneInfo() }
-                
-                <PropertyStackComponent>
-                  <div className="property--title">
-                    <EditableSprintName sprint_id={sprint_id} />
-                  </div>
-                </PropertyStackComponent>
-                <PropertyStackComponent>
-                  <div className="property-text">{sprint.description}
-                  </div>
-                </PropertyStackComponent>
-
-                <MienFeature feature_name="emacs">
-                  <PropertyStackComponent>
-                    <div onClick={this.showEmacsSprint}>
-                      Sprint
-                      <div className="sprint_sidebar__emacs_copy_img" />
-                    </div>
-                  </PropertyStackComponent>
-                </MienFeature>
-                
-                <PropertyStackComponent>
-                  <div className="property-text">
-                    Status: <EditableSprintStatus sprint_ids={[sprint.id]} project_id={sprint.project_id} />
-                  </div>
-                </PropertyStackComponent>
-
-                <PropertyStackComponent>
-                  <div className="property-text">
-                    Type: <EditableSprintType sprint_ids={[sprint.id]} project_id={sprint.project_id} />
-                  </div>
-                </PropertyStackComponent>
-                
-                <PropertyStackComponent>
-                  <div className="named-property">
-                    <div className="named-property__name">Created</div>
-                    <div className="named-property__value"><Timestamp format="short-date" value={moment(sprint.created)}/></div>
-                  </div>
-                </PropertyStackComponent>
-                <PropertyStackComponent>
-                  <div className="named-property">
-                    <div className="named-property__name">First Activity</div>
-                    <div className="named-property__value"><Timestamp format="short-date" value={sprint.first_entry && moment(sprint.first_entry.start_time)}/></div>
-                  </div>
-                </PropertyStackComponent>
-                <PropertyStackComponent>
-                  <div className="named-property">
-                    <div className="named-property__name">Last Activity</div>
-                    <div className="named-property__value"><Timestamp format="short-date" value={sprint.last_entry && moment(sprint.last_entry.end_time)}/></div>
-                  </div>
-                </PropertyStackComponent>
-
-                { has_view_review_cycle_permission &&
-                  <MienFeature feature_name="review_schedule">
-                    <PropertyStackComponent title="Reviews">
-                      <SprintReviewPanel sprint_id={sprint.id} />
-                    </PropertyStackComponent>
-                  </MienFeature>
-                }
-
-                  {/* { false && this.renderCostSummary() } */}
-
-                <MienFeature feature_name="deadlines">
-                  <PropertyStackComponent title="Deadlines">
-                    { map(sprint.deadline_ids, function (deadline_id, index) {
-                          return <EditableSprintDeadline key={sprint.id} sprint_id={sprint.id} deadline_id={deadline_id}/>
-                      })
-                    }
-                    <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
-                  </PropertyStackComponent>
-                </MienFeature>
-                  
-                <MienFeature feature_name="multiple_issue_summary">
-                  <MultipleIssueSummary sprint_id={sprint_id}  project_id={sprint.project_id} auto_load={false} />
-                </MienFeature>
-
-              </PropertyStack>
-            </div>
+            <SidebarContainer>
+              {
+                  [
+                      this.renderCloneInfo(),
+                      this.renderTitleStack(),
+                      this.renderDescriptionStack(),
+                      this.renderInfoStack(),
+                      this.renderReviewStack(),
+                      this.renderDeadlineStack(),
+                      this.renderMultiSummerStack()
+                  ]
+              }
+            </SidebarContainer>
         )
     }
 }
@@ -166,18 +199,14 @@ export function mapStateToProps(state, props) {
     const { sprint_id, project_id } = props
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
-    // const cost_summary = getCostSummary(state, sprint_id)
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
-    // const can_view_costs = sprint && has_permission(state, sprint.project_id, 'has_view_ctc_billable_rates')
     
     return {
         sprint_id,
         sprint,
-        // cost_summary,
         project_id,
         project,
-        has_view_review_cycle_permission,
-        // can_view_costs
+        has_view_review_cycle_permission
     }
 }
 

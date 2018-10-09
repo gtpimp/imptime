@@ -48,7 +48,6 @@ class CommonTable extends Component {
             args.className += " common-table__row--selected"
         }
         args.className += " common-table__row"
-        
         return this.isRowSortable(index)
              ? <SortableRow {...args} />
              : defaultTableRowRenderer(args)
@@ -91,7 +90,7 @@ class CommonTable extends Component {
                   onStop={(event, data) => this.resizeColumn({
                           dataKey: args.dataKey,
                           deltaX: args.x
-                      })}
+                  })}
                   position={{
                       x: 0,
                       y: 0
@@ -119,31 +118,32 @@ class CommonTable extends Component {
               <div className="common-table">
                 <AutoSizer>
                   {({width, height}) => (
-                       <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
-                                      height={height}
-                                      headerHeight={40}
-                                      rowCount={size(items)}
-                                      onRowClick={this.onRowClicked}
-                                      onSortEnd={this.onRowSorted}
-                                      distance={5}
-                                      rowHeight={30}
-                                      width={width}
-                                      useDragHandle
-                                      rowRenderer={this.rowRenderer}
-                                      rowGetter={({ index }) => items[index]}
-                       >
-                         { map(header_list, (header) =>
-                             <Column key={header.key}
-                                     label={header.label}
-                                     dataKey={header.key}
-                                     //headerRenderer={this.renderDraggableHeader}
-                                     cellRenderer={this.renderDraggableColumn}
-                                     flexGrow={parseInt(header.flex || 0, 10)}
-                                     flexShrink={parseInt(header.flex || 0, 10)}
-                                     width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
-                           )}
-                       </SortableTable>
-                   )}
+                      <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
+                                     height={height}
+                                     headerHeight={40}
+                                     rowCount={size(items)}
+                                     onRowClick={this.onRowClicked}
+                                     onSortEnd={this.onRowSorted}
+                                     distance={5}
+                                     rowHeight={30}
+                                     width={width}
+                                     useDragHandle
+                                     rowRenderer={this.rowRenderer}
+                                     rowGetter={({ index }) => items[index]}
+                          >
+                        { map(header_list, (header) =>
+                            <Column key={header.key}
+                                    headerClassName="common-table__header__column"
+                                    label={header.label}
+                                    dataKey={header.key}
+                            //headerRenderer={this.renderDraggableHeader}
+                                    cellRenderer={this.renderDraggableColumn}
+                                    flexGrow={parseInt(header.flex || 0, 10)}
+                                    flexShrink={parseInt(header.flex || 0, 10)}
+                                    width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
+                        )}
+                      </SortableTable>
+                  )}
                 </AutoSizer>
               </div>
               

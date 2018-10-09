@@ -12,6 +12,11 @@
 .text-component--empty {
 }
 
+.text-component--empty:hover {
+    color: $color-36;
+    text-decoration: underline;
+}
+
 .text-component--testable {
     padding: 12px;
     padding-left: 0;
@@ -39,6 +44,7 @@
     margin-bottom: 12px;
     min-height: 50px;
     background-color: rgba(0, 22, 49, 0.05);
+    word-break: break-word;
 }
 
 .text-component--rendered_markdown {
@@ -48,5 +54,6 @@
 
     p {
         margin: 0;
+        word-break: break-word;
     }
 }

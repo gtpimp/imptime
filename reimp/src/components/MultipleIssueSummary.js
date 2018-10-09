@@ -1,6 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import { css } from 'emotion'
+
+import { default_theme as theme } from '../theme/default'
 import Loading from './Loading'
 import { getCostSummary, ensureCostSummaryLoaded, isLoadingCostSummary } from '../actions/CostSummary'
 import {
@@ -10,6 +13,11 @@ import {
     downloadActualsByIssue
 } from '../actions/MultipleIssueSummary'
 import BreakdownSummary from './BreakdownSummary'
+import SidebarPrimaryButton from './SidebarPrimaryButton'
+
+const summary_button_block = css`
+padding: 12px 0 12px 0;
+`
 
 class MultipleIssueSummary extends Component {
 
@@ -61,7 +69,9 @@ class MultipleIssueSummary extends Component {
 
         if (!auto_load && ! summary ) {
             return (
-                <button onClick={this.loadSummary}>Load summary</button>
+                <div className={ summary_button_block }>
+                  <SidebarPrimaryButton onButtonClick={this.loadSummary} label="Load summary" />
+                </div>
             )
         }
         

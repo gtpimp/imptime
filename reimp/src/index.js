@@ -1,6 +1,7 @@
 import './sass/imptime.css'
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Route, Switch } from 'react-router-dom'
 import configureStore from './store/configureStore'
 import {Provider} from 'react-redux'
 import Raven from 'raven-js'
@@ -18,10 +19,11 @@ if (RAVEN_DSN) {
 ReactDOM.render(
     <Provider store={store}>
       <BrowserRouter>
-        <MainLayout />
+        <Switch>
+          <MainLayout />
+        </Switch>
       </BrowserRouter>
     </Provider>,
     document.getElementById('root')
 )
-
 Modal.setAppElement("#app")

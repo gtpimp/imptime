@@ -4,8 +4,18 @@
     position: relative;
 }
 
+.hours:hover {
+    color: $color-36;
+    text-decoration: underline;
+}
+
 .hours--negative {
     color: $warning-color;
+}
+
+.hours--negative:hover {
+    color: $color-36;
+    text-decoration: underline;
 }
 
 .hours__hint {

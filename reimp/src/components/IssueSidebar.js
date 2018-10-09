@@ -12,6 +12,7 @@ import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueRisky from './EditableIssueRisky'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
+import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import MienFeature from './MienFeature'
 import TagListFlat from './TagListFlat'
 //import EditableIssueAttachment from './EditableIssueAttachment'
@@ -25,6 +26,7 @@ import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
 import IssueEstimatesSummary from './IssueEstimatesSummary'
+import EditableIssueTitle from './EditableIssueTitle'
 
 import SidebarContainer from './SidebarContainer'
 import SidebarProperty from './SidebarProperty'
@@ -169,7 +171,8 @@ class IssueSidebar extends Component {
         const { issue, full_screen_mode_available, sidebar_view_mode } = this.props
         return (
             <SidebarProperty key="titlestack">
-              <SidebarTitle issue_id={ issue.id }>
+              <SidebarTitle variant="issue" variant_id={ issue.id }>
+                <EditableIssueTitle issue_id={issue.id} />
                 <SidebarFullscreenWidget
                     sidebar_view_mode={ sidebar_view_mode }
                     full_screen_mode_available={ full_screen_mode_available }
@@ -195,23 +198,24 @@ class IssueSidebar extends Component {
             <SidebarProperty key="infostack">
               <SidebarDetail label="Sprint">
                 <EditableIssueInSprint issue_ids={[issue.id]}/>
-                {/* <div className="property-row">
-                    <div className="property-value">
-                    
-                    </div>
-                    <div className="property-col-small">
-                    <EditableMoveIssueToSprint issue_ids={[issue.id]} />
-                    </div>
-                    <div className="property-col-small">
-                    <EditableCopyIssueToSprint issue_ids={[issue.id]} />
-                    </div>
-                    </div> */}
+            <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+            {/* <div className="property-row">
+                <div className="property-value">
+                
+                </div>
+                <div className="property-col-small">
+                <EditableMoveIssueToSprint issue_ids={[issue.id]} />
+                </div>
+                <div className="property-col-small">
+                <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                </div>
+                </div> */}
               </SidebarDetail>
 
               { false && 
-              <SidebarDetail label="Grouping issue">
-                <EditableIssueParent issue_ids={[issue.id]}/>
-              </SidebarDetail>
+                <SidebarDetail label="Grouping issue">
+                  <EditableIssueParent issue_ids={[issue.id]}/>
+                </SidebarDetail>
               }
 
               <SidebarDetail label="Type">
@@ -310,14 +314,14 @@ class IssueSidebar extends Component {
                                  placement="bottom"
                                  content={
                                      <Testable key={`feature_testable_${testable.id}`}
-                                               testable={testable}
-                                               feature_id={feature_id.id}
-                                                    />
-                                         }
-                        >
-                                     <div className={css`display: flex`}>
-                                       <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{Testable.name}
-                                     </div>
+                                                   testable={testable}
+                                                   feature_id={feature_id.id}
+                                     />
+                                 }
+                            >
+                          <div className={css`display: flex`}>
+                            <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{Testable.name}
+                          </div>
                         </Floater>
                     )
                 })
@@ -469,7 +473,7 @@ class IssueSidebar extends Component {
                         this.renderDependancyStack(),
                         this.renderAttachmentsStack(),
                         this.renderFeatureStack(),
-                        this.renderReviewsStack(),
+                        this.renderReviewsStack()
                     ]
                   }
                 </SidebarContainer>

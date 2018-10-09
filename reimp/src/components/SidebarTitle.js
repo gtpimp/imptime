@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import { css } from 'emotion'
 
 import { default_theme as theme } from '../theme/default'
-import EditableIssueTitle from './EditableIssueTitle'
 
 const style = css`
 display: flex;
@@ -13,10 +12,9 @@ font: ${theme.fonts.bold_huge}
 class SidebarTitle extends Component {
 
     render() {
-        const { issue_id, children } = this.props
+        const { children } = this.props
         return (
             <div className={ style }>
-              <EditableIssueTitle issue_id={issue_id} />
               { children }
             </div>
         )
