@@ -1,10 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { withRouter } from 'react-router-dom'
-import map from 'lodash/map'
-import { cx, css } from 'emotion'
 import { getAnnotatedVisualSpecDocument, ensureAnnotatedVisualSpecDocumentsLoaded } from '../../actions/AnnotatedVisualSpecDocuments'
-import {default_theme as theme} from '../../theme/default'
 import {DropTarget} from 'react-dnd';
 import {DndTypes} from '../../actions/Dnd'
 import '../../sass/visual-spec-document-gallery.scss'
@@ -27,9 +23,7 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
     }
 
     render() {
-        const { annotated_visual_spec_document_id, img_element_unique_id,
-                connectDropTarget } = this.props
-        const { visual_spec_document_image_loaded } = this.state
+        const { annotated_visual_spec_document_id, img_element_unique_id } = this.props
         return (
             <div>
               <VisualSpecDocumentGalleryImage annotated_visual_spec_document_id={annotated_visual_spec_document_id}

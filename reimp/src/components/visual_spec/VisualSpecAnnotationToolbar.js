@@ -5,8 +5,6 @@ import VisualSpecAnnotation from './VisualSpecAnnotation'
 import ANNOTATION_SHAPES from './VisualSpecDocumentGalleryImage'
 import { css } from 'emotion'
 import {default_theme as theme} from '../../theme/default'
-import {DragSource, DropTarget} from 'react-dnd'
-import {DndTypes} from '../../actions/Dnd'
 
 class VisualSpecAnnotationToolbar extends Component {
 
@@ -35,4 +33,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ANNOTATION, headingSource, collect)(DropTarget(DndTypes.VISUAL_SPEC_ANNOTATION, headingTarget, collectDrop)(VisualSpecAnnotationToolbar)))
+export default connect(mapStateToProps)(VisualSpecAnnotationToolbar)

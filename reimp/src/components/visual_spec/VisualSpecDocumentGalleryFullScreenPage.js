@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import map from 'lodash/map'
 import { getAnnotatedVisualSpecDocument, ensureAnnotatedVisualSpecDocumentsLoaded } from '../../actions/AnnotatedVisualSpecDocuments'
 import { cx, css } from 'emotion'
 import {default_theme as theme} from '../../theme/default'
@@ -26,7 +25,6 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
     }
 
     onKeyPressFullScreen = (evt) => {
-        const { onCancelFullScreen } = this.props
         if (evt.keyCode === 27) {
             evt.preventDefault()
             this.onCancelFullScreen()
