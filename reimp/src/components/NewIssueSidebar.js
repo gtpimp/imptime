@@ -29,12 +29,14 @@ class NewIssueSidebar extends Component {
     }
 
     onSaveCandidateIssue(new_value) {
-        const {onCreatedIssues, dispatch} = this.props
+        const {onCreatedIssues, dispatch, project_id, sprint_id} = this.props
         dispatch(updateCandidateSubject(new_value.issue_title))
-        dispatch(updateCandidateSprint(new_value.sprint_id))
+        dispatch(updateCandidateSprint(new_value.sprint_id || sprint_id))
         dispatch(updateCandidateProperties(new_value))
         const onDone = function(issue_id) {
-            onCreatedIssues([issue_id], new_value.sprint_id, new_value.project_id)
+            onCreatedIssues([issue_id],
+                            new_value.sprint_id || sprint_id,
+                            new_value.project_id || project_id)
         }
         dispatch(saveCandidateIssue(onDone))
     }

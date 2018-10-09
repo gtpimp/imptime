@@ -238,7 +238,7 @@ function mapStateToProps(state, props) {
     // const visual_spec_annotation_ids = visual_spec_annotation_ids_by_doc_id[visual_spec_document_id] || []
     // const visual_spec_annotations = getVisualSpecIssueAnnotations(state, visual_spec_annotation_ids) || []
 
-    const visual_spec_annotations = visual_spec_annotations_by_doc_id[visual_spec_document_id]
+    const visual_spec_annotations = visual_spec_annotations_by_doc_id && visual_spec_annotations_by_doc_id[visual_spec_document_id]
     const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + visual_spec_document_id
     const preview_url = (render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url
     

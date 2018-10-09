@@ -174,7 +174,7 @@ function mapStateToProps(state, props) {
             onCreateAnnotation, onUpdateAnnotation, onDeleteAnnotation } = props
     
     const visual_spec_document = getVisualSpecDocument(state, visual_spec_document_id) || []
-    const visual_spec_annotations = visual_spec_annotations_by_doc_id[visual_spec_document_id]
+    const visual_spec_annotations = visual_spec_annotations_by_doc_id && visual_spec_annotations_by_doc_id[visual_spec_document_id]
     const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + visual_spec_document_id
     
     return {

@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm } from 'redux-form';
 import '../../sass/text-component.scss'
-import SprintSelectorField from './SprintSelectorField'
-import ProjectSelectorField from './ProjectSelectorField'
 import IssueTitleField from './IssueTitleField';
 import PropertyStackComponent from '../PropertyStackComponent'
 
@@ -16,19 +14,12 @@ class NewIssueForm extends Component {
         this.onChangeProject = this.onChangeProject.bind(this)
     }
 
-    componentDidMount() {
-        const { default_project_id, default_sprint_id } = this.props
-        this.setState( {project_id: default_project_id,
-                        sprint_id: default_sprint_id} )
-    }
-
     onChangeProject(new_project_id) {
         this.setState({project_id:new_project_id})
     }
 
     render() {
-        const { handleSubmit, onKeyDown, default_project_id } = this.props
-        const { project_id } = this.state
+        const { handleSubmit, onKeyDown } = this.props
 
         return (
             <form onSubmit={handleSubmit}>
@@ -37,17 +28,6 @@ class NewIssueForm extends Component {
                   <PropertyStackComponent title="Title">
                     <IssueTitleField onKeyDown={onKeyDown} />
                   </PropertyStackComponent>
-                  <PropertyStackComponent title="Project (default is the current project)">
-                    <ProjectSelectorField auto_focus={false}
-                                          onChange={this.onChangeProject}
-                                          default_project_id={project_id || default_project_id} />
-                  </PropertyStackComponent>
-                  
-                  { project_id &&
-                    <PropertyStackComponent title="Sprint (default is the current sprint)">
-                      <SprintSelectorField project_id={project_id} auto_focus={false} />
-                    </PropertyStackComponent>
-                  }
                 </div>
                 <button className="button issue_sidebar--textarea" type="submit">Submit</button>
               </div>
@@ -58,20 +38,14 @@ class NewIssueForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmitted, onKeyDown,
-            default_project_id, default_sprint_id,
-            optional_default_issue_values} = props
+    const { onSubmitted, onKeyDown } = props
     
     return {
         initialValues: Object.assign({},
-                                     {title:'',
-                                      project_id: default_project_id,
-                                      sprint_id: default_sprint_id},
-                                     optional_default_issue_values),
+                                     {title:''}),
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        onKeyDown,
-        default_project_id
+        onKeyDown
     }
 }
 
