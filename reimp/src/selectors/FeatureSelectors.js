@@ -7,7 +7,7 @@ const selGetFeature = (state, props) => {
 }
 
 const selGetAnnotationsById = (state, props) => {
-    return get(state, ["item", ENTITY_KEY__VISUAL_SPEC_FEATURE_ANNOTATION, "items_by_id"], null)
+    return get(state, ["item", ENTITY_KEY__VISUAL_SPEC_ANNOTATION, "items_by_id"], null)
 }
 
 export const makeSelFeatureAnnotationsByDocId = () => {

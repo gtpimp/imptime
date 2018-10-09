@@ -26,7 +26,6 @@ import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
 import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
-import VisualSpecDocumentToolbarPanel from '../visual_spec/VisualSpecDocumentToolbarPanel'
 import { css } from 'react-emotion'
 import { default_theme as theme } from '../../theme/default'
 import { getPageName } from '../../actions/Page'
@@ -97,8 +96,6 @@ class Toolbar extends Component {
                 return <BillableHoursStatementToolbarPanel key="billable-hours-statement-panel" {...this.props}/>
             case 'user-timesheets':
                 return <UserTimesheetsToolbarPanel key="user-timesheet-panel" {...this.props}/>
-            case 'visual-spec-document':
-                return <VisualSpecDocumentToolbarPanel key='visual-spec-document' {...this.props}/>
             case 'bulk-issue-creator':
                 return <BulkCreateIssuesToolbarPanel key='bulk-issue-creator' {...this.props}/>
             case 'bulk-feature-creator':

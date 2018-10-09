@@ -39,8 +39,7 @@ import user_api
 import views
 import visual_spec_document_api
 import visual_spec_issue_api
-import visual_spec_issue_annotation_api
-import visual_spec_feature_annotation_api
+import visual_spec_annotation_api
 import wiki_api 
 from rest_framework.routers import DefaultRouter
 from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
@@ -100,10 +99,8 @@ router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocu
                 base_name='visual_spec_document')
 router.register(r'visual_spec_issue', visual_spec_issue_api.VisualSpecIssueViewSet,
                 base_name='visual_spec_issue')
-router.register(r'visual_spec_issue_annotation', visual_spec_issue_annotation_api.VisualSpecIssueAnnotationViewSet,
-                base_name='visual_spec_issue_annotation')
-router.register(r'visual_spec_feature_annotation', visual_spec_feature_annotation_api.VisualSpecFeatureAnnotationViewSet,
-                base_name='visual_spec_feature_annotation')
+router.register(r'visual_spec_annotation', visual_spec_annotation_api.VisualSpecAnnotationViewSet,
+                base_name='visual_spec_annotation')
 router.register(r'issue', issue_api.IssueViewSet,
                 base_name='issue')
 router.register(r'issue_share', issue_api.IssueShareViewSet,

@@ -1,7 +1,7 @@
 import './sass/imptime.css'
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Route, Switch } from 'react-router-dom'
+import { Switch } from 'react-router-dom'
 import configureStore from './store/configureStore'
 import {Provider} from 'react-redux'
 import Raven from 'raven-js'

@@ -1,22 +1,22 @@
 import logging
 from base_serializer import BaseModelSerializer
 from rest_framework import serializers
-from imptime.models import VisualSpecFeatureAnnotation
+from imptime.models import VisualSpecAnnotation
 logger = logging.getLogger(__name__)
 
-class VisualSpecFeatureAnnotationInboundSerializer(BaseModelSerializer):
+class VisualSpecAnnotationInboundSerializer(BaseModelSerializer):
     class Meta:
-        model = VisualSpecFeatureAnnotation
+        model = VisualSpecAnnotation
         fields = ['shape',
                   'x_pos',
                   'y_pos']
 
 
-class VisualSpecFeatureAnnotationSerializer(BaseModelSerializer):
+class VisualSpecAnnotationSerializer(BaseModelSerializer):
     id = serializers.CharField()
     
     class Meta:
-        model = VisualSpecFeatureAnnotation
+        model = VisualSpecAnnotation
         fields = ['id',
                   'shape',
                   'x_pos',

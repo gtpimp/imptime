@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { css, cx } from 'emotion'
+import { css } from 'emotion'
 
 import { default_theme as theme } from '../theme/default'
 

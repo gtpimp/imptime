@@ -15,7 +15,7 @@ from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
 from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
-from imptime.models import VisualSpecIssueAnnotation, WikiPage, VisualSpecFeatureAnnotation
+from imptime.models import WikiPage, VisualSpecAnnotation
 from imptime.models import Mien, CompanyProblem, SprintSnapshot
 from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature
 from testable.models import Testable
@@ -201,15 +201,15 @@ class BaseViewSet(viewsets.ViewSet):
         return VisualSpecDocument.objects.filter(Q(visual_spec_projects__project__in=self.allowed_projects())|
                                                  Q(visual_spec_issues__issue__in=self.allowed_issues())).distinct()
 
+    def allowed_annotated_visual_spec_documents(self):
+        return AnnotatedVisualSpecDocument.objects.filter(visual_spec_document__in=self.allowed_visual_spec_documents)
+    
     def allowed_visual_spec_issues(self):
         return VisualSpecIssue.objects.filter(issue__in=self.allowed_issues())
 
-    def allowed_visual_spec_issue_annotations(self):
-        return VisualSpecIssueAnnotation.objects.filter(visual_spec_issue__issue__in=self.allowed_issues())
+    def allowed_visual_spec_annotations(self):
+        return VisualSpecAnnotation.objects.filter(annotated_visual_spec_document__in=self.allowed_annotated_visual_spec_documents())
 
-    def allowed_visual_spec_feature_annotations(self):
-        return VisualSpecFeatureAnnotation.objects.filter(visual_spec_feature__feature__in=self.allowed_features())
-    
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
 

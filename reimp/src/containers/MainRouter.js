@@ -38,7 +38,6 @@ import ReleaseNotesPage from './ReleaseNotesPage'
 import SprintsPage from './SprintsPage'
 import FeaturesPage from './FeaturesPage'
 import FlatFeaturesPage from './FlatFeaturesPage'
-import VisualSpecDocumentPage from '../components/visual_spec/VisualSpecDocumentPage'
 import WelcomePage from './WelcomePage'
 import { setBrowserTitle } from '../actions/Page'
 
@@ -83,8 +82,6 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/features/:featureId" component={FeaturesPage}/>
               <Route exact path="/projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
               <Route exact path="/projects/:projectId/executiveSummary" component={ProjectRoadmapPage}/>
-              <Route exact path="/projects/:projectId/gallery/" component={VisualSpecDocumentPage}/>
-              <Route exact path="/projects/:projectId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
               <Route exact path="/projects/:projectId/wiki/" component={ProjectWikiPage}/>
               <Route exact path="/projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
@@ -96,14 +93,10 @@ class MainRouter extends Component {
               <Route exact path="/slow/projects/:projectId/sprints/:sprintId/issues" component={SlowIssuesPage}/>
               <Route exact path="/slow/projects/:projectId/sprints/:sprintId/issues/:issueId" component={SlowIssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/history" component={IssueHistoryPage}/>
-              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery" component={VisualSpecDocumentPage}/>
-              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/gallery/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
-              <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
               <Route exact path="/projects/:projectId/users" component={ProjectUserPage}/>
               <Route exact path="/projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
-              <Route exact path="/visualSpec/:visualSpecDocumentId" component={VisualSpecDocumentPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
               <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
               <Route exact path="/dashboard" component={DashboardPage}/>

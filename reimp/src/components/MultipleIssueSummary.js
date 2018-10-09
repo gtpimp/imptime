@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { css } from 'emotion'
-
-import { default_theme as theme } from '../theme/default'
 import Loading from './Loading'
 import { getCostSummary, ensureCostSummaryLoaded, isLoadingCostSummary } from '../actions/CostSummary'
 import {

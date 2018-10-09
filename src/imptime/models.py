@@ -124,6 +124,39 @@ class VisualSpecDocument(BaseModel):
         height, width = self.height_and_width()
         return width
 
+class AnnotatedVisualSpecDocument(BaseModel):
+    visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='annotated_visual_spec_document')
+
+class VisualSpecAnnotation(BaseModel):
+
+    SHAPES = [ ('circle', 'Circle'),
+               ('square', 'Square'),
+               ('arrow', 'Arrow') ]
+
+    TARGET_OFFSET_PERCENTAGES = { 'circle': { 'x': 50, 'y': 50 },
+                                  'square': { 'x': 50, 'y': 50 },
+                                  'arrow': { 'x': 100, 'y': 50 } }
+
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='annotations')
+    shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
+    x_pos = models.FloatField()
+    y_pos = models.FloatField()
+    x_offset_to_target = models.FloatField()
+    y_offset_to_target = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        self.x_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['x']
+        self.y_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['y']
+        super(VisualSpecAnnotation, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    def shape_url(self):
+        return 'images/visual_spec__%s.png' % self.shape
+
 
 class VisualSpecProject(BaseModel):
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_projects')
@@ -186,7 +219,8 @@ class VisualSpecProject(BaseModel):
 
 
 class VisualSpecIssue(BaseModel):
-    visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues')
+    deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues')
+    annotated_visual_spec_document = ProtectedForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_issues')
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_issues')
     order = models.IntegerField(default=1)
 
@@ -194,7 +228,7 @@ class VisualSpecIssue(BaseModel):
     MAX_ORDER=999999
 
     class Meta:
-        unique_together = ('issue', 'visual_spec_document')
+        unique_together = ('issue', 'annotated_visual_spec_document')
 
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -246,7 +280,8 @@ class VisualSpecIssue(BaseModel):
 
 
 class VisualSpecFeature(BaseModel):
-    visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_features')
+    deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_features')
+    annotated_visual_spec_document = ProtectedForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_features')
     feature = ProtectedForeignKey("imptime.Feature", related_name='visual_spec_features')
     order = models.IntegerField(default=1)
 
@@ -254,7 +289,7 @@ class VisualSpecFeature(BaseModel):
     MAX_ORDER=999999
 
     class Meta:
-        unique_together = ('feature', 'visual_spec_document')
+        unique_together = ('feature', 'annotated_visual_spec_document')
 
     def save(self, *args, **kwargs):
         was_created = not self.id
@@ -303,60 +338,6 @@ class VisualSpecFeature(BaseModel):
         max_order = self.objects.filter(feature_id=feature_id)\
                                 .aggregate(max_order=Max('order'))['max_order'] or 0
         return max_order + self.INCREMENT
-    
-
-class VisualSpecIssueAnnotation(BaseModel):
-
-    SHAPES = [ ('circle', 'Circle'),
-               ('square', 'Square'),
-               ('arrow', 'Arrow') ]
-
-    TARGET_OFFSET_PERCENTAGES = { 'circle': { 'x': 50, 'y': 50 },
-                                  'square': { 'x': 50, 'y': 50 },
-                                  'arrow': { 'x': 100, 'y': 50 } }
-
-    visual_spec_issue = models.ForeignKey(VisualSpecIssue, related_name='visual_spec_issue_annotations')
-    shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
-    x_pos = models.FloatField()
-    y_pos = models.FloatField()
-    x_offset_to_target = models.FloatField()
-    y_offset_to_target = models.FloatField()
-
-    def save(self, *args, **kwargs):
-        was_created = not self.id
-        self.x_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['x']
-        self.y_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['y']
-        super(VisualSpecIssueAnnotation, self).save(*args, **kwargs)
-        if was_created:
-            RefreshNotifier().notify_model_create(self)
-        else:
-            RefreshNotifier().notify_model_update(self)
-
-    def shape_url(self):
-        return 'images/visual_spec_issue__%s.png' % self.shape
-
-
-class VisualSpecFeatureAnnotation(BaseModel):
-
-    visual_spec_feature = models.ForeignKey(VisualSpecFeature, related_name='visual_spec_feature_annotations')
-    shape = models.CharField(max_length=50, choices=VisualSpecIssueAnnotation.SHAPES, default='circle')
-    x_pos = models.FloatField()
-    y_pos = models.FloatField()
-    x_offset_to_target = models.FloatField()
-    y_offset_to_target = models.FloatField()
-
-    def save(self, *args, **kwargs):
-        was_created = not self.id
-        self.x_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['x']
-        self.y_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['y']
-        super(VisualSpecIssueAnnotation, self).save(*args, **kwargs)
-        if was_created:
-            RefreshNotifier().notify_model_create(self)
-        else:
-            RefreshNotifier().notify_model_update(self)
-
-    def shape_url(self):
-        return 'images/visual_spec_issue__%s.png' % self.shape
     
 
 class SprintTemplate(BaseModel):

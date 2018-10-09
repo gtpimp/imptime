@@ -4,15 +4,6 @@ import { map, size, slice } from 'lodash'
 import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import 'react-virtualized/styles.css';
-import {
-    ensureVisualSpecFeatureAnnotationsLoaded,
-    createVisualSpecFeatureAnnotation,
-    updateVisualSpecFeatureAnnotation,
-    deleteVisualSpecFeatureAnnotation
-} from '../actions/VisualSpecFeatureAnnotations'
-import {
-    makeSelFeatureAnnotationsByDocId
-} from '../selectors/FeatureSelectors'
 import Testable from './Testable'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import RenderedMarkdown from './RenderedMarkdown'
@@ -28,26 +19,6 @@ class FlatFeature extends Component {
     }
 
     refresh(these_props) {
-        const props = these_props || this.props
-        const { dispatch, visual_spec_document_ids } = props
-        if ( visual_spec_document_ids ) {
-            dispatch(ensureVisualSpecFeatureAnnotationsLoaded(visual_spec_document_ids))
-        }
-    }
-
-    onCreateAnnotation = (visual_spec_document_id, params) => {
-        const { dispatch, feature } = this.props
-        dispatch(createVisualSpecFeatureAnnotation(visual_spec_document_id, feature.id, params))
-    }
-    
-    onUpdateAnnotation = (visual_spec_document_id, visual_spec_annotation_ids, params) => {
-        const { dispatch, feature } = this.props
-        dispatch(updateVisualSpecFeatureAnnotation(visual_spec_document_id, feature.id,
-                                                   visual_spec_annotation_ids, params))    }
-    
-    onDeleteAnnotation = (visual_spec_annotation_id) => {
-        const { dispatch } = this.props
-        dispatch(deleteVisualSpecFeatureAnnotation(visual_spec_annotation_id))
     }
 
     renderFeatureDescription() {
@@ -71,15 +42,10 @@ class FlatFeature extends Component {
     }
 
     renderFeatureImages() {
-        const { feature, feature_annotations_by_doc_id } = this.props
+        const { feature } = this.props
         return (
             <div className={css`display: flex; flex-wrap: wrap; margin-bottom: 20px;`}>
-              <VisualSpecDocumentGallery visual_spec_document_ids={feature.visual_spec_document_ids}
-                                         onCreateAnnotation={this.onCreateAnnotation}
-                                         onUpdateAnnotation={this.onUpdateAnnotation}
-                                         onDeleteAnnotation={this.onDeleteAnnotation}
-                                         visual_spec_annotations_by_doc_id={feature_annotations_by_doc_id}
-                                         feature_id={feature.id}
+              <VisualSpecDocumentGallery annotated_visual_spec_document_ids={feature.annotated_visual_spec_document_ids}
                                          render_quality="hires"
                                          image_class="visual_spec_document_gallery__image--large_preview"
                                          allow_edit={false} />
@@ -109,7 +75,7 @@ class FlatFeature extends Component {
         if ( is_root_element ) {
             return null
         }
-        const is_empty = size(feature.testables) === 0 && size(feature.description) === 0 && size(feature.visual_spec_document_ids) === 0
+        const is_empty = size(feature.testables) === 0 && size(feature.description) === 0 && size(feature.annotated_visual_spec_document_ids) === 0
         if ( is_empty ) {
             return null
         }
@@ -124,21 +90,15 @@ class FlatFeature extends Component {
     }
 }
 
-const makeMapStateToProps = () => {
-    const selFeatureAnnotationsByDocId = makeSelFeatureAnnotationsByDocId()
-    const mapStateToProps = (state, props) => {
-        const { feature, parent_features } = props
-        const visual_spec_document_ids = feature && feature.visual_spec_document_ids
-        const feature_annotations_by_doc_id = selFeatureAnnotationsByDocId(state, props)
+const mapStateToProps = (state, props) => {
+    const { feature, parent_features } = props
+    const annotated_visual_spec_document_ids = feature && feature.annotated_visual_spec_document_ids
 
-        return {
-            parent_features, 
-            feature,
-            visual_spec_document_ids,
-            feature_annotations_by_doc_id
-        }
+    return {
+        parent_features, 
+        feature,
+        annotated_visual_spec_document_ids,
     }
-    return mapStateToProps
 }
 
-export default connect(makeMapStateToProps)(FlatFeature)
+export default connect(mapStateToProps)(FlatFeature)

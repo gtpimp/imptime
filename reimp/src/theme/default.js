@@ -41,7 +41,7 @@ export const default_theme = {
                button_background: '#D8DDE1',
                button_background_hover: '#C7CCD0',
                cell_separator: '#ededed',
-               button_background: '#E9EEF2',
+               sidebar_button_background: '#E9EEF2',
                button_hover_background: 'rgba(11,139,178,0.10)',
                danger_button_background: '#E25A50',
                danger_button_hover_background: '#e04b40',

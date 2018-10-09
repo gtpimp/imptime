@@ -14,14 +14,10 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     hires_height = serializers.IntegerField()
     content_type = serializers.CharField()
     is_image = serializers.BooleanField()
-    visual_spec_issue_ids = serializers.ListField(child=serializers.CharField())
-    issue_ids = serializers.ListField(child=serializers.CharField())
     visual_spec_project_ids = serializers.ListField(child=serializers.CharField())
     project_ids = serializers.CharField()
 
     def to_representation(self, obj, *args, **kwargs):
-        obj.visual_spec_issue_ids = obj.visual_spec_issues.all().values_list('id', flat=True)
-        obj.issue_ids = obj.visual_spec_issues.all().values_list('issue_id', flat=True)
         obj.visual_spec_project_ids = obj.visual_spec_projects.all().values_list('id', flat=True)
         obj.project_ids = obj.visual_spec_project_ids.all().values_list('project_id', flat=True)
         return super(VisualSpecDocumentSerializer, self).to_representation(obj, *args, **kwargs)

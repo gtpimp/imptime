@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { css, cx } from 'emotion'
+import { css } from 'emotion'
 
 import { default_theme as theme } from '../theme/default'
 
@@ -8,7 +8,7 @@ height: 32px;
 border: none;
 border: none;
 background: transparent;
-background-color: ${theme.colours.button_background};
+background-color: ${theme.colours.sidebar_button_background};
 outline: none;
 font: ${theme.fonts.semibold_normal};
 color: ${theme.colours.link};

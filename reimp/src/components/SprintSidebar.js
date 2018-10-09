@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
-import PropertyStack from '../components/PropertyStack'
-import PropertyStackComponent from '../components/PropertyStackComponent'
 import Timestamp from '../components/Timestamp'
 import MienFeature from './MienFeature'
 import moment from 'moment'
