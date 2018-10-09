@@ -12,6 +12,7 @@ import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueRisky from './EditableIssueRisky'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
+import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import MienFeature from './MienFeature'
 import TagListFlat from './TagListFlat'
 //import EditableIssueAttachment from './EditableIssueAttachment'
@@ -197,23 +198,24 @@ class IssueSidebar extends Component {
             <SidebarProperty key="infostack">
               <SidebarDetail label="Sprint">
                 <EditableIssueInSprint issue_ids={[issue.id]}/>
-                {/* <div className="property-row">
-                    <div className="property-value">
-                    
-                    </div>
-                    <div className="property-col-small">
-                    <EditableMoveIssueToSprint issue_ids={[issue.id]} />
-                    </div>
-                    <div className="property-col-small">
-                    <EditableCopyIssueToSprint issue_ids={[issue.id]} />
-                    </div>
-                    </div> */}
+            <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+            {/* <div className="property-row">
+                <div className="property-value">
+                
+                </div>
+                <div className="property-col-small">
+                <EditableMoveIssueToSprint issue_ids={[issue.id]} />
+                </div>
+                <div className="property-col-small">
+                <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                </div>
+                </div> */}
               </SidebarDetail>
 
               { false && 
-              <SidebarDetail label="Grouping issue">
-                <EditableIssueParent issue_ids={[issue.id]}/>
-              </SidebarDetail>
+                <SidebarDetail label="Grouping issue">
+                  <EditableIssueParent issue_ids={[issue.id]}/>
+                </SidebarDetail>
               }
 
               <SidebarDetail label="Type">
@@ -312,14 +314,14 @@ class IssueSidebar extends Component {
                                  placement="bottom"
                                  content={
                                      <Testable key={`feature_testable_${testable.id}`}
-                                               testable={testable}
-                                               feature_id={feature_id.id}
-                                                    />
-                                         }
-                        >
-                                     <div className={css`display: flex`}>
-                                       <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{Testable.name}
-                                     </div>
+                                                   testable={testable}
+                                                   feature_id={feature_id.id}
+                                     />
+                                 }
+                            >
+                          <div className={css`display: flex`}>
+                            <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{Testable.name}
+                          </div>
                         </Floater>
                     )
                 })
