@@ -2,6 +2,8 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import map from 'lodash/map'
+import {DragSource, DropTarget} from 'react-dnd'
+import {DndTypes} from '../../actions/Dnd'
 import { css } from 'emotion'
 import classNames from 'classnames'
 import {default_theme as theme} from '../../theme/default'
@@ -170,12 +172,12 @@ class VisualSpecDocumentGalleryImage extends Component {
 
 function mapStateToProps(state, props) {
     const { annotated_visual_spec_document_id, is_active, onSelected,
-            render_quality, image_class, show_annotations } = props
+            el_img_element_unique_id, render_quality, image_class, show_annotations } = props
 
     const annotated_visual_spec_document = getAnnotatedVisualSpecDocument(state, annotated_visual_spec_document_id)
     const visual_spec_document = annotated_visual_spec_document && annotated_visual_spec_document.visual_spec_document || {}
     const visual_spec_annotations = annotated_visual_spec_document && annotated_visual_spec_document.annotations
-    const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + annotated_visual_spec_document_id
+    const img_element_unique_id = el_img_element_unique_id || "vsd-editor__gallery_image__visual_spec_document_id_" + annotated_visual_spec_document_id
     const preview_url = visual_spec_document && ((render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url) || null
     
     return {

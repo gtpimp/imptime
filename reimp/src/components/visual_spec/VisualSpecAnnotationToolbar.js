@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import VisualSpecAnnotation from './VisualSpecAnnotation'
 import ANNOTATION_SHAPES from './VisualSpecDocumentGalleryImage'
 import { css } from 'emotion'
 import {default_theme as theme} from '../../theme/default'
-import {DragSource, DropTarget} from 'react-dnd';
+import {DragSource, DropTarget} from 'react-dnd'
 import {DndTypes} from '../../actions/Dnd'
 
 class VisualSpecAnnotationToolbar extends Component {
@@ -19,11 +20,8 @@ class VisualSpecAnnotationToolbar extends Component {
                        key={shape}
                        visual_spec_annotation={null}
                        default_shape={shape}
-                       container_img_element_unique_id={null}
                        annotation_size_px={25}
                        tooltips_enabled={false}
-                       onUpdate={this.updateVisualSpecAnnotation}
-                       onCreate={this.createVisualSpecAnnotation}
                    />
                ))}
             </div>
@@ -32,5 +30,9 @@ class VisualSpecAnnotationToolbar extends Component {
     
 }
 
+function mapStateToProps(state, props) {
+    return {}
+}
 
-export default withRouter(connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ANNOTATION, headingSource, collect)(DropTarget(DndTypes.VISUAL_SPEC_ANNOTATION, headingTarget, collectDrop)(VisualSpecAnnotationToolbar))))
+
+export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_ANNOTATION, headingSource, collect)(DropTarget(DndTypes.VISUAL_SPEC_ANNOTATION, headingTarget, collectDrop)(VisualSpecAnnotationToolbar)))
