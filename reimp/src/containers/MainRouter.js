@@ -38,6 +38,7 @@ import ReleaseNotesPage from './ReleaseNotesPage'
 import SprintsPage from './SprintsPage'
 import FeaturesPage from './FeaturesPage'
 import FlatFeaturesPage from './FlatFeaturesPage'
+import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
 import { setBrowserTitle } from '../actions/Page'
 
@@ -97,6 +98,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
               <Route exact path="/projects/:projectId/users" component={ProjectUserPage}/>
               <Route exact path="/projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
+              <Route exact path="/projects/:projectId/image/:annotatedVisualSpecDocumentId" component={VisualSpecDocumentGalleryFullScreenPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
               <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
               <Route exact path="/dashboard" component={DashboardPage}/>

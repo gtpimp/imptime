@@ -1,20 +1,18 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { withRouter } from 'react-router-dom'
 import map from 'lodash/map'
 import { css } from 'emotion'
 import classNames from 'classnames'
 import {default_theme as theme} from '../../theme/default'
-import {DragSource, DropTarget} from 'react-dnd';
-import {DndTypes} from '../../actions/Dnd'
 import '../../sass/visual-spec-document-gallery.scss'
 import VisualSpecAnnotation from './VisualSpecAnnotation'
-import VisualSpecDocumentGalleryFullScreenImage from './VisualSpecDocumentGalleryFullScreenImage'
 import {
     ensureAnnotatedVisualSpecDocumentsLoaded,
     getAnnotatedVisualSpecDocument
 } from '../../actions/AnnotatedVisualSpecDocuments'
 
-const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
+export const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
 
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
@@ -23,8 +21,7 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.hideVisualSpecDocumentImageLoadingImage = this.hideVisualSpecDocumentImageLoadingImage.bind(this)
         this.onClickDownload = this.onClickDownload.bind(this)
         this.onClickPreview = this.onClickPreview.bind(this)
-        this.state = { display_mode: 'inline',
-                       visual_spec_document_image_loaded: false }
+        this.state = { visual_spec_document_image_loaded: false }
     }
 
     componentDidMount() {
@@ -42,11 +39,8 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     setFullScreenMode = () => {
-        this.setState({display_mode:'fullscreen'})
-    }
-
-    setInlineMode = () => {
-        this.setState({display_mode:'inline'})
+        const { history, project_id, annotated_visual_spec_document_id } = this.props
+        history.push(`projects/${project_id}/image/${annotated_visual_spec_document_id}`)
     }
 
     onVisualSpecDocumentImageLoaded() {
@@ -66,13 +60,6 @@ class VisualSpecDocumentGalleryImage extends Component {
     onClickPreview(event) {
         event.stopPropagation()
         this.setFullScreenMode()
-    }
-
-    onKeyPressFullScreen = (evt) => {
-        if (evt.keyCode === 27) {
-            evt.preventDefault()
-            this.setInlineMode()
-        }
     }
 
     createVisualSpecAnnotation(params) {
@@ -136,27 +123,6 @@ class VisualSpecDocumentGalleryImage extends Component {
         }
     }
 
-    renderFullScreenAnnotationToolbar() {
-        return (
-            <div className={css`display: flex; 
-                                cursor: pointer; 
-                                margin-right: ${theme.spacing.horizontal_section_gap}`} >
-              {map(ANNOTATION_SHAPES, (shape) => (
-                   <VisualSpecAnnotation
-                       key={shape}
-                       visual_spec_annotation={null}
-                       default_shape={shape}
-                       container_img_element_unique_id={null}
-                       annotation_size_px={25}
-                       tooltips_enabled={false}
-                       onUpdate={this.updateVisualSpecAnnotation}
-                       onCreate={this.createVisualSpecAnnotation}
-                   />
-               ))}
-            </div>
-        )
-    }
-
     render() {
         const { annotated_visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
                 show_annotations, visual_spec_annotations,
@@ -170,15 +136,6 @@ class VisualSpecDocumentGalleryImage extends Component {
 
         const thumbnail_element = this.resolveThumbnailElement(preview_image_url)
 
-        if ( display_mode === 'fullscreen' ) {
-            return (
-                <VisualSpecDocumentGalleryFullScreenImage annotated_visual_spec_document_id={annotated_visual_spec_document_id}
-                                                          onCancelFullScreen={this.setInlineMode}
-                                                          show_annotations={show_annotations}
-                />
-            )
-        }
-        
         return connectDragSource(connectDropTarget(
             <div className="visual-spec-document-gallery-image__container" key={annotated_visual_spec_document_id}>
               <div className={classNames("visual-spec-document-gallery-image__img_container",
@@ -278,4 +235,4 @@ function collectDrop(connect, monitor) {
     }
 }
 
-export default connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_DOCUMENT, headingSource, collect)(DropTarget(DndTypes.VISUAL_SPEC_DOCUMENT, headingTarget, collectDrop)(VisualSpecDocumentGalleryImage)))
+export default withRouter(connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_DOCUMENT, headingSource, collect)(DropTarget(DndTypes.VISUAL_SPEC_DOCUMENT, headingTarget, collectDrop)(VisualSpecDocumentGalleryImage))))
