@@ -222,6 +222,26 @@ const headingTarget = {
     }
 }
 
+const headingAnnotationTarget = {
+    drop: (props, monitor, component) => {
+        const {annotated_visual_spec_document_id, img_element_unique_id} = props 
+        const distance_moved = monitor.getDifferenceFromInitialOffset()
+        const child_pos = monitor.getClientOffset()
+        const img_element = document.getElementById(img_element_unique_id)
+        const img_size = img_element.getBoundingClientRect()
+        return { annotated_visual_spec_document_id: annotated_visual_spec_document_id,
+                 child_pos: child_pos,
+                 distance_moved: distance_moved,
+                 parent_pos: img_size }
+    },
+    hover: (props, monitor, component) => {
+    },
+    canDrop: (props, monitor) => {
+        return true;
+    }
+
+}
+
 function collect(connect, monitor) {
     return {
         connectDragSource: connect.dragSource(),
@@ -237,4 +257,4 @@ function collectDrop(connect, monitor) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_DOCUMENT, headingSource, collect)(DropTarget(DndTypes.VISUAL_SPEC_DOCUMENT, headingTarget, collectDrop)(VisualSpecDocumentGalleryImage))))
+export default withRouter(connect(mapStateToProps)(DragSource(DndTypes.VISUAL_SPEC_DOCUMENT, headingSource, collect)(DropTarget(DndTypes.VISUAL_SPEC_DOCUMENT, headingTarget, collectDrop)(DropTarget(DndTypes.VISUAL_SPEC_ANNOTATION, headingAnnotationTarget, collectDrop)(VisualSpecDocumentGalleryImage)))))
