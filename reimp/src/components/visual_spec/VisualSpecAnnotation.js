@@ -78,29 +78,27 @@ class VisualSpecAnnotation extends Component {
         return (
             <div>
               {connectDragSource(
-                   <div>
-                     <div key={(visual_spec_annotation.id) || "empty"+shape}
-                          className={classNames("visual-spec",
-                                                {"visual-spec--dragging": isDragging,
-                                                 "visual-spec--empty": !visual_spec_annotation.id})}
-                          style={container_style}
-                     >
-                       { ! visual_spec_annotation.id &&
-                         <div className={classNames("visual-spec__image--"+shape)}
-                              style={annotation_style}
-                         >
+                   <div key={(visual_spec_annotation.id) || "empty"+shape}
+                        className={classNames("visual-spec",
+                                              {"visual-spec--dragging": isDragging,
+                                               "visual-spec--empty": !visual_spec_annotation.id})}
+                        style={container_style}
+                   >
+                     { ! visual_spec_annotation.id &&
+                       <div className={classNames("visual-spec__image--"+shape)}
+                            style={annotation_style}
+                       >
+                       </div>
+                     }
+
+                       { visual_spec_annotation.id &&
+                         <div>
+                           <div className={classNames("visual-spec__image--"+shape)}
+                                style={annotation_style}
+                           >
+                           </div>
                          </div>
                        }
-
-                         { visual_spec_annotation.id &&
-                           <div>
-                             <div className={classNames("visual-spec__image--"+shape)}
-                                  style={annotation_style}
-                             >
-                             </div>
-                           </div>
-                         }
-                     </div>
                    </div>
                )}
             </div>
