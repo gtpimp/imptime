@@ -16,6 +16,7 @@ class Websocket extends Component {
     }
 
     componentDidMount() {
+        this._ismounted = true;
         this.setupWebsocket();
     }
 
@@ -27,6 +28,7 @@ class Websocket extends Component {
     }
 
     componentWillUnmount() {
+        this._ismounted = true;
         let websocket = this.state.ws;
         websocket.close();
     }
@@ -81,7 +83,7 @@ class Websocket extends Component {
             this.logging('Websocket disconnected');
             this.onDisconnectFromSocket()
 
-            if (this.props.reconnect) {
+            if (this.props.reconnect && this._ismounted) {
                 let time = this.generateInterval(this.state.attempts);
                 this.setState({ws: null})
                 setTimeout(() => {

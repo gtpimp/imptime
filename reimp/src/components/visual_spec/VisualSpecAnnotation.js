@@ -4,7 +4,6 @@ import {DndTypes} from '../../actions/Dnd'
 import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec.scss'
-import ToolTip from 'react-portal-tooltip'
 import {
     updateVisualSpecAnnotation,
     createVisualSpecAnnotation,
@@ -21,16 +20,6 @@ class VisualSpecAnnotationDragLayer extends Component {
 
 class VisualSpecAnnotation extends Component {
 
-    state = {
-        isTooltipActive: false
-    }
-
-    constructor(props) {
-        super(props)
-        this.showTooltip = this.showTooltip.bind(this)
-        this.hideTooltip = this.hideTooltip.bind(this)
-    }
-
     componentDidMount() {
         this.refresh()
     }
@@ -40,20 +29,6 @@ class VisualSpecAnnotation extends Component {
     }
 
     refresh(these_props) {
-    }
-
-    showTooltip() {
-        const { tooltips_enabled } = this.props
-        if ( tooltips_enabled ) {
-            this.setState({isTooltipActive: true})
-        }
-    }
-
-    hideTooltip() {
-        const { tooltips_enabled } = this.props
-        if ( tooltips_enabled ) {
-            this.setState({isTooltipActive: false})
-        }
     }
 
     createVisualSpecAnnotation({annotated_visual_spec_document_id, visual_spec_annotation_id, shape, x_pos, y_pos}) {
@@ -75,9 +50,8 @@ class VisualSpecAnnotation extends Component {
 
     render() {
         const { visual_spec_annotation, isDragging, connectDragSource,
-                shape, tooltips_enabled, annotation_size_px,
+                shape, annotation_size_px,
                 container_img_size} = this.props
-        const { isTooltipActive } = this.state
 
         let offset = { width: 0, height: 0 }
         if ( visual_spec_annotation.id && container_img_size ) {
@@ -109,15 +83,11 @@ class VisualSpecAnnotation extends Component {
         annotation_style.width = annotation_size_px + "px"
         annotation_style.height = annotation_size_px + "px"
 
-        const tooltip_target_id = (tooltips_enabled && "visual_spec_annotation_"+visual_spec_annotation.id) || "dummy_vsia_"+visual_spec_annotation.id
-
         return (
             <div>
 
               {connectDragSource(
-                   <div id={tooltip_target_id}
-                        key={(visual_spec_annotation.id) || "empty"}
-                        ref={(element) => { this.tooltip_parent = element }}
+                   <div key={(visual_spec_annotation.id) || "empty"}
                         className={classNames("visual-spec",
                                               {"visual-spec--dragging": isDragging,
                                                "visual-spec--empty": !visual_spec_annotation.id})}
@@ -131,7 +101,7 @@ class VisualSpecAnnotation extends Component {
                      }
 
                      { visual_spec_annotation.id &&
-                       <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
+                       <div>
                          <div className={classNames("visual-spec__image--"+shape)}
                               style={annotation_style}
                          >
@@ -140,21 +110,6 @@ class VisualSpecAnnotation extends Component {
                      }
                    </div>
                )}
-
-               { visual_spec_annotation.id && !isDragging && tooltips_enabled &&
-                 <ToolTip active={isTooltipActive}
-                          position="right"
-                          arrow="center"
-                          parent={tooltip_target_id}>
-                   <div className="visual-spec--tooltip">
-                     {/* <EditableIssueTitle issue_id={issue.id} />
-                     <EditableIssueDescription issue_id={issue.id} />
-                     <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
-                     <EditableIssueStatus issue_ids={[issue.id]} project_id={issue.project_id}/>
-                     <EditableIssueEstimate issue_id={issue.id} /> */}
-                   </div>
-                 </ToolTip>
-               }
 
             { false && isDragging && <VisualSpecAnnotationDragLayer {...this.props} /> }
 
@@ -165,10 +120,9 @@ class VisualSpecAnnotation extends Component {
 
 function mapStateToProps(state, props) {
     const { visual_spec_annotation, default_shape,
-            can_edit, annotation_size_px, tooltips_enabled,
+            can_edit, annotation_size_px,
             container_img_element_unique_id } = props
-    // const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
-    const is_invalidated = false // is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
+    const is_invalidated = false
     const container_img_element = (container_img_element_unique_id && document.getElementById(container_img_element_unique_id)) || null
     const container_img_size = (container_img_element && container_img_element.getBoundingClientRect()) || { width:0, height:0 }
 
@@ -178,7 +132,6 @@ function mapStateToProps(state, props) {
         shape: (visual_spec_annotation && visual_spec_annotation.shape) || default_shape || "circle",
         can_edit: can_edit !== false,
         annotation_size_px: annotation_size_px || 60,
-        tooltips_enabled: tooltips_enabled !== false,
         container_img_size
     }
 }
