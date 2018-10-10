@@ -156,6 +156,10 @@ class VisualSpecAnnotation(BaseModel):
         else:
             RefreshNotifier().notify_model_update(self, params={'annotated_visual_spec_document_id':str(self.annotated_visual_spec_document_id)})
 
+    def delete(self):
+        super(VisualSpecAnnotation, self).delete()
+        RefreshNotifier().notify_model_delete(self, params={'annotated_visual_spec_document_id':str(self.annotated_visual_spec_document_id)})
+            
     def shape_url(self):
         return 'images/visual_spec__%s.png' % self.shape
 

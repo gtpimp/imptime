@@ -68,9 +68,9 @@ class VisualSpecAnnotation extends Component {
                                             {shape, x_pos, y_pos}))
     }
 
-    deleteVisualSpecAnnotation(visual_spec_issue_annotation_id) {
+    deleteVisualSpecAnnotation({annotated_visual_spec_document_id, visual_spec_annotation_id}) {
         const { dispatch } = this.props
-        dispatch(deleteVisualSpecAnnotation(visual_spec_issue_annotation_id))
+        dispatch(deleteVisualSpecAnnotation(annotated_visual_spec_document_id, visual_spec_annotation_id))
     }
 
     render() {
@@ -197,8 +197,9 @@ const headingSource = {
         }
         const drop_result = monitor.getDropResult()
         if ( drop_result === null ) {
-            if ( visual_spec_annotation.id && onDelete ) {
-                component.deleteVisualSpecAnnotation({visual_spec_annotation_id:visual_spec_annotation.id})
+            if ( visual_spec_annotation.id ) {
+                component.deleteVisualSpecAnnotation({annotated_visual_spec_document_id: visual_spec_annotation.annotated_visual_spec_document_id,
+                                                      visual_spec_annotation_id: visual_spec_annotation.id})
             }
             return
         }

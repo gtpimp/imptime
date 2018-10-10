@@ -14,10 +14,12 @@ class VisualSpecAnnotationInboundSerializer(BaseModelSerializer):
 
 class VisualSpecAnnotationSerializer(BaseModelSerializer):
     id = serializers.CharField()
+    annotated_visual_spec_document_id = serializers.CharField()
     
     class Meta:
         model = VisualSpecAnnotation
         fields = ['id',
+                  'annotated_visual_spec_document_id',
                   'shape',
                   'x_pos',
                   'y_pos',

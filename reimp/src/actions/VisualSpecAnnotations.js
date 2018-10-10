@@ -17,7 +17,10 @@ import {
     UPDATE_ENTIRE_ITEM_FIELD_NAME,
     PERFORM_CUSTOM_MANIPULATION
 } from '../actions/Item'
-import { update_visual_spec_annotation_within_annotated_vsd } from '../reducers/annotated_visual_spec_document'
+import {
+    update_visual_spec_annotation_within_annotated_vsd,
+    delete_visual_spec_annotation_within_annotated_vsd
+} from '../reducers/annotated_visual_spec_document'
 
 export function invalidateAllVisualSpecAnnotations() {
     return (dispatch, getState) => {
@@ -82,8 +85,15 @@ export function createVisualSpecAnnotation(annotated_visual_spec_document_id, pa
     }
 }
 
-export function deleteVisualSpecAnnotation(visual_spec_annotation_id) {
+export function deleteVisualSpecAnnotation(annotated_visual_spec_document_id, visual_spec_annotation_id) {
     return (dispatch, getState) => {
+        dispatch({
+            type: PERFORM_CUSTOM_MANIPULATION,
+            func: delete_visual_spec_annotation_within_annotated_vsd,
+            entity_key: ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT,
+            annotated_visual_spec_document_id,
+            annotation_ids: [visual_spec_annotation_id]})
+        
         dispatch(deleteItems(ENTITY_KEY__VISUAL_SPEC_ANNOTATION, [visual_spec_annotation_id]))
     }
 }
