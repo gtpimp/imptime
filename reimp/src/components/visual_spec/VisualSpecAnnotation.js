@@ -87,6 +87,10 @@ class VisualSpecAnnotation extends Component {
             }
         }
 
+        if ( isDragging ) {
+            return null
+        }
+        
         const container_style = {}
         if ( !isDragging && visual_spec_annotation.x_pos ) {
             if ( visual_spec_annotation.y_pos > 100 ) {

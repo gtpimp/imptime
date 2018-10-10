@@ -48,8 +48,7 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
                  onKeyDown={this.onKeyPressFullScreen}
                  tabIndex="0"
                  key={annotated_visual_spec_document_id}>
-              <div className={css`background: linear-gradient(${theme.colours.nav_bar_gradient1}, ${theme.colours.nav_bar_gradient2});
-                                  height: ${header_height}px;
+              <div className={css`height: ${header_height}px;
                                   position: fixed;
                                   padding-left: 12px;
                                   padding-right: 3px;
@@ -58,14 +57,14 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
                                   align-items: center;
                                   top: 0px;
                                   z-index: 9;
-                                  color: #ffffff;
+                                  color: ${theme.colours.black};
                                   width:100%;`}>
                   <div>
                     {visual_spec_document.name}
                   </div>
                   <div className={css`display: flex`}>
                     <VisualSpecAnnotationToolbar />
-                    <div className={cx("icon--large-cross",
+                    <div className={cx("icon--black-close",
                                        css`float: right;
                                        cursor: pointer;`
                         )}

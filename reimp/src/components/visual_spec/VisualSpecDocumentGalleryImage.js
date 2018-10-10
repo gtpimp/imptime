@@ -175,7 +175,7 @@ class VisualSpecDocumentGalleryImage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { annotated_visual_spec_document_id, is_active, onSelected,
+    const { annotated_visual_spec_document_id, is_active, onSelected, allow_edit,
             el_img_element_unique_id, render_quality, image_class, show_annotations } = props
 
     const annotated_visual_spec_document = getAnnotatedVisualSpecDocument(state, annotated_visual_spec_document_id)
@@ -185,7 +185,7 @@ function mapStateToProps(state, props) {
     const preview_url = (visual_spec_document && ((render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url)) || null
     const project_id = visual_spec_document.project_ids && visual_spec_document.project_ids[0]
     const project = project_id && getProject(state, project_id)
-    const can_edit = visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
+    const can_edit = allow_edit !== false && visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
     const is_invalidated = is_annotated_visual_spec_document_invalidated(state, annotated_visual_spec_document_id)
     
     return {

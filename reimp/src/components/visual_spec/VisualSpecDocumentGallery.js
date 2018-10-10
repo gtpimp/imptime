@@ -56,6 +56,7 @@ class VisualSpecDocumentGallery extends Component {
                             className="visual_spec_document_gallery__card">
                          <VisualSpecDocumentGalleryImage annotated_visual_spec_document_id={annotated_visual_spec_document_id}
                                                          image_class={image_class}
+                                                         allow_edit={allow_edit}
                                                          onReorder={that.reorderDocuments}
                                                          render_quality={render_quality}
                                                          show_annotations={show_annotations}
