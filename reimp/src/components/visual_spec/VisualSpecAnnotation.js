@@ -5,6 +5,11 @@ import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
 import '../../sass/visual-spec-issue.scss'
 import ToolTip from 'react-portal-tooltip'
+import {
+    updateVisualSpecAnnotation,
+    createVisualSpecAnnotation,
+    deleteVisualSpecAnnotation
+} from '../../actions/VisualSpecAnnotations'
 
 class VisualSpecAnnotationDragLayer extends Component {
     render() {
@@ -49,6 +54,23 @@ class VisualSpecAnnotation extends Component {
         if ( tooltips_enabled ) {
             this.setState({isTooltipActive: false})
         }
+    }
+
+    createVisualSpecAnnotation({annotated_visual_spec_document_id, visual_spec_annotation_id, shape, x_pos, y_pos}) {
+        const { dispatch } = this.props
+        dispatch(createVisualSpecAnnotation(annotated_visual_spec_document_id, {shape, x_pos, y_pos}))
+    }
+
+    updateVisualSpecAnnotation({annotated_visual_spec_document_id, visual_spec_annotation_id, shape, x_pos, y_pos}) {
+        const { dispatch } = this.props
+        dispatch(updateVisualSpecAnnotation(annotated_visual_spec_document_id, 
+                                            [visual_spec_annotation_id],
+                                            {shape, x_pos, y_pos}))
+    }
+
+    deleteVisualSpecAnnotation(visual_spec_issue_annotation_id) {
+        const { dispatch } = this.props
+        dispatch(deleteVisualSpecAnnotation(visual_spec_issue_annotation_id))
     }
 
     render() {
@@ -139,7 +161,7 @@ class VisualSpecAnnotation extends Component {
 
 function mapStateToProps(state, props) {
     const { visual_spec_annotation, default_shape,
-            onUpdate, onCreate, can_edit, annotation_size_px, tooltips_enabled,
+            can_edit, annotation_size_px, tooltips_enabled,
             container_img_element_unique_id } = props
     // const visual_spec_issue_annotation = getVisualSpecIssueAnnotation(state, visual_spec_issue_annotation_id) || {}
     const is_invalidated = false // is_visual_spec_issue_annotation_invalidated(state, visual_spec_issue_annotation_id)
@@ -149,8 +171,6 @@ function mapStateToProps(state, props) {
     return {
         visual_spec_annotation: visual_spec_annotation || {},
         is_invalidated: is_invalidated || false,
-        onUpdate,
-        onCreate,
         shape: (visual_spec_annotation && visual_spec_annotation.shape) || default_shape || "circle",
         can_edit: can_edit !== false,
         annotation_size_px: annotation_size_px || 60,
@@ -167,34 +187,39 @@ const headingSource = {
     },
     endDrag(props, monitor, component) {
         const { visual_spec_annotation,
-                onUpdate, onCreate, onDelete, shape, can_edit } = props
+                onDelete, shape, can_edit } = props
         if ( ! can_edit ) {
             return
         }
         const drop_result = monitor.getDropResult()
         if ( drop_result === null ) {
             if ( visual_spec_annotation.id && onDelete ) {
-                onDelete(visual_spec_annotation.id)
+                component.deleteVisualSpecAnnotation({visual_spec_annotation_id:visual_spec_annotation.id})
             }
             return
         }
-        const { child_pos, parent_pos, distance_moved } = drop_result
+        const { annotated_visual_spec_document_id, child_pos, parent_pos, distance_moved } = drop_result
         let x_pos
         let y_pos
         if ( props.visual_spec_annotation && props.visual_spec_annotation.id ) {
             x_pos = visual_spec_annotation.x_pos + (100*distance_moved.x / parent_pos.width) //-
                     //(annotation_size_px * visual_spec_annotation.x_offset_to_target / parent_pos.width)
             y_pos = visual_spec_annotation.y_pos + (100*distance_moved.y / parent_pos.height) //-
-                    //(annotation_size_px * visual_spec_annotation.y_offset_to_target / parent_pos.height)
-            onUpdate([props.visual_spec_annotation.id], {shape:shape,
-                                                               x_pos:x_pos,
-                                                               y_pos:y_pos})
+            //(annotation_size_px * visual_spec_annotation.y_offset_to_target / parent_pos.height)
+
+            component.updateVisualSpecAnnotation({annotated_visual_spec_document_id,
+                                                  visual_spec_annotation_id: visual_spec_annotation.id,
+                                                  shape,
+                                                  x_pos,
+                                                  y_pos})
+            
         } else {
             x_pos = 100*(child_pos.x-parent_pos.left)/ parent_pos.width
             y_pos = 100*(child_pos.y-parent_pos.top)/ parent_pos.height
-            onCreate({shape: shape,
-                      x_pos: x_pos,
-                      y_pos: y_pos})
+            component.createVisualSpecAnnotation({annotated_visual_spec_document_id,
+                                                  shape: shape,
+                                                  x_pos: x_pos,
+                                                  y_pos: y_pos})
         }
     }
 }
