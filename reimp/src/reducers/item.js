@@ -26,7 +26,8 @@ import {
     ANNOUNCE_DELETE_ITEMS_FAILED,
     SET_GLOBAL_ENTITY_FLAG,
     UPDATE_ENTIRE_ITEM_FIELD_NAME,
-    SET_TRANSIENT_ITEM_VALUE
+    SET_TRANSIENT_ITEM_VALUE,
+    PERFORM_CUSTOM_MANIPULATION
 } from '../actions/Item.js'
 
 const initialState = {
@@ -181,6 +182,11 @@ export default function item(state = initialState, action) {
         case SET_GLOBAL_ENTITY_FLAG:
             s = cloneItemState(state, action)
             s[action.field_name] = action.new_value
+            return setItemState(state, action, s)
+
+        case PERFORM_CUSTOM_MANIPULATION:
+            s = cloneItemState(state, action)
+            s = action.func(s, action)
             return setItemState(state, action, s)
 
         default:

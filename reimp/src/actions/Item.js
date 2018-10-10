@@ -33,6 +33,7 @@ export const ANNOUNCE_DELETE_ITEMS_FAILED = 'ANNOUNCE_DELETE_ITEMS_FAILED'
 export const SET_GLOBAL_ENTITY_FLAG = 'SET_GLOBAL_ENTITY_FLAG'
 
 export const UPDATE_ENTIRE_ITEM_FIELD_NAME = "__all__"
+export const PERFORM_CUSTOM_MANIPULATION = "PERFORM_CUSTOM_MANIPULATION"
 
 export function invalidateAllItems(entity_key) {
     return {

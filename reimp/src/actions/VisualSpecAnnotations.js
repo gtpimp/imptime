@@ -1,4 +1,7 @@
-import { ENTITY_KEY__VISUAL_SPEC_ANNOTATION } from '../actions/ItemListKeyRegistry'
+import {
+    ENTITY_KEY__VISUAL_SPEC_ANNOTATION,
+    ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT
+} from '../actions/ItemListKeyRegistry'
 import { get } from 'lodash'
 import {
     invalidateAllItems,
@@ -11,8 +14,10 @@ import {
     startCandidateItem,
     saveCandidateItem,
     deleteItems,
-    UPDATE_ENTIRE_ITEM_FIELD_NAME
+    UPDATE_ENTIRE_ITEM_FIELD_NAME,
+    PERFORM_CUSTOM_MANIPULATION
 } from '../actions/Item'
+import { update_visual_spec_annotation_within_annotated_vsd } from '../reducers/annotated_visual_spec_document'
 
 export function invalidateAllVisualSpecAnnotations() {
     return (dispatch, getState) => {
@@ -30,11 +35,23 @@ export function invalidateVisualSpecAnnotations(visual_spec_annotation_ids_to_in
 
 export function updateVisualSpecAnnotation(annotated_visual_spec_document_id,
                                            visual_spec_annotation_ids, params) {
-    const data = Object.assign({},
-                               {annotated_visual_spec_document_id: annotated_visual_spec_document_id},
-                               params)
-    return updateItem(ENTITY_KEY__VISUAL_SPEC_ANNOTATION, visual_spec_annotation_ids,
-                      UPDATE_ENTIRE_ITEM_FIELD_NAME, data)
+
+    return (dispatch, getState) => {
+        const data = Object.assign({},
+                                   {annotated_visual_spec_document_id: annotated_visual_spec_document_id},
+                                   params)
+
+        dispatch({
+            type: PERFORM_CUSTOM_MANIPULATION,
+            func: update_visual_spec_annotation_within_annotated_vsd,
+            entity_key: ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT,
+            annotated_visual_spec_document_id,
+            annotation_ids: visual_spec_annotation_ids,
+            params: params})
+            
+        dispatch(updateItem(ENTITY_KEY__VISUAL_SPEC_ANNOTATION, visual_spec_annotation_ids,
+                            UPDATE_ENTIRE_ITEM_FIELD_NAME, data))
+    }
 }
 
 export function fetchVisualSpecAnnotationsIfNeeded(list_key) {
