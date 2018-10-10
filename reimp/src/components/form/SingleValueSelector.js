@@ -12,6 +12,7 @@ export class SingleValueSelector extends Component {
         this.onSelected = this.onSelected.bind(this)
         this.onSelectionFilterChanged = this.onSelectionFilterChanged.bind(this)
         this.onKeyDownOnSelectionFilter = this.onKeyDownOnSelectionFilter.bind(this)
+        this.state = {filter_term: null}
     }
 
     onSelected(selected_option) {
@@ -30,7 +31,7 @@ export class SingleValueSelector extends Component {
     onSelectionFilterChanged() {
         const { onFilterChanged } = this.props
         const new_filter_value = this.selection_filter_el.value
-        this.setState({filter_term:new_filter_value})
+        this.setState({filter_term: new_filter_value})
         if ( onFilterChanged ) {
             onFilterChanged(new_filter_value)
         }
@@ -131,7 +132,8 @@ export class SingleValueSelector extends Component {
 
     render() {
         const { placeholder, only_show_options_if_filtered, value } = this.props
-        const show_options = !only_show_options_if_filtered || size(value)>0
+        const { filter_term } = this.state
+        const show_options = !only_show_options_if_filtered || size(filter_term)>0
         
         return (
             <div className="single-value-selector">
