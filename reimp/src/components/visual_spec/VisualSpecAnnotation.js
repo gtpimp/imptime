@@ -10,14 +10,6 @@ import {
     deleteVisualSpecAnnotation
 } from '../../actions/VisualSpecAnnotations'
 
-class VisualSpecAnnotationDragLayer extends Component {
-    render() {
-        return (
-            <div>Dragging</div>
-        )
-    }
-}
-
 class VisualSpecAnnotation extends Component {
 
     componentDidMount() {
@@ -85,34 +77,32 @@ class VisualSpecAnnotation extends Component {
 
         return (
             <div>
-
               {connectDragSource(
-                   <div key={(visual_spec_annotation.id) || "empty"}
-                        className={classNames("visual-spec",
-                                              {"visual-spec--dragging": isDragging,
-                                               "visual-spec--empty": !visual_spec_annotation.id})}
-                        style={container_style}
-                   >
-                     { ! visual_spec_annotation.id &&
-                       <div className={classNames("visual-spec__image--"+shape)}
-                            style={annotation_style}
-                       >
-                       </div>
-                     }
-
-                     { visual_spec_annotation.id &&
-                       <div>
+                   <div>
+                     <div key={(visual_spec_annotation.id) || "empty"+shape}
+                          className={classNames("visual-spec",
+                                                {"visual-spec--dragging": isDragging,
+                                                 "visual-spec--empty": !visual_spec_annotation.id})}
+                          style={container_style}
+                     >
+                       { ! visual_spec_annotation.id &&
                          <div className={classNames("visual-spec__image--"+shape)}
                               style={annotation_style}
                          >
                          </div>
-                       </div>
-                     }
+                       }
+
+                         { visual_spec_annotation.id &&
+                           <div>
+                             <div className={classNames("visual-spec__image--"+shape)}
+                                  style={annotation_style}
+                             >
+                             </div>
+                           </div>
+                         }
+                     </div>
                    </div>
                )}
-
-            { false && isDragging && <VisualSpecAnnotationDragLayer {...this.props} /> }
-
             </div>
         )
     }
@@ -137,6 +127,10 @@ function mapStateToProps(state, props) {
 }
 
 const headingSource = {
+    canDrag(props) {
+        return props.can_edit
+    },
+    
     beginDrag(props, monitor, component) {
         return {
             id: (props.visual_spec_annotation && props.visual_spec_annotation.id) || "new"

@@ -23,12 +23,14 @@ class Websocket extends Component {
     componentWillReceiveProps(new_props) {
         if ( new_props.url !== this.props.url ) {
             this.state.ws.close()
-            this.setState({ws: new WebSocket(new_props.url)})
+            if ( this._ismounted ) {
+                this.setState({ws: new WebSocket(new_props.url)})
+            }
         }
     }
 
     componentWillUnmount() {
-        this._ismounted = true;
+        this._ismounted = false;
         let websocket = this.state.ws;
         websocket.close();
     }
@@ -55,7 +57,9 @@ class Websocket extends Component {
         if ( this.state.attempts > 1 ) {
             console.log("Websocket connected")
         }
-        this.setState({attempts: 1});
+        if ( this._ismounted ) {
+            this.setState({attempts: 1});
+        }
         dispatch(websocketConnected())
     }
 
@@ -65,7 +69,7 @@ class Websocket extends Component {
     }    
 
     setupWebsocket() {
-        if(!this.state.ws){
+        if( !this.state.ws && this._ismounted ){
             this.setState({ws: new WebSocket(this.props.url)})
         }
         let websocket = this.state.ws;
@@ -83,11 +87,15 @@ class Websocket extends Component {
             this.logging('Websocket disconnected');
             this.onDisconnectFromSocket()
 
-            if (this.props.reconnect && this._ismounted) {
+            if (this.props.reconnect) {
                 let time = this.generateInterval(this.state.attempts);
-                this.setState({ws: null})
+                if ( this._ismounted ) {
+                    this.setState({ws: null})
+                }
                 setTimeout(() => {
-                    this.setState({attempts: that.state.attempts+1});
+                    if ( this._ismounted ) {
+                        this.setState({attempts: that.state.attempts+1});
+                    }
                     this.setupWebsocket();
                 }, time);
             }
