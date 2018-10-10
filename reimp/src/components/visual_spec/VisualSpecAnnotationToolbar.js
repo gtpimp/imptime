@@ -2,9 +2,10 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
 import VisualSpecAnnotation from './VisualSpecAnnotation'
-import ANNOTATION_SHAPES from './VisualSpecDocumentGalleryImage'
 import { css } from 'emotion'
 import {default_theme as theme} from '../../theme/default'
+
+export const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
 
 class VisualSpecAnnotationToolbar extends Component {
 

@@ -15,7 +15,7 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     content_type = serializers.CharField()
     is_image = serializers.BooleanField()
     visual_spec_project_ids = serializers.ListField(child=serializers.CharField())
-    project_ids = serializers.CharField()
+    project_ids = serializers.ListField(serializers.CharField())
 
     def to_representation(self, obj, *args, **kwargs):
         obj.visual_spec_project_ids = obj.visual_spec_projects.all().values_list('id', flat=True)

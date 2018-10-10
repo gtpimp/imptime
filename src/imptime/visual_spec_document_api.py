@@ -93,26 +93,31 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             new_value = params['value']
             project_id = params.get('project_id')
             issue_id = params.get('issue_id', None)
+            feature_id = params.get('feature_id', None)
 
-            visual_spec_document_ids = params.pop('visual_spec_document_ids', [pk])
+            annotated_visual_spec_document_ids = params.pop('annotated_visual_spec_document_ids', [pk])
 
-            for vsd_id in visual_spec_document_ids:
-                vsd = self.allowed_visual_spec_documents().get(pk=vsd_id)
+            for annotated_vsd_id in annotated_visual_spec_document_ids:
+                annotated_vsd = self.allowed_annotated_visual_spec_documents().get(pk=annotated_vsd_id)
 
-                if field_name == 'visual_spec_document_id_after':
-                    after_vsd = self.allowed_visual_spec_documents().get(pk=new_value)
+                if field_name == 'annotated_visual_spec_document_id_after':
+                    after_vsd = self.allowed_annotated_visual_spec_documents().get(pk=new_value)
                     if issue_id is not None:
-                        VisualSpecIssue.insert_after(issue_id, vsd, after_vsd)
+                        VisualSpecIssue.insert_after(issue_id, annotated_vsd, annotated_after_vsd)
                         issue = self.allowed_issue(issue_id)
                         issue.save()
+                    elif feature_id is not None:
+                        VisualSpecFeature.insert_after(feature_id, annotated_vsd, annotated_after_vsd)
+                        feature = self.allowed_feature(feature_id)
+                        feature.save()
                     else:
-                        VisualSpecProject.insert_after(project_id, vsd, after_vsd)
+                        VisualSpecProject.insert_after(project_id, annotated_vsd, annotated_after_vsd)
                         project = self.allowed_project(project_id)
                         project.save()
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
 
-            data = {'status': 'success', 'payload': visual_spec_document_ids}
+            data = {'status': 'success', 'payload': annotated_visual_spec_document_ids}
 
         except Exception, ex:
             logger.exception(ex)
@@ -126,12 +131,13 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             params = request.data
             visual_spec_document_id = pk
             issue_id = params['issue_id']
-            visual_spec_document_id = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id).id
+            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
+            annotated_visual_spec_document = AnnotatedVisualSpecDocument.objects.create(visual_spec_document=visual_spec_document)
             issue = self.allowed_issues().get(pk=issue_id)
             issue_id = issue.id
-            VisualSpecIssue.insert_at_the_end(issue_id, visual_spec_document_id)
+            VisualSpecIssue.insert_at_the_end(issue_id, annotated_visual_spec_document.id)
             issue.save()
-            data = {'status': 'success', 'payload': [visual_spec_document_id]}
+            data = {'status': 'success', 'payload': [annotated_visual_spec_document_id]}
 
         except Exception, ex:
             logger.exception(ex)
@@ -145,12 +151,14 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             params = request.data
             visual_spec_document_id = pk
             issue_id = params['issue_id']
-            visual_spec_document_id = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id).id
+            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id).id
             issue = self.allowed_issues().get(pk=issue_id)
             issue_id = issue.id
-            vsi = VisualSpecIssue.objects.filter(issue_id=issue_id, visual_spec_document_id=visual_spec_document_id).first()
+            vsi = VisualSpecIssue.objects.filter(issue_id=issue_id, annotated_visual_spec_document__visual_spec_document_id=visual_spec_document_id).first()
             if vsi is not None:
+                annotated_visual_spec_document = vsi.annotated_visual_spec_document
                 vsi.delete()
+                annotated_visual_spec_document.delete()
             issue.save()
             data = {'status': 'success', 'payload': [visual_spec_document_id]}
 
@@ -166,7 +174,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             params = request.data
             visual_spec_document_id = pk
             project_id = params['project_id']
-            vsd = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
+            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
             project = self.allowed_projects().get(pk=project_id)
             project_id = project.id
             vsi = VisualSpecProject.objects.filter(project_id=project_id, visual_spec_document_id=visual_spec_document_id).first()

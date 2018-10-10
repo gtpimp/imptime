@@ -79,7 +79,7 @@ class FeatureSidebar extends Component {
         return (
             <SidebarProperty key="attachmentstack">
               <SidebarSectionTitle title="Attachments" />
-              <VisualSpecDocumentGallery visual_spec_document_ids={feature.visual_spec_document_ids}
+              <VisualSpecDocumentGallery annotated_visual_spec_document_ids={feature.annotated_visual_spec_document_ids}
                                          feature_id={feature.id}
                                          allow_edit={false} />
               

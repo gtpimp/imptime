@@ -80,13 +80,15 @@ class VisualSpecDocument(BaseModel):
                                                     content_type=content_type,
                                                     is_image=is_image)
 
+        annotated_vsd = AnnotatedVisualSpecDocument.objects.create(visual_spec_document=vsd)
+            
         VisualSpecProject.objects.get_or_create(visual_spec_document=vsd,
                                                 project_id=project.id,
                                                 defaults={'order':VisualSpecProject.get_next_order(project.id)})
         project.save()
-
+        
         if issue is not None:
-            _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
+            _, created = VisualSpecIssue.objects.get_or_create(annotated_visual_spec_document=annotated_vsd,
                                                                issue=issue,
                                                                defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
             if created:
@@ -94,7 +96,7 @@ class VisualSpecDocument(BaseModel):
                 IssueHistory.add_history(user, issue, "added attachment", "", name)
 
         if feature is not None:
-            _, created = VisualSpecFeature.objects.get_or_create(visual_spec_document=vsd,
+            _, created = VisualSpecFeature.objects.get_or_create(annotated_visual_spec_document=annotated_vsd,
                                                                  feature=feature,
                                                                  defaults={'order':VisualSpecFeature.get_next_order(feature.id)})
             if created:
@@ -219,7 +221,7 @@ class VisualSpecProject(BaseModel):
 
 
 class VisualSpecIssue(BaseModel):
-    deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues')
+    deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues', null=True)
     annotated_visual_spec_document = ProtectedForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_issues')
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_issues')
     order = models.IntegerField(default=1)
@@ -280,7 +282,7 @@ class VisualSpecIssue(BaseModel):
 
 
 class VisualSpecFeature(BaseModel):
-    deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_features')
+    deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_features', null=True)
     annotated_visual_spec_document = ProtectedForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_features')
     feature = ProtectedForeignKey("imptime.Feature", related_name='visual_spec_features')
     order = models.IntegerField(default=1)

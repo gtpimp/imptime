@@ -91,6 +91,8 @@ class MainLayout extends Component {
                                this.props.location.pathname.indexOf('account/create') !== -1 ||
                                this.props.location.pathname.indexOf('share/') !== -1
 
+        // hack, better to abstract the router up one level
+        const self_contained_page = this.props.location.pathname.indexOf("fullscreen/") !== -1
 
         if ( ! are_settings_loaded ) {
             return (
@@ -111,6 +113,15 @@ class MainLayout extends Component {
                 <AppDiv id="app">
                   <Maintenance/>
                   <Error/>
+                  <MainRouter />
+                </AppDiv>
+            )
+        }
+
+        if ( self_contained_page ) {
+            return (
+                <AppDiv id="app">
+                  <Websocket/>
                   <MainRouter />
                 </AppDiv>
             )

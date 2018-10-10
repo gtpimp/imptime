@@ -8,6 +8,8 @@ import '../../sass/visual-spec-document-gallery.scss'
 import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
 import VisualSpecDocumentGalleryFullScreen from './VisualSpecDocumentGalleryFullScreen'
 
+const header_height = 36;
+
 class VisualSpecDocumentGalleryFullScreenImage extends Component {
 
     componentDidMount() {
@@ -42,12 +44,13 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
             <div className={css`position: absolute;
                                 top: 0px;
                                 left: 0px;
+                                width:100%;
                             `}
                  onKeyDown={this.onKeyPressFullScreen}
                  tabIndex="0"
                  key={annotated_visual_spec_document_id}>
               <div className={css`background: linear-gradient(${theme.colours.nav_bar_gradient1}, ${theme.colours.nav_bar_gradient2});
-                                  height: 36px;
+                                  height: ${header_height}px;
                                   position: fixed;
                                   padding-left: 12px;
                                   padding-right: 3px;
@@ -55,6 +58,7 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
                                   justify-content: space-between;
                                   align-items: center;
                                   top: 0px;
+                                  z-index: 9;
                                   color: #ffffff;
                                   width:100%;`}>
                   <div>
@@ -70,7 +74,9 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
                   </div>
               </div>
 
-              <VisualSpecDocumentGalleryFullScreen annotated_visual_spec_document_id={annotated_visual_spec_document_id} />
+              <div className={css`margin-top:${header_height}px`}>
+                <VisualSpecDocumentGalleryFullScreen annotated_visual_spec_document_id={annotated_visual_spec_document_id} />
+              </div>
             </div>
         )
     }

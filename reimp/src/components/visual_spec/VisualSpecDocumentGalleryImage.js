@@ -40,7 +40,7 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     setFullScreenMode = () => {
         const { history, project_id, annotated_visual_spec_document_id } = this.props
-        history.push(`projects/${project_id}/image/${annotated_visual_spec_document_id}`)
+        history.push(`/fullscreen/projects/${project_id}/image/${annotated_visual_spec_document_id}`)
     }
 
     onVisualSpecDocumentImageLoaded() {
@@ -177,8 +177,10 @@ function mapStateToProps(state, props) {
     const visual_spec_annotations = annotated_visual_spec_document && annotated_visual_spec_document.annotations
     const img_element_unique_id = el_img_element_unique_id || ("vsd-editor__gallery_image__visual_spec_document_id_" + annotated_visual_spec_document_id)
     const preview_url = (visual_spec_document && ((render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url)) || null
+    const project_id = visual_spec_document.project_ids && visual_spec_document.project_ids[0]
     
     return {
+        project_id,
         preview_image_url: preview_url,
         hires_url: visual_spec_document.hires_url,
         download_url: visual_spec_document.download_url,

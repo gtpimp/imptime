@@ -37,7 +37,7 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const annotated_visual_spec_document_id = props.match.params.annotatedVisualSpecDocumentId
+    const { annotated_visual_spec_document_id } = props
     const annotated_visual_spec_document = getAnnotatedVisualSpecDocument(state, annotated_visual_spec_document_id)
     const visual_spec_document = (annotated_visual_spec_document && annotated_visual_spec_document.visual_spec_document) || {}
     const img_element_unique_id = "vsd-editor__gallery_image__visual_spec_document_id_" + annotated_visual_spec_document_id
@@ -77,4 +77,4 @@ function collectDrop(connect, monitor) {
     }
 }
 
-export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ISSUE_ANNOTATION, headingTarget, collectDrop)(VisualSpecDocumentGalleryFullScreenImage))
+export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ANNOTATION, headingTarget, collectDrop)(VisualSpecDocumentGalleryFullScreenImage))

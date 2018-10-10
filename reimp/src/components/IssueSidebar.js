@@ -363,7 +363,7 @@ class IssueSidebar extends Component {
         return (
             <SidebarProperty key="attachmentstack">
               <SidebarSectionTitle title="Attachments" />
-              <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
+              <VisualSpecDocumentGallery annotated_visual_spec_document_ids={issue.annotated_visual_spec_document_ids}
                                          issue_id={issue.id}
                                          allow_edit={false} />
               
