@@ -68,9 +68,9 @@ class IssuesToolbarPanel extends Component {
         dispatch(updateCandidateSubject(new_values.issue_title))
         dispatch(updateCandidateSprint(sprint_id))
         const onDone = (issue_id) => {
+            this.onStopCreateIssue()
             history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_id)
         }
-        this.onStopCreateIssue()
         dispatch(saveCandidateIssue(onDone))
     }
 
@@ -103,7 +103,9 @@ class IssuesToolbarPanel extends Component {
         return (
             <ModalDialog isOpen={true}
                          onClose={this.onStopCreateIssue}
-                         title="New Issue" >
+                         title="New Issue"
+                         variant="large"
+            >
               <NewIssueForm onSubmitted={this.onCreateIssue}
                             onStopCreateIssue={this.onStopCreateIssue} />
             </ModalDialog>
