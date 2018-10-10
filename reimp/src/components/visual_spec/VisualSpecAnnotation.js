@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import {DndTypes} from '../../actions/Dnd'
 import {DragSource} from 'react-dnd';
 import classNames from 'classnames'
-import '../../sass/visual-spec-issue.scss'
+import '../../sass/visual-spec.scss'
 import ToolTip from 'react-portal-tooltip'
 import {
     updateVisualSpecAnnotation,
@@ -114,13 +114,13 @@ class VisualSpecAnnotation extends Component {
                    <div id={tooltip_target_id}
                         key={(visual_spec_annotation.id) || "empty"}
                         ref={(element) => { this.tooltip_parent = element }}
-                        className={classNames("visual-spec-issue",
-                                              {"visual-spec-issue--dragging": isDragging,
-                                               "visual-spec-issue--empty": !visual_spec_annotation.id})}
+                        className={classNames("visual-spec",
+                                              {"visual-spec--dragging": isDragging,
+                                               "visual-spec--empty": !visual_spec_annotation.id})}
                         style={container_style}
                    >
                      { ! visual_spec_annotation.id &&
-                       <div className={classNames("visual-spec-issue__image--"+shape)}
+                       <div className={classNames("visual-spec__image--"+shape)}
                             style={annotation_style}
                        >
                        </div>
@@ -128,7 +128,7 @@ class VisualSpecAnnotation extends Component {
 
                      { visual_spec_annotation.id &&
                        <div onMouseEnter={this.showTooltip} onMouseLeave={this.hideTooltip}>
-                         <div className={classNames("visual-spec-issue__image--"+shape)}
+                         <div className={classNames("visual-spec__image--"+shape)}
                               style={annotation_style}
                          >
                          </div>
@@ -142,7 +142,7 @@ class VisualSpecAnnotation extends Component {
                           position="right"
                           arrow="center"
                           parent={tooltip_target_id}>
-                   <div className="visual-spec-issue--tooltip">
+                   <div className="visual-spec--tooltip">
                      {/* <EditableIssueTitle issue_id={issue.id} />
                      <EditableIssueDescription issue_id={issue.id} />
                      <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>

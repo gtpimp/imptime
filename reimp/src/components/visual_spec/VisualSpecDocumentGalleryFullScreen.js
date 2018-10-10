@@ -77,4 +77,4 @@ function collectDrop(connect, monitor) {
     }
 }
 
-export default connect(mapStateToProps)(DropTarget(DndTypes.VISUAL_SPEC_ANNOTATION, headingTarget, collectDrop)(VisualSpecDocumentGalleryFullScreenImage))
+export default connect(mapStateToProps)(VisualSpecDocumentGalleryFullScreenImage)

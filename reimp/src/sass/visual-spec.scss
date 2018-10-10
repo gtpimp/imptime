@@ -1,36 +1,36 @@
 @import 'variables.scss';
 
-.visual-spec-issue {
+.visual-spec {
     position: absolute;
 }
 
-.visual-spec-issue.visual-spec-issue--empty {
+.visual-spec.visual-spec--empty {
     display: block;
     position: relative;
 }
 
-.visual-spec-issue__image--normal {
+.visual-spec__image--normal {
     background-repeat: no-repeat;
     width: 60px;
     height: 60px;
 }
 
-.visual-spec-issue__image--small {
+.visual-spec__image--small {
     background-repeat: no-repeat;
     background-size: 15px;
     width: 15px;
     height: 15px;
 }
 
-.visual-spec-issue__image--circle {
+.visual-spec__image--circle {
     background-image: url('../images/visual_spec__circle.png');
 }
 
-.visual-spec-issue__image--square {
+.visual-spec__image--square {
     background-image: url('../images/visual_spec__square.png');
 }
 
-.visual-spec-issue__image--arrow {
+.visual-spec__image--arrow {
     background-image: url('../images/visual_spec__arrow.png');
 }
 
@@ -40,7 +40,7 @@
     overflow: hidden;
 }
 
-.visual-spec-issue--tooltip .blank {
+.visual-spec--tooltip .blank {
     height: 20px;
 }
 

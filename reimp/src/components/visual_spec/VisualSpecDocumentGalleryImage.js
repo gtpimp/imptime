@@ -7,10 +7,12 @@ import {DndTypes} from '../../actions/Dnd'
 import classNames from 'classnames'
 import '../../sass/visual-spec-document-gallery.scss'
 import VisualSpecAnnotation from './VisualSpecAnnotation'
+import { has_permission } from '../../actions/Users'
 import {
     ensureAnnotatedVisualSpecDocumentsLoaded,
     getAnnotatedVisualSpecDocument
 } from '../../actions/AnnotatedVisualSpecDocuments'
+import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
 
 export const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
 
@@ -34,8 +36,11 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, annotated_visual_spec_document_id } = props
+        const { dispatch, annotated_visual_spec_document_id, project_id } = props
         dispatch(ensureAnnotatedVisualSpecDocumentsLoaded([annotated_visual_spec_document_id]))
+        if ( project_id ) {
+            dispatch(ensureProjectsLoaded([project_id]))
+        }
     }
 
     setFullScreenMode = () => {
@@ -125,7 +130,7 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     render() {
         const { annotated_visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
-                visual_spec_annotations,
+                visual_spec_annotations, can_edit,
                 connectDragSource, connectDropTarget,
                 img_element_unique_id} = this.props
         const { visual_spec_document_image_loaded } = this.state
@@ -146,11 +151,11 @@ class VisualSpecDocumentGalleryImage extends Component {
                 { visual_spec_document_image_loaded && map(visual_spec_annotations, (visual_spec_annotation) => {
                       return (
                           <VisualSpecAnnotation key={visual_spec_annotation.id}
-                                                can_edit={false}
+                                                can_edit={can_edit}
                                                 container_img_element_unique_id={img_element_unique_id}
                                                 annotation_size_px={25}
                                                 tooltips_enabled={false}
-                                                visual_spec_annotation_id={visual_spec_annotation.id} />
+                                                visual_spec_annotation={visual_spec_annotation} />
                       )
                   })
                 }
@@ -178,8 +183,11 @@ function mapStateToProps(state, props) {
     const img_element_unique_id = el_img_element_unique_id || ("vsd-editor__gallery_image__visual_spec_document_id_" + annotated_visual_spec_document_id)
     const preview_url = (visual_spec_document && ((render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url)) || null
     const project_id = visual_spec_document.project_ids && visual_spec_document.project_ids[0]
+    const project = project_id && getProject(state, project_id)
+    const can_edit = visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
     
     return {
+        project,
         project_id,
         preview_image_url: preview_url,
         hires_url: visual_spec_document.hires_url,
@@ -191,7 +199,8 @@ function mapStateToProps(state, props) {
         onSelected,
         img_element_unique_id,
         image_class,
-        show_annotations
+        show_annotations,
+        can_edit
     }
 }
 
