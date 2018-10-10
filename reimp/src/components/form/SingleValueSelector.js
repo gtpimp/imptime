@@ -131,7 +131,7 @@ export class SingleValueSelector extends Component {
     }
 
     render() {
-        const { placeholder, only_show_options_if_filtered, value } = this.props
+        const { placeholder, only_show_options_if_filtered } = this.props
         const { filter_term } = this.state
         const show_options = !only_show_options_if_filtered || size(filter_term)>0
         

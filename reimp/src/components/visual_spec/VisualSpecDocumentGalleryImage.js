@@ -15,7 +15,6 @@ import {
 } from '../../actions/AnnotatedVisualSpecDocuments'
 import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
 
-const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
 const DEFAULT_ANNOTATION_SIZE = 25
 
 class VisualSpecDocumentGalleryImage extends Component {

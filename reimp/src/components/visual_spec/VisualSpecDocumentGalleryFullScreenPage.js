@@ -6,6 +6,7 @@ import { cx, css } from 'emotion'
 import {default_theme as theme} from '../../theme/default'
 import '../../sass/visual-spec-document-gallery.scss'
 import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
+import VisualSpecToolbar from './VisualSpecToolbar'
 import VisualSpecDocumentGalleryFullScreen from './VisualSpecDocumentGalleryFullScreen'
 
 const header_height = 36;
@@ -59,10 +60,11 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
                                   z-index: 9;
                                   color: ${theme.colours.black};
                                   width:100%;`}>
-                  <div>
+                  <div className={css`display:flex;`}>
                     {visual_spec_document.name}
                   </div>
-                  <div className={css`display: flex`}>
+                  <div className={css`display: flex; align-items: center`}>
+                    <VisualSpecToolbar annotated_visual_spec_document_id={annotated_visual_spec_document_id} />
                     <VisualSpecAnnotationToolbar />
                     <div className={cx("icon--black-close",
                                        css`float: right;
