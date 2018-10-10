@@ -59,6 +59,7 @@ class VisualSpecAnnotationViewSet(BaseViewSet):
             s = VisualSpecAnnotationInboundSerializer(data=params)
             if s.is_valid():
                 annotation = s.save(annotated_visual_spec_document=annotated_visual_spec_document)
+                annotation.save()
             else:
                 return self.error_response(Exception("Invalid post data: %s" % s.errors))
             

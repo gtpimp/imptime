@@ -152,9 +152,9 @@ class VisualSpecAnnotation(BaseModel):
         self.y_offset_to_target = self.TARGET_OFFSET_PERCENTAGES[self.shape]['y']
         super(VisualSpecAnnotation, self).save(*args, **kwargs)
         if was_created:
-            RefreshNotifier().notify_model_create(self)
+            RefreshNotifier().notify_model_create(self, params={'annotated_visual_spec_document_id':str(self.annotated_visual_spec_document_id)})
         else:
-            RefreshNotifier().notify_model_update(self)
+            RefreshNotifier().notify_model_update(self, params={'annotated_visual_spec_document_id':str(self.annotated_visual_spec_document_id)})
 
     def shape_url(self):
         return 'images/visual_spec__%s.png' % self.shape

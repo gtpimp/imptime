@@ -1,5 +1,5 @@
 import { ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT } from '../actions/ItemListKeyRegistry'
-
+import { get } from 'lodash'
 import {
     invalidateAllItems,
     invalidateItems,
@@ -31,3 +31,6 @@ export function getAnnotatedVisualSpecDocument(state, annotated_visual_spec_docu
     return getItem(state, ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT, annotated_visual_spec_document_id)
 }
 
+export function is_annotated_visual_spec_document_invalidated(state, annotated_visual_spec_document_id) {
+    return get(state, ["item", "annotated_visual_spec_document", "invalidated_item_ids"], []).indexOf(annotated_visual_spec_document_id) !== -1
+}

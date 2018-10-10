@@ -10,7 +10,8 @@ import VisualSpecAnnotation from './VisualSpecAnnotation'
 import { has_permission } from '../../actions/Users'
 import {
     ensureAnnotatedVisualSpecDocumentsLoaded,
-    getAnnotatedVisualSpecDocument
+    getAnnotatedVisualSpecDocument,
+    is_annotated_visual_spec_document_invalidated,
 } from '../../actions/AnnotatedVisualSpecDocuments'
 import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
 
@@ -185,6 +186,7 @@ function mapStateToProps(state, props) {
     const project_id = visual_spec_document.project_ids && visual_spec_document.project_ids[0]
     const project = project_id && getProject(state, project_id)
     const can_edit = visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
+    const is_invalidated = is_annotated_visual_spec_document_invalidated(state, annotated_visual_spec_document_id)
     
     return {
         project,
@@ -200,7 +202,8 @@ function mapStateToProps(state, props) {
         img_element_unique_id,
         image_class,
         show_annotations,
-        can_edit
+        can_edit,
+        is_invalidated
     }
 }
 
