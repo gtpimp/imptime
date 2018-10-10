@@ -90,7 +90,7 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     resolveThumbnailElement(preview_image_url) {
-        const { visual_spec_document, img_element_unique_id, image_class } = this.props
+        const { visual_spec_document, img_element_unique_id, image_class, is_image, content_type } = this.props
         if ( ! preview_image_url ) {
             return (
                 <div id={img_element_unique_id}
@@ -99,9 +99,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                 />
             )
         }
-        if ( preview_image_url.startsWith("no_preview_available__") ) {
-            const parts = preview_image_url.split("__")
-            const content_type = parts[1].replace("/","-").replace(/\./g,"-")
+        if ( !is_image ) {
             return (
                 <div id={img_element_unique_id}
                      className={"visual_spec_document_gallery__image " +
@@ -184,6 +182,9 @@ function mapStateToProps(state, props) {
     const visual_spec_annotations = annotated_visual_spec_document && annotated_visual_spec_document.annotations
     const img_element_unique_id = el_img_element_unique_id || ("vsd-editor__gallery_image__visual_spec_document_id_" + annotated_visual_spec_document_id)
     const preview_url = (visual_spec_document && ((render_quality === 'hires' && visual_spec_document.hires_url) || visual_spec_document.preview_url)) || null
+    const content_type_url = (visual_spec_document && visual_spec_document.preview_url) || null
+    const is_image = content_type_url && !content_type_url.startsWith("no_preview_available__")
+    const content_type = content_type_url && !is_image && content_type_url.split("__")[1].replace("/","-").replace(/\./g,"-")
     const project_id = visual_spec_document.project_ids && visual_spec_document.project_ids[0]
     const project = project_id && getProject(state, project_id)
     const can_edit = allow_edit !== false && visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
@@ -195,6 +196,8 @@ function mapStateToProps(state, props) {
         preview_image_url: preview_url,
         hires_url: visual_spec_document.hires_url,
         download_url: visual_spec_document.download_url,
+        content_type,
+        is_image,
         visual_spec_document: visual_spec_document,
         visual_spec_annotations,
         annotated_visual_spec_document_id,
