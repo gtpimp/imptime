@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getAnnotatedVisualSpecDocument, ensureAnnotatedVisualSpecDocumentsLoaded } from '../../actions/AnnotatedVisualSpecDocuments'
-import {DropTarget} from 'react-dnd';
-import {DndTypes} from '../../actions/Dnd'
 import '../../sass/visual-spec-document-gallery.scss'
 import VisualSpecDocumentGalleryImage from './VisualSpecDocumentGalleryImage'
+
+const ANNOTATION_SIZE = 60
 
 class VisualSpecDocumentGalleryFullScreenImage extends Component {
 
@@ -28,6 +28,7 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
             <div>
               <VisualSpecDocumentGalleryImage annotated_visual_spec_document_id={annotated_visual_spec_document_id}
                                               render_quality='hires'
+                                              annotation_size={ANNOTATION_SIZE}
                                               image_class='visual_spec_document_gallery__image--fullsize'
                                               el_img_element_unique_id={img_element_unique_id}
                                               show_annotations={true} />
@@ -46,34 +47,6 @@ function mapStateToProps(state, props) {
         annotated_visual_spec_document_id,
         visual_spec_document,
         img_element_unique_id
-    }
-}
-
-const headingTarget = {
-    drop: (props, monitor, component) => {
-        const {annotated_visual_spec_document_id, img_element_unique_id} = props 
-        const distance_moved = monitor.getDifferenceFromInitialOffset()
-        const child_pos = monitor.getClientOffset()
-        const img_element = document.getElementById(img_element_unique_id)
-        const img_size = img_element.getBoundingClientRect()
-        return { annotated_visual_spec_document_id: annotated_visual_spec_document_id,
-                 child_pos: child_pos,
-                 distance_moved: distance_moved,
-                 parent_pos: img_size }
-    },
-    hover: (props, monitor, component) => {
-    },
-    canDrop: (props, monitor) => {
-        return true;
-    }
-
-}
-
-function collectDrop(connect, monitor) {
-    return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop()
     }
 }
 

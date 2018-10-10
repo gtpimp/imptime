@@ -15,7 +15,8 @@ import {
 } from '../../actions/AnnotatedVisualSpecDocuments'
 import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
 
-export const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
+const ANNOTATION_SHAPES = [ "circle", "square", "arrow" ]
+const DEFAULT_ANNOTATION_SIZE = 25
 
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
@@ -131,7 +132,7 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     render() {
         const { annotated_visual_spec_document_id, preview_image_url, is_active, isOver, isDragging,
-                visual_spec_annotations, can_edit,
+                visual_spec_annotations, can_edit, annotation_size,
                 connectDragSource, connectDropTarget,
                 img_element_unique_id} = this.props
         const { visual_spec_document_image_loaded } = this.state
@@ -154,7 +155,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                           <VisualSpecAnnotation key={visual_spec_annotation.id}
                                                 can_edit={can_edit}
                                                 container_img_element_unique_id={img_element_unique_id}
-                                                annotation_size_px={25}
+                                                annotation_size_px={annotation_size}
                                                 tooltips_enabled={false}
                                                 visual_spec_annotation={visual_spec_annotation} />
                       )
@@ -176,6 +177,7 @@ class VisualSpecDocumentGalleryImage extends Component {
 
 function mapStateToProps(state, props) {
     const { annotated_visual_spec_document_id, is_active, onSelected, allow_edit,
+            annotation_size,
             el_img_element_unique_id, render_quality, image_class, show_annotations } = props
 
     const annotated_visual_spec_document = getAnnotatedVisualSpecDocument(state, annotated_visual_spec_document_id)
@@ -203,7 +205,8 @@ function mapStateToProps(state, props) {
         image_class,
         show_annotations,
         can_edit,
-        is_invalidated
+        is_invalidated,
+        annotation_size: annotation_size || DEFAULT_ANNOTATION_SIZE
     }
 }
 

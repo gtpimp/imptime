@@ -191,7 +191,7 @@ const headingSource = {
     },
     endDrag(props, monitor, component) {
         const { visual_spec_annotation,
-                onDelete, shape, can_edit } = props
+                shape, can_edit } = props
         if ( ! can_edit ) {
             return
         }

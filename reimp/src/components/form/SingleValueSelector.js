@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
-import { map, filter, includes, keys, keyBy, find } from 'lodash'
+import { map, filter, includes, keys, keyBy, find, size } from 'lodash'
 import { optionSelected, getBestOptions } from '../../actions/OptionRemember'
 import '../../sass/single-value-selector.css'
 
@@ -130,8 +130,8 @@ export class SingleValueSelector extends Component {
     }
 
     render() {
-
-        const { placeholder } = this.props
+        const { placeholder, only_show_options_if_filtered, value } = this.props
+        const show_options = !only_show_options_if_filtered || size(value)>0
         
         return (
             <div className="single-value-selector">
@@ -146,7 +146,7 @@ export class SingleValueSelector extends Component {
                   {this.render_best_suggestions()}
                 </div>
                 <div className="single-value-selector__suggestions">
-                  {this.render_suggestions()}
+                  { show_options && this.render_suggestions()}
                 </div>
             </div>
         )
@@ -156,7 +156,8 @@ export class SingleValueSelector extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { options, value, auto_focus, placeholder, rememberer_key, onFilterChanged } = props
+    const { options, value, auto_focus, placeholder, rememberer_key,
+            onFilterChanged, only_show_options_if_filtered } = props
 
     const best_options = getBestOptions(state, rememberer_key)
     
@@ -167,7 +168,8 @@ function mapStateToProps(state, props) {
         placeholder: placeholder || "",
         rememberer_key: rememberer_key || placeholder,
         best_options,
-        onFilterChanged
+        onFilterChanged,
+        only_show_options_if_filtered: only_show_options_if_filtered === true
     }
 }
 
