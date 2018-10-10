@@ -50,6 +50,7 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
                  tabIndex="0"
                  key={annotated_visual_spec_document_id}>
               <div className={css`height: ${header_height}px;
+                                  background-color: ${theme.colours.page_background}; 
                                   position: fixed;
                                   padding-left: 12px;
                                   padding-right: 3px;
@@ -63,8 +64,10 @@ class VisualSpecDocumentGalleryFullScreenImage extends Component {
                   <div className={css`display:flex;`}>
                     {visual_spec_document.name}
                   </div>
-                  <div className={css`display: flex; align-items: center`}>
-                    <VisualSpecToolbar annotated_visual_spec_document_id={annotated_visual_spec_document_id} />
+                  <div className={css`display: flex; 
+                                      align-items: center; `}>
+                    <VisualSpecToolbar annotated_visual_spec_document_id={annotated_visual_spec_document_id}
+                                       onClose={this.onCancelFullScreen}/>
                     <VisualSpecAnnotationToolbar />
                     <div className={cx("icon--black-close",
                                        css`float: right;

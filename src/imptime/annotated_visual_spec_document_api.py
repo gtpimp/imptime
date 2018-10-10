@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from visual_spec_document_serializer import VisualSpecDocumentSerializer
 from annotated_visual_spec_document_serializer import AnnotatedVisualSpecDocumentSerializer
+from imptime.models import FeatureHistory, IssueHistory
 
 logger = logging.getLogger(__name__)
 
@@ -53,3 +54,30 @@ class AnnotatedVisualSpecDocumentViewSet(BaseViewSet):
     def _enrich_qs(self, qs):
         qs = qs.prefetch_related('annotations')
         return qs
+
+    def update(self, request, pk):
+        raise Exception("Need an update otherwise delete isn't detected by django-rest-framework")
+    
+    def delete(self, request, pk):
+        try:
+            annotated_visual_spec_document_id = pk
+            annotated_visual_spec_document = self.allowed_annotated_visual_spec_documents().get(pk=annotated_visual_spec_document_id)
+            doc = annotated_visual_spec_document.visual_spec_document
+            vs_features = [x for x in annotated_visual_spec_document.visual_spec_features.all()]
+            vs_issues = [y for y in annotated_visual_spec_document.visual_spec_issues.all()]
+            annotated_visual_spec_document.delete()
+            for vs_feature in vs_features:
+                FeatureHistory.add_history(request.user, vs_feature.feature, "removing attachment", doc.name, "")
+                vs_feature.feature.save()
+
+            for vs_issue in vs_issues:
+                IssueHistory.add_history(request.user, vs_issue.issue, "removing attachment", doc.name, "")
+                vs_issue.issue.save()
+            data = {'status': 'success'}
+        
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+    

@@ -238,7 +238,7 @@ class VisualSpecProject(BaseModel):
 
 class VisualSpecIssue(BaseModel):
     deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues', null=True)
-    annotated_visual_spec_document = ProtectedForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_issues')
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_issues')
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_issues')
     order = models.IntegerField(default=1)
 
@@ -299,7 +299,7 @@ class VisualSpecIssue(BaseModel):
 
 class VisualSpecFeature(BaseModel):
     deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_features', null=True)
-    annotated_visual_spec_document = ProtectedForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_features')
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_features')
     feature = ProtectedForeignKey("imptime.Feature", related_name='visual_spec_features')
     order = models.IntegerField(default=1)
 
