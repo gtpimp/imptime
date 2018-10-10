@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import IssueHistory, Issue
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
-from imptime.models import VisualSpecDocument, VisualSpecProject, VisualSpecIssue
+from imptime.models import VisualSpecDocument, VisualSpecProject, VisualSpecIssue, VisualSpecFeature
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +101,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                 annotated_vsd = self.allowed_annotated_visual_spec_documents().get(pk=annotated_vsd_id)
 
                 if field_name == 'annotated_visual_spec_document_id_after':
-                    after_vsd = self.allowed_annotated_visual_spec_documents().get(pk=new_value)
+                    annotated_after_vsd = self.allowed_annotated_visual_spec_documents().get(pk=new_value)
                     if issue_id is not None:
                         VisualSpecIssue.insert_after(issue_id, annotated_vsd, annotated_after_vsd)
                         issue = self.allowed_issue(issue_id)
@@ -124,101 +124,3 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-
-    @detail_route(methods=['POST'])
-    def associateWithIssue(self, request, pk):
-        try:
-            params = request.data
-            visual_spec_document_id = pk
-            issue_id = params['issue_id']
-            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
-            annotated_visual_spec_document = AnnotatedVisualSpecDocument.objects.create(visual_spec_document=visual_spec_document)
-            issue = self.allowed_issues().get(pk=issue_id)
-            issue_id = issue.id
-            VisualSpecIssue.insert_at_the_end(issue_id, annotated_visual_spec_document.id)
-            issue.save()
-            data = {'status': 'success', 'payload': [annotated_visual_spec_document_id]}
-
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
-
-        return HttpResponse(JSONRenderer().render(data))
-
-    @detail_route(methods=['POST'])
-    def unassociateWithIssue(self, request, pk):
-        try:
-            params = request.data
-            visual_spec_document_id = pk
-            issue_id = params['issue_id']
-            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id).id
-            issue = self.allowed_issues().get(pk=issue_id)
-            issue_id = issue.id
-            vsi = VisualSpecIssue.objects.filter(issue_id=issue_id, annotated_visual_spec_document__visual_spec_document_id=visual_spec_document_id).first()
-            if vsi is not None:
-                annotated_visual_spec_document = vsi.annotated_visual_spec_document
-                vsi.delete()
-                annotated_visual_spec_document.delete()
-            issue.save()
-            data = {'status': 'success', 'payload': [visual_spec_document_id]}
-
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
-
-        return HttpResponse(JSONRenderer().render(data))
-
-    @detail_route(methods=['POST'])
-    def unassociateWithProject(self, request, pk):
-        try:
-            params = request.data
-            visual_spec_document_id = pk
-            project_id = params['project_id']
-            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
-            project = self.allowed_projects().get(pk=project_id)
-            project_id = project.id
-            vsi = VisualSpecProject.objects.filter(project_id=project_id, visual_spec_document_id=visual_spec_document_id).first()
-            if vsi is not None:
-                vsi.delete()
-            if VisualSpecProject.objects.filter(visual_spec_document_id=visual_spec_document_id).count() == 0:
-                vsd.deleted = True
-                vsd.save()
-            project.save()
-            data = {'status': 'success', 'payload': [visual_spec_document_id]}
-
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
-
-        return HttpResponse(JSONRenderer().render(data))
-
-
-    @detail_route(methods=['POST'])
-    def cloneIssueForDoc(self, request, pk):
-        try:
-            params = request.data
-            visual_spec_document_id = pk
-            visual_spec_document = self.allowed_visual_spec_documents().get(pk=visual_spec_document_id)
-            issue_id = params['issue_id']
-            issue_to_clone = self.allowed_issue(issue_id)
-            if not self.logged_in_permissions(issue_to_clone.project.business).has_edit_issues:
-                raise Exception("Can't add issues")
-
-            new_issue = issue_to_clone.copy(logged_in_user=request.user)
-
-            SprintIssueOrder.insert_after(new_issue, set_after_this_issue=issue_to_clone)
-            IssueHistory.add_history(request.user, new_issue,
-                                     "created", "", new_issue.number)
-
-            VisualSpecIssue.objects.create(visual_spec_document=visual_spec_document,
-                                           issue=new_issue,
-                                           order=0)
-
-            data = {'status': 'success',
-                    'payload': {'new_issue_id': new_issue.id,
-                                'new_visual_spec_document_id': visual_spec_document.id}}
-            return HttpResponse(JSONRenderer().render(data))
-
-        except Exception, ex:
-            logger.exception(ex)
-            return self.error_response(ex)
