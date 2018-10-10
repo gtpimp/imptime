@@ -129,6 +129,18 @@ class VisualSpecDocument(BaseModel):
 class AnnotatedVisualSpecDocument(BaseModel):
     visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='annotated_visual_spec_document')
 
+    @classmethod
+    def clone(self, annotated_visual_spec_document):
+        clone = annotated_visual_spec_document
+        annotations = annotated_visual_spec_document.annotations.all()
+        clone.id = None
+        clone.save()
+        for annotation in annotations:
+            annotation.id = None
+            annotation.annotated_visual_spec_document = clone
+            annotation.save()
+        return clone
+    
 class VisualSpecAnnotation(BaseModel):
 
     SHAPES = [ ('circle', 'Circle'),
@@ -893,12 +905,16 @@ class Feature(BaseModel):
                                  "", "for feature %s %s" % (self.number, self.name))
 
         for vsf in self.visual_spec_features.all():
-            vsd = vsf.visual_spec_document
-            _, created = VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
+            annotated_vsd = AnnotatedVisualSpecDocument.clone(vsf.annotated_visual_spec_document)
+            _, created = VisualSpecIssue.objects.get_or_create(annotated_visual_spec_document=annotated_vsd,
                                                                issue=issue,
                                                                defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
             if created:
-                IssueHistory.add_history(logged_in_user, issue, "linked attachment from feature %s %s" % (self.number, self.name), "", vsd.name)
+                IssueHistory.add_history(logged_in_user,
+                                         issue,
+                                         "linked attachment from feature %s %s" % (self.number, self.name),
+                                         "",
+                                         annotated_vsd.visual_spec_document.name)
 
         issue.save()
         self.save()
