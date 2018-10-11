@@ -38,7 +38,9 @@ class FlatFeatureNavigation extends Component {
         const {dispatch, list_key, project_id} = this.props
         if (project_id) {
             dispatch(fetchFeaturesIfNeeded(list_key))
-            dispatch(ensureProjectsLoaded([project_id]))
+            if ( project_id ) {
+                dispatch(ensureProjectsLoaded([project_id]))
+            }
             this.refresh()
         }
     }

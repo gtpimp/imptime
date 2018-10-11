@@ -1,30 +1,22 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { startCandidateFeature } from '../../actions/Features'
 import { getGloballySelectedProjectId } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
+import FlatFeatureNavigation from '../../components/FlatFeatureNavigation'
 
-class FeaturesToolbarPanel extends Component {
-
-    onNewFeatureClick = () => {
-        const { dispatch, last_selected_feature_id, project_id } = this.props
-        dispatch(startCandidateFeature(project_id, last_selected_feature_id))
-    }
+class FlatFeaturesToolbarPanel extends Component {
 
     onToggleFlat = (tree_view) => {
         const { project_id, history } = this.props
-        history.push('/projects/' + project_id + '/features/flat')
+        history.push('/projects/' + project_id + '/features')
     }
     
     render() {
-        const { is_tree_view } = this.props
+        const { navigateToFeature, is_tree_view, list_key } = this.props
         return (
             <div className="toolbar-panel">
-              <div className="button toolbar-button--small button--large button--primary"
-                   onClick={this.onNewFeatureClick}>
-                + New Feature
-              </div>
+              <FlatFeatureNavigation list_key={list_key} navigateToFeature={navigateToFeature} />
               <ToggleButton value={is_tree_view}
                             onChange={this.onToggleFlat}
                             on_label={"Tree"}
@@ -36,13 +28,17 @@ class FeaturesToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const { custom_props } = props
+    const { navigateToFeature, list_key } = custom_props
     const project_id = getGloballySelectedProjectId(state)
-    const is_tree_view = true
+    const is_tree_view = false
     
     return {
         project_id,
-        is_tree_view
+        is_tree_view,
+        navigateToFeature,
+        list_key
     }
 }
 
-export default withRouter(connect(mapStateToProps)(FeaturesToolbarPanel))
+export default withRouter(connect(mapStateToProps)(FlatFeaturesToolbarPanel))

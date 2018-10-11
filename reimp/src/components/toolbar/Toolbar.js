@@ -13,6 +13,7 @@ import SprintDashboardToolbarPanel from './SprintDashboardToolbarPanel'
 import SprintRateToolbarPanel from './SprintRateToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import FeaturesToolbarPanel from './FeaturesToolbarPanel'
+import FlatFeaturesToolbarPanel from './FlatFeaturesToolbarPanel'
 import NudgeToolbarPanel from './NudgeToolbarPanel'
 import CompanyProblemToolbarPanel from './CompanyProblemToolbarPanel'
 import ScheduleToolbarPanel from './ScheduleToolbarPanel'
@@ -28,7 +29,7 @@ import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
 import { css } from 'react-emotion'
 import { default_theme as theme } from '../../theme/default'
-import { getPageName } from '../../actions/Page'
+import { getPageName, getToolbarNames, getToolbarParams } from '../../actions/Page'
 
 const ToolbarDiv = css`
 display: flex;
@@ -69,25 +70,27 @@ class Toolbar extends Component {
             case 'company_problem':
                 return <CompanyProblemToolbarPanel key='company_problem' {...this.props} />
             case 'features':
-                return <FeaturesToolbarPanel key="features-panel"/>
+                return <FeaturesToolbarPanel key="features-panel" {...this.props}/>
+            case 'flat-features':
+                return <FlatFeaturesToolbarPanel key="flat-features-panel" {...this.props}/>
             case 'issue':
-                return <IssueToolbarPanel key="issue-panel"/>
+                return <IssueToolbarPanel key="issue-panel" {...this.props}/>
             case 'issues':
-                return <IssuesToolbarPanel key="issues-panel"/>
+                return <IssuesToolbarPanel key="issues-panel" {...this.props}/>
             case 'list':
-                return <ListToolbarPanel key="list-panel"/>
+                return <ListToolbarPanel key="list-panel"{...this.props} />
             case 'project-dashboards':
                 return <ProjectDashboardsToolbarPanel key="project-dashboards-toolbar-panel" {...this.props}/>
             case 'project-dashboard':
-                return <ProjectDashboardToolbarPanel key="project-dashboard-panel"/>
+                return <ProjectDashboardToolbarPanel key="project-dashboard-panel"{...this.props} />
             case 'projects':
-                return <ProjectsToolbarPanel key="projects-panel"/>
+                return <ProjectsToolbarPanel key="projects-panel"{...this.props} />
             case 'sprint-dashboard':
-                return <SprintDashboardToolbarPanel key="sprint-dashboard-panel"/>
+                return <SprintDashboardToolbarPanel key="sprint-dashboard-panel"{...this.props} />
             case 'sprint-rate':
-                return <SprintRateToolbarPanel key="sprint-rate-panel"/>
+                return <SprintRateToolbarPanel key="sprint-rate-panel"{...this.props} />
             case 'sprints':
-                return <SprintsToolbarPanel key="sprints-panel"/>
+                return <SprintsToolbarPanel key="sprints-panel"{...this.props} />
             case 'cost-summary':
                 return <CostSummaryToolbarPanel key="cost-summary-panel" {...this.props}/>
             case 'project-statement':
@@ -139,10 +142,13 @@ class Toolbar extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const page_toolbars = state.page.toolbar_names || []
+    const page_toolbars = getToolbarNames(state)
+    const page_name = getPageName(state)
+    const params = getToolbarParams(state)
     return {
         panelIds: page_toolbars,
-        page_name: getPageName(state)
+        page_name,
+        custom_props: params
     }
 }
 

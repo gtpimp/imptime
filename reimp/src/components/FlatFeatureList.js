@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map, concat } from 'lodash'
+import { AutoSizer } from 'react-virtualized'
+import { css }  from 'emotion'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { logged_in_user } from '../actions/Auth'
 import 'react-virtualized/styles.css';
@@ -23,6 +25,8 @@ import {
     fetchFeaturesIfNeeded,
 } from '../actions/Features'
 import FlatFeature from './FlatFeature'
+
+const HACK_NUMBER_TO_PREVENT_DOUBLE_SCROLL = 40
 
 class FlatFeatureList extends Component {
 
@@ -78,7 +82,14 @@ class FlatFeatureList extends Component {
         const { features_as_structured_tree } = this.props
         this.refs = {}
         return (
-            this.renderSubTree([], features_as_structured_tree[0])
+            <AutoSizer>
+              {({width, height}) => (
+                  <div className={css`overflow:auto`}
+                       style={{height:`${height-HACK_NUMBER_TO_PREVENT_DOUBLE_SCROLL}px`, width:`${width}px`}}>
+                    {this.renderSubTree([], features_as_structured_tree[0])}
+                  </div>
+              )}
+            </AutoSizer>
         )
     }
 }

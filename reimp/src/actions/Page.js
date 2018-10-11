@@ -1,3 +1,5 @@
+import { get } from 'lodash'
+
 export const INIT_PAGE = 'INIT_PAGE'
 export const SET_PAGE_TOOLBARS = 'SET_PAGE_TOOLBARS'
 export const UPDATE_PAGE_SIDEBAR = 'UPDATE_PAGE_SIDEBAR'
@@ -31,14 +33,23 @@ export function hide_sidebar(page_key, sidebar_name) {
     }
 }
 
-export function set_toolbars(page_key, toolbar_names, page_name="") {
+export function set_toolbars(page_key, toolbar_names, page_name="", params=null) {
 
     return {
         type: SET_PAGE_TOOLBARS,
-        page_key: page_key,
-        toolbar_names: toolbar_names,
-        page_name: page_name
+        page_key,
+        toolbar_names,
+        page_name,
+        params
     }
+}
+
+export function getToolbarNames(state) {
+    return get(state, ["page", "toolbar_names"], [])
+}
+
+export function getToolbarParams(state) {
+    return get(state, ["page", "params"], [])
 }
 
 export function select_issues(page_key, issue_ids) {

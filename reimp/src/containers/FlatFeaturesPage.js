@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom'
+import { css } from 'emotion'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {setFeatureBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__FEATURE_LIST,
-    PAGE_KEY__FEATURES_PAGE
+    PAGE_KEY__FLAT_FEATURES_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     update_list_filter,
@@ -20,14 +21,17 @@ import {
     setGloballySelectedProjectId
 } from '../actions/Page'
 import FlatFeatureList from '../components/FlatFeatureList'
-import FlatFeatureNavigation from '../components/FlatFeatureNavigation'
-import ReactToPrint from "react-to-print";
+import ReactToPrint from "react-to-print"
+import Toolbar from '../components/toolbar/Toolbar'
+import Splitter from '../components/Splitter'
 
 class FlatFeaturesPage extends Component {
 
     componentDidMount() {
         const {dispatch, project_id, list_key, page_key} = this.props
-        dispatch(set_toolbars(page_key, ['features']))
+        const params = { navigateToFeature: this.onNavigateToFeature,
+                         list_key: list_key }
+        dispatch(set_toolbars(page_key, ['flat-features'], "", params))
         const new_filter = { project_id: project_id }
         dispatch(update_list_filter(list_key, Object.assign({}, new_filter)))
         dispatch(setGloballySelectedProjectId(project_id))
@@ -80,18 +84,17 @@ class FlatFeaturesPage extends Component {
         const {list_key, project_id, project } = this.props
 
         setBrowserTitle(project.name)
+
+        /* <ReactToPrint
+            trigger={() => <button>Print</button>}
+            content={() => this.componentRef}
+            debug={true}
+            />
+          */
         
         return (
-            <div>
-
-              <ReactToPrint
-                  trigger={() => <button>Print</button>}
-                  content={() => this.componentRef}
-                  debug={true}
-              />
-
-              <FlatFeatureNavigation list_key={list_key} navigateToFeature={this.onNavigateToFeature} />
-              
+            <div className={css`width:100%;height:100%`}>
+              <Toolbar />
               <FlatFeatureList list_key={list_key}
                                project_id={project_id}
                                onReactRefsCreated={this.onFeatureRefsCreated}
@@ -104,7 +107,7 @@ class FlatFeaturesPage extends Component {
 function mapStateToProps(state, props) {
     const default_filter = props.default_filter || {}
     let list_key = props.list_key || LIST_KEY__FEATURE_LIST
-    let page_key = props.page_key || PAGE_KEY__FEATURES_PAGE
+    let page_key = props.page_key || PAGE_KEY__FLAT_FEATURES_PAGE
     const filter = getListFilter(state, list_key)
 
     const project_id = props.match.params.projectId
