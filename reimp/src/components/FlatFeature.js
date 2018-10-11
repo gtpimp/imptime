@@ -68,20 +68,25 @@ class FlatFeature extends Component {
 
     render() {
         const { feature, parent_features } = this.props
-        const is_root_element = size(parent_features) === 1
         if ( ! feature ) {
             return null
         }
+        
+        const is_root_element = size(parent_features) === 0
         if ( is_root_element ) {
             return null
         }
+        
+        const is_top_level = size(parent_features) === 1
         const is_empty = size(feature.testables) === 0 && size(feature.description) === 0 && size(feature.annotated_visual_spec_document_ids) === 0
-        if ( is_empty ) {
+        if ( !is_top_level && is_empty ) {
             return null
         }
+        const autoForwardedInnerRef = this.props.innerRef
         
         return (
-            <div className={css`margin-bottom: 50px;`}>
+            <div ref={autoForwardedInnerRef}
+                 className={css`margin-bottom: 50px;`}>
               <div>{this.renderFeatureDescription()}</div>
               <div>{this.renderFeatureImages()}</div>
               <div>{this.renderFeatureTestables()}</div>
@@ -97,8 +102,12 @@ const mapStateToProps = (state, props) => {
     return {
         parent_features, 
         feature,
-        annotated_visual_spec_document_ids,
+        annotated_visual_spec_document_ids
     }
 }
 
-export default connect(mapStateToProps)(FlatFeature)
+const ConnectedFlatFeature = connect(mapStateToProps)(FlatFeature)
+
+export default React.forwardRef((props, ref) => (
+    <ConnectedFlatFeature {...props} innerRef={ref} />
+))

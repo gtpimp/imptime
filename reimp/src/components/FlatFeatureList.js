@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
+import { map, concat } from 'lodash'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { logged_in_user } from '../actions/Auth'
 import 'react-virtualized/styles.css';
@@ -27,12 +27,13 @@ import FlatFeature from './FlatFeature'
 class FlatFeatureList extends Component {
 
     componentDidMount() {
-        const {dispatch, list_key, project_id} = this.props
+        const {dispatch, list_key, project_id, onReactRefsCreated} = this.props
         if (project_id) {
             dispatch(fetchFeaturesIfNeeded(list_key))
             dispatch(ensureProjectsLoaded([project_id]))
             this.refresh()
         }
+        onReactRefsCreated(this.refs)
     }
 
     componentWillReceiveProps(new_props) {
@@ -42,26 +43,40 @@ class FlatFeatureList extends Component {
         this.refresh(new_props)
     }
 
+    componentDidUpdate() {
+        const { onReactRefsCreated } = this.props
+        onReactRefsCreated(this.refs)
+    }
+
     refresh(these_props) {
+    }
+
+    renderFeature(parent_features, feature) {
+        const ref = React.createRef()
+        this.refs[feature.id] = ref
+        return (
+            <FlatFeature ref={ref} parent_features={parent_features} feature={feature} />
+        )
     }
 
     renderSubTree(parent_features, feature) {
         if ( ! feature ) {
             return null
         }
-        parent_features.push(feature)
+        
         const res = (
             <div key={`feature_${feature.id}`}>
-              <FlatFeature parent_features={parent_features} feature={feature} />
-              { map(feature.children, (child) => this.renderSubTree(parent_features, child)) }
+              {this.renderFeature(parent_features, feature)}
+              { map(feature.children, (child) => this.renderSubTree(concat(parent_features, [feature]), child)) }
             </div>
         )
-        parent_features.pop(feature)
+        
         return res
     }
     
     render() {
         const { features_as_structured_tree } = this.props
+        this.refs = {}
         return (
             this.renderSubTree([], features_as_structured_tree[0])
         )
@@ -77,7 +92,7 @@ const makeMapStateToProps = () => {
     const selFeatureObjectsToRender = makeSelFeatureObjectsToRender()
     const selFeaturesAsStructuredTree = makeSelFeaturesAsStructuredTree()
     const mapStateToProps = (state, props) => {
-        const {list_key, header_list} = props
+        const {list_key, header_list, onReactRefsCreated} = props
         const filter = getListFilter(state, list_key)
         const project_id = filter.project_id || null
         const project = getProject(state, project_id) || {}
@@ -107,7 +122,8 @@ const makeMapStateToProps = () => {
             is_loading: isLoading(state, list_key),
             last_updated: getLastUpdated(state, list_key),
             header_list: header_list,
-            logged_in_user_id
+            logged_in_user_id,
+            onReactRefsCreated
         }
     }
     return mapStateToProps

@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import ReactDOM from 'react-dom';
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import {setFeatureBreadcrumbsHelper} from '../actions/Breadcrumbs'
@@ -19,6 +20,7 @@ import {
     setGloballySelectedProjectId
 } from '../actions/Page'
 import FlatFeatureList from '../components/FlatFeatureList'
+import FlatFeatureNavigation from '../components/FlatFeatureNavigation'
 import ReactToPrint from "react-to-print";
 
 class FlatFeaturesPage extends Component {
@@ -63,6 +65,16 @@ class FlatFeaturesPage extends Component {
         }
     }
 
+    onFeatureRefsCreated = (refs) => {
+        this.feature_refs = refs
+    }
+
+    onNavigateToFeature = (feature_id) => {
+        const ref = this.feature_refs[feature_id]
+        const el_feature = ReactDOM.findDOMNode(ref.current)
+        el_feature.scrollIntoView()
+    }
+
     render() {
 
         const {list_key, project_id, project } = this.props
@@ -77,9 +89,12 @@ class FlatFeaturesPage extends Component {
                   content={() => this.componentRef}
                   debug={true}
               />
+
+              <FlatFeatureNavigation list_key={list_key} navigateToFeature={this.onNavigateToFeature} />
               
               <FlatFeatureList list_key={list_key}
                                project_id={project_id}
+                               onReactRefsCreated={this.onFeatureRefsCreated}
                                ref={el=>(this.componentRef=el)} />
             </div>
         )
