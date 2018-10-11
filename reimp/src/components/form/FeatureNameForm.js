@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field, formValueSelector } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './TextAreaField'
 import '../../sass/text-component.scss'
 
 class FeatureNameForm extends Component {
@@ -14,7 +14,7 @@ class FeatureNameForm extends Component {
     renderTextarea(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="1"
                 maxLength="300"
                 className="textarea textarea--text-component textarea--title"

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './TextAreaField'
 import OtherUser from '../../components/OtherUser'
 
 class IssueCommentForm extends Component {
@@ -25,10 +25,10 @@ class IssueCommentForm extends Component {
         }
     }
 
-    renderTextarea(field) {
+    renderTextarea(field) { 
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="1"
                 className="textarea textarea--text-component textarea--comment"
                 placeholder="Comment"

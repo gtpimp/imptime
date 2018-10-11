@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './form/TextAreaField'
 import '../sass/text-component.scss'
-
+ 
 class TextComponent extends Component {
 
     handleChange(e) {
@@ -30,7 +30,7 @@ class TextComponent extends Component {
         const {placeholder, value} = this.props
         return (
             <div className="text-component--edit">
-                  <Textarea
+                  <TextAreaField
                       rows="1"
                       maxLength="3000"
                       className="textarea textarea--text-component"

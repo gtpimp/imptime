@@ -5,7 +5,6 @@ import PropertyStackComponent from '../PropertyStackComponent'
 import { Field, reduxForm } from 'redux-form';
 import { getSprint, ensureSprintsLoaded } from '../../actions/Sprints'
 import { getProject, ensureProjectsLoaded } from '../../actions/Projects'
-import 'react-select/dist/react-select.css';
 import UserDropdown from './UserDropdown';
 import 'react-datepicker/dist/react-datepicker.css';
 

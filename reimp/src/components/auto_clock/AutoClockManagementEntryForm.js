@@ -6,7 +6,7 @@ import PropertyStack from '../PropertyStack'
 import PropertyStackComponent from '../PropertyStackComponent'
 import { map } from 'lodash'
 import { Field, reduxForm } from 'redux-form'
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from '../form/TextAreaField'
 import { default_theme as theme } from '../../theme/default'
 
 class AutoClockManagementEntryForm extends Component {
@@ -51,7 +51,7 @@ class AutoClockManagementEntryForm extends Component {
     renderDescriptionField(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="10"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"

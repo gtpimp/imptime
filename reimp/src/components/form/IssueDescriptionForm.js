@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './TextAreaField'
 
 class IssueDescriptionForm extends Component {
 
@@ -30,7 +30,7 @@ class IssueDescriptionForm extends Component {
     renderTextarea(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="10"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"

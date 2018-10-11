@@ -21,15 +21,14 @@ import {
     setGloballySelectedProjectId
 } from '../actions/Page'
 import FlatFeatureList from '../components/FlatFeatureList'
-import ReactToPrint from "react-to-print"
 import Toolbar from '../components/toolbar/Toolbar'
-import Splitter from '../components/Splitter'
 
 class FlatFeaturesPage extends Component {
 
     componentDidMount() {
         const {dispatch, project_id, list_key, page_key} = this.props
         const params = { navigateToFeature: this.onNavigateToFeature,
+                         getComponentRefForPrinting: this.getRefToPrint,
                          list_key: list_key }
         dispatch(set_toolbars(page_key, ['flat-features'], "", params))
         const new_filter = { project_id: project_id }
@@ -79,18 +78,16 @@ class FlatFeaturesPage extends Component {
         el_feature.scrollIntoView()
     }
 
+    getRefToPrint = () => {
+        return this.componentRef
+    }
+
     render() {
 
         const {list_key, project_id, project } = this.props
 
         setBrowserTitle(project.name)
 
-        /* <ReactToPrint
-            trigger={() => <button>Print</button>}
-            content={() => this.componentRef}
-            debug={true}
-            />
-          */
         
         return (
             <div className={css`width:100%;height:100%`}>

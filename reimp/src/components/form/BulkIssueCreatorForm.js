@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './TextAreaField'
 
 class BulkIssueCreatorForm extends Component {
 
@@ -27,7 +27,7 @@ class BulkIssueCreatorForm extends Component {
     renderTextarea(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 className="textarea textarea--text-component bulk-issue-creator-form__textarea"
                 style={{ minHeight:200 }}
                 placeholder="Bulk Text"

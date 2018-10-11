@@ -1,11 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './TextAreaField'
 import { getSprint } from '../../actions/Sprints'
 import { getProject } from '../../actions/Projects'
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -38,7 +37,7 @@ class SprintDeadlineForm extends Component {
     renderDescriptionField(field) {
         const { input } = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="1"
                 maxLength="3000"
                 className="textarea textarea--text-component textarea--description"

@@ -4,7 +4,6 @@ from django.utils.functional import curry
 from django.db.models import Sum, Count, Q, F, Max, Min
 from django.contrib.auth.models import Group
 import time
-from fields import ButtonRadioSelect
 from time import mktime
 from datetime import datetime
 import math
@@ -1602,8 +1601,8 @@ class FinanceChecklistForm(forms.ModelForm):
 
 class QuickClockerForm(forms.Form):
 
-    user = UserModelChoiceField(queryset=User.objects.none(), required=True, widget=ButtonRadioSelect())
-    project = forms.ModelChoiceField(required=True, queryset=timepiece.Project.objects.none(), widget=ButtonRadioSelect())
+    user = UserModelChoiceField(queryset=User.objects.none(), required=True)
+    project = forms.ModelChoiceField(required=True, queryset=timepiece.Project.objects.none())
 
     def __init__(self, logged_in_user, users, projects, *args, **kwargs):
         self.users = users
@@ -1616,7 +1615,7 @@ class QuickClockerForm(forms.Form):
         self.fields['project'].choices = [ (x.id, "<b>%s</b>     %s <span searchable_name='%s' style='font-size:9px'>(%s)</span>"%(x.business.name, x.name, (x.name.lower() + " " + x.business.name.lower()), x.status3.name)) for x in projects ]
 
 class QuickClockerClockOutForm(forms.Form):
-    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), label="", widget=ButtonRadioSelect())
+    entry = forms.ModelChoiceField(required=True, queryset=Entry.objects.none(), label="")
     clock_out_time = forms.DateTimeField(label="")
 
     def __init__(self, entries, *args, **kwargs):

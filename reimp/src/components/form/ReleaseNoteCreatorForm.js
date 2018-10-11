@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './TextAreaField'
 
 class ReleaseNoteCreatorForm extends Component {
 
@@ -19,7 +19,7 @@ class ReleaseNoteCreatorForm extends Component {
     renderHeaderTextarea(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 className="textarea textarea--text-component release-note-creator-form__textarea"
                 style={{ minHeight:50 }}
                 value={input.value}
@@ -31,7 +31,7 @@ class ReleaseNoteCreatorForm extends Component {
     renderContentTextarea(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 className="textarea textarea--text-component release-note-creator-form__textarea"
                 style={{ minHeight:200 }}
                 value={input.value}

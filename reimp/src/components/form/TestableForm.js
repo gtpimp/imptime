@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from './TextAreaField'
 
 class TestableForm extends Component {
 
@@ -28,7 +28,7 @@ class TestableForm extends Component {
     renderTextarea(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="1"
                 className="textarea textarea--text-component textarea--testable"
                 placeholder="Testable steps"

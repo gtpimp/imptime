@@ -45,6 +45,18 @@ background-size: ${theme.spacing.three};
 class IconButton extends Component {
     render() {
         const { icon, label, onButtonClick } = this.props
+
+        if (! onButtonClick ) {
+            return (
+                <div className={icon_button}>
+                  <div className={cx(icon_add, css`
+                  -webkit-mask: url(${icon}) no-repeat center;
+                  `)} data-tooltip={label}></div>
+                  <div className={button_label}>{ label }</div>
+                </div>
+            )
+        }
+        
         return (
             <button onClick={ onButtonClick } className={icon_button}>
               <div className={cx(icon_add, css`

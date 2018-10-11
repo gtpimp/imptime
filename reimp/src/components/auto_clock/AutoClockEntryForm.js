@@ -18,7 +18,7 @@ import PopupPanelHeading from '../PopupPanelHeading'
 import PopupPanelText from '../PopupPanelText'
 import PopupPanelSeparator from '../PopupPanelSeparator'
 import IssueSelectorForm from '../form/IssueSelectorForm'
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from '../form/TextAreaField'
 import PropertyStackComponent from '../PropertyStackComponent'
 import PropertyStack from '../PropertyStack'
 
@@ -79,7 +79,7 @@ class AutoClockEntryForm extends Component {
     renderDescriptionField(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="3"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"

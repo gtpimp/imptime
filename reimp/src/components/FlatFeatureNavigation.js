@@ -66,7 +66,9 @@ class FlatFeatureNavigation extends Component {
             return null
         }
         return (
-            <div className={menu_item_container} onClick={(evt) => this.onClickFeature(evt, feature)}>
+            <div key={`flat_feature_navigation_${feature.id}`}
+                 className={menu_item_container}
+                 onClick={(evt) => this.onClickFeature(evt, feature)}>
               {feature.name}
             </div>
         )

@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import PropertyStack from '../PropertyStack'
 import PropertyStackComponent from '../PropertyStackComponent'
 import { Field, reduxForm } from 'redux-form'
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from '../form/TextAreaField'
 
 class AutoClockQuickEntryForm extends Component {
 
@@ -15,7 +15,7 @@ class AutoClockQuickEntryForm extends Component {
     renderDescriptionField(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="5"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"

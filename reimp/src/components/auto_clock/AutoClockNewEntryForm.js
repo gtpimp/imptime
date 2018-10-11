@@ -5,7 +5,7 @@ import PropertyStack from '../PropertyStack'
 import PropertyStackComponent from '../PropertyStackComponent'
 import { Field, reduxForm } from 'redux-form'
 import { getAvailableAutoClockEntity } from '../../actions/AutoClock'
-import Textarea from 'react-expanding-textarea'
+import TextAreaField from '../form/TextAreaField'
 import AutoClockInlineIssue from './AutoClockInlineIssue'
 import PopupPanelHeading from '../PopupPanelHeading'
 import PopupPanelText from '../PopupPanelText'
@@ -24,7 +24,7 @@ class AutoClockNewEntryForm extends Component {
     renderDescriptionField(field) {
         const {input} = field
         return (
-            <Textarea
+            <TextAreaField
                 rows="3"
                 className="textarea textarea--text-component textarea--description"
                 placeholder="Description"

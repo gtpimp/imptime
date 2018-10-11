@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { reduxForm, Field } from 'redux-form';
-//import Textarea from 'react-expanding-textarea'
 import { getSprint } from '../../actions/Sprints'
 import SprintName from '../../components/SprintName'
 import { has_permission } from '../../actions/Users'
