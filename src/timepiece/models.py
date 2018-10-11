@@ -4097,8 +4097,13 @@ class Issue(BaseModel):
         do_dependancy_check = kwargs.pop('do_dependancy_check', True)
         super(Issue, self).save(*args, **kwargs)
         self.check_quality()
+
+        from imptime.models import Feature
+        
         params = { 'project_id': self.project_id,  #sic
-                   'sprint_id': self.project_id }
+                   'sprint_id': self.project_id,
+                   'feature_ids': [x.id for x in Feature.objects.filter(testables__implementing_issues=self.id)]
+        }
 
         if was_created:
             RefreshNotifier().notify_model_create(self, params)

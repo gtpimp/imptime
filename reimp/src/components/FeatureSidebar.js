@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
+import { map, keys } from 'lodash'
 import Timestamp from './Timestamp'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
@@ -13,6 +13,7 @@ import EditableFeatureTestable from './EditableFeatureTestable'
 import SidebarSectionTitle from './SidebarSectionTitle'
 import SidebarProperty from './SidebarProperty'
 import SidebarAddButton from './SidebarAddButton'
+import SidebarDetail from './SidebarDetail'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
 
@@ -71,6 +72,38 @@ class FeatureSidebar extends Component {
 
     hideAddVisualSpecDoc = () => {
         this.setState({adding_visual_spec_doc:false})
+    }
+
+    renderStatsStack() {
+        const { feature } = this.props
+        return (
+            <div>
+              <SidebarProperty key="nestedstatsstack">
+                <SidebarSectionTitle title="Nested stats" />
+                { map(keys(feature.nested_stats), function(key) {
+                      return (
+                          <SidebarDetail key={`nested_stats_${key}`}
+                                         label={key}>
+                            {feature.nested_stats[key]}
+                          </SidebarDetail>
+                      )
+                  }
+                  )}
+              </SidebarProperty>
+              <SidebarProperty key="statsstack">
+                <SidebarSectionTitle title="Feature stats" />
+                { map(keys(feature.nested_stats), function(key) {
+                      return (
+                          <SidebarDetail key={`nested_stats_${key}`}
+                                         label={key}>
+                            {feature.nested_stats[key]}
+                          </SidebarDetail>
+                      )
+                  }
+                  )}
+              </SidebarProperty>
+            </div>
+        )
     }
 
     renderAttachmentsStack() {
@@ -134,6 +167,7 @@ class FeatureSidebar extends Component {
 
                 { this.renderTestablesStack() }
                 { this.renderAttachmentsStack() }
+                { this.renderStatsStack() }
                 
                 <PropertyStackComponent>
                   <div onClick={this.onDeleteFeature} className="icon--small-delete" />

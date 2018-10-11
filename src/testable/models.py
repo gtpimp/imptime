@@ -29,6 +29,10 @@ class Testable(models.Model):
     def save(self, *args, **kwargs):
         super(Testable, self).save(*args, **kwargs)
         self.quality_error = self.check_quality()
+        if self.issue_id:
+            self.issue.save()
+        for feature in self.features.all():
+            feature.save()
 
     def copy(self):
         return Testable.objects.create(include_in_regression_test=self.include_in_regression_test,

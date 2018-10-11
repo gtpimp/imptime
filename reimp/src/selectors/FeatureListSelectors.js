@@ -3,7 +3,7 @@ import {
     ENTITY_KEY__FEATURE,
 } from '../actions/ItemListKeyRegistry'
 import { each, union, intersection, get, compact, map, size,
-         take, includes, filter, keyBy, values, sortBy } from 'lodash'
+         includes, filter, keyBy, values, sortBy } from 'lodash'
 import { getTreeFromFlatData } from 'react-sortable-tree'
 
 const selGetVisibleFeatureIds = (state, props) => {
@@ -199,7 +199,7 @@ const helperCreateStructuredTree = (all_features_by_id, selected_feature_ids) =>
         feature.selected = includes(selected_feature_ids, feature.id)
         feature.title = `${feature.name}_id${feature.id}__order${feature.order}__selected${feature.selected}`
         feature.title = feature.name
-        feature.subtitle = take(feature.description, MAX_CHARS_FOR_SUBTITLE)
+        feature.subtitle = (feature.description || "").substring(0, MAX_CHARS_FOR_SUBTITLE)
     })
     let tree = getTreeFromFlatData({flatData: values(all_features_by_id),
                                     getKey: (node) => node.id,
@@ -213,7 +213,8 @@ export const makeSelFeaturesAsStructuredTree = () => {
     return createSelector(
         [ selGetAllFeaturesById, selGetSelectedFeatureIds ],
         ( all_features_by_id, selected_feature_ids ) => {
-            return helperCreateStructuredTree(all_features_by_id, selected_feature_ids)
+            const tree = helperCreateStructuredTree(all_features_by_id, selected_feature_ids)
+            return tree
         }
     )
 }
@@ -233,10 +234,11 @@ export const makeSelTopLevelFeaturesList = () => {
     )
 }
 
-const recursivelySortTree = (nodes) => {
+function recursivelySortTree(nodes) {
     nodes = sortBy(nodes, (node) => (node && node.order) || 0)
     map(nodes, (node) => {
         node.children = recursivelySortTree(node.children)
     })
     return nodes
 }
+

@@ -4,7 +4,6 @@ from base_serializer import BaseSerializer
 from testable_serializer import TestableSerializer
 from drf_compound_fields.fields import ListField
 from imptime.models import AnnotatedVisualSpecDocument
-from collections import defaultdict
 logger = logging.getLogger(__name__)
 
 class FeatureStatsSerializer(BaseSerializer):
@@ -36,6 +35,7 @@ class FeatureSerializer(BaseSerializer):
     testables = TestableSerializer(many=True, source="testables_in_order")
     annotated_visual_spec_document_ids = ListField()
     stats = FeatureStatsSerializer()
+    nested_stats = FeatureStatsSerializer()
     
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -58,46 +58,5 @@ class FeatureSerializer(BaseSerializer):
         testables.sort(key=lambda x: x.order)
         feature.testables_in_order = testables
 
-        feature.stats = self.set_calculate_issue_stats(feature)
-        
         return super(FeatureSerializer, self).to_representation(feature, *args, **kwargs)
     
-    def set_calculate_issue_stats(self, feature):
-
-        stats = defaultdict(int)
-        testables = feature.testables.all()
-        stats['num_testables'] = len(testables)
-        
-        for feature_testable in testables:
-            issues = feature_testable.implementing_issues.all()
-            if len(issues) == 0:
-                stats['num_testables_without_issues'] += 1
-            else:
-                stats['num_testables_with_issues'] += 1
-            stats['num_issues'] += len(issues)
-
-            fully_implemented_testable = False
-            for issue in issues:
-
-                points = [ x for x in issue.issue_points.all() if x.user_id == issue.assigned_to_id ]
-                if len(points) == 0:
-                    stats['num_issues_without_estimates'] += 1
-                else:
-                    estimate = points[0].points
-                    stats['num_issues_with_estimates'] += 1
-                    stats['estimated_hours'] += estimate or 0
-
-                for entry in issue.entries.all():
-                    stats['hours_clocked'] += float(entry.hours)
-
-                issue_testables = issue.testables.all()
-                for issue_testable in issue_testables:
-                    if issue_testable.steps == feature_testable.steps:
-                        fully_implemented_testable = True
-                    
-            if fully_implemented_testable:
-                stats['num_fully_implemented_testables'] += 1
-            else:
-                stats['num_not_fully_implemented_testables'] += 1
-                
-        return stats

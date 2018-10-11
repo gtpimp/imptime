@@ -1,5 +1,6 @@
 import logging
 from feature_serializer import FeatureSerializer
+from collections import defaultdict
 from markdown_enrichment import MarkdownEnrichment
 from project_api import ProjectViewSet
 from django.utils import timezone
@@ -60,6 +61,9 @@ class FeatureViewSet(BaseViewSet):
                 if features.count() > 0:
                     project_id = features[0].project_id
                     features = self._enrich_features_qs(features, project_id)
+
+                features = self._calculate_feature_stats(features)
+                    
                 s = FeatureSerializer(features, logged_in_user=request.user, many=True)
                 features_data = s.data
                 context['features'] = features_data
@@ -309,3 +313,67 @@ class FeatureViewSet(BaseViewSet):
             qs = qs.filter(Q(name__icontains=feature_any_field)|Q(description__icontains=feature_any_field))
 
         return super(FeatureViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
+
+    @classmethod
+    def _calculate_feature_stats(self, features):
+        for feature in features:
+            feature.stats = self._calculate_issue_stats(feature)
+            
+        for feature in features:
+            self._recursively_calculate_nested_stats(feature)
+
+        return features
+
+    @classmethod
+    def _recursively_calculate_nested_stats(self, feature):
+        nested_stats = feature.stats
+        for child in feature.children.all():
+            if not hasattr(child, "nested_stats"):
+                self._recursively_calculate_nested_stats(child)
+            for k, v in child.nested_stats:
+                nested_stats[k] += v
+                 
+        feature.nested_stats = nested_stats
+        
+    @classmethod
+    def _calculate_issue_stats(self, feature):
+
+        stats = defaultdict(float)
+        testables = feature.testables.all()
+        stats['num_testables'] = len(testables)
+        
+        for feature_testable in testables:
+            issues = feature_testable.implementing_issues.all()
+            if len(issues) == 0:
+                stats['num_testables_without_issues'] += 1
+            else:
+                stats['num_testables_with_issues'] += 1
+            stats['num_issues'] += len(issues)
+
+            fully_implemented_testable = False
+            for issue in issues:
+
+                points = [ x for x in issue.issue_points.all() if x.user_id == issue.assigned_to_id ]
+                if len(points) == 0:
+                    stats['num_issues_without_estimates'] += 1
+                else:
+                    estimate = points[0].points
+                    stats['num_issues_with_estimates'] += 1
+                    stats['estimated_hours'] += estimate or 0
+
+                for entry in issue.entries.all():
+                    stats['hours_clocked'] += float(entry.hours)
+
+                issue_testables = issue.testables.all()
+                for issue_testable in issue_testables:
+                    if issue_testable.steps == feature_testable.steps:
+                        fully_implemented_testable = True
+                    
+            if fully_implemented_testable:
+                stats['num_fully_implemented_testables'] += 1
+            else:
+                stats['num_not_fully_implemented_testables'] += 1
+                
+        return stats
+            
+    
