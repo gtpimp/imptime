@@ -6,7 +6,6 @@ import { getGloballySelectedProjectId } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
 import FlatFeatureNavigation from '../FlatFeatureNavigation'
 import ReactToPrint from "react-to-print"
-import IconButton from '../IconButton'
 
 class FlatFeaturesToolbarPanel extends Component {
 
