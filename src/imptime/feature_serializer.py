@@ -7,6 +7,7 @@ from imptime.models import AnnotatedVisualSpecDocument
 logger = logging.getLogger(__name__)
 
 class FeatureStatsSerializer(BaseSerializer):
+    num_features_without_testables = serializers.IntegerField()
     num_testables = serializers.IntegerField()
     num_testables_without_issues = serializers.IntegerField()
     num_testables_with_issues = serializers.IntegerField()
@@ -36,6 +37,7 @@ class FeatureSerializer(BaseSerializer):
     annotated_visual_spec_document_ids = ListField()
     stats = FeatureStatsSerializer()
     nested_stats = FeatureStatsSerializer()
+    total_stats = FeatureStatsSerializer()
     
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')

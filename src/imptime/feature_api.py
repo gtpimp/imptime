@@ -50,11 +50,8 @@ class FeatureViewSet(BaseViewSet):
             features = self.apply_pagination(qs=features, pagination=pagination)
 
             if format_args.get('ids_only', None):
-
                 if not project_id:
                     raise Exception("Must filter by project_id") # for the moment, this is just a sanity check
-
-                
                 context['ids'] = [str(x) for x in features.values_list(
                     'id', flat=True)]
             else:
@@ -325,23 +322,37 @@ class FeatureViewSet(BaseViewSet):
         for feature in features:
             self._recursively_calculate_nested_stats(features_by_id, feature)
 
+        for feature in features:
+            self._calculate_total_stats(feature)
+            
         return features
 
     @classmethod
     def _recursively_calculate_nested_stats(self, features_by_id, feature):
         nested_stats = feature.stats
+
         for child_id in [x.id for x in feature.children.all()]:
             child = features_by_id.get(child_id, None)
             if not child:
-                # can happen if the child is in a different project?
-                logger.warning("Trying to map a feature which belongs to a different project possibly: feature_id=%s, child_id=%s" % (feature.id, child_id))
-                continue
+                # happens when refreshing just part of the feature set
+                child = feature.children.get(pk=child_id)
+                child.stats = self._calculate_issue_stats(child)
+                features_by_id[child_id] = child
             if not hasattr(child, "nested_stats"):
                 self._recursively_calculate_nested_stats(features_by_id, child)
             for k, v in child.nested_stats.items():
                 nested_stats[k] += v
-                 
+
         feature.nested_stats = nested_stats
+
+    @classmethod
+    def _calculate_total_stats(self, feature):
+
+        feature.total_stats = defaultdict(float)
+        for k, v in feature.stats.items():
+            feature.total_stats[k] += v
+        for k, v in feature.nested_stats.items():
+            feature.total_stats[k] += v
         
     @classmethod
     def _calculate_issue_stats(self, feature):
@@ -349,6 +360,7 @@ class FeatureViewSet(BaseViewSet):
         stats = defaultdict(float)
         testables = feature.testables.all()
         stats['num_testables'] = len(testables)
+        stats['num_features_without_testables'] = 0 if len(testables)>0 else 1
         
         for feature_testable in testables:
             issues = feature_testable.implementing_issues.all()
