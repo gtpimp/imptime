@@ -330,7 +330,11 @@ class FeatureViewSet(BaseViewSet):
     def _recursively_calculate_nested_stats(self, features_by_id, feature):
         nested_stats = feature.stats
         for child_id in [x.id for x in feature.children.all()]:
-            child = features_by_id[child_id]
+            child = features_by_id.get(child_id, None)
+            if not child:
+                # can happen if the child is in a different project?
+                logger.warning("Trying to map a feature which belongs to a different project possibly: feature_id=%s, child_id=%s" % (feature.id, child_id))
+                continue
             if not hasattr(child, "nested_stats"):
                 self._recursively_calculate_nested_stats(features_by_id, child)
             for k, v in child.nested_stats.items():
