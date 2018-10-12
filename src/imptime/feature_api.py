@@ -351,7 +351,9 @@ class FeatureViewSet(BaseViewSet):
         stats = defaultdict(float)
         testables = feature.testables.all()
         stats['num_testables'] = len(testables)
-        stats['num_features_without_testables'] = 0 if len(testables)>0 else 1
+
+        missing_testable = len(testables) == 0 and len(feature.children.all()) == 0
+        stats['num_features_missing_testables'] = 1 if missing_testable else 0
         
         for feature_testable in testables:
             issues = feature_testable.implementing_issues.all()

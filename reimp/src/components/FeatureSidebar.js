@@ -88,7 +88,7 @@ class FeatureSidebar extends Component {
                 <SidebarSectionTitle title="Stats" />
                 <SidebarDetail key={`nested_stats_nested_stats.estimated_hours`} label="Estimated hours"><Hours hours={feature.nested_stats.estimated_hours}/></SidebarDetail>
                 <SidebarDetail key={`nested_stats_nested_stats.hours_clocked`} label="Hours so far"><Hours hours={feature.nested_stats.hours_clocked}/></SidebarDetail>
-                <SidebarDetail key={`nested_stats_nested_stats.num_testables`} label="Features without testables">{feature.nested_stats.num_features_without_testables}</SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.num_features_missing_testables`} label="Features missing testables">{feature.nested_stats.num_features_missing_testables}</SidebarDetail>
                 <SidebarDetail key={`nested_stats_nested_stats.num_testables_without_issues`} label="Number of testables without issues">{feature.nested_stats.num_testables_without_issues}</SidebarDetail>
                 <SidebarDetail key={`nested_stats_nested_stats.num_not_fully_implemented_testables`} label="Number of testables without matching issues">{feature.nested_stats.num_not_fully_implemented_testables}</SidebarDetail>
                 <SidebarDetail key={`nested_stats_nested_stats.num_not_fully_implemented_testables`} label="Number of unestimated issues">{feature.nested_stats.num_issues_without_estimates}</SidebarDetail>
