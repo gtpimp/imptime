@@ -31,7 +31,7 @@
     "react-classnames": "^0.1.2",
     "react-cookies": "^0.1.0",
     "react-datepicker": "^1.1.0",
-    "react-dnd": "^2.1.4",
+    "react-dnd": "^2.6.0",
     "react-dnd-html5-backend": "^2.1.2",
     "react-dom": "^16.3.2",
     "react-draggable": "^3.0.5",
