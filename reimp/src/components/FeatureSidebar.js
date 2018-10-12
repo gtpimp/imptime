@@ -86,17 +86,17 @@ class FeatureSidebar extends Component {
             <div>
               <SidebarProperty key="nestedstatsstack">
                 <SidebarSectionTitle title="Stats" />
-                <SidebarDetail key={`total_stats_total_stats.estimated_hours`} label="Estimated hours"><Hours hours={feature.total_stats.estimated_hours}/></SidebarDetail>
-                <SidebarDetail key={`total_stats_total_stats.hours_clocked`} label="Hours so far"><Hours hours={feature.total_stats.hours_clocked}/></SidebarDetail>
-                <SidebarDetail key={`total_stats_total_stats.num_testables`} label="Features without testables">{feature.total_stats.num_features_without_testables}</SidebarDetail>
-                <SidebarDetail key={`total_stats_total_stats.num_testables_without_issues`} label="Number of testables without issues">{feature.total_stats.num_testables_without_issues}</SidebarDetail>
-                <SidebarDetail key={`total_stats_total_stats.num_not_fully_implemented_testables`} label="Number of testables without matching issues">{feature.total_stats.num_not_fully_implemented_testables}</SidebarDetail>
-                <SidebarDetail key={`total_stats_total_stats.num_not_fully_implemented_testables`} label="Number of unestimated issues">{feature.total_stats.num_issues_without_estimates}</SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.estimated_hours`} label="Estimated hours"><Hours hours={feature.nested_stats.estimated_hours}/></SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.hours_clocked`} label="Hours so far"><Hours hours={feature.nested_stats.hours_clocked}/></SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.num_testables`} label="Features without testables">{feature.nested_stats.num_features_without_testables}</SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.num_testables_without_issues`} label="Number of testables without issues">{feature.nested_stats.num_testables_without_issues}</SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.num_not_fully_implemented_testables`} label="Number of testables without matching issues">{feature.nested_stats.num_not_fully_implemented_testables}</SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.num_not_fully_implemented_testables`} label="Number of unestimated issues">{feature.nested_stats.num_issues_without_estimates}</SidebarDetail>
                 
-                { false && <SidebarDetail key={`total_stats_total_stats.num_testables_with_issues`} label="num_testables_with_issues">{feature.total_stats.num_testables_with_issues}</SidebarDetail>}
-                { false && <SidebarDetail key={`total_stats_total_stats.num_issues`} label="num_issues">{feature.total_stats.num_issues}</SidebarDetail> }
-                { false && <SidebarDetail key={`total_stats_total_stats.num_issues_with_estimates`} label="num_issues_with_estimates">{feature.total_stats.num_issues_with_estimates}</SidebarDetail>}
-                { false && <SidebarDetail key={`total_stats_total_stats.num_fully_implemented_testables`} label="num_fully_implemented_testables">{feature.total_stats.num_fully_implemented_testables}</SidebarDetail>}
+                { false && <SidebarDetail key={`nested_stats_nested_stats.num_testables_with_issues`} label="num_testables_with_issues">{feature.nested_stats.num_testables_with_issues}</SidebarDetail>}
+                { false && <SidebarDetail key={`nested_stats_nested_stats.num_issues`} label="num_issues">{feature.nested_stats.num_issues}</SidebarDetail> }
+                { false && <SidebarDetail key={`nested_stats_nested_stats.num_issues_with_estimates`} label="num_issues_with_estimates">{feature.nested_stats.num_issues_with_estimates}</SidebarDetail>}
+                { false && <SidebarDetail key={`nested_stats_nested_stats.num_fully_implemented_testables`} label="num_fully_implemented_testables">{feature.nested_stats.num_fully_implemented_testables}</SidebarDetail>}
               </SidebarProperty>
             </div>
         )

@@ -37,7 +37,6 @@ class FeatureSerializer(BaseSerializer):
     annotated_visual_spec_document_ids = ListField()
     stats = FeatureStatsSerializer()
     nested_stats = FeatureStatsSerializer()
-    total_stats = FeatureStatsSerializer()
     
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')

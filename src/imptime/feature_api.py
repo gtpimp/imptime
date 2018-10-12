@@ -322,13 +322,13 @@ class FeatureViewSet(BaseViewSet):
         for feature in features:
             self._recursively_calculate_nested_stats(features_by_id, feature)
 
-        for feature in features:
-            self._calculate_total_stats(feature)
-            
         return features
 
     @classmethod
     def _recursively_calculate_nested_stats(self, features_by_id, feature):
+        if hasattr(feature, "nested_stats"):
+            return
+        
         nested_stats = feature.stats
 
         for child_id in [x.id for x in feature.children.all()]:
@@ -345,15 +345,6 @@ class FeatureViewSet(BaseViewSet):
 
         feature.nested_stats = nested_stats
 
-    @classmethod
-    def _calculate_total_stats(self, feature):
-
-        feature.total_stats = defaultdict(float)
-        for k, v in feature.stats.items():
-            feature.total_stats[k] += v
-        for k, v in feature.nested_stats.items():
-            feature.total_stats[k] += v
-        
     @classmethod
     def _calculate_issue_stats(self, feature):
 
