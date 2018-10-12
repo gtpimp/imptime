@@ -211,6 +211,7 @@ class FeatureViewSet(BaseViewSet):
 
             feature = create_feature()
             feature = self._enrich_features_qs(Feature.objects.filter(pk=feature.id), project).first()
+            self._calculate_feature_stats([feature])
             context['item'] = FeatureSerializer(feature, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
