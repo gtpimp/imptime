@@ -76,6 +76,11 @@ class FeatureSidebar extends Component {
 
     renderStatsStack() {
         const { feature } = this.props
+
+        if ( !feature.nested_stats || !feature.stats ) {
+            return null
+        }
+        
         return (
             <div>
               <SidebarProperty key="nestedstatsstack">
@@ -92,11 +97,11 @@ class FeatureSidebar extends Component {
               </SidebarProperty>
               <SidebarProperty key="statsstack">
                 <SidebarSectionTitle title="Feature stats" />
-                { map(keys(feature.nested_stats), function(key) {
+                { map(keys(feature.stats), function(key) {
                       return (
-                          <SidebarDetail key={`nested_stats_${key}`}
+                          <SidebarDetail key={`stats_${key}`}
                                          label={key}>
-                            {feature.nested_stats[key]}
+                            {feature.stats[key]}
                           </SidebarDetail>
                       )
                   }

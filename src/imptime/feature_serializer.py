@@ -34,8 +34,8 @@ class FeatureSerializer(BaseSerializer):
     is_root_node = serializers.BooleanField()
     testables = TestableSerializer(many=True, source="testables_in_order")
     annotated_visual_spec_document_ids = ListField()
-    stats = FeatureStatsSerializer()
-    nested_stats = FeatureStatsSerializer()
+    #stats = FeatureStatsSerializer()
+    #nested_stats = FeatureStatsSerializer()
     
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
