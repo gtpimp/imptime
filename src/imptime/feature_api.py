@@ -194,7 +194,7 @@ class FeatureViewSet(BaseViewSet):
 
                 if parent_feature_id is not None:
                     feature_parent = self.allowed_feature(parent_feature_id)
-                    if feature_parent.project_id != project_id:
+                    if feature_parent.project_id != project.id:
                         raise Exception("Parent must belong to the same project")
                 else:
                     feature_parent = Feature.get_root_feature(project)

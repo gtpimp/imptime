@@ -121,10 +121,10 @@ export function reorderFeature(moving_feature_ids, feature_id_after, list_key, i
     }
 }
 
-export function startCandidateFeature(project_id, feature_id_parent) {
+export function startCandidateFeature(project_id, parent_feature_id) {
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__FEATURE,
-                                    { feature_id_parent: feature_id_parent,
+                                    { parent_feature_id: parent_feature_id,
 	                              project_id: project_id }))
     }
 }
