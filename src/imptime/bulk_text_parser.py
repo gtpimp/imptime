@@ -6,7 +6,7 @@ from timepiece.models import IssuePoints
 from django.utils import timezone
 from django.conf import settings
 from testable.models import Testable
-from imptime.models import ProjectFeatureOrder, Feature, VisualSpecFeature, VisualSpecDocument, VisualSpecIssue
+from imptime.models import ProjectFeatureOrder, Feature, VisualSpecFeature, VisualSpecDocument, VisualSpecIssue, AnnotatedVisualSpecDocument
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 import logging
@@ -170,12 +170,13 @@ class BulkTextParser(object):
             attachment_name = meta_info['attributes']["attachment"]
             vsd = VisualSpecDocument.objects.filter(visual_spec_projects__project=sprint.business, #sic
                                                     name=attachment_name).first()
-            if not vsd:
-                raise Exception("No document found with name %s" % meta_info["attachment"])
-            VisualSpecIssue.objects.get_or_create(visual_spec_document=vsd,
-                                                    issue=issue,
-                                                    defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
-
+            if vsd:
+                annotated_vsd = AnnotatedVisualSpecDocument.objects.create(visual_spec_document=vsd)
+                VisualSpecIssue.objects.get_or_create(annotated_visual_spec_document=annotated_vsd,
+                                                      issue=issue,
+                                                      defaults={'order':VisualSpecIssue.get_next_order(issue.id)})
+            else:
+                logger.warning("No document found with name %s" % meta_info['attributes']["attachment"])
         
         logger.debug("Created issue %s %s" % (issue.id, issue.subject))
         return issue
@@ -194,11 +195,13 @@ class BulkTextParser(object):
             attachment_name = meta_info['attributes']["attachment"]
             vsd = VisualSpecDocument.objects.filter(visual_spec_projects__project=project,
                                                     name=attachment_name).first()
-            if not vsd:
-                raise Exception("No document found with name %s" % meta_info["attributes"]["attachment"])
-            VisualSpecFeature.objects.get_or_create(visual_spec_document=vsd,
-                                                    feature=feature,
-                                                    defaults={'order':VisualSpecFeature.get_next_order(feature.id)})
+            if vsd:
+               annotated_vsd = AnnotatedVisualSpecDocument.objects.create(visual_spec_document=vsd)
+               VisualSpecFeature.objects.get_or_create(annotated_visual_spec_document=annotated_vsd,
+                                                       feature=feature,
+                                                       defaults={'order':VisualSpecFeature.get_next_order(feature.id)})
+            else:
+                logger.warning("No document found with name %s" % meta_info['attributes']["attachment"])
         
         return feature
         

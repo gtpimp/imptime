@@ -91,7 +91,7 @@ class FeatureSidebar extends Component {
                 <SidebarDetail key={`nested_stats_nested_stats.num_features_missing_testables`} label="Features missing testables">{feature.nested_stats.num_features_missing_testables}</SidebarDetail>
                 <SidebarDetail key={`nested_stats_nested_stats.num_testables_without_issues`} label="Number of testables without issues">{feature.nested_stats.num_testables_without_issues}</SidebarDetail>
                 <SidebarDetail key={`nested_stats_nested_stats.num_not_fully_implemented_testables`} label="Number of testables without matching issues">{feature.nested_stats.num_not_fully_implemented_testables}</SidebarDetail>
-                <SidebarDetail key={`nested_stats_nested_stats.num_not_fully_implemented_testables`} label="Number of unestimated issues">{feature.nested_stats.num_issues_without_estimates}</SidebarDetail>
+                <SidebarDetail key={`nested_stats_nested_stats.num_unestimated_issues`} label="Number of unestimated issues">{feature.nested_stats.num_issues_without_estimates}</SidebarDetail>
                 
                 { false && <SidebarDetail key={`nested_stats_nested_stats.num_testables_with_issues`} label="num_testables_with_issues">{feature.nested_stats.num_testables_with_issues}</SidebarDetail>}
                 { false && <SidebarDetail key={`nested_stats_nested_stats.num_issues`} label="num_issues">{feature.nested_stats.num_issues}</SidebarDetail> }

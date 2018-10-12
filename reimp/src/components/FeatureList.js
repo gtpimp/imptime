@@ -57,61 +57,9 @@ class FeatureList extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
     }
 
-    /* onClickedFeature(event, feature_id) {
-     *     const {dispatch, onSelectFeatures, selected_ids} = this.props
-     *     if ( event ) {
-     *         event.stopPropagation()
-     *     }
-
-     *     let selected_feature_ids = []
-     *     if (event.ctrlKey || event.metaKey) {
-     *         if (includes(selected_ids, feature_id)) {
-     *             selected_feature_ids = difference(selected_ids, [feature_id])
-     *         } else {
-     *             selected_feature_ids = union(selected_ids, [feature_id])
-     *         }
-     *     } else if (event.shiftKey) {
-     *         selected_feature_ids = concat(selected_ids, this.findFeaturesFromHereToAlreadySelected(feature_id))
-     *     }
-     *     if ( onSelectFeatures ) {
-     *         onSelectFeatures(selected_feature_ids)
-     *     }
-     *     dispatch(cancelCandidateFeature())
-     * }*/
-
-    /* findFeaturesFromHereToAlreadySelected(target_feature_id) {
-     *     window.alert("Not implemented yet")
-     *     return [target_feature_id]
-     * }*/
-
-    /* onDeleteFeature = (event, feature) => {
-     *     const { dispatch, onDelete } = this.props
-     *     event.stopPropagation()
-
-     *     if ( feature.actual_hours > 0 ) {
-     *         window.alert("This feature has time against it and so can't be deleted")
-     *         return
-     *     }
-     *     
-     *     if ( ! window.confirm( "Delete feature " + feature.number + " - " + feature.subject + "?") ) {
-     *         return
-     *     }
-     *     dispatch(deleteFeatures([feature.id]))
-     *     if ( onDelete ) {
-     *         onDelete(feature.id)
-     *     }
-     * }*/
-
     onSelectedFeature = (node) => {
         const {dispatch, onSelectFeatures} = this.props
         let selected_feature_ids = [node.id]
-        /* if (event.ctrlKey || event.metaKey) {
-         *     if (includes(selected_ids, feature_id)) {
-         *         selected_feature_ids = difference(selected_ids, [feature_id])
-         *     } else {
-         *         selected_feature_ids = union(selected_ids, [feature_id])
-         *     }
-         * }*/
         if ( onSelectFeatures )  {
             onSelectFeatures(selected_feature_ids)
         }
@@ -132,51 +80,6 @@ class FeatureList extends Component {
         }
     }
     
-    /* reorderFeature(index_of_row_being_moved, index_of_destination) {
-     *     const {dispatch, list_key, feature_items} = this.props
-
-     *     // get feature being moved
-     *     const moving_feature_id = feature_items[index_of_row_being_moved].id
-     *     if ( ! moving_feature_id ) {
-     *         return
-     *     }
-     *     let selected_ids = this.props.selected_ids || []
-     *     if ( ! includes(selected_ids, moving_feature_id) ) {
-     *         selected_ids = [moving_feature_id]
-     *     }
-
-     *     // get place to move it
-     *     let move_after_feature_id
-     *     if ( index_of_row_being_moved > index_of_destination ) {
-     *         move_after_feature_id = (index_of_destination>0 && feature_items[index_of_destination-1].id) || null
-     *     } else {
-     *         move_after_feature_id = feature_items[index_of_destination].id || null
-     *     }
-
-     *     const target_feature_id = move_after_feature_id
-
-     *     dispatch(reorderFeature(selected_ids, target_feature_id, list_key,
-     *                           index_of_destination,
-     *                           function () {
-     *                               dispatch(invalidateList(list_key))
-     *                               dispatch(fetchFeaturesIfNeeded(list_key))
-     *                           }))
-     * }*/
-
-    /* renderCandidateFeature() {
-
-     *     const {list_key} = this.props
-
-     *     return (
-     *         <div key={list_key + ".candidate_feature"}
-     *              className="div-table__row feature_list__candidate_feature">
-     *           <div className="div-table__cell" colSpan="20">
-     *             Creating new feature here
-     *           </div>
-     *         </div>
-     *     )
-     * }*/
-
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
         const { feature_items, header_list } = this.props
         const key = `feature_${columnIndex}_${rowIndex}`

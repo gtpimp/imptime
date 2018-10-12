@@ -25,6 +25,11 @@ import Toolbar from '../components/toolbar/Toolbar'
 
 class FlatFeaturesPage extends Component {
 
+    constructor(props) {
+        super(props)
+        this.renderableFeatureListRef = React.createRef()
+    }
+    
     componentDidMount() {
         const {dispatch, project_id, list_key, page_key} = this.props
         const params = { navigateToFeature: this.onNavigateToFeature,
@@ -79,23 +84,21 @@ class FlatFeaturesPage extends Component {
     }
 
     getRefToPrint = () => {
-        return this.componentRef
+        return this.renderableFeatureListRef.current
     }
 
     render() {
 
         const {list_key, project_id, project } = this.props
-
         setBrowserTitle(project.name)
-
         
         return (
             <div className={css`width:100%;height:100%`}>
               <Toolbar />
               <FlatFeatureList list_key={list_key}
                                project_id={project_id}
-                               onReactRefsCreated={this.onFeatureRefsCreated}
-                               ref={el=>(this.componentRef=el)} />
+                               renderableRef={this.renderableFeatureListRef}
+                               onReactRefsCreated={this.onFeatureRefsCreated} />
             </div>
         )
     }
@@ -123,3 +126,4 @@ function mapStateToProps(state, props) {
 }
 
 export default withRouter(connect(mapStateToProps)(FlatFeaturesPage))
+
