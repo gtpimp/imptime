@@ -125,6 +125,12 @@ class FeatureList extends Component {
         return header_list[index].maxWidth
     }
 
+    renderFeatureIcons = (rowInfo) => {
+        return [
+            <div>I am an icon</div>,
+        ]
+    }
+
     render_tree() {
 
         const { is_mien_configurer_active, header_list, features_by_id,
@@ -148,6 +154,7 @@ class FeatureList extends Component {
                         items_by_id={features_by_id}
                         //onChange={this.onUpdateTree}
                         onReorder={this.onReorder}
+                        renderIcons={this.renderFeatureIcons}
                         onNodeSelected={this.onSelectedFeature}
                         onExpandCollapse={this.onExpandCollapse}
                         getAvailableHeaders={getAllAvailableFeatureHeaders}

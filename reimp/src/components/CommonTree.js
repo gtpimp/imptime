@@ -164,9 +164,9 @@ class CommonTree extends Component {
             </form>
         )
     }
-    
+
     render() {
-        const { renderNode, getAvailableHeaders,
+        const { getAvailableHeaders, renderIcons,
                 getHeaderListForMien, updateMienHeaders, header_list_name, items } = this.props
         const { searchString, searchFocusIndex } = this.state
 
@@ -191,11 +191,10 @@ class CommonTree extends Component {
                               searchFinishCallback={this.onSearched}
 
                               generateNodeProps={rowInfo => ({
+                                      buttons: renderIcons(rowInfo),
                                       onClick: (evt) => this.onNodeClicked(evt, rowInfo),
                                   })}
-                >
-                  {renderNode}
-                </SortableTree>
+                />
               </div>
               
             </MienListColumnConfigurable>
@@ -207,8 +206,8 @@ class CommonTree extends Component {
 function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
-            onExpandCollapse, items_by_id, 
-            selected_item_ids, onNodeSelected, onReorder, items, header_list, renderCell } = props
+            onExpandCollapse, items_by_id, renderIcons,
+            selected_item_ids, onNodeSelected, onReorder, items, header_list } = props
 
     const mien_id = getCurrentMienId(state)
     
@@ -225,7 +224,7 @@ function mapStateToProps(state, props) {
         selected_item_ids,
         header_list,
         mien_id,
-        renderCell
+        renderIcons
     }
 }
 
