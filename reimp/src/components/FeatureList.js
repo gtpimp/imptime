@@ -1,11 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import Floater from "react-floater"
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
+import Pluralize from 'react-pluralize'
 import { logged_in_user } from '../actions/Auth'
 import CommonTree from './CommonTree'
 import DivTableCell from './DivTableCell'
+import ProgressBar from './ProgressBar'
 import 'react-virtualized/styles.css';
 import {
     makeSelFeatureIds,
@@ -126,9 +129,80 @@ class FeatureList extends Component {
     }
 
     renderFeatureIcons = (rowInfo) => {
-        return [
-            <div>I am an icon</div>,
-        ]
+        const feature = rowInfo.node
+        const { nested_stats } = feature
+        const icons = []
+
+        if ( nested_stats.estimated_hours || nested_stats.hours_clocked ) {
+            icons.push(
+                <div>
+                  Hours:
+                  <ProgressBar current={nested_stats.hours_clocked} max={nested_stats.estimated_hours}/>
+                </div>
+            )
+        }
+
+        if ( nested_stats.num_features_missing_testables > 0 ||
+             nested_stats.num_testables_without_issues > 0 ||
+             nested_stats.num_not_fully_implemented_testables > 0 ||
+             nested_stats.num_unestimated_issues > 0 ) {
+            
+            icons.push(
+                  <Floater
+                      title="Feature problems"
+                      disableHoverToClick
+                      event="hover"
+                      eventDelay={0}
+                      placement="right"
+                      content={
+                          <div>
+                              { nested_stats.num_features_missing_testables > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) is missing&nbsp;
+                                    <Pluralize singular="testable" count={nested_stats.num_features_missing_testables}/>.
+                                  </div>
+                                </div>
+                              }
+                              { nested_stats.num_testables_without_issues > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) has&nbsp;
+                                    <Pluralize singular="testable" count={nested_stats.num_testables_without_issues}/> without issues.
+                                  </div>
+                                </div>
+                              }
+                              { nested_stats.num_not_fully_implemented_testables > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) has&nbsp;
+                                    <Pluralize singular="testable" count={nested_stats.num_not_fully_implemented_testables}/>
+                                    that&nbsp;
+                                    <Pluralize singular="isn't" plural="aren't" showCount={false} count={nested_stats.num_not_fully_implemented_testables}/>
+                                    &nbsp;exactly matched by an issue.
+                                  </div>
+                                </div>
+                              }
+                              { nested_stats.num_unestimated_issues > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) has&nbsp;
+                                    <Pluralize singular="issue" count={nested_stats.num_unestimated_issues}/>
+                                    that&nbsp;
+                                    <Pluralize singular="isn't" plural="aren't" showCount={false} count={nested_stats.num_unestimated_issues}/>
+                                    &nbsp;estimated.
+                                  </div>
+                                </div>
+                              }
+                          </div>
+                      }
+                  >
+                          <div className="icon icon--warning"></div> 
+                  </Floater>
+            )
+        }
+        
+        return icons       
     }
 
     render_tree() {
