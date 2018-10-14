@@ -150,9 +150,11 @@ class FeatureList extends Component {
                           </div>
                               }
                   >
-                          <div className={css`minWidth:100px;font-size:${theme.font_sizes.superscript}`}>
+                          <div className={css`min-width:100px;font-size:${theme.font_sizes.superscript}`}>
                             <ProgressBar current={nested_stats.hours_clocked} max={nested_stats.estimated_hours}/>
-                            <Hours hours={nested_stats.hours_clocked}/> / <Hours hours={nested_stats.estimated_hours}/>
+                            <div className={css`display:flex`}>
+                              <Hours hours={nested_stats.hours_clocked}/> / <Hours hours={nested_stats.estimated_hours}/>
+                            </div>
                           </div>
                   </Floater>
                 </div>
