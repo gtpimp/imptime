@@ -250,6 +250,13 @@ class IssueViewSet(BaseViewSet):
                     if SprintReview.objects.filter(project_id=issue.project_id, review_by=request.user).first() is not None:
                         IssueReview.reviewed(issue, request.user)
 
+                elif field_name == "due_date":
+                    if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        old_due_date = issue.due_date
+                        issue.due_date = new_value
+                        IssueHistory.add_history(request.user, issue, "changed due date",
+                                                 str(old_due_date), str(issue.due_date))
+                        
                 elif field_name == "make_feature_issues_successive":
                     sprint_id = new_value
                     feature_issue = issue

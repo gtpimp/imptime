@@ -9,6 +9,7 @@ import Floater from "react-floater"
 import Testable from './Testable'
 import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
+import EditableIssueDueDate from './EditableIssueDueDate'
 import EditableIssueRisky from './EditableIssueRisky'
 import EditableIssueComment from './EditableIssueComment'
 import EditableIssueTestable from './EditableIssueTestable'
@@ -226,6 +227,10 @@ class IssueSidebar extends Component {
 
               <SidebarDetail label="Assigned to">
                 <EditableIssueAssignedUser issue_ids={[issue.id]} project_id={issue.project_id}/>
+              </SidebarDetail>
+
+              <SidebarDetail label="Due date">
+                <EditableIssueDueDate issue_ids={[issue.id]} project_id={issue.project_id}/>
               </SidebarDetail>
 
               <SidebarDetail label="Risky">
