@@ -46,7 +46,7 @@ class FeatureViewSet(BaseViewSet):
             if project_id:
                 features = features.order_by_project_id(project_id=project_id,
                                                         parent_feature_id=None)
-            
+             
             features = self.apply_pagination(qs=features, pagination=pagination)
 
             if format_args.get('ids_only', None):
@@ -59,7 +59,7 @@ class FeatureViewSet(BaseViewSet):
                     project_id = features[0].project_id
                     features = self._enrich_features_qs(features, project_id)
 
-                features = self._calculate_feature_stats(features)
+                features = self._calculate_feature_stats(request.user, features)
                     
                 s = FeatureSerializer(features, logged_in_user=request.user, many=True)
                 features_data = s.data
@@ -80,6 +80,7 @@ class FeatureViewSet(BaseViewSet):
                            .prefetch_related('testables__implementing_issues__testables')\
                            .prefetch_related('testables__implementing_issues__entries')\
                            .prefetch_related('testables__implementing_issues__issue_points')\
+                           .prefetch_related('testables__implementing_issues__project__rate')\
                            .prefetch_related('testables__testable_steps')\
                            .prefetch_related('visual_spec_features')
         return features
@@ -208,7 +209,8 @@ class FeatureViewSet(BaseViewSet):
 
             feature = create_feature()
             feature = self._enrich_features_qs(Feature.objects.filter(pk=feature.id), project).first()
-            self._calculate_feature_stats([feature])
+
+            self._calculate_feature_stats(request.user, [feature])
             context['item'] = FeatureSerializer(feature, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
@@ -313,19 +315,19 @@ class FeatureViewSet(BaseViewSet):
         return super(FeatureViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
 
     @classmethod
-    def _calculate_feature_stats(self, features):
+    def _calculate_feature_stats(self, logged_in_user, features):
         for feature in features:
-            feature.stats = self._calculate_issue_stats(feature)
+            feature.stats = self._calculate_issue_stats(logged_in_user, feature)
 
         features_by_id = dict( [(x.id, x) for x in features] )
             
         for feature in features:
-            self._recursively_calculate_nested_stats(features_by_id, feature)
+            self._recursively_calculate_nested_stats(logged_in_user, features_by_id, feature)
 
         return features
 
     @classmethod
-    def _recursively_calculate_nested_stats(self, features_by_id, feature):
+    def _recursively_calculate_nested_stats(self, logged_in_user, features_by_id, feature):
         if hasattr(feature, "nested_stats"):
             return
         
@@ -336,17 +338,17 @@ class FeatureViewSet(BaseViewSet):
             if not child:
                 # happens when refreshing just part of the feature set
                 child = feature.children.get(pk=child_id)
-                child.stats = self._calculate_issue_stats(child)
+                child.stats = self._calculate_issue_stats(logged_in_user, child)
                 features_by_id[child_id] = child
             if not hasattr(child, "nested_stats"):
-                self._recursively_calculate_nested_stats(features_by_id, child)
+                self._recursively_calculate_nested_stats(logged_in_user, features_by_id, child)
             for k, v in child.nested_stats.items():
                 nested_stats[k] += v
 
         feature.nested_stats = nested_stats
 
     @classmethod
-    def _calculate_issue_stats(self, feature):
+    def _calculate_issue_stats(self, logged_in_user, feature):
 
         stats = defaultdict(float)
         testables = feature.testables.all()
@@ -366,16 +368,34 @@ class FeatureViewSet(BaseViewSet):
             fully_implemented_testable = False
             for issue in issues:
 
+                if not hasattr(self, "_cached_permissions"):
+                    # pick the first issue as representative of all permissions
+                    self._cached_permissions = ProjectPermissions.for_user(user=logged_in_user,
+                                                                           business=issue.project.business_id,
+                                                                           auto_create=False)
+                    
+                
+                rates = issue.project.rate.all()
+                rate = [ x for x in rates if x.user_id == issue.assigned_to_id ]
+                if len(rates) > 0:
+                    rate = rates[0]
+                    velocity = rate.velocity
+                else:
+                    velocity = 1.0
+                
                 points = [ x for x in issue.issue_points.all() if x.user_id == issue.assigned_to_id ]
                 if len(points) == 0:
                     stats['num_issues_without_estimates'] += 1
                 else:
                     estimate = points[0].points
                     stats['num_issues_with_estimates'] += 1
-                    stats['estimated_hours'] += estimate or 0
 
-                for entry in issue.entries.all():
-                    stats['hours_clocked'] += float(entry.hours)
+                    if issue.assigned_to_id == logged_in_user.id or self._cached_permissions.has_see_other_user_points:
+                        stats['estimated_hours'] += (estimate or 0) * velocity
+
+                if self._cached_permissions.has_view_actual_hours:
+                    for entry in issue.entries.all():
+                        stats['hours_clocked'] += float(entry.hours)
 
                 issue_testables = issue.testables.all()
                 for issue_testable in issue_testables:
