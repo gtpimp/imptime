@@ -421,6 +421,18 @@ class IssueViewSet(BaseViewSet):
         status_names = raw_filter_args.pop('status_names', None)
         if status_names:
             qs = qs.filter(status2__name__in=status_names)
+
+        only_open = raw_filter_args.pop('is_open', None)
+        if only_open:
+            qs = qs.filter_open(self.request.user)
+
+        due_now = raw_filter_args.pop('due_now', None)
+        if due_now:
+            qs = qs.filter(due_date__date__lte=timezone.today().date())
+
+        assigned_to_ids = raw_filter_args.pop('assigned_to_ids', None)
+        if assigned_to_ids:
+            qs = qs.filter(assigned_to__in=assigned_to_ids)
             
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
 
