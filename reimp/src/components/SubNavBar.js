@@ -63,7 +63,7 @@ class SubNavBar extends Component {
               <ToolbarDiv side="right">
 
                 <AutoClockPopup />
-
+                <DueIssueList />
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
 
                   <div className={`${navbar_submenu_item}`}>
@@ -89,7 +89,6 @@ class SubNavBar extends Component {
                   </div>
                 </NavTab>
                 }
-                <DueIssueList />
               </ToolbarDiv>
               
             </SubNavBarDiv>

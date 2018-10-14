@@ -66,6 +66,9 @@ const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", description:"Iss
 const DEFAULT_ISSUE_HEADERS_KEYS = ["number", "issue_type", "attachment", "name", "assignee", "status", "estimate_summary", "tag_columns", "small_delete"]
 const DEFAULT_ISSUE_HEADERS = filter(ALL_AVAILABLE_ISSUE_HEADERS, (header) => includes(DEFAULT_ISSUE_HEADERS_KEYS, header.key))
 
+const DEFAULT_POPUP_ISSUE_HEADER_KEYS = ["name", "status"]
+const DEFAULT_POPUP_ISSUE_HEADERS = filter(ALL_AVAILABLE_ISSUE_HEADERS, (header) => includes(DEFAULT_POPUP_ISSUE_HEADER_KEYS, header.key))
+
 export function invalidateAllIssues() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__ISSUE))
@@ -573,3 +576,6 @@ export function getAllAvailableIssueHeaders() {
     return ALL_AVAILABLE_ISSUE_HEADERS
 }
 
+export function getDefaultPopupIssueHeaders() {
+    return DEFAULT_POPUP_ISSUE_HEADERS
+}

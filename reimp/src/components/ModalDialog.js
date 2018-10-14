@@ -14,6 +14,7 @@ const modal_dialog = css`border-radius: 2px;
                          position: absolute;
                          top: 10%;
                          max-height: 80%;
+                         min-height: 50%;
                          overflow-y: auto;
                          overflow-x: hidden;
                          outline: none; `

@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
-import { map, slice, size } from 'lodash'
+import Pluralize from 'react-pluralize'
+import ModalDialog from './ModalDialog'
 import {connect} from 'react-redux'
 import {css} from 'emotion'
 import Floater from 'react-floater'
+import IssueList from './IssueList'
 import {default_theme as theme} from '../theme/default'
 import {
     LIST_KEY__MY_ISSUE_LIST_DUE_NOW
@@ -17,7 +19,8 @@ import {
 } from '../actions/ItemList'
 import {
     fetchIssuesIfNeeded,
-    getIssuesById
+    getIssuesById,
+    getDefaultPopupIssueHeaders
 } from '../actions/Issues'
 
 class DueIssueList extends Component {
@@ -45,16 +48,16 @@ class DueIssueList extends Component {
         dispatch(fetchIssuesIfNeeded(list_key))
     }
 
-    onHidePopup() {
+    onHidePopup = () => {
         this.setState({show_popup:false})
     }
 
-    onShowPopup() {
+    onShowPopup = () => {
         this.setState({show_popup:true})
     }
 
     renderDueAlert() {
-        const { pagination_unallocated, pagination } = this.props
+        const { pagination } = this.props
         const num_issues = pagination && pagination.num_items
         if ( num_issues === 0 ) {
             return null
@@ -68,11 +71,28 @@ class DueIssueList extends Component {
                        disableHoverToClick
                        event="hover"
                        eventDelay={0}
-                       placement="right"
-                       content={<div>You have {num_issues} open issues due today.</div>}>
-                {num_issues}
+                       placement="left"
+                       content={<div>You have {num_issues} open&nbsp;<Pluralize singular="issue" showCount={false} count={num_issues}/>&nbsp;due today.</div>}>
+                <div className={css`border-radius: 10px; 
+                                    min-width:20px; 
+                                    border: 1px solid ${theme.colours.notok}; 
+                                    text-align:center;`}>
+                  {num_issues}
+                </div>
               </Floater>
             </div>
+        )
+    }
+
+    renderPopup() {
+        const { list_key, header_list } = this.props
+        return (
+            <ModalDialog isOpen={true}
+                         onClose={this.onHidePopup}
+                         title="Issues due today"
+                         variant="large">
+              <IssueList list_key={list_key} issue_header_list={header_list} />
+            </ModalDialog>
         )
     }
 
@@ -82,6 +102,7 @@ class DueIssueList extends Component {
         return (
             <div>
               { this.renderDueAlert() }
+              { show_popup && this.renderPopup() }
             </div>
         )
     }
@@ -94,13 +115,15 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const logged_in_user_id = logged_in_user().user_id || -1
     const pagination = getListPagination(state, list_key)
+    const header_list = getDefaultPopupIssueHeaders()
 
     return {
         list_key,
         items_by_id,
         filter,
         logged_in_user_id,
-        pagination
+        pagination,
+        header_list
     }
 
 }
