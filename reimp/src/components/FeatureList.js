@@ -9,6 +9,7 @@ import { logged_in_user } from '../actions/Auth'
 import CommonTree from './CommonTree'
 import DivTableCell from './DivTableCell'
 import ProgressBar from './ProgressBar'
+import Hours from './Hours'
 import 'react-virtualized/styles.css';
 import {
     makeSelFeatureIds,
@@ -136,8 +137,24 @@ class FeatureList extends Component {
         if ( nested_stats.estimated_hours || nested_stats.hours_clocked ) {
             icons.push(
                 <div>
-                  Hours:
-                  <ProgressBar current={nested_stats.hours_clocked} max={nested_stats.estimated_hours}/>
+                  <Floater
+                      title="Progress (hours)"
+                      disableHoverToClick
+                      event="hover"
+                      eventDelay={0}
+                      placement="right"
+                      content={
+                          <div>
+                            <div>Hours clocked: <Hours hours={nested_stats.hours_clocked}/></div>
+                            <div>Total estimates: <Hours hours={nested_stats.estimated_hours}/></div>
+                          </div>
+                              }
+                  >
+                          <div className={css`minWidth:100px;font-size:${theme.font_sizes.superscript}`}>
+                            <ProgressBar current={nested_stats.hours_clocked} max={nested_stats.estimated_hours}/>
+                            <Hours hours={nested_stats.hours_clocked}/> / <Hours hours={nested_stats.estimated_hours}/>
+                          </div>
+                  </Floater>
                 </div>
             )
         }
