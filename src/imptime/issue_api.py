@@ -428,7 +428,7 @@ class IssueViewSet(BaseViewSet):
 
         due_now = raw_filter_args.pop('due_now', None)
         if due_now:
-            qs = qs.filter(due_date__date__lte=timezone.today().date())
+            qs = qs.filter(due_date__date__lte=timezone.now().date())
 
         assigned_to_ids = raw_filter_args.pop('assigned_to_ids', None)
         if assigned_to_ids:

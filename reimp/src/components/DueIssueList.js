@@ -3,23 +3,22 @@ import { map, slice, size } from 'lodash'
 import {connect} from 'react-redux'
 import {css} from 'emotion'
 import Floater from 'react-floater'
-import {default_theme as theme} from '../../theme/default'
+import {default_theme as theme} from '../theme/default'
 import {
     LIST_KEY__MY_ISSUE_LIST_DUE_NOW
-} from '../../actions/ItemListKeyRegistry'
-import { logged_in_user } from '../../actions/Auth'
+} from '../actions/ItemListKeyRegistry'
+import { logged_in_user } from '../actions/Auth'
 import {
     initList,
-    shouldFetchList,
     getVisibleItemIds,
-    getNestedObjects,
-    ensureNestedObjectsLoaded,
-    isLoading,
-    getLastUpdated,
     update_list_filter,
     getListFilter,
     getListPagination
-} from '../../actions/ItemList'
+} from '../actions/ItemList'
+import {
+    fetchIssuesIfNeeded,
+    getIssuesById
+} from '../actions/Issues'
 
 class DueIssueList extends Component {
     constructor(props) {
@@ -30,9 +29,9 @@ class DueIssueList extends Component {
     componentDidMount() {
         const { dispatch, list_key, logged_in_user_id } = this.props
         dispatch(initList(list_key))
-        dispatch(update_list_filter(list_key_by_issue, { 'is_open': true,
-                                                         'due_now': true,
-                                                         'assigned_to_ids': [logged_in_user_id] }))
+        dispatch(update_list_filter(list_key, { 'is_open': true,
+                                                'due_now': true,
+                                                'assigned_to_ids': [logged_in_user_id] }))
         this.refresh()
     }
 
@@ -42,23 +41,21 @@ class DueIssueList extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        
+        const { dispatch, list_key } = props
         dispatch(fetchIssuesIfNeeded(list_key))
     }
 
     onHidePopup() {
         this.setState({show_popup:false})
-        hideAutoClockPopup()
     }
 
     onShowPopup() {
         this.setState({show_popup:true})
-        showAutoClockPopup()
     }
 
     renderDueAlert() {
-        const { pagination_unallocated } = this.props
-        const num_issues = issues_pagination && issues_pagination.num_items
+        const { pagination_unallocated, pagination } = this.props
+        const num_issues = pagination && pagination.num_items
         if ( num_issues === 0 ) {
             return null
         }
@@ -91,9 +88,9 @@ class DueIssueList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const list_key = LIST_KEY__RECENT_AUTO_CLOCK
+    const list_key = LIST_KEY__MY_ISSUE_LIST_DUE_NOW
     const visible_item_ids = getVisibleItemIds(state, list_key)
-    const items_by_id = getIssues(state, visible_item_ids)
+    const items_by_id = getIssuesById(state, visible_item_ids)
     const filter = getListFilter(state, list_key)
     const logged_in_user_id = logged_in_user().user_id || -1
     const pagination = getListPagination(state, list_key)
