@@ -37,6 +37,10 @@
     @include icon(20px, 19.45px, 'icon_settings_black@2x.png')
 }
 
+.icon--open {
+    @include icon(20px, 20px, 'open.png')
+}
+
 .icon--timer-estimate {
     @include icon(20px, 20px, 'icon_time_black 14@2x.png')
     opacity:0.2;

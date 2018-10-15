@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { flatMap, keys, groupBy, filter, keyBy, size, uniq, concat, indexOf, map, union, difference, includes } from 'lodash'
 import { css } from 'emotion'
+import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
 import styled from 'react-emotion'
 import Floater from "react-floater"
@@ -372,6 +373,15 @@ class IssueList extends Component {
         const {selected_ids, dispatch} = this.props
         event.stopPropagation()
         dispatch(ungroupIssuesIntoFeature(selected_ids))
+    }
+
+    onOpenIssueInSprint = (event, issue) => {
+        const { history, onAction } = this.props
+        event.stopPropagation()
+        history.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id);
+        if ( onAction ) {
+            onAction("view_in_sprint", issue)
+        }
     }
 
     onDeleteIssue = (event, issue) => {
@@ -812,6 +822,25 @@ class IssueList extends Component {
                     </DivTableCell>
                 )
                 break
+            case "view_in_sprint":
+                content = (
+                    <DivTableCell key={key}
+                                  secondary={true}
+                    >
+                      <div className={"reveal-on-hover--block"}>
+                        <Floater title="Open issue"
+                                 disableHoverToClick
+                                 event="hover"
+                                 eventDelay={0}
+                                 placement="bottom"
+                                 content="Open this issue in its sprint"
+                        >
+                          <div className="icon--open" onClick={(event) => that.onOpenIssueInSprint(event, issue)} />
+                        </Floater>
+                      </div>
+                    </DivTableCell>
+                )
+                break
             default:
                 console.error("Unknown header: " + header_key)
         }
@@ -830,7 +859,8 @@ class IssueList extends Component {
 
     render_grid() {
 
-            const { is_mien_configurer_active, header_list, is_visible, issue_items, selected_ids } = this.props
+        const { is_mien_configurer_active, header_list, is_visible,
+                issue_items, selected_ids, table_params } = this.props
 
         if (!is_visible) {
             return (<div></div>)
@@ -872,6 +902,7 @@ class IssueList extends Component {
                            selected_item_ids={selected_ids}
                            header_list={header_list}
                            renderCell={this.renderCell}
+                           table_params={table_params}
               />
         )
     }
@@ -915,7 +946,7 @@ const makeMapStateToProps = () => {
     const selIssues = makeSelIssues()
     const selIssueObjectsToRender = makeSelIssueObjectsToRender()
     const mapStateToProps = (state, props) => {
-        const {list_key, issue_header_list} = props
+        const {list_key, issue_header_list, table_params, onAction} = props
         const filter = getListFilter(state, list_key)
         const sprint_id = filter.sprint_id || null
         const sprint = getSprint(state, sprint_id) || {}
@@ -975,10 +1006,12 @@ const makeMapStateToProps = () => {
             all_tags_by_id,
             tag_category_names,
             logged_in_user_id,
-            logged_in_user_can_estimate_user_id
+            logged_in_user_can_estimate_user_id,
+            table_params,
+            onAction
         }
     }
     return mapStateToProps
 }
 
-export default connect(makeMapStateToProps)(IssueList)
+export default withRouter(connect(makeMapStateToProps)(IssueList))

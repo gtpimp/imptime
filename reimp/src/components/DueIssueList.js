@@ -56,6 +56,12 @@ class DueIssueList extends Component {
         this.setState({show_popup:true})
     }
 
+    onIssueAction = (action_name, issue) => {
+        if ( action_name === "view_in_sprint" ) {
+            this.onHidePopup()
+        }
+    }
+
     renderDueAlert() {
         const { pagination } = this.props
         const num_issues = pagination && pagination.num_items
@@ -90,8 +96,11 @@ class DueIssueList extends Component {
             <ModalDialog isOpen={true}
                          onClose={this.onHidePopup}
                          title="Issues due today"
-                         variant="large">
-              <IssueList list_key={list_key} issue_header_list={header_list} />
+                         variant="full">
+              <IssueList list_key={list_key} issue_header_list={header_list}
+                         table_params={{height:300}}
+                         onAction={this.onIssueAction}
+              />
             </ModalDialog>
         )
     }

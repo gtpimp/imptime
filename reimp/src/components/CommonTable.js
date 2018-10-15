@@ -105,7 +105,7 @@ class CommonTable extends Component {
     
     render() {
         const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
-                items, header_list } = this.props
+                items, header_list, table_params } = this.props
 
         return (
 
@@ -119,7 +119,7 @@ class CommonTable extends Component {
                 <AutoSizer>
                   {({width, height}) => (
                       <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
-                                     height={height}
+                                     height={table_params.height || height} 
                                      headerHeight={40}
                                      rowCount={size(items)}
                                      onRowClick={this.onRowClicked}
@@ -157,7 +157,8 @@ function mapStateToProps(state, props) {
     
     const { getAvailableHeaders, getHeaderListForMien, updateMienHeaders, header_list_name,
             renderCell,
-            selected_item_ids, onRowSelected, onRowReordered, items, header_list } = props
+            selected_item_ids, onRowSelected, onRowReordered, items, header_list,
+            table_params } = props
 
     const mien_id = getCurrentMienId(state)
     
@@ -172,7 +173,8 @@ function mapStateToProps(state, props) {
         items,
         selected_item_ids,
         header_list,
-        mien_id
+        mien_id,
+        table_params: table_params || {}
     }
 }
 
