@@ -7,6 +7,7 @@ import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import PopupPanel from './PopupPanel'
 import NavTabPopup from './NavTabPopup'
+import NavMenuItem from './NavMenuItem'
 
 const nav_item_css = {paddingLeft:"12px",
                       display:"flex",
@@ -14,10 +15,7 @@ const nav_item_css = {paddingLeft:"12px",
                       justifyContent:"center",
                       '&:hover': { cursor: "pointer"}}
 
-const NavMenuItem = styled('div')(props => Object.assign(nav_item_css,
-                                                         {cursor: "pointer",
-                                                          backgroundColor: props.isActive === true ? theme.colours.panel_background : "auto",
-                                                          color: props.colourName === null ? "#ffffff" : theme.colours[props.colourName]}))
+
 
 const NavDropdownMenuItem = styled('div')(props => Object.assign(nav_item_css,
                                           {position:"relative",
@@ -61,7 +59,7 @@ class NavTab extends Component {
     render() {
         const {match, to, children, variant, expanded, colourName} = this.props
         const {sub_menu_visible} = this.state
-        
+
         if (variant === 'link') {
             let isActive
             isActive = match.path === to
@@ -104,6 +102,8 @@ class NavTab extends Component {
                   }
                 </NavDropdownMenuItem>
             )
+        } else if ( variant === "component_handled" ) {
+            return children
         }
     }
 }
