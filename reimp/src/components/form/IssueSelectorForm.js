@@ -99,7 +99,7 @@ class IssueSelectorForm extends Component {
               Create a new issue in sprint <SprintName sprint_id={sprint_id} />
               <IssueTitleField />
               <IssueAssigneeField project_id={project_id} />
-              <label>Due now<Field component="input" type="checkbox" name="due_now" /></label>
+              <label>Due today<Field component="input" type="checkbox" name="due_now" /></label>
             </div>
         )
     }
