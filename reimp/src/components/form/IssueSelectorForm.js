@@ -115,7 +115,7 @@ class IssueSelectorForm extends Component {
 
     render() {
         const { handleSubmit, default_project_id } = this.props
-        const { project_id, sprint_id, issue_id, creating_issue } = this.state
+        const { project_id, sprint_id, creating_issue } = this.state
 
         return (
             <form onSubmit={handleSubmit(this.handleSubmitIntercept)}>

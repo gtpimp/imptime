@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import ReactDOM from 'react-dom'
 import classNames from 'classnames'
-import { map, filter, includes, keys, keyBy, find, size } from 'lodash'
+import { map, filter, includes, keys, keyBy, find } from 'lodash'
 import { optionSelected, getBestOptions } from '../../actions/OptionRemember'
 import '../../sass/single-value-selector.css'
 
