@@ -291,6 +291,8 @@ class IssueViewSet(BaseViewSet):
             params = request.data['item']
             sprint_id = params['sprint_id']
             issue_id_before = params.get('issue_id_before', None)
+            assigned_to_id = params.get('assigned_to_id', None)
+            due_now = params.get('due_now', None)
 
             sprint = self.allowed_sprint(sprint_id)
             if not self.logged_in_permissions(sprint.business).has_add_issue:
@@ -300,9 +302,11 @@ class IssueViewSet(BaseViewSet):
                 issue_status = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0]
                 issue = Issue.objects.create(project_id=sprint.id,   # sic
                                              status2 = issue_status,
+                                             assigned_to_id = assigned_to_id,
                                              number=Issue.get_next_issue_number(sprint.business),
                                              subject=params['subject'],
                                              created_by=request.user,
+                                             due_date=timezone.now() if due_now else None,
                                              can_group_issues=params.get('can_group_issues', False),
                                              issue_type=params.get('issue_type', 'issue'))
 

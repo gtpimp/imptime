@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {Field} from 'redux-form'
 import {css} from 'emotion'
 import { reduxForm } from 'redux-form';
 import '../../sass/text-component.scss'
@@ -69,6 +70,12 @@ class IssueSelectorForm extends Component {
         if ( values.issue_title ) {
             dispatch(startCandidateIssue(values.sprint_id))
             dispatch(updateCandidateSubject(values.issue_title))
+            if ( values.assigned_user ) {
+                dispatch(updateCandidateProperties({assigned_to_id:values.assigned_user}))
+            }
+            if ( values.due_now ) {
+                dispatch(updateCandidateProperties({due_now:values.due_now}))
+            }
             if ( optional_default_issue_values ) {
                 dispatch(updateCandidateProperties(optional_default_issue_values))
             }
@@ -92,6 +99,7 @@ class IssueSelectorForm extends Component {
               Create a new issue in sprint <SprintName sprint_id={sprint_id} />
               <IssueTitleField />
               <IssueAssigneeField project_id={project_id} />
+              <label>Due now<Field component="input" type="checkbox" name="due_now" /></label>
             </div>
         )
     }
