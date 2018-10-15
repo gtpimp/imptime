@@ -1,15 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {reduxForm, Field} from 'redux-form'
-import { ensureUsersLoaded, getUsers } from '../../actions/Users'
-import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
-import SingleValueSelector from './SingleValueSelector'
+import {reduxForm} from 'redux-form'
+import IssueAssigneeField from './IssueAssigneeField'
 
 class IssueAssignedUserForm extends Component {
 
     constructor(props) {
         super(props)
-        this.renderSingleValueSelector = this.renderSingleValueSelector.bind(this)
         this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
     }
 
@@ -22,41 +19,18 @@ class IssueAssignedUserForm extends Component {
     }
 
     refresh() {
-        const {dispatch, assignable_user_ids, project_id} = this.props
-        dispatch(ensureProjectsLoaded([project_id]))
-        dispatch(ensureUsersLoaded(assignable_user_ids))
     }
 
-    onChangeAndSubmit(e, fieldOnChange) {
+    onChangeAndSubmit(user_id) {
         const {handleSubmit} = this.props
-        fieldOnChange(e)
         setTimeout(() => handleSubmit(), 0)
     }
 
-    renderSingleValueSelector(field) {
-        const {input, data, ...rest} = field
-        const { project_id } = this.props
-        return (
-            <SingleValueSelector
-                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
-                value={input.value}
-                options={data}
-                rememberer_key={"user_"+project_id}
-                {...rest}
-            />
-        )
-    }
-
     render() {
-        const {handleSubmit, assignable_user_options } = this.props
+        const {handleSubmit, project_id } = this.props
         return (
             <form onSubmit={handleSubmit}>
-              <Field name='assigned_user'
-                     component={this.renderSingleValueSelector}
-                     valueField="value"
-                     textField="label"
-                     data={assignable_user_options}
-              />
+              <IssueAssigneeField project_id={project_id} onChange={this.onChangeAndSubmit} />
             </form>
         )
     }
@@ -65,22 +39,12 @@ class IssueAssignedUserForm extends Component {
 function mapStateToProps(state, props) {
 
     const { project_id, onSubmitted } = props
-    const project = getProject(state, project_id) || {}
-    const assignable_user_ids = project.allowed_user_ids || []
-    const users = getUsers(state, assignable_user_ids)
-
-    const assignable_user_options = users.map(function (user) {
-        return {value: user.id, label: user.visible_name}
-    })
 
     return {
         initialValues: {assigned_to: props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
-        assignable_user_options: assignable_user_options,
-        assignable_user_ids: assignable_user_ids,
-        project_id: project_id,
-        project: project
+        project_id
     }
 }
 

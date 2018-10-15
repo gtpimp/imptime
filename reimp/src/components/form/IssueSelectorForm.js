@@ -7,7 +7,8 @@ import IssueSelectorField from './IssueSelectorField'
 import SprintName from '../SprintName'
 import SprintSelectorField from './SprintSelectorField'
 import ProjectSelectorField from './ProjectSelectorField'
-import IssueTitleField from './IssueTitleField';
+import IssueTitleField from './IssueTitleField'
+import IssueAssigneeField from './IssueAssigneeField'
 import PropertyStackComponent from '../PropertyStackComponent'
 import { getGloballySelectedEntityIds } from '../../actions/Page'
 import {
@@ -85,11 +86,12 @@ class IssueSelectorForm extends Component {
     }
 
     renderCreateNewIssue() {
-        const { sprint_id } = this.state
+        const { project_id, sprint_id } = this.state
         return (
             <div>
               Create a new issue in sprint <SprintName sprint_id={sprint_id} />
               <IssueTitleField />
+              <IssueAssigneeField project_id={project_id} />
             </div>
         )
     }
