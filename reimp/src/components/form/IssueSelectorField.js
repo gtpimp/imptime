@@ -94,7 +94,6 @@ class SelectIssueField extends Component {
                 rememberer_key={"issue_"+project_id}
                 auto_focus={auto_focus}
                 onFilterChanged={this.onFilterChanged}
-                only_show_options_if_filtered={true}
                 {...rest}
             />
         )
