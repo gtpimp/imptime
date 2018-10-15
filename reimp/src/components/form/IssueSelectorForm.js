@@ -1,16 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {Field} from 'redux-form'
-import {css} from 'emotion'
 import { reduxForm } from 'redux-form';
 import '../../sass/text-component.scss'
 import IssueSelectorField from './IssueSelectorField'
-import SprintName from '../SprintName'
 import SprintSelectorField from './SprintSelectorField'
 import ProjectSelectorField from './ProjectSelectorField'
 import IssueTitleField from './IssueTitleField'
 import IssueAssigneeField from './IssueAssigneeField'
-import PropertyStackComponent from '../PropertyStackComponent'
 import { getGloballySelectedEntityIds } from '../../actions/Page'
 import {
     startCandidateIssue,
@@ -19,6 +16,9 @@ import {
     saveCandidateIssue
 } from '../../actions/Issues'
 import PopupPanelMiniButton from '../PopupPanelMiniButton'
+import SidebarContainer from '../SidebarContainer'
+import SidebarProperty from '../SidebarProperty'
+import SidebarDetail from '../SidebarDetail'
 
 class IssueSelectorForm extends Component {
 
@@ -93,61 +93,73 @@ class IssueSelectorForm extends Component {
     }
 
     renderCreateNewIssue() {
-        const { project_id, sprint_id } = this.state
+        const { project_id } = this.state
         return (
             <div>
-              Create a new issue in sprint <SprintName sprint_id={sprint_id} />
-              <IssueTitleField />
-              <IssueAssigneeField project_id={project_id} />
-              <label>Due today<Field component="input" type="checkbox" name="due_now" /></label>
+              
+              <SidebarDetail label="Title">
+                <IssueTitleField />
+              </SidebarDetail>
+
+              <SidebarDetail label="Assignee (optional)">
+                <IssueAssigneeField project_id={project_id} />
+              </SidebarDetail>
+
+              <SidebarDetail label="Due date (optional)">
+                <label>Due today<Field component="input" type="checkbox" name="due_now" /></label>
+              </SidebarDetail>
+              
             </div>
         )
     }
 
     render() {
         const { handleSubmit, default_project_id } = this.props
-        const { project_id, sprint_id, creating_issue } = this.state
+        const { project_id, sprint_id, issue_id, creating_issue } = this.state
 
         return (
             <form onSubmit={handleSubmit(this.handleSubmitIntercept)}>
               <div>
 
-                <div className={css`display:flex; justify-content:space-between`}>
-                  <div className={css`width:30%`}>
-                    <PropertyStackComponent title="Project">
+                <SidebarContainer>
+                  <SidebarProperty key="infostack">
+                    <SidebarDetail label="Project">
                       <ProjectSelectorField auto_focus={false}
                                             onChange={this.onChangeProject}
                                             default_project_id={project_id || default_project_id} />
-                    </PropertyStackComponent>
-                  </div>
-                
-                  <div className={css`width:30%;opacity:${project_id ? 1.0 : 0.2}`}>
-                    <PropertyStackComponent title="Sprint">
-                      <SprintSelectorField project_id={project_id}
-                                           auto_focus={false}
-                                           onChange={this.onChangeSprint}
-                      />
-                    </PropertyStackComponent>
-                  </div>
-                  <div className={css`width:30%;opacity:${sprint_id ? 1.0 : 0.2}`}>
-                    <PropertyStackComponent title="Issue">
-                      { creating_issue && this.renderCreateNewIssue() }
-                      { ! creating_issue &&
-                        <div>
-                          <IssueSelectorField sprint_id={sprint_id}
-                                              auto_focus={false}
-                                              onChange={this.onChangeIssue} />
-                          { sprint_id && 
-                            <PopupPanelMiniButton onClick={this.onStartCreateNewIssue}>
-                              New issue
-                            </PopupPanelMiniButton>
-                          }
-                        </div>
-                      }
-                    </PropertyStackComponent>
-                  </div>
-                </div>
-                <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                    </SidebarDetail>
+
+                    { project_id && 
+                      <SidebarDetail label="Sprint">
+                        <SprintSelectorField project_id={project_id}
+                                             auto_focus={false}
+                                             onChange={this.onChangeSprint}
+                        />
+                      </SidebarDetail>
+                    }
+
+                    { sprint_id &&
+                      <div>
+                        { creating_issue && this.renderCreateNewIssue() }
+                        { ! creating_issue &&
+                          <SidebarDetail label="Issue">
+                            <div>
+                              <IssueSelectorField sprint_id={sprint_id}
+                                                  auto_focus={false}
+                                                  onChange={this.onChangeIssue} />
+                              <PopupPanelMiniButton onClick={this.onStartCreateNewIssue}>
+                                New issue
+                              </PopupPanelMiniButton>
+                            </div>
+                          </SidebarDetail>
+                        }
+                      </div>
+                    }
+                  </SidebarProperty>
+                  { sprint_id && 
+                    <button className="button issue_sidebar--textarea" type="submit">Submit</button>
+                  }
+                </SidebarContainer>
               </div>
             </form>
         )

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import ReactDOM from 'react-dom'
 import classNames from 'classnames'
 import { map, filter, includes, keys, keyBy, find, size } from 'lodash'
 import { optionSelected, getBestOptions } from '../../actions/OptionRemember'
@@ -18,6 +19,7 @@ export class SingleValueSelector extends Component {
     onSelected(selected_option) {
         const {dispatch, onChange, rememberer_key} = this.props
         dispatch(optionSelected(rememberer_key, selected_option.value))
+        this.setState({filter_term: selected_option.label})
         onChange(selected_option.value)
     }
 
@@ -131,25 +133,31 @@ export class SingleValueSelector extends Component {
     }
 
     render() {
-        const { placeholder, only_show_options_if_filtered } = this.props
+        const { placeholder, only_show_options_if_filtered, value } = this.props
         const { filter_term } = this.state
-        const show_options = !only_show_options_if_filtered || size(filter_term)>0
-        
+        const is_focused = this.selection_filter_el && document.activeElement === ReactDOM.findDOMNode(this.selection_filter_el)
+        const show_options = (!only_show_options_if_filtered || size(filter_term)>0)
+
         return (
             <div className="single-value-selector">
                 <div className="single-value-selector__input-wrapper">
                   <input onKeyDown={this.onKeyDownOnSelectionFilter}
                          placeholder={placeholder}
+                         value={filter_term}
                          className="single-value-selector__input"
                          ref={(ref)=> this.selection_filter_el=ref}
                          onChange={this.onSelectionFilterChanged}/>
                 </div>
-                <div className="single-value-selector__best-suggestions">
-                  {this.render_best_suggestions()}
-                </div>
-                <div className="single-value-selector__suggestions">
-                  { show_options && this.render_suggestions()}
-                </div>
+                { is_focused && 
+                  <div className="single-value-selector__best-suggestions">
+                    {this.render_best_suggestions()}
+                  </div>
+                }
+                { is_focused && 
+                  <div className="single-value-selector__suggestions">
+                    { show_options && this.render_suggestions()}
+                  </div>
+                }
             </div>
         )
     }
