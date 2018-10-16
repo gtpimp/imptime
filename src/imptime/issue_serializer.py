@@ -54,6 +54,7 @@ class IssueSerializer(BaseSerializer):
     share_ref = serializers.CharField()
     has_attachment = serializers.SerializerMethodField()
     risky = serializers.BooleanField()
+    due_date = serializers.DateTimeField()
 
     def get_has_attachment(self, issue):
         if len(issue.annotated_visual_spec_document_ids) > 0:

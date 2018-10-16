@@ -22,7 +22,7 @@ django-annoying==0.8.4
 django-api-docs==1.1.1
 django-appconf==1.0.1
 django-bootstrap-toolkit==2.15.0
-django-bootstrap3==6.2.2
+django-bootstrap3==11.0.0
 django-celery==3.1.17
 django-classy-tags==0.6.2
 django-colorful==1.2

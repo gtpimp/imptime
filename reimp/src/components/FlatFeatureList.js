@@ -79,14 +79,16 @@ class FlatFeatureList extends Component {
     }
     
     render() {
-        const { features_as_structured_tree } = this.props
+        const { features_as_structured_tree, renderableRef } = this.props
         this.refs = {}
         return (
             <AutoSizer>
               {({width, height}) => (
                   <div className={css`overflow:auto`}
                        style={{height:`${height-HACK_NUMBER_TO_PREVENT_DOUBLE_SCROLL}px`, width:`${width}px`}}>
-                    {this.renderSubTree([], features_as_structured_tree[0])}
+                    <div ref={renderableRef}>
+                      {this.renderSubTree([], features_as_structured_tree[0])}
+                    </div>
                   </div>
               )}
             </AutoSizer>
@@ -103,7 +105,7 @@ const makeMapStateToProps = () => {
     const selFeatureObjectsToRender = makeSelFeatureObjectsToRender()
     const selFeaturesAsStructuredTree = makeSelFeaturesAsStructuredTree()
     const mapStateToProps = (state, props) => {
-        const {list_key, header_list, onReactRefsCreated} = props
+        const {list_key, header_list, onReactRefsCreated, renderableRef} = props
         const filter = getListFilter(state, list_key)
         const project_id = filter.project_id || null
         const project = getProject(state, project_id) || {}
@@ -134,10 +136,12 @@ const makeMapStateToProps = () => {
             last_updated: getLastUpdated(state, list_key),
             header_list: header_list,
             logged_in_user_id,
-            onReactRefsCreated
+            onReactRefsCreated,
+            renderableRef
         }
     }
     return mapStateToProps
 }
 
 export default connect(makeMapStateToProps)(FlatFeatureList)
+

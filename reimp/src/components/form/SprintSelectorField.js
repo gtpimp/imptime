@@ -90,7 +90,6 @@ class SprintSelectorField extends Component {
                 rememberer_key={"sprint_"+project_id}
                 auto_focus={auto_focus}
                 onFilterChanged={this.onFilterChanged}
-                only_show_options_if_filtered={true}
                 {...rest}
             />
         )

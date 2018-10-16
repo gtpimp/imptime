@@ -1,11 +1,15 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import Floater from "react-floater"
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
+import Pluralize from 'react-pluralize'
 import { logged_in_user } from '../actions/Auth'
 import CommonTree from './CommonTree'
 import DivTableCell from './DivTableCell'
+import ProgressBar from './ProgressBar'
+import Hours from './Hours'
 import 'react-virtualized/styles.css';
 import {
     makeSelFeatureIds,
@@ -57,61 +61,9 @@ class FeatureList extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
     }
 
-    /* onClickedFeature(event, feature_id) {
-     *     const {dispatch, onSelectFeatures, selected_ids} = this.props
-     *     if ( event ) {
-     *         event.stopPropagation()
-     *     }
-
-     *     let selected_feature_ids = []
-     *     if (event.ctrlKey || event.metaKey) {
-     *         if (includes(selected_ids, feature_id)) {
-     *             selected_feature_ids = difference(selected_ids, [feature_id])
-     *         } else {
-     *             selected_feature_ids = union(selected_ids, [feature_id])
-     *         }
-     *     } else if (event.shiftKey) {
-     *         selected_feature_ids = concat(selected_ids, this.findFeaturesFromHereToAlreadySelected(feature_id))
-     *     }
-     *     if ( onSelectFeatures ) {
-     *         onSelectFeatures(selected_feature_ids)
-     *     }
-     *     dispatch(cancelCandidateFeature())
-     * }*/
-
-    /* findFeaturesFromHereToAlreadySelected(target_feature_id) {
-     *     window.alert("Not implemented yet")
-     *     return [target_feature_id]
-     * }*/
-
-    /* onDeleteFeature = (event, feature) => {
-     *     const { dispatch, onDelete } = this.props
-     *     event.stopPropagation()
-
-     *     if ( feature.actual_hours > 0 ) {
-     *         window.alert("This feature has time against it and so can't be deleted")
-     *         return
-     *     }
-     *     
-     *     if ( ! window.confirm( "Delete feature " + feature.number + " - " + feature.subject + "?") ) {
-     *         return
-     *     }
-     *     dispatch(deleteFeatures([feature.id]))
-     *     if ( onDelete ) {
-     *         onDelete(feature.id)
-     *     }
-     * }*/
-
     onSelectedFeature = (node) => {
         const {dispatch, onSelectFeatures} = this.props
         let selected_feature_ids = [node.id]
-        /* if (event.ctrlKey || event.metaKey) {
-         *     if (includes(selected_ids, feature_id)) {
-         *         selected_feature_ids = difference(selected_ids, [feature_id])
-         *     } else {
-         *         selected_feature_ids = union(selected_ids, [feature_id])
-         *     }
-         * }*/
         if ( onSelectFeatures )  {
             onSelectFeatures(selected_feature_ids)
         }
@@ -132,51 +84,6 @@ class FeatureList extends Component {
         }
     }
     
-    /* reorderFeature(index_of_row_being_moved, index_of_destination) {
-     *     const {dispatch, list_key, feature_items} = this.props
-
-     *     // get feature being moved
-     *     const moving_feature_id = feature_items[index_of_row_being_moved].id
-     *     if ( ! moving_feature_id ) {
-     *         return
-     *     }
-     *     let selected_ids = this.props.selected_ids || []
-     *     if ( ! includes(selected_ids, moving_feature_id) ) {
-     *         selected_ids = [moving_feature_id]
-     *     }
-
-     *     // get place to move it
-     *     let move_after_feature_id
-     *     if ( index_of_row_being_moved > index_of_destination ) {
-     *         move_after_feature_id = (index_of_destination>0 && feature_items[index_of_destination-1].id) || null
-     *     } else {
-     *         move_after_feature_id = feature_items[index_of_destination].id || null
-     *     }
-
-     *     const target_feature_id = move_after_feature_id
-
-     *     dispatch(reorderFeature(selected_ids, target_feature_id, list_key,
-     *                           index_of_destination,
-     *                           function () {
-     *                               dispatch(invalidateList(list_key))
-     *                               dispatch(fetchFeaturesIfNeeded(list_key))
-     *                           }))
-     * }*/
-
-    /* renderCandidateFeature() {
-
-     *     const {list_key} = this.props
-
-     *     return (
-     *         <div key={list_key + ".candidate_feature"}
-     *              className="div-table__row feature_list__candidate_feature">
-     *           <div className="div-table__cell" colSpan="20">
-     *             Creating new feature here
-     *           </div>
-     *         </div>
-     *     )
-     * }*/
-
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
         const { feature_items, header_list } = this.props
         const key = `feature_${columnIndex}_${rowIndex}`
@@ -222,6 +129,101 @@ class FeatureList extends Component {
         return header_list[index].maxWidth
     }
 
+    renderFeatureIcons = (rowInfo) => {
+        const feature = rowInfo.node
+        const { nested_stats } = feature
+        const icons = []
+
+        if ( nested_stats.estimated_hours || nested_stats.hours_clocked ) {
+            icons.push(
+                <div>
+                  <Floater
+                      title="Progress (hours)"
+                      disableHoverToClick
+                      event="hover"
+                      eventDelay={0}
+                      placement="right"
+                      content={
+                          <div>
+                            <div>Hours clocked: <Hours hours={nested_stats.hours_clocked}/></div>
+                            <div>Total estimates: <Hours hours={nested_stats.estimated_hours}/></div>
+                          </div>
+                              }
+                  >
+                          <div className={css`min-width:100px;font-size:${theme.font_sizes.superscript}`}>
+                            <ProgressBar current={nested_stats.hours_clocked} max={nested_stats.estimated_hours}/>
+                            <div className={css`display:flex`}>
+                              <Hours hours={nested_stats.hours_clocked}/> / <Hours hours={nested_stats.estimated_hours}/>
+                            </div>
+                          </div>
+                  </Floater>
+                </div>
+            )
+        }
+
+        if ( nested_stats.num_features_missing_testables > 0 ||
+             nested_stats.num_testables_without_issues > 0 ||
+             nested_stats.num_not_fully_implemented_testables > 0 ||
+             nested_stats.num_unestimated_issues > 0 ) {
+            
+            icons.push(
+                  <Floater
+                      title="Feature problems"
+                      disableHoverToClick
+                      event="hover"
+                      eventDelay={0}
+                      placement="right"
+                      content={
+                          <div>
+                              { nested_stats.num_features_missing_testables > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) is missing&nbsp;
+                                    <Pluralize singular="testable" count={nested_stats.num_features_missing_testables}/>.
+                                  </div>
+                                </div>
+                              }
+                              { nested_stats.num_testables_without_issues > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) has&nbsp;
+                                    <Pluralize singular="testable" count={nested_stats.num_testables_without_issues}/> without issues.
+                                  </div>
+                                </div>
+                              }
+                              { nested_stats.num_not_fully_implemented_testables > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) has&nbsp;
+                                    <Pluralize singular="testable" count={nested_stats.num_not_fully_implemented_testables}/>
+                                    that&nbsp;
+                                    <Pluralize singular="isn't" plural="aren't" showCount={false} count={nested_stats.num_not_fully_implemented_testables}/>
+                                    &nbsp;exactly matched by an issue.
+                                  </div>
+                                </div>
+                              }
+                              { nested_stats.num_unestimated_issues > 0 &&
+                                <div className="floater__section">
+                                  <div>
+                                    This feature (or its children) has&nbsp;
+                                    <Pluralize singular="issue" count={nested_stats.num_unestimated_issues}/>
+                                    that&nbsp;
+                                    <Pluralize singular="isn't" plural="aren't" showCount={false} count={nested_stats.num_unestimated_issues}/>
+                                    &nbsp;estimated.
+                                  </div>
+                                </div>
+                              }
+                          </div>
+                      }
+                  >
+                          <div className="icon icon--warning"></div> 
+                  </Floater>
+            )
+        }
+        
+        return icons       
+    }
+
     render_tree() {
 
         const { is_mien_configurer_active, header_list, features_by_id,
@@ -245,6 +247,7 @@ class FeatureList extends Component {
                         items_by_id={features_by_id}
                         //onChange={this.onUpdateTree}
                         onReorder={this.onReorder}
+                        renderIcons={this.renderFeatureIcons}
                         onNodeSelected={this.onSelectedFeature}
                         onExpandCollapse={this.onExpandCollapse}
                         getAvailableHeaders={getAllAvailableFeatureHeaders}

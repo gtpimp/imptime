@@ -61,7 +61,7 @@ class Navbar extends Component {
                 <NavTab to="/projects" label="Projects" />
               </div>
               <NavbarRightDiv>
-                <NavTab variant="dashboard-toggle" label="+ Issue">
+                <NavTab variant="component_handled">
                   <QuickIssueCreator />
                 </NavTab>
                 <NavTab variant="dashboard-toggle" label="Mien">

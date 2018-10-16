@@ -7,16 +7,17 @@ from imptime.models import AnnotatedVisualSpecDocument
 logger = logging.getLogger(__name__)
 
 class FeatureStatsSerializer(BaseSerializer):
-    num_testables = serializers.IntegerField()
-    num_testables_without_issues = serializers.IntegerField()
-    num_testables_with_issues = serializers.IntegerField()
-    num_issues = serializers.IntegerField()
-    num_issues_without_estimates = serializers.IntegerField()
-    num_issues_with_estimates = serializers.IntegerField()
-    estimated_hours = serializers.IntegerField()
-    hours_clocked = serializers.IntegerField()
-    num_fully_implemented_testables = serializers.IntegerField()
-    num_not_fully_implemented_testables = serializers.IntegerField()
+    num_features_missing_testables = serializers.FloatField()
+    num_testables = serializers.FloatField()
+    num_testables_without_issues = serializers.FloatField()
+    num_testables_with_issues = serializers.FloatField()
+    num_issues = serializers.FloatField()
+    num_issues_without_estimates = serializers.FloatField()
+    num_issues_with_estimates = serializers.FloatField()
+    estimated_hours = serializers.FloatField()
+    hours_clocked = serializers.FloatField()
+    num_fully_implemented_testables = serializers.FloatField()
+    num_not_fully_implemented_testables = serializers.FloatField()
 
 class FeatureSerializer(BaseSerializer):
 

@@ -2,8 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { startCandidateFeature } from '../../actions/Features'
-import { getGloballySelectedProjectId } from '../../actions/Page'
+import { getGloballySelectedProjectId, get_selected_feature_ids } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
+import { PAGE_KEY__FEATURES_PAGE } from '../../actions/ItemListKeyRegistry'
 
 class FeaturesToolbarPanel extends Component {
 
@@ -38,10 +39,13 @@ class FeaturesToolbarPanel extends Component {
 function mapStateToProps(state, props) {
     const project_id = getGloballySelectedProjectId(state)
     const is_tree_view = true
+    const selected_feature_ids = get_selected_feature_ids(state, PAGE_KEY__FEATURES_PAGE)
+    const last_selected_feature_id = selected_feature_ids && selected_feature_ids[0]
     
     return {
         project_id,
-        is_tree_view
+        is_tree_view,
+        last_selected_feature_id
     }
 }
 

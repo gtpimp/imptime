@@ -250,6 +250,13 @@ class IssueViewSet(BaseViewSet):
                     if SprintReview.objects.filter(project_id=issue.project_id, review_by=request.user).first() is not None:
                         IssueReview.reviewed(issue, request.user)
 
+                elif field_name == "due_date":
+                    if self.logged_in_permissions(issue.project.business).has_edit_issues:
+                        old_due_date = issue.due_date
+                        issue.due_date = new_value
+                        IssueHistory.add_history(request.user, issue, "changed due date",
+                                                 str(old_due_date), str(issue.due_date))
+                        
                 elif field_name == "make_feature_issues_successive":
                     sprint_id = new_value
                     feature_issue = issue
@@ -284,6 +291,8 @@ class IssueViewSet(BaseViewSet):
             params = request.data['item']
             sprint_id = params['sprint_id']
             issue_id_before = params.get('issue_id_before', None)
+            assigned_to_id = params.get('assigned_to_id', None)
+            due_now = params.get('due_now', None)
 
             sprint = self.allowed_sprint(sprint_id)
             if not self.logged_in_permissions(sprint.business).has_add_issue:
@@ -293,9 +302,11 @@ class IssueViewSet(BaseViewSet):
                 issue_status = IssueStatus.objects.get_or_create(name='new', business=sprint.business)[0]
                 issue = Issue.objects.create(project_id=sprint.id,   # sic
                                              status2 = issue_status,
+                                             assigned_to_id = assigned_to_id,
                                              number=Issue.get_next_issue_number(sprint.business),
                                              subject=params['subject'],
                                              created_by=request.user,
+                                             due_date=timezone.now() if due_now else None,
                                              can_group_issues=params.get('can_group_issues', False),
                                              issue_type=params.get('issue_type', 'issue'))
 
@@ -414,6 +425,18 @@ class IssueViewSet(BaseViewSet):
         status_names = raw_filter_args.pop('status_names', None)
         if status_names:
             qs = qs.filter(status2__name__in=status_names)
+
+        only_open = raw_filter_args.pop('is_open', None)
+        if only_open:
+            qs = qs.filter_open(self.request.user)
+
+        due_now = raw_filter_args.pop('due_now', None)
+        if due_now:
+            qs = qs.filter(due_date__date__lte=timezone.now().date())
+
+        assigned_to_ids = raw_filter_args.pop('assigned_to_ids', None)
+        if assigned_to_ids:
+            qs = qs.filter(assigned_to__in=assigned_to_ids)
             
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
 

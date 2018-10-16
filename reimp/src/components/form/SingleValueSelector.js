@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import ReactDOM from 'react-dom'
 import classNames from 'classnames'
-import { map, filter, includes, keys, keyBy, find, size } from 'lodash'
+import { map, filter, includes, keys, keyBy, find } from 'lodash'
 import { optionSelected, getBestOptions } from '../../actions/OptionRemember'
 import '../../sass/single-value-selector.css'
 
@@ -12,12 +13,15 @@ export class SingleValueSelector extends Component {
         this.onSelected = this.onSelected.bind(this)
         this.onSelectionFilterChanged = this.onSelectionFilterChanged.bind(this)
         this.onKeyDownOnSelectionFilter = this.onKeyDownOnSelectionFilter.bind(this)
-        this.state = {filter_term: null}
+        this.state = {filter_term: null,
+                      show_options: false}
     }
 
     onSelected(selected_option) {
         const {dispatch, onChange, rememberer_key} = this.props
         dispatch(optionSelected(rememberer_key, selected_option.value))
+        this.setState({filter_term: selected_option.label})
+        this.setState({show_options:false})
         onChange(selected_option.value)
     }
 
@@ -25,6 +29,10 @@ export class SingleValueSelector extends Component {
         const { auto_focus } = this.props
         if ( auto_focus ) {
             this.selection_filter_el && this.selection_filter_el.focus()
+            this.setState({show_options: true})
+        } else {
+            const is_focused = this.selection_filter_el && document.activeElement === ReactDOM.findDOMNode(this.selection_filter_el)
+            this.setState({show_options: is_focused})
         }
     }
     
@@ -35,6 +43,10 @@ export class SingleValueSelector extends Component {
         if ( onFilterChanged ) {
             onFilterChanged(new_filter_value)
         }
+    }
+
+    onFocusFilter = () => {
+        this.setState({show_options: true})
     }
 
     onKeyDownOnSelectionFilter(event) {
@@ -48,6 +60,7 @@ export class SingleValueSelector extends Component {
             }
             event.stopPropagation()
             event.preventDefault()
+            this.setState({show_options:false})
         }
     }
 
@@ -131,25 +144,30 @@ export class SingleValueSelector extends Component {
     }
 
     render() {
-        const { placeholder, only_show_options_if_filtered } = this.props
-        const { filter_term } = this.state
-        const show_options = !only_show_options_if_filtered || size(filter_term)>0
-        
+        const { placeholder } = this.props
+        const { filter_term, show_options } = this.state
+
         return (
-            <div className="single-value-selector">
+            <div className="single-value-selector" >
                 <div className="single-value-selector__input-wrapper">
                   <input onKeyDown={this.onKeyDownOnSelectionFilter}
+                         onFocus={this.onFocusFilter}
                          placeholder={placeholder}
+                         value={filter_term}
                          className="single-value-selector__input"
                          ref={(ref)=> this.selection_filter_el=ref}
                          onChange={this.onSelectionFilterChanged}/>
                 </div>
-                <div className="single-value-selector__best-suggestions">
-                  {this.render_best_suggestions()}
-                </div>
-                <div className="single-value-selector__suggestions">
-                  { show_options && this.render_suggestions()}
-                </div>
+                { show_options && 
+                  <div className="single-value-selector__best-suggestions">
+                    {this.render_best_suggestions()}
+                  </div>
+                }
+                { show_options && 
+                  <div className="single-value-selector__suggestions">
+                    { this.render_suggestions()}
+                  </div>
+                }
             </div>
         )
     }
@@ -159,7 +177,7 @@ export class SingleValueSelector extends Component {
 function mapStateToProps(state, props) {
 
     const { options, value, auto_focus, placeholder, rememberer_key,
-            onFilterChanged, only_show_options_if_filtered } = props
+            onFilterChanged } = props
 
     const best_options = getBestOptions(state, rememberer_key)
     
@@ -170,8 +188,7 @@ function mapStateToProps(state, props) {
         placeholder: placeholder || "",
         rememberer_key: rememberer_key || placeholder,
         best_options,
-        onFilterChanged,
-        only_show_options_if_filtered: only_show_options_if_filtered === true
+        onFilterChanged
     }
 }
 

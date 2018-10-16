@@ -21,7 +21,7 @@
     @include icon(24px, 24px, 'ic_mode_edit_black_24dp_1x.png')
 }
 
-.icon--print {
+.icon--print { 
     @include icon(24px, 24px, 'baseline_print_black_18dp.png')
 }
 
@@ -35,6 +35,10 @@
 
 .icon--settings {
     @include icon(20px, 19.45px, 'icon_settings_black@2x.png')
+}
+
+.icon--open {
+    @include icon(20px, 20px, 'open.png')
 }
 
 .icon--timer-estimate {
