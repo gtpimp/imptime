@@ -13,6 +13,7 @@ class DecisionJournalSerializer(BaseSerializer):
     decision_made_at = serializers.DateTimeField()
     decision_made_by_id = serializers.CharField()
     project_id = serializers.CharField()
+    created = serializers.DateTimeField()
     
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')

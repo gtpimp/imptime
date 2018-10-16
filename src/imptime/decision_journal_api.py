@@ -114,6 +114,18 @@ class DecisionJournalViewSet(BaseViewSet):
                         DecisionJournalHistory.add_history(
                             request.user, decision_journal, "changed decision made at",
                             old_decision_made_at, decision_journal.decision_made_at)
+
+                elif field_name == "decision_made_by":
+                    if self.logged_in_permissions(decision_journal.project).has_edit_decision_journal:
+                        old_decision_made_by = decision_journal.decision_made_by
+                        new_decision_made_by = self.allowed_project_user(decision_journal.project_id, new_value) if new_value else "no-one"
+                        decision_journal.decision_made_by = new_decision_made_by
+                        
+                        DecisionJournalHistory.add_history(
+                            request.user, decision_journal, "changed decision made by",
+                            old_decision_made_by.username if old_decision_made_by else "no-one",
+                            decision_journal.decision_made_by.username if decision_journal.decision_made_by else "no-one")
+
                         
                 else: 
                     raise Exception("Unsupported field name: %s" % field_name)

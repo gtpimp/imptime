@@ -197,6 +197,9 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)
 
+    def allowed_project_user(self, project_id, user_id):
+        return Project.objects.get(pk=project_id).users.filter(pk=user_id)
+
     def allowed_visual_spec_documents(self):
         return VisualSpecDocument.objects.filter(Q(visual_spec_projects__project__in=self.allowed_projects())|
                                                  Q(visual_spec_issues__issue__in=self.allowed_issues())).distinct()
