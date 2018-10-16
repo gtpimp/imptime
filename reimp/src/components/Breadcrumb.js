@@ -55,6 +55,9 @@ const menu_buttons = {
         { label: (objs) => 'Features',
           nav_url: (objs) => '/projects/' + objs.project.id + '/features'
         },
+        { label: (objs) => 'Decision journal',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/journal'
+        },
         { label: (objs) => 'Wiki',
           nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/',
           perms: (objs) => ['has_view_business_comments']
