@@ -3,6 +3,7 @@ import annotated_visual_spec_document_api
 import auth_api
 import billable_hours_statement_api
 import cost_summary_api
+import decision_journal_api
 import estimate_summary_api
 import filter_api
 import issue_api
@@ -130,6 +131,8 @@ router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
                 base_name='time_summary')
 router.register(r'estimate_summary', estimate_summary_api.EstimateSummaryViewSet,
                 base_name='estimate_summary')
+router.register(r'decision_journal', decision_journal_api.DecisionJournalViewSet,
+                base_name='decision_journal')
 router.register(r'project_dashboard', project_dashboard_api.ProjectDashboardViewSet,
                 base_name='project_dashboard')
 router.register(r'project_statement', project_statement_api.ProjectStatementViewSet,

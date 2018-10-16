@@ -14,7 +14,7 @@ from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
 from timepiece.models import ProjectDeadline as SprintDeadline
-from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge
+from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nudge, DecisionJournal
 from imptime.models import WikiPage, VisualSpecAnnotation
 from imptime.models import Mien, CompanyProblem, SprintSnapshot
 from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature, AnnotatedVisualSpecDocument
@@ -291,6 +291,11 @@ class BaseViewSet(viewsets.ViewSet):
         return WikiPage.objects.filter(Q(pk__in=non_sensitive_wiki_pages.values_list('id', flat=True))|
                                        Q(pk__in=sensitive_wikis.values_list('id', flat=True)))
 
+    def allowed_decision_journals(self):
+        return DecisionJournal.objects.filter(project__in=self.allowed_projects(), deleted=False)\
+                                      .filter(business_permissions__user=self.request.user,
+                                              business_permissions__can_view_decision_journal=True)
+    
     def allowed_company_problems(self):
         non_sensitive_company_problem_pages = CompanyProblem.objects.filter(money_sensitive=False,
                                                                             project__in=self.allowed_projects()\
