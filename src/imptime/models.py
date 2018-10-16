@@ -873,6 +873,9 @@ class Feature(BaseModel):
             RefreshNotifier().notify_model_create(self)
         else:
             RefreshNotifier().notify_model_update(self)
+        if self.parent_id:
+            RefreshNotifier().notify_model_update(self.parent)
+            
 
     def delete(self):
         super(Feature, self).soft_delete()
