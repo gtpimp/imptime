@@ -1,6 +1,3 @@
-import { impfetch } from './lib.js'
-
-import { updateVisibleItemIdAbove } from './ItemList'
 import {
     ENTITY_KEY__DECISION_JOURNAL,
     HEADER_LIST_NAME__DECISION_JOURNAL,
@@ -31,13 +28,10 @@ import {
     cancelCandidateItem,
     getCandidateItem,
     deleteItems,
-    itemPost,
     is_item_invalidated,
     getInvalidatedItemIds,
     getSavingItemIds,
-    getLoadingItemIds,
-    getTransientItemValue,
-    setTransientItemValue
+    getLoadingItemIds
 } from '../actions/Item'
 
 export const SET_DECISION_JOURNAL_STORE_VALUE = 'SET_DECISION_JOURNAL_STORE_VALUE'
@@ -106,11 +100,11 @@ export function updateDecisionJournalRepercussions(decision_journal_id, value) {
     return updateItem(ENTITY_KEY__DECISION_JOURNAL, [decision_journal_id], "repercussions", value)
 }
 
-export function updateDecisionJournalDecisionMadeBy(user_id, value) {
+export function updateDecisionJournalDecisionMadeBy(decision_journal_id, value) {
     return updateItem(ENTITY_KEY__DECISION_JOURNAL, [decision_journal_id], "repercussions", value)
 }
 
-export function updateDecisionJournalDecisionMadeAt(user_id, value) {
+export function updateDecisionJournalDecisionMadeAt(decision_journal_id, value) {
     return updateItem(ENTITY_KEY__DECISION_JOURNAL, [decision_journal_id], "decision_made_at", value)
 }
 

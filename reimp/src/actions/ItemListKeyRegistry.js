@@ -120,6 +120,7 @@ export const PAGE_KEY__CLOCK_HISTORY_PAGE = 'clock_history_page'
 export const HEADER_LIST_NAME__ISSUE = "issue"
 export const HEADER_LIST_NAME__SPRINT = "sprint"
 export const HEADER_LIST_NAME__FEATURE = "feature"
+export const HEADER_LIST_NAME__DECISION_JOURNAL = "decision_journal"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'

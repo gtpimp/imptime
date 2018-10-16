@@ -1,47 +1,35 @@
 import React, {Component} from 'react'
-import { flatMap, keys, groupBy, filter, keyBy, size, uniq, concat, indexOf, map, union, difference, includes } from 'lodash'
+import { concat, union, difference, includes } from 'lodash'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
-import styled from 'react-emotion'
-import Floater from "react-floater"
 import {connect} from 'react-redux'
-import { ensureProjectsLoaded, getProject } from '../actions/Projects'
-import { logged_in_user } from '../actions/Auth'
 import CommonTable from './CommonTable'
-import 'react-virtualized/styles.css';
+import OtherUser from './OtherUser'
+import 'react-virtualized/styles.css'
+import { ENTITY_KEY__DECISION_JOURNAL } from '../actions/ItemListKeyRegistry'
 import {
     initList,
     invalidateList,
     update_list_filter,
-    collapse_list,
-    expand_list,
-    setItemFlag,
-    setCursorItem,
-    getCursorItemId,
+    getLoadingItemIds,
+    getSelectedItems,
     getVisibleItemIds,
     getSelectedItemIds,
-    getHighlightedItemIds,
-    getItemFlag,
+    getVisibleItems,
     getLastUpdated,
-    isLoading,
-    getListFilter
+    isLoading
 } from '../actions/ItemList'
 import {
     invalidateAllDecisionJournals,
     fetchDecisionJournalsIfNeeded,
     cancelCandidateDecisionJournal,
-    getCandidateDecisionJournal,
-    ensureDecisionJournalsLoaded,
     getAllAvailableDecisionJournalHeaders,
     updateDecisionJournalMienHeaders,
     getDecisionJournalHeaderListForMien,
     deleteDecisionJournals
 } from '../actions/DecisionJournals'
-import { ensureTagsLoaded } from '../actions/Tags'
-import DeleteDecisionJournal from './DeleteDecisionJournal'
 import DivTableCell from './DivTableCell'
-import Timestamp from './Timestamp'
 
 class DecisionJournalList extends Component {
 
@@ -55,8 +43,7 @@ class DecisionJournalList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, selected_ids, list_key, project_id,
-               decision_journal_ids, journals_by_id} = this.props
+        const {dispatch, list_key, project_id} = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(update_list_filter({project_id:project_id}))
@@ -65,18 +52,16 @@ class DecisionJournalList extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, list_key, selected_ids, decision_journals_by_id} = this.props
-        const { decision_journal_ids, project_id } = new_props
-        const {onSelectDecisionJournals} = this.props
+        const {dispatch, list_key, onSelectDecisionJournals} = new_props
         if ( this.props.project_id !== new_props.project_id ) {
             onSelectDecisionJournals([])
-            dispatch(update_list_filter({project_id:new_props.project_id}))
+            dispatch(update_list_filter({project_id: new_props.project_id}))
         }
         dispatch(fetchDecisionJournalsIfNeeded(list_key))
     }
 
     onClickedDecisionJournal(event, decision_journal_id) {
-        const {dispatch, onSelectDecisionJournals, selected_ids, project_id} = this.props
+        const {dispatch, onSelectDecisionJournals, selected_ids} = this.props
         if ( event ) {
             event.stopPropagation()
         }
@@ -138,10 +123,8 @@ class DecisionJournalList extends Component {
     }
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { sprint, decision_journal_items, header_list, logged_in_user_id, selected_items,
-                tag_category_names, all_tags_by_id, logged_in_user_can_estimate_user_id } = this.props
+        const { decision_journal_items, header_list } = this.props
         const key = `decision_journal_${columnIndex}_${rowIndex}`
-        const that = this
         const header = header_list[columnIndex]
         const header_key = header.key
         const item = decision_journal_items[rowIndex]
@@ -245,39 +228,32 @@ class DecisionJournalList extends Component {
     }
 }
 
-const makeMapStateToProps = () => {
-    const mapStateToProps = (state, props) => {
-        
-        const {list_key, project_id, decision_journal_header_list} = props
+const mapStateToProps = (state, props) => {
+    
+    const {list_key, decision_journal_header_list} = props
 
-        const visible_item_ids = getVisibleItemIds(state, list_key)
-        const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__DECISION_JOURNAL)
-        const selected_item_ids = getSelectedItemIds(state, list_key)
-        const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__DECISION_JOURNAL)
-        const display_mode = getDisplayMode(state, list_key) || "expanded"
-        const loading_item_ids = getLoadingItemIds(state, list_key)
-        const is_loading = isLoading(state, list_key)
-        const last_updated = getLastUpdated(state, list_key)
-        const candidate_decision_journal = getCandidateDecisionJournal(state)
-        const is_creating_decision_journal = candidate_decision_journal || false
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__DECISION_JOURNAL)
+    const selected_item_ids = getSelectedItemIds(state, list_key)
+    const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__DECISION_JOURNAL)
+    const loading_item_ids = getLoadingItemIds(state, list_key)
+    const is_loading = isLoading(state, list_key)
+    const last_updated = getLastUpdated(state, list_key)
 
+    return {
+        list_key: list_key,
+        visible_item_ids,
+        decision_journals: visible_items,
+        decision_journal_ids: visible_item_ids,
+        loading_item_ids,
+        selected_ids: selected_item_ids,
+        selected_items,
+        has_items: visible_items && visible_items.length > 0,
+        is_loading,
+        last_updated,
+        header_list: decision_journal_header_list
+    }        
 
-        return {
-            list_key: list_key,
-            visible_item_ids,
-            decision_journals: visible_items,
-            decision_journal_ids: visible_item_ids,
-            loading_item_ids,
-            selected_ids: selected_item_ids,
-            selected_items,
-            has_items: visible_items && visible_items.length > 0,
-            is_loading,
-            last_updated,
-            header_list
-        }        
-
-    }
-    return mapStateToProps
 }
 
-export default withRouter(connect(makeMapStateToProps)(DecisionJournalList))
+export default withRouter(connect(mapStateToProps)(DecisionJournalList))

@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
 import Timestamp from './Timestamp'
 import PropertyStack from './PropertyStack'
 import PropertyStackComponent from './PropertyStackComponent'
@@ -57,11 +56,6 @@ class DecisionJournalSidebar extends Component {
             <div className="sidebar decision_journal-sidebar">
               <PropertyStack>
 
-                <PropertyStackComponent>
-                  <div className="property--title">
-                    <EditableDecisionJournalName decision_journal_id={decision_journal_id} />
-                  </div>
-                </PropertyStackComponent>
                 <PropertyStackComponent>
                   <div className="property-text">
                     <EditableDecisionJournalDescription decision_journal_id={decision_journal_id} />
