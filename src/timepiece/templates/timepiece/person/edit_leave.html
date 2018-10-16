@@ -1,6 +1,5 @@
 {% extends "timepiece/person/base.html" %}
 {% block title %}{% if not person %}Create Person{% else %}Edit {{ person.get_full_name }}{% endif %}{% endblock %}
-{% load bootstrap_toolkit %}
 {% load static %}
 
 {% block crumbs %}
@@ -21,7 +20,7 @@
     <form id="create-edit-person" class="form-horizontal" action="" method="post" accept-charset="utf-8">
       
       {% csrf_token %}
-      {{ new_leave_form|as_bootstrap:"horizontal" }}
+      {{ new_leave_form }}
       
       <div class="form-actions">
         <input class="btn btn-primary" type="submit" value="Save" name="submit" />

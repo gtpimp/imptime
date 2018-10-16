@@ -1090,9 +1090,8 @@ def _set_project_rate_to_default_for_user(user, project):
 
 
 @permission_required('timepiece.can_manage_client_users')
-@render_with('timepiece/person/list.html')
 @login_required
-def list_people(request):
+def list_people(request, template='timepiece/person/list.html'):
     d = request.GET.copy()
     if 'staff' not in d:
         d['staff'] = 'staff'
@@ -1118,7 +1117,7 @@ def list_people(request):
         'form': form,
         'people': people.select_related(),
     }
-    return context
+    return render(request, template, context)
 
 
 @permission_required('timepiece.can_manage_client_users')
