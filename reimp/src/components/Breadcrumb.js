@@ -56,7 +56,7 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/features'
         },
         { label: (objs) => 'Decision journal',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/journal',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/journals/',
           perms: (objs) => ['has_view_decision_journal']
         },
         { label: (objs) => 'Wiki',
@@ -64,7 +64,7 @@ const menu_buttons = {
           perms: (objs) => ['has_view_business_comments']
         },
         { label: (objs) => 'Users',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/users'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/users/'
         },
         { label: (objs) => 'Gallery and attachments',
           nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'

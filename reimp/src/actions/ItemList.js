@@ -519,7 +519,7 @@ export function getLastUpdated(state, list_key) {
 }
 
 export function getLoadingItemIds(state, list_key) {
-    return (state.item_list || {}).loading_item_ids || []
+    return get(state, ["item_list", list_key, "loading_item_ids"], [])
 }
 
 export function haveItemsBeenRetrieved(state, ids, entity_key) {

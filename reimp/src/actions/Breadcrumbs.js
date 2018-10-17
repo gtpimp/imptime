@@ -145,9 +145,9 @@ export function setDecisionJournalBreadcrumbsHelper(project, optional_decision_j
                           label: 'Decision_Journals',
                           selected_entities: {project:project}}]
     if ( decision_journal.id ) {
-        breadcrumbs.push({to: '/projects/'+project.id+'/decision_journals/' + decision_journal.id,
+        breadcrumbs.push({to: '/projects/'+project.id+'/journals/' + decision_journal.id,
                           type: 'decision_journal',
-                          label: decision_journal.description.slice(0,50),
+                          label: (decision_journal.decision || "").slice(0,50),
                           selected_entities: {project:project,
                                               decision_journal: decision_journal}})
     }

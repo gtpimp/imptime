@@ -31,6 +31,7 @@ import {
     deleteDecisionJournals
 } from '../actions/DecisionJournals'
 import DivTableCell from './DivTableCell'
+import Timestamp from './Timestamp'
 
 class DecisionJournalList extends Component {
 
@@ -124,11 +125,17 @@ class DecisionJournalList extends Component {
     }
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { decision_journal_items, header_list } = this.props
+        const { decision_journals, header_list } = this.props
         const key = `decision_journal_${columnIndex}_${rowIndex}`
         const header = header_list[columnIndex]
         const header_key = header.key
-        const item = decision_journal_items[rowIndex]
+        const item = decision_journals[rowIndex]
+        if ( item.loaded === false ) {
+            return (
+                <DivTableCell key={key}>
+                </DivTableCell>
+            )
+        }
         if ( item.type === "candidate" ) {
             return  (
                 <DivTableCell key={key}
@@ -139,7 +146,7 @@ class DecisionJournalList extends Component {
             )
         }
         
-        const decision_journal = item.decision_journal
+        const decision_journal = item
         let content = null
 
         if ( isScrolling ) {
@@ -154,10 +161,10 @@ class DecisionJournalList extends Component {
         }
         
         switch(header_key) {
-            case "description":
+            case "decision":
                 content = (
                     <DivTableCell key={header.key} >
-                      <div>{decision_journal.description}</div>
+                      <div>{decision_journal.decision}</div>
                     </DivTableCell>
                 )
                 break
@@ -165,6 +172,13 @@ class DecisionJournalList extends Component {
                 content = (
                     <DivTableCell key={header.key} >
                       <OtherUser user_id={decision_journal.decision_made_by_id}/>
+                    </DivTableCell>
+                )
+                break
+            case "decision_made_at":
+                content = (
+                    <DivTableCell key={header.key} >
+                      <Timestamp value={decision_journal.decision_made_by_at} format='date' />
                     </DivTableCell>
                 )
                 break
@@ -181,18 +195,10 @@ class DecisionJournalList extends Component {
 
     render_grid() {
 
-        const { is_mien_configurer_active, header_list, is_visible,
-                decision_journal_items, selected_ids, table_params } = this.props
+        const { header_list,
+                decision_journals, selected_ids, table_params } = this.props
 
-        if (!is_visible) {
-            return (<div></div>)
-        }
-
-        if ( is_mien_configurer_active ) {
-            return this.renderListColumnConfigurer()
-        }
-
-        if ( decision_journal_items.length === 0 ) {
+        if ( decision_journals.length === 0 ) {
             return (
                 <div className="div-table__row">
                   <div className="div-table__cell">No journal entries</div>
@@ -207,7 +213,7 @@ class DecisionJournalList extends Component {
                            onRowReordered={this.reorderDecisionJournal}
                            updateMienHeaders={updateDecisionJournalMienHeaders}
                            header_list_name="decision_journal"
-                           items={decision_journal_items}
+                           items={decision_journals}
                            selected_item_ids={selected_ids}
                            header_list={header_list}
                            renderCell={this.renderCell}
@@ -217,10 +223,6 @@ class DecisionJournalList extends Component {
     }
 
     render() {
-        const {is_visible} = this.props
-        if (!is_visible) {
-            return (<div></div>)
-        }
         if ( window.shortcuts_warning === undefined ) {
             console.log("The next warning about <shortcuts> will be fixed once react-shortcuts makes a new release. See https://github.com/avocode/react-shortcuts/pull/41")
             window.shortcuts_warning = true
@@ -231,7 +233,7 @@ class DecisionJournalList extends Component {
 
 const mapStateToProps = (state, props) => {
     
-    const {list_key, decision_journal_header_list} = props
+    const {list_key, header_list} = props
 
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__DECISION_JOURNAL)
@@ -253,7 +255,7 @@ const mapStateToProps = (state, props) => {
         has_items: visible_items && visible_items.length > 0,
         is_loading,
         last_updated,
-        header_list: decision_journal_header_list,
+        header_list,
         filter
     }        
 

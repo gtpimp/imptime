@@ -31,7 +31,8 @@ import {
     is_item_invalidated,
     getInvalidatedItemIds,
     getSavingItemIds,
-    getLoadingItemIds
+    getLoadingItemIds,
+    isLoadingItems
 } from '../actions/Item'
 
 export const SET_DECISION_JOURNAL_STORE_VALUE = 'SET_DECISION_JOURNAL_STORE_VALUE'
@@ -40,6 +41,7 @@ export const ANNOUNCE_BULK_CREATING_DECISION_JOURNALS_FAILED = 'ANNOUNCE_BULK_CR
 export const ANNOUNCE_BULK_CREATED_DECISION_JOURNALS = 'ANNOUNCE_BULK_CREATED_DECISION_JOURNALS'
 
 const ALL_AVAILABLE_DECISION_JOURNAL_HEADERS = [ {key:'decision_made_at', label:"Made at", description:"Decision made at", width:medium_col_width},
+                                                 {key:'decision_made_by', label:"Made By", description:"Decision made by", width:medium_col_width},
                                                  {key:'decision', label:"Decision", description:"Decision", width:"auto", flex:1}
 ]
 const DEFAULT_DECISION_JOURNAL_HEADERS_KEYS = ["decision_made_at", "decision"]
@@ -173,4 +175,8 @@ export function getDefaultDecisionJournalHeaders() {
 
 export function getAllAvailableDecisionJournalHeaders() {
     return ALL_AVAILABLE_DECISION_JOURNAL_HEADERS
+}
+
+export function isLoadingDecisionJournals(state, item_ids) {
+    return isLoadingItems(state, ENTITY_KEY__DECISION_JOURNAL, item_ids)
 }

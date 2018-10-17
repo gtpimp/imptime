@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes} from 'lodash'
+import {includes, values} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import DecisionJournalList from '../components/DecisionJournalList'
 import DecisionJournalSidebar from '../components/DecisionJournalSidebar'
@@ -16,7 +16,8 @@ import {
     selectItems,
     update_list_filter,
     invalidateList,
-    getListFilter
+    getListFilter,
+    areItemsReadyToDisplay
 } from '../actions/ItemList'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
@@ -27,7 +28,11 @@ import {
     setBrowserTitle,
     setGloballySelectedProjectId
 } from '../actions/Page'
-import {getCandidateDecisionJournal, getDecisionJournalHeaderListForCurrentMien} from '../actions/DecisionJournals'
+import {
+    getCandidateDecisionJournal,
+    getDecisionJournalHeaderListForCurrentMien,
+    isLoadingDecisionJournals
+} from '../actions/DecisionJournals'
 
 class DecisionJournalsPage extends Component {
 
@@ -93,7 +98,7 @@ class DecisionJournalsPage extends Component {
         dispatch(select_decision_journals(page_key, decision_journal_ids))
         
         if ( decision_journal_ids && decision_journal_ids.length === 1 ) {
-            history.push('/projects/'+project_id+'/decision_journals/'+decision_journal_ids[0]);
+            history.push('/projects/'+project_id+'/journals/'+decision_journal_ids[0]);
         }
     }
 
@@ -103,9 +108,9 @@ class DecisionJournalsPage extends Component {
         
         return (
             <DecisionJournalList list_key={list_key}
-                         project_id={project_id}
-                         header_list={decision_journal_header_list}
-                         onSelectDecisionJournals={this.onSelectDecisionJournals}
+                                 project_id={project_id}
+                                 header_list={decision_journal_header_list}
+                                 onSelectDecisionJournals={this.onSelectDecisionJournals}
             />
         )
     }
@@ -166,7 +171,7 @@ function mapStateToProps(state, props) {
     })
 
     const project_id = props.match.params.projectId
-    const default_decision_journal_id = props.match.params.decision_journalId
+    const default_decision_journal_id = props.match.params.decisionJournalId
     const project = getProject(state, project_id) || {}
     const project_name = project.name
     const candidate_decision_journal = getCandidateDecisionJournal(state) || null
@@ -174,6 +179,7 @@ function mapStateToProps(state, props) {
     const decision_journal_header_list = getDecisionJournalHeaderListForCurrentMien(state)
     const selected_decision_journal = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const show_sidebar = (is_creating_decision_journal || (selected_decision_journal && selected_decision_journal.id)) || false
+    const is_loading = !areItemsReadyToDisplay(state, list_key) || isLoadingDecisionJournals(state, values(items_by_id))
 
     return {
         list_key,
@@ -191,7 +197,8 @@ function mapStateToProps(state, props) {
         is_creating_decision_journal: is_creating_decision_journal,
         decision_journal_header_list,
         show_sidebar,
-        project_name
+        project_name,
+        is_loading
     }
 }
 

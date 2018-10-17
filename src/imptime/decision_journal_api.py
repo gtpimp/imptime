@@ -73,15 +73,15 @@ class DecisionJournalViewSet(BaseViewSet):
                 decision_journal_pks = [pk]
 
             for decision_journal_pk in decision_journal_pks:
-                decision_journal = self.allowed_decision_journal(decision_journal_pk)
+                decision_journal = self.allowed_decision_journals().get(pk=decision_journal_pk)
 
-                if field_name == "description":
+                if field_name == "decision":
                     if self.logged_in_permissions(decision_journal.project).has_edit_decision_journal:
-                        old_description = decision_journal.description
-                        decision_journal.description = new_value
+                        old_decision = decision_journal.decision
+                        decision_journal.decision = new_value
                         DecisionJournalHistory.add_history(
-                            request.user, decision_journal, "changed description",
-                            old_description, decision_journal.description)
+                            request.user, decision_journal, "changed decision",
+                            old_decision, decision_journal.decision)
 
                 elif field_name == "context":
                     if self.logged_in_permissions(decision_journal.project).has_edit_decision_journal:
@@ -187,7 +187,7 @@ class DecisionJournalViewSet(BaseViewSet):
                 decision_journal_pks = [pk]
 
             for decision_journal_pk in decision_journal_pks:
-                decision_journal = self.allowed_decision_journal(decision_journal_pk)
+                decision_journal = self.allowed_decision_journals().get(pk=decision_journal_pk)
                 if self.logged_in_permissions(decision_journal.project).has_edit_decision_journal:
                     DecisionJournalHistory.add_history(request.user, decision_journal,
                                                        "deleted", decision_journal.name, "")
@@ -208,7 +208,7 @@ class DecisionJournalViewSet(BaseViewSet):
         raw_filter_args['__business_project_switch_filter_required'] = False        
         decision_journal_any_field = raw_filter_args.pop('any_field', None)
         if decision_journal_any_field is not None and len(decision_journal_any_field)>1:
-            qs = qs.filter(Q(description__icontains=decision_journal_any_field)\
+            qs = qs.filter(Q(decision__icontains=decision_journal_any_field)\
                            |Q(reason__icontains=decision_journal_any_field)\
                            |Q(context__icontains=decision_journal_any_field)\
                            |Q(repercussions__icontains=decision_journal_any_field))
