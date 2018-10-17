@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 class DecisionJournalSerializer(BaseSerializer):
 
     id = serializers.CharField()
-    description = serializers.CharField()
+    decision = serializers.CharField()
     reason = serializers.CharField()
     context = serializers.CharField()
     repercussions = serializers.FloatField()

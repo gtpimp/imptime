@@ -12,6 +12,7 @@ import {
     initList,
     invalidateList,
     update_list_filter,
+    getListFilter,
     getLoadingItemIds,
     getSelectedItems,
     getVisibleItemIds,
@@ -36,8 +37,6 @@ class DecisionJournalList extends Component {
     constructor(props) {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
-        this.onCollapse = this.onCollapse.bind(this)
-        this.onExpand = this.onExpand.bind(this)
         this.onClickedDecisionJournal = this.onClickedDecisionJournal.bind(this)
         this.onDeleteDecisionJournal = this.onDeleteDecisionJournal.bind(this)
     }
@@ -46,18 +45,20 @@ class DecisionJournalList extends Component {
         const {dispatch, list_key, project_id} = this.props
         if (project_id) {
             dispatch(initList(list_key))
-            dispatch(update_list_filter({project_id:project_id}))
+            dispatch(update_list_filter(list_key, {project_id:project_id}))
             dispatch(fetchDecisionJournalsIfNeeded(list_key))
         }
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, list_key, onSelectDecisionJournals} = new_props
+        const {dispatch, list_key, filter, onSelectDecisionJournals} = new_props
         if ( this.props.project_id !== new_props.project_id ) {
             onSelectDecisionJournals([])
-            dispatch(update_list_filter({project_id: new_props.project_id}))
+            dispatch(update_list_filter(list_key, {project_id: new_props.project_id}))
         }
-        dispatch(fetchDecisionJournalsIfNeeded(list_key))
+        if ( filter && filter.project_id ) {
+            dispatch(fetchDecisionJournalsIfNeeded(list_key))
+        }
     }
 
     onClickedDecisionJournal(event, decision_journal_id) {
@@ -239,6 +240,7 @@ const mapStateToProps = (state, props) => {
     const loading_item_ids = getLoadingItemIds(state, list_key)
     const is_loading = isLoading(state, list_key)
     const last_updated = getLastUpdated(state, list_key)
+    const filter = getListFilter(state, list_key)
 
     return {
         list_key: list_key,
@@ -251,7 +253,8 @@ const mapStateToProps = (state, props) => {
         has_items: visible_items && visible_items.length > 0,
         is_loading,
         last_updated,
-        header_list: decision_journal_header_list
+        header_list: decision_journal_header_list,
+        filter
     }        
 
 }

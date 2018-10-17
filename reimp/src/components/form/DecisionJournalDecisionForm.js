@@ -4,7 +4,7 @@ import { reduxForm, Field, formValueSelector } from 'redux-form';
 import TextAreaField from './TextAreaField'
 import '../../sass/text-component.scss'
 
-class DecisionJournalDescriptionForm extends Component {
+class DecisionJournalDecisionForm extends Component {
 
     constructor(props) {
         super(props)
@@ -15,10 +15,10 @@ class DecisionJournalDescriptionForm extends Component {
         const {input} = field
         return (
             <TextAreaField
-                rows="1"
+                rows={20}
                 maxLength="300"
-                classDescription="textarea textarea--text-component textarea--title"
-                placeholder="Description"
+                className="textarea textarea--text-component textarea--title"
+                placeholder="Decision"
                 onChange={input.onChange}
                 value={input.value}
                 autoFocus
@@ -32,14 +32,14 @@ class DecisionJournalDescriptionForm extends Component {
         return (
             
             <form onSubmit={handleSubmit}>
-              <div classDescription="decision_journal_sidebar--form">
-                <div classDescription="decision_journal_sidebar--textarea">
-                  <Field description="description"
+              <div className="decision_journal_sidebar--form">
+                <div className="decision_journal_sidebar--textarea">
+                  <Field name="decision"
                          component={this.renderTextarea} />
                 </div>
-                  <div classDescription="decision_journal_sidebar__button_row">
-                    <button classDescription="button decision_journal_sidebar--textarea" type="submit">Submit</button>
-                    <button classDescription="button decision_journal_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
+                  <div className="decision_journal_sidebar__button_row">
+                    <button className="button decision_journal_sidebar--textarea" type="submit">Submit</button>
+                    <button className="button decision_journal_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
                   </div>
               </div>
             </form>
@@ -50,16 +50,15 @@ class DecisionJournalDescriptionForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onSubmitted, onCancel } = props
-
-    const selector = formValueSelector('decision_journal_description_form')
+    const selector = formValueSelector('decision_journal_decision_form')
     
     return {
-        initialValues: {description:props.initial_value},
+        initialValues: {decision:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel: onCancel,
-        textAreaValue: selector(state, 'description')
+        textAreaValue: selector(state, 'decision')
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'decision_journal_description_form'})(DecisionJournalDescriptionForm))
+export default connect(mapStateToProps)(reduxForm({form:'decision_journal_decision_form'})(DecisionJournalDecisionForm))

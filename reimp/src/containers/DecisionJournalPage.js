@@ -38,7 +38,7 @@ class DecisionJournalsPage extends Component {
 
     componentDidMount() {
         const {dispatch, project_id, list_key, page_key} = this.props
-        dispatch(set_toolbars(page_key, ['decision_journals']))
+        dispatch(set_toolbars(page_key, ['decision-journals']))
         const new_filter = { project_id: project_id }
         dispatch(update_list_filter(list_key, Object.assign({}, new_filter)))
         dispatch(setGloballySelectedProjectId(project_id))

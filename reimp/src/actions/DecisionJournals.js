@@ -40,7 +40,7 @@ export const ANNOUNCE_BULK_CREATING_DECISION_JOURNALS_FAILED = 'ANNOUNCE_BULK_CR
 export const ANNOUNCE_BULK_CREATED_DECISION_JOURNALS = 'ANNOUNCE_BULK_CREATED_DECISION_JOURNALS'
 
 const ALL_AVAILABLE_DECISION_JOURNAL_HEADERS = [ {key:'decision_made_at', label:"Made at", description:"Decision made at", width:medium_col_width},
-                                                 {key:'decision', label:"Description", description:"Description", width:"auto", flex:1}
+                                                 {key:'decision', label:"Decision", description:"Decision", width:"auto", flex:1}
 ]
 const DEFAULT_DECISION_JOURNAL_HEADERS_KEYS = ["decision_made_at", "decision"]
 const DEFAULT_DECISION_JOURNAL_HEADERS = filter(ALL_AVAILABLE_DECISION_JOURNAL_HEADERS, (header) => includes(DEFAULT_DECISION_JOURNAL_HEADERS_KEYS, header.key))
@@ -84,8 +84,8 @@ export function getDecisionJournalsById(state, decision_journal_ids) {
     return getItemsById(state, ENTITY_KEY__DECISION_JOURNAL, decision_journal_ids)
 }
 
-export function updateDecisionJournalDescription(decision_journal_id, value) {
-    return updateItem(ENTITY_KEY__DECISION_JOURNAL, [decision_journal_id], "description", value)
+export function updateDecisionJournalDecision(decision_journal_id, value) {
+    return updateItem(ENTITY_KEY__DECISION_JOURNAL, [decision_journal_id], "decision", value)
 }
 
 export function updateDecisionJournalContext(decision_journal_id, value) {
@@ -115,8 +115,8 @@ export function startCandidateDecisionJournal(project_id) {
     }
 }
 
-export function updateCandidateDescription(description) {
-    return updateCandidateDetails(ENTITY_KEY__DECISION_JOURNAL, {description:description})
+export function updateCandidateDecision(decision) {
+    return updateCandidateDetails(ENTITY_KEY__DECISION_JOURNAL, {decision:decision})
 }
 
 export function updateCandidateProperties(props) {

@@ -56,7 +56,8 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/features'
         },
         { label: (objs) => 'Decision journal',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/journal'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/journal',
+          perms: (objs) => ['has_view_decision_journal']
         },
         { label: (objs) => 'Wiki',
           nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/',
@@ -151,7 +152,7 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate'
         },
         { label: (objs) => 'Expand All',
-          dispatch_action: (objs) => expandAllFeatures(objs.issues)
+          dispatch_action: (objs) => expandAllFeatures(objs.issues),
         },
         { label: (objs) => 'Collapse All',
           dispatch_action: (objs) => collapseAllFeatures(objs.issues)          

@@ -153,7 +153,7 @@ class DecisionJournalViewSet(BaseViewSet):
             def create_decision_journal():
 
                 decision_journal = DecisionJournal.objects.create(project_id=project_id,
-                                                                  description=params.get('description', None),
+                                                                  decision=params.get('decision', None),
                                                                   reason=params.get('reason', None),
                                                                   context=params.get('context', None),
                                                                   repercussions=params.get('repercussions', None),
@@ -162,7 +162,7 @@ class DecisionJournalViewSet(BaseViewSet):
                                                                   created=request.user)
 
                 DecisionJournalHistory.add_history(request.user, decision_journal,
-                                                   "created", "", decision_journal.description)
+                                                   "created", "", decision_journal.decision)
                 return decision_journal
 
             decision_journal = create_decision_journal()

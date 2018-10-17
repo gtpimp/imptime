@@ -4,11 +4,11 @@ import PropertyStack from './PropertyStack'
 import Sidebar from './Sidebar'
 import {
     getCandidateDecisionJournal,
-    updateCandidateDescription,
+    updateCandidateDecision,
     saveCandidateDecisionJournal,
     cancelCandidateDecisionJournal
 } from '../actions/DecisionJournals'
-import DecisionJournalDescriptionForm from './form/DecisionJournalDescriptionForm'
+import DecisionJournalDecisionForm from './form/DecisionJournalDecisionForm'
 
 class NewDecisionJournalSidebar extends Component {
 
@@ -20,7 +20,7 @@ class NewDecisionJournalSidebar extends Component {
 
     onSaveCandidateDecisionJournal(new_value) {
         const {dispatch} = this.props
-        dispatch(updateCandidateDescription(new_value.description))
+        dispatch(updateCandidateDecision(new_value.decision))
         dispatch(saveCandidateDecisionJournal())
     }
 
@@ -37,7 +37,7 @@ class NewDecisionJournalSidebar extends Component {
               <PropertyStack>
                 <div>
                   <div>
-                    <DecisionJournalDescriptionForm
+                    <DecisionJournalDecisionForm
                         onSubmitted={this.onSaveCandidateDecisionJournal}
                         onCancel={this.onCancelDecisionJournalCreation}/>
                   </div>

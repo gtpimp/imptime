@@ -5,6 +5,7 @@ import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import BulkCreateFeaturesToolbarPanel from './BulkCreateFeaturesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'
 import ClockHistoryToolbarPanel from './ClockHistoryToolbarPanel'
+import DecisionJournalToolbarPanel from './DecisionJournalToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
 import ProjectsToolbarPanel from './ProjectsToolbarPanel'
@@ -118,9 +119,11 @@ class Toolbar extends Component {
             case 'work-summary':
                 return <WorkSummaryToolbarPanel key='summary' {...this.props} />
             case 'calendar':
-                return <CalendarToolbarPanel key='summary' {...this.props} />
+                return <CalendarToolbarPanel key='calendar' {...this.props} />
             case 'clock-history':
-                return <ClockHistoryToolbarPanel key='summary' {...this.props} />
+                return <ClockHistoryToolbarPanel key='clock-history' {...this.props} />
+            case 'decision-journals':
+                return <DecisionJournalToolbarPanel key='decision-journals' {...this.props} />
             default:
                 throw new Error("Unsupported toolbar panel:" + id)
         }

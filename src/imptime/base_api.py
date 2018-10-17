@@ -295,9 +295,11 @@ class BaseViewSet(viewsets.ViewSet):
                                        Q(pk__in=sensitive_wikis.values_list('id', flat=True)))
 
     def allowed_decision_journals(self):
-        return DecisionJournal.objects.filter(project__in=self.allowed_projects(), deleted=False)\
-                                      .filter(business_permissions__user=self.request.user,
-                                              business_permissions__can_view_decision_journal=True)
+        return DecisionJournal.objects.filter(project__in=self.allowed_projects()\
+                                                              .filter(business_permissions__user=self.request.user,
+                                                                      business_permissions__can_view_decision_journal=True),
+                                              deleted=False)
+                                      
     
     def allowed_company_problems(self):
         non_sensitive_company_problem_pages = CompanyProblem.objects.filter(money_sensitive=False,
