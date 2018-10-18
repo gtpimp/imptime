@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes, values} from 'lodash'
+import {includes, keys} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import DecisionJournalList from '../components/DecisionJournalList'
 import DecisionJournalSidebar from '../components/DecisionJournalSidebar'
@@ -17,6 +17,7 @@ import {
     update_list_filter,
     invalidateList,
     getListFilter,
+    getVisibleItemIds,
     areItemsReadyToDisplay
 } from '../actions/ItemList'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
@@ -31,7 +32,8 @@ import {
 import {
     getCandidateDecisionJournal,
     getDecisionJournalHeaderListForCurrentMien,
-    isLoadingDecisionJournals
+    isLoadingDecisionJournals,
+    getDecisionJournalsById
 } from '../actions/DecisionJournals'
 
 class DecisionJournalsPage extends Component {
@@ -63,10 +65,7 @@ class DecisionJournalsPage extends Component {
         if ( new_props.project !== this.props.project ||
              new_props.project_id !== this.props.project_id ||
              new_props.project.name !== this.props.project.name ||
-             new_props.selected_decision_journal_id !== this.props.selected_decision_journal_id ||
-             new_props.selected_decision_journal.id !== this.props.selected_decision_journal.id ||
-             new_props.selected_decision_journal.loaded !== this.props.selected_decision_journal.loaded) {
-
+             new_props.selected_decision_journal.id !== this.props.selected_decision_journal.id ) {
             
             this.refresh(new_props)
         }
@@ -157,12 +156,12 @@ class DecisionJournalsPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {decision_journal} = state
     const default_filter = props.default_filter || {}
     let list_key = props.list_key || LIST_KEY__DECISION_JOURNAL_LIST
     let page_key = props.page_key || PAGE_KEY__DECISION_JOURNALS_PAGE
     const filter = getListFilter(state, list_key)
-    const items_by_id = (decision_journal && decision_journal.items_by_id) || {}
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const items_by_id = getDecisionJournalsById(state, visible_item_ids)
     const selected_decision_journal_ids = get_selected_decision_journal_ids(state, page_key)
     
     const selected_items = items_by_id && selected_decision_journal_ids && selected_decision_journal_ids.map(function (selected_id, index) {
@@ -179,7 +178,7 @@ function mapStateToProps(state, props) {
     const decision_journal_header_list = getDecisionJournalHeaderListForCurrentMien(state)
     const selected_decision_journal = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const show_sidebar = (is_creating_decision_journal || (selected_decision_journal && selected_decision_journal.id)) || false
-    const is_loading = !areItemsReadyToDisplay(state, list_key) || isLoadingDecisionJournals(state, values(items_by_id))
+    const is_loading = !areItemsReadyToDisplay(state, list_key) || isLoadingDecisionJournals(state, keys(items_by_id))
 
     return {
         list_key,

@@ -190,7 +190,7 @@ class DecisionJournalViewSet(BaseViewSet):
                 decision_journal = self.allowed_decision_journals().get(pk=decision_journal_pk)
                 if self.logged_in_permissions(decision_journal.project).has_edit_decision_journal:
                     DecisionJournalHistory.add_history(request.user, decision_journal,
-                                                       "deleted", decision_journal.name, "")
+                                                       "deleted", decision_journal.decision, "")
                     decision_journal.delete()
                 else:
                     data = {'status': 'failed', 'error_message': 'Permission denied to delete decision journals'}

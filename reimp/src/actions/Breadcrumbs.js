@@ -140,7 +140,7 @@ export function setDecisionJournalBreadcrumbsHelper(project, optional_decision_j
                           type: 'project',
                           selected_entities: {project: project}
                          },
-                         {to: '/projects/'+project.id+'/decision_journals',
+                         {to: '/projects/'+project.id+'/journals',
                           type: 'decision_journals',
                           label: 'Decision_Journals',
                           selected_entities: {project:project}}]
