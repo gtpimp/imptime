@@ -35,7 +35,6 @@ import SidebarFullscreenWidget from './SidebarFullscreenWidget'
 import SidebarAuthor from './SidebarAuthor'
 import SidebarDetail from './SidebarDetail'
 import SidebarAddButton from './SidebarAddButton'
-import SidebarManageButton from './SidebarManageButton'
 
 // import IssueDescription from './IssueDescription'
 //import moment from 'moment'
@@ -346,20 +345,6 @@ class IssueSidebar extends Component {
         )
     }
 
-    /* renderAddAttachmentWidget() {
-     *     const { issue } = this.props
-     *     return (
-     *         <PropertyStackComponent>
-     *           <SidebarSectionTitle title="Attachments" />
-     *           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
-     *                                      issue_id={issue.id}
-     *                                      allow_edit={false} />
-     *           <button className="button button--primary" onClick={this.showAddVisualSpecDoc}>Add</button>
-     *           { false && <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button> }
-     *         </PropertyStackComponent>
-     *     )
-     * }*/
-
     renderAttachmentsStack() {
         const { issue, project_id } = this.props
         const adding_visual_spec_doc = this.state.adding_visual_spec_doc
@@ -376,12 +361,7 @@ class IssueSidebar extends Component {
                         onButtonClick={this.showAddVisualSpecDoc}
                         label="Add attachment" />
               )}
-              { false && ! adding_visual_spec_doc && (
-                    <SidebarManageButton
-                        data-tooltip="Upload attachment"
-                        onButtonClick={this.showIssueVisualSpecGallery}
-                        label="Manage Attachments" />
-              )}
+
               { adding_visual_spec_doc && (
                     <div>
                       <VisualSpecDocumentForm issue_id={issue.id}
@@ -394,35 +374,6 @@ class IssueSidebar extends Component {
             </SidebarProperty>
         )
     }
-
-    /* renderAttachmentsStack() {
-     *     const { issue, project_id } = this.props
-     *     const adding_visual_spec_doc = this.state.adding_visual_spec_doc
-     *     return (
-     *         <PropertyStackComponent key="attachmentstack">
-     *           <SidebarSectionTitle title="Attachments" />
-     *           <VisualSpecDocumentGallery visual_spec_document_ids={issue.visual_spec_document_ids}
-     *                                      issue_id={issue.id}
-     *                                      allow_edit={false} />
-     *           
-     *           { ! adding_visual_spec_doc && (
-     *                 <div className="property-row">
-     *                   <div onClick={this.showAddVisualSpecDoc} className="icon--add icon--clickable" data-tooltip="Upload attachment"></div>
-     *                   <button className="button button--secondary" onClick={this.showIssueVisualSpecGallery}>Manage</button>
-     *                 </div>
-     *           )}
-     *           { adding_visual_spec_doc && (
-     *                 <div>
-     *                   <VisualSpecDocumentForm issue_id={issue.id}
-     *                                           project_id={project_id}
-     *                                           onChange={this.hideAddVisualSpecDoc}
-     *                   />
-     *                   <button className="button button--primary" onClick={this.hideAddVisualSpecDoc}>Cancel</button>
-     *                 </div>
-     *           )}
-     *         </PropertyStackComponent>
-     *     )
-     * } */
 
     renderFeatureStack() {
         const { issue } = this.props

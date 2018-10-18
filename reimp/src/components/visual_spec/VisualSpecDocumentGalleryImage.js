@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { withRouter } from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 import map from 'lodash/map'
 import {DragSource, DropTarget} from 'react-dnd'
 import {DndTypes} from '../../actions/Dnd'
@@ -90,7 +90,11 @@ class VisualSpecDocumentGalleryImage extends Component {
     }
 
     resolveThumbnailElement(preview_image_url) {
-        const { visual_spec_document, img_element_unique_id, image_class, is_image, content_type } = this.props
+        const { visual_spec_document, img_element_unique_id, image_class, is_image,
+                content_type, project_id, annotated_visual_spec_document_id } = this.props
+  
+        const full_screen_url = `/fullscreen/projects/${project_id}/image/${annotated_visual_spec_document_id}`
+        
         if ( ! preview_image_url ) {
             return (
                 <div id={img_element_unique_id}
@@ -116,13 +120,14 @@ class VisualSpecDocumentGalleryImage extends Component {
         } else {
             const class_name = image_class || "visual_spec_document_gallery__image"
             return (
-                <img id={img_element_unique_id}
-                     className={class_name}
-                     src={preview_image_url}
-                     onClick={this.onClickPreview}
-                     onLoad={this.onVisualSpecDocumentImageLoaded}
-                     alt=""
-                />
+                <Link to={full_screen_url}>
+                  <img id={img_element_unique_id}
+                       className={class_name}
+                       src={preview_image_url}
+                       onLoad={this.onVisualSpecDocumentImageLoaded}
+                       alt=""
+                  />
+                </Link>
             )
         }
     }
