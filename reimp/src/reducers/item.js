@@ -102,8 +102,8 @@ export default function item(state = initialState, action) {
             s = updateMultipleItemValues(state, action)
             s.transient_values_by_id = Object.assign(s.transient_values_by_id || {}, {})
             let new_transient_item_values
-            map(action.items_ids, function(item_id) {
-                new_transient_item_values = Object.assign(s.transient_values_by_id[item_id],
+            map(action.item_ids, function(item_id) {
+                new_transient_item_values = Object.assign(s.transient_values_by_id[item_id] || {},
                                                           {[action.field_name]: action.new_value})
                 s.transient_values_by_id[item_id] = new_transient_item_values
             })

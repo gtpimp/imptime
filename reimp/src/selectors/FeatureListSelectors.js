@@ -34,6 +34,10 @@ const selGetCandidateFeature = (state, props) => {
     return get(state, ["item", ENTITY_KEY__FEATURE, "candidate_item"], null)
 }
 
+const selGetTransientFeatureValuesById = (state, props) => {
+    return get(state, ["item", ENTITY_KEY__FEATURE, "transient_values_by_id"], null)
+}
+
 const helperGetFilteredFeaturesById = (all_features_by_id, filter_feature_ids) => {
     if ( ! all_features_by_id ) {
         return null
@@ -189,7 +193,7 @@ export const makeSelFeatureObjectsToRender = () => {
     )
 }
 
-const helperCreateStructuredTree = (all_features_by_id, selected_feature_ids) => {
+const helperCreateStructuredTree = (all_features_by_id, selected_feature_ids, transient_values_by_id) => {
     
     const MAX_CHARS_FOR_SUBTITLE = 100
     if ( ! all_features_by_id ) {
@@ -200,6 +204,7 @@ const helperCreateStructuredTree = (all_features_by_id, selected_feature_ids) =>
         feature.title = `${feature.name}_id${feature.id}__order${feature.order}__selected${feature.selected}`
         feature.title = feature.name
         feature.subtitle = (feature.description || "").substring(0, MAX_CHARS_FOR_SUBTITLE)
+        feature.expanded = get(transient_values_by_id, [feature.id, "expanded"], false)
     })
     let tree = getTreeFromFlatData({flatData: values(all_features_by_id),
                                     getKey: (node) => node.id,
@@ -211,9 +216,9 @@ const helperCreateStructuredTree = (all_features_by_id, selected_feature_ids) =>
 
 export const makeSelFeaturesAsStructuredTree = () => {
     return createSelector(
-        [ selGetAllFeaturesById, selGetSelectedFeatureIds ],
-        ( all_features_by_id, selected_feature_ids ) => {
-            const tree = helperCreateStructuredTree(all_features_by_id, selected_feature_ids)
+        [ selGetAllFeaturesById, selGetSelectedFeatureIds, selGetTransientFeatureValuesById ],
+        ( all_features_by_id, selected_feature_ids, transient_values_by_id ) => {
+            const tree = helperCreateStructuredTree(all_features_by_id, selected_feature_ids, transient_values_by_id)
             return tree
         }
     )
@@ -221,10 +226,10 @@ export const makeSelFeaturesAsStructuredTree = () => {
 
 export const makeSelTopLevelFeaturesList = () => {
     return createSelector(
-        [ selGetAllFeaturesById, selGetSelectedFeatureIds ],
-        ( all_features_by_id, selected_feature_ids ) => {
+        [ selGetAllFeaturesById, selGetSelectedFeatureIds, selGetTransientFeatureValuesById ],
+        ( all_features_by_id, selected_feature_ids, transient_values_by_id ) => {
 
-            const tree = helperCreateStructuredTree(all_features_by_id, selected_feature_ids)
+            const tree = helperCreateStructuredTree(all_features_by_id, selected_feature_ids, transient_values_by_id)
             if ( size(tree) === 0 ) {
                 return []
             }
