@@ -130,6 +130,30 @@ export function setFeatureBreadcrumbsHelper(project, optional_feature) {
     return setBreadcrumbs(breadcrumbs)
 }
 
+export function setDecisionJournalBreadcrumbsHelper(project, optional_decision_journal) {
+    const decision_journal = optional_decision_journal || {}
+    const breadcrumbs = [{to: '/projects',
+                          label: 'Projects',
+                          type: 'projects'},
+                         {to: '/projects/'+project.id,
+                          label: project.name,
+                          type: 'project',
+                          selected_entities: {project: project}
+                         },
+                         {to: '/projects/'+project.id+'/decision_journals',
+                          type: 'decision_journals',
+                          label: 'Decision_Journals',
+                          selected_entities: {project:project}}]
+    if ( decision_journal.id ) {
+        breadcrumbs.push({to: '/projects/'+project.id+'/journals/' + decision_journal.id,
+                          type: 'decision_journal',
+                          label: (decision_journal.decision || "").slice(0,50),
+                          selected_entities: {project:project,
+                                              decision_journal: decision_journal}})
+    }
+    return setBreadcrumbs(breadcrumbs)
+}
+
 
 export function setBreadcrumbs(breadcrumbs) {
     return {

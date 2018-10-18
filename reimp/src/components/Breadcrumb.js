@@ -55,12 +55,16 @@ const menu_buttons = {
         { label: (objs) => 'Features',
           nav_url: (objs) => '/projects/' + objs.project.id + '/features'
         },
+        { label: (objs) => 'Decision journal',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/journals/',
+          perms: (objs) => ['has_view_decision_journal']
+        },
         { label: (objs) => 'Wiki',
           nav_url: (objs) => '/projects/' + objs.project.id + '/wiki/',
           perms: (objs) => ['has_view_business_comments']
         },
         { label: (objs) => 'Users',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/users'
+          nav_url: (objs) => '/projects/' + objs.project.id + '/users/'
         },
         { label: (objs) => 'Gallery and attachments',
           nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
@@ -148,7 +152,7 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/bulkCreate'
         },
         { label: (objs) => 'Expand All',
-          dispatch_action: (objs) => expandAllFeatures(objs.issues)
+          dispatch_action: (objs) => expandAllFeatures(objs.issues),
         },
         { label: (objs) => 'Collapse All',
           dispatch_action: (objs) => collapseAllFeatures(objs.issues)          

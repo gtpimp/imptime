@@ -1099,3 +1099,46 @@ class FeatureHistory(BaseModel):
     def for_feature(self, feature):
         return FeatureHistory.objects.filter(feature_id=feature.id).order_by("-created_at")
     
+class DecisionJournal(BaseModel):
+    project = models.ForeignKey(Project)
+    decision_made_at = models.DateTimeField(null=False)
+    decision_made_by = ProtectedForeignKey(User, blank=False, null=False)
+    decision = models.TextField(null=True, blank=True)
+    reason = models.TextField(null=True, blank=True)
+    context = models.TextField(null=True, blank=True)
+    repercussions = models.TextField(null=True, blank=True)
+
+    def delete(self):
+        super(DecisionJournal, self).soft_delete()
+        RefreshNotifier().notify_model_delete(self)
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(DecisionJournal, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+        
+class DecisionJournalHistory(BaseModel):
+    decision_journal_id = models.IntegerField(blank=False, null=False, db_index=True)
+    original_decision_journal = models.ForeignKey(DecisionJournal, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
+    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=False, null=False)
+    before = models.TextField(blank=True, null=True)
+    after = models.TextField(blank=True, null=True)
+    
+    @classmethod
+    def add_history(self, user, decision_journal, description, before, after):
+        DecisionJournalHistory.objects.create(created_by=user,
+                                              original_decision_journal=decision_journal,
+                                              decision_journal_id=decision_journal.id,
+                                              description=description,
+                                              before=before, after=after)
+
+    @classmethod
+    def for_decision_journal(self, decision_journal):
+        return DecisionJournalHistory.objects.filter(decision_journal_id=decision_journal.id).order_by("-created_at")
+    

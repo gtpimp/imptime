@@ -445,6 +445,8 @@ class BusinessPermissions(BaseModel):
     can_view_business_comments = models.BooleanField(default=False, verbose_name="Can view project comments")
     can_view_testables = models.BooleanField(default=True, verbose_name="Can View Testables")
     can_view_issue_history = models.BooleanField(default=True, verbose_name="Can View Issue History")
+    can_view_decision_journal = models.BooleanField(default=False, verbose_name="Can View Decision Journal")
+    can_edit_decision_journal = models.BooleanField(default=False, verbose_name="Can Edit Decision Journal")
 
     can_view_actual_hours = models.BooleanField(default=False, verbose_name="Can View Actual Hours")
     can_see_other_user_points = models.BooleanField(default=False, verbose_name="Can See Other User's Points")
@@ -548,6 +550,8 @@ class BusinessPermissions(BaseModel):
         bp.can_view_business_comments = True
         bp.can_view_testables = True
         bp.can_view_issue_history = True
+        bp.can_view_decision_journal = False
+        bp.can_edit_decision_journal = False
         bp.can_view_actual_hours = True
         bp.can_see_other_user_points = True
         bp.can_estimate_own_points = False #typically project creators won't be estimators
@@ -841,6 +845,14 @@ class BusinessPermissions(BaseModel):
     @property
     def has_view_issue_history(self):
         return self.is_active_member_of_business and self.can_view_issue_history
+
+    @property
+    def has_view_decision_journal(self):
+        return self.is_active_member_of_business and self.can_view_decision_journal
+
+    @property
+    def has_edit_decision_journal(self):
+        return self.is_active_member_of_business and self.can_edit_decision_journal
     
     @property
     def has_edit_business_comments(self):

@@ -181,9 +181,8 @@ class IssueViewSet(BaseViewSet):
                             issue.assigned_to.username \
                             if issue.assigned_to else "no-one"
                         issue.assigned_to_id = new_value
-                        new_assigned_to = \
-                            User.objects.get(pk=new_value).username \
-                            if new_value else "no-one"
+                        new_assigned_to = self.allowed_project_user(issue.project.business_id, new_value).username if new_value else "no-one"
+                            
                         IssueHistory.add_history(
                             request.user, issue, "changed assigned to",
                             old_assigned_to, new_assigned_to)
