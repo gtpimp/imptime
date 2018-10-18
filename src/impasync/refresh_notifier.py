@@ -9,24 +9,21 @@ logger = logging.getLogger(__name__)
 
 class RefreshNotifier(object):
 
-    def notify_model_create(self, obj, params=None):
-        self._notify('create', obj, params)
+    def notify_model_create(self, obj, params=None, name=None):
+        self._notify('create', obj, params, name=name)
 
-    def notify_model_update(self, obj, params=None):
-        self._notify('update', obj, params)
+    def notify_model_update(self, obj, params=None, name=None):
+        self._notify('update', obj, params, name=name)
 
-    def notify_model_delete(self, obj, params=None):
-        self._notify('delete', obj, params)
+    def notify_model_delete(self, obj, params=None, name=None):
+        self._notify('delete', obj, params, name=name)
 
-    def _notify(self, action_type, obj, params):
-
-        entity_name = obj.__class__.__name__.lower()
+    def _notify(self, action_type, obj, params, name=None):
+        entity_name = name or obj.__class__.__name__.lower()
         if entity_name == 'business':
             entity_name = 'project'
         elif entity_name == 'project':
             entity_name = 'sprint'
-        elif entity_name == 'businesspermissions':
-            entity_name = 'projectpermissions'
         elif entity_name == 'businessinvite':
             entity_name = 'projectinvite'
 

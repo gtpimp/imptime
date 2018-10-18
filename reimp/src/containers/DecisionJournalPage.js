@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {includes, keys} from 'lodash'
 import {withRouter} from 'react-router-dom'
+import { has_permission } from '../actions/Users'
 import DecisionJournalList from '../components/DecisionJournalList'
 import DecisionJournalSidebar from '../components/DecisionJournalSidebar'
 import NewDecisionJournalSidebar from '../components/NewDecisionJournalSidebar'
@@ -104,7 +105,7 @@ class DecisionJournalsPage extends Component {
     renderLeftPane() {
 
         const {project_id, list_key, decision_journal_header_list } = this.props
-        
+
         return (
             <DecisionJournalList list_key={list_key}
                                  project_id={project_id}
@@ -144,8 +145,17 @@ class DecisionJournalsPage extends Component {
     }
 
     render() {
-        const {show_sidebar, project } = this.props
+        const {show_sidebar, project, can_view } = this.props
         setBrowserTitle(project.name)
+
+        if (! can_view ) {
+            return (
+                <div>
+                  No permission to view decision journals
+                </div>
+            )
+        }
+        
         return (
             <Splitter name="decision_journals_page">
               {this.renderLeftPane()}
@@ -180,6 +190,8 @@ function mapStateToProps(state, props) {
     const show_sidebar = (is_creating_decision_journal || (selected_decision_journal && selected_decision_journal.id)) || false
     const is_loading = !areItemsReadyToDisplay(state, list_key) || isLoadingDecisionJournals(state, keys(items_by_id))
 
+    const can_view = has_permission(state, project_id, "has_view_decision_journal")
+
     return {
         list_key,
         page_key,
@@ -197,7 +209,8 @@ function mapStateToProps(state, props) {
         decision_journal_header_list,
         show_sidebar,
         project_name,
-        is_loading
+        is_loading,
+        can_view
     }
 }
 

@@ -488,11 +488,13 @@ class BusinessPermissions(BaseModel):
         if was_created:
             RefreshNotifier().notify_model_create(
                 self, params={'projects': [self.business_id],
-                              'users': [self.user_id]})
+                              'users': [self.user_id]},
+                name='projectpermissions')
         else:
             RefreshNotifier().notify_model_update(
                 self, params={'projects': [self.business_id],
-                              'users': [self.user_id]})
+                              'users': [self.user_id]},
+                name='projectpermissions')
 
     @classmethod
     def _by_user(self, business):
