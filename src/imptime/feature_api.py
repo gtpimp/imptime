@@ -1,6 +1,7 @@
 import logging
 from feature_serializer import FeatureSerializer
 from collections import defaultdict
+import copy
 from markdown_enrichment import MarkdownEnrichment
 from project_api import ProjectViewSet
 from django.utils import timezone
@@ -320,7 +321,7 @@ class FeatureViewSet(BaseViewSet):
             feature.stats = self._calculate_issue_stats(logged_in_user, feature)
 
         features_by_id = dict( [(x.id, x) for x in features] )
-            
+
         for feature in features:
             self._recursively_calculate_nested_stats(logged_in_user, features_by_id, feature)
 
@@ -331,7 +332,8 @@ class FeatureViewSet(BaseViewSet):
         if hasattr(feature, "nested_stats"):
             return
         
-        nested_stats = feature.stats
+        nested_stats = copy.deepcopy(feature.stats)
+        feature.nested_stats = nested_stats
 
         for child_id in [x.id for x in feature.children.all()]:
             child = features_by_id.get(child_id, None)
@@ -345,7 +347,6 @@ class FeatureViewSet(BaseViewSet):
             for k, v in child.nested_stats.items():
                 nested_stats[k] += v
 
-        feature.nested_stats = nested_stats
 
     @classmethod
     def _calculate_issue_stats(self, logged_in_user, feature):
