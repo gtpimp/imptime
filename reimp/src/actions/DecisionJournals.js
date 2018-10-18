@@ -44,7 +44,7 @@ const ALL_AVAILABLE_DECISION_JOURNAL_HEADERS = [ {key:'decision_made_at', label:
                                                  {key:'decision_made_by', label:"Made By", description:"Decision made by", width:medium_col_width},
                                                  {key:'decision', label:"Decision", description:"Decision", width:"auto", flex:1}
 ]
-const DEFAULT_DECISION_JOURNAL_HEADERS_KEYS = ["decision_made_at", "decision"]
+const DEFAULT_DECISION_JOURNAL_HEADERS_KEYS = ["decision_made_at", "decision_made_by", "decision"]
 const DEFAULT_DECISION_JOURNAL_HEADERS = filter(ALL_AVAILABLE_DECISION_JOURNAL_HEADERS, (header) => includes(DEFAULT_DECISION_JOURNAL_HEADERS_KEYS, header.key))
 
 export function invalidateAllDecisionJournals() {

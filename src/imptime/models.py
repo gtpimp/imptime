@@ -1101,7 +1101,7 @@ class FeatureHistory(BaseModel):
     
 class DecisionJournal(BaseModel):
     project = models.ForeignKey(Project)
-    decision_made_at = models.DateTimeField(null=False, auto_now=True)
+    decision_made_at = models.DateTimeField(null=False)
     decision_made_by = ProtectedForeignKey(User, blank=False, null=False)
     decision = models.TextField(null=True, blank=True)
     reason = models.TextField(null=True, blank=True)
@@ -1110,8 +1110,17 @@ class DecisionJournal(BaseModel):
 
     def delete(self):
         super(DecisionJournal, self).soft_delete()
+        RefreshNotifier().notify_model_delete(self)
 
-    
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(DecisionJournal, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+        
 class DecisionJournalHistory(BaseModel):
     decision_journal_id = models.IntegerField(blank=False, null=False, db_index=True)
     original_decision_journal = models.ForeignKey(DecisionJournal, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")

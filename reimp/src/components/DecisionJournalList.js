@@ -178,7 +178,7 @@ class DecisionJournalList extends Component {
             case "decision_made_at":
                 content = (
                     <DivTableCell key={header.key} >
-                      <Timestamp value={decision_journal.decision_made_by_at} format='date' />
+                      <Timestamp value={decision_journal.decision_made_at} format='date' />
                     </DivTableCell>
                 )
                 break
