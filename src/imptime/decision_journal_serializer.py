@@ -9,7 +9,7 @@ class DecisionJournalSerializer(BaseSerializer):
     decision = serializers.CharField()
     reason = serializers.CharField()
     context = serializers.CharField()
-    repercussions = serializers.FloatField()
+    repercussions = serializers.CharField()
     decision_made_at = serializers.DateTimeField()
     decision_made_by_id = serializers.CharField()
     project_id = serializers.CharField()

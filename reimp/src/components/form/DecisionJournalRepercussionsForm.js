@@ -4,7 +4,7 @@ import { reduxForm, Field, formValueSelector } from 'redux-form';
 import TextAreaField from './TextAreaField'
 import '../../sass/text-component.scss'
 
-class DecisionJournalDecisionForm extends Component {
+class DecisionJournalRepercussionsForm extends Component {
 
     constructor(props) {
         super(props)
@@ -18,7 +18,7 @@ class DecisionJournalDecisionForm extends Component {
                 rows={10}
                 maxLength="300"
                 className="textarea textarea--text-component textarea--title"
-                placeholder="Decision"
+                placeholder="Repercussions"
                 onChange={input.onChange}
                 value={input.value}
                 autoFocus
@@ -34,7 +34,7 @@ class DecisionJournalDecisionForm extends Component {
             <form onSubmit={handleSubmit}>
               <div className="decision_journal_sidebar--form">
                 <div className="decision_journal_sidebar--textarea">
-                  <Field name="decision"
+                  <Field name="repercussions"
                          component={this.renderTextarea} />
                 </div>
                   <div className="decision_journal_sidebar__button_row">
@@ -53,12 +53,12 @@ function mapStateToProps(state, props) {
     const selector = formValueSelector('decision_journal_decision_form')
     
     return {
-        initialValues: {decision:props.initial_value},
+        initialValues: {repercussions:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel: onCancel,
-        textAreaValue: selector(state, 'decision')
+        textAreaValue: selector(state, 'repercussions')
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'decision_journal_decision_form'})(DecisionJournalDecisionForm))
+export default connect(mapStateToProps)(reduxForm({form:'decision_journal_decision_form'})(DecisionJournalRepercussionsForm))

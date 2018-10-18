@@ -1,12 +1,15 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import Timestamp from './Timestamp'
-import PropertyStack from './PropertyStack'
-import PropertyStackComponent from './PropertyStackComponent'
+import SidebarContainer from './SidebarContainer'
+import SidebarSectionTitle from './SidebarSectionTitle'
 import moment from 'moment'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureDecisionJournalsLoaded, getDecisionJournal, deleteDecisionJournals} from '../actions/DecisionJournals'
 import EditableDecisionJournalDescription from './EditableDecisionJournalDescription'
+import EditableDecisionJournalReason from './EditableDecisionJournalReason'
+import EditableDecisionJournalContext from './EditableDecisionJournalContext'
+import EditableDecisionJournalRepercussions from './EditableDecisionJournalRepercussions'
 
 class DecisionJournalSidebar extends Component {
 
@@ -53,28 +56,36 @@ class DecisionJournalSidebar extends Component {
         }
         
         return (
-            <div className="sidebar decision_journal-sidebar">
-              <PropertyStack>
+            <SidebarContainer>
 
-                <PropertyStackComponent>
-                  <div className="property-text">
-                    <EditableDecisionJournalDescription decision_journal_id={decision_journal_id} />
-                  </div>
-                </PropertyStackComponent>
+              <div key="descriptionstack">
+                <SidebarSectionTitle title="Description" />
+                <EditableDecisionJournalDescription decision_journal_id={decision_journal_id} />
+              </div>
 
-                <PropertyStackComponent>
-                  <div className="named-property">
-                    <div className="named-property__name">Created</div>
-                    <div className="named-property__value"><Timestamp format="short-date" value={moment(decision_journal.created)}/></div>
-                  </div>
-                </PropertyStackComponent>
+              <div key="reasonstack">
+                <SidebarSectionTitle title="Reason" />
+                <EditableDecisionJournalReason decision_journal_id={decision_journal_id} />
+              </div>
 
-                <PropertyStackComponent>
-                  <div onClick={this.onDeleteDecisionJournal} className="icon--small-delete" />
-                </PropertyStackComponent>
-                
-              </PropertyStack>
-            </div>
+              <div key="contextstack">
+                <SidebarSectionTitle title="Context" />
+                <EditableDecisionJournalContext decision_journal_id={decision_journal_id} />
+              </div>
+
+              <div key="repercussionsstack">
+                <SidebarSectionTitle title="Repercussions" />
+                <EditableDecisionJournalRepercussions decision_journal_id={decision_journal_id} />
+              </div>
+              
+              <div key="infostack">
+                <SidebarSectionTitle title="Info" />
+                <div className="named-property__name">Created</div>
+                <div className="named-property__value"><Timestamp format="short-date" value={moment(decision_journal.created)}/></div>
+                <div onClick={this.onDeleteDecisionJournal} className="icon--small-delete" />
+              </div>
+              
+            </SidebarContainer>
         )
     }
 }
