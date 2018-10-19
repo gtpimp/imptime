@@ -23,9 +23,9 @@
             <form id="create-edit-person" class="form-horizontal" action="" method="post" accept-charset="utf-8">
               
               {% csrf_token %}
-              {{ person_form|as_bootstrap:"horizontal" }}
+              {{ person_form }}
 
-              {{ profile_form|as_bootstrap:"horizontal" }}
+              {{ profile_form }}
               
                 <div class="form-actions">
                     <input class="btn btn-primary" type="submit" value="Save" name="submit" />

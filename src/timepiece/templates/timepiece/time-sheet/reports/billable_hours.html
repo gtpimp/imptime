@@ -21,7 +21,7 @@
 
         <div class="span5">
             <form class="form-inline date-form" method="get">
-                {{ date_form|as_bootstrap:"inline" }}
+                {{ date_form }}
                 <div class="hidden">
                     {{ billable_form }}
                 </div>
@@ -34,7 +34,7 @@
     <div class="row-fluid">
         <div class="span3">
             <form class="form-vertical filter" method="get">
-                {{ billable_form|as_bootstrap }}
+                {{ billable_form }}
                 <div class="hidden">
                     {{ date_form }}
                 </div>
