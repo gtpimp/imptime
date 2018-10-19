@@ -70,6 +70,8 @@ class WikiViewSet(BaseViewSet):
                 elif field_name == "money_sensitive":
                     if self.logged_in_permissions(wiki_page.project).has_view_ctc_billable_rates:
                         wiki_page.money_sensitive = new_value
+                elif field_name == "store_encrypted":
+                    wiki_page.store_encrypted = new_value
                 elif field_name == "content":
                     wiki_page.content = new_value
                     wiki_page.enriched_content = MarkdownEnrichment(request.user).enrich(wiki_page.content,

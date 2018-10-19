@@ -46,6 +46,10 @@ export function updateWikiMoneySensitive(wiki_id, new_bool, on_done) {
     return updateItem(ENTITY_KEY__WIKI, [wiki_id], "money_sensitive", new_bool, on_done)
 }
 
+export function updateWikiStoreEncrypted(wiki_id, new_bool, on_done) {
+    return updateItem(ENTITY_KEY__WIKI, [wiki_id], "store_encrypted", new_bool, on_done)
+}
+
 export function fetchWikisIfNeeded(list_key) {
     return (dispatch, getState) => {
         dispatch(fetchItemsIfNeeded(ENTITY_KEY__WIKI, list_key))

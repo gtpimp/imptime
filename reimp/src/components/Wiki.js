@@ -4,7 +4,8 @@ import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     ensureWikisLoaded,
     getWiki,
-    updateWikiMoneySensitive
+    updateWikiMoneySensitive,
+    updateWikiStoreEncrypted
 } from '../actions/Wikis'
 
 import EditableWikiContent from './EditableWikiContent'
@@ -17,6 +18,7 @@ class Wiki extends Component {
     constructor(props) {
         super(props)
         this.onCommerciallySensitiveClick = this.onCommerciallySensitiveClick.bind(this)
+        this.onStoreEncryptedClick = this.onStoreEncryptedClick.bind(this)
     }
     
     componentDidMount() {
@@ -32,6 +34,11 @@ class Wiki extends Component {
     onCommerciallySensitiveClick(is_commercially_sensitive) {
         const { dispatch, wiki_id } = this.props
         dispatch(updateWikiMoneySensitive(wiki_id, is_commercially_sensitive))
+    }
+
+    onStoreEncryptedClick(store_encrypted) {
+        const { dispatch, wiki_id } = this.props
+        dispatch(updateWikiStoreEncrypted(wiki_id, store_encrypted))
     }
     
     render() {
@@ -54,10 +61,18 @@ class Wiki extends Component {
                     <div className="wiki-header__commercially_sensitive">
                       <ToggleButton value={wiki.money_sensitive}
                                     onChange={this.onCommerciallySensitiveClick}
-                                    on_label={"Sensitive"}
-                                    off_label={"Safe"} />
+                                    on_label={"Financial"}
+                                    off_label={"Regular"} />
                     </div>
                   </PermissionInspectorHighlighter>
+                }
+                { can_edit &&
+                  <div className="wiki-header__secure">
+                    <ToggleButton value={wiki.store_encrypted}
+                                  onChange={this.onStoreEncryptedClick}
+                                  on_label={"Encrypted"}
+                                  off_label={"Visible"} />
+                  </div>
                 }
               </div>
               <div className="wiki__content">

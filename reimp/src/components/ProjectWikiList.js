@@ -81,6 +81,9 @@ class WikiList extends Component {
                     <div className="icon--commercially-sensitive"/>
                   </PermissionInspectorHighlighter>
                 }
+                { wiki.store_encrypted &&
+                  <div className="icon--secure"/>
+                }
               </div>
               <div className="wiki-list__row_buttons">
                 { can_delete &&

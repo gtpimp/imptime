@@ -13,5 +13,6 @@ class WikiPageSerializer(BaseModelSerializer):
                    'money_sensitive',
                    'name',
                    'content',
-                   'enriched_content']
+                   'enriched_content',
+                   'store_encrypted' ]
         

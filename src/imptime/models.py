@@ -369,9 +369,19 @@ class WikiPage(BaseModel):
     project = ProtectedForeignKey(Project, related_name='wikis', null=False)
     content = models.TextField(null=True)
     enriched_content = models.TextField(null=True)
+    store_encrypted = models.BooleanField(default=False) #true if refers to project commercials
+
+    ENCRYPTED_TOKEN = "BEGIN PGP MESSAGE"
 
     def save(self, *args, **kwargs):
         was_created = not self.id
+
+        
+        if self.store_encrypted:
+            has_content = self.content is not None and len(self.content.strip())>0
+            if has_content and self.ENCRYPTED_TOKEN not in self.content:
+                raise Exception("Content is not encrypted, not saving")
+        
         super(WikiPage, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(self)
