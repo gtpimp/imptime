@@ -144,11 +144,10 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_projects_for_money(self, project_qs):
         """ only returns projects the user can see billable information about """
-        project_ids = [p.id for p in project_qs if ProjectPermissions.for_user(self.request.user,
-                                                                               business=p, #sic
-                                                                               auto_create=False)\
-                       .has_view_ctc_billable_rates]
-        return project_qs.filter(pk__in=project_ids)
+        return Project.objects.filter(business_permissions__user=self.request.user,
+                                      business_permissions__business__in=project_qs,
+                                      business_permissions__can_view_ctc_billable_rates=True,
+                                      pk__in=project_qs)
     
     def allowed_sprints(self):
         return PermissionHelper.allowed_sprints(self.request.user)

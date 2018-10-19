@@ -11,6 +11,7 @@
   "dependencies": {
     "classnames": "^2.2.5",
     "create-react-class": "^15.5.2",
+    "crypto-js": "^3.1.9-1",
     "draft-js": "^0.10.5",
     "emotion": "^9.2.5",
     "eslint-plugin-flowtype": "^2.42.0",

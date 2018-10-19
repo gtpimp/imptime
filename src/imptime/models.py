@@ -371,7 +371,7 @@ class WikiPage(BaseModel):
     enriched_content = models.TextField(null=True)
     store_encrypted = models.BooleanField(default=False) #true if refers to project commercials
 
-    ENCRYPTED_TOKEN = "BEGIN PGP MESSAGE"
+    ENCRYPTED_TOKEN = "__ENCRYPTED__"
 
     def save(self, *args, **kwargs):
         was_created = not self.id

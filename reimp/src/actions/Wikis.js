@@ -1,5 +1,6 @@
 import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
-
+import aes from 'crypto-js/aes'
+import enc from 'crypto-js/enc-utf8'
 import {
     invalidateAllItems,
     invalidateItems,
@@ -15,6 +16,8 @@ import {
     saveCandidateItem,
     deleteItems,
 } from '../actions/Item'
+
+const ENCRYPTED_TOKEN = "__ENCRYPTED__"
 
 export function invalidateAllWikis() {
     return (dispatch, getState) => {
@@ -102,3 +105,22 @@ export function deleteWiki(wiki_id) {
         dispatch(deleteItems(ENTITY_KEY__WIKI, [wiki_id]))
     }
 }
+
+export function encryptContent(unencrypted_content, password) {
+
+    const encrypted = ENCRYPTED_TOKEN + aes.encrypt(unencrypted_content, password).toString()
+    const decrypted = decryptContent(encrypted, password)
+    if ( unencrypted_content !== decrypted ) {
+        return null
+    }
+    return encrypted
+}
+
+export function decryptContent(encrypted_content, password) {
+    encrypted_content = encrypted_content.slice(ENCRYPTED_TOKEN.length)
+    const bytes = aes.decrypt(encrypted_content, password)
+    const unencrypted = bytes.toString(enc)
+    return unencrypted
+}
+
+

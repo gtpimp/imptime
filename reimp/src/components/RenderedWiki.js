@@ -22,8 +22,9 @@ class RenderedWiki extends Component {
     }
 
     render() {
-        const { wiki } = this.props
-        const content = (wiki.enriched_content || "").trim() || (wiki.content || "").trim()
+        const { wiki, unencrypted_content } = this.props
+
+        const content = (unencrypted_content || "").trim() || (wiki.enriched_content || "").trim() || (wiki.content || "").trim()
         return (
             <div className="text-component--readonly text-component--description">
               <RenderedMarkdown content={content} />
@@ -33,7 +34,7 @@ class RenderedWiki extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { wiki_id } = props
+    const { wiki_id, unencrypted_content } = props
     const wiki = getWiki(state, wiki_id) || {}
     const project_id = wiki.project_id
     const project = getProject(state, project_id) || {}
@@ -44,7 +45,8 @@ function mapStateToProps(state, props) {
         project_id: project_id,
         can_view,
         wiki,
-        wiki_id
+        wiki_id,
+        unencrypted_content
     }
 }
 
