@@ -48,7 +48,7 @@ Holidays:
 
   <div class="pane filter" style="display:none">
     <form method="GET" action="{% url 'scheduler' %}">
-      {{ schedule_filter_form|as_bootstrap:"horizontal" }}
+      {{ schedule_filter_form }}
       <input type="submit" class="btn btn-info" value="filter"/>
     </form>
   </div>
