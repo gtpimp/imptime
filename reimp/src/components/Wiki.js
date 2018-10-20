@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { size } from 'lodash'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     ensureWikisLoaded,
@@ -37,8 +38,12 @@ class Wiki extends Component {
     }
 
     onStoreEncryptedClick(store_encrypted) {
-        const { dispatch, wiki_id } = this.props
-        dispatch(updateWikiStoreEncrypted(wiki_id, store_encrypted))
+        const { dispatch, wiki_id, wiki } = this.props
+        if ( size(wiki.content)>0 ) {
+            window.alert("Can't change encryption mechanism unless the wiki is empty")
+        } else {
+            dispatch(updateWikiStoreEncrypted(wiki_id, store_encrypted))
+        }
     }
     
     render() {

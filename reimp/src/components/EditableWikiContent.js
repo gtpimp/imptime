@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { size } from 'lodash'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import EditableProperty from './form/EditableProperty'
 import WikiForm from './form/WikiForm'
@@ -38,6 +39,12 @@ class EditableWikiContent extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { project_id, wiki_id, dispatch } = props
+
+        if ( these_props && these_props.wiki_id !== this.props.wiki_id ) {
+            this.setState({'temporary_encryption_password': null,
+                           'unencrypted_content': null})
+        }
+        
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureWikisLoaded([wiki_id]))
     }
@@ -46,15 +53,16 @@ class EditableWikiContent extends Component {
         const { dispatch, wiki, wiki_id } = this.props
         this.setState({unencrypted_content: new_value.content})
         if ( wiki.store_encrypted === true ) {
-            this.trySaveEncrypted()
+            this.trySaveEncrypted({unencrypted_content: new_value.content})
         } else {
             dispatch(updateWikiContent(wiki_id, new_value.content))
         }
     }
 
-    trySaveEncrypted = (new_password) => {
+    trySaveEncrypted = ({unencrypted_content, new_password}) => {
         const { dispatch, wiki_id } = this.props
-        const { temporary_encryption_password, unencrypted_content } = this.state
+        const { temporary_encryption_password } = this.state
+        unencrypted_content = unencrypted_content || this.state.unencrypted_content
         const password = new_password || temporary_encryption_password
         if ( password === null ) {
             this.setState({is_getting_password: true,
@@ -73,10 +81,10 @@ class EditableWikiContent extends Component {
 
     onDecrypt = (evt) => {
         evt.preventDefault()
-        this.tryLoadEncrypted()
+        this.tryLoadEncrypted({})
     }
 
-    tryLoadEncrypted = (new_password) => {
+    tryLoadEncrypted = ({new_password}) => {
         const { wiki } = this.props
         const { temporary_encryption_password } = this.state
         const password = new_password || temporary_encryption_password
@@ -104,9 +112,9 @@ class EditableWikiContent extends Component {
                        password_mode: null})
 
         if ( password_mode === 'encrypting' ) {
-            this.trySaveEncrypted(password)
+            this.trySaveEncrypted({new_password:password})
         } else if ( password_mode === 'decrypting' ) {
-            this.tryLoadEncrypted(password)
+            this.tryLoadEncrypted({new_password:password})
         }
     }
 
@@ -137,6 +145,8 @@ class EditableWikiContent extends Component {
         if ( is_getting_password ) {
             return this.renderGetPassword()
         }
+
+        const ready_to_edit = can_edit && (!wiki.store_encrypted || wiki.content === null || wiki.content.length === 0 || size(unencrypted_content)>0)
         
         return (
             <PermissionInspectorHighlighter project_id={project_id}
@@ -146,10 +156,10 @@ class EditableWikiContent extends Component {
                 <EditableProperty property_key={'wiki_content_'+wiki.id}
                                   initial_value={content}
                                   onChange={this.onChange}
-                                  can_edit={can_edit}
+                                  can_edit={ready_to_edit}
                 >
                   <WikiForm />
-                  <RenderedWiki wiki_id={wiki.id} />
+                  <RenderedWiki wiki_id={wiki.id} unencrypted_content={unencrypted_content} />
                   <div className="text-component--empty text-component--description">
                     Click to edit
                   </div>
