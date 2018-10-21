@@ -26,7 +26,12 @@ export class SingleValueSelector extends Component {
     }
 
     componentDidMount() {
-        const { auto_focus } = this.props
+        const { auto_focus, initial_filter_term } = this.props
+
+        if ( this.state.filter_term === null && initial_filter_term ) {
+            this.setState({filter_term: initial_filter_term})
+        }
+        
         if ( auto_focus ) {
             this.selection_filter_el && this.selection_filter_el.focus()
             this.setState({show_options: true})
@@ -177,7 +182,7 @@ export class SingleValueSelector extends Component {
 function mapStateToProps(state, props) {
 
     const { options, value, auto_focus, placeholder, rememberer_key,
-            onFilterChanged } = props
+            onFilterChanged, initial_filter_term } = props
 
     const best_options = getBestOptions(state, rememberer_key)
     
@@ -188,7 +193,8 @@ function mapStateToProps(state, props) {
         placeholder: placeholder || "",
         rememberer_key: rememberer_key || placeholder,
         best_options,
-        onFilterChanged
+        onFilterChanged,
+        initial_filter_term
     }
 }
 

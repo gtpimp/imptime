@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field } from 'redux-form'
-import { getProjects, fetchProjectsIfNeeded } from '../../actions/Projects'
+import { getProjects, getProject, fetchProjectsIfNeeded, ensureProjectsLoaded } from '../../actions/Projects'
 import {
     SELECTOR__PROJECTS
 } from '../../actions/ItemListKeyRegistry'
@@ -42,8 +42,12 @@ class ProjectSelectorField extends Component {
     
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, filter, list_key } = props
+        const { dispatch, filter, list_key, default_project_id } = props
 
+        if ( default_project_id && default_project_id !== this.props.default_project_id ) {
+            dispatch(ensureProjectsLoaded([default_project_id]))
+        }
+        
         if ( filter !== this.props.filter ) {
             dispatch(invalidateList(list_key))
         }
@@ -74,12 +78,15 @@ class ProjectSelectorField extends Component {
     }
     
     renderSingleValueSelector(field) {
-        const { auto_focus, project_id } = this.props
+        const { auto_focus, project_id, default_project, default_project_id } = this.props
         const {input, data, ...rest} = field
+        const initial_filter_term = (!project_id && default_project_id && default_project.name) || null
+        
         return (
             <SingleValueSelector
                 onChange={(project_id) => this.onFieldChange(project_id, input.onChange)}
                 placeholder={"Type to filter project"}
+                initial_filter_term={initial_filter_term}
                 value={input.value}
                 options={data}
                 rememberer_key={"project_"+project_id}
@@ -115,6 +122,9 @@ function mapStateToProps(state, props) {
         let label = project.name
 	return { value: project.id, label: label }
     })
+
+    const default_project = default_project_id && getProject(state, default_project_id)
+    
     const filter = getListFilter(state, list_key)
     return {
         onChange: onChange,
@@ -124,6 +134,7 @@ function mapStateToProps(state, props) {
         auto_focus,
         filter,
         default_project_id,
+        default_project,
         list_key
     }
 }
