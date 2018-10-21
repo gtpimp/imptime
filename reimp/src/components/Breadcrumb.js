@@ -142,10 +142,7 @@ const menu_buttons = {
           perms: (objs) => ['has_view_ctc_billable_rates'],
           generic_action: function(objs, props) {
               props.dispatch(startSprintSnapshotSelector())
-        }},
-        { label: (objs) => 'Slow issues',
-          nav_url: (objs) => '/slow/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/issues'
-        },
+        }}
     ],
     'issues': [
         { label: (objs) => 'Bulk Create Issues',
