@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { concat, partition, sortBy } from 'lodash'
 import { Field } from 'redux-form'
-import { getSprints, fetchSprintsIfNeeded } from '../../actions/Sprints'
+import { getSprints, fetchSprintsIfNeeded, ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import {
     SELECTOR__SPRINTS
 } from '../../actions/ItemListKeyRegistry'
@@ -40,7 +40,12 @@ class SprintSelectorField extends Component {
     
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, project_id, filter, list_key } = props
+        const { dispatch, project_id, filter, list_key, default_sprint_id } = props
+
+        if ( default_sprint_id && default_sprint_id !== this.props.default_sprint_id ) {
+            dispatch(ensureSprintsLoaded([default_sprint_id]))
+        }
+        
         if ( filter.project_id !== project_id ) {
             if ( project_id ) {
                 dispatch(update_list_filter(list_key, {project_id: project_id}))
@@ -79,12 +84,14 @@ class SprintSelectorField extends Component {
     }
 
     renderSingleValueSelector(field) {
-        const { auto_focus, project_id } = this.props
+        const { auto_focus, project_id, sprint_id, default_sprint_id, default_sprint } = this.props
         const {input, data, ...rest} = field
+        const initial_filter_term = (!sprint_id && default_sprint_id && default_sprint.name) || null
         return (
             <SingleValueSelector
                 onChange={(sprint_id) => this.onFieldChange(sprint_id, input.onChange)}
                 placeholder={"Type to filter sprint"}
+                initial_filter_term={initial_filter_term}
                 value={input.value}
                 options={data}
                 rememberer_key={"sprint_"+project_id}
@@ -129,6 +136,8 @@ function mapStateToProps(state, props) {
     const partitioned = partition(sprint_options, 'is_open')
     sprint_options = concat(sortBy(partitioned[0], 'label'), sortBy(partitioned[1], 'label'))
 
+    const default_sprint = default_sprint_id && getSprint(state, default_sprint_id)
+    
     const filter = getListFilter(state, list_key)
     
     return {
@@ -140,7 +149,8 @@ function mapStateToProps(state, props) {
         default_sprint_id,
         auto_focus,
         filter,
-        list_key
+        list_key,
+        default_sprint
     }
 }
 

@@ -114,7 +114,7 @@ class IssueSelectorForm extends Component {
     }
 
     render() {
-        const { handleSubmit, default_project_id } = this.props
+        const { handleSubmit, default_project_id, default_sprint_id } = this.props
         const { project_id, sprint_id, creating_issue } = this.state
 
         return (
@@ -133,6 +133,7 @@ class IssueSelectorForm extends Component {
                       <SidebarDetail label="Sprint">
                         <SprintSelectorField project_id={project_id}
                                              auto_focus={false}
+                                             default_sprint_id={sprint_id || default_sprint_id}
                                              onChange={this.onChangeSprint}
                         />
                       </SidebarDetail>
