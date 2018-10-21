@@ -16,7 +16,6 @@ class SprintSnapshotPage extends Component {
 
     componentDidMount() {
         const {sprint_id, project_id, sprint_snapshot_id, dispatch} = this.props
-        // dispatch(set_toolbars(PAGE_KEY__SPRINT_SNAPSHOT_PAGE, ['sprint-snapshot'], , ""))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         dispatch(ensureSprintSnapshotsLoaded([sprint_snapshot_id]))

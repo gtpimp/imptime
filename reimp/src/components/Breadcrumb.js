@@ -138,6 +138,9 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary',
           perms: (objs) => ['has_view_ctc_billable_rates']
         },
+        { label: (objs) => 'Proposal',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/proposal'
+        },
         { label: (objs) => 'Snapshots',
           perms: (objs) => ['has_view_ctc_billable_rates'],
           generic_action: function(objs, props) {
