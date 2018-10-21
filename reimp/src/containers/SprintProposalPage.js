@@ -52,7 +52,7 @@ class SprintProposalPage extends Component {
     
     render() {
         const { project, sprint_id } = this.props
-        { project && setBrowserTitle(project.name) }
+        project && setBrowserTitle(project.name)
         
         return (
             <div>
