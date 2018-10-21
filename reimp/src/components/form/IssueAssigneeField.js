@@ -36,12 +36,13 @@ class IssueAssigneeField extends Component {
 
     renderSingleValueSelector(field) {
         const {input, data, ...rest} = field
-        const { project_id } = this.props
+        const { project_id, auto_focus } = this.props
         return (
             <SingleValueSelector
                 onChange={(user_id) => this.onFieldChange(user_id, input.onChange)}
                 value={input.value}
                 options={data}
+                auto_focus={auto_focus}
                 rememberer_key={"user_"+project_id}
                 {...rest}
             />
@@ -63,7 +64,7 @@ class IssueAssigneeField extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project_id, onChange } = props
+    const { project_id, onChange, auto_focus } = props
     const project = getProject(state, project_id) || {}
     const assignable_user_ids = project.allowed_user_ids || []
     const users = getUsers(state, assignable_user_ids)
@@ -78,7 +79,8 @@ function mapStateToProps(state, props) {
         assignable_user_ids,
         project_id,
         project,
-        onChange
+        onChange,
+        auto_focus
     }
 }
 

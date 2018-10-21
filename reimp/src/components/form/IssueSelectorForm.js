@@ -102,7 +102,7 @@ class IssueSelectorForm extends Component {
               </SidebarDetail>
 
               <SidebarDetail label="Assignee (optional)">
-                <IssueAssigneeField project_id={project_id} />
+                <IssueAssigneeField project_id={project_id} auto_focus={false} />
               </SidebarDetail>
 
               <SidebarDetail label="Due date (optional)">
