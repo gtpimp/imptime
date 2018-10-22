@@ -30,6 +30,7 @@ import { ensureTagsLoaded } from '../actions/Tags'
 import Testable from './Testable'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import RenderedMarkdown from './RenderedMarkdown'
+import PrintTitle from './PrintTitle'
 
 class SprintProposal extends Component {
 
@@ -62,7 +63,11 @@ class SprintProposal extends Component {
         const { sprint_id } = this.props
         return (
             <div>
-              This is the sprint proposal for <SprintName sprint_id={sprint_id}/>
+              <PrintTitle>
+                <div className={css`display:flex`}>
+                  Proposal for &nbsp;<SprintName sprint_id={sprint_id}/>
+                </div>
+              </PrintTitle>
             </div>
         )
     }
@@ -71,6 +76,9 @@ class SprintProposal extends Component {
         const { issues } = this.props
         return (
             <div>
+              <PrintTitle>
+                Issues
+              </PrintTitle>
               { map(issues, (issue) => {
                     return (
                         <div key={`issue_contents_${issue.id}`}>
@@ -122,6 +130,9 @@ class SprintProposal extends Component {
         const { issues } = this.props
         return (
             <div>
+              <PrintTitle>
+                Issue details
+              </PrintTitle>
               { map(issues, (issue) => {
                     return (
                         <div key={`issue_list_${issue.id}`}>
@@ -141,6 +152,7 @@ class SprintProposal extends Component {
     render() {
         return (
             <div>
+              
               { this.renderHeader() }
               { this.renderIssueContents() }
               { this.renderIssues() }
