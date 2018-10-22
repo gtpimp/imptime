@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
+import { css } from 'emotion'
 import { setSprintBreadcrumbsHelper, setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -55,7 +56,7 @@ class SprintProposalPage extends Component {
         project && setBrowserTitle(project.name)
         
         return (
-            <div>
+            <div className={css`width:100%;height:100%`}>
               <SprintProposal sprint_id={sprint_id}
                               list_key={LIST_KEY__ISSUES_FOR_PROPOSAL} />
             </div>

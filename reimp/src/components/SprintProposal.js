@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
+import { map, size } from 'lodash'
+import { cx, css } from 'emotion'
+import { default_theme as theme } from '../theme/default'
 import {
     ensureSprintsLoaded,
     getSprint
@@ -25,6 +27,9 @@ import {
     fetchIssuesIfNeeded
 } from '../actions/Issues'
 import { ensureTagsLoaded } from '../actions/Tags'
+import Testable from './Testable'
+import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
+import RenderedMarkdown from './RenderedMarkdown'
 
 class SprintProposal extends Component {
 
@@ -42,7 +47,7 @@ class SprintProposal extends Component {
         const props = these_props || this.props
         const { dispatch, list_key, sprint_id, tag_ids, filter } = props
 
-        if ( filter.sprint_id != sprint_id ) {
+        if ( filter.sprint_id !== sprint_id ) {
             dispatch(update_list_filter(list_key, {sprint_id: sprint_id}))
         }
         
@@ -68,21 +73,77 @@ class SprintProposal extends Component {
             <div>
               { map(issues, (issue) => {
                     return (
-                        <IssueName key={`issue_contents_${issue.id}`}
-                                   issue_id={issue.id} />
+                        <div key={`issue_contents_${issue.id}`}>
+                          <IssueName issue_id={issue.id} />
+                        </div>
                     )
               }) }
             </div>
         )
     }
 
-    render() {
-        const { sprint_id } = this.props
+    renderIssueImages(issue) {
+        return (
+            <div className={css`display: flex; flex-wrap: wrap; margin-bottom: 20px;`}>
+              <VisualSpecDocumentGallery annotated_visual_spec_document_ids={issue.annotated_visual_spec_document_ids}
+                                         render_quality="hires"
+                                         image_class="visual_spec_document_gallery__image--large_preview"
+                                         allow_edit={false} />
+            </div>
+        )
+    }
 
+    renderIssueTestables(issue) {
+        return (
+            <div className={css`display: flex; flex-wrap: wrap;`}>
+              { map(issue.testables, (testable) =>
+                  <div key={`issue_testable_${testable.id}`} className={css`max-width:25%; margin-left: 30px; margin-right: 30px;`}>
+                    <Testable key={`testable_${testable.id}`} testable={testable} />
+                  </div>
+                ) }
+            </div>
+        )
+    }
+
+    renderIssueDescription(issue) {
+        return (
+            <div className={cx("text-component--readonly text-component--description",
+                               css`background-color: ${theme.colours.sub_nav_bar};
+                                   border-top: 1px solid ${theme.colours.border_strong}`)}>
+              
+              { size(issue.description) !== 0 && 
+                <RenderedMarkdown content={issue.enriched_description || issue.description} />
+              }
+            </div>
+        )
+    }
+
+    renderIssues() {
+        const { issues } = this.props
+        return (
+            <div>
+              { map(issues, (issue) => {
+                    return (
+                        <div key={`issue_list_${issue.id}`}>
+                          <div>
+                            <IssueName issue_id={issue.id} />
+                          </div>
+                          <div>{this.renderIssueDescription(issue)}</div>
+                          <div>{this.renderIssueImages(issue)}</div>
+                          <div>{this.renderIssueTestables(issue)}</div>
+                        </div>
+                    )
+                }) }
+            </div>
+        )
+    }
+
+    render() {
         return (
             <div>
               { this.renderHeader() }
               { this.renderIssueContents() }
+              { this.renderIssues() }
             </div>
         )
     }    
