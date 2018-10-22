@@ -4,7 +4,7 @@ import {withRouter} from 'react-router-dom'
 import { setSprintBreadcrumbsHelper, setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import { PAGE_KEY__SPRINT_PROPOSAL_PAGE } from '../actions/ItemListKeyRegistry'
+import { PAGE_KEY__SPRINT_PROPOSAL_PAGE, LIST_KEY__ISSUES_FOR_PROPOSAL } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
     setBrowserTitle
@@ -56,7 +56,8 @@ class SprintProposalPage extends Component {
         
         return (
             <div>
-              <SprintProposal sprint_id={sprint_id} />
+              <SprintProposal sprint_id={sprint_id}
+                              list_key={LIST_KEY__ISSUES_FOR_PROPOSAL} />
             </div>
         )
     }
