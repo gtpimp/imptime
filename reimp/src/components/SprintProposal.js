@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map, size } from 'lodash'
+import { map, size, get } from 'lodash'
 import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import {
@@ -38,6 +38,8 @@ import Testable from './Testable'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import RenderedMarkdown from './RenderedMarkdown'
 import PrintTitle from './PrintTitle'
+import OtherUser from './OtherUser'
+import Hours from './Hours'
 
 class SprintProposal extends Component {
 
@@ -87,7 +89,7 @@ class SprintProposal extends Component {
         )
     }
 
-    renderCosts() {
+    renderCostTotals() {
         const { cost_summary } = this.props
         return (
             <div>
@@ -119,6 +121,7 @@ class SprintProposal extends Component {
                     return (
                         <div key={`issue_contents_${issue.id}`}>
                           <IssueName issue_id={issue.id} />
+                          { this.renderIssueSummary(issue) }
                         </div>
                     )
               }) }
@@ -162,8 +165,28 @@ class SprintProposal extends Component {
         )
     }
 
+    renderIssueSummary(issue) {
+        const { issues, cost_summary, show_money } = this.props
+        const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
+        return (
+            <div>
+              <div className={css`display:flex`}>
+                Assigned to: <OtherUser user_id={issue.assigned_to_id}/>
+              </div>
+              <div className={css`display:flex`}>
+                Estimate: <Hours hours={issue_costs.velocity_adjusted_estimate} />
+              </div>
+              { show_money && 
+                <div className={css`display:flex`}>
+                  Estimated cost: <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
+                </div>
+              }
+            </div>
+        )        
+    }
+
     renderIssues() {
-        const { issues } = this.props
+        const { issues, cost_summary } = this.props
         return (
             <div>
               <PrintTitle>
@@ -174,6 +197,7 @@ class SprintProposal extends Component {
                         <div key={`issue_list_${issue.id}`}>
                           <div>
                             <IssueName issue_id={issue.id} />
+                            { this.renderIssueSummary(issue) }
                           </div>
                           <div>{this.renderIssueDescription(issue)}</div>
                           <div>{this.renderIssueImages(issue)}</div>
@@ -190,7 +214,7 @@ class SprintProposal extends Component {
         return (
             <div>
               { this.renderHeader() }
-              { show_money && this.renderCosts() }
+              { show_money && this.renderCostTotals() }
               { this.renderIssueContents() }
               { this.renderIssues() }
             </div>

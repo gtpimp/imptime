@@ -3,8 +3,7 @@ from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from django.db.models import Count, Sum, FloatField
 from django.db.models import F, ExpressionWrapper
-from collections import OrderedDict
-
+from collections import OrderedDict, defaultdict
 
 class MultipleIssueSummaryCalculator(object):
 
@@ -25,6 +24,7 @@ class MultipleIssueSummaryCalculator(object):
         res['all_issue_ids'] = qs.values_list('id', flat=True)
         res['all_sprint_ids'] = [x for x in Sprint.objects.filter(issues__in=qs).order_by("id").values_list("id", flat=True).distinct() if x]
         res['estimates_by_user'] = self._get_estimates_by_user(qs)
+        res['estimates_by_issue'] = self._get_estimates_by_issue(qs)
         res['estimates_by_tag_category'] = self._get_estimates_by_tag_category(qs)
         res['actuals_by_user'] = self._get_actuals_by_user(qs, res['estimates_by_user'])
         res['actuals_by_issue'] = self._get_actuals_by_issue(qs)
@@ -92,6 +92,36 @@ class MultipleIssueSummaryCalculator(object):
                     estimates.setdefault(x['user_id'], {})['velocity_commission_cost'] = x['velocity_adjusted_cost']
 
         return estimates
+
+    def _get_estimates_by_issue(self, issues_qs):
+        estimates = defaultdict(float)
+
+        values = ['id',
+                  'assigned_to_id',
+                  'assigned_to__user_points__points',
+                  'assigned_to__rates__velocity',
+                  'velocity_adjusted_estimate'
+        ]
+        issues_qs = issues_qs.filter(assigned_to__rates__project=F('project'),
+                                     assigned_to__user_points__issue_id=F('id'))\
+                             .order_by("id")
+        issues_qs = issues_qs.annotate(velocity_adjusted_estimate=Sum(F('assigned_to__rates__velocity')*F('assigned_to__user_points__points'),
+                                                                      output_field=FloatField()))
+        if self.has_view_ctc_billable_rates:
+            issues_qs = issues_qs.annotate(velocity_adjusted_cost=Sum(F('assigned_to__rates__velocity')*F('assigned_to__user_points__points')*F('assigned_to__rates__billable_amount')*100/
+                                                                      (100-F('assigned_to__rates__project__commission_percentage')),
+                                                                      output_field=FloatField()))
+            values.append('assigned_to__rates__billable_amount')
+            values.append('assigned_to__rates__project__commission_percentage')
+            values.append('velocity_adjusted_cost')
+            
+        issues_qs = issues_qs.values(*values)
+
+        for issue_estimate in issues_qs:
+            estimates[str(issue_estimate['id'])] = issue_estimate
+
+        return estimates
+        
     
     def _get_estimates_by_tag_category(self, issues_qs):
         estimates_by_tag_category = {}
