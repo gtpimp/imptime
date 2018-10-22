@@ -13,8 +13,14 @@ import {
     update_list_filter,
     getListFilter
 } from '../actions/ItemList'
+import {ensureEstimateSummaryLoaded,
+        getEstimateSummary
+} from '../actions/EstimateSummary'
+import { showMoney } from '../actions/Mien'
+import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
+import CurrencyValue from './CurrencyValue'
 import {
     makeSelIssues,
     makeSelTagIdsForIssues,
@@ -26,6 +32,7 @@ import { selGetAllTagsById } from '../selectors/IssueSelectors'
 import {
     fetchIssuesIfNeeded
 } from '../actions/Issues'
+import {ensureCostSummaryLoaded, getCostSummary} from '../actions/CostSummary'
 import { ensureTagsLoaded } from '../actions/Tags'
 import Testable from './Testable'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
@@ -46,13 +53,21 @@ class SprintProposal extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, list_key, sprint_id, tag_ids, filter } = props
+        const { dispatch, list_key, sprint_id, tag_ids, filter, estimate_summary } = props
 
         if ( filter.sprint_id !== sprint_id ) {
             dispatch(update_list_filter(list_key, {sprint_id: sprint_id}))
         }
+
+        if ( sprint_id ) {
+            dispatch(ensureSprintsLoaded([sprint_id]))
+            dispatch(ensureEstimateSummaryLoaded(sprint_id))
+            dispatch(ensureCostSummaryLoaded(sprint_id))
+        }
         
-        sprint_id && dispatch(ensureSprintsLoaded([sprint_id]))
+        if ( estimate_summary ) {
+            dispatch(ensureUsersLoaded(estimate_summary.all_user_ids))
+        }
         if ( filter.sprint_id ) {
             dispatch(ensureTagsLoaded(tag_ids))
             dispatch(fetchIssuesIfNeeded(list_key))
@@ -68,6 +83,27 @@ class SprintProposal extends Component {
                   Proposal for &nbsp;<SprintName sprint_id={sprint_id}/>
                 </div>
               </PrintTitle>
+            </div>
+        )
+    }
+
+    renderCosts() {
+        const { cost_summary } = this.props
+        return (
+            <div>
+              <PrintTitle>
+                Cost summary
+              </PrintTitle>
+              { cost_summary.spendable_budget &&
+                <div>
+                  Sprint budget: 
+                  <CurrencyValue value={cost_summary.spendable_budget} />
+                </div>
+              }
+              <div>
+                Cost based on estimates:
+                <CurrencyValue value={cost_summary.estimated_cost} />
+              </div>
             </div>
         )
     }
@@ -150,10 +186,11 @@ class SprintProposal extends Component {
     }
 
     render() {
+        const { show_money } = this.props
         return (
             <div>
-              
               { this.renderHeader() }
+              { show_money && this.renderCosts() }
               { this.renderIssueContents() }
               { this.renderIssues() }
             </div>
@@ -180,6 +217,9 @@ function makeMapStateToProps(state, props) {
         const filter = getListFilter(state, list_key)
         const invalidated_issue_ids = selInvalidatedIssueIds(state, props)
         const loading_issue_ids = selLoadingIssueIds(state, props)
+        const estimate_summary = getEstimateSummary(state, sprint_id) || {}
+        const cost_summary = getCostSummary(state, sprint_id) || {}
+        const show_money = sprint && showMoney(state, sprint.project_id)
         
         return {
             sprint_id,
@@ -192,7 +232,10 @@ function makeMapStateToProps(state, props) {
             all_tags_by_id,
             filter,
             invalidated_issue_ids,
-            loading_issue_ids
+            loading_issue_ids,
+            estimate_summary,
+            cost_summary,
+            show_money
         }
     }
     return mapStateToProps
