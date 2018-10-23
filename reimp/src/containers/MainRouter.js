@@ -16,7 +16,6 @@ import PasswordChangedPage from './PasswordChangedPage'
 import DashboardPage from './DashboardPage'
 import ForgotPasswordPage from './ForgotPasswordPage'
 import IssuesPage from './IssuesPage'
-import SlowIssuesPage from './slow/SlowIssuesPage'
 import IssueHistoryPage from './IssueHistoryPage'
 import InvoicesPage from './InvoicesPage'
 import PasswordReminderSentPage from './PasswordReminderSentPage'
@@ -26,6 +25,7 @@ import ProjectUserPage from './ProjectUserPage'
 import ProjectsPage from './ProjectsPage'
 import SprintCostSummaryPage from './SprintCostSummaryPage'
 import SprintDashboardPage from './SprintDashboardPage'
+import SprintProposalPage from './SprintProposalPage'
 import SprintRatePage from './SprintRatePage'
 import SprintSnapshotPage from './SprintSnapshotPage'
 import UserTimesheetPage from './UserTimesheetPage'
@@ -90,12 +90,11 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/proposal" component={SprintProposalPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/rates" component={SprintRatePage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/snapshots/:snapshotId" component={SprintSnapshotPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
-              <Route exact path="/slow/projects/:projectId/sprints/:sprintId/issues" component={SlowIssuesPage}/>
-              <Route exact path="/slow/projects/:projectId/sprints/:sprintId/issues/:issueId" component={SlowIssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId/history" component={IssueHistoryPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/costSummary" component={SprintCostSummaryPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
