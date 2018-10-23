@@ -30,6 +30,9 @@ class WikiViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             wiki_pages = self.allowed_wiki_pages()
+
+            wiki_pages = wiki_pages.order_by("name")
+            
             wiki_pages = self.apply_filter(qs=wiki_pages, raw_filter_args=filter_args)
 
             wiki_pages = self.apply_pagination(qs=wiki_pages,

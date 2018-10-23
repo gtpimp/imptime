@@ -104,7 +104,6 @@ class EditableWikiContent extends Component {
                 this.setState({temporary_encryption_password: null})
                 window.alert("Wrong password")
             } else {
-                wiki.content = decrypted_content
                 this.setState({unencrypted_content: decrypted_content})
             }
         }
@@ -146,7 +145,7 @@ class EditableWikiContent extends Component {
         const { wiki, can_edit, project_id } = this.props
         const { is_getting_password, unencrypted_content } = this.state
 
-        const content = (wiki.content || "").trim()
+        const content = (unencrypted_content || wiki.content || "").trim()
 
         if ( is_getting_password ) {
             return this.renderGetPassword()
