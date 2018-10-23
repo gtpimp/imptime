@@ -8,7 +8,7 @@ import { UPLOAD_RELATIVE_URL } from '../../actions/VisualSpecDocuments'
 class VisualSpecDocumentForm extends Component {
 
     render() {
-        const { issue_id, feature_id, project_id,
+        const { issue_id, feature_id, project_id, wiki_id, 
                 onChange, onDelete, onCancel, visual_spec_document } = this.props
 
         const upload_params = {project_id: project_id}
@@ -20,6 +20,9 @@ class VisualSpecDocumentForm extends Component {
             extra_buttons.push(<button onClick={onDelete}>remove</button>)
         } else if ( feature_id ) {
             upload_params.feature_id = feature_id
+            extra_buttons.push(<button onClick={onDelete}>remove</button>)
+        } else if ( wiki_id ) {
+            upload_params.wiki_id = wiki_id
             extra_buttons.push(<button onClick={onDelete}>remove</button>)
         } else {
             extra_buttons.push(<button onClick={onDelete}>delete</button>)
@@ -43,7 +46,7 @@ class VisualSpecDocumentForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onChange, issue_id, feature_id, project_id, onDelete,
+    const { onChange, issue_id, feature_id, project_id, wiki_id, onDelete,
             onOpen, onCancel, visual_spec_document } = props
     
     return {
@@ -52,6 +55,7 @@ function mapStateToProps(state, props) {
         issue_id,
         feature_id, 
         project_id,
+        wiki_id, 
         onDelete,
         onOpen,
         onCancel

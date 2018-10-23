@@ -13,6 +13,11 @@ import EditableWikiContent from './EditableWikiContent'
 import EditableWikiName from './EditableWikiName'
 import ToggleButton from './toolbar/ToggleButton'
 import { has_permission } from '../actions/Users'
+import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
+import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
+import SidebarSectionTitle from './SidebarSectionTitle'
+import SidebarProperty from './SidebarProperty'
+import SidebarAddButton from './SidebarAddButton'
 
 class Wiki extends Component {
 
@@ -20,6 +25,7 @@ class Wiki extends Component {
         super(props)
         this.onCommerciallySensitiveClick = this.onCommerciallySensitiveClick.bind(this)
         this.onStoreEncryptedClick = this.onStoreEncryptedClick.bind(this)
+        this.state = {adding_visual_spec_doc: false}
     }
     
     componentDidMount() {
@@ -37,6 +43,14 @@ class Wiki extends Component {
         dispatch(updateWikiMoneySensitive(wiki_id, is_commercially_sensitive))
     }
 
+    showAddVisualSpecDoc = () => {
+        this.setState({adding_visual_spec_doc:true})
+    }
+
+    hideAddVisualSpecDoc = () => {
+        this.setState({adding_visual_spec_doc:false})
+    }
+
     onStoreEncryptedClick(store_encrypted) {
         const { dispatch, wiki_id, wiki } = this.props
         if ( size(wiki.content)>0 ) {
@@ -44,6 +58,35 @@ class Wiki extends Component {
         } else {
             dispatch(updateWikiStoreEncrypted(wiki_id, store_encrypted))
         }
+    }
+
+    renderAttachmentsStack() {
+        const { wiki, project_id } = this.props
+        const adding_visual_spec_doc = this.state.adding_visual_spec_doc
+        return (
+            <SidebarProperty key="attachmentstack">
+              <SidebarSectionTitle title="Attachments" />
+              <VisualSpecDocumentGallery annotated_visual_spec_document_ids={wiki.annotated_visual_spec_document_ids}
+                                         wiki_id={wiki.id}
+                                         allow_edit={false} />
+              
+              { ! adding_visual_spec_doc && (
+                    <SidebarAddButton
+                        data-tooltip="Upload attachment"
+                        onButtonClick={this.showAddVisualSpecDoc}
+                        label="Add attachment" />
+                )}
+              { adding_visual_spec_doc && (
+                    <div>
+                      <VisualSpecDocumentForm wiki_id={wiki.id}
+                                              project_id={project_id}
+                                              onChange={this.hideAddVisualSpecDoc}
+                      />
+                      <button className="button button--primary" onClick={this.hideAddVisualSpecDoc}>Cancel</button>
+                    </div>
+                )}
+            </SidebarProperty>
+        )
     }
     
     render() {
@@ -89,6 +132,7 @@ class Wiki extends Component {
                   <EditableWikiContent wiki_id={wiki.id} />
                 }
               </div>
+              { this.renderAttachmentsStack() }
             </div>
         )
     }
@@ -99,12 +143,14 @@ function mapStateToProps(state, props) {
     const wiki = getWiki(state, wiki_id) || {}
     const can_edit = has_permission(state, wiki.project_id, 'has_edit_business_comments')
     const can_view_sensitive_wikis = has_permission(state, wiki.project_id, 'has_view_ctc_billable_rates')
+    const project_id = wiki && wiki.project_id
 
     return {
         wiki,
         is_loading: !wiki.id,
         can_edit,
-        can_view_sensitive_wikis
+        can_view_sensitive_wikis,
+        project_id
     }
 }
 
