@@ -12,7 +12,7 @@ class SprintProposalToolbarPanel extends Component {
     onPrint = (evt) => {
         const { sprint } = this.props
         evt.preventDefault()
-        window.open(sprint.proposal_download_url)
+        window.open(sprint.proposal_download_url + "&url=" + window.location.pathname)
     }
     
     render() {

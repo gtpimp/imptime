@@ -105,7 +105,7 @@ MEDIA_URL = '/media/'
 DJIKI_IMAGES_PATH='wiki'
 DJIKI_AUTHORIZATION_BACKEND="djiki.auth.base.OnlyAuthenticatedEdits"
 
-WEB_URL_BASE = "http://localhost:3000/"
+WEB_URL_BASE = "NOT CONFIGURED"
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -165,6 +165,7 @@ PHANTOM_ROOT_DIR = LOG_FOLDER
 PUPPETEER_TEMP_DIR = "/opt/imptime/temp"
 PUPPETEER_PDF_CMD_OPTIONS = None
 PUPPETEER_PDF_CMD = "/opt/imptime/api/node_modules/puppeteer-pdf/puppeteer-pdf.js"
+PUPPETEER_BASE_URL = WEB_URL_BASE
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'jvo(l47k$=imb)hy29kl+^0n6n@r41eoi_96&amp;6#@57!r1cl%8&amp;6'

@@ -83,5 +83,6 @@ class PuppeteerHelper():
 
 def render_url_to_pdf(request, url, basename, **kwargs):
     puppeteer = PuppeteerHelper()
+    url = settings.PUPPETEER_BASE_URL + url
     response = puppeteer.url_to_pdf(request, url, basename, additional_pdf_kwargs=kwargs)
     return response
