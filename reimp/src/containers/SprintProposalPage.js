@@ -4,11 +4,13 @@ import {withRouter} from 'react-router-dom'
 import { css } from 'emotion'
 import { setSprintBreadcrumbsHelper, setBreadcrumbs } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
+import {ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { PAGE_KEY__SPRINT_PROPOSAL_PAGE, LIST_KEY__ISSUES_FOR_PROPOSAL } from '../actions/ItemListKeyRegistry'
+import Toolbar from '../components/toolbar/Toolbar'
 import {
     set_toolbars,
-    setBrowserTitle
+    setBrowserTitle,
+    select_sprints
 } from '../actions/Page'
 import SprintProposal from '../components/SprintProposal'
 
@@ -19,16 +21,19 @@ class SprintProposalPage extends Component {
         dispatch(set_toolbars(PAGE_KEY__SPRINT_PROPOSAL_PAGE, ['sprint-proposal']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
+        dispatch(select_sprints(PAGE_KEY__SPRINT_PROPOSAL_PAGE, [sprint_id]))
         this.refresh()
     }
 
     componentWillReceiveProps(new_props) {
-        const { sprint_id, project_id, dispatch } = this.props
+        const { sprint_id, project_id, dispatch } = new_props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         
         if ( (new_props.project && (!this.props.project || new_props.project.id !== this.props.project.id)) ||
              (new_props.sprint && (!this.props.sprint || new_props.sprint.id !== this.props.sprint.id)) ) {
+
+            dispatch(select_sprints(PAGE_KEY__SPRINT_PROPOSAL_PAGE, [sprint_id]))
             this.refresh(new_props)
         }
     }
@@ -57,6 +62,7 @@ class SprintProposalPage extends Component {
         
         return (
             <div className={css`width:100%;height:100%`}>
+              <Toolbar />
               <SprintProposal sprint_id={sprint_id}
                               list_key={LIST_KEY__ISSUES_FOR_PROPOSAL} />
             </div>

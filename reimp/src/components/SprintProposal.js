@@ -166,7 +166,7 @@ class SprintProposal extends Component {
     }
 
     renderIssueSummary(issue) {
-        const { issues, cost_summary, show_money } = this.props
+        const { cost_summary, show_money } = this.props
         const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
         return (
             <div>
@@ -186,7 +186,7 @@ class SprintProposal extends Component {
     }
 
     renderIssues() {
-        const { issues, cost_summary } = this.props
+        const { issues } = this.props
         return (
             <div>
               <PrintTitle>

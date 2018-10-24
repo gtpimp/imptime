@@ -402,4 +402,3 @@ export function getDefaultSprintHeaders() {
 export function getAllAvailableSprintHeaders() {
     return ALL_AVAILABLE_SPRINT_HEADERS
 }
-

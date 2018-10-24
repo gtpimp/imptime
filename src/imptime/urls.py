@@ -152,5 +152,6 @@ urlpatterns = [
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/download', VisualSpecDocumentDownloadView.as_view(), name='download_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/hires', VisualSpecDocumentHiresView.as_view(), name='hires_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/preview', VisualSpecDocumentPreviewView.as_view(), name='preview_visual_spec_document'),
+    url(r'^sprint/(?P<sprint_id>.*)/downloadProposal/', sprint_api.SprintProposalView.as_view(), name='sprint_proposal'),
 
 ] + router.urls

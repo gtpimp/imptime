@@ -1,5 +1,6 @@
 import logging
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 from django.conf import settings
 from base_serializer import BaseSerializer
 from clock_entry_serializer import ClockEntrySerializer
@@ -50,6 +51,7 @@ class SprintSerializer(BaseSerializer):
     commission_percentage = serializers.FloatField()
     budget = serializers.FloatField()
     hours_by_assignee = serializers.FloatField()
+    proposal_download_url = serializers.CharField()
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -115,5 +117,14 @@ class SprintSerializer(BaseSerializer):
             sprint.hours_by_assignee = self.hours_per_sprint_by_assignee.get(sprint.id, 0)
         else:
             sprint.hours_by_assignee = None
-            
+
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)
+
+    @classmethod
+    def _base_url(self, request):
+        return reverse('home', request=request).replace('/welcome/', '')
+    
+    @classmethod
+    def get_proposal_download_url(self, request, sprint):
+        return self._base_url(request) + '/imp/sprint/%s/downloadProposal?token=%s'%(sprint.id, request.user.profile.authenticate_token)
+    

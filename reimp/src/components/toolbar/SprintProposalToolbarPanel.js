@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { cx, css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import '../../sass/toolbar-panel.css'
 import {
@@ -8,9 +9,18 @@ import {
 
 class SprintProposalToolbarPanel extends Component {
 
+    onPrint = (evt) => {
+        const { sprint } = this.props
+        evt.preventDefault()
+        window.open(sprint.proposal_download_url)
+    }
+    
     render() {
         return (
             <div className="toolbar-panel">
+              <div className={cx("icon--print", css`cursor:pointer`)}
+                   onClick={this.onPrint} 
+              />
             </div>
         )
     }
