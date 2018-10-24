@@ -3,6 +3,7 @@ from sprint_serializer import SprintSerializer
 from authentication import get_user_by_token
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
+from puppeteer.generator import render_url_to_pdf
 from django.http import HttpResponse
 from base_api import BaseViewSet, PermissionHelper
 from django.db.models import Prefetch, Count, Sum, FloatField, F, ExpressionWrapper
@@ -254,4 +255,8 @@ class SprintProposalView(APIView):
     def get(self, request, sprint_id):
         user = get_user_by_token(request)
         sprint = PermissionHelper.allowed_sprints(user).get(pk=sprint_id)
-
+        response = render_url_to_pdf(request, "http://www.google.com", "google_test")
+        return response
+    
+        
+        

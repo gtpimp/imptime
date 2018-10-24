@@ -162,6 +162,10 @@ STATICFILES_FINDERS = (
 
 PHANTOM_ROOT_DIR = LOG_FOLDER
 
+PUPPETEER_TEMP_DIR = "/tmp"
+PUPPETEER_PDF_CMD_OPTIONS = None
+PUPPETEER_PDF_CMD = "/opt/imptime/api/node_modules/puppeteer-pdf/puppeteer-pdf.js"
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'jvo(l47k$=imb)hy29kl+^0n6n@r41eoi_96&amp;6#@57!r1cl%8&amp;6'
 
@@ -486,6 +490,9 @@ ISSUE_INBOX_DEFAULT_SPRINT_NAME = "Inbox"
 ISSUE_INBOX_MAX_ISSUE_DESCRIPTION_LENGTH = 4000
 ISSUE_INBOX_TEMP_ATTACHMENT_FOLDER = "/tmp"
 ISSUE_INBOX_TEMP_FOLDER = "/tmp"
+
+
+
 
 # AUTH_USER_MODEL = 'timepiece.ClientUser'
 

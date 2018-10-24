@@ -1,5 +1,14 @@
 FROM imptime/base:latest
-  
+
+# Needed for puppeteer
+RUN apt-get update && apt-get install -y --force-yes \
+  libnss3 \
+  libgconf2-4 \
+  libx11-xcb1 \
+  libxcursor1 \
+  libcups2 \
+  libxss1
+
 COPY version.txt /opt/imptime/api/version.txt
 COPY * /opt/imptime/api/
 
@@ -9,6 +18,8 @@ WORKDIR /opt/imptime/api/
 RUN wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
 RUN tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /usr/local/share/
 RUN ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/
+
+RUN npm install puppeteer
 
 COPY docker/start-api.sh start-api.sh
 COPY docker/migrate-api-database.sh migrate-api-database.sh
