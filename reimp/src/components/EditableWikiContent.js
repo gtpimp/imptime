@@ -84,6 +84,12 @@ class EditableWikiContent extends Component {
         this.tryLoadEncrypted({})
     }
 
+    onChangeEncryptionPassword = (evt) => {
+        evt.preventDefault()
+        this.setState({is_getting_password: true,
+                       password_mode: 'encrypting'})
+    }
+
     tryLoadEncrypted = ({new_password}) => {
         const { wiki } = this.props
         const { temporary_encryption_password } = this.state
@@ -98,7 +104,6 @@ class EditableWikiContent extends Component {
                 this.setState({temporary_encryption_password: null})
                 window.alert("Wrong password")
             } else {
-                wiki.content = decrypted_content
                 this.setState({unencrypted_content: decrypted_content})
             }
         }
@@ -140,7 +145,7 @@ class EditableWikiContent extends Component {
         const { wiki, can_edit, project_id } = this.props
         const { is_getting_password, unencrypted_content } = this.state
 
-        const content = (wiki.content || "").trim()
+        const content = (unencrypted_content || wiki.content || "").trim()
 
         if ( is_getting_password ) {
             return this.renderGetPassword()
@@ -166,6 +171,9 @@ class EditableWikiContent extends Component {
                 </EditableProperty>
                 { wiki && wiki.content && wiki.store_encrypted && unencrypted_content === null && 
                   <button onClick={this.onDecrypt}>Decrypt</button>
+                }
+                { wiki && wiki.content && wiki.store_encrypted && unencrypted_content !== null &&
+                  <button onClick={this.onChangeEncryptionPassword}>Change password</button>
                 }
               </PermissionInspectorHighlighter>
             </PermissionInspectorHighlighter>

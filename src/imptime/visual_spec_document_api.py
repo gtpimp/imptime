@@ -17,7 +17,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import IssueHistory, Issue
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
-from imptime.models import VisualSpecDocument, VisualSpecProject, VisualSpecIssue, VisualSpecFeature
+from imptime.models import VisualSpecDocument, VisualSpecProject
+from imptime.models import VisualSpecIssue, VisualSpecFeature, VisualSpecWiki
 
 logger = logging.getLogger(__name__)
 
@@ -66,9 +67,11 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             project = self.allowed_project(project_pk)
             issue_pk = request.POST.get('issue_id', None)
             feature_pk = request.POST.get('feature_id', None)
+            wiki_pk = request.POST.get('wiki_id', None)
 
             issue = self.allowed_issue(issue_pk) if issue_pk else None
             feature = self.allowed_feature(feature_pk) if feature_pk else None
+            wiki = self.allowed_wiki_pages().get(pk=wiki_pk) if wiki_pk else None
                 
             for name, f in request.FILES.items():
                 VisualSpecDocument.create_for_doc(user=request.user,
@@ -77,7 +80,8 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                                                   name=f.name,
                                                   content_type=f.content_type,
                                                   issue=issue,
-                                                  feature=feature)
+                                                  feature=feature,
+                                                  wiki=wiki)
             data = {'status': 'success'}
 
         except Exception, ex:
@@ -94,6 +98,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             project_id = params.get('project_id')
             issue_id = params.get('issue_id', None)
             feature_id = params.get('feature_id', None)
+            wiki_id = params.get('wiki_id', None)
 
             annotated_visual_spec_document_ids = params.pop('annotated_visual_spec_document_ids', [pk])
 
@@ -110,6 +115,10 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                         VisualSpecFeature.insert_after(feature_id, annotated_vsd, annotated_after_vsd)
                         feature = self.allowed_feature(feature_id)
                         feature.save()
+                    elif wiki_id is not None:
+                        VisualSpecWiki.insert_after(wiki_id, annotated_vsd, annotated_after_vsd)
+                        wiki = self.allowed_wiki_pages().get(pk=wiki_id)
+                        wiki.save()
                     else:
                         VisualSpecProject.insert_after(project_id, annotated_vsd, annotated_after_vsd)
                         project = self.allowed_project(project_id)

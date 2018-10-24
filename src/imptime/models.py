@@ -56,7 +56,7 @@ class VisualSpecDocument(BaseModel):
         return hash_md5.hexdigest()
 
     @classmethod
-    def create_for_doc(self, user, project, doc, name, content_type, issue=None, feature=None):
+    def create_for_doc(self, user, project, doc, name, content_type, issue=None, feature=None, wiki=None):
         d_file = doc
         is_image = content_type.startswith('image')
         if is_image:
@@ -103,6 +103,14 @@ class VisualSpecDocument(BaseModel):
                 feature.save()
                 FeatureHistory.add_history(user, feature, "added attachment", "", name)
 
+        if wiki is not None:
+            _, created = VisualSpecWiki.objects.get_or_create(annotated_visual_spec_document=annotated_vsd,
+                                                              wiki=wiki,
+                                                              defaults={'order':VisualSpecWiki.get_next_order(wiki.id)})
+            if created:
+                wiki.save()
+                WikiPageHistory.add_history(user, wiki, "added attachment", "", name)
+                
                 
     def height_and_width(self):
         max_size = settings.QUOTE_IMAGE_MAX_SIZE
@@ -391,7 +399,89 @@ class WikiPage(BaseModel):
     def delete(self):
         super(WikiPage, self).delete()
         RefreshNotifier().notify_model_delete(self)
+
+class WikiPageHistory(BaseModel):
+    wiki_page_id = models.IntegerField(blank=False, null=False, db_index=True)
+    original_wiki_page = models.ForeignKey(WikiPage, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
+    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=False, null=False)
+    before = models.TextField(blank=True, null=True)
+    after = models.TextField(blank=True, null=True)
     
+    @classmethod
+    def add_history(self, user, wiki_page, description, before, after):
+        WikiPageHistory.objects.create(created_by=user,
+                                       original_wiki_page=wiki_page,
+                                       wiki_page_id=wiki_page.id,
+                                       description=description,
+                                       before=before, after=after)
+
+    @classmethod
+    def for_wiki_page(self, wiki_page):
+        return WikiPageHistory.objects.filter(wiki_page_id=wiki_page.id).order_by("-created_at")
+
+        
+class VisualSpecWiki(BaseModel):
+    deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_wikis', null=True)
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_wikis')
+    wiki = ProtectedForeignKey("imptime.WikiPage", related_name='visual_spec_wikis')
+    order = models.IntegerField(default=1)
+
+    INCREMENT=10
+    MAX_ORDER=999999
+
+    class Meta:
+        unique_together = ('wiki', 'annotated_visual_spec_document')
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(VisualSpecWiki, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    @classmethod
+    def renumber(self, wiki_id):
+        vsis = self.objects.filter(wiki_id=wiki_id).order_by("order")
+        order = 0
+        for vsi in vsis:
+            if vsi.order != order:
+                vsi.order = order
+                vsi.save()
+            order += self.INCREMENT
+
+    @classmethod
+    def insert_after(self, wiki_id, visual_spec_document, set_after_this_visual_spec_document):
+        self.renumber(wiki_id)
+        vsi_target = self.objects.get_or_create(wiki_id=wiki_id,
+                                                visual_spec_document_id=set_after_this_visual_spec_document.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = vsi_target.order+1
+        vsi, is_new = self.objects.get_or_create(wiki_id=wiki_id,
+                                                 visual_spec_document_id=visual_spec_document.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            vsi.order = new_order
+            vsi.save()
+        self.renumber(wiki_id)
+
+    @classmethod
+    def insert_at_the_end(self, wiki_id, visual_spec_document_id):
+        new_order = self.get_next_order(wiki_id)
+        self.objects.get_or_create(wiki_id=wiki_id,
+                                   visual_spec_document_id=visual_spec_document_id,
+                                   defaults={'order':new_order})
+        self.renumber(wiki_id)
+
+    @classmethod
+    def get_next_order(self, wiki_id):
+        self.renumber(wiki_id)
+        max_order = self.objects.filter(wiki_id=wiki_id)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+
 
 class ReleaseNote(BaseModel):
     header = models.TextField(null=False)

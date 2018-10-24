@@ -10,7 +10,7 @@ from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
-from imptime.models import WikiPage
+from imptime.models import WikiPage, WikiPageHistory
 from rest_framework.decorators import detail_route
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,9 @@ class WikiViewSet(BaseViewSet):
             format_args = params.get('format', {})
 
             wiki_pages = self.allowed_wiki_pages()
+
+            wiki_pages = wiki_pages.order_by("name")
+            
             wiki_pages = self.apply_filter(qs=wiki_pages, raw_filter_args=filter_args)
 
             wiki_pages = self.apply_pagination(qs=wiki_pages,
@@ -66,16 +69,24 @@ class WikiViewSet(BaseViewSet):
                     raise Exception("No permission to edit this wiki page")
                 
                 if field_name == 'name':
+                    old_value = wiki_page.name
                     wiki_page.name = new_value
+                    WikiPageHistory.add_history(request.user, wiki_page, "update name", old_value, new_value)
                 elif field_name == "money_sensitive":
                     if self.logged_in_permissions(wiki_page.project).has_view_ctc_billable_rates:
+                        old_value = wiki_page.money_sensitive
                         wiki_page.money_sensitive = new_value
+                        WikiPageHistory.add_history(request.user, wiki_page, "update money_sensitive", old_value, new_value)
                 elif field_name == "store_encrypted":
+                    old_value = wiki_page.store_encrypted
                     wiki_page.store_encrypted = new_value
+                    WikiPageHistory.add_history(request.user, wiki_page, "update store encrypted", old_value, new_value)
                 elif field_name == "content":
+                    old_value = wiki_page.content
                     wiki_page.content = new_value
                     wiki_page.enriched_content = MarkdownEnrichment(request.user).enrich(wiki_page.content,
                                                                                          project_id=wiki_page.project_id)
+                    WikiPageHistory.add_history(request.user, wiki_page, "update content", old_value, new_value)
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 wiki_page.save()
