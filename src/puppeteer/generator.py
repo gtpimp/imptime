@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import urllib
+import subprocess
 import os
 import uuid
 import urlparse
+from itertools import chain
 from subprocess import call
 from time import sleep
 from django.conf import settings
 from django.http import HttpResponse
 import json
+from django.utils import six
 import logging
 logger=logging.getLogger(__name__)
 
@@ -16,15 +19,16 @@ logger=logging.getLogger(__name__)
 
 class PuppeteerHelper():
 
-    def url_to_pdf(request, url, basename, additional_pdf_kwargs):
+    def url_to_pdf(self, request, url, basename, additional_pdf_kwargs):
         output_filepath = os.path.join(settings.PUPPETEER_TEMP_DIR, '{0}.pdf'.format(uuid.uuid4()))
-        puppeteer_to_pdf(url, output_filepath, additional_pdf_kwargs)
-        response = self._return_response(output_filepath, basename)
+        self._puppeteer_to_pdf(url, output_filepath, additional_pdf_kwargs)
+        response = self._create_attachment_response(output_filepath, basename)
         # os.remove(output_filepath)
         return response
 
-    def puppeteer_to_pdf(url, output_filepath, additional_pdf_kwargs):
+    def _puppeteer_to_pdf(self, url, output_filepath, additional_pdf_kwargs):
         options = settings.PUPPETEER_PDF_CMD_OPTIONS
+
         if options is None:
             options = {'path': output_filepath}
         else:
@@ -34,29 +38,21 @@ class PuppeteerHelper():
         cmd = settings.PUPPETEER_PDF_CMD
         ck_args = list(chain([cmd],
                              [url],
-                             _options_to_args(**options)))
+                             self._options_to_args(options)))
 
         sub_cmd = ' '.join(ck_args)
+        
         logger.debug(sub_cmd)
         subprocess.call(sub_cmd, shell=True)
-
-        with open(output_filepath, "rb") as f:
-            content = f.read()
-        os.remove(output_filepath)
-        
-        return content
     
-    def _return_response(self, pdf_filepath, basename):
+    def _create_attachment_response(self, pdf_filepath, basename):
         try:
-            pdf_file = open(pfd_filepath, 'rb')
+            pdf_file = open(pdf_filepath, 'rb')
         except IOError, ex:
             logger.exception(ex)
             raise Exception("The PDF was not created")
 
-        response = HttpResponse(
-            pdf_file,,
-            content_type='application/force-download'
-        )
+        response = HttpResponse(pdf_file, content_type='application/force-download')
         extension = '.pdf'
         if not os.path.splitext(basename)[1]:
             basename = basename + extension
@@ -65,8 +61,27 @@ class PuppeteerHelper():
 
         return response
 
+    def _options_to_args(self, options):
+        NO_ARGUMENT_OPTIONS = ['-dhf', '--displayHeaderFooter', '-ht', '--printBackground', '-l', '--landscape',
+                               '-h', '--help', '-V', '--version']
+        
+        flags = []
+        for name in sorted(options):
+            value = options[name]
+            formatted_flag = '--%s' % name if len(name) > 1 else '-%s' % name
+            formatted_flag = formatted_flag.replace('_', '-')
+            accepts_no_arguments = formatted_flag in NO_ARGUMENT_OPTIONS
+            if value is None or (value is False and accepts_no_arguments):
+                continue
+            flags.append(formatted_flag)
+            if accepts_no_arguments:
+                continue
+            flags.append(six.text_type(value))
+        return flags
 
-def render_url_to_pdf(url, request, basename, **kwargs):
+    
+
+def render_url_to_pdf(request, url, basename, **kwargs):
     puppeteer = PuppeteerHelper()
     response = puppeteer.url_to_pdf(request, url, basename, additional_pdf_kwargs=kwargs)
     return response
