@@ -1,0 +1,19 @@
+
+@media print {
+    .main-layout__header {
+        display: none;
+    }
+
+    .main-layout__middle .main-layout__toolbar {
+        display: none;
+    }
+
+    .main-layout__middle {
+        height: 100%;
+        overflow: visible;
+    }
+
+    .main-layout__footer {
+        display: none;
+    }
+}
