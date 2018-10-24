@@ -16,4 +16,18 @@
     .main-layout__footer {
         display: none;
     }
+
+    .print__page {
+        break-before: page;
+        page-break-before: always;
+    }
+
+    .print__image {
+        break-inside: avoid;
+    }
+
+    .print__contiguous_section {
+        break-inside: avoid;
+    }
+    
 }

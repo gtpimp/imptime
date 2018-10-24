@@ -92,7 +92,7 @@ class SprintProposal extends Component {
     renderCostTotals() {
         const { cost_summary } = this.props
         return (
-            <div>
+            <div className="print__page">
               <PrintTitle>
                 Cost summary
               </PrintTitle>
@@ -113,7 +113,7 @@ class SprintProposal extends Component {
     renderIssueContents() {
         const { issues } = this.props
         return (
-            <div>
+            <div className="print__page">
               <PrintTitle>
                 Issues
               </PrintTitle>
@@ -188,13 +188,13 @@ class SprintProposal extends Component {
     renderIssues() {
         const { issues } = this.props
         return (
-            <div>
+            <div className="print__page">
               <PrintTitle>
                 Issue details
               </PrintTitle>
               { map(issues, (issue) => {
                     return (
-                        <div key={`issue_list_${issue.id}`}>
+                        <div className="print__contiguous_section" key={`issue_list_${issue.id}`}>
                           <div>
                             <IssueName issue_id={issue.id} />
                             { this.renderIssueSummary(issue) }

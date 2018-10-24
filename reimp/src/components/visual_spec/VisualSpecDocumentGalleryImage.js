@@ -146,7 +146,7 @@ class VisualSpecDocumentGalleryImage extends Component {
         const thumbnail_element = this.resolveThumbnailElement(preview_image_url)
 
         return connectDragSource(connectDropTarget(
-            <div className="visual-spec-document-gallery-image__container" key={annotated_visual_spec_document_id}>
+            <div className="visual-spec-document-gallery-image__container print__image" key={annotated_visual_spec_document_id}>
               <div className={classNames("visual-spec-document-gallery-image__img_container",
                                          {"visual_spec_document_gallery__image--selected": is_active,
                                           "visual_spec_document_gallery__image--dnd-target": isOver
