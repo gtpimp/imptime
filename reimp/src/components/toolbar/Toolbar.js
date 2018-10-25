@@ -29,7 +29,7 @@ import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
 import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
-import { css } from 'react-emotion'
+import { cx, css } from 'react-emotion'
 import { default_theme as theme } from '../../theme/default'
 import { getPageName, getToolbarNames, getToolbarParams } from '../../actions/Page'
 
@@ -135,7 +135,7 @@ class Toolbar extends Component {
     render() {
         const {panelIds, page_name} = this.props
         return (
-            <div className={ ToolbarDiv }>
+            <div className={cx('main-layout__toolbar', ToolbarDiv)}>
               <div className={left_toolbar}>
                 <p className={ menu_header }>{ page_name }</p>
               </div>

@@ -1,0 +1,33 @@
+
+@media print {
+    .main-layout__header {
+        display: none;
+    }
+
+    .main-layout__middle .main-layout__toolbar {
+        display: none;
+    }
+
+    .main-layout__middle {
+        height: 100%;
+        overflow: visible;
+    }
+
+    .main-layout__footer {
+        display: none;
+    }
+
+    .print__page {
+        break-before: page;
+        page-break-before: always;
+    }
+
+    .print__image {
+        break-inside: avoid;
+    }
+
+    .print__contiguous_section {
+        break-inside: avoid;
+    }
+    
+}
