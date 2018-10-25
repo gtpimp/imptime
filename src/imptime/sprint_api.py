@@ -254,7 +254,6 @@ class SprintProposalView(APIView):
     
     def get(self, request, sprint_id):
         user = get_user_by_token(request)
-        import pdb; pdb.set_trace()
         render_url = request.GET['url']
         sprint = PermissionHelper.allowed_sprints(user).get(pk=sprint_id)
         response = render_url_to_pdf(request, render_url, "google_test")

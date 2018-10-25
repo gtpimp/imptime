@@ -35,7 +35,7 @@ class PuppeteerHelper():
             options = copy(options)
         options.update(additional_pdf_kwargs)
 
-        cmd = os.path.join(os.path.realpath(os.path.dirname(__file__)), "run_puppeteer.js")
+        cmd = os.path.join(os.path.realpath(os.path.dirname(__file__)), "impd_puppeteer.js")
         ck_args = list(chain([cmd],
                              [url],
                              self._options_to_args(options)))
