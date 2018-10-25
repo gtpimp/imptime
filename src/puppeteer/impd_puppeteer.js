@@ -1,33 +1,37 @@
 #!/usr/bin/env node
 
 const _ = require("lodash");
-const cli = require("commander");
+const program = require("commander");
 const puppeteer = require("puppeteer");
 
-cli.version("1")
+program.version("1")
     .option("--path <path>", "The output filepath")
-    .option("--auth_token <path>", "The authentication token for this user")
-    .action(function(required, optional) {})
+    .option("--auth-token <value>", "The authentication token for this user")
+    .option("--user-id <value>", "The user id")
+    .action(function(env, options) {})
     .parse(process.argv);
-
 
 (async () => {
     let options = {};
-    options["path"] = cli["path"]
-    
-    // console.log(options)
-    
+    options["path"] = program["path"]
+    user_id = "" + program['userId']
+    auth_token = program['authToken']
+
     const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     const page = await browser.newPage();
+    const location = _.first(program.args);
+    const domain = location.split("/")[2].split(":")[0]
 
     page.setCookie({"name": "token",
-                    "value": "84fb0bcf9c24e3396fb1ff13e14c3f936394a36e",
-                    "domain": "localhost"})
+                    "value": auth_token,
+                    "domain": domain})
     page.setCookie({"name": "user_id",
-                    "value": "3",
-                    "domain": "localhost"})
+                    "value": user_id,
+                    "domain": domain})
+    page.setCookie({"name": "has_usable_password",
+                    "value": "true",
+                    "domain": domain})
 
-    const location = _.first(cli.args);
     await page.goto(location, {
         waitUntil: _.get(options, "waitUntil", "networkidle2")
     });

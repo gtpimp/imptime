@@ -1,6 +1,6 @@
 import logging
 from sprint_serializer import SprintSerializer
-from authentication import get_user_by_token
+from authentication import force_login_by_token
 from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
 from puppeteer.generator import render_url_to_pdf
@@ -253,9 +253,9 @@ class SprintViewSet(BaseViewSet):
 class SprintProposalView(APIView):
     
     def get(self, request, sprint_id):
-        user = get_user_by_token(request)
+        force_login_by_token(request)
         render_url = request.GET['url']
-        sprint = PermissionHelper.allowed_sprints(user).get(pk=sprint_id)
+        sprint = PermissionHelper.allowed_sprints(request.user).get(pk=sprint_id)
         response = render_url_to_pdf(request, render_url, "google_test")
         return response
     

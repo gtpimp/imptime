@@ -1,3 +1,5 @@
+from django.contrib.auth import login as django_login, load_backend
+from django.conf import settings
 from rest_framework import authentication, exceptions, status
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
@@ -20,3 +22,18 @@ def get_user_by_token(request):
     #user = User.objects.get(pk=user_id, profile__authenticate_token=token)
     user = User.objects.get(profile__authenticate_token=token)
     return user
+
+def force_login(request, user):
+    if not hasattr(user, 'backend'):
+        for backend in settings.AUTHENTICATION_BACKENDS:
+            if user == load_backend(backend).get_user(user.pk):
+                user.backend = backend
+                break
+    if hasattr(user, 'backend'):
+        django_login(request, user)
+    
+def force_login_by_token(request):
+    user = get_user_by_token(request)
+    force_login(request, user)
+
+        

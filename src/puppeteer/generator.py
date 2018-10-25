@@ -2,6 +2,7 @@
 
 import urllib
 import subprocess
+from copy import copy
 import os
 import uuid
 import urlparse
@@ -19,20 +20,18 @@ logger=logging.getLogger(__name__)
 
 class PuppeteerHelper():
 
-    def url_to_pdf(self, request, url, basename, additional_pdf_kwargs):
+    def url_to_pdf(self, url, basename, additional_pdf_kwargs):
         output_filepath = os.path.join(settings.PUPPETEER_TEMP_DIR, '{0}.pdf'.format(uuid.uuid4()))
         self._puppeteer_to_pdf(url, output_filepath, additional_pdf_kwargs)
         response = self._create_attachment_response(output_filepath, basename)
-        # os.remove(output_filepath)
+        os.remove(output_filepath)
         return response
 
     def _puppeteer_to_pdf(self, url, output_filepath, additional_pdf_kwargs):
-        options = settings.PUPPETEER_PDF_CMD_OPTIONS
-
-        if options is None:
-            options = {'path': output_filepath}
-        else:
+        options = settings.PUPPETEER_PDF_CMD_OPTIONS or {}
+        if options is not None:
             options = copy(options)
+        options['path'] = output_filepath
         options.update(additional_pdf_kwargs)
 
         cmd = os.path.join(os.path.realpath(os.path.dirname(__file__)), "impd_puppeteer.js")
@@ -84,5 +83,7 @@ class PuppeteerHelper():
 def render_url_to_pdf(request, url, basename, **kwargs):
     puppeteer = PuppeteerHelper()
     url = settings.PUPPETEER_BASE_URL + url
-    response = puppeteer.url_to_pdf(request, url, basename, additional_pdf_kwargs=kwargs)
+    kwargs['user-id'] = request.user.id
+    kwargs['auth-token'] = request.COOKIES['token']
+    response = puppeteer.url_to_pdf(url, basename, additional_pdf_kwargs=kwargs)
     return response
