@@ -29,5 +29,9 @@
     .print__contiguous_section {
         break-inside: avoid;
     }
-    
+
+    img {
+        max-width: 100%;
+    }
+
 }

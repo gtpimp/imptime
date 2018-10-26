@@ -16,8 +16,6 @@ from django.utils import six
 import logging
 logger=logging.getLogger(__name__)
 
-# Some code taken from https://github.com/namespace-ee/django-puppeteer-pdf (MIT)
-
 class PuppeteerHelper():
 
     def url_to_pdf(self, url, basename, additional_pdf_kwargs):
@@ -61,29 +59,23 @@ class PuppeteerHelper():
         return response
 
     def _options_to_args(self, options):
-        NO_ARGUMENT_OPTIONS = ['-dhf', '--displayHeaderFooter', '-ht', '--printBackground', '-l', '--landscape',
-                               '-h', '--help', '-V', '--version']
-        
         flags = []
         for name in sorted(options):
             value = options[name]
             formatted_flag = '--%s' % name if len(name) > 1 else '-%s' % name
             formatted_flag = formatted_flag.replace('_', '-')
-            accepts_no_arguments = formatted_flag in NO_ARGUMENT_OPTIONS
-            if value is None or (value is False and accepts_no_arguments):
-                continue
             flags.append(formatted_flag)
-            if accepts_no_arguments:
-                continue
             flags.append(six.text_type(value))
         return flags
 
-    
 
 def render_url_to_pdf(request, url, basename, **kwargs):
     puppeteer = PuppeteerHelper()
     url = settings.PUPPETEER_BASE_URL + url
     kwargs['user-id'] = request.user.id
     kwargs['auth-token'] = request.COOKIES['token']
+    kwargs['headerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "header.html")).read() + "'"
+    kwargs['footerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "footer.html")).read() + "'"
+
     response = puppeteer.url_to_pdf(url, basename, additional_pdf_kwargs=kwargs)
     return response

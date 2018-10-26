@@ -8,12 +8,19 @@ program.version("1")
     .option("--path <path>", "The output filepath")
     .option("--auth-token <value>", "The authentication token for this user")
     .option("--user-id <value>", "The user id")
+    .option("--headerTemplate <value>", "The header template")
+    .option("--footerTemplate <value>", "The footer template")
     .action(function(env, options) {})
     .parse(process.argv);
 
 (async () => {
     let options = {};
     options["path"] = program["path"]
+    options["headerTemplate"] = program["headerTemplate"]
+    options["footerTemplate"] = program["footerTemplate"]
+    options["displayHeaderFooter"] = true
+    options["margin"] = { top: "100px" }
+    
     user_id = "" + program['userId']
     auth_token = program['authToken']
 
