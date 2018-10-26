@@ -6,7 +6,8 @@ import {
     isMienConfigurerActive,
     getMienBeingConfigured,
     updateMienHeaders,
-    getHeaderListForMien
+    getHeaderListForMien,
+    getHeaderListForCurrentMien
 } from '../actions/Mien'
 
 class MienListColumnConfigurable extends Component {
@@ -51,7 +52,12 @@ function mapStateToProps(state, props) {
 
     const is_mien_configurer_active = isMienConfigurerActive(state)
     const mien_being_configured = getMienBeingConfigured(state)
-    let active_headers = mien_being_configured && getHeaderListForMien(mien_being_configured, header_list_name)
+    let active_headers
+    if ( mien_being_configured ) {
+        active_headers = getHeaderListForMien(mien_being_configured, header_list_name)
+    } else {
+        active_headers = getHeaderListForCurrentMien(state, header_list_name)
+    }
     if ( size(active_headers) === 0 ) {
         active_headers = filter(all_headers, (header) => header.is_default === true)
     }

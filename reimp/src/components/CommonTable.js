@@ -1,12 +1,10 @@
 import React, {Component} from 'react'
-import { includes, keyBy, size, map } from 'lodash'
+import { includes, size, map } from 'lodash'
 import {connect} from 'react-redux'
-import Draggable from 'react-draggable'
 import { findDOMNode } from 'react-dom'
-import { AutoSizer, defaultTableHeaderRenderer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
+import { AutoSizer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
-import { updateMienHeaders, getCurrentMienId } from '../actions/Mien'
 import 'react-virtualized/styles.css';
 
 const SortableTable = SortableContainer(Table, {
@@ -53,16 +51,6 @@ class CommonTable extends Component {
              : defaultTableRowRenderer(args)
     }
 
-    resizeColumn = ({ dataKey, deltaX }) => {
-        const { dispatch, header_list, header_list_name, mien_id } = this.props
-        const header = keyBy(header_list, "key")[dataKey]
-        header.flexGrow = 0
-        header.flexShrink = 0
-        header.width = ""+Math.max(MIN_COLUMN_WIDTH, parseInt(header.width.replace("px",""), 10) + deltaX)+"px"
-
-        dispatch(updateMienHeaders(mien_id, header_list_name, header_list))
-    }
-
     isRowSortable = (index) => {
         const { onRowReordered } = this.props
         return index >= 0 && onRowReordered !== undefined
@@ -81,8 +69,7 @@ class CommonTable extends Component {
     }
     
     render() {
-        const { all_headers, updateMienHeaders, header_list_name,
-                items, header_list, table_params } = this.props
+        const { all_headers, header_list_name, items, table_params } = this.props
 
         return (
 
@@ -135,8 +122,6 @@ function mapStateToProps(state, props) {
             selected_item_ids, onRowSelected, onRowReordered, items, header_list,
             table_params } = props
 
-    const mien_id = getCurrentMienId(state)
-    
     return {
         all_headers,
         onRowSelected,
@@ -146,7 +131,6 @@ function mapStateToProps(state, props) {
         header_list_name,
         items,
         selected_item_ids,
-        mien_id,
         table_params: table_params || {}
     }
 }
