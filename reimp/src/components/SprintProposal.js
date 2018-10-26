@@ -120,21 +120,21 @@ class SprintProposal extends Component {
     }
 
     renderIssueContentsHeader = (header_list) => {
-        const { show_money } = this.props
         return (
             <DivTableHeaderRow>
-              <DivTableHeaderCell key="sprint_proposal__div_table__issue">Issue</DivTableHeaderCell>
-              <DivTableHeaderCell key="sprint_proposal__div_table__name">Name</DivTableHeaderCell>
-              <DivTableHeaderCell key="sprint_proposal__div_table__hours">Hours</DivTableHeaderCell>
-              { show_money &&
-                <DivTableHeaderCell key="sprint_proposal__div_table__cost">Cost</DivTableHeaderCell>
-              }
+              { map(header_list, (v, k) => (
+                    <DivTableHeaderCell key={k}
+                                        className="div-table__header_cell"
+                                        style={getCellStyle(v)}>
+                      {v.label }
+                    </DivTableHeaderCell>
+                ))}
             </DivTableHeaderRow>
         )
     }
 
     renderIssueContents(header_list) {
-        const { cost_summary, issues, show_money } = this.props
+        const { cost_summary, issues } = this.props
         return (
             <div className="print__page">
               <PrintTitle>
@@ -145,14 +145,45 @@ class SprintProposal extends Component {
                      const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
                      return (
                          <DivTableRow key={`sprint_proposal__div_table__${issue.id}`}>
-                           <DivTableCell>{issue.number}</DivTableCell>
-                           <DivTableCell><IssueName issue_id={issue.id} /></DivTableCell>
-                           <DivTableCell><Hours hours={issue_costs.velocity_adjusted_estimate} /></DivTableCell>
-                           { show_money &&
-                             <DivTableCell>
-                               <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
-                             </DivTableCell>
-                           }
+
+                           { map(header_list, (header) => {
+                                 const header_key = header.key
+                                 let content = null
+                                 switch(header_key) {
+                                     case "number":
+                                         content = (
+                                             <DivTableCell>
+                                               {issue.number}
+                                             </DivTableCell>
+                                         )
+                                         break
+                                     case "name":
+                                         content = (
+                                             <DivTableCell>
+                                               <IssueName issue_id={issue.id} />
+                                             </DivTableCell>
+                                         )
+                                         break
+                                     case "estimates_by_assignee":
+                                         content = (
+                                             <DivTableCell>
+                                               <Hours hours={issue_costs.velocity_adjusted_estimate} />
+                                             </DivTableCell>
+                                         )
+                                         break
+                                     case "cost_by_assignee":
+                                         content = (
+                                             <DivTableCell>
+                                               <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
+                                             </DivTableCell>
+                                         )
+                                         break
+                                     default:
+                                         console.error("Unknown header: " + header_key)
+                                 }
+                                 return content
+                             }
+                             )}
                          </DivTableRow>
                      )
                  }

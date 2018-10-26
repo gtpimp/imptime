@@ -46,10 +46,10 @@ export var ALL_AVAILABLE_SPRINT_HEADERS =
     ]
 
 export const ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS = [
-    {key:'ref', label:'Number', description:'Number', width:small_col_width, is_default:true},
-    {key:'name', label:'name', description:'Name', width:large_col_width, is_default:true},
-    {key:'estimates_by_assignee', label:"Total estimated hours by assignee", description:"Total estimated hours by the assigned user", width:small_col_width, is_default:true},
-    {key:'cost_by_assignee', label:"Total estimates cost by assignee", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
+    {key:'number', label:'Number', description:'Number', width:small_col_width, is_default:true},
+    {key:'name', label:'Name', description:'Name', width:"auto", flex:1, is_default:true},
+    {key:'estimates_by_assignee', label:"Hours", description:"Total estimated hours by the assigned user", width:small_col_width, is_default:true},
+    {key:'cost_by_assignee', label:"Cost", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
 ]
 
 export function invalidateAllSprints() {

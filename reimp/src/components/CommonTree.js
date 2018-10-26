@@ -214,7 +214,6 @@ function mapStateToProps(state, props) {
         onNodeSelected,
         onReorder,
         onExpandCollapse,
-        header_list_name,
         items,
         items_by_id,
         selected_item_ids,
