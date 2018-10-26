@@ -20,3 +20,19 @@ export function printUrl(url_to_print, name) {
         window.open(url)
     }
 }
+
+export function tokenisedApiUrl(state, partial_url) {
+    const token = cookie.load("token")
+    return `${state.settings.API_BASE_URL}${partial_url}"?token=${token}`
+}
+
+export function downloadUrl(url_to_download) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = tokenisedApiUrl(state, url_to_download)
+        window.open(url)
+    }
+}
+
+
+

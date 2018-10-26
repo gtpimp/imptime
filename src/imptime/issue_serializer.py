@@ -5,7 +5,6 @@ from drf_compound_fields.fields import ListField
 from base_serializer import BaseSerializer
 from issue_estimate_serializer import IssueEstimateSerializer, IssueHoursSerializer
 from issue_comment_serializer import IssueCommentSerializer, IssueShareCommentSerializer
-from issue_attachment_serializer import IssueAttachmentSerializer
 from imptime.models import AnnotatedVisualSpecDocument
 from timepiece.models import BusinessPermissions, Issue
 from testable_serializer import TestableSerializer
@@ -45,7 +44,6 @@ class IssueSerializer(BaseSerializer):
     needs_issue_ids = serializers.ListField(child=serializers.CharField())
     issue_ids_needing_us = serializers.ListField(child=serializers.CharField())
     needs_open_issues_ids = serializers.ListField(child=serializers.CharField())
-    attachments = IssueAttachmentSerializer(many=True)
     annotated_visual_spec_document_ids = ListField()
     created_at = serializers.DateTimeField(source='created')
     created_by_id = serializers.CharField()

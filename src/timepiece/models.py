@@ -4525,16 +4525,6 @@ class ProjectIssueOrder(BaseModel):
         return previous['issue']
         
 
-class IssueAttachment(BaseModel):
-    issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
-    attachment = models.FileField(max_length=255, upload_to=upload_to_attachments, null=False, blank=False)
-    name = models.CharField(max_length=255)
-    content_type = models.CharField(max_length=255, null=True)
-
-    @property
-    def download_url(self):
-        return reverse('download_issue_attachment', kwargs={'issue_attachment_id':self.id})
-
 class RedmineToTimepieceBusinessMapping(BaseModel):
     redmine_business_name = models.CharField(max_length=255)
     timepiece_business_name = models.CharField(max_length=255)

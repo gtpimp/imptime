@@ -7,7 +7,6 @@ import decision_journal_api
 import estimate_summary_api
 import filter_api
 import issue_api
-import issue_attachment_api
 import clock_api
 import invoice_api
 import issue_comment_api
@@ -45,7 +44,6 @@ import visual_spec_issue_api
 import visual_spec_annotation_api
 import wiki_api 
 from rest_framework.routers import DefaultRouter
-from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
 from visual_spec_document_download import VisualSpecDocumentHiresView
 
@@ -80,8 +78,6 @@ router.register(r'feature', feature_api.FeatureViewSet,
                 base_name='feature')
 router.register(r'issue/comment', issue_comment_api.IssueCommentViewSet,
                 base_name='issue_comment')
-router.register(r'issue/attachment', issue_attachment_api.IssueAttachmentViewSet,
-                base_name='issue_attachment')
 router.register(r'issue/estimate', issue_estimate_api.IssueEstimateViewSet,
                 base_name='issue_estimate')
 router.register(r'issue_history', issue_history_api.IssueHistoryViewSet,
@@ -148,8 +144,6 @@ router.register(r'work_summary', work_summary_api.WorkSummaryViewSet,
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^login/', auth_api.LoginViewSet.as_view()),
-    url(r'^issue/attachment/(?P<attachment_id>.*)/preview', IssueAttachmentPreviewView.as_view(), name='preview_attachment'),
-    url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/download', VisualSpecDocumentDownloadView.as_view(), name='download_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/hires', VisualSpecDocumentHiresView.as_view(), name='hires_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/preview', VisualSpecDocumentPreviewView.as_view(), name='preview_visual_spec_document'),

@@ -1,6 +1,5 @@
 import logging
 from issue_serializer import IssueSerializer, IssueShareSerializer
-from issue_attachment_serializer import IssueAttachmentSerializer
 from issue_serializer import IssueGeneralDetailsSerializer
 from markdown_enrichment import MarkdownEnrichment
 from project_api import ProjectViewSet
@@ -85,7 +84,6 @@ class IssueViewSet(BaseViewSet):
                        .select_related('assigned_to')\
                        .select_related('status2')\
                        .prefetch_related('comments')\
-                       .prefetch_related('attachments')\
                        .prefetch_related('group_children')\
                        .prefetch_related('issue_points__user')\
                        .prefetch_related('group_children')\
@@ -109,10 +107,6 @@ class IssueViewSet(BaseViewSet):
                                                   queryset=Entry.objects.filter(user=self.request.user).select_related('user').filter(end_time__isnull=True)))
 
         issues = issues.annotate(actual_hours=Sum('entries__hours'))
-        for issue in issues:
-            for attachment in issue.attachments.all():
-                attachment.react_download_url = IssueAttachmentSerializer.get_download_url(self.request, attachment)
-                attachment.react_preview_url = IssueAttachmentSerializer.get_preview_url(self.request, attachment)
         return issues
 
 
