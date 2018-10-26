@@ -14,7 +14,6 @@ import {
     setPageFlag,
     getPageFlag
 } from '../actions/Page'
-import { getIssueHeaderListForCurrentMien } from '../actions/Issues'
 import {
     initList,
     update_list_filter,
@@ -129,7 +128,7 @@ class ScheduleItemPage extends Component {
     }
 
     renderIssuesForNudge(nudge) {
-        const { issue_header_list, show_issues_for_nudge } = this.props
+        const { show_issues_for_nudge } = this.props
         return (
             <div>
               <h3>
@@ -141,7 +140,6 @@ class ScheduleItemPage extends Component {
                 Close
               </button>
               <IssueList list_key={LIST_KEY__ISSUE_LIST}
-                         issue_header_list={issue_header_list}
                          onSelectIssues={this.onSelectIssuesForNudge}
               />
             </div>
@@ -183,14 +181,12 @@ function mapStateToProps(state, props) {
     const can_edit = canEditScheduleEvents(schedule)
     const show_issues_for_nudge = getPageFlag(state, PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge") || null
     const nudge_issues_filter = getListFilter(state, LIST_KEY__CALENDAR_EVENT_LIST)
-    const issue_header_list = getIssueHeaderListForCurrentMien(state)
 
     return {
         schedule_id,
         schedule,
         can_edit,
         show_issues_for_nudge,
-        issue_header_list,
         nudge_issues_filter
     }
 }

@@ -1,17 +1,11 @@
 import { impfetch } from './lib.js'
-import { keyBy, filter, includes } from 'lodash'
+import { keyBy } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
 import {
     ENTITY_KEY__SPRINT,
-    HEADER_LIST_NAME__SPRINT,
     small_col_width,
     large_col_width
 } from './ItemListKeyRegistry'
-import {
-    updateMienHeaders,
-    getHeaderListForCurrentMien,
-    getHeaderListForMien
-} from '../actions/Mien'
 
 export const ANNOUNCE_SPRINTS_SAVING = 'ANNOUNCE_SPRINTS_SAVING'
 export const ANNOUNCE_SPRINTS_SAVED = 'ANNOUNCE_SPRINTS_SAVED'

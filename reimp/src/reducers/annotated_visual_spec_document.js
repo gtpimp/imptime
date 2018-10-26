@@ -11,7 +11,8 @@ export function update_visual_spec_annotation_within_annotated_vsd(entity_state,
         annotations.push(annotation)
     })
     doc.annotations = annotations
-    entity_state.items_by_id[action.annotated_visual_spec_document_id] = doc
+    entity_state.items_by_id = Object.assign({}, entity_state.items_by_id,
+                                             {[action.annotated_visual_spec_document_id]:doc})
     return entity_state
 }
 

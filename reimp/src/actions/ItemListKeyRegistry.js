@@ -121,6 +121,7 @@ export const PAGE_KEY__SPRINT_SNAPSHOT_PAGE = 'sprint_snapshot_page'
 export const PAGE_KEY__CLOCK_HISTORY_PAGE = 'clock_history_page'
 
 export const HEADER_LIST_NAME__ISSUE = "issue"
+export const HEADER_LIST_NAME__DUE_ISSUE = "due_issue"
 export const HEADER_LIST_NAME__SPRINT = "sprint"
 export const HEADER_LIST_NAME__FEATURE = "feature"
 export const HEADER_LIST_NAME__DECISION_JOURNAL = "decision_journal"

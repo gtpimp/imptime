@@ -21,3 +21,11 @@ export default function mien(state = initialState, action) {
     }
 }
 
+export function customUpdateMienHeaders(entity_state, action) {
+    const mien = Object.assign({}, entity_state.items_by_id[action.params.mien_id])
+    mien[action.params.name] = action.params.headers
+    entity_state.items_by_id = Object.assign({}, entity_state.items_by_id,
+                                             {[action.params.mien_id]:mien})
+    return entity_state
+}
+

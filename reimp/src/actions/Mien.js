@@ -19,8 +19,10 @@ import {
     is_item_invalidated,
     getInvalidatedItemIds,
     getSavingItemIds,
-    getLoadingItemIds
+    getLoadingItemIds,
+    customUpdate
 } from '../actions/Item'
+import { customUpdateMienHeaders } from '../reducers/mien'
 import { has_permission } from './Users'
 import { ENTITY_KEY__MIEN } from './ItemListKeyRegistry'
 
@@ -139,7 +141,11 @@ export function updateMienTitle(mien_id, value) {
 }
 
 export function updateMienHeaders(mien_id, name, headers) {
-    return updateItem(ENTITY_KEY__MIEN, [mien_id], "headers", {'name':name, 'headers':headers}) 
+    return (dispatch, getState) => {
+        dispatch(customUpdate(ENTITY_KEY__MIEN, customUpdateMienHeaders,
+                              {headers: headers, name: name, mien_id: mien_id}))
+        dispatch(updateItem(ENTITY_KEY__MIEN, [mien_id], "headers", {'name':name, 'headers':headers}))
+    }
 }
 
 export function updateMienFeature(mien_id, feature_name, is_enabled) {

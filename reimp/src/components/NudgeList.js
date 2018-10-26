@@ -122,7 +122,7 @@ class NudgeList extends Component {
         }
 
         return (
-            <MienListColumnConfigurable available_headers={ALL_AVAILABLE_NUDGE_HEADERS}
+            <MienListColumnConfigurable all_headers={ALL_AVAILABLE_NUDGE_HEADERS}
                                         header_list_name={HEADER_LIST_NAME__NUDGE}
             >
               {({active_headers}) => (

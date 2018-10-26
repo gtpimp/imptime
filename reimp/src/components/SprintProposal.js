@@ -19,7 +19,6 @@ import {
 import {ensureEstimateSummaryLoaded,
         getEstimateSummary
 } from '../actions/EstimateSummary'
-import { getHeaderListForCurrentMien } from '../actions/Mien'
 import { showMoney } from '../actions/Mien'
 import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
@@ -124,11 +123,11 @@ class SprintProposal extends Component {
         const { show_money } = this.props
         return (
             <DivTableHeaderRow>
-              <DivTableHeaderCell>Issue</DivTableHeaderCell>
-              <DivTableHeaderCell extra_style={getCellStyle(header_list.name)}>Name</DivTableHeaderCell>
-              <DivTableHeaderCell>Hours</DivTableHeaderCell>
+              <DivTableHeaderCell key="sprint_proposal__div_table__issue">Issue</DivTableHeaderCell>
+              <DivTableHeaderCell key="sprint_proposal__div_table__name">Name</DivTableHeaderCell>
+              <DivTableHeaderCell key="sprint_proposal__div_table__hours">Hours</DivTableHeaderCell>
               { show_money &&
-                <DivTableHeaderCell>Cost</DivTableHeaderCell>
+                <DivTableHeaderCell key="sprint_proposal__div_table__cost">Cost</DivTableHeaderCell>
               }
             </DivTableHeaderRow>
         )
@@ -145,14 +144,14 @@ class SprintProposal extends Component {
                 {map(issues, (issue) => {
                      const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
                      return (
-                         <DivTableRow>
+                         <DivTableRow key={`sprint_proposal__div_table__${issue.id}`}>
                            <DivTableCell>{issue.number}</DivTableCell>
                            <DivTableCell><IssueName issue_id={issue.id} /></DivTableCell>
                            <DivTableCell><Hours hours={issue_costs.velocity_adjusted_estimate} /></DivTableCell>
-                           { show_money && 
-                             <div className={css`display:flex`}>
-                               <DivTableCell><CurrencyValue value={issue_costs.velocity_adjusted_cost} /></DivTableCell>
-                             </div>
+                           { show_money &&
+                             <DivTableCell>
+                               <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
+                             </DivTableCell>
                            }
                          </DivTableRow>
                      )
@@ -244,11 +243,11 @@ class SprintProposal extends Component {
     }
 
     render() {
-        const { show_money, header_list_name } = this.props
+        const { show_money } = this.props
         return (
             <div>
 
-              <MienListColumnConfigurable getAvailableHeaders={ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS}
+              <MienListColumnConfigurable all_headers={ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS}
                                           header_list_name={HEADER_LIST_NAME__SPRINT_PROPOSAL}
               >
                 {({active_headers}) => (
@@ -275,7 +274,6 @@ function makeMapStateToProps(state, props) {
     const mapStateToProps = (state, props) => {
         
         const { sprint_id, list_key } = props
-        const header_list_name = "sprint_proposal"
         const sprint = getSprint(state, sprint_id)
         const visible_issue_ids = getVisibleItemIds(state, list_key)
         const issues = selIssues(state, props)
@@ -288,7 +286,6 @@ function makeMapStateToProps(state, props) {
         const estimate_summary = getEstimateSummary(state, sprint_id) || {}
         const cost_summary = getCostSummary(state, sprint_id) || {}
         const show_money = sprint && showMoney(state, sprint.project_id)
-        const header_list = getHeaderListForCurrentMien(state, header_list_name)
         
         return {
             sprint_id,
@@ -304,9 +301,7 @@ function makeMapStateToProps(state, props) {
             loading_issue_ids,
             estimate_summary,
             cost_summary,
-            show_money,
-            header_list_name,
-            header_list
+            show_money
         }
     }
     return mapStateToProps

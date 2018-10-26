@@ -7,7 +7,8 @@ import Floater from 'react-floater'
 import IssueList from './IssueList'
 import {default_theme as theme} from '../theme/default'
 import {
-    LIST_KEY__MY_ISSUE_LIST_DUE_NOW
+    LIST_KEY__MY_ISSUE_LIST_DUE_NOW,
+    HEADER_LIST_NAME__DUE_ISSUE
 } from '../actions/ItemListKeyRegistry'
 import { logged_in_user } from '../actions/Auth'
 import {
@@ -20,7 +21,7 @@ import {
 import {
     fetchIssuesIfNeeded,
     getIssuesById,
-    getDefaultPopupIssueHeaders
+    ALL_AVAILABLE_POPUP_ISSUE_HEADERS
 } from '../actions/Issues'
 
 class DueIssueList extends Component {
@@ -97,7 +98,9 @@ class DueIssueList extends Component {
                          onClose={this.onHidePopup}
                          title="Issues due today"
                          variant="full">
-              <IssueList list_key={list_key} issue_header_list={header_list}
+              <IssueList list_key={list_key}
+                         custom_issue_header_list={header_list}
+                         custom_issue_header_list_name={HEADER_LIST_NAME__DUE_ISSUE}
                          table_params={{height:300}}
                          onAction={this.onIssueAction}
               />
@@ -124,7 +127,7 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const logged_in_user_id = logged_in_user().user_id || -1
     const pagination = getListPagination(state, list_key)
-    const header_list = getDefaultPopupIssueHeaders()
+    const header_list = ALL_AVAILABLE_POPUP_ISSUE_HEADERS
 
     return {
         list_key,
