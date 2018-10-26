@@ -27,7 +27,7 @@ import {
     setBrowserTitle,
     setGloballySelectedProjectId
 } from '../actions/Page'
-import {getCandidateFeature, getFeatureHeaderListForCurrentMien} from '../actions/Features'
+import {getCandidateFeature} from '../actions/Features'
 
 class FeaturesPage extends Component {
 
@@ -101,12 +101,11 @@ class FeaturesPage extends Component {
 
     renderLeftPane() {
 
-        const {project_id, list_key, feature_header_list } = this.props
+        const {project_id, list_key} = this.props
         
         return (
             <FeatureList list_key={list_key}
                          project_id={project_id}
-                         header_list={feature_header_list}
                          onSelectFeatures={this.onSelectFeatures}
             />
         )
@@ -176,7 +175,6 @@ function mapStateToProps(state, props) {
     const project_name = project.name
     const candidate_feature = getCandidateFeature(state) || null
     const is_creating_feature = candidate_feature || false
-    const feature_header_list = getFeatureHeaderListForCurrentMien(state)
     const selected_feature = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const show_sidebar = (is_creating_feature || (selected_feature && selected_feature.id)) || false
 
@@ -194,7 +192,6 @@ function mapStateToProps(state, props) {
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
         is_creating_feature: is_creating_feature,
-        feature_header_list,
         show_sidebar,
         project_name
     }

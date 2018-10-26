@@ -119,15 +119,14 @@ class CommonTable extends Component {
 function mapStateToProps(state, props) {
     
     const { header_list_name, renderCell, all_headers, 
-            selected_item_ids, onRowSelected, onRowReordered, items, header_list,
+            selected_item_ids, onRowSelected, onRowReordered, items,
             table_params } = props
 
     return {
-        all_headers,
         onRowSelected,
         onRowReordered,
         renderCell,
-        header_list,
+        all_headers,
         header_list_name,
         items,
         selected_item_ids,

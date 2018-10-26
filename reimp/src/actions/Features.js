@@ -3,16 +3,8 @@ import { impfetch } from './lib.js'
 import { updateVisibleItemIdAbove } from './ItemList'
 import {
     ENTITY_KEY__FEATURE,
-    ENTITY_KEY__TAG,
-    HEADER_LIST_NAME__FEATURE
+    ENTITY_KEY__TAG
 } from './ItemListKeyRegistry'
-
-import { includes, filter } from 'lodash'
-import {
-    updateMienHeaders,
-    getHeaderListForCurrentMien,
-    getHeaderListForMien
-} from '../actions/Mien'
 
 import {
     invalidateAllItems,
@@ -44,12 +36,9 @@ export const ANNOUNCE_BULK_CREATING_FEATURES = 'ANNOUNCE_BULK_CREATING_FEATURES'
 export const ANNOUNCE_BULK_CREATING_FEATURES_FAILED = 'ANNOUNCE_BULK_CREATING_FEATURES_FAILED'
 export const ANNOUNCE_BULK_CREATED_FEATURES = 'ANNOUNCE_BULK_CREATED_FEATURES'
 
-const ALL_AVAILABLE_FEATURE_HEADERS = [ {key:'number', label:"#", description:"Feature number", width:"50px"},
-                                      {key:'name', label:"Name", description:"Feature subject", width:"auto", flex:1} 
+export const ALL_AVAILABLE_FEATURE_HEADERS = [ {key:'number', label:"#", description:"Feature number", width:"50px"},
+                                               {key:'name', label:"Name", description:"Feature subject", width:"auto", flex:1} 
 ]
-
-const DEFAULT_FEATURE_HEADERS_KEYS = ["number", "name"]
-const DEFAULT_FEATURE_HEADERS = filter(ALL_AVAILABLE_FEATURE_HEADERS, (header) => includes(DEFAULT_FEATURE_HEADERS_KEYS, header.key))
 
 export function invalidateAllFeatures() {
     return (dispatch, getState) => {
@@ -246,26 +235,6 @@ export function deleteTagFromFeatures(tag_id, feature_ids) {
     const method = "DELETE"
     const data = { feature_ids: feature_ids }
     return itemPost(ENTITY_KEY__FEATURE, feature_ids, url, field_name, field_value, method, data)
-}
-
-export function updateFeatureMienHeaders(mien_id, headers) {
-    return updateMienHeaders(mien_id, HEADER_LIST_NAME__FEATURE, headers)
-}
-
-export function getFeatureHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__FEATURE) || getDefaultFeatureHeaders()
-}
-
-export function getFeatureHeaderListForCurrentMien(state) {
-    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__FEATURE) || getDefaultFeatureHeaders()
-}
-
-export function getDefaultFeatureHeaders() {
-    return DEFAULT_FEATURE_HEADERS
-}
-
-export function getAllAvailableFeatureHeaders() {
-    return ALL_AVAILABLE_FEATURE_HEADERS
 }
 
 export function updateFeatureTestable(feature_id, testable_id, new_testable, name) {
