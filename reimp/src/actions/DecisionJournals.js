@@ -1,17 +1,7 @@
 import {
     ENTITY_KEY__DECISION_JOURNAL,
-    HEADER_LIST_NAME__DECISION_JOURNAL,
     medium_col_width
 } from './ItemListKeyRegistry'
-
-import { includes, filter } from 'lodash'
-
-import {
-    updateMienHeaders,
-    getHeaderListForCurrentMien,
-    getHeaderListForMien
-} from '../actions/Mien'
-
 import {
     invalidateAllItems,
     invalidateItems,
@@ -40,12 +30,10 @@ export const ANNOUNCE_BULK_CREATING_DECISION_JOURNALS = 'ANNOUNCE_BULK_CREATING_
 export const ANNOUNCE_BULK_CREATING_DECISION_JOURNALS_FAILED = 'ANNOUNCE_BULK_CREATING_DECISION_JOURNALS_FAILED'
 export const ANNOUNCE_BULK_CREATED_DECISION_JOURNALS = 'ANNOUNCE_BULK_CREATED_DECISION_JOURNALS'
 
-const ALL_AVAILABLE_DECISION_JOURNAL_HEADERS = [ {key:'decision_made_at', label:"Made at", description:"Decision made at", width:medium_col_width},
-                                                 {key:'decision_made_by', label:"Made By", description:"Decision made by", width:medium_col_width},
-                                                 {key:'decision', label:"Decision", description:"Decision", width:"auto", flex:1}
+export const ALL_AVAILABLE_DECISION_JOURNAL_HEADERS = [ {key:'decision_made_at', label:"Made at", description:"Decision made at", width:medium_col_width, is_default: true},
+                                                        {key:'decision_made_by', label:"Made By", description:"Decision made by", width:medium_col_width, is_default: true},
+                                                        {key:'decision', label:"Decision", description:"Decision", width:"auto", flex:1, is_default: true}
 ]
-const DEFAULT_DECISION_JOURNAL_HEADERS_KEYS = ["decision_made_at", "decision_made_by", "decision"]
-const DEFAULT_DECISION_JOURNAL_HEADERS = filter(ALL_AVAILABLE_DECISION_JOURNAL_HEADERS, (header) => includes(DEFAULT_DECISION_JOURNAL_HEADERS_KEYS, header.key))
 
 export function invalidateAllDecisionJournals() {
     return (dispatch, getState) => {
@@ -155,26 +143,6 @@ export function getSavingDecisionJournalIds(state, decision_journal_ids) {
 
 export function is_decision_journal_invalidated(state, decision_journal_id) {
     return is_item_invalidated(ENTITY_KEY__DECISION_JOURNAL, state, decision_journal_id)
-}
-
-export function updateDecisionJournalMienHeaders(mien_id, headers) {
-    return updateMienHeaders(mien_id, HEADER_LIST_NAME__DECISION_JOURNAL, headers)
-}
-
-export function getDecisionJournalHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__DECISION_JOURNAL) || getDefaultDecisionJournalHeaders()
-}
-
-export function getDecisionJournalHeaderListForCurrentMien(state) {
-    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__DECISION_JOURNAL) || getDefaultDecisionJournalHeaders()
-}
-
-export function getDefaultDecisionJournalHeaders() {
-    return DEFAULT_DECISION_JOURNAL_HEADERS
-}
-
-export function getAllAvailableDecisionJournalHeaders() {
-    return ALL_AVAILABLE_DECISION_JOURNAL_HEADERS
 }
 
 export function isLoadingDecisionJournals(state, item_ids) {

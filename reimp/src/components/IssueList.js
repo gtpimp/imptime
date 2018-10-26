@@ -889,9 +889,9 @@ class IssueList extends Component {
 
         return (
               <CommonTable all_headers={all_headers}
+                           header_list_name={header_list_name}
                            onRowSelected={this.onClickedIssue}
                            onRowReordered={this.reorderIssue}
-                           header_list_name={header_list_name}
                            items={issue_items}
                            selected_item_ids={selected_ids}
                            renderCell={this.renderCell}

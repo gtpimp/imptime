@@ -7,7 +7,10 @@ import {connect} from 'react-redux'
 import CommonTable from './CommonTable'
 import OtherUser from './OtherUser'
 import 'react-virtualized/styles.css'
-import { ENTITY_KEY__DECISION_JOURNAL } from '../actions/ItemListKeyRegistry'
+import {
+    ENTITY_KEY__DECISION_JOURNAL,
+    HEADER_LIST_NAME__DECISION_JOURNAL
+} from '../actions/ItemListKeyRegistry'
 import {
     initList,
     invalidateList,
@@ -25,10 +28,8 @@ import {
     invalidateAllDecisionJournals,
     fetchDecisionJournalsIfNeeded,
     cancelCandidateDecisionJournal,
-    getAllAvailableDecisionJournalHeaders,
-    updateDecisionJournalMienHeaders,
-    getDecisionJournalHeaderListForMien,
-    deleteDecisionJournals
+    deleteDecisionJournals,
+    ALL_AVAILABLE_DECISION_JOURNAL_HEADERS
 } from '../actions/DecisionJournals'
 import DivTableCell from './DivTableCell'
 import Timestamp from './Timestamp'
@@ -124,10 +125,10 @@ class DecisionJournalList extends Component {
         )
     }
 
-    renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { decision_journals, header_list } = this.props
+    renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex, activeHeaders}) => {
+        const { decision_journals } = this.props
         const key = `decision_journal_${columnIndex}_${rowIndex}`
-        const header = header_list[columnIndex]
+        const header = activeHeaders[columnIndex]
         const header_key = header.key
         const item = decision_journals[rowIndex]
         if ( item.loaded === false ) {
@@ -195,8 +196,7 @@ class DecisionJournalList extends Component {
 
     render_grid() {
 
-        const { header_list,
-                decision_journals, selected_ids, table_params } = this.props
+        const { all_headers, decision_journals, selected_ids, table_params } = this.props
 
         if ( decision_journals.length === 0 ) {
             return (
@@ -207,17 +207,14 @@ class DecisionJournalList extends Component {
         }
 
         return (
-              <CommonTable getAvailableHeaders={getAllAvailableDecisionJournalHeaders}
-                           getHeaderListForMien={getDecisionJournalHeaderListForMien}
-                           onRowSelected={this.onClickedDecisionJournal}
-                           onRowReordered={this.reorderDecisionJournal}
-                           updateMienHeaders={updateDecisionJournalMienHeaders}
-                           header_list_name="decision_journal"
-                           items={decision_journals}
-                           selected_item_ids={selected_ids}
-                           header_list={header_list}
-                           renderCell={this.renderCell}
-                           table_params={table_params}
+            <CommonTable all_headers={all_headers}
+                         header_list_name={HEADER_LIST_NAME__DECISION_JOURNAL}
+                         onRowSelected={this.onClickedDecisionJournal}
+                         onRowReordered={this.reorderDecisionJournal}
+                         items={decision_journals}
+                         selected_item_ids={selected_ids}
+                         renderCell={this.renderCell}
+                         table_params={table_params}
               />
         )
     }
@@ -233,7 +230,7 @@ class DecisionJournalList extends Component {
 
 const mapStateToProps = (state, props) => {
     
-    const {list_key, header_list} = props
+    const {list_key} = props
 
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__DECISION_JOURNAL)
@@ -255,7 +252,7 @@ const mapStateToProps = (state, props) => {
         has_items: visible_items && visible_items.length > 0,
         is_loading,
         last_updated,
-        header_list,
+        all_headers: ALL_AVAILABLE_DECISION_JOURNAL_HEADERS,
         filter
     }        
 
