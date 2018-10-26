@@ -19,7 +19,7 @@ program.version("1")
     options["headerTemplate"] = program["headerTemplate"]
     options["footerTemplate"] = program["footerTemplate"]
     options["displayHeaderFooter"] = true
-    options["margin"] = { top: "100px" }
+    options["margin"] = { top: "100px", left: "10px", right: "10px", bottom: "50px" }
     
     user_id = "" + program['userId']
     auth_token = program['authToken']
