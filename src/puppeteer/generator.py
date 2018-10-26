@@ -69,13 +69,13 @@ class PuppeteerHelper():
         return flags
 
 
-def render_url_to_pdf(request, url, basename, **kwargs):
+def render_url_to_pdf(request, url, basename, additional_pdf_kwargs):
     puppeteer = PuppeteerHelper()
     url = settings.PUPPETEER_BASE_URL + url
-    kwargs['user-id'] = request.user.id
-    kwargs['auth-token'] = request.COOKIES['token']
-    kwargs['headerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "header.html")).read() + "'"
-    kwargs['footerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "footer.html")).read() + "'"
+    additional_pdf_kwargs['user-id'] = request.user.id
+    additional_pdf_kwargs['auth-token'] = request.COOKIES['token']
+    additional_pdf_kwargs['headerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "header.html")).read() + "'"
+    additional_pdf_kwargs['footerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "footer.html")).read() + "'"
 
-    response = puppeteer.url_to_pdf(url, basename, additional_pdf_kwargs=kwargs)
+    response = puppeteer.url_to_pdf(url, basename, additional_pdf_kwargs=additional_pdf_kwargs)
     return response
