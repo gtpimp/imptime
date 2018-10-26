@@ -18,12 +18,12 @@ class IssueAttachmentSerializer(BaseSerializer):
     @classmethod
     def get_download_url(self, request, attachment):
         #return self._base_url(request) + reverse('imp:download_attachment', kwargs={'attachment_id':attachment.id})
-        return self._base_url(request) + '/imp/issue/attachment/%s/download?token=%s'%(attachment.id, request.user.profile.authenticate_token)
+        return self._base_url(request) + '/imp/issue/attachment/%s/download?token=%s'%(attachment.id, request.auth.key)
 
     @classmethod
     def get_preview_url(self, request, attachment):
         #return self._base_url(request) + reverse('imp:preview_attachment', kwargs={'attachment_id':attachment.id})
-        return self._base_url(request) + '/imp/issue/attachment/%s/preview?token=%s'%(attachment.id, request.user.profile.authenticate_token)
+        return self._base_url(request) + '/imp/issue/attachment/%s/preview?token=%s'%(attachment.id, request.auth.key)
 
     @classmethod
     def _base_url(self, request):
