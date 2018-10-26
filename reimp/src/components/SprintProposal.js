@@ -125,7 +125,7 @@ class SprintProposal extends Component {
               { map(header_list, (v, k) => (
                     <DivTableHeaderCell key={k}
                                         className="div-table__header_cell"
-                                        style={getCellStyle(v)}>
+                                        extra_style={getCellStyle(v)}>
                       {v.label }
                     </DivTableHeaderCell>
                 ))}
@@ -152,28 +152,28 @@ class SprintProposal extends Component {
                                  switch(header_key) {
                                      case "number":
                                          content = (
-                                             <DivTableCell>
+                                             <DivTableCell extra_style={getCellStyle(header)}>
                                                {issue.number}
                                              </DivTableCell>
                                          )
                                          break
                                      case "name":
                                          content = (
-                                             <DivTableCell>
+                                             <DivTableCell extra_style={getCellStyle(header)}>
                                                <IssueName issue_id={issue.id} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "estimates_by_assignee":
                                          content = (
-                                             <DivTableCell>
+                                             <DivTableCell extra_style={getCellStyle(header)}>
                                                <Hours hours={issue_costs.velocity_adjusted_estimate} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "cost_by_assignee":
                                          content = (
-                                             <DivTableCell>
+                                             <DivTableCell extra_style={getCellStyle(header)}>
                                                <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
                                              </DivTableCell>
                                          )
