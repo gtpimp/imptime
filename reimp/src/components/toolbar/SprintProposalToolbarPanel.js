@@ -13,7 +13,7 @@ class SprintProposalToolbarPanel extends Component {
     onPrint = (evt) => {
         const { dispatch, sprint } = this.props
         evt.preventDefault()
-        dispatch(printCurrentPage(`proposal_${sprint.name}`))
+        dispatch(printCurrentPage(`Proposal_${sprint.name}`))
     }
     
     render() {

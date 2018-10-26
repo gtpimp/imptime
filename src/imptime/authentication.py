@@ -17,14 +17,8 @@ class FormTokenAuthenticated(authentication.TokenAuthentication):
 
 def get_user_by_token(request):
     token = request.GET['token']
-    user = User.objects.get(profile__authenticate_token=token)
-    return user
-
-def get_user_by_session_token(session_token):
-    session = Session.objects.get(pk=session_token)
-    s_data = session.get_decoded()
-    user_id = s_data.get('_auth_user_id')
-    user = User.objects.get(pk=user_id)
+    rest_token = Token.objects.get(key=token)
+    user = rest_token.user
     return user
 
 def force_login(request, user):
@@ -39,9 +33,4 @@ def force_login(request, user):
 def force_login_by_token(request):
     user = get_user_by_token(request)
     force_login(request, user)
-
-def force_login_by_session_token(request, session_token):
-    user = get_user_by_session_token(session_token)
-    force_login(request, user)
-    
-        
+ 

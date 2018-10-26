@@ -15,8 +15,8 @@ export function printCurrentPage(name, auto_timestamp=true) {
 export function printUrl(url_to_print, name) {
     return (dispatch, getState) => {
         const state = getState()
-        const session_id = cookie.load("sessionid")
-        const url = `${state.settings.API_BASE_URL}imp/pdf/${name}?url=${encodeURI(url_to_print)}&session_id=${session_id}`
+        const token = cookie.load("token")
+        const url = `${state.settings.API_BASE_URL}imp/pdf/${name}?url=${encodeURI(url_to_print)}&token=${token}`
         window.open(url)
     }
 }
