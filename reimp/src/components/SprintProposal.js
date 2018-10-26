@@ -3,10 +3,13 @@ import {connect} from 'react-redux'
 import { map, size, get } from 'lodash'
 import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
+import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import {
     ensureSprintsLoaded,
-    getSprint
+    getSprint,
+    ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS
 } from '../actions/Sprints'
+import { HEADER_LIST_NAME__SPRINT_PROPOSAL } from '../actions/ItemListKeyRegistry'
 import {
     initList,
     getVisibleItemIds,
@@ -16,6 +19,7 @@ import {
 import {ensureEstimateSummaryLoaded,
         getEstimateSummary
 } from '../actions/EstimateSummary'
+import { getHeaderListForCurrentMien } from '../actions/Mien'
 import { showMoney } from '../actions/Mien'
 import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
@@ -40,6 +44,12 @@ import RenderedMarkdown from './RenderedMarkdown'
 import PrintTitle from './PrintTitle'
 import OtherUser from './OtherUser'
 import Hours from './Hours'
+import DivTable from './DivTable'
+import DivTableHeaderRow from './DivTableHeaderRow'
+import DivTableHeaderCell from './DivTableHeaderCell'
+import DivTableRow from './DivTableRow'
+import DivTableCell from './DivTableCell'
+import MienListColumnConfigurable from './MienListColumnConfigurable'
 
 class SprintProposal extends Component {
 
@@ -110,21 +120,45 @@ class SprintProposal extends Component {
         )
     }
 
-    renderIssueContents() {
-        const { issues } = this.props
+    renderIssueContentsHeader = (header_list) => {
+        const { show_money } = this.props
+        return (
+            <DivTableHeaderRow>
+              <DivTableHeaderCell>Issue</DivTableHeaderCell>
+              <DivTableHeaderCell extra_style={getCellStyle(header_list.name)}>Name</DivTableHeaderCell>
+              <DivTableHeaderCell>Hours</DivTableHeaderCell>
+              { show_money &&
+                <DivTableHeaderCell>Cost</DivTableHeaderCell>
+              }
+            </DivTableHeaderRow>
+        )
+    }
+
+    renderIssueContents(header_list) {
+        const { cost_summary, issues, show_money } = this.props
         return (
             <div className="print__page">
               <PrintTitle>
                 Issues
               </PrintTitle>
-              { map(issues, (issue) => {
-                    return (
-                        <div key={`issue_contents_${issue.id}`}>
-                          <IssueName issue_id={issue.id} />
-                          { this.renderIssueSummary(issue) }
-                        </div>
-                    )
-              }) }
+              <DivTable renderHeader={() => this.renderIssueContentsHeader(header_list)}>
+                {map(issues, (issue) => {
+                     const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
+                     return (
+                         <DivTableRow>
+                           <DivTableCell>{issue.number}</DivTableCell>
+                           <DivTableCell><IssueName issue_id={issue.id} /></DivTableCell>
+                           <DivTableCell><Hours hours={issue_costs.velocity_adjusted_estimate} /></DivTableCell>
+                           { show_money && 
+                             <div className={css`display:flex`}>
+                               <DivTableCell><CurrencyValue value={issue_costs.velocity_adjusted_cost} /></DivTableCell>
+                             </div>
+                           }
+                         </DivTableRow>
+                     )
+                 }
+                 )}
+              </DivTable>
             </div>
         )
     }
@@ -210,13 +244,22 @@ class SprintProposal extends Component {
     }
 
     render() {
-        const { show_money } = this.props
+        const { show_money, header_list_name } = this.props
         return (
             <div>
-              { this.renderHeader() }
-              { show_money && this.renderCostTotals() }
-              { this.renderIssueContents() }
-              { this.renderIssues() }
+
+              <MienListColumnConfigurable getAvailableHeaders={ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS}
+                                          header_list_name={HEADER_LIST_NAME__SPRINT_PROPOSAL}
+              >
+                {({active_headers}) => (
+                     <div>
+                       { this.renderHeader() }
+                       { show_money && this.renderCostTotals() }
+                       { this.renderIssueContents(active_headers) }
+                       { this.renderIssues() }
+                     </div>
+                 )}
+              </MienListColumnConfigurable>
             </div>
         )
     }    
@@ -232,6 +275,7 @@ function makeMapStateToProps(state, props) {
     const mapStateToProps = (state, props) => {
         
         const { sprint_id, list_key } = props
+        const header_list_name = "sprint_proposal"
         const sprint = getSprint(state, sprint_id)
         const visible_issue_ids = getVisibleItemIds(state, list_key)
         const issues = selIssues(state, props)
@@ -244,6 +288,7 @@ function makeMapStateToProps(state, props) {
         const estimate_summary = getEstimateSummary(state, sprint_id) || {}
         const cost_summary = getCostSummary(state, sprint_id) || {}
         const show_money = sprint && showMoney(state, sprint.project_id)
+        const header_list = getHeaderListForCurrentMien(state, header_list_name)
         
         return {
             sprint_id,
@@ -259,7 +304,9 @@ function makeMapStateToProps(state, props) {
             loading_issue_ids,
             estimate_summary,
             cost_summary,
-            show_money
+            show_money,
+            header_list_name,
+            header_list
         }
     }
     return mapStateToProps

@@ -27,7 +27,7 @@ import NudgeList from '../components/NudgeList'
 import PlanningCalendar from '../components/PlanningCalendar'
 import IssueList from '../components/IssueList'
 import SprintName from '../components/SprintName'
-import { getNudgeHeaderListForCurrentMien, convertIssuesToNudges } from '../actions/Nudges'
+import { convertIssuesToNudges } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
 
@@ -105,12 +105,10 @@ class ScheduleItemPage extends Component {
     }
 
     renderNudgeList() {
-        const { nudge_header_list } = this.props
         return (
             <div>
               <h3>Projects and sprints that require attention, showing the most important issue for each sprint</h3>
               <NudgeList list_key={LIST_KEY__NUDGE_LIST}
-                         header_list={nudge_header_list}
                          onShowMoreIssues={this.onShowMoreIssues}
                          onSelect={this.onSelectNudge}/>
             </div>
@@ -182,7 +180,6 @@ function mapStateToProps(state, props) {
 
     const schedule_id = props.match.params.scheduleId
     const schedule = getSchedule(state, schedule_id)
-    const nudge_header_list = getNudgeHeaderListForCurrentMien(state)
     const can_edit = canEditScheduleEvents(schedule)
     const show_issues_for_nudge = getPageFlag(state, PAGE_KEY__SCHEDULE_ITEM_PAGE, "show_issues_for_nudge") || null
     const nudge_issues_filter = getListFilter(state, LIST_KEY__CALENDAR_EVENT_LIST)
@@ -191,7 +188,6 @@ function mapStateToProps(state, props) {
     return {
         schedule_id,
         schedule,
-        nudge_header_list,
         can_edit,
         show_issues_for_nudge,
         issue_header_list,
