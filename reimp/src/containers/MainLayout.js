@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import cookie from 'react-cookies';
 import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom'
 import Header from '../components/Header'

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 import NavTab from './NavTab'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { can_create_release_notes, logout } from '../actions/Auth'
@@ -106,4 +106,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(SubNavBar)
+export default withRouter(connect(mapStateToProps)(SubNavBar))
