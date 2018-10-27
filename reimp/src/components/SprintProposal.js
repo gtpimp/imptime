@@ -177,6 +177,9 @@ class SprintProposal extends Component {
               </PrintTitle>
               { this.renderCostMethodology() }
               <div className={css`font: ${theme.fonts.bold_large}`}>
+                <p>
+                  These costs do NOT include South African VAT. If VAT is applicable, then it will be added during invoicing.
+                </p>
                 { cost_summary.spendable_budget &&
                   <div className={css`display: flex`}>
                     Sprint budget: 
