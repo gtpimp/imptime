@@ -19,9 +19,10 @@ import {
     initList,
     selectItems,
     update_list_pagination,
+    getListFilter,
+    getVisibleItemIds
 } from '../actions/ItemList'
-import {getCandidateCompany} from '../actions/Companies'
-import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
+import {getCandidateCompany, getCompaniesById, fetchCompaniesIfNeeded} from '../actions/Companies'
 import Splitter from '../components/Splitter'
 
 class CompaniesPage extends Component {
@@ -32,14 +33,13 @@ class CompaniesPage extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, default_company_id} = this.props
+        const {dispatch, default_company_id, list_key} = this.props
         dispatch(set_toolbars(PAGE_KEY__COMPANIES_PAGE, ['companies'], "Company list"))
-        dispatch(initList(LIST_KEY__COMPANY_LIST))        
-        dispatch(update_list_pagination(LIST_KEY__COMPANY_LIST, {page_size:20}))
+        dispatch(initList(list_key))        
+        dispatch(update_list_pagination(list_key, {page_size:20}))
         if ( default_company_id !== undefined ) {
-            dispatch(selectItems(LIST_KEY__COMPANY_LIST, [default_company_id]))
+            dispatch(selectItems(list_key, [default_company_id]))
             dispatch(select_companies(PAGE_KEY__COMPANIES_PAGE, [default_company_id]))
-            dispatch(setActivelyAvailableAutoClockEntity(default_company_id))
         }
         this.refresh()
     }
@@ -47,14 +47,16 @@ class CompaniesPage extends Component {
     componentWillReceiveProps(new_props) {
         if ( new_props.selected_company_ids.length !== this.props.selected_company_ids.length ||
              (new_props.selected_company_ids.length > 0 &&
-              new_props.selected_company_ids[0] !== this.props.selected_company_ids[0] )) {
+              new_props.selected_company_ids[0] !== this.props.selected_company_ids[0]) ||
+              new_props.selected_company.loaded !== this.props.selected_company.loaded ) {
             this.refresh(new_props)
         }
     }
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, selected_companies } = props
+        const { dispatch, selected_companies, list_key } = props
+        dispatch(fetchCompaniesIfNeeded(list_key))
         let selected_company = null
         if ( selected_companies && selected_companies.length === 1 ) {
             selected_company = selected_companies[0]
@@ -63,8 +65,8 @@ class CompaniesPage extends Component {
     }
 
     onSelectCompanies(company_ids) {
-        const { dispatch, history } = this.props
-        dispatch(selectItems(LIST_KEY__COMPANY_LIST, company_ids))
+        const { dispatch, history, list_key } = this.props
+        dispatch(selectItems(list_key, company_ids))
         dispatch(select_companies(PAGE_KEY__COMPANIES_PAGE, company_ids))
         if ( company_ids && company_ids.length === 1 ) {
             history.push('/companies/' + company_ids[0]);
@@ -72,9 +74,10 @@ class CompaniesPage extends Component {
     }
 
     renderLeftPane() {
+        const { list_key } = this.props
         return (
             <CompanyList key="companies"
-                         list_key={LIST_KEY__COMPANY_LIST}
+                         list_key={list_key}
                          onSelectCompanies={this.onSelectCompanies} />
         )
     }
@@ -133,8 +136,10 @@ class CompaniesPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {company} = state
-    const items_by_id = (company && company.items_by_id) || {}
+    const list_key = LIST_KEY__COMPANY_LIST
+    const filter = getListFilter(state, list_key)
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const items_by_id = getCompaniesById(state, visible_item_ids)
     const selected_company_ids = get_selected_company_ids(state, PAGE_KEY__COMPANIES_PAGE)
     const default_company_id = props.match.params.companyId
 
@@ -156,7 +161,9 @@ function mapStateToProps(state, props) {
         is_creating_company: is_creating_company,
         default_company_id,
         selected_company,
-        show_sidebar
+        show_sidebar,
+        filter,
+        list_key
     }
 }
 
