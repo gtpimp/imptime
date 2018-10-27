@@ -9,6 +9,7 @@ import BulkIssueCreatorPage from './BulkIssueCreatorPage'
 import BulkFeatureCreatorPage from './BulkFeatureCreatorPage'
 import CalendarPage from './CalendarPage'
 import ChangePasswordPage from './ChangePasswordPage'
+import CompanyPage from './CompanyPage'
 import ClockHistoryPage from './ClockHistoryPage'
 import CompanyProblemPage from './CompanyProblemPage'
 import DecisionJournalPage from './DecisionJournalPage'
@@ -63,6 +64,7 @@ class MainRouter extends Component {
               <Route exact path="/clock/history/" component={ClockHistoryPage}/>
               <Route exact path="/clock/history/:filter" component={ClockHistoryPage}/>
               <Route exact path="/clock/history/issue/:issueId" component={ClockHistoryPage}/>
+              <Route exact_path="/companies/" component={CompanyPage}/>
               <Route exact path="/schedule" component={SchedulesPage}/>
               <Route exact path="/schedule/:scheduleId" component={ScheduleItemPage}/>
               <Route exact path="/password/changed" component={PasswordChangedPage}/>

@@ -16,7 +16,7 @@ class DecisionJournalContextForm extends Component {
         return (
             <TextAreaField
                 rows={10}
-                maxLength="300"
+                maxLength="3000"
                 className="textarea textarea--text-component textarea--title"
                 placeholder="Context"
                 onChange={input.onChange}

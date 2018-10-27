@@ -4,7 +4,7 @@ import { reduxForm, Field, formValueSelector } from 'redux-form';
 import TextAreaField from './TextAreaField'
 import '../../sass/text-component.scss'
 
-class DecisionJournalRepercussionsForm extends Component {
+class CompanyNameForm extends Component {
 
     constructor(props) {
         super(props)
@@ -16,9 +16,9 @@ class DecisionJournalRepercussionsForm extends Component {
         return (
             <TextAreaField
                 rows={10}
-                maxLength="3000"
+                maxLength="300"
                 className="textarea textarea--text-component textarea--title"
-                placeholder="Repercussions"
+                placeholder="Name"
                 onChange={input.onChange}
                 value={input.value}
                 autoFocus
@@ -32,14 +32,14 @@ class DecisionJournalRepercussionsForm extends Component {
         return (
             
             <form onSubmit={handleSubmit}>
-              <div className="decision_journal_sidebar--form">
-                <div className="decision_journal_sidebar--textarea">
-                  <Field name="repercussions"
+              <div className="company_sidebar--form">
+                <div className="company_sidebar--textarea">
+                  <Field name="name"
                          component={this.renderTextarea} />
                 </div>
-                  <div className="decision_journal_sidebar__button_row">
-                    <button className="button decision_journal_sidebar--textarea" type="submit">Submit</button>
-                    <button className="button decision_journal_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
+                  <div className="company_sidebar__button_row">
+                    <button className="button company_sidebar--textarea" type="submit">Submit</button>
+                    <button className="button company_sidebar--textarea" type="button" onClick={() => onCancel()}>Cancel</button>
                   </div>
               </div>
             </form>
@@ -50,15 +50,15 @@ class DecisionJournalRepercussionsForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onSubmitted, onCancel } = props
-    const selector = formValueSelector('decision_journal_decision_form')
+    const selector = formValueSelector('company_name_form')
     
     return {
-        initialValues: {repercussions:props.initial_value},
+        initialValues: {decision:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel: onCancel,
-        textAreaValue: selector(state, 'repercussions')
+        textAreaValue: selector(state, 'name')
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'decision_journal_decision_form'})(DecisionJournalRepercussionsForm))
+export default connect(mapStateToProps)(reduxForm({form:'company_name_form'})(CompanyNameForm))

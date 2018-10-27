@@ -1,6 +1,7 @@
 export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
 export const LIST_KEY__FEATURE_LIST = 'features'
+export const LIST_KEY__COMPANY_LIST = 'companies'
 export const LIST_KEY__DECISION_JOURNAL_LIST = 'decision_journals'
 export const LIST_KEY__ISSUE_LIST = 'issues'
 export const LIST_KEY__MY_ISSUE_LIST_DUE_NOW = 'my_issues_due_now'
@@ -40,6 +41,7 @@ export const ENTITY_KEY__ISSUE_HISTORY = 'issue_history'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
 export const ENTITY_KEY__FEATURE = 'feature'
+export const ENTITY_KEY__COMPANY = 'company'
 export const ENTITY_KEY__DECISION_JOURNAL = 'decision_journal'
 export const ENTITY_KEY__ISSUE = 'issue'
 export const ENTITY_KEY__ISSUE_GENERAL_DETAILS = 'issue_general_details'
@@ -79,6 +81,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE,
                                   ENTITY_KEY__FEATURE,
+                                  ENTITY_KEY__COMPANY,
                                   ENTITY_KEY__DECISION_JOURNAL,
                                   ENTITY_KEY__CALENDAR_EVENT,
                                   ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT,
@@ -95,6 +98,7 @@ export const PAGE_KEY__PROJECT_ROADMAP_PAGE = 'project_roadmap_page'
 export const PAGE_KEY__PROJECT_USER_PAGE = 'project_user_page'
 export const PAGE_KEY__SPRINTS_PAGE = 'sprints_page'
 export const PAGE_KEY__FEATURES_PAGE = 'features_page'
+export const PAGE_KEY__COMPANIES_PAGE = 'companies_page'
 export const PAGE_KEY__DECISION_JOURNALS_PAGE = 'decision_journal_page'
 export const PAGE_KEY__FLAT_FEATURES_PAGE = 'flat_features_page'
 export const PAGE_KEY__SPRINT_TEMPLATES_PAGE = 'sprint_templates_page'
@@ -124,6 +128,7 @@ export const HEADER_LIST_NAME__ISSUE = "issue"
 export const HEADER_LIST_NAME__DUE_ISSUE = "due_issue"
 export const HEADER_LIST_NAME__SPRINT = "sprint"
 export const HEADER_LIST_NAME__FEATURE = "feature"
+export const HEADER_LIST_NAME__COMPANY = "company"
 export const HEADER_LIST_NAME__DECISION_JOURNAL = "decision_journal"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
 export const HEADER_LIST_NAME__SPRINT_PROPOSAL = "sprint_proposal"

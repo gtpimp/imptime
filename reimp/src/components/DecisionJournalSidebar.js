@@ -13,11 +13,6 @@ import EditableDecisionJournalRepercussions from './EditableDecisionJournalReper
 
 class DecisionJournalSidebar extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {adding_visual_spec_doc: false}
-    }
-    
     componentDidMount() {
 	const { dispatch, project_id, decision_journal_id } = this.props
 	if ( project_id ) {

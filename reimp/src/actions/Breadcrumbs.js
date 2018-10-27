@@ -2,6 +2,20 @@
 export const SET_BREADCRUMBS = 'SET_BREADCRUMBS'
 export const SET_BREADCRUMBS_ACTIVE = 'SET_BREADCRUMBS_ACTIVE'
 
+export function setCompanyBreadcrumbsHelper(optional_company) {
+    const company = optional_company || {}
+    const breadcrumbs = [{to: '/companies',
+                          type: 'companies',
+                          label: 'Companies'}]
+    if ( company.id ) {
+        breadcrumbs.push({to: '/companies/' + company.id,
+                          type: 'company',
+                          label: company.name,
+                          selected_entities: {company: company}})
+    }
+    return setBreadcrumbs(breadcrumbs)
+}
+
 export function setProjectUserBreadcrumbsHelper(project, optional_user) {
     const user = optional_user || {}
     const breadcrumbs = [{to: '/projects',
