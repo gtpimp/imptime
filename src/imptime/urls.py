@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 import annotated_visual_spec_document_api
 import auth_api
 import billable_hours_statement_api
+import company_api
 import cost_summary_api
 import decision_journal_api
 import estimate_summary_api
@@ -122,6 +123,8 @@ router.register(r'multiple_issue_summary', multiple_issue_summary_api.MultipleIs
                 base_name='multiple_issue_summary_api')
 router.register(r'filter', filter_api.FilterViewSet,
                 base_name='filter')
+router.register(r'company', company_api.CompanyViewSet,
+                base_name='company')
 router.register(r'sprint_cost_summary', cost_summary_api.CostSummaryViewSet,
                 base_name='sprint_cost_summary')
 router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,

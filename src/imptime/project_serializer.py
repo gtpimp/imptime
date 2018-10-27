@@ -104,7 +104,7 @@ class ProjectSerializer(BaseSerializer):
                                                                    .order_by("name")
         
         project.user_permissions = ProjectPermissions.for_user(user=self.logged_in_user,
-                                                               business=project) #sic
+                                                               business=project, auto_create=False) #sic
         project.num_open_sprints = Sprint.objects.filter(business=project).filter_open().count() #sic
         project.visual_spec_document_ids = VisualSpecDocument.objects.filter(visual_spec_projects__project=project)\
                                                                      .order_by("visual_spec_projects__order")\

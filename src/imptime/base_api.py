@@ -9,7 +9,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import Issue, IssueReview, Tag, ProjectRole, Rate
+from timepiece.models import Issue, IssueReview, Tag, ProjectRole, Rate, Company
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
@@ -39,8 +39,8 @@ class PermissionHelper():
     @classmethod
     def allowed_projects(self, user):
         return Project.objects.all()\
-          .filter_by_logged_in_user(user)\
-          .distinct()
+                              .filter_by_logged_in_user(user)\
+                              .distinct()
 
     @classmethod
     def allowed_project_permissions(self, user):
@@ -311,6 +311,12 @@ class BaseViewSet(viewsets.ViewSet):
         return CompanyProblem.objects.filter(Q(pk__in=non_sensitive_company_problem_pages.values_list('id', flat=True))|
                                              Q(pk__in=sensitive_company_problems.values_list('id', flat=True)))
 
+
+    def allowed_companies(self):
+        return Company.objects.all()\
+                              .filter(deleted=False)\
+                              .filter_by_logged_in_user(self.request.user)\
+                              .distinct()
     
     def allowed_miens(self):
         return Mien.objects.filter(user=self.request.user)
