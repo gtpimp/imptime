@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import moment from 'moment'
 import { map, size, get } from 'lodash'
 import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
@@ -41,6 +42,7 @@ import Testable from './Testable'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import RenderedMarkdown from './RenderedMarkdown'
 import PrintTitle from './PrintTitle'
+import PrintSubTitle from './PrintSubTitle'
 import OtherUser from './OtherUser'
 import Hours from './Hours'
 import DivTable from './DivTable'
@@ -49,6 +51,8 @@ import DivTableHeaderCell from './DivTableHeaderCell'
 import DivTableRow from './DivTableRow'
 import DivTableCell from './DivTableCell'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
+import Loading from './Loading'
+import Timestamp from './Timestamp'
 
 class SprintProposal extends Component {
 
@@ -86,14 +90,80 @@ class SprintProposal extends Component {
     }
 
     renderHeader() {
-        const { sprint_id } = this.props
+        const { sprint_id, sprint } = this.props
         return (
             <div>
               <PrintTitle>
-                <div className={css`display:flex`}>
-                  Proposal for &nbsp;<SprintName sprint_id={sprint_id}/>
+                <div>
+                  Proposal for
+                  <h2>
+                    <SprintName sprint_id={sprint_id}/>
+                  </h2>
                 </div>
+                { sprint.description && 
+                  <div>
+                    <h2>Sprint description</h2>
+                    <p>
+                      {sprint.description}
+                    </p>
+                  </div>
+                }
               </PrintTitle>
+              <div className={css`display:flex`}>
+                Generated at <Timestamp value={moment()} format='dateshort-time' />
+              </div>
+            </div>
+        )
+    }
+
+    renderDevelopmentMethodology() {
+        return (
+            <div className="print__page">
+              <PrintTitle>Development methodology</PrintTitle>
+              <p>
+                ImplicitDesign uses the agile software development methodology, which
+                allows for a flexible specification and on-going client-liason.
+              </p>
+              <p>
+                We assist the client in managing the project budget, by identifying where
+                costs can be reduced or functionality can be streamlined.
+              </p>
+              <p>
+                We bill by the hour, for a number of reasons:
+                <ul>
+                  <li>it allows the final cost of the project to match exactly the effort involved,
+                    ie no quote padding is required</li>
+                  <li>
+                    scope changes to the project are easily managed as a normal part of the
+                    development process</li>
+                </ul>
+              </p>
+              <p>
+                Therefore the project is not open-ended, but rather managed in an ongoing
+                manner.
+              </p>
+            </div>
+        )
+    }
+
+    renderCostMethodology() {
+        return (
+            <div>
+              <p>
+                The following costing is based on the list of issues given later in this document.
+              </p>
+              <p>
+                The final cost will be invoiced as the actual billable time taken, which may be
+                less than the minimum estimate or more than the maximum estimate.
+              </p>
+              <p>
+                To manage the budget expectations and overruns, the client can request to be
+                notified at certain budget milestones, for example half-way through the sprint
+                budget.
+              </p>
+              <p>
+                The total estimated cost is a formula including testing, uncertainty and management.
+              </p>
             </div>
         )
     }
@@ -103,17 +173,20 @@ class SprintProposal extends Component {
         return (
             <div className="print__page">
               <PrintTitle>
-                Cost summary
+                Costing
               </PrintTitle>
-              { cost_summary.spendable_budget &&
-                <div>
-                  Sprint budget: 
-                  <CurrencyValue value={cost_summary.spendable_budget} />
+              { this.renderCostMethodology() }
+              <div className={css`font: ${theme.fonts.bold_large}`}>
+                { cost_summary.spendable_budget &&
+                  <div className={css`display: flex`}>
+                    Sprint budget: 
+                    <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
+                  </div>
+                }
+                <div className={css`display: flex`}>
+                  Total estimated cost
+                  <CurrencyValue value={cost_summary.estimated_cost} float_direction="none" />
                 </div>
-              }
-              <div>
-                Cost based on estimates:
-                <CurrencyValue value={cost_summary.estimated_cost} />
               </div>
             </div>
         )
@@ -133,6 +206,30 @@ class SprintProposal extends Component {
         )
     }
 
+    renderIssueMethodology() {
+        return (
+            <div>
+              <p>
+                The following list of issues represents the work agreed to be done within the
+                cost given above. This list is flexible to on-going change as determined
+                through feedback with the client.
+              </p>
+              <p>
+                Each issue is assigned an expected duration to complete, typically in the
+                range of a few hours. By estimating at such a granular resolution we find that
+                complexities inherent in the project are identified in the specification phase
+                which greatly reduces risk.
+              </p>
+              <p>
+                Our estimates are usually slightly high. Usually this is balanced out by smaller
+                tweaks or adjustments that are identified during testing. In general these
+                estimates are a realistic reflection of the cost to deliver the requirements,
+                rather than optimistic or pessimistic.
+              </p>
+            </div>
+        )
+    }
+
     renderIssueContents(header_list) {
         const { cost_summary, issues } = this.props
         return (
@@ -140,6 +237,7 @@ class SprintProposal extends Component {
               <PrintTitle>
                 Issues
               </PrintTitle>
+              { this.renderIssueMethodology() }
               <DivTable renderHeader={() => this.renderIssueContentsHeader(header_list)}>
                 {map(issues, (issue) => {
                      const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
@@ -175,6 +273,13 @@ class SprintProposal extends Component {
                                          content = (
                                              <DivTableCell extra_style={getCellStyle(header)}>
                                                <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
+                                             </DivTableCell>
+                                         )
+                                         break
+                                     case "assignee":
+                                         content = (
+                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                               <OtherUser user_id={issue.assigned_to_id}/>
                                              </DivTableCell>
                                          )
                                          break
@@ -221,6 +326,10 @@ class SprintProposal extends Component {
             <div className={cx("text-component--readonly text-component--description",
                                css`background-color: ${theme.colours.sub_nav_bar};
                                    border-top: 1px solid ${theme.colours.border_strong}`)}>
+
+              <PrintSubTitle>
+                <IssueName issue_id={issue.id} />
+              </PrintSubTitle>
               
               { size(issue.description) !== 0 && 
                 <RenderedMarkdown content={issue.enriched_description || issue.description} />
@@ -229,24 +338,18 @@ class SprintProposal extends Component {
         )
     }
 
-    renderIssueSummary(issue) {
-        const { cost_summary, show_money } = this.props
-        const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
+    renderIssueDescriptionMethodology() {
         return (
             <div>
-              <div className={css`display:flex`}>
-                Assigned to: <OtherUser user_id={issue.assigned_to_id}/>
-              </div>
-              <div className={css`display:flex`}>
-                Estimate: <Hours hours={issue_costs.velocity_adjusted_estimate} />
-              </div>
-              { show_money && 
-                <div className={css`display:flex`}>
-                  Estimated cost: <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
-                </div>
-              }
+              <p>
+                This section contains a detailed breakdown of each issue,
+                including images (if available) and the steps taken to verify the issue is complete.
+              </p>
+              <p>
+                This is the definition of what this proposal actually delivers.
+              </p>
             </div>
-        )        
+        )
     }
 
     renderIssues() {
@@ -256,13 +359,10 @@ class SprintProposal extends Component {
               <PrintTitle>
                 Issue details
               </PrintTitle>
+              { this.renderIssueDescriptionMethodology() }
               { map(issues, (issue) => {
                     return (
                         <div className="print__contiguous_section" key={`issue_list_${issue.id}`}>
-                          <div>
-                            <IssueName issue_id={issue.id} />
-                            { this.renderIssueSummary(issue) }
-                          </div>
                           <div>{this.renderIssueDescription(issue)}</div>
                           <div>{this.renderIssueImages(issue)}</div>
                           <div>{this.renderIssueTestables(issue)}</div>
@@ -274,7 +374,12 @@ class SprintProposal extends Component {
     }
 
     render() {
-        const { show_money } = this.props
+        const { show_money, sprint } = this.props
+
+        if ( ! sprint ) {
+            return (<Loading/>)
+        }
+        
         return (
             <div>
 
@@ -282,8 +387,9 @@ class SprintProposal extends Component {
                                           header_list_name={HEADER_LIST_NAME__SPRINT_PROPOSAL}
               >
                 {({active_headers}) => (
-                     <div>
+                     <div className={css`margin-left: 20px; margin-right: 20px`}>
                        { this.renderHeader() }
+                       { this.renderDevelopmentMethodology() }
                        { show_money && this.renderCostTotals() }
                        { this.renderIssueContents(active_headers) }
                        { this.renderIssues() }
