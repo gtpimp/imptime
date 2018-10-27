@@ -44,7 +44,7 @@ function mapStateToProps(state, props) {
     const { company_id } = props
     const company = getCompany(state, company_id) || {}
 
-    const can_edit = has_company_permission(state, company, 'has_edit_company_info')
+    const can_edit = has_company_permission(state, company_id, 'has_edit_company_info')
     return {
         company: company,
         can_edit

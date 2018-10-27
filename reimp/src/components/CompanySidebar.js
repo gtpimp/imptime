@@ -6,7 +6,7 @@ import SidebarSectionTitle from './SidebarSectionTitle'
 import moment from 'moment'
 import {ensureCompaniesLoaded, getCompany, deleteCompanies} from '../actions/Companies'
 import EditableCompanyName from './EditableCompanyName'
-
+ 
 class CompanySidebar extends Component {
 
     componentDidMount() {

@@ -73,11 +73,9 @@ class CompaniesPage extends Component {
 
     renderLeftPane() {
         return (
-            <div className="list-layout__list">
-              <CompanyList key="companies"
-                           list_key={LIST_KEY__COMPANY_LIST}
-                           onSelectCompanies={this.onSelectCompanies} />
-            </div>
+            <CompanyList key="companies"
+                         list_key={LIST_KEY__COMPANY_LIST}
+                         onSelectCompanies={this.onSelectCompanies} />
         )
     }
 

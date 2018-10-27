@@ -41,7 +41,7 @@ class CompanyViewSet(BaseViewSet):
                                       logged_in_user=self.request.user,
                                       many=True)
                 companies_data = s.data
-                context['companies'] = companies_data
+                context['items'] = companies_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
@@ -62,14 +62,14 @@ class CompanyViewSet(BaseViewSet):
                 company_pks = [pk]
 
             for company_pk in company_pks:
-                company = self.allowed_company(company_pk)
+                company = self.allowed_companies().get(pk=company_pk)
                 if field_name == 'name':
-                    if self.logged_in_permissions(company).has_edit_company_info:
+                    if self.logged_in_company_permissions(company).has_edit_company_info:
                         old_value = company.name
                         company.name = new_value
                         CompanyHistory.add_history(request.user, company, "Changed name", old_value, new_value)
                 elif field_name == 'description':
-                    if self.logged_in_permissions(company).has_edit_company_info:
+                    if self.logged_in_company_permissions(company).has_edit_company_info:
                         old_value = company.description
                         company.description = new_value
                         CompanyHistory.add_history(request.user, company, "Changed name", old_value, new_value)
@@ -77,7 +77,7 @@ class CompanyViewSet(BaseViewSet):
                     raise Exception("Unsupported field name: %s" % field_name)
                 company.save()
             
-            data = {'status': 'success'}
+            data = {'status': 'success', 'payload': company_pks}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
@@ -87,17 +87,16 @@ class CompanyViewSet(BaseViewSet):
     def create(self, request):
         try:
             context = {}
-            params = request.data['company']
+            params = request.data['item']
 
             company = Company.objects.create(
                 created_by=request.user,
                 name=params['name'])
 
-            company.create_default_statuses()
             CompanyPermissions.ensure_user_belongs_to_company(user=request.user, company=company)
             CompanyPermissions.give_all_permissions_to_user(user=request.user, company=company)
 
-            context['company'] = {'name': company.name}
+            context['item'] = CompanySerializer(company, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
@@ -110,10 +109,10 @@ class CompanyViewSet(BaseViewSet):
     def invite(self, request, pk):
         try:
             company_id = pk
-            company = self.allowed_company(company_id)
+            company = self.allowed_companies().get(pk=company_id)
             invited_user_email = request.data['user_email']
 
-            if self.logged_in_permissions(company).has_invite_users:
+            if self.logged_in_company_permissions(company).has_invite_users:
                 invited_user = User.objects.filter(email=invited_user_email).first()
                 if invited_user is None:
                     invited_user = User.objects.create(email=invited_user_email,
@@ -139,9 +138,9 @@ class CompanyViewSet(BaseViewSet):
             else:
                 company_pks = [pk]
             for company_pk in company_pks:
-                company = self.allowed_company(company_pk)                
+                company = self.allowed_companies().get(pk=company_pk)                
                 
-                if self.logged_in_permissions(company).can_delete_company:
+                if self.logged_in_company_permissions(company).can_delete_company:
                     CompanyHistory.add_history(request.user, company,
                                                "deleted", company.id, "")
                 else:

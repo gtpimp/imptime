@@ -27,7 +27,7 @@ import {
 
 export const SET_COMPANY_STORE_VALUE = 'SET_COMPANY_STORE_VALUE'
 
-export const ALL_AVAILABLE_COMPANY_HEADERS = [ {key:'name', label:"Name", description:"Company subject", width:"auto", flex:1}
+export const ALL_AVAILABLE_COMPANY_HEADERS = [ {key:'name', label:"Name", description:"Company name", width:"auto", flex:1, is_default: true}
 ]
 
 

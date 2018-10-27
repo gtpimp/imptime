@@ -64,7 +64,8 @@ class MainRouter extends Component {
               <Route exact path="/clock/history/" component={ClockHistoryPage}/>
               <Route exact path="/clock/history/:filter" component={ClockHistoryPage}/>
               <Route exact path="/clock/history/issue/:issueId" component={ClockHistoryPage}/>
-              <Route exact_path="/companies/" component={CompaniesPage}/>
+              <Route exact path="/companies/" component={CompaniesPage}/>
+              <Route exact path="/companies/:companyId" component={CompaniesPage}/>
               <Route exact path="/schedule" component={SchedulesPage}/>
               <Route exact path="/schedule/:scheduleId" component={ScheduleItemPage}/>
               <Route exact path="/password/changed" component={PasswordChangedPage}/>

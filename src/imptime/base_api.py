@@ -9,7 +9,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import Issue, IssueReview, Tag, ProjectRole, Rate, Company
+from timepiece.models import Issue, IssueReview, Tag, ProjectRole, Rate, Company, CompanyPermissions
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
@@ -59,6 +59,7 @@ class BaseViewSet(viewsets.ViewSet):
     def __init__(self, *args, **kwargs):
         super(BaseViewSet, self).__init__(*args, **kwargs)
         self._logged_in_permissions_by_project = {}
+        self._logged_in_permissions_by_company = {}
     
     def error_response(self, ex):
         data = {'status': 'failed', 'error': str(ex)}
@@ -327,6 +328,13 @@ class BaseViewSet(viewsets.ViewSet):
         pup = ProjectPermissions.for_user(self.request.user, project)
         self._logged_in_permissions_by_project[project.id] = pup
         return pup
+
+    def logged_in_company_permissions(self, company):
+        if company.id in self._logged_in_permissions_by_company:
+            return self._logged_in_permissions_by_company[company.id]
+        cp = CompanyPermissions.for_user(self.request.user, company)
+        self._logged_in_permissions_by_company[company.id] = cp
+        return cp
 
     def generate_share_ref(self, m, force=False):
         now = timezone.now()

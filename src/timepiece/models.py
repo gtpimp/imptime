@@ -65,12 +65,13 @@ class CompanyQuerySet(QuerySet):
 
 class Company(BaseModel):
     name = models.CharField(max_length=255, null=False, blank=True, unique=True)
-    description = models.TextField(null=False, blank=True, unique=True)
+    description = models.TextField(null=False, blank=True)
     email = models.EmailField(null=False, blank=False)
     logo = models.FileField(max_length=255, upload_to=upload_to_logos, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, related_name='companies_created_by', null=True, blank=True)
 
     objects = CompanyQuerySet.as_manager()
 
@@ -143,18 +144,24 @@ class CompanyPermissions(BaseModel):
                 name='companypermissions')
 
     @classmethod
+    def active_companies_for_user(self, user):
+        cps = self.objects.filter(user=user, is_active_member_of_company=True)
+        return Company.objects.filter(company_permissions__in=cps)
+            
+    @classmethod
     def ensure_user_belongs_to_company(self, user, company):
-        bp = CompanyPermissions.objects.get_or_create(company=company,
+        cp = CompanyPermissions.objects.get_or_create(company=company,
                                                        user=user)[0]
-        bp.is_active_member_of_company = True
-        bp.save()
-        return bp
+        cp.is_active_member_of_company = True
+        cp.save()
+        return cp
 
     @classmethod
     def give_all_permissions_to_user(self, user, company):
         cp = self.ensure_user_belongs_to_company(user=user, company=company)
         cp.can_invite_users = True
         cp.can_set_user_permissions = True
+        cp.can_edit_company_info = True
         cp.save()
 
     @classmethod

@@ -5,7 +5,6 @@ import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
 import {connect} from 'react-redux'
 import CommonTable from './CommonTable'
-import OtherUser from './OtherUser'
 import 'react-virtualized/styles.css'
 import {
     ENTITY_KEY__COMPANY,
@@ -14,7 +13,6 @@ import {
 import {
     initList,
     invalidateList,
-    update_list_filter,
     getListFilter,
     getLoadingItemIds,
     getSelectedItems,
@@ -32,7 +30,6 @@ import {
     ALL_AVAILABLE_COMPANY_HEADERS
 } from '../actions/Companies'
 import DivTableCell from './DivTableCell'
-import Timestamp from './Timestamp'
 
 class CompanyList extends Component {
 
@@ -44,23 +41,14 @@ class CompanyList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, project_id} = this.props
-        if (project_id) {
-            dispatch(initList(list_key))
-            dispatch(update_list_filter(list_key, {project_id:project_id}))
-            dispatch(fetchCompaniesIfNeeded(list_key))
-        }
+        const {dispatch, list_key} = this.props
+        dispatch(initList(list_key))
+        dispatch(fetchCompaniesIfNeeded(list_key))
     }
 
     componentWillReceiveProps(new_props) {
-        const {dispatch, list_key, filter, onSelectCompanies} = new_props
-        if ( this.props.project_id !== new_props.project_id ) {
-            onSelectCompanies([])
-            dispatch(update_list_filter(list_key, {project_id: new_props.project_id}))
-        }
-        if ( filter && filter.project_id ) {
-            dispatch(fetchCompaniesIfNeeded(list_key))
-        }
+        const {dispatch, list_key} = new_props
+        dispatch(fetchCompaniesIfNeeded(list_key))
     }
 
     onClickedCompany(event, company_id) {
@@ -166,24 +154,10 @@ class CompanyList extends Component {
         }
         
         switch(header_key) {
-            case "decision":
+            case "name":
                 content = (
                     <DivTableCell key={header.key} >
-                      <div>{company.decision}</div>
-                    </DivTableCell>
-                )
-                break
-            case "decision_made_by":
-                content = (
-                    <DivTableCell key={header.key} >
-                      <OtherUser user_id={company.decision_made_by_id}/>
-                    </DivTableCell>
-                )
-                break
-            case "decision_made_at":
-                content = (
-                    <DivTableCell key={header.key} >
-                      <Timestamp value={company.decision_made_at} format='date' />
+                      <div>{company.name}</div>
                     </DivTableCell>
                 )
                 break
