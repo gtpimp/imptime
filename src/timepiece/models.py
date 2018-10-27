@@ -56,9 +56,7 @@ upload_to_logos = UploadTo("logos")
 upload_to_attachments = UploadTo("issue_attachments")
 upload_to_project_documents = UploadTo("project_documents")
 
-class Client(BaseModel):
-    """ a client is a top-level customer of the system,
-    which has their own users etc. """
+class Company(BaseModel):
     name = models.CharField(max_length=255, null=False, blank=True)
     code = models.CharField(max_length=100, null=False, blank=True)
     email = models.EmailField(null=False, blank=False)
@@ -162,7 +160,7 @@ class Business(BaseModel):
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
-    impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
+    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='businesses')
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
     archived = models.BooleanField(default=False, db_index=True)
 
@@ -3693,7 +3691,7 @@ class UserProfile(BaseModel):
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
-    impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='profiles')
+    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='profiles')
 
     required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
 
