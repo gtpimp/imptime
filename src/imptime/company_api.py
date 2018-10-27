@@ -120,9 +120,10 @@ class CompanyViewSet(BaseViewSet):
 
                 CompanyPermissions.ensure_user_belongs_to_company(user=invited_user, company=company)
                 data = {'status': 'success'}
+                company.save()
             else:
                 data = {'status': 'failed', 'error_message': 'Permission denied to invite users'}
-
+                
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)

@@ -102,7 +102,7 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'projectinvite' ) {
         dispatch(invalidateUsers(d.params.users))
         dispatch(invalidateProjects(d.params.projects))
-
+        
     } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidatePups([d.entity_ref]))
         dispatch(invalidateProjects(d.params.projects))

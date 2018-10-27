@@ -192,7 +192,8 @@ class BaseViewSet(viewsets.ViewSet):
         return self.allowed_timesheet_entries().get(pk=pk)
 
     def allowed_users(self):
-        return ProjectPermissions.viewable_users(self.request.user).distinct()
+        return ProjectPermissions.viewable_users(self.request.user).distinct()\
+            | CompanyPermissions.viewable_users(self.request.user).distinct()
 
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)

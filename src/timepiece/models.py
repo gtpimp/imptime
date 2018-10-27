@@ -187,6 +187,17 @@ class CompanyPermissions(BaseModel):
         else:
             return qs.first()
 
+
+    @classmethod
+    def viewable_users(self, user):
+        """ returns all users that this user could know about, based on which companies they have in common """
+        company_ids = CompanyPermissions.objects.filter(user=user,
+                                                        is_active_member_of_company=True)\
+                                                .values_list('company_id', flat=True)
+
+        return User.objects.filter(company_permissions__company_id__in=company_ids,
+                                   company_permissions__is_active_member_of_company=True)
+        
     @classmethod
     def active_users_for_company(self, company_id):
         return User.objects.filter(company_permissions__company_id=company_id,
