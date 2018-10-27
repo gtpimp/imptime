@@ -110,7 +110,7 @@ class SprintProposal extends Component {
                 }
               </PrintTitle>
               <div className={css`display:flex`}>
-                Generated at <Timestamp value={moment()} format='dateshort-time' />
+                Generated at&nbsp;<Timestamp value={moment()} format='dateshort-time' />
               </div>
             </div>
         )
