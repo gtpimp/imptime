@@ -3,6 +3,7 @@ import { fetchListIfNeeded, getMissingItemIds } from './ItemList'
 import { ENTITY_KEY__USER } from '../actions/ItemListKeyRegistry'
 import { logged_in_user } from './Auth'
 import { getProject } from './Projects'
+import { getCompany } from './Companies'
 import each from 'lodash/each'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
@@ -123,4 +124,16 @@ export function logged_in_users_permissions(state, project_id) {
 
 export function has_permission(state, project_id, permission_name) {
     return logged_in_users_permissions(state, project_id)[permission_name] || false
+}
+
+export function logged_in_users_company_permissions(state, company_id) {
+    const company = getCompany(state, company_id)
+    if ( ! company ) {
+        return {}
+    }
+    return company.logged_in_users_permissions || {}
+}
+
+export function has_company_permission(state, company_id, permission_name) {
+    return logged_in_users_company_permissions(state, company_id)[permission_name] || false
 }

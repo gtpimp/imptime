@@ -59,6 +59,7 @@ class Navbar extends Component {
                                  `}>
 
                 <NavTab to="/projects" label="Projects" />
+                <NavTab to="/companies" label="Companies" />
               </div>
               <NavbarRightDiv>
                 <NavTab variant="component_handled">

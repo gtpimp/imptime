@@ -15,10 +15,10 @@ class CompanyNameForm extends Component {
         const {input} = field
         return (
             <TextAreaField
-                rows={10}
+                rows={1}
                 maxLength="300"
                 className="textarea textarea--text-component textarea--title"
-                placeholder="Name"
+                placeholder="Company Name"
                 onChange={input.onChange}
                 value={input.value}
                 autoFocus
@@ -50,10 +50,11 @@ class CompanyNameForm extends Component {
 function mapStateToProps(state, props) {
 
     const { onSubmitted, onCancel } = props
+
     const selector = formValueSelector('company_name_form')
     
     return {
-        initialValues: {decision:props.initial_value},
+        initialValues: {name:props.initial_value},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel: onCancel,

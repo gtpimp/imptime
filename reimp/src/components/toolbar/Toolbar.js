@@ -5,6 +5,7 @@ import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import BulkCreateFeaturesToolbarPanel from './BulkCreateFeaturesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'
 import ClockHistoryToolbarPanel from './ClockHistoryToolbarPanel'
+import CompaniesToolbarPanel from './CompaniesToolbarPanel'
 import DecisionJournalToolbarPanel from './DecisionJournalToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
@@ -71,6 +72,8 @@ class Toolbar extends Component {
         switch(id) {
             case 'company_problem':
                 return <CompanyProblemToolbarPanel key='company_problem' {...this.props} />
+            case 'companies':
+                return <CompaniesToolbarPanel key='companies' {...this.props} />
             case 'features':
                 return <FeaturesToolbarPanel key="features-panel" {...this.props}/>
             case 'flat-features':
