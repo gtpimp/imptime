@@ -3,6 +3,7 @@ import annotated_visual_spec_document_api
 import auth_api
 import billable_hours_statement_api
 import company_api
+import company_user_permission_api
 import cost_summary_api
 import decision_journal_api
 import estimate_summary_api
@@ -57,6 +58,8 @@ router.register(r'billable_hours_statement', billable_hours_statement_api.Billab
                 base_name='billable_hours_statement')
 router.register(r'permission/project', project_user_permission_api.ProjectUserPermissionViewSet,
                 base_name='project_permission')
+router.register(r'permission/company', company_user_permission_api.CompanyUserPermissionViewSet,
+                base_name='company_permission')
 router.register(r'rate/sprint', sprint_user_rate_api.SprintUserRateViewSet,
                 base_name='sprint_user_rate')
 router.register(r'project', project_api.ProjectViewSet,

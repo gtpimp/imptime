@@ -21,6 +21,7 @@ import project_dashboard from './project_dashboard'
 import project_statement from './project_statement'
 import work_summary from './work_summary'
 import project_user_permission from './project_user_permission'
+import company_user_permission from './company_user_permission'
 import settings from './settings'
 import sprint from './sprint'
 import sprint_snapshot from './sprint_snapshot'
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
     auth,
     billable_hours_statement,
     breadcrumbs,
+    company_user_permission,
     editable_property,
     estimate_summary,
     feature,

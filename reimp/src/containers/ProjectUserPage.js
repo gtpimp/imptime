@@ -5,7 +5,7 @@ import { setProjectUserBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureUsersLoaded, getUser} from '../actions/Users'
 import ProjectUsers from '../components/ProjectUsers'
-import UserPermissions from '../components/UserPermissions'
+import ProjectUserPermissions from '../components/ProjectUserPermissions'
 import {
     PAGE_KEY__PROJECT_USER_PAGE
 } from '../actions/ItemListKeyRegistry'
@@ -68,9 +68,9 @@ class ProjectUserPage extends Component {
         const that = this
         return (
             <div className="project-user__user_permissions">
-                <UserPermissions project_id={project_id}
-                                 user_id={user_id}
-                                 onClose={that.closeProjectUserPermissions} />
+              <ProjectUserPermissions project_id={project_id}
+                                      user_id={user_id}
+                                      onClose={that.closeProjectUserPermissions} />
             </div>
         )
     }

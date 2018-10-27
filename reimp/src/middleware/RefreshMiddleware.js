@@ -12,6 +12,7 @@ import { invalidateTags } from '../actions/Tags'
 import { invalidateIssueReviews } from '../actions/IssueReviews'
 import { invalidateUsers } from '../actions/Users'
 import { invalidatePups } from '../actions/ProjectUserPermissions'
+import { invalidateCups } from '../actions/CompanyUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
 import { invalidateVisualSpecDocuments, invalidateAllVisualSpecDocuments } from '../actions/VisualSpecDocuments'
 import { invalidateVisualSpecAnnotations } from '../actions/VisualSpecAnnotations'
@@ -46,6 +47,7 @@ import {
     LIST_KEY__COMPANY_LIST,
     LIST_KEY__DECISION_JOURNAL_LIST,
     LIST_KEY__PROJECT_USER_LIST,
+    LIST_KEY__COMPANY_USER_LIST,
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
     LIST_KEY__MY_ISSUE_LIST_DUE_NOW,
     LIST_KEY__RELEASE_NOTES_LIST,
@@ -104,7 +106,9 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidatePups([d.entity_ref]))
         dispatch(invalidateProjects(d.params.projects))
-
+    } else if ( d.entity_name === 'companypermissions' ) {
+        dispatch(invalidateCups([d.entity_ref]))
+        dispatch(invalidateCompanies([d.params.company]))
     } else if ( d.entity_name === 'visualspecdocument' ) {
         dispatch(invalidateVisualSpecDocuments([d.entity_ref]))
 
@@ -180,6 +184,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
 
     } else if ( d.entity_name === 'projectpermissions' ) {
         list_keys_to_invalidate[LIST_KEY__PROJECT_USER_LIST] = true
+    } else if ( d.entity_name === 'companypermissions' ) {
+        list_keys_to_invalidate[LIST_KEY__COMPANY_USER_LIST] = true
     } else if ( d.entity_name === 'visualspecissue' ) {
         if ( d.action_type === "create" ) {
             dispatch(invalidateAllVisualSpecDocuments())

@@ -139,10 +139,18 @@ class CompanyPermissions(BaseModel):
                 name='companypermissions')
         else:
             RefreshNotifier().notify_model_update(
-                self, params={'company': [self.company_id],
+                self, params={'company': self.company_id,
                               'user': self.user_id},
                 name='companypermissions')
 
+    def update_permission(self, permission_name, new_state, save=True):
+        field_name = permission_name.replace("has_", "can_")
+        if not hasattr(self, field_name):
+            raise Exception("Trying to set unknown permission: %s " % permission_name)
+        setattr(self, field_name, new_state)
+        if save:
+            self.save()
+            
     @classmethod
     def active_companies_for_user(self, user):
         cps = self.objects.filter(user=user, is_active_member_of_company=True)

@@ -2,14 +2,14 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { union } from 'lodash'
 import {withRouter} from 'react-router-dom'
-import {getProject, is_project_invalidated} from '../actions/Projects'
-import InviteProjectUserForm from '../components/form/InviteProjectUserForm'
+import {getCompany, is_company_invalidated} from '../actions/Companies'
+import InviteCompanyUserForm from '../components/form/InviteCompanyUserForm'
 import ModalDialog from '../components/ModalDialog'
 import UserList from './UserList'
-import {ensureUsersLoaded, has_permission} from '../actions/Users'
+import {ensureUsersLoaded, has_company_permission} from '../actions/Users'
 import {
-    PAGE_KEY__PROJECT_USER_PAGE,
-    LIST_KEY__PROJECT_USER_LIST
+    PAGE_KEY__COMPANY_USER_PAGE,
+    LIST_KEY__COMPANY_USER_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
     update_list_filter,
@@ -21,10 +21,10 @@ import {
     clearPageFlag,
     getPageFlag
 } from '../actions/Page'
-import {saveInviteUser} from '../actions/Projects'
+import {saveInviteUser} from '../actions/Companies'
 import '../sass/inviting.css'
 
-class ProjectUsersPage extends Component {
+class CompanyUsersPage extends Component {
 
     constructor(props) {
         super(props)
@@ -40,57 +40,57 @@ class ProjectUsersPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const {project_id} = this.props
-        if (new_props.project_id !== project_id || new_props.project.id !== this.props.project.id) {
+        const {company_id} = this.props
+        if (new_props.company_id !== company_id || new_props.company.id !== this.props.company.id) {
             this.refresh(new_props)
         }
     }
 
     refresh(these_props) {
         const props = these_props || this.props
-        const {dispatch, project, project_id} = props
-        dispatch(update_list_filter(LIST_KEY__PROJECT_USER_LIST, {'project_id': project_id}))
-        if ( project.id ) {
-            dispatch(ensureUsersLoaded(union(project.invited_user_ids, project.allowed_user_ids)))
+        const {dispatch, company, company_id} = props
+        dispatch(update_list_filter(LIST_KEY__COMPANY_USER_LIST, {'company_id': company_id}))
+        if ( company.id ) {
+            dispatch(ensureUsersLoaded(union(company.invited_user_ids, company.allowed_user_ids)))
         }
     }
 
     onSelectUsers(user_ids) {
-        const {dispatch, history, project_id} = this.props
-        dispatch(selectItems(LIST_KEY__PROJECT_USER_LIST, user_ids))
-        dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, user_ids))
+        const {dispatch, history, company_id} = this.props
+        dispatch(selectItems(LIST_KEY__COMPANY_USER_LIST, user_ids))
+        dispatch(select_users(PAGE_KEY__COMPANY_USER_PAGE, user_ids))
         if (user_ids && user_ids.length === 1) {
-            history.push('/projects/' + project_id + '/users/' + user_ids[0]);
+            history.push('/companies/' + company_id + '/users/' + user_ids[0]);
         }
     }
 
     onStartInviteUser() {
         const {dispatch} = this.props
-        dispatch(setPageFlag(PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user'))
+        dispatch(setPageFlag(PAGE_KEY__COMPANY_USER_PAGE, 'inviting_user'))
     }
 
     onCancelInviteUser() {
         const {dispatch} = this.props
-        dispatch(clearPageFlag(PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user'))
+        dispatch(clearPageFlag(PAGE_KEY__COMPANY_USER_PAGE, 'inviting_user'))
     }
 
     onSaveInviteUser(new_value) {
-        const {dispatch, project_id} = this.props
-        dispatch(saveInviteUser(project_id, new_value.invited_user_email))
-        dispatch(clearPageFlag(PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user'))
+        const {dispatch, company_id} = this.props
+        dispatch(saveInviteUser(company_id, new_value.invited_user_email))
+        dispatch(clearPageFlag(PAGE_KEY__COMPANY_USER_PAGE, 'inviting_user'))
     }
 
     renderInviteUser() {
-        const { project_id } = this.props
+        const { company_id } = this.props
         const that = this
         return (
             <ModalDialog isOpen={true}
                          onClose={that.onCancelInviteUser}
-                         title="Invite People to Project"
+                         title="Invite People to Company"
                          variant="large">
 
                 <div>
-                    <InviteProjectUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
+                    <InviteCompanyUserForm company_id={company_id} onChange={that.onSaveInviteUser}/>
                 </div>
             </ModalDialog>
         )
@@ -118,7 +118,7 @@ class ProjectUsersPage extends Component {
             <div>
               { is_inviting_user && this.renderInviteUser() }
 
-              <h2>Team</h2>
+              <h2>Members</h2>
               { can_invite_user && 
                 <div className="button button-primary button__default-width" onClick={this.onStartInviteUser}>
                   <i className="material-icons md-18">add_circle_outline</i>
@@ -137,24 +137,24 @@ class ProjectUsersPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {project_id, onPermissionsAction} = props
-    const project = getProject(state, project_id)
-    const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user')
-    const can_view_permissions = has_permission(state, project_id, 'has_view_permissions')
-    const can_invite_user = has_permission(state, project_id, 'has_invite_users')
-    const is_invalidated = is_project_invalidated(state, project_id)
+    const {company_id, onPermissionsAction} = props
+    const company = getCompany(state, company_id)
+    const is_inviting_user = getPageFlag(state, PAGE_KEY__COMPANY_USER_PAGE, 'inviting_user')
+    const can_view_permissions = has_company_permission(state, company_id, 'has_set_user_permissions')
+    const can_invite_user = has_company_permission(state, company_id, 'has_invite_users')
+    const is_invalidated = is_company_invalidated(state, company_id)
     return {
-        project_id,
-        project: project || {},
+        company_id,
+        company: company || {},
         can_view_permissions,
         can_invite_user,
         is_inviting_user,
         onPermissionsAction,
-        invited_user_ids: (project || {}).invited_user_ids || [],
+        invited_user_ids: (company || {}).invited_user_ids || [],
         is_invalidated,
-        is_loading: !project || !project.id,
-        allowed_user_ids: (project || {}).allowed_user_ids || []
+        is_loading: !company || !company.id,
+        allowed_user_ids: (company || {}).allowed_user_ids || []
     }
 }
 
-export default withRouter(connect(mapStateToProps)(ProjectUsersPage))
+export default withRouter(connect(mapStateToProps)(CompanyUsersPage))

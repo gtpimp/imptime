@@ -4,16 +4,17 @@ import {withRouter} from 'react-router-dom'
 import keys from 'lodash/keys'
 import map from 'lodash/map'
 import filter from 'lodash/filter'
-import UserPermissionForm from './form/UserPermissionForm'
+import ProjectUserPermissionForm from './form/ProjectUserPermissionForm'
 import { getUser, ensureUsersLoaded, logged_in_users_permissions } from '../actions/Users'
 import { getProject, ensureProjectsLoaded } from '../actions/Projects'
-import { getProjectUserPermission, ensureProjectUserPermissionsLoaded } from '../actions/ProjectUserPermissions'
-import '../sass/user-permission.css'
 import {
+    getProjectUserPermission,
+    ensureProjectUserPermissionsLoaded,
     updateProjectUserPermissions
 } from '../actions/ProjectUserPermissions'
+import '../sass/user-permission.css'
 
-class UserPermissions extends Component {
+class ProjectUserPermissions extends Component {
 
     constructor(props) {
         super(props)
@@ -76,11 +77,11 @@ class UserPermissions extends Component {
 
                         { !is_loading && logged_in_users_permissions.has_view_permissions &&
 
-                          <UserPermissionForm permission_names={permission_names}
-                                              user_id={user.id}
-                                              project_id={project.id}
-                                              onRemoveUser={this.onRemoveUser}
-                                              onSave={this.onChangePermission} />
+                          <ProjectUserPermissionForm permission_names={permission_names}
+                                                     user_id={user.id}
+                                                     project_id={project.id}
+                                                     onRemoveUser={this.onRemoveUser}
+                                                     onSave={this.onChangePermission} />
                         }
 
             </div>
@@ -111,4 +112,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(UserPermissions))
+export default withRouter(connect(mapStateToProps)(ProjectUserPermissions))

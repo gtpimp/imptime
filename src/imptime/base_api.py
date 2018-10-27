@@ -216,6 +216,10 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
 
+    def allowed_company_permissions(self):
+        return CompanyPermissions.objects.filter(company__in=self.allowed_companies(),
+                                                 is_active_member_of_company=True)
+    
     def allowed_release_notes(self):
         return ReleaseNote.objects.all()
 
@@ -318,6 +322,9 @@ class BaseViewSet(viewsets.ViewSet):
                               .filter(deleted=False)\
                               .filter_by_logged_in_user(self.request.user)\
                               .distinct()
+
+    def allowed_company(self, company_id):
+        return self.allowed_companies().get(pk=company_id)
     
     def allowed_miens(self):
         return Mien.objects.filter(user=self.request.user)

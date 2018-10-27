@@ -16,6 +16,31 @@ export function setCompanyBreadcrumbsHelper(optional_company) {
     return setBreadcrumbs(breadcrumbs)
 }
 
+export function setCompanyUserBreadcrumbsHelper(company, optional_user) {
+    const user = optional_user || {}
+    const breadcrumbs = [{to: '/companies',
+                          type: 'companies',
+                          label: 'Companies'},
+                         {to: '/companies/' + company.id,
+                          type: 'company',
+                          label: company.name,
+                          selected_entities: {company: company}},
+                         {to: '/companies/'+company.id+'/users/',
+                          label: 'Users',
+                          type: 'users',
+                          selected_entities: {company: company}}
+    ]
+    if ( user ) {
+        breadcrumbs.push({to: '/companies/'+company.id+'/users/'+user.id,
+                          type: 'company',
+                          label: user.username,
+                          selected_entities: {company: company,
+                                              user: user}})
+    }
+    return setBreadcrumbs(breadcrumbs)
+}
+
+
 export function setProjectUserBreadcrumbsHelper(project, optional_user) {
     const user = optional_user || {}
     const breadcrumbs = [{to: '/projects',
