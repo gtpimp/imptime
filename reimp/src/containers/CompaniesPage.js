@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {get} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import CompanyList from '../components/CompanyList'
 import CompanySidebar from '../components/CompanySidebar'
@@ -48,7 +49,7 @@ class CompaniesPage extends Component {
         if ( new_props.selected_company_ids.length !== this.props.selected_company_ids.length ||
              (new_props.selected_company_ids.length > 0 &&
               new_props.selected_company_ids[0] !== this.props.selected_company_ids[0]) ||
-              new_props.selected_company.loaded !== this.props.selected_company.loaded ) {
+              get(new_props, ["selected_company", "name"], false) !== get(this.props, ["selected_company", "name"], false) ) {
             this.refresh(new_props)
         }
     }

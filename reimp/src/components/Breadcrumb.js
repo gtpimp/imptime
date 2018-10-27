@@ -96,6 +96,35 @@ const menu_buttons = {
           perms: (objs) => ['has_view_permissions']
         }
     ],
+    'company': [
+        { label: (objs) => "Manage this company",
+          type: "heading"
+        },
+        { label: (objs) => 'Users',
+          nav_url: (objs) => '/companies/' + objs.company.id + '/users/'
+        },
+        { label: (objs) => "Experimental",
+          type: "separator"
+        },
+        { label: (objs) => 'Checklists',
+          nav_url: (objs) => '/company/problems'
+        },
+        { label: (objs) => 'Billable hours',
+          nav_url: (objs) => '/company/billable_hours'
+        },
+        { label: (objs) => 'Timesheets',
+          nav_url: (objs) => '/usertimesheets'
+        },
+        { label: (objs) => 'Daily work summary',
+          nav_url: (objs) => '/work_summary'
+        },
+        { label: (objs) => 'Dashboard',
+          nav_url: (objs) => '/dashboard'
+        },
+        { label: (objs) => 'Invoices',
+          nav_url: (objs) => '/invoices'
+        }
+    ],
     'features': [
         { label: (objs) => 'Bulk Create Features',
           nav_url: (objs) => '/projects/' + objs.project.id + '/bulkCreateFeatures',
