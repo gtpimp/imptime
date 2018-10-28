@@ -166,7 +166,7 @@ class InvoiceList extends Component {
             case "created":
                 content = (
                     <DivTableCell key={header.key} >
-                      <Timestamp value={invoice.created}/>
+                      <Timestamp value={invoice.created} format="from_now"/>
                     </DivTableCell>
                 )
                 break
@@ -174,7 +174,7 @@ class InvoiceList extends Component {
             case "issued_at":
                 content = (
                     <DivTableCell key={header.key} >
-                      <Timestamp value={invoice.issued_at}/>
+                      <Timestamp value={invoice.issued_at} format="from_now"/>
                     </DivTableCell>
                 )
                 break
@@ -182,7 +182,7 @@ class InvoiceList extends Component {
             case "payment_due":
                 content = (
                     <DivTableCell key={header.key} >
-                      <Timestamp value={invoice.payment_due}/>
+                      <Timestamp value={invoice.payment_due} format="from_now"/>
                     </DivTableCell>
                 )
                 break
@@ -190,7 +190,7 @@ class InvoiceList extends Component {
             case "paid_at":
                 content = (
                     <DivTableCell key={header.key} >
-                      <Timestamp value={invoice.paid_at}/>
+                      <Timestamp value={invoice.paid_at} format="from_now"/>
                     </DivTableCell>
                 )
                 break
@@ -280,17 +280,13 @@ class InvoiceList extends Component {
     render() {
         const { list_key, invoices, selected_item_ids, all_headers } = this.props
 	return (
-	    <div className={css`width:100%`}>
-              <Pagination list_key={list_key}
-                          on_changed={this.onChangePage} />
-              <CommonTable all_headers={all_headers}
-                           header_list_name={HEADER_LIST_NAME__INVOICE}
-                           onRowSelected={this.onClickedInvoice}
-                           items={invoices}
-                           selected_item_ids={selected_item_ids}
-                           renderCell={this.renderCell}
-              />
-	    </div>
+            <CommonTable all_headers={all_headers}
+                         header_list_name={HEADER_LIST_NAME__INVOICE}
+                         onRowSelected={this.onClickedInvoice}
+                         items={invoices}
+                         selected_item_ids={selected_item_ids}
+                         renderCell={this.renderCell}
+            />
 	)
     }
 }

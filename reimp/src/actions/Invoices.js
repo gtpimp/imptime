@@ -19,7 +19,7 @@ export var ALL_AVAILABLE_INVOICE_HEADERS = [{key:'invoice_number', label:"Number
                                             {key:'payment_due', label:'Due at', width:'auto', flex:1, is_default: true},
                                             {key:'paid_at', label:'Paid at', width:'auto', flex:1},
                                             {key:'status', label:'Status', width:'auto', flex:1, is_default: true},
-                                            {key:'is_overdue', label:'Overdue', width:'auto', flex:1},
+                                            {key:'is_overdue', label:'Overdue', width:'auto', flex:1, is_default: true},
                                             {key:'cost_ex_vat', label:'Cost exVAT', width:'auto', flex:1, is_default: true},
                                             {key:'vat', label:'Vat', width:'auto', flex:1, is_default: true},
                                             {key:'cost_with_vat', label:'Cost with VAT', width:'auto', flex:1, is_default: true},
