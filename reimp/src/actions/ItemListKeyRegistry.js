@@ -133,6 +133,7 @@ export const HEADER_LIST_NAME__FEATURE = "feature"
 export const HEADER_LIST_NAME__COMPANY = "company"
 export const HEADER_LIST_NAME__DECISION_JOURNAL = "decision_journal"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
+export const HEADER_LIST_NAME__INVOICE = "invoice"
 export const HEADER_LIST_NAME__SPRINT_PROPOSAL = "sprint_proposal"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
@@ -163,28 +164,6 @@ export function getCellStyle(s) {
     }
 }
 
-export var INVOICE_HEADER_LIST = {'invoice_number': {label:"Number", width:"auto", flex:1},
-                                  'client_name': {label:'Client', width:'auto', flex:1},
-                                  //'internal_comment': {label:'Comment', width:'auto', flex:1},
-                                  'project_id': {label:'Project', width:'auto', flex:1},
-                                  'sprint_id': {label:'Sprint', width:'auto', flex:1},
-                                  'created': {label:'Created at', width:'auto', flex:1},
-                                  'issued_at': {label:'Issued at', width:'auto', flex:1},
-                                  'payment_due': {label:'Due at', width:'auto', flex:1},
-                                  'paid_at': {label:'Paid at', width:'auto', flex:1},
-                                  'status': {label:'status', width:'auto', flex:1},
-                                  'is_overdue': {label:'Overdue', width:'auto', flex:1},
-                                  'cost_ex_vat': {label:'cost_ex_vat', width:'auto', flex:1},
-                                  'vat': {label:'Vat', width:'auto', flex:1},
-                                  'cost_with_vat': {label:'cost_with_vat', width:'auto', flex:1},
-                                  'amount_paid': {label:'amount_paid', width:'auto', flex:1},
-                                  'amount_written_off': {label:'amount_written_off', width:'auto', flex:1},
-                                  'amount_owed': {label:'amount_owed', width:'auto', flex:1},
-                                  'invoice_note': {label:'Note', width:'auto', flex:1},
-                                  //'footer_terms': {label:'footer_terms', width:'auto', flex:1},
-                                  //'client_order_name': {label:'Order name', width:'auto', flex:1},
-                                  //'client_order_number': {label:'Order number', width:'auto', flex:1}
-}
 
 export var ISSUE_HISTORY_HEADER_LIST = [ {key:'created_by', label:"User", description:"The user who made the change", width:medium_col_width},
                                          {key:'created_at', label:"Date", description:"When the change was made", width:medium_col_width},

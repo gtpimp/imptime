@@ -4,8 +4,7 @@ import {withRouter} from 'react-router-dom'
 import InvoiceList from '../components/InvoiceList'
 import {
     LIST_KEY__INVOICE_LIST,
-    PAGE_KEY__INVOICES_PAGE,
-    INVOICE_HEADER_LIST
+    PAGE_KEY__INVOICES_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
     update_list_filter,
@@ -25,23 +24,18 @@ class InvoicesPage extends Component {
     }
 
     render() {
-        const { invoice_header_list, list_key} = this.props
+        const { list_key} = this.props
         return (
-            <div className="list-layout__list">
-              <InvoiceList list_key={list_key}
-                           header_list={invoice_header_list} />
-            </div>
+            <InvoiceList list_key={list_key} />
         )
     }
 }
 
 function mapStateToProps(state, props) {
 
-    const invoice_header_list = INVOICE_HEADER_LIST
     const company_id = props.match.params.companyId
     
     return {
-        invoice_header_list,
         list_key: LIST_KEY__INVOICE_LIST,
         company_id
     }

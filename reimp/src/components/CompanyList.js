@@ -174,7 +174,7 @@ class CompanyList extends Component {
 
     render() {
 
-        const { all_headers, companies, selected_ids, table_params } = this.props
+        const { all_headers, companies, selected_ids } = this.props
 
         if ( companies.length === 0 ) {
             return (
@@ -192,7 +192,6 @@ class CompanyList extends Component {
                          items={companies}
                          selected_item_ids={selected_ids}
                          renderCell={this.renderCell}
-                         table_params={table_params}
               />
         )
     }
