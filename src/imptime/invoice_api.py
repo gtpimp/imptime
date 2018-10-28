@@ -36,9 +36,7 @@ class InvoiceViewSet(BaseViewSet):
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
             invoices = self.allowed_invoices().order_by("-payment_due")
-            
             invoices = self.apply_filter(qs=invoices, raw_filter_args=filter_args)
-
             invoices = self.apply_pagination(qs=invoices, pagination=pagination)
             
             if format_args.get('ids_only'):

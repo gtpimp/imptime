@@ -18,9 +18,9 @@ import {
 class InvoicesPage extends Component {
 
     componentDidMount() {
-        const {dispatch, list_key} = this.props
+        const {dispatch, list_key, company_id} = this.props
         dispatch(set_toolbars(PAGE_KEY__INVOICES_PAGE, []))
-        dispatch(update_list_filter(list_key, {}))
+        dispatch(update_list_filter(list_key, {from_company_id: company_id}))
         dispatch(update_list_pagination(list_key, {page_size: 20}))
     }
 
@@ -38,10 +38,12 @@ class InvoicesPage extends Component {
 function mapStateToProps(state, props) {
 
     const invoice_header_list = INVOICE_HEADER_LIST
+    const company_id = props.match.params.companyId
     
     return {
         invoice_header_list,
         list_key: LIST_KEY__INVOICE_LIST,
+        company_id
     }
 }
 

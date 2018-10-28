@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import map from 'lodash/map'
+import { map, size } from 'lodash'
 import { connect } from 'react-redux'
 import {
     invalidateList,
@@ -8,6 +8,7 @@ import {
     isLoading,
     getLastUpdated,
     getLoadingItemIds,
+    getListFilter
 } from '../actions/ItemList'
 import {
     invalidateAllInvoices,
@@ -29,21 +30,24 @@ class InvoiceList extends Component {
     }
 
     componentWillReceiveProps() {
-        const { dispatch, list_key } = this.props
-        dispatch(fetchInvoicesIfNeeded(list_key))
+        const { dispatch, list_key, filter } = this.props
+        if ( size(filter)>0 ) {
+            dispatch(fetchInvoicesIfNeeded(list_key))
+        }
     }
 
     onChangePage() {
         const { dispatch, list_key } = this.props
 	dispatch(invalidateList(list_key))
-	dispatch(fetchInvoicesIfNeeded(list_key))
     }
 
     onRefresh(event) {
-        const { dispatch, list_key } = this.props
+        const { dispatch, list_key, filter } = this.props
 	dispatch(invalidateList(list_key))
 	dispatch(invalidateAllInvoices())
-	dispatch(fetchInvoicesIfNeeded(list_key))
+        if ( size(filter)>0 ) {
+	    dispatch(fetchInvoicesIfNeeded(list_key))
+        }
 	if ( event ) {
 	    event.stopPropagation()
 	}
@@ -100,6 +104,7 @@ function mapStateToProps(state, props) {
     const loading_item_ids = getLoadingItemIds(state, list_key)
     const is_loading = isLoading(state, list_key)
     const last_updated = getLastUpdated(state, list_key)
+    const filter = getListFilter(state, list_key)
 
     return {
         list_key: list_key,
@@ -110,7 +115,8 @@ function mapStateToProps(state, props) {
         has_items: visible_items && visible_items.length > 0,
         is_loading,
         last_updated,
-        header_list
+        header_list,
+        filter
     }
 }
 

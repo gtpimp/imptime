@@ -122,7 +122,7 @@ const menu_buttons = {
           nav_url: (objs) => '/dashboard'
         },
         { label: (objs) => 'Invoices',
-          nav_url: (objs) => '/invoices'
+          nav_url: (objs) => `/companies/${objs.company.id}/invoices`
         }
     ],
     'features': [
