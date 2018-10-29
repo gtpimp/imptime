@@ -82,6 +82,7 @@ class Invoice(models.Model):
 
     objects = InvoiceQuerySet.as_manager()
 
+    from_company = ProtectedForeignKey("timepiece.Company", blank=False, null=False, related_name='invoices')
     client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False, related_name='invoices')
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
     business = models.ForeignKey("timepiece.Business", blank=True, null=False, related_name='invoices')

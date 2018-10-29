@@ -32,7 +32,6 @@ import {
 } from '../actions/Page'
 import {
     getCandidateDecisionJournal,
-    getDecisionJournalHeaderListForCurrentMien,
     isLoadingDecisionJournals,
     getDecisionJournalsById
 } from '../actions/DecisionJournals'
@@ -104,12 +103,11 @@ class DecisionJournalsPage extends Component {
 
     renderLeftPane() {
 
-        const {project_id, list_key, decision_journal_header_list } = this.props
+        const {project_id, list_key } = this.props
 
         return (
             <DecisionJournalList list_key={list_key}
                                  project_id={project_id}
-                                 header_list={decision_journal_header_list}
                                  onSelectDecisionJournals={this.onSelectDecisionJournals}
             />
         )
@@ -185,7 +183,6 @@ function mapStateToProps(state, props) {
     const project_name = project.name
     const candidate_decision_journal = getCandidateDecisionJournal(state) || null
     const is_creating_decision_journal = candidate_decision_journal || false
-    const decision_journal_header_list = getDecisionJournalHeaderListForCurrentMien(state)
     const selected_decision_journal = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const show_sidebar = (is_creating_decision_journal || (selected_decision_journal && selected_decision_journal.id)) || false
     const is_loading = !areItemsReadyToDisplay(state, list_key) || isLoadingDecisionJournals(state, keys(items_by_id))
@@ -206,7 +203,6 @@ function mapStateToProps(state, props) {
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
         is_creating_decision_journal: is_creating_decision_journal,
-        decision_journal_header_list,
         show_sidebar,
         project_name,
         is_loading,

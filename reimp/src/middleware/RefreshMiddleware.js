@@ -6,11 +6,13 @@ import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateFeatures } from '../actions/Features'
 import { invalidateDecisionJournals } from '../actions/DecisionJournals'
+import { invalidateCompanies } from '../actions/Companies'
 import { invalidateIssues } from '../actions/Issues'
 import { invalidateTags } from '../actions/Tags'
 import { invalidateIssueReviews } from '../actions/IssueReviews'
 import { invalidateUsers } from '../actions/Users'
 import { invalidatePups } from '../actions/ProjectUserPermissions'
+import { invalidateCups } from '../actions/CompanyUserPermissions'
 import { invalidateIssueGeneralDetails } from '../actions/IssueGeneralDetails'
 import { invalidateVisualSpecDocuments, invalidateAllVisualSpecDocuments } from '../actions/VisualSpecDocuments'
 import { invalidateVisualSpecAnnotations } from '../actions/VisualSpecAnnotations'
@@ -42,8 +44,10 @@ import {
     LIST_KEY__ISSUE_LIST,
     LIST_KEY__NUDGE_LIST,
     LIST_KEY__COMPANY_PROBLEM_LIST,
+    LIST_KEY__COMPANY_LIST,
     LIST_KEY__DECISION_JOURNAL_LIST,
     LIST_KEY__PROJECT_USER_LIST,
+    LIST_KEY__COMPANY_USER_LIST,
     LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST,
     LIST_KEY__MY_ISSUE_LIST_DUE_NOW,
     LIST_KEY__RELEASE_NOTES_LIST,
@@ -98,11 +102,13 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'projectinvite' ) {
         dispatch(invalidateUsers(d.params.users))
         dispatch(invalidateProjects(d.params.projects))
-
+        
     } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidatePups([d.entity_ref]))
         dispatch(invalidateProjects(d.params.projects))
-
+    } else if ( d.entity_name === 'companypermissions' ) {
+        dispatch(invalidateCups([d.entity_ref]))
+        dispatch(invalidateCompanies([d.params.company]))
     } else if ( d.entity_name === 'visualspecdocument' ) {
         dispatch(invalidateVisualSpecDocuments([d.entity_ref]))
 
@@ -128,6 +134,8 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateUsers([d.entity_ref]))
     } else if ( d.entity_name === 'decisionjournal' ) {
         dispatch(invalidateDecisionJournals([d.entity_ref]))
+    } else if ( d.entity_name === 'company' ) {
+        dispatch(invalidateCompanies([d.entity_ref]))
     } else if ( d.entity_name === 'rate' ) {
         dispatch(invalidateSurForSprintAndUser(d.params.sprint_id, d.params.user_id))
 
@@ -176,6 +184,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
 
     } else if ( d.entity_name === 'projectpermissions' ) {
         list_keys_to_invalidate[LIST_KEY__PROJECT_USER_LIST] = true
+    } else if ( d.entity_name === 'companypermissions' ) {
+        list_keys_to_invalidate[LIST_KEY__COMPANY_USER_LIST] = true
     } else if ( d.entity_name === 'visualspecissue' ) {
         if ( d.action_type === "create" ) {
             dispatch(invalidateAllVisualSpecDocuments())
@@ -190,6 +200,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true
     } else if ( d.entity_name === 'decisionjournal' ) {
         list_keys_to_invalidate[LIST_KEY__DECISION_JOURNAL_LIST] = true
+    } else if ( d.entity_name === 'company' ) {
+        list_keys_to_invalidate[LIST_KEY__COMPANY_LIST] = true
     } else if ( d.entity_name === 'projectfeatureorder' ) {
         list_keys_to_invalidate[LIST_KEY__FEATURE_LIST] = true
     } else if ( d.entity_name === 'businessprojectorder' ) {

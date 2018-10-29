@@ -6083,7 +6083,7 @@ def client_list(request, template="timepiece/client/client_list.html", context=N
     if not request.user.is_superuser:
         return HttpResponseForbidden("Not allowed")
 
-    clients = timepiece.Client.objects.all().order_by("name")
+    clients = timepiece.Company.objects.all().order_by("name")
     context['clients'] = clients
 
     return render(request, template, context)
@@ -6111,7 +6111,7 @@ def edit_client(request, client_code, template="timepiece/client/add_client.html
     if not request.user.is_superuser:
         return HttpResponseForbidden("Not allowed")
 
-    client = timepiece.Client.objects.get(code=client_code)
+    client = timepiece.Company.objects.get(code=client_code)
     form = timepiece_forms.ClientForm(request.POST or None, request.FILES or None, instance=client)
     if form.is_valid():
         form.save()

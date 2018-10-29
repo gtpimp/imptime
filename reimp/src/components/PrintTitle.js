@@ -6,6 +6,7 @@ import { default_theme as theme } from '../theme/default'
 const style = css`
 display: flex;
 flex-direction: column;
+text-align: center;
 font: ${theme.fonts.bold_huge}
 `
 

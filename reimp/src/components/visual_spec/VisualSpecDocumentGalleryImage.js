@@ -14,6 +14,7 @@ import {
     is_annotated_visual_spec_document_invalidated,
 } from '../../actions/AnnotatedVisualSpecDocuments'
 import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
+import { tokenisedApiUrl } from '../../actions/Print'
 
 const DEFAULT_ANNOTATION_SIZE = 25
 
@@ -146,7 +147,7 @@ class VisualSpecDocumentGalleryImage extends Component {
         const thumbnail_element = this.resolveThumbnailElement(preview_image_url)
 
         return connectDragSource(connectDropTarget(
-            <div className="visual-spec-document-gallery-image__container" key={annotated_visual_spec_document_id}>
+            <div className="visual-spec-document-gallery-image__container print__image" key={annotated_visual_spec_document_id}>
               <div className={classNames("visual-spec-document-gallery-image__img_container",
                                          {"visual_spec_document_gallery__image--selected": is_active,
                                           "visual_spec_document_gallery__image--dnd-target": isOver
@@ -194,13 +195,15 @@ function mapStateToProps(state, props) {
     const project = project_id && getProject(state, project_id)
     const can_edit = allow_edit !== false && visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
     const is_invalidated = is_annotated_visual_spec_document_invalidated(state, annotated_visual_spec_document_id)
+
+    
     
     return {
         project,
         project_id,
-        preview_image_url: preview_url,
-        hires_url: visual_spec_document.hires_url,
-        download_url: visual_spec_document.download_url,
+        preview_image_url: tokenisedApiUrl(state, preview_url),
+        hires_url: tokenisedApiUrl(state, visual_spec_document.hires_url),
+        download_url: tokenisedApiUrl(state, visual_spec_document.download_url),
         content_type,
         is_image,
         visual_spec_document: visual_spec_document,

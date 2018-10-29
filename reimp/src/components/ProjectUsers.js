@@ -3,12 +3,12 @@ import {connect} from 'react-redux'
 import { union } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import {getProject, is_project_invalidated} from '../actions/Projects'
-import InviteUserForm from '../components/form/InviteUserForm'
+import InviteProjectUserForm from '../components/form/InviteProjectUserForm'
 import ModalDialog from '../components/ModalDialog'
 import UserList from './UserList'
 import {ensureUsersLoaded, has_permission} from '../actions/Users'
 import {
-    PAGE_KEY__PROJECT_DASHBOARD_PAGE,
+    PAGE_KEY__PROJECT_USER_PAGE,
     LIST_KEY__PROJECT_USER_LIST
 } from '../actions/ItemListKeyRegistry'
 import {
@@ -58,7 +58,7 @@ class ProjectUsersPage extends Component {
     onSelectUsers(user_ids) {
         const {dispatch, history, project_id} = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_USER_LIST, user_ids))
-        dispatch(select_users(PAGE_KEY__PROJECT_DASHBOARD_PAGE, user_ids))
+        dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, user_ids))
         if (user_ids && user_ids.length === 1) {
             history.push('/projects/' + project_id + '/users/' + user_ids[0]);
         }
@@ -66,18 +66,18 @@ class ProjectUsersPage extends Component {
 
     onStartInviteUser() {
         const {dispatch} = this.props
-        dispatch(setPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
+        dispatch(setPageFlag(PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user'))
     }
 
     onCancelInviteUser() {
         const {dispatch} = this.props
-        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
+        dispatch(clearPageFlag(PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user'))
     }
 
     onSaveInviteUser(new_value) {
         const {dispatch, project_id} = this.props
         dispatch(saveInviteUser(project_id, new_value.invited_user_email))
-        dispatch(clearPageFlag(PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user'))
+        dispatch(clearPageFlag(PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user'))
     }
 
     renderInviteUser() {
@@ -90,7 +90,7 @@ class ProjectUsersPage extends Component {
                          variant="large">
 
                 <div>
-                    <InviteUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
+                    <InviteProjectUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
                 </div>
             </ModalDialog>
         )
@@ -112,7 +112,7 @@ class ProjectUsersPage extends Component {
 
     render() {
 
-        const {is_inviting_user, invited_user_ids, allowed_user_ids, project, can_invite_user} = this.props
+        const {is_inviting_user, invited_user_ids, allowed_user_ids, can_invite_user} = this.props
 
         return (
             <div>
@@ -125,8 +125,7 @@ class ProjectUsersPage extends Component {
                   Add user
                 </div>
               }
-              <UserList project_id={project.id}
-                        invited_user_ids={invited_user_ids}
+              <UserList invited_user_ids={invited_user_ids}
                         user_ids={allowed_user_ids}
                         onSelectUsers={this.onSelectUsers}
                         user_actions={this.getActionRenderFunc()}
@@ -140,7 +139,7 @@ class ProjectUsersPage extends Component {
 function mapStateToProps(state, props) {
     const {project_id, onPermissionsAction} = props
     const project = getProject(state, project_id)
-    const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_DASHBOARD_PAGE, 'inviting_user')
+    const is_inviting_user = getPageFlag(state, PAGE_KEY__PROJECT_USER_PAGE, 'inviting_user')
     const can_view_permissions = has_permission(state, project_id, 'has_view_permissions')
     const can_invite_user = has_permission(state, project_id, 'has_invite_users')
     const is_invalidated = is_project_invalidated(state, project_id)

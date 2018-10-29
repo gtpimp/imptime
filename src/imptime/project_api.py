@@ -149,15 +149,15 @@ class ProjectViewSet(BaseViewSet):
             project = self.allowed_project(project_id)
             invited_user_email = request.data['user_email']
 
-            invited_user = User.objects.filter(email=invited_user_email).first()
-            if invited_user is None:
-                invited_user = User.objects.create(email=invited_user_email,
-                                                   username=invited_user_email)
-                created_user = True
-            else:
-                created_user = False
-
             if self.logged_in_permissions(project).has_invite_users:
+                invited_user = User.objects.filter(email=invited_user_email).first()
+                if invited_user is None:
+                    invited_user = User.objects.create(email=invited_user_email,
+                                                       username=invited_user_email)
+                    created_user = True
+                else:
+                    created_user = False
+
                 ProjectPermissions.ensure_user_belongs_to_business(user=invited_user,
                                                                     business=project) #sic
 
@@ -201,8 +201,7 @@ class ProjectViewSet(BaseViewSet):
                     from_address=settings.FROM_EMAIL,
                     text_content=plain_content,
                     html_content=html_content,
-                    to_addresses=[invite_user.email],
-                    bcc_addresses=[x[1] for x in settings.ADMINS])
+                    to_addresses=[invite_user.email])
 
     def delete(self, request, pk):
         try:

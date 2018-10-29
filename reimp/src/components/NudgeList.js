@@ -16,13 +16,14 @@ import {
     getSelectedItemIds,
     invalidateList
 } from '../actions/ItemList'
-import { ENTITY_KEY__NUDGE } from '../actions/ItemListKeyRegistry'
+import {
+    ENTITY_KEY__NUDGE,
+    HEADER_LIST_NAME__NUDGE
+} from '../actions/ItemListKeyRegistry'
 import {
     fetchNudgesIfNeeded,
-    getAllAvailableNudgeHeaders,
-    getNudgeHeaderListForMien,
-    updateNudgeMienHeaders,
-    reorderNudge
+    reorderNudge,
+    ALL_AVAILABLE_NUDGE_HEADERS
 } from '../actions/Nudges'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 import Nudge from './Nudge'
@@ -103,7 +104,7 @@ class NudgeList extends Component {
 
     render() {
 
-        const { list_key, nudge_ids, is_loading, header_list, selected_item_ids, onShowMoreIssues } = this.props
+        const { list_key, nudge_ids, is_loading, selected_item_ids, onShowMoreIssues } = this.props
         const that = this
 
         if ( (is_loading && !nudge_ids && nudge_ids.length) === 0 ) {
@@ -121,33 +122,35 @@ class NudgeList extends Component {
         }
 
         return (
-            <MienListColumnConfigurable getAvailableHeaders={getAllAvailableNudgeHeaders}
-                                        getHeaderListForMien={getNudgeHeaderListForMien}
-                                        updateMienHeaders={updateNudgeMienHeaders}
-                                        header_list_name="nudge"
+            <MienListColumnConfigurable all_headers={ALL_AVAILABLE_NUDGE_HEADERS}
+                                        header_list_name={HEADER_LIST_NAME__NUDGE}
             >
-              <Pagination list_key={list_key}
-                          on_changed={this.onChangePage} />
-              
-              <DivTable header_list={header_list}
-                        onReorder={that.reorderNudge}
-              >
-                {map(nudge_ids, (nudge_id) =>
-                    <Nudge key={nudge_id}
-                           nudge_id={nudge_id}
-                           onChangeSelection={that.onChangeNudgeSelection}
-                           onShowMoreIssues={onShowMoreIssues}
-                           is_selected={includes(selected_item_ids, nudge_id)}
-                           header_list={header_list}/>
-                 )}
-              </DivTable>
+              {({active_headers}) => (
+                   <div>
+                     <Pagination list_key={list_key}
+                                 on_changed={this.onChangePage} />
+                     
+                     <DivTable header_list={active_headers}
+                               onReorder={that.reorderNudge}
+                     >
+                       {map(nudge_ids, (nudge_id) =>
+                           <Nudge key={nudge_id}
+                                  nudge_id={nudge_id}
+                                  onChangeSelection={that.onChangeNudgeSelection}
+                                  onShowMoreIssues={onShowMoreIssues}
+                                  is_selected={includes(selected_item_ids, nudge_id)}
+                                  header_list={active_headers}/>
+                        )}
+                     </DivTable>
+                   </div>
+               )}
             </MienListColumnConfigurable>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const { list_key, header_list, onSelect, onShowMoreIssues } = props
+    const { list_key, onSelect, onShowMoreIssues } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const nudges = getVisibleItems(state, list_key, ENTITY_KEY__NUDGE)
     const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__NUDGE, visible_item_ids)
@@ -165,7 +168,6 @@ function mapStateToProps(state, props) {
         should_fetch_list,
         last_updated,
         nested_objects,
-        header_list,
         selected_item_ids,
         onSelect,
         onShowMoreIssues

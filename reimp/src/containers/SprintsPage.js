@@ -28,7 +28,7 @@ import {
     setBrowserTitle
 } from '../actions/Page'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
-import {getCandidateSprint, getSprintHeaderListForCurrentMien} from '../actions/Sprints'
+import {getCandidateSprint} from '../actions/Sprints'
 
 class SprintsPage extends Component {
 
@@ -110,14 +110,12 @@ class SprintsPage extends Component {
 
     renderLeftPane() {
 
-        const {project_id,
-               list_key, sprint_header_list } = this.props
+        const {project_id, list_key } = this.props
         
         return (
             <div className="list-layout__list">
               <SprintList list_key={list_key}
                           project_id={project_id}
-                          header_list={sprint_header_list}
                           onSelectSprints={this.onSelectSprints}
               />
             </div>
@@ -206,7 +204,6 @@ function mapStateToProps(state, props) {
     const project_name = project.name
     const candidate_sprint = getCandidateSprint(state) || null
     const is_creating_sprint = candidate_sprint || false
-    const sprint_header_list = getSprintHeaderListForCurrentMien(state)
     const selected_sprint = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
     const show_sidebar = (is_creating_sprint || (selected_sprint && selected_sprint.id)) || false
 
@@ -224,7 +221,6 @@ function mapStateToProps(state, props) {
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: selected_items.length > 1,
         is_creating_sprint: is_creating_sprint,
-        sprint_header_list,
         show_sidebar,
         project_name
     }

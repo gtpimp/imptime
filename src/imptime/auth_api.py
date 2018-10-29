@@ -35,7 +35,8 @@ class LoginViewSet(rest_views.ObtainAuthToken):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
+        Token.objects.filter(user=user).delete()
+        token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
                          'user_id': user.id,
                          'is_superuser': user.is_superuser,

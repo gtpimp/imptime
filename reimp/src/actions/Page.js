@@ -114,6 +114,16 @@ export function select_decision_journals(page_key, decision_journal_ids) {
     }
 }
 
+export function select_companies(page_key, company_ids) {
+    return (dispatch, getState) => {
+        dispatch({
+            type: UPDATE_PAGE_SELECTION,
+            page_key: page_key,
+            company_ids: company_ids
+        })
+    }
+}
+
 export function get_header_list(state, page_key) {
     return (state.page[page_key] || {}).header_list || [];
 }
@@ -144,6 +154,10 @@ export function get_selected_feature_ids(state, page_key) {
 
 export function get_selected_decision_journal_ids(state, page_key) {
     return (((state ||{}).page || {})[page_key] || {}).decision_journal_ids || []
+}
+
+export function get_selected_company_ids(state, page_key) {
+    return (((state ||{}).page || {})[page_key] || {}).company_ids || []
 }
 
 export function setPageFlag(page_key, flag_name, value) {

@@ -164,7 +164,6 @@ PHANTOM_ROOT_DIR = LOG_FOLDER
 
 PUPPETEER_TEMP_DIR = "/opt/imptime/temp"
 PUPPETEER_PDF_CMD_OPTIONS = None
-PUPPETEER_PDF_CMD = "/opt/imptime/api/node_modules/puppeteer-pdf/puppeteer-pdf.js"
 PUPPETEER_BASE_URL = WEB_URL_BASE
 
 # Make this unique, and don't share it with anybody.

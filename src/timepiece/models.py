@@ -56,21 +56,169 @@ upload_to_logos = UploadTo("logos")
 upload_to_attachments = UploadTo("issue_attachments")
 upload_to_project_documents = UploadTo("project_documents")
 
-class Client(BaseModel):
-    """ a client is a top-level customer of the system,
-    which has their own users etc. """
-    name = models.CharField(max_length=255, null=False, blank=True)
-    code = models.CharField(max_length=100, null=False, blank=True)
+class CompanyQuerySet(QuerySet):
+    def filter_by_logged_in_user(self, user):
+        """ restricts entries to those belonging to companies the given
+        user (typically the logged in user) is assigned to """
+        return self.filter(pk__in=CompanyPermissions.active_companies_for_user(user))
+
+
+class Company(BaseModel):
+    name = models.CharField(max_length=255, null=False, blank=True, unique=True)
+    description = models.TextField(null=False, blank=True)
     email = models.EmailField(null=False, blank=False)
     logo = models.FileField(max_length=255, upload_to=upload_to_logos, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, related_name='companies_created_by', null=True, blank=True)
+
+    objects = CompanyQuerySet.as_manager()
 
     def __unicode__(self):
         return self.name
 
+    @property
+    def allowed_user_ids(self):
+        company_users = CompanyPermissions.active_users_for_company(company_id=self.id)
+        return company_users.values_list('id', flat=True).order_by("username")
 
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(Company, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self)
+        else:
+            RefreshNotifier().notify_model_update(self)
+
+    def delete(self):
+        super(Company, self).soft_delete()
+        RefreshNotifier().notify_model_delete(self)
+
+
+class CompanyHistory(BaseModel):
+
+    company_id = models.IntegerField(blank=False, null=False, db_index=True)
+    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.CharField(max_length=255, blank=False, null=False)
+    before = models.TextField(blank=True, null=True)
+    after = models.TextField(blank=True, null=True)
+
+    @classmethod
+    def add_history(self, user, company, description, before, after):
+        CompanyHistory.objects.create(created_by=user, company_id=company.id,
+                                      description=description,
+                                      before=before, after=after)
+
+    @classmethod
+    def for_company(self, company):
+        return CompanyHistory.objects.filter(company_id=company.id).order_by("-created_at")
+            
+    
+class CompanyPermissions(BaseModel):
+
+    class Meta:
+        unique_together = (('user','company'),)
+
+    company = models.ForeignKey(Company, related_name='company_permissions', db_index=True)
+    user = models.ForeignKey(User, related_name='company_permissions', db_index=True)
+
+    is_active_member_of_company = models.BooleanField(default=True, verbose_name="Is An Active Member of This Company")
+    can_invite_users = models.BooleanField(default=False, verbose_name="Can Invite Users")
+    can_set_user_permissions = models.BooleanField(default=False, verbose_name="Can Set User Permissions")
+    can_edit_company_info = models.BooleanField(default=False, verbose_name="Can Edit Company Info")
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(CompanyPermissions, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(
+                self, params={'company': self.company_id,
+                              'user': self.user_id},
+                name='companypermissions')
+        else:
+            RefreshNotifier().notify_model_update(
+                self, params={'company': self.company_id,
+                              'user': self.user_id},
+                name='companypermissions')
+
+    def update_permission(self, permission_name, new_state, save=True):
+        field_name = permission_name.replace("has_", "can_")
+        if not hasattr(self, field_name):
+            raise Exception("Trying to set unknown permission: %s " % permission_name)
+        setattr(self, field_name, new_state)
+        if save:
+            self.save()
+            
+    @classmethod
+    def active_companies_for_user(self, user):
+        cps = self.objects.filter(user=user, is_active_member_of_company=True)
+        return Company.objects.filter(company_permissions__in=cps)
+            
+    @classmethod
+    def ensure_user_belongs_to_company(self, user, company):
+        cp = CompanyPermissions.objects.get_or_create(company=company,
+                                                       user=user)[0]
+        cp.is_active_member_of_company = True
+        cp.save()
+        return cp
+
+    @classmethod
+    def give_all_permissions_to_user(self, user, company):
+        cp = self.ensure_user_belongs_to_company(user=user, company=company)
+        cp.can_invite_users = True
+        cp.can_set_user_permissions = True
+        cp.can_edit_company_info = True
+        cp.save()
+
+    @classmethod
+    def for_user(self, user, company=None, auto_create=True):
+        qs = user.company_permissions
+        if company is not None:
+            qs = qs.filter(company=company)
+
+        bp = qs.first()
+        if bp is None:
+            if auto_create:
+                return self.objects.get_or_create(company=company, user=user)[0]
+            else:
+                return None
+        else:
+            return qs.first()
+
+
+    @classmethod
+    def viewable_users(self, user):
+        """ returns all users that this user could know about, based on which companies they have in common """
+        company_ids = CompanyPermissions.objects.filter(user=user,
+                                                        is_active_member_of_company=True)\
+                                                .values_list('company_id', flat=True)
+
+        return User.objects.filter(company_permissions__company_id__in=company_ids,
+                                   company_permissions__is_active_member_of_company=True)
+        
+    @classmethod
+    def active_users_for_company(self, company_id):
+        return User.objects.filter(company_permissions__company_id=company_id,
+                                   company_permissions__is_active_member_of_company=True).distinct()
+
+    @property
+    def has_is_active_member_of_company(self):
+        return self.is_active_member_of_company
+
+    @property
+    def has_invite_users(self):
+        return self.is_active_member_of_company and self.can_invite_users
+
+    @property
+    def has_set_user_permissions(self):
+        return self.is_active_member_of_company and self.can_set_user_permissions
+
+    @property
+    def has_edit_company_info(self):
+        return self.is_active_member_of_company and self.can_edit_company_info
+    
 class Attribute(BaseModel):
     ATTRIBUTE_TYPES = (
         ('project-type', 'Project Type'),
@@ -162,7 +310,7 @@ class Business(BaseModel):
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
-    impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='businesses')
+    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='businesses')
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
     archived = models.BooleanField(default=False, db_index=True)
 
@@ -3693,7 +3841,7 @@ class UserProfile(BaseModel):
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
-    impd_client = models.ForeignKey(Client, null=True, blank=False, related_name='profiles')
+    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='profiles')
 
     required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
 
@@ -4524,16 +4672,6 @@ class ProjectIssueOrder(BaseModel):
             return None
         return previous['issue']
         
-
-class IssueAttachment(BaseModel):
-    issue = models.ForeignKey(Issue, blank=False, null=False, related_name='attachments')
-    attachment = models.FileField(max_length=255, upload_to=upload_to_attachments, null=False, blank=False)
-    name = models.CharField(max_length=255)
-    content_type = models.CharField(max_length=255, null=True)
-
-    @property
-    def download_url(self):
-        return reverse('download_issue_attachment', kwargs={'issue_attachment_id':self.id})
 
 class RedmineToTimepieceBusinessMapping(BaseModel):
     redmine_business_name = models.CharField(max_length=255)

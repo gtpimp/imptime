@@ -978,6 +978,7 @@ class Feature(BaseModel):
 
     def delete(self):
         super(Feature, self).soft_delete()
+        RefreshNotifier().notify_model_delete(self)
 
     def link_issue_to_testable(self, logged_in_user, issue_id, testable_id):
         testable = self.testables.get(pk=testable_id)

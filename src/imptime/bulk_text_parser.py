@@ -1,5 +1,5 @@
 from emacs_importer.orgnode import makelist_from_file, makelist_from_string
-from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment, IssueAttachment
+from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from datetime import datetime
 from timepiece.models import IssuePoints

@@ -5,6 +5,7 @@ import BulkCreateIssuesToolbarPanel from './BulkCreateIssuesToolbarPanel'
 import BulkCreateFeaturesToolbarPanel from './BulkCreateFeaturesToolbarPanel'
 import CalendarToolbarPanel from './CalendarToolbarPanel'
 import ClockHistoryToolbarPanel from './ClockHistoryToolbarPanel'
+import CompaniesToolbarPanel from './CompaniesToolbarPanel'
 import DecisionJournalToolbarPanel from './DecisionJournalToolbarPanel'
 import ProjectDashboardsToolbarPanel from './ProjectDashboardsToolbarPanel'
 import ProjectDashboardToolbarPanel from './ProjectDashboardToolbarPanel'
@@ -29,7 +30,7 @@ import ProjectStatementToolbarPanel from './ProjectStatementToolbarPanel'
 import ProjectRoadmapToolbarPanel from './ProjectRoadmapToolbarPanel'
 import ProjectWikiToolbarPanel from './ProjectWikiToolbarPanel'
 import UserTimesheetsToolbarPanel from './UserTimesheetsToolbarPanel'
-import { css } from 'react-emotion'
+import { cx, css } from 'react-emotion'
 import { default_theme as theme } from '../../theme/default'
 import { getPageName, getToolbarNames, getToolbarParams } from '../../actions/Page'
 
@@ -71,6 +72,8 @@ class Toolbar extends Component {
         switch(id) {
             case 'company_problem':
                 return <CompanyProblemToolbarPanel key='company_problem' {...this.props} />
+            case 'companies':
+                return <CompaniesToolbarPanel key='companies' {...this.props} />
             case 'features':
                 return <FeaturesToolbarPanel key="features-panel" {...this.props}/>
             case 'flat-features':
@@ -135,7 +138,7 @@ class Toolbar extends Component {
     render() {
         const {panelIds, page_name} = this.props
         return (
-            <div className={ ToolbarDiv }>
+            <div className={cx('main-layout__toolbar', ToolbarDiv)}>
               <div className={left_toolbar}>
                 <p className={ menu_header }>{ page_name }</p>
               </div>

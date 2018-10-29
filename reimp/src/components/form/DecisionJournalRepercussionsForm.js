@@ -16,7 +16,7 @@ class DecisionJournalRepercussionsForm extends Component {
         return (
             <TextAreaField
                 rows={10}
-                maxLength="300"
+                maxLength="3000"
                 className="textarea textarea--text-component textarea--title"
                 placeholder="Repercussions"
                 onChange={input.onChange}

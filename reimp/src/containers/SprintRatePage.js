@@ -25,7 +25,7 @@ import {ensureSprintsLoaded,
         getSprint
 } from '../actions/Sprints'
 import ModalDialog from '../components/ModalDialog'
-import InviteUserForm from '../components/form/InviteUserForm'
+import InviteProjectUserForm from '../components/form/InviteProjectUserForm'
 
 class SprintRatePage extends Component {
 
@@ -88,7 +88,7 @@ class SprintRatePage extends Component {
                          variant="large">
 
               <div>
-                <InviteUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
+                <InviteProjectUserForm project_id={project_id} onChange={that.onSaveInviteUser}/>
               </div>
             </ModalDialog>
         )

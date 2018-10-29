@@ -1,6 +1,8 @@
 export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
 export const LIST_KEY__FEATURE_LIST = 'features'
+export const LIST_KEY__COMPANY_LIST = 'companies'
+export const LIST_KEY__COMPANY_USER_LIST = 'company_users'
 export const LIST_KEY__DECISION_JOURNAL_LIST = 'decision_journals'
 export const LIST_KEY__ISSUE_LIST = 'issues'
 export const LIST_KEY__MY_ISSUE_LIST_DUE_NOW = 'my_issues_due_now'
@@ -40,6 +42,7 @@ export const ENTITY_KEY__ISSUE_HISTORY = 'issue_history'
 export const ENTITY_KEY__PROJECT = 'project'
 export const ENTITY_KEY__SPRINT = 'sprint'
 export const ENTITY_KEY__FEATURE = 'feature'
+export const ENTITY_KEY__COMPANY = 'company'
 export const ENTITY_KEY__DECISION_JOURNAL = 'decision_journal'
 export const ENTITY_KEY__ISSUE = 'issue'
 export const ENTITY_KEY__ISSUE_GENERAL_DETAILS = 'issue_general_details'
@@ -79,6 +82,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__WIKI,
                                   ENTITY_KEY__SPRINT_USER_RATE,
                                   ENTITY_KEY__FEATURE,
+                                  ENTITY_KEY__COMPANY,
                                   ENTITY_KEY__DECISION_JOURNAL,
                                   ENTITY_KEY__CALENDAR_EVENT,
                                   ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT,
@@ -95,6 +99,8 @@ export const PAGE_KEY__PROJECT_ROADMAP_PAGE = 'project_roadmap_page'
 export const PAGE_KEY__PROJECT_USER_PAGE = 'project_user_page'
 export const PAGE_KEY__SPRINTS_PAGE = 'sprints_page'
 export const PAGE_KEY__FEATURES_PAGE = 'features_page'
+export const PAGE_KEY__COMPANIES_PAGE = 'companies_page'
+export const PAGE_KEY__COMPANY_USER_PAGE = 'company_user_page'
 export const PAGE_KEY__DECISION_JOURNALS_PAGE = 'decision_journal_page'
 export const PAGE_KEY__FLAT_FEATURES_PAGE = 'flat_features_page'
 export const PAGE_KEY__SPRINT_TEMPLATES_PAGE = 'sprint_templates_page'
@@ -121,10 +127,14 @@ export const PAGE_KEY__SPRINT_SNAPSHOT_PAGE = 'sprint_snapshot_page'
 export const PAGE_KEY__CLOCK_HISTORY_PAGE = 'clock_history_page'
 
 export const HEADER_LIST_NAME__ISSUE = "issue"
+export const HEADER_LIST_NAME__DUE_ISSUE = "due_issue"
 export const HEADER_LIST_NAME__SPRINT = "sprint"
 export const HEADER_LIST_NAME__FEATURE = "feature"
+export const HEADER_LIST_NAME__COMPANY = "company"
 export const HEADER_LIST_NAME__DECISION_JOURNAL = "decision_journal"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
+export const HEADER_LIST_NAME__INVOICE = "invoice"
+export const HEADER_LIST_NAME__SPRINT_PROPOSAL = "sprint_proposal"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
@@ -154,28 +164,6 @@ export function getCellStyle(s) {
     }
 }
 
-export var INVOICE_HEADER_LIST = {'invoice_number': {label:"Number", width:"auto", flex:1},
-                                  'client_name': {label:'Client', width:'auto', flex:1},
-                                  //'internal_comment': {label:'Comment', width:'auto', flex:1},
-                                  'project_id': {label:'Project', width:'auto', flex:1},
-                                  'sprint_id': {label:'Sprint', width:'auto', flex:1},
-                                  'created': {label:'Created at', width:'auto', flex:1},
-                                  'issued_at': {label:'Issued at', width:'auto', flex:1},
-                                  'payment_due': {label:'Due at', width:'auto', flex:1},
-                                  'paid_at': {label:'Paid at', width:'auto', flex:1},
-                                  'status': {label:'status', width:'auto', flex:1},
-                                  'is_overdue': {label:'Overdue', width:'auto', flex:1},
-                                  'cost_ex_vat': {label:'cost_ex_vat', width:'auto', flex:1},
-                                  'vat': {label:'Vat', width:'auto', flex:1},
-                                  'cost_with_vat': {label:'cost_with_vat', width:'auto', flex:1},
-                                  'amount_paid': {label:'amount_paid', width:'auto', flex:1},
-                                  'amount_written_off': {label:'amount_written_off', width:'auto', flex:1},
-                                  'amount_owed': {label:'amount_owed', width:'auto', flex:1},
-                                  'invoice_note': {label:'Note', width:'auto', flex:1},
-                                  //'footer_terms': {label:'footer_terms', width:'auto', flex:1},
-                                  //'client_order_name': {label:'Order name', width:'auto', flex:1},
-                                  //'client_order_number': {label:'Order number', width:'auto', flex:1}
-}
 
 export var ISSUE_HISTORY_HEADER_LIST = [ {key:'created_by', label:"User", description:"The user who made the change", width:medium_col_width},
                                          {key:'created_at', label:"Date", description:"When the change was made", width:medium_col_width},

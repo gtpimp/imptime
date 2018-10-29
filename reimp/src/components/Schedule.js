@@ -14,7 +14,7 @@ import {
 } from '../actions/Schedules'
 import Timestamp from './Timestamp'
 import OtherUser from './OtherUser'
-import InviteUserForm from '../components/form/InviteUserForm'
+import InviteProjectUserForm from '../components/form/InviteProjectUserForm'
 import ModalDialog from '../components/ModalDialog'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 
@@ -95,7 +95,7 @@ class Schedule extends Component {
                          title="Invite people to this schedule"
                          variant="large">
               <div>
-                <InviteUserForm project_id={project_id} onChange={that.onAddViewableUser}/>
+                <InviteProjectUserForm project_id={project_id} onChange={that.onAddViewableUser}/>
               </div>
             </ModalDialog>
         )
@@ -152,7 +152,7 @@ class Schedule extends Component {
                          title="Invite people to this schedule"
                          variant="large">
               <div>
-                <InviteUserForm project_id={project_id} onChange={that.onAddEditableUser}/>
+                <InviteProjectUserForm project_id={project_id} onChange={that.onAddEditableUser}/>
               </div>
             </ModalDialog>
         )

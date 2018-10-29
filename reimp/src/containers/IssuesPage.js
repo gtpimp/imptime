@@ -30,7 +30,7 @@ import {
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import {getCandidateIssue, getIssues, getIssueHeaderListForCurrentMien} from '../actions/Issues'
+import {getCandidateIssue, getIssues} from '../actions/Issues'
 
 class IssuesPage extends Component {
 
@@ -131,14 +131,13 @@ class IssuesPage extends Component {
     }
 
     renderLeftPane() {
-        const { issue_header_list, sprint_id, filter_sprint_id } = this.props
+        const { sprint_id, filter_sprint_id } = this.props
         if ( filter_sprint_id !== sprint_id ) {
             return null
         }
         return (
             <IssueList list_key={LIST_KEY__ISSUE_LIST}
                        onSelectIssues={this.onSelectIssues}
-                       issue_header_list={issue_header_list}
             />
         )
 
@@ -218,7 +217,6 @@ function mapStateToProps(state, props) {
     const sprint = getSprint(state, sprint_id) || {}
     const candidate_issue = getCandidateIssue(state) || null
     const is_creating_issue = candidate_issue || false
-    const issue_header_list = getIssueHeaderListForCurrentMien(state)
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
     const sidebar_view_mode = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "sidebar_view_mode", "right")
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
@@ -235,7 +233,6 @@ function mapStateToProps(state, props) {
         is_single_selection: selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue,
-        issue_header_list,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
         sidebar_view_mode
     }

@@ -1,9 +1,6 @@
 import logging
 from sprint_serializer import SprintSerializer
-from authentication import get_user_by_token
-from rest_framework.views import APIView
 from rest_framework.renderers import JSONRenderer
-from puppeteer.generator import render_url_to_pdf
 from django.http import HttpResponse
 from base_api import BaseViewSet, PermissionHelper
 from django.db.models import Prefetch, Count, Sum, FloatField, F, ExpressionWrapper
@@ -60,9 +57,6 @@ class SprintViewSet(BaseViewSet):
 
                 sprints = sprints.annotate(num_issues=Count('issues'))
                 sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee = self._enrich_sprint_qs(sprints)
-
-                for sprint in sprints:
-                    sprint.proposal_download_url = SprintSerializer.get_proposal_download_url(request, sprint)
 
                 s = SprintSerializer(sprints, many=True,
                                      estimates_by_sprint_id=estimates_by_sprint_id,
@@ -248,17 +242,3 @@ class SprintViewSet(BaseViewSet):
             qs = qs.filter(project_type__in=sprint_types)
             
         return super(SprintViewSet, self).apply_filter(qs, raw_filter_args)
-
-@permission_classes(())
-class SprintProposalView(APIView):
-    
-    def get(self, request, sprint_id):
-        user = get_user_by_token(request)
-        import pdb; pdb.set_trace()
-        render_url = request.GET['url']
-        sprint = PermissionHelper.allowed_sprints(user).get(pk=sprint_id)
-        response = render_url_to_pdf(request, render_url, "google_test")
-        return response
-    
-        
-        

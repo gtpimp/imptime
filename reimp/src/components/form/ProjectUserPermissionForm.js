@@ -78,7 +78,7 @@ const QUICK_ROLES = { 'owner': [ 'has_delete_project',
                                    'has_view_ctc_rates' ]
 }
 
-class UserPermissionForm extends Component {
+class ProjectUserPermissionForm extends Component {
 
     constructor(props) {
         super(props)
@@ -264,4 +264,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'project_permission_form'})(UserPermissionForm))
+export default connect(mapStateToProps)(reduxForm({form:'project_permission_form'})(ProjectUserPermissionForm))

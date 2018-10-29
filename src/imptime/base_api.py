@@ -9,7 +9,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework import viewsets
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from timepiece.models import Issue, IssueReview, Tag, ProjectRole, Rate
+from timepiece.models import Issue, IssueReview, Tag, ProjectRole, Rate, Company, CompanyPermissions
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Entry as TimesheetEntry
@@ -39,8 +39,8 @@ class PermissionHelper():
     @classmethod
     def allowed_projects(self, user):
         return Project.objects.all()\
-          .filter_by_logged_in_user(user)\
-          .distinct()
+                              .filter_by_logged_in_user(user)\
+                              .distinct()
 
     @classmethod
     def allowed_project_permissions(self, user):
@@ -59,6 +59,7 @@ class BaseViewSet(viewsets.ViewSet):
     def __init__(self, *args, **kwargs):
         super(BaseViewSet, self).__init__(*args, **kwargs)
         self._logged_in_permissions_by_project = {}
+        self._logged_in_permissions_by_company = {}
     
     def error_response(self, ex):
         data = {'status': 'failed', 'error': str(ex)}
@@ -191,7 +192,8 @@ class BaseViewSet(viewsets.ViewSet):
         return self.allowed_timesheet_entries().get(pk=pk)
 
     def allowed_users(self):
-        return ProjectPermissions.viewable_users(self.request.user).distinct()
+        return ProjectPermissions.viewable_users(self.request.user).distinct()\
+            | CompanyPermissions.viewable_users(self.request.user).distinct()
 
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)
@@ -215,6 +217,10 @@ class BaseViewSet(viewsets.ViewSet):
     def allowed_project_permissions(self):
         return PermissionHelper.allowed_project_permissions(self.request.user)
 
+    def allowed_company_permissions(self):
+        return CompanyPermissions.objects.filter(company__in=self.allowed_companies(),
+                                                 is_active_member_of_company=True)
+    
     def allowed_release_notes(self):
         return ReleaseNote.objects.all()
 
@@ -311,6 +317,15 @@ class BaseViewSet(viewsets.ViewSet):
         return CompanyProblem.objects.filter(Q(pk__in=non_sensitive_company_problem_pages.values_list('id', flat=True))|
                                              Q(pk__in=sensitive_company_problems.values_list('id', flat=True)))
 
+
+    def allowed_companies(self):
+        return Company.objects.all()\
+                              .filter(deleted=False)\
+                              .filter_by_logged_in_user(self.request.user)\
+                              .distinct()
+
+    def allowed_company(self, company_id):
+        return self.allowed_companies().get(pk=company_id)
     
     def allowed_miens(self):
         return Mien.objects.filter(user=self.request.user)
@@ -321,6 +336,13 @@ class BaseViewSet(viewsets.ViewSet):
         pup = ProjectPermissions.for_user(self.request.user, project)
         self._logged_in_permissions_by_project[project.id] = pup
         return pup
+
+    def logged_in_company_permissions(self, company):
+        if company.id in self._logged_in_permissions_by_company:
+            return self._logged_in_permissions_by_company[company.id]
+        cp = CompanyPermissions.for_user(self.request.user, company)
+        self._logged_in_permissions_by_company[company.id] = cp
+        return cp
 
     def generate_share_ref(self, m, force=False):
         now = timezone.now()

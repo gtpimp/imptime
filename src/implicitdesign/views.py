@@ -37,6 +37,7 @@ def primary_login(request, template="registration/login.html", context=None):
                             password=form.cleaned_data['password'])
         if user is not None:
             django_login(request, user)
+            RestFrameworkToken.objects.filter(user=user).delete()
             RestFrameworkToken.objects.get_or_create(user=user)
             return HttpResponseRedirect(request.GET.get('next', "/"))
         else:

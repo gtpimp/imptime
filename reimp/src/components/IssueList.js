@@ -52,11 +52,12 @@ import {
     ungroupIssuesIntoFeature,
     getCandidateIssue,
     ensureIssuesLoaded,
-    getAllAvailableIssueHeaders,
-    updateIssueMienHeaders,
-    getIssueHeaderListForMien,
-    deleteIssues
+    deleteIssues,
+    ALL_AVAILABLE_ISSUE_HEADERS,
 } from '../actions/Issues'
+import {
+    HEADER_LIST_NAME__ISSUE
+ } from '../actions/ItemListKeyRegistry'
 import { ensureTagsLoaded } from '../actions/Tags'
 import DeleteIssue from './DeleteIssue'
 import DivTableCell from './DivTableCell'
@@ -450,12 +451,12 @@ class IssueList extends Component {
         )
     }
 
-    renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { sprint, issue_items, header_list, logged_in_user_id, selected_items,
+    renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex, activeHeaders}) => {
+        const { sprint, issue_items, logged_in_user_id, selected_items,
                 tag_category_names, all_tags_by_id, logged_in_user_can_estimate_user_id } = this.props
         const key = `issue_${columnIndex}_${rowIndex}`
         const that = this
-        const header = header_list[columnIndex]
+        const header = activeHeaders[columnIndex]
         const header_key = header.key
         const item = issue_items[rowIndex]
         if ( item.type === "candidate" ) {
@@ -852,14 +853,9 @@ class IssueList extends Component {
         )
     }
 
-    getColumnWidth = ({index}) => {
-        const { header_list } = this.props
-        return header_list[index].maxWidth
-    }
-
     render_grid() {
 
-        const { is_mien_configurer_active, header_list, is_visible,
+        const { is_mien_configurer_active, all_headers, header_list_name, is_visible,
                 issue_items, selected_ids, table_params } = this.props
 
         if (!is_visible) {
@@ -892,15 +888,12 @@ class IssueList extends Component {
          * })*/
 
         return (
-              <CommonTable getAvailableHeaders={getAllAvailableIssueHeaders}
-                           getHeaderListForMien={getIssueHeaderListForMien}
+              <CommonTable all_headers={all_headers}
+                           header_list_name={header_list_name}
                            onRowSelected={this.onClickedIssue}
                            onRowReordered={this.reorderIssue}
-                           updateMienHeaders={updateIssueMienHeaders}
-                           header_list_name="issue"
                            items={issue_items}
                            selected_item_ids={selected_ids}
-                           header_list={header_list}
                            renderCell={this.renderCell}
                            table_params={table_params}
               />
@@ -946,7 +939,7 @@ const makeMapStateToProps = () => {
     const selIssues = makeSelIssues()
     const selIssueObjectsToRender = makeSelIssueObjectsToRender()
     const mapStateToProps = (state, props) => {
-        const {list_key, issue_header_list, table_params, onAction} = props
+        const {list_key, table_params, onAction, custom_issue_header_list, custom_issue_header_list_name} = props
         const filter = getListFilter(state, list_key)
         const sprint_id = filter.sprint_id || null
         const sprint = getSprint(state, sprint_id) || {}
@@ -973,6 +966,8 @@ const makeMapStateToProps = () => {
         const logged_in_user_id = logged_in_user().user_id
         const logged_in_user_can_estimate_user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
         const issue_ids = selIssueIds(state, props)
+        const all_headers = custom_issue_header_list || ALL_AVAILABLE_ISSUE_HEADERS
+        const header_list_name = custom_issue_header_list_name || HEADER_LIST_NAME__ISSUE
 
         return {
             list_key: list_key,
@@ -1001,14 +996,15 @@ const makeMapStateToProps = () => {
             is_creating_issue: is_creating_issue,
             expanded_issues: expanded_issues,
             autoexpanded_feature_ids,
-            header_list: issue_header_list,
             tag_ids,
             all_tags_by_id,
             tag_category_names,
             logged_in_user_id,
             logged_in_user_can_estimate_user_id,
             table_params,
-            onAction
+            onAction,
+            all_headers,
+            header_list_name
         }
     }
     return mapStateToProps

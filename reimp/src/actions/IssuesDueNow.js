@@ -9,12 +9,6 @@ import { map, compact, forEach, filter, includes } from 'lodash'
 import difference from 'lodash/difference'
 import { getUser } from '../actions/Users'
 import {
-    updateMienHeaders,
-    getHeaderListForCurrentMien,
-    getHeaderListForMien
-} from '../actions/Mien'
-
-import {
     invalidateAllItems,
     invalidateItems,
     fetchItemsIfNeeded,
@@ -522,25 +516,5 @@ export function startMinutesEditor(project_id, on_done) {
     
     return itemPost(ENTITY_KEY__ISSUE, ["minutes_for_"+project_id], url,
                     field_name, field_value, method, data, on_post_done)
-}
-
-export function updateIssueMienHeaders(mien_id, headers) {
-    return updateMienHeaders(mien_id, HEADER_LIST_NAME__ISSUE, headers)
-}
-
-export function getIssueHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__ISSUE) || getDefaultIssueHeaders()
-}
-
-export function getIssueHeaderListForCurrentMien(state) {
-    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__ISSUE) || getDefaultIssueHeaders()
-}
-
-export function getDefaultIssueHeaders() {
-    return DEFAULT_ISSUE_HEADERS
-}
-
-export function getAllAvailableIssueHeaders() {
-    return ALL_AVAILABLE_ISSUE_HEADERS
 }
 

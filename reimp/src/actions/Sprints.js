@@ -1,17 +1,12 @@
 import { impfetch } from './lib.js'
-import { keyBy, filter, includes } from 'lodash'
+import { keyBy } from 'lodash'
 import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
 import {
     ENTITY_KEY__SPRINT,
-    HEADER_LIST_NAME__SPRINT,
     small_col_width,
+    medium_col_width,
     large_col_width
 } from './ItemListKeyRegistry'
-import {
-    updateMienHeaders,
-    getHeaderListForCurrentMien,
-    getHeaderListForMien
-} from '../actions/Mien'
 
 export const ANNOUNCE_SPRINTS_SAVING = 'ANNOUNCE_SPRINTS_SAVING'
 export const ANNOUNCE_SPRINTS_SAVED = 'ANNOUNCE_SPRINTS_SAVED'
@@ -34,31 +29,30 @@ export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
 export const ANNOUNCE_CLONE_SPRINT_FAILED = 'ANNOUNCE_CLONE_SPRINT_FAILED'
 
-export var ALL_AVAILABLE_SPRINT_HEADERS =
-    [ {key:'name', label:'name', description:'Name', width:large_col_width},
-      {key:'ref', label:'Ref', description:'Reference', width:small_col_width},
+export const ALL_AVAILABLE_SPRINT_HEADERS =
+    [ {key:'name', label:'name', description:'Name', width:large_col_width, is_default:true},
+      {key:'ref', label:'Ref', description:'Reference', width:small_col_width, is_default:true},
       {key:'number', label:'number', description:'Number', width:small_col_width},
-      {key:'state_summary', label:'State Summary', description:'State summary indicating problems', width:large_col_width},
+      {key:'state_summary', label:'State Summary', description:'State summary indicating problems', width:large_col_width, is_default:true},
       {key:'start_time', label:"First clock", description:"First clocked time on this sprint", width:small_col_width},
       {key:'end_time', label:"Last clock", description:"Last clocked time on this sprint", width:small_col_width},
-      {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width},
+      {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width, is_default:true},
       {key:'num_testable_issues', label:"Testable issues", description:"Number of testable issues", width: small_col_width},
       {key:'has_dev_started', label:"Has dev started", description:"Has time been clocked by the assigned user on any testable issue", width:small_col_width},
-      {key:'status', label:"Status", description:"Sprint status", width:small_col_width},
+      {key:'status', label:"Status", description:"Sprint status", width:small_col_width, is_default:true},
       {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
       {key:'hours_by_assignee', label:"Total clocked hours by assignee", description:"Total actual hours by the assigned user across all testable issues", width:small_col_width},
       {key:'estimates_by_assignee', label:"Total estimated hours by assignee", description:"Total estimated hours by the assigned user across all testable issues", width:small_col_width},
       {key:'open_estimates_by_assignee', label:"Total open estimated hours by assignee", description:"Total estimated hours by the assigned user across open testable issues", width:small_col_width},
     ]
 
-const DEFAULT_SPRINT_HEADERS_KEYS = ["ref",
-                                     "name",
-                                     "status",
-                                     "num_issues",
-                                     "state_summary"
-                                     ]
-const DEFAULT_SPRINT_HEADERS = filter(ALL_AVAILABLE_SPRINT_HEADERS, (header) => includes(DEFAULT_SPRINT_HEADERS_KEYS, header.key))
-
+export const ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS = [
+    {key:'number', label:'Number', description:'Number', width:small_col_width, is_default:true},
+    {key:'name', label:'Name', description:'Name', width:"auto", flex:1, is_default:true},
+    {key:'estimates_by_assignee', label:"Hours", description:"Total estimated hours by the assigned user", width:small_col_width, is_default:true},
+    {key:'cost_by_assignee', label:"Cost", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
+    {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
+]
 
 export function invalidateAllSprints() {
     return {
@@ -381,24 +375,4 @@ export function cloneTemplateSprint(sprint_id, onDone) {
 
 export function is_sprint_invalidated(state, sprint_id) {
     return (((state.sprint || {}).invalidated_item_ids) || []).indexOf(sprint_id) !== -1
-}
-
-export function updateSprintMienHeaders(mien_id, headers) {
-    return updateMienHeaders(mien_id, HEADER_LIST_NAME__SPRINT, headers)
-}
-
-export function getSprintHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__SPRINT) || getDefaultSprintHeaders()
-}
-
-export function getSprintHeaderListForCurrentMien(state) {
-    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__SPRINT) || getDefaultSprintHeaders()
-}
-
-export function getDefaultSprintHeaders() {
-    return DEFAULT_SPRINT_HEADERS
-}
-
-export function getAllAvailableSprintHeaders() {
-    return ALL_AVAILABLE_SPRINT_HEADERS
 }

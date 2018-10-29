@@ -59,6 +59,7 @@ class Navbar extends Component {
                                  `}>
 
                 <NavTab to="/projects" label="Projects" />
+                <NavTab to="/companies" label="Companies" />
               </div>
               <NavbarRightDiv>
                 <NavTab variant="component_handled">
@@ -88,44 +89,7 @@ class Navbar extends Component {
                     <Link to='/schedule'>All calendars</Link>
                   </PopupPanelLink>
                 </NavTab>               
-                <NavTab variant="dashboard-toggle" label="Company" >
-
-                  <PopupPanelHeading>
-                    Checklists
-                  </PopupPanelHeading>
-                  <PopupPanelLink>
-                    <Link to='/company/problems'>Problems</Link>
-                  </PopupPanelLink>
-
-                  <PopupPanelHeading>
-                    Time
-                  </PopupPanelHeading>
-                  <PopupPanelLink>
-                    <Link to='/company/billable_hours'>Billable hours</Link>
-                  </PopupPanelLink>
-                  <PopupPanelLink>
-                    <Link to="/usertimesheets">Timesheets</Link>
-                  </PopupPanelLink>
-
-                  <PopupPanelHeading>
-                    Summaries
-                  </PopupPanelHeading>
-                  <PopupPanelLink>
-                    <Link to="/work_summary">Daily work summary</Link>
-                  </PopupPanelLink>
-                  <PopupPanelLink>
-                    <Link to="/dashboard">Dashboard</Link>
-                  </PopupPanelLink>
-
-                  <PopupPanelHeading>
-                    Finance
-                  </PopupPanelHeading>
-                  <PopupPanelLink>
-                    <Link to='/invoices'>Invoices</Link>
-                  </PopupPanelLink>
-
-                </NavTab>
-
+                
                 <NavTab variant="dashboard-toggle" label="Bookmarks">
                   <BookmarkSelector/>
                 </NavTab>

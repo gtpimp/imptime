@@ -6,13 +6,14 @@ import '../../sass/toolbar-panel.css'
 import {
     PAGE_KEY__SPRINT_PROPOSAL_PAGE
 } from '../../actions/ItemListKeyRegistry'
+import { printCurrentPage } from '../../actions/Print'
 
 class SprintProposalToolbarPanel extends Component {
 
     onPrint = (evt) => {
-        const { sprint } = this.props
+        const { dispatch, sprint } = this.props
         evt.preventDefault()
-        window.open(sprint.proposal_download_url + "&url=" + window.location.pathname)
+        dispatch(printCurrentPage(`Proposal_${sprint.name}`))
     }
     
     render() {

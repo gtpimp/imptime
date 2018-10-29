@@ -9,6 +9,26 @@ import {
     getItems,
 } from '../actions/Item'
 
+export var ALL_AVAILABLE_INVOICE_HEADERS = [{key:'invoice_number', label:"Number", width:"auto", flex:1, is_default: true},
+                                            {key:'client_name', label:'Client', width:'auto', flex:1, is_default: true},
+                                            {key:'internal_comment', label:'Comment', width:'auto', flex:1},
+                                            {key:'project_id', label:'Project', width:'auto', flex:1, is_default: true},
+                                            {key:'sprint_id', label:'Sprint', width:'auto', flex:1, is_default: true},
+                                            {key:'created', label:'Created at', width:'auto', flex:1},
+                                            {key:'issued_at', label:'Issued at', width:'auto', flex:1},
+                                            {key:'payment_due', label:'Due at', width:'auto', flex:1, is_default: true},
+                                            {key:'paid_at', label:'Paid at', width:'auto', flex:1},
+                                            {key:'status', label:'Status', width:'auto', flex:1, is_default: true},
+                                            {key:'is_overdue', label:'Overdue', width:'auto', flex:1, is_default: true},
+                                            {key:'cost_ex_vat', label:'Cost exVAT', width:'auto', flex:1, is_default: true},
+                                            {key:'vat', label:'Vat', width:'auto', flex:1, is_default: true},
+                                            {key:'cost_with_vat', label:'Cost with VAT', width:'auto', flex:1, is_default: true},
+                                            {key:'amount_paid', label:'Paid', width:'auto', flex:1, is_default: true},
+                                            {key:'amount_written_off', label:'Written off', width:'auto', flex:1},
+                                            {key:'amount_owed', label:'Owed', width:'auto', flex:1},
+                                            {key:'invoice_note', label:'Note', width:'auto', flex:1},
+]
+
 export function invalidateAllInvoices() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__INVOICE))

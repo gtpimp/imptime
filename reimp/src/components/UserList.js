@@ -56,7 +56,7 @@ class UserList extends Component {
 
 function mapStateToProps(state, props) {
     const {user} = state
-    const {project_id, invited_user_ids, user_ids, user_actions} = props
+    const {invited_user_ids, user_ids, user_actions} = props
     const all_items_by_id = (user && user.items_by_id) || {} 
 
     const items_to_display = (all_items_by_id && user_ids.map(function (visible_item_id, index) {
@@ -70,11 +70,9 @@ function mapStateToProps(state, props) {
     const is_inviting_user = invite_user || false
 
     return {
-        project_id,
         users: items_to_display,
         user_ids: map(items_to_display, 'id'),
         has_items: items_to_display && items_to_display.length > 0,
-        is_visible: project_id || false,
         invite_user,
         is_inviting_user,
         invited_user_ids,

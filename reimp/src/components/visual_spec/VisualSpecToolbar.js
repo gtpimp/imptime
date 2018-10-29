@@ -10,6 +10,7 @@ import {default_theme as theme} from '../../theme/default'
 import IconButton from '../IconButton'
 import download_icon from '../../images/material-icons-black-download.png'
 import delete_icon from '../../images/delete_outline.svg'
+import { downloadUrl } from '../../actions/Print.js'
 
 class VisualSpecToolbar extends Component {
 
@@ -28,9 +29,9 @@ class VisualSpecToolbar extends Component {
     }
 
     onDownload = (evt) => {
-        const { visual_spec_document } = this.props
+        const { dispatch, visual_spec_document } = this.props
         evt.preventDefault()
-        window.open(visual_spec_document.download_url)
+        dispatch(downloadUrl(visual_spec_document.download_url))
     }
 
     onDelete = (evt) => {

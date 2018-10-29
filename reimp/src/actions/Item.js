@@ -487,3 +487,13 @@ export function getLoadingItemIds(state, entity_key, item_ids) {
 export function isLoadingItems(state, entity_key, item_ids) {
     return getLoadingItemIds(state, entity_key, item_ids).length > 0
 }
+
+export function customUpdate(entity_key, updateFunc, params) {
+    // Typically create updateFunc in a custom reducers file
+    return {
+        type: PERFORM_CUSTOM_MANIPULATION,
+        func: updateFunc,
+        entity_key: entity_key,
+        params: params
+    }
+}

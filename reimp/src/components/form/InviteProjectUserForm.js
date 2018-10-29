@@ -8,7 +8,7 @@ import SingleValueSelector from './SingleValueSelector'
 //import SearchInput from '../SearchInput'
 import '../../sass/invite-user-form.css'
 
-class InviteUserForm extends Component {
+class InviteProjectUserForm extends Component {
 
     constructor(props) {
         super(props)
@@ -97,4 +97,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form: 'invite_user_form'})(InviteUserForm))
+export default connect(mapStateToProps)(reduxForm({form: 'invite_user_form'})(InviteProjectUserForm))

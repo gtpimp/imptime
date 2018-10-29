@@ -64,7 +64,8 @@ export default function page(state = initialState, action) {
                 issue_ids: action.issue_ids || l.issue_ids || null,
                 wiki_ids: action.wiki_ids || l.wiki_ids || null,
                 feature_ids: action.feature_ids || l.feature_ids || null,
-                decision_journal_ids: action.decision_journal_ids || l.decision_journal_ids || null
+                decision_journal_ids: action.decision_journal_ids || l.decision_journal_ids || null,
+                company_ids: action.company_ids || l.company_ids || null
             })
             
             return state_copy;

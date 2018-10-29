@@ -4,7 +4,6 @@ import { updateVisibleItemIdAbove, setItemFlag } from './ItemList'
 import {
     ENTITY_KEY__ISSUE,
     ENTITY_KEY__TAG,
-    HEADER_LIST_NAME__ISSUE,
     medium_col_width,
     small_col_width,
     tiny_col_width,
@@ -13,12 +12,6 @@ import {
 import { map, compact, forEach, filter, includes } from 'lodash'
 import difference from 'lodash/difference'
 import { getUser } from '../actions/Users'
-import {
-    updateMienHeaders,
-    getHeaderListForCurrentMien,
-    getHeaderListForMien
-} from '../actions/Mien'
-
 import {
     invalidateAllItems,
     invalidateItems,
@@ -47,28 +40,26 @@ export const ANNOUNCE_BULK_CREATING_ISSUES = 'ANNOUNCE_BULK_CREATING_ISSUES'
 export const ANNOUNCE_BULK_CREATING_ISSUES_FAILED = 'ANNOUNCE_BULK_CREATING_ISSUES_FAILED'
 export const ANNOUNCE_BULK_CREATED_ISSUES = 'ANNOUNCE_BULK_CREATED_ISSUES'
 
-const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", description:"Issue number", width:"50px"},
-                                      {key:'issue_type', label:'', description:"Icon showing the issue type", width:tiny_col_width},
-                                      {key:'attachment', label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width},
-                                      {key:'problems', label:'', description:"Icon showing if the issue has problems", width:tiny_col_width},
-                                      {key:'expand_feature', label:'', description:"Icon to allow expanding feature issues", width:tiny_col_width},
-                                      {key:'name', label:"Name", description:"Issue subject", width:"auto", flex:1},
-                                      {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
-                                      {key:'created_at', label:"Created at", description:"Creation date", width:medium_col_width},
-                                      {key:'status', label:"Status", description:"Status",  width:medium_col_width},
-                                      {key:'tag_columns', label:"Tag Columns", description:"Columns for each tag", width:medium_col_width},
-                                      {key:'my_estimate', label:"My Estimate", description:"My time estimate", width:small_col_width},
-                                      {key:'estimate_summary', label:"Time", description:"Condensed summary of all times", width:medium_col_width},
-                                      {key:'estimate_columns', label:"Estimates", description:"Columns for each user", width:medium_col_width},
-                                      {key:'small_delete', label:"", description:"Delete issue", width:tiny_col_width},
-                                      {key:'view_in_sprint', label:"", description:"View in sprint", width:tiny_col_width},
+export const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", description:"Issue number", width:"50px", is_default:true},
+                                             {key:'issue_type', label:'', description:"Icon showing the issue type", width:tiny_col_width, is_default:true},
+                                             {key:'attachment', label:'', description:"Icon showing if the issue has an attachment", width:tiny_col_width, is_default:true},
+                                             {key:'problems', label:'', description:"Icon showing if the issue has problems", width:tiny_col_width, is_default:true},
+                                             {key:'expand_feature', label:'', description:"Icon to allow expanding feature issues", width:tiny_col_width},
+                                             {key:'name', label:"Name", description:"Issue subject", width:"auto", flex:1, is_default:true},
+                                             {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width, is_default:true},
+                                             {key:'created_at', label:"Created at", description:"Creation date", width:medium_col_width},
+                                             {key:'status', label:"Status", description:"Status",  width:medium_col_width, is_default:true},
+                                             {key:'tag_columns', label:"Tag Columns", description:"Columns for each tag", width:medium_col_width, is_default:true},
+                                             {key:'my_estimate', label:"My Estimate", description:"My time estimate", width:small_col_width},
+                                             {key:'estimate_summary', label:"Time", description:"Condensed summary of all times", width:medium_col_width, is_default:true},
+                                             {key:'estimate_columns', label:"Estimates", description:"Columns for each user", width:medium_col_width},
+                                             {key:'small_delete', label:"", description:"Delete issue", width:tiny_col_width, is_default:true},
+                                             {key:'view_in_sprint', label:"", description:"View in sprint", width:tiny_col_width},
 ]
 
-const DEFAULT_ISSUE_HEADERS_KEYS = ["number", "issue_type", "attachment", "name", "assignee", "status", "estimate_summary", "tag_columns", "small_delete"]
-const DEFAULT_ISSUE_HEADERS = filter(ALL_AVAILABLE_ISSUE_HEADERS, (header) => includes(DEFAULT_ISSUE_HEADERS_KEYS, header.key))
 
 const DEFAULT_POPUP_ISSUE_HEADER_KEYS = ["name", "view_in_sprint", "status"]
-const DEFAULT_POPUP_ISSUE_HEADERS = filter(ALL_AVAILABLE_ISSUE_HEADERS, (header) => includes(DEFAULT_POPUP_ISSUE_HEADER_KEYS, header.key))
+export const ALL_AVAILABLE_POPUP_ISSUE_HEADERS = filter(ALL_AVAILABLE_ISSUE_HEADERS, (header) => includes(DEFAULT_POPUP_ISSUE_HEADER_KEYS, header.key))
 
 export function invalidateAllIssues() {
     return (dispatch, getState) => {
@@ -555,28 +546,4 @@ export function startMinutesEditor(project_id, on_done) {
     
     return itemPost(ENTITY_KEY__ISSUE, ["minutes_for_"+project_id], url,
                     field_name, field_value, method, data, on_post_done)
-}
-
-export function updateIssueMienHeaders(mien_id, headers) {
-    return updateMienHeaders(mien_id, HEADER_LIST_NAME__ISSUE, headers)
-}
-
-export function getIssueHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__ISSUE) || getDefaultIssueHeaders()
-}
-
-export function getIssueHeaderListForCurrentMien(state) {
-    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__ISSUE) || getDefaultIssueHeaders()
-}
-
-export function getDefaultIssueHeaders() {
-    return DEFAULT_ISSUE_HEADERS
-}
-
-export function getAllAvailableIssueHeaders() {
-    return ALL_AVAILABLE_ISSUE_HEADERS
-}
-
-export function getDefaultPopupIssueHeaders() {
-    return DEFAULT_POPUP_ISSUE_HEADERS
 }

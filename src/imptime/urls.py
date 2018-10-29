@@ -2,12 +2,13 @@ from django.conf.urls import include, url
 import annotated_visual_spec_document_api
 import auth_api
 import billable_hours_statement_api
+import company_api
+import company_user_permission_api
 import cost_summary_api
 import decision_journal_api
 import estimate_summary_api
 import filter_api
 import issue_api
-import issue_attachment_api
 import clock_api
 import invoice_api
 import issue_comment_api
@@ -20,6 +21,7 @@ import nudge_api
 import company_problem_api
 import schedule_api
 import schedule_item_api
+import print_api
 import project_api
 import project_dashboard_api
 import project_statement_api
@@ -44,7 +46,6 @@ import visual_spec_issue_api
 import visual_spec_annotation_api
 import wiki_api 
 from rest_framework.routers import DefaultRouter
-from issue_attachment_download import IssueAttachmentDownloadView, IssueAttachmentPreviewView
 from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
 from visual_spec_document_download import VisualSpecDocumentHiresView
 
@@ -57,6 +58,8 @@ router.register(r'billable_hours_statement', billable_hours_statement_api.Billab
                 base_name='billable_hours_statement')
 router.register(r'permission/project', project_user_permission_api.ProjectUserPermissionViewSet,
                 base_name='project_permission')
+router.register(r'permission/company', company_user_permission_api.CompanyUserPermissionViewSet,
+                base_name='company_permission')
 router.register(r'rate/sprint', sprint_user_rate_api.SprintUserRateViewSet,
                 base_name='sprint_user_rate')
 router.register(r'project', project_api.ProjectViewSet,
@@ -79,8 +82,6 @@ router.register(r'feature', feature_api.FeatureViewSet,
                 base_name='feature')
 router.register(r'issue/comment', issue_comment_api.IssueCommentViewSet,
                 base_name='issue_comment')
-router.register(r'issue/attachment', issue_attachment_api.IssueAttachmentViewSet,
-                base_name='issue_attachment')
 router.register(r'issue/estimate', issue_estimate_api.IssueEstimateViewSet,
                 base_name='issue_estimate')
 router.register(r'issue_history', issue_history_api.IssueHistoryViewSet,
@@ -125,6 +126,8 @@ router.register(r'multiple_issue_summary', multiple_issue_summary_api.MultipleIs
                 base_name='multiple_issue_summary_api')
 router.register(r'filter', filter_api.FilterViewSet,
                 base_name='filter')
+router.register(r'company', company_api.CompanyViewSet,
+                base_name='company')
 router.register(r'sprint_cost_summary', cost_summary_api.CostSummaryViewSet,
                 base_name='sprint_cost_summary')
 router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
@@ -147,11 +150,9 @@ router.register(r'work_summary', work_summary_api.WorkSummaryViewSet,
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^login/', auth_api.LoginViewSet.as_view()),
-    url(r'^issue/attachment/(?P<attachment_id>.*)/preview', IssueAttachmentPreviewView.as_view(), name='preview_attachment'),
-    url(r'^issue/attachment/(?P<attachment_id>.*)/download', IssueAttachmentDownloadView.as_view(), name='download_attachment'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/download', VisualSpecDocumentDownloadView.as_view(), name='download_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/hires', VisualSpecDocumentHiresView.as_view(), name='hires_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/preview', VisualSpecDocumentPreviewView.as_view(), name='preview_visual_spec_document'),
-    url(r'^sprint/(?P<sprint_id>.*)/downloadProposal/', sprint_api.SprintProposalView.as_view(), name='sprint_proposal'),
+    url(r'^pdf/(?P<filename>.*)/', print_api.PrintViewSet.as_view(), name='print_pdf'),
 
 ] + router.urls

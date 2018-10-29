@@ -7,10 +7,10 @@ import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import Pluralize from 'react-pluralize'
 import { logged_in_user } from '../actions/Auth'
 import CommonTree from './CommonTree'
-import DivTableCell from './DivTableCell'
 import ProgressBar from './ProgressBar'
 import Hours from './Hours'
-import 'react-virtualized/styles.css';
+import 'react-virtualized/styles.css'
+import { HEADER_LIST_NAME__FEATURE } from '../actions/ItemListKeyRegistry'
 import {
     makeSelFeatureIds,
     makeSelFeaturesById,
@@ -33,12 +33,10 @@ import {
 import {
     fetchFeaturesIfNeeded,
     getCandidateFeature,
-    getAllAvailableFeatureHeaders,
-    updateFeatureMienHeaders,
-    getFeatureHeaderListForMien,
     updateFeaturePosition,
     expandFeatureInTree,
     cancelCandidateFeature,
+    ALL_AVAILABLE_FEATURE_HEADERS
 } from '../actions/Features'
 
 class FeatureList extends Component {
@@ -82,51 +80,6 @@ class FeatureList extends Component {
         if ( node ) {
             dispatch(expandFeatureInTree(node.id, expanded))
         }
-    }
-    
-    renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex}) => {
-        const { feature_items, header_list } = this.props
-        const key = `feature_${columnIndex}_${rowIndex}`
-        const item = feature_items[rowIndex]
-        const feature = item.feature
-        let content = null
-        const header = header_list[columnIndex]
-        const header_key = header.key
-
-        if ( item.type === "candidate" ) {
-            return  (
-                <DivTableCell key={key}
-                              extra_style={css`background-color:${theme.colours.new_item_background}`}>
-                  { header_key === "name" && "Creating feature..." }
-                  { header_key !== "name" && <span>&nbsp;</span> }
-                </DivTableCell>
-            )
-        }
-        
-        switch(header_key) {
-            case "number":
-                content = (
-                    <DivTableCell key={key} >
-                      <div>{feature.number}</div>
-                    </DivTableCell>
-                )
-                break
-            case "name":
-                content = (
-                    <DivTableCell key={header_key} >
-                      {feature.name}
-                    </DivTableCell>
-                )
-                break
-            default:
-                console.error("Unknown header: " + header_key)
-        }
-        return content
-    }
-
-    getColumnWidth = ({index}) => {
-        const { header_list } = this.props
-        return header_list[index].maxWidth
     }
 
     renderFeatureIcons = (rowInfo) => {
@@ -226,7 +179,7 @@ class FeatureList extends Component {
 
     render_tree() {
 
-        const { is_mien_configurer_active, header_list, features_by_id,
+        const { is_mien_configurer_active, features_by_id, all_headers,
                 feature_items, selected_ids, features_as_structured_tree } = this.props
 
         if ( is_mien_configurer_active ) {
@@ -245,16 +198,12 @@ class FeatureList extends Component {
 
             <CommonTree items={features_as_structured_tree}
                         items_by_id={features_by_id}
-                        //onChange={this.onUpdateTree}
                         onReorder={this.onReorder}
                         renderIcons={this.renderFeatureIcons}
                         onNodeSelected={this.onSelectedFeature}
                         onExpandCollapse={this.onExpandCollapse}
-                        getAvailableHeaders={getAllAvailableFeatureHeaders}
-                        getHeaderListForMien={getFeatureHeaderListForMien}
-                        updateMienHeaders={updateFeatureMienHeaders}
-                        header_list={header_list}
-                        header_list_name="feature"
+                        all_headers={all_headers}
+                        header_list_name={HEADER_LIST_NAME__FEATURE}
                         selected_item_ids={selected_ids}
             >
               {this.renderFeature}
@@ -278,7 +227,7 @@ const makeMapStateToProps = () => {
     const selFeatureObjectsToRender = makeSelFeatureObjectsToRender()
     const selFeaturesAsStructuredTree = makeSelFeaturesAsStructuredTree()
     const mapStateToProps = (state, props) => {
-        const {list_key, header_list, onSelectFeatures} = props
+        const {list_key, onSelectFeatures} = props
         const filter = getListFilter(state, list_key)
         const project_id = filter.project_id || null
         const project = getProject(state, project_id) || {}
@@ -319,7 +268,7 @@ const makeMapStateToProps = () => {
             last_updated: getLastUpdated(state, list_key),
             candidate_feature: candidate_feature,
             is_creating_feature: is_creating_feature,
-            header_list: header_list,
+            all_headers: ALL_AVAILABLE_FEATURE_HEADERS,
             logged_in_user_id,
             onSelectFeatures
         }

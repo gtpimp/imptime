@@ -1,8 +1,6 @@
 import { impfetch } from './lib.js'
-import { filter, includes } from 'lodash'
 import {
     ENTITY_KEY__NUDGE,
-    HEADER_LIST_NAME__NUDGE,
     medium_col_width,
     small_col_width,
     large_col_width
@@ -26,20 +24,15 @@ import {
     itemPost
 } from '../actions/Item'
 import { updateVisibleItemIdAbove } from './ItemList'
-import {
-    updateMienHeaders,
-    getHeaderListForCurrentMien,
-    getHeaderListForMien
-} from '../actions/Mien'
 
 export var ALL_AVAILABLE_NUDGE_HEADERS =
-    [ {key:'select', label:'', description:'Select', width:small_col_width},
-      {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width},
-      {key:'description', label:'Description', description:'Description of the nudge', width:large_col_width},
+    [ {key:'select', label:'', description:'Select', width:small_col_width, is_default:true},
+      {key:'reason', label:'Reason', description:'Reason for the nudge', width:medium_col_width, is_default:true},
+      {key:'description', label:'Description', description:'Description of the nudge', width:large_col_width, is_default:true},
       {key:'user', label:'User', description:'User', width:small_col_width},
-      {key:'project', label:'Project', description:'Project', width:small_col_width},
-      {key:'sprint', label:'Sprint', description:'Sprint', width:large_col_width},
-      {key:'issue', label:'Issue', description:'Issue', width:large_col_width},
+      {key:'project', label:'Project', description:'Project', width:small_col_width, is_default:true},
+      {key:'sprint', label:'Sprint', description:'Sprint', width:large_col_width, is_default:true},
+      {key:'issue', label:'Issue', description:'Issue', width:large_col_width, is_default:true},
       {key:'issue_status', label:'Issue status', description:'Status', width:medium_col_width},
       {key:'estimated_start_at', label:'Start at', description:'Estimated start date', width:small_col_width},
       {key:'estimated_end_at', label:'End at', description:'Estimated end date', width:small_col_width},
@@ -48,12 +41,8 @@ export var ALL_AVAILABLE_NUDGE_HEADERS =
       {key:'due_date_reason', label:'Due date reason', description:'Why this nudge should be resolved at the due date', width:large_col_width},
       {key:'modified', label:'Refreshed at', description:'When this nudge was last refreshed ', width:medium_col_width},
       {key:'out_of_sequence_warning', label:'Out of sequence', description:'Indicates if there are more important issues in this sprint to be attended to', width:small_col_width},
-      {key:'actions', label:'Actions', description:'Action buttons', width:medium_col_width},
+      {key:'actions', label:'Actions', description:'Action buttons', width:medium_col_width, is_default:true}
     ]
-
-const DEFAULT_NUDGE_HEADERS_KEYS = ["select", "actions", "reason", "project", "sprint", "issue", "description"]
-const DEFAULT_NUDGE_HEADERS = filter(ALL_AVAILABLE_NUDGE_HEADERS, (header) => includes(DEFAULT_NUDGE_HEADERS_KEYS, header.key))
-
 
 export function invalidateAllNudges() {
     return (dispatch, getState) => {
@@ -156,24 +145,4 @@ export function convertIssuesToNudges(schedule_id, issue_ids) {
 
 export function isRecalculatingNudges(state) {
     return getGlobalEntityFlag(ENTITY_KEY__NUDGE, state, "recalculating") === true
-}
-
-export function updateNudgeMienHeaders(mien_id, headers) {
-    return updateMienHeaders(mien_id, HEADER_LIST_NAME__NUDGE, headers)
-}
-
-export function getNudgeHeaderListForMien(mien) {
-    return getHeaderListForMien(mien, HEADER_LIST_NAME__NUDGE) || getDefaultNudgeHeaders()
-}
-
-export function getNudgeHeaderListForCurrentMien(state) {
-    return getHeaderListForCurrentMien(state, HEADER_LIST_NAME__NUDGE) || getDefaultNudgeHeaders()
-}
-
-export function getDefaultNudgeHeaders() {
-    return DEFAULT_NUDGE_HEADERS
-}
-
-export function getAllAvailableNudgeHeaders() {
-    return ALL_AVAILABLE_NUDGE_HEADERS
 }
