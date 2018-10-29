@@ -200,7 +200,7 @@ class SprintList extends Component {
         
         return (
             <div className="sprint_list__container">
-              <MienListColumnConfigurable available_headers={ALL_AVAILABLE_SPRINT_HEADERS}
+              <MienListColumnConfigurable all_headers={ALL_AVAILABLE_SPRINT_HEADERS}
                                           header_list_name={HEADER_LIST_NAME__SPRINT}
               >
                 {({active_headers}) => (

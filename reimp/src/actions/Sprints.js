@@ -29,7 +29,7 @@ export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
 export const ANNOUNCE_CLONE_SPRINT_FAILED = 'ANNOUNCE_CLONE_SPRINT_FAILED'
 
-export var ALL_AVAILABLE_SPRINT_HEADERS =
+export const ALL_AVAILABLE_SPRINT_HEADERS =
     [ {key:'name', label:'name', description:'Name', width:large_col_width, is_default:true},
       {key:'ref', label:'Ref', description:'Reference', width:small_col_width, is_default:true},
       {key:'number', label:'number', description:'Number', width:small_col_width},
