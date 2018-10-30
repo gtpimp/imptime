@@ -41,6 +41,7 @@ import ReleaseNotesPage from './ReleaseNotesPage'
 import SprintsPage from './SprintsPage'
 import FeaturesPage from './FeaturesPage'
 import FlatFeaturesPage from './FlatFeaturesPage'
+import ExecutiveSummaryPage from './ExecutiveSummaryPage'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
 import { setBrowserTitle } from '../actions/Page'
@@ -109,6 +110,7 @@ class MainRouter extends Component {
               <Route exact path="/fullscreen/projects/:projectId/image/:annotatedVisualSpecDocumentId" component={VisualSpecDocumentGalleryFullScreenPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
               <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
+              <Route exact path="/sprint/executive-summary/:obj_ref" component={ExecutiveSummaryPage}/>
               <Route exact path="/dashboard" component={DashboardPage}/>
               <Route exact path="/usertimesheets" component={UserTimesheetPage}/>
             </Switch>

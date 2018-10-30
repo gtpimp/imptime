@@ -10,7 +10,8 @@ import {
     BarChart,
     Bar,
     XAxis,
-    YAxis
+    YAxis,
+    ReferenceDot
 } from 'recharts'
 
 const resource_data = [
@@ -20,6 +21,16 @@ const resource_data = [
 const status_data = [
     {name: 'status', ontime: 200, warning: 300, danger: 400}
 ];
+
+const SmallDot = (props)=> {
+    const radius = 2.5;
+    const diameter = radius * 2;
+    return (
+        <svg width={diameter} height={diameter} style={{"overflow": "visible"}}>
+          <circle cx={props.cx} cy={props.cy} r={radius} stroke="green" strokeWidth="0" fill={props.color} />
+        </svg>
+    );
+}
 
 class ReadOnlyExecutiveSummary extends Component {
 
@@ -54,21 +65,23 @@ class ReadOnlyExecutiveSummary extends Component {
                         layout="vertical">
                 <XAxis type="number" hide={ true } />
                 <YAxis dataKey="name" type="category" hide={ true } />
+
+                {/* <ReferenceDot shape={<SmallDot color={'#912424'} /> } /> */}
                 <Bar
                     isAnimationActive={ false }
                     dataKey="ontime"
                     stackId="a"
                     fill="#249134" />
-                <Bar
+                {/* <Bar
                     isAnimationActive={ false }
                     dataKey="warning"
                     stackId="a"
                     fill="#916c24" />
-                <Bar
+                    <Bar
                     isAnimationActive={ false }
                     dataKey="danger"
                     stackId="a"
-                    fill="#912424" />
+                    fill="#912424" /> */}
               </BarChart>
             </ResponsiveContainer>
         );
