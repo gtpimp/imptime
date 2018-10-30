@@ -5,8 +5,74 @@ import {withRouter} from 'react-router-dom'
 import { css, cx } from 'emotion'
 import { default_theme as theme } from '../../theme/default'
 import placeholder from '../../images/executive_summary_placeholder.jpg'
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis
+} from 'recharts'
+
+const resource_data = [
+    {name: 'resources', spent: 7500, remaining: 2500}
+];
+
+const status_data = [
+    {name: 'status', ontime: 200, warning: 300, danger: 400}
+];
 
 class ReadOnlyExecutiveSummary extends Component {
+
+    renderResourceChart = () => {
+        return (
+            <ResponsiveContainer>
+              <BarChart data={resource_data}
+                        margin={{top: 0, right: 0, left: 0, bottom: 0}}
+                        layout="vertical">
+                <XAxis type="number" hide={ true } />
+                <YAxis dataKey="name" type="category" hide={ true } />
+                <Bar
+                    isAnimationActive={ false }
+                    dataKey="spent"
+                    stackId="a"
+                    fill="#1e3f75" />
+                <Bar
+                    isAnimationActive={ false }
+                    dataKey="remaining"
+                    stackId="a"
+                    fill="#e6e6e6" />
+              </BarChart>
+            </ResponsiveContainer>
+        );
+    }
+
+    renderStatusChart = () => {
+        return (
+            <ResponsiveContainer>
+              <BarChart data={status_data}
+                        margin={{top: 0, right: 0, left: 0, bottom: 0}}
+                        layout="vertical">
+                <XAxis type="number" hide={ true } />
+                <YAxis dataKey="name" type="category" hide={ true } />
+                <Bar
+                    isAnimationActive={ false }
+                    dataKey="ontime"
+                    stackId="a"
+                    fill="#249134" />
+                <Bar
+                    isAnimationActive={ false }
+                    dataKey="warning"
+                    stackId="a"
+                    fill="#916c24" />
+                <Bar
+                    isAnimationActive={ false }
+                    dataKey="danger"
+                    stackId="a"
+                    fill="#912424" />
+              </BarChart>
+            </ResponsiveContainer>
+        );
+    }
     
     render() {
 
@@ -28,22 +94,33 @@ class ReadOnlyExecutiveSummary extends Component {
                   <img className={ placeholder_image } src={ placeholder } />
                 </div>
                 <div className={ summary_content }>
-                  <div className={ content_row }>
+                  <div className={ deadline_row }>
                     <span className={content_title}>Deadline</span>
                     <span>24 Sept 2018</span>
                     <span>ETA: 28 Sept 2018</span>
+                    <span className={ css`width: 100px;`}></span>
                   </div>
                   <div className={ content_row }>
-                    <span className={content_title}>Resource usage</span>
-                    <span>R7,500/R10,000 (75%)</span>
+                    <div className={ left_content }>
+                      <span className={content_title}>Resource usage</span>
+                      <span>R7,500/R10,000 (75%)</span>
+                    </div>
+                    <div className={ bar_container }>
+                      { this.renderResourceChart() }
+                    </div>
                   </div>
                   <div className={ content_row }>
-                    <span className={content_title}>How are we doing</span>
-                    <span>+R5,000 (150%)</span>
+                    <div className={ left_content }>
+                      <span className={content_title}>How are we doing</span>
+                      <span>+5,000 (150%)</span>
+                    </div>
+                    <div className={ bar_container }>
+                      { this.renderStatusChart() }
+                    </div>
                   </div>
                   <div className={context_description}>
                     <span className={content_title}>Description</span>
-                    <span>Apply the new colour scheme to the web app, the mobile app and the emails. Note: does not include updating promotional website.</span>
+                    <span className={ description_text }>Apply the new colour scheme to the web app, the mobile app and the emails. Note: does not include updating promotional website.</span>
                   </div>
                 </div>
               </div>
@@ -138,16 +215,48 @@ flex-direction: column;
 `
 
 const content_title = css`
-font-weight: 500;
+font: ${theme.fonts.semibold_big};
 `
 
 const context_description = css`
 display: flex;
 flex-direction: column;
+padding: 24px;
 `
 
 const content_row = css`
+display: flex;
+flex: 1;
+flex-direction: column;
 padding: 24px;
 border-bottom: 1px solid #E6E6E6;
-font: ${theme.fonts.semibold_big}';
+font: ${theme.fonts.regular_huge};
+`
+
+const deadline_row = css`
+display: flex;
+flex: 1;
+justify-content: space-between;
+align-items: space-between;
+padding: 24px;
+border-bottom: 1px solid #E6E6E6;
+font: ${theme.fonts.regular_huge};
+`
+
+const left_content = css`
+display: flex;
+flex: 5;
+justify-content: space-between;
+align-items: space-between;
+`
+
+const bar_container = css`
+display: flex;
+width: 100%;
+height: 15px;
+margin-top: 10px;
+`
+
+const description_text = css`
+margin-top: 10px;
 `
