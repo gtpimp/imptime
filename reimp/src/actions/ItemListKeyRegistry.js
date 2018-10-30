@@ -135,6 +135,7 @@ export const HEADER_LIST_NAME__DECISION_JOURNAL = "decision_journal"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
 export const HEADER_LIST_NAME__INVOICE = "invoice"
 export const HEADER_LIST_NAME__SPRINT_PROPOSAL = "sprint_proposal"
+export const HEADER_LIST_NAME__SPRINT_ROADMAP = "sprint_roadmap"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'
