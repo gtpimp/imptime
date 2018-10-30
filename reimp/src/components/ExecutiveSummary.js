@@ -3,8 +3,8 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 
 import { css, cx } from 'emotion'
-import { default_theme as theme } from '../../theme/default'
-import placeholder from '../../images/executive_summary_placeholder.jpg'
+import { default_theme as theme } from '../theme/default'
+import placeholder from '../images/executive_summary_placeholder.jpg'
 import {
     ResponsiveContainer,
     BarChart,
@@ -32,7 +32,7 @@ const SmallDot = (props)=> {
     );
 }
 
-class ReadOnlyExecutiveSummary extends Component {
+class ExecutiveSummary extends Component {
 
     renderResourceChart = () => {
         return (
@@ -146,7 +146,7 @@ function mapStateToProps(state) {
     return {}
 }
 
-export default withRouter(connect(mapStateToProps)(ReadOnlyExecutiveSummary))
+export default withRouter(connect(mapStateToProps)(ExecutiveSummary))
 
 const main = css`
 display: flex;

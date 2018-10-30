@@ -42,6 +42,7 @@ import SprintsPage from './SprintsPage'
 import FeaturesPage from './FeaturesPage'
 import FlatFeaturesPage from './FlatFeaturesPage'
 import ExecutiveSummaryPage from './ExecutiveSummaryPage'
+import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
 import { setBrowserTitle } from '../actions/Page'
@@ -99,6 +100,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/proposal" component={SprintProposalPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/rates" component={SprintRatePage}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/executive_summary" component={ExecutiveSummaryPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/snapshots/:snapshotId" component={SprintSnapshotPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues" component={IssuesPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/issues/:issueId" component={IssuesPage}/>
@@ -107,10 +109,12 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
               <Route exact path="/projects/:projectId/users" component={ProjectUserPage}/>
               <Route exact path="/projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
+
+              <Route exact path="/simplified/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage}/>
+
               <Route exact path="/fullscreen/projects/:projectId/image/:annotatedVisualSpecDocumentId" component={VisualSpecDocumentGalleryFullScreenPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
               <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
-              <Route exact path="/sprint/executive-summary/:obj_ref" component={ExecutiveSummaryPage}/>
               <Route exact path="/dashboard" component={DashboardPage}/>
               <Route exact path="/usertimesheets" component={UserTimesheetPage}/>
             </Switch>

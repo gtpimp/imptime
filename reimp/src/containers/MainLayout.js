@@ -94,6 +94,9 @@ class MainLayout extends Component {
         // hack, better to abstract the router up one level
         const self_contained_page = this.props.location.pathname.indexOf("fullscreen/") !== -1
 
+        // hack, better to abstract the router up one level
+        const self_contained_simplified_page = this.props.location.pathname.indexOf("simplified/") !== -1
+
         if ( ! are_settings_loaded ) {
             return (
                 <AppDiv id="app">Loading settings...</AppDiv>
@@ -119,6 +122,15 @@ class MainLayout extends Component {
         }
 
         if ( self_contained_page ) {
+            return (
+                <AppDiv id="app">
+                  <Websocket/>
+                  <MainRouter />
+                </AppDiv>
+            )
+        }
+
+        if (self_contained_simplified_page) {
             return (
                 <AppDiv id="app">
                   <Websocket/>

@@ -1,29 +1,51 @@
-import React, {Component} from 'react'
-import Websocket from '../components/Websocket'
+import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import ReadOnlyIssueComment from '../components/readonly/ReadOnlyIssueComment'
-import ReadOnlyHeader from '../components/readonly/ReadOnlyHeader'
-import ReadOnlyExecutiveSummary from '../components/readonly/ReadOnlyExecutiveSummary'
+import ExecutiveSummary from '../components/ExecutiveSummary'
+import PrimaryButton from '../components/PrimaryButton'
+import { css } from 'emotion'
 
-class ExecutiveSummaryPage extends Component {
-    
+class SimplifiedExecutiveSummaryPage extends Component {
+
+    onShareExecutiveSummary = () => {
+        console.log("SHARE")
+    }
+
     render() {
-        const { obj_ref } = this.props
-        
         return (
-            <ReadOnlyExecutiveSummary obj_ref={obj_ref} />
+            <div className={ main }>
+              <div className={ actions }>
+                <PrimaryButton
+                    label="Share Executive Summary"
+                    onButtonClick={this.onShareExecutiveSummary} />
+              </div>
+              <div className={ content }>
+                <ExecutiveSummary />
+              </div>
+            </div>
         )
     }
 }
-
 function mapStateToProps(state, props) {
-    const obj_ref = props.match.params.obj_ref
-    console.log("obj_ref", obj_ref)
-    return {
-        obj_ref
-    }
+    return {}
 }
+export default withRouter(connect(mapStateToProps)(SimplifiedExecutiveSummaryPage))
 
-export default withRouter(connect(mapStateToProps)(ExecutiveSummaryPage))
+const main = css`
+display: flex;
+flex: 1;
+flex-direction: column;
+`
 
+const actions = css`
+display: flex;
+height: 40px;
+justify-content: center;
+align-items: center;
+background-color: #c8d3d6;
+`
+
+const content = css`
+display: flex;
+flex: 11;
+`

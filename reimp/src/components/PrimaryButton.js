@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import { css } from 'emotion'
-import PrimaryButton from './PrimaryButton'
 
 import { default_theme as theme } from '../theme/default'
 
@@ -21,11 +20,14 @@ cursor: pointer;
 }
 `
 
-class SidebarPrimaryButton extends Component {
+class PrimaryButton extends Component {
     render() {
+        const { label, onButtonClick } = this.props
         return (
-            <PrimaryButton {...this.props} />
+            <button onClick={ onButtonClick } className={btn}>
+              { label }
+            </button>
         )
     }
 }
-export default SidebarPrimaryButton
+export default PrimaryButton
