@@ -172,6 +172,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name === 'sprint' ) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_LIST] = true
         list_keys_to_invalidate[SELECTOR__SPRINTS] = true
+        list_keys_to_invalidate[LIST_KEY__SPRINT_ROADMAP] = true
 
     } else if ( d.entity_name === 'issue' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
@@ -208,6 +209,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     } else if ( d.entity_name === 'businessprojectorder' ) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_LIST] = true
         list_keys_to_invalidate[SELECTOR__SPRINTS] = true
+        list_keys_to_invalidate[LIST_KEY__SPRINT_ROADMAP] = true
     } else if ( d.entity_name === 'nudge' ) {
         list_keys_to_invalidate[LIST_KEY__NUDGE_LIST] = true
     } else if ( d.entity_name === 'companyproblem' ) {

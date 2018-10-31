@@ -28,8 +28,15 @@ class SprintRoadmapViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = params.get('filter', {})
             format_args = params.get('format', {})
+            ordering = params.get('ordering', {})
 
             sprints = self.allowed_sprints()
+
+            if 'project_id' in filter_args:
+                by_type_first = ordering.get('sprint_type', None)
+                sprints = sprints.order_by_business_id(business_id=filter_args['project_id'],  #sic
+                                                       by_type_first=by_type_first)
+            
             sprints = self.apply_filter(qs=sprints,
                                         raw_filter_args=filter_args)
             sprints = self.apply_pagination(qs=sprints,

@@ -216,11 +216,11 @@ function mapStateToProps(state, props) {
     const deadline_list_key = LIST_KEY__SPRINT_DEADLINE
     const roadmap_list_key = LIST_KEY__SPRINT_ROADMAP
     const cost_summary_list_key = LIST_KEY__SPRINT_COST_SUMMARY
-    const sprint_ids = getVisibleItemIds(state, list_key)
-    const sprints = getVisibleItems(state, list_key, ENTITY_KEY__SPRINT)
+    const sprint_ids = getVisibleItemIds(state, sprint_list_key)
+    const sprints = getVisibleItems(state, sprint_list_key, ENTITY_KEY__SPRINT)
     const sprint_roadmap_ids = getSprintRoadmapIdsFromSprintIds(sprint_ids)
     const sprint_roadmaps_by_id = getSprintRoadmapsById(state, sprint_roadmap_ids)
-    const is_loading = isLoading(state, list_key) || getLoadingItemIds(state, list_key).length > 0 || !haveItemsBeenRetrieved(state, sprint_ids, ENTITY_KEY__SPRINT)
+    const is_loading = isLoading(state, sprint_list_key) || getLoadingItemIds(state, sprint_list_key).length > 0 || !haveItemsBeenRetrieved(state, sprint_ids, ENTITY_KEY__SPRINT)
     const sprint_width_mode = getSprintWidthMode(state, sprint_list_key)
     const sprint_deadline_ids = flatMap(sprints, (sprint) => get(sprint, "deadline_ids", []))
     const sprint_deadlines_by_id = getSprintDeadlinesById(state, sprint_deadline_ids)

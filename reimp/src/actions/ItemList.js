@@ -395,6 +395,7 @@ function tryFetchListAndItems(list_key, matching_items_key, matching_items_promi
                     dispatch(announceListLoadFailed(list_key, json.error))
                 } else {
                     dispatch(announceListLoaded(list_key, json.payload, json.nested_objects || {}))
+
                     const required_item_ids = json.payload.ids || []
                     dispatch(tryFetchMatchingItems(list_key,
                                                    required_item_ids,
