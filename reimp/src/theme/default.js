@@ -92,6 +92,7 @@ export const default_theme = {
     spacing: {
         horizontal_space_inline: "5px",
         horizontal_text_space_inside_button: "12px",
+        horizontal_row_space_tight: "2px",
         vertical_row_space_tight: "2px",
         mini_button_height: "24px",
         vertical_section_gap: "20px",
