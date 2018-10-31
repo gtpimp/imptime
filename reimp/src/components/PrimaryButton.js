@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import { css } from 'emotion'
+import { Link } from 'react-router-dom'
 
 import { default_theme as theme } from '../theme/default'
 
@@ -21,13 +22,44 @@ cursor: pointer;
 `
 
 class PrimaryButton extends Component {
-    render() {
-        const { label, onButtonClick } = this.props
+
+    onClick = (evt) => {
+        const { disabled, onButtonClick } = this.props
+        if ( disabled ) {
+            evt.preventDefault()
+        } else if ( onButtonClick ) {
+            evt.preventDefault()
+            onButtonClick(evt)
+        }
+    }
+
+    renderLink = () => {
+        const { to, label } = this.props
         return (
-            <button onClick={ onButtonClick } className={btn}>
+            <Link
+                className={btn}
+                onClick={this.onClick}
+                to={ to }
+                {...this.props} >
+              { label }
+            </Link>
+        )
+    }
+
+    renderButton = () => {
+        const { label } = this.props
+        return (
+            <button
+                onClick={this.onClick}
+                className={btn}>
               { label }
             </button>
         )
+    }
+    
+    render() {
+        const { to } = this.props
+        return to ? this.renderLink() : this.renderButton()
     }
 }
 export default PrimaryButton
