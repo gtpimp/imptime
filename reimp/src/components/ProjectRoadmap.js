@@ -166,11 +166,12 @@ class ProjectRoadmap extends Component {
                             return (
                                 <DivTableCell key={header_key}
                                               extra_style={getCellStyle(header)}>
-
                                   <div>
                                     { map(features, (feature) => (
+                                        <div key={feature.id}>
                                           <FeatureName feature_id={feature.id} />
-                                      ))}
+                                        </div>
+                                    ))}
                                   </div>
                                 </DivTableCell>
                             )
@@ -190,12 +191,6 @@ class ProjectRoadmap extends Component {
 
         const { is_loading, sprints, project_id } = this.props
 
-        if ( is_loading ) {
-            return (
-                <div>Loading...</div>
-            )
-        }
-        
         return (
             <div ref={ (el) => this.project_roadmap_el = el }>
                 

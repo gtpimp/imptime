@@ -48,7 +48,7 @@ class ProjectRoadmapPage extends Component {
 
         return (
             <div>
-              <h2>Executive Summary</h2>
+              <h2>Road map</h2>
               <ProjectRoadmap project_id={project_id} list_key={LIST_KEY__SPRINT_ROADMAP} />
               <br/>
             </div>
