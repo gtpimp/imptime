@@ -376,3 +376,7 @@ export function cloneTemplateSprint(sprint_id, onDone) {
 export function is_sprint_invalidated(state, sprint_id) {
     return (((state.sprint || {}).invalidated_item_ids) || []).indexOf(sprint_id) !== -1
 }
+
+export function getExecutiveSummaryUrl(project_id, sprint_id) {
+    return window.location.origin + `/simplified/projects/${project_id}/sprints/${sprint_id}/executive_summary`
+}

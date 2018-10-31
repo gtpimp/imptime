@@ -1,6 +1,6 @@
 import { css } from 'emotion'
 
-const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-serif",
+const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', 'sans-serif'",
                     'semibold-12': "normal normal 500 12px 'Fira Sans', sans-serif",
                     'semibold-15': "normal normal 500 15px 'Fira Sans', sans-serif",
                     'regular-13': "normal normal 400 13px 'Fira Sans', sans-serif",
@@ -8,6 +8,7 @@ const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', sans-seri
                     'regular-18': "normal normal 400 18px 'Fira Sans', sans-serif",
                     'bold-12': "normal normal 600 12px 'Fira Sans', sans-serif",
                     'bold-15': "normal normal 600 15px 'Fira Sans', sans-serif",
+                    'semibold-18': "normal normal 500 18px 'Fira Sans', sans-serif",
                     'semibold-20': "normal normal 500 20px 'Fira Sans', sans-serif",
                     'semibold-26': "normal normal 500 26px 'Fira Sans', sans-serif",
                     'bold-20': "normal normal 600 20px 'Fira Sans', sans-serif",
@@ -61,6 +62,7 @@ export const default_theme = {
         bold_large: fonts_raw['bold-15'],
         regular_larger: fonts_raw['regular-13'],
         regular_huge: fonts_raw['regular-18'],
+        semibold_big: fonts_raw['semibold-18'],
         semibold_huge: fonts_raw['semibold-20'],
         semibold_massive: fonts_raw['semibold-26'],
         

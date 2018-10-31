@@ -4,19 +4,11 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import ReadOnlyIssueComment from '../components/readonly/ReadOnlyIssueComment'
 import ReadOnlyHeader from '../components/readonly/ReadOnlyHeader'
-import ReadOnlyExecutiveSummary from '../components/readonly/ReadOnlyExecutiveSummary'
 
 class ReadOnlyPage extends Component {
     
     render() {
         const { object_type, obj_ref, subref } = this.props
-
-        if (object_type === 'executive_summary') {
-            return (
-                <ReadOnlyExecutiveSummary obj_ref={obj_ref} subref={subref} />
-            )
-        }
-        
         return (
             <div className="sharing-page">
               <Websocket/>

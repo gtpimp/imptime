@@ -74,10 +74,20 @@
              padding-right: 18px;
              text-decoration: none;
          }
+
+         html {
+             overflow: scroll;
+             overflow-x: hidden;
+         }
+         ::-webkit-scrollbar {
+             width: 0px;
+             background: transparent;
+         }
         </style>
         
     </head>
     <body style="height:100%; width: 100%;" >
+      <div id="modal-root"></div>
       <div id="root" style="height:100%; width: 100%; background: #e6eef0;">
 
         <div class="init">

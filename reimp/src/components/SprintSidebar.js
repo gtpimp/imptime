@@ -99,9 +99,11 @@ class SprintSidebar extends Component {
             <div key="reviewstack">
               { has_view_review_cycle_permission &&
                 <SidebarProperty>
-                  <SidebarSectionTitle title="Reviews" />
                   <MienFeature feature_name="review_schedule">
-                    <SprintReviewPanel sprint_id={sprint.id} />
+                    <div>
+                      <SidebarSectionTitle title="Reviews" />
+                      <SprintReviewPanel sprint_id={sprint.id} />
+                    </div>
                   </MienFeature>
                 </SidebarProperty>
               }
@@ -141,12 +143,14 @@ class SprintSidebar extends Component {
         return (
             <SidebarProperty key="deadlinestack">
               <MienFeature feature_name="deadlines">
-                <SidebarSectionTitle title="Deadlines" />
-                { map(sprint.deadline_ids, function (deadline_id, index) {
-                      return <EditableSprintDeadline key={sprint.id} sprint_id={sprint.id} deadline_id={deadline_id}/>
-                  })
-                }
-                <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
+                <div>
+                  <SidebarSectionTitle title="Deadlines" />
+                  { map(sprint.deadline_ids, function (deadline_id, index) {
+                        return <EditableSprintDeadline key={sprint.id} sprint_id={sprint.id} deadline_id={deadline_id}/>
+                    })
+                  }
+                  <EditableSprintDeadline sprint_id={sprint.id} deadline_id={null}/>
+                </div>
               </MienFeature>
             </SidebarProperty>
         )

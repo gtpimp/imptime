@@ -163,6 +163,10 @@ const menu_buttons = {
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/rates',
           perms: (objs) => ['has_view_ctc_billable_rates']
         },
+        { label: (objs) => 'Executive Summary',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/executive_summary',
+          perms: (objs) => ['has_view_ctc_billable_rates']
+        },
         { label: (objs) => 'Cost Summary',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/costSummary',
           perms: (objs) => ['has_view_ctc_billable_rates']

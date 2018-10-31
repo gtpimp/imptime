@@ -37,8 +37,7 @@ class MienFeature extends Component {
         const { is_hovered } = this.state
 
         if ( this.props.children.length > 1 ) {
-            console.error("Can only have a single child, consider wrapping in a div")
-            return null
+            return <div>Can only have a single child, consider wrapping in a div</div>
         }
         
         return (
