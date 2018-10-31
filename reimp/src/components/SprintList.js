@@ -117,7 +117,8 @@ class SprintList extends Component {
 
     reorderSprints(sprint_type, index_of_row_being_moved, original_index_of_destination) {
         const {dispatch, list_key, sprints_by_type} = this.props
-        dispatch(reorderSprints(sprint_type, index_of_row_being_moved, original_index_of_destination, list_key, sprints_by_type))
+        const sprints = sprints_by_type[sprint_type]
+        dispatch(reorderSprints(sprints, index_of_row_being_moved, original_index_of_destination, list_key))
     }
 
     render_candidate_sprint() {

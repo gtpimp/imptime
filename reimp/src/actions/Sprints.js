@@ -191,10 +191,9 @@ export function updateSprintBudget(sprint_ids, value) {
     return updateSprint(sprint_ids, "budget", value)
 }
 
-export function reorderSprints(sprint_type, index_of_row_being_moved, original_index_of_destination, list_key, sprints_by_type ) {
+export function reorderSprints(sprints, index_of_row_being_moved, original_index_of_destination, list_key ) {
     return (dispatch, getState) => {
 
-        const sprints = sprints_by_type[sprint_type]
         let index_of_destination = original_index_of_destination
 
         if ( index_of_row_being_moved > index_of_destination ) {

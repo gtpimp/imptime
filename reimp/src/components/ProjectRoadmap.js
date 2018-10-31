@@ -47,7 +47,8 @@ import {
     getCellStyle
 } from '../actions/ItemListKeyRegistry'
 import {
-    fetchSprintsIfNeeded
+    fetchSprintsIfNeeded,
+    reorderSprints
 } from '../actions/Sprints'
 import SprintName from './SprintName'
 import DivTable from './DivTable'
@@ -110,15 +111,18 @@ class ProjectRoadmap extends Component {
         dispatch(ensureFeaturesLoaded(all_feature_ids))
     }
 
+    reorderSprints = (index_of_row_being_moved, original_index_of_destination) => {
+        const {dispatch, list_key, sprints} = this.props
+        dispatch(reorderSprints(sprints, index_of_row_being_moved, original_index_of_destination, list_key))
+    }
+
     renderSprintRow(sprint, active_headers) {
         const { sprint_deadlines_by_id, sprint_roadmaps_by_id, features_by_id } = this.props
-        const that = this
 
         const sprint_roadmap = sprint_roadmaps_by_id[sprint.id]
         
         return (
-            <DivTableRow key={sprint.id}
-                         onReorder={(a,b) => that.reorderSprints(a,b)}>
+            <DivTableRow key={sprint.id} >
 
               { map(active_headers, function(header) {
                     const header_key = header.key
@@ -194,6 +198,7 @@ class ProjectRoadmap extends Component {
     render() {
 
         const { sprints, project_id } = this.props
+        const that = this
 
         return (
             <div ref={ (el) => this.project_roadmap_el = el }>
@@ -202,7 +207,9 @@ class ProjectRoadmap extends Component {
                                           header_list_name={HEADER_LIST_NAME__SPRINT_ROADMAP}
                 >
                   {({active_headers}) => (
-                       <DivTable project_id={project_id} header_list={active_headers}>
+                       <DivTable project_id={project_id}
+                                 header_list={active_headers}
+                                 onReorder={(a,b) => that.reorderSprints(a,b)} >
                          {map(sprints, (sprint) => this.renderSprintRow(sprint, active_headers))}
                        </DivTable>
                    )}
