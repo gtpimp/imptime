@@ -24,6 +24,7 @@ import {
     get_selected_sprint_ids,
     get_selected_issue_ids
 } from '../actions/Page'
+import { autoBookmarkCurrent } from './Bookmarks'
 
 export function hideAutoClockPopup() {
     cookie.save('show_auto_clock_popup', "0", { path: '/' })
@@ -152,6 +153,8 @@ export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue
                               sprint_id: sprint_id,
                               issue_id: issue_id}))
         }
+
+        dispatch(autoBookmarkCurrent())
         
     }
 }

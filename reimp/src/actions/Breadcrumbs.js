@@ -1,3 +1,4 @@
+import { size } from 'lodash'
 
 export const SET_BREADCRUMBS = 'SET_BREADCRUMBS'
 export const SET_BREADCRUMBS_ACTIVE = 'SET_BREADCRUMBS_ACTIVE'
@@ -215,4 +216,11 @@ export function areBreadcrumbsActive(state) {
 
 export function getBreadcrumbs(state) {
     return ((state || {}).breadcrumbs || {}).breadcrumbs
+}
+
+export function getRootEntityBreadcrumb(breadcrumbs) {
+    if ( size(breadcrumbs) === 0 ) {
+        return null
+    }
+    return breadcrumbs[1]
 }

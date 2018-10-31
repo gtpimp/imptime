@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map } from 'lodash'
-import { reduxForm, Field, change } from 'redux-form';
+import { reduxForm, Field } from 'redux-form';
 import '../../sass/text-component.scss'
 
 const DEFAULT_TIME_ESTIMATES = [ "0:00", "0:15", "0:30", "0:45",

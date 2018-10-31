@@ -2,32 +2,20 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { getBreadcrumbs } from '../actions/Breadcrumbs'
 import {withRouter} from 'react-router-dom'
-import { getBookmarks, addBookmark, removeBookmark, pushBookmarkToTop } from '../actions/Bookmarks'
+import { getBookmarks, removeBookmark, bookmarkCurrent } from '../actions/Bookmarks'
 import { css } from 'emotion'
-import { join, map } from 'lodash'
+import { map } from 'lodash'
 import PopupPanelButton from './PopupPanelButton'
-import PopupPanelLink from './PopupPanelLink'
 import PopupPanelHeading from './PopupPanelHeading'
 import PopupPanelText from './PopupPanelText'
+import Bookmark from './Bookmark'
 
 class BookmarkSelector extends Component {
 
-    onGotoBookmark = (evt, bookmark) => {
-        const { history } = this.props
-        evt.preventDefault()
-        history.push(bookmark.url)
-        pushBookmarkToTop(bookmark.name)
-    }
-
     onAddBookmark = (evt) => {
-        const { breadcrumbs } = this.props
+        const { dispatch } = this.props
         evt.preventDefault()
-        const url = window.location.pathname
-
-        const name_parts = []
-        map(breadcrumbs, (breadcrumb) => name_parts.push(breadcrumb.label))
-        const name = join(name_parts, " > ")
-        addBookmark(name, url)
+        dispatch(bookmarkCurrent())
     }
 
     onRemoveBookmark = (evt, bookmark) => {
@@ -35,7 +23,7 @@ class BookmarkSelector extends Component {
         if (! window.confirm("Delete this bookmark?")) {
             return false
         }
-        removeBookmark(bookmark.name)
+        removeBookmark(bookmark)
     }
 
     renderBookmarks() {
@@ -43,13 +31,10 @@ class BookmarkSelector extends Component {
         return (
             <div>
               { map(bookmarks, (bookmark) =>
-                  <PopupPanelLink key={bookmark.name}>
-                    <div className={css`display:flex; flex-direction: row; justify-content: space-between;`}
-                         onClick={(evt) => this.onGotoBookmark(evt, bookmark) } >
-                      {bookmark.name}
-                      <div className="mien-editor-button-bar__button icon--small-delete" onClick={(event) => this.onRemoveBookmark(event, bookmark)}/>
-                    </div>
-                  </PopupPanelLink>
+                  <div>
+                    <Bookmark bookmark={bookmark} />
+                    <div className="mien-editor-button-bar__button icon--small-delete" onClick={(event) => this.onRemoveBookmark(event, bookmark)}/>
+                  </div>
                 )}
             </div>
         )
