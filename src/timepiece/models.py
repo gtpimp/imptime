@@ -45,6 +45,7 @@ from dateutil.relativedelta import relativedelta
 from dateutil import rrule
 
 from datetime import timedelta, date
+import random
 
 COLOURS = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4","#FFEBCD","#0000FF","#8A2BE2","#A52A2A","#DEB887","#5F9EA0","#7FFF00","#D2691E","#FF7F50","#6495ED","#FFF8DC","#DC143C","#00FFFF","#00008B","#008B8B","#B8860B","#A9A9A9","#006400","#BDB76B","#556B2F","#FF8C00","#9932CC","#E9967A","#8FBC8F","#483D8B","#2F4F4F","#00CED1","#9400D3","#FF1493","#00BFFF","#696969","#1E90FF","#B22222","#FFFAF0","#228B22","#FF00FF","#DCDCDC","#F8F8FF","#FFD700","#DAA520","#BEBEBE","#808080","#00FF00","#008000","#ADFF2F","#F0FFF0","#FF69B4","#CD5C5C","#4B0082","#FFFFF0","#F0E68C","#E6E6FA","#FFF0F5","#7CFC00","#FFFACD","#ADD8E6","#F08080","#E0FFFF","#FAFAD2","#D3D3D3","#90EE90","#FFB6C1","#FFA07A","#20B2AA","#87CEFA","#778899","#B0C4DE","#00FF00","#32CD32","#FAF0E6","#FF00FF","#B03060","#7F0000","#66CDAA","#0000CD","#BA55D3","#9370DB","#3CB371","#7B68EE","#00FA9A","#48D1CC","#C71585","#191970","#F5FFFA","#FFE4E1","#FFE4B5","#FFDEAD","#000080","#FDF5E6","#808000","#6B8E23","#FFA500","#FF4500","#DA70D6","#EEE8AA","#98FB98","#AFEEEE","#DB7093","#FFEFD5","#FFDAB9","#CD853F","#FFC0CB","#DDA0DD","#B0E0E6","#A020F0","#7F007F","#FF0000","#BC8F8F","#4169E1","#8B4513","#FA8072","#F4A460","#2E8B57","#FFF5EE","#A0522D","#C0C0C0","#87CEEB","#6A5ACD","#708090","#FFFAFA","#00FF7F","#4682B4","#D2B48C","#008080","#D8BFD8","#FF6347","#40E0D0","#EE82EE","#F5DEB3","#F5F5F5","#FFFF00","#9ACD32"]
 
@@ -3885,6 +3886,34 @@ class UserAutoLoginToken(BaseModel):
     @classmethod
     def check_and_use_auto_login(self, token):
         a = UserAutoLoginToken.objects.filter(token=token).first()
+        if a is None or a.used == True or a.expire_at < timezone.now():
+            return None
+        a.used = True
+        a.save()
+        return a.user
+
+class UserOtpToken(BaseModel):
+    user = models.OneToOneField(User, unique=True, related_name='otp')
+    token = models.CharField(max_length=100)
+    expire_at = models.DateTimeField()
+    used = models.BooleanField(default=False)
+
+    @classmethod
+    def get_otp_token(self, user):
+        a = UserOtpToken.objects.get_or_create(user=user, defaults={'expire_at':timezone.now()})[0]
+        a.expire_at = timezone.now() + relativedelta(hours=settings.OTP_EXPIRE_IN_HOURS)
+        a.token = self._generate_otp_token()
+        a.used = False
+        a.save()
+        return a.token
+
+    def _generate_otp_token(self):
+        return ''.join([str(random.randint(0,9)) for _ in range(6)])
+
+
+    @classmethod
+    def check_and_use_otp(self, token):
+        a = UserOtpToken.objects.filter(token=token).first()
         if a is None or a.used == True or a.expire_at < timezone.now():
             return None
         a.used = True

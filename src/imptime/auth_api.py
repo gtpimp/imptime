@@ -13,7 +13,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import UserAutoLoginToken, User, UserProfile
+from timepiece.models import UserAutoLoginToken, User, UserProfile, UserOtpToken
 from rest_framework.authtoken import views as rest_views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -52,8 +52,9 @@ class OtpEmailViewSet(rest_views.ObtainAuthToken):
                 user = user_by_email
 
         if user:
+            otp = UserOtpToken.get_otp_token(user)
             email_context = {
-                'otp': '123123'
+                'otp': otp
             }
             html_template = template.loader.get_template("imptime/emails/email_otp.html")
             plain_template = template.loader.get_template("imptime/emails/email_otp.txt")
