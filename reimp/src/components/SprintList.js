@@ -117,19 +117,7 @@ class SprintList extends Component {
 
     reorderSprints(sprint_type, index_of_row_being_moved, original_index_of_destination) {
         const {dispatch, list_key, sprints_by_type} = this.props
-
-        const sprints = sprints_by_type[sprint_type]
-        let index_of_destination = original_index_of_destination
-
-        if ( index_of_row_being_moved > index_of_destination ) {
-            index_of_destination -= 1;
-        }
-
-        const moving_sprint_id = sprints[index_of_row_being_moved].id
-        const move_after_sprint_id = (index_of_destination>=0 && sprints[index_of_destination].id) || null
-        
-        dispatch(reorderSprints(moving_sprint_id, move_after_sprint_id, list_key,
-                                original_index_of_destination))
+        dispatch(reorderSprints(sprint_type, index_of_row_being_moved, original_index_of_destination, list_key, sprints_by_type))
     }
 
     render_candidate_sprint() {

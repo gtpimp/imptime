@@ -112,11 +112,13 @@ class ProjectRoadmap extends Component {
 
     renderSprintRow(sprint, active_headers) {
         const { sprint_deadlines_by_id, sprint_roadmaps_by_id, features_by_id } = this.props
+        const that = this
 
         const sprint_roadmap = sprint_roadmaps_by_id[sprint.id]
         
         return (
-            <DivTableRow key={sprint.id}>
+            <DivTableRow key={sprint.id}
+                         onReorder={(a,b) => that.reorderSprints(a,b)}>
 
               { map(active_headers, function(header) {
                     const header_key = header.key

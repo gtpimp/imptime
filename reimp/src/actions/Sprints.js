@@ -191,10 +191,21 @@ export function updateSprintBudget(sprint_ids, value) {
     return updateSprint(sprint_ids, "budget", value)
 }
 
-export function reorderSprints(sprint_id_before, sprint_id_after, list_key, index_of_destination, on_done) {
+export function reorderSprints(sprint_type, index_of_row_being_moved, original_index_of_destination, list_key, sprints_by_type ) {
     return (dispatch, getState) => {
-        dispatch(updateVisibleItemIdAbove(list_key, [sprint_id_before], sprint_id_after, index_of_destination))
-        dispatch(updateSprint([sprint_id_before], "sprint_id_after", sprint_id_after, on_done))
+
+        const sprints = sprints_by_type[sprint_type]
+        let index_of_destination = original_index_of_destination
+
+        if ( index_of_row_being_moved > index_of_destination ) {
+            index_of_destination -= 1;
+        }
+
+        const sprint_id_before = sprints[index_of_row_being_moved].id
+        const sprint_id_after = (index_of_destination>=0 && sprints[index_of_destination].id) || null
+        
+        dispatch(updateVisibleItemIdAbove(list_key, [sprint_id_before], sprint_id_after, original_index_of_destination))
+        dispatch(updateSprint([sprint_id_before], "sprint_id_after", sprint_id_after))
     }
 }
 
