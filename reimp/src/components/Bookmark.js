@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter, Link} from 'react-router-dom'
-import { pushBookmarkToTop } from '../actions/Bookmarks'
 import { css } from 'emotion'
 import { map } from 'lodash'
 import PopupPanelLink from './PopupPanelLink'
@@ -13,7 +12,7 @@ class Bookmark extends Component {
         return (
             <div className={css`display: flex; `}>
               { map(bookmark.parts, (bookmark_part, index) => (
-                    <div key={`bookmark_${bookmark_part.url}`}
+                    <div key={`bookmark_${bookmark.leaf_id}_${index}_${bookmark_part.url}`}
                          className={css`display: flex`}>
                       { index > 0 && <span>&gt;</span> }
                       <PopupPanelLink>

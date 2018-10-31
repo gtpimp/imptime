@@ -1,4 +1,4 @@
-import { size } from 'lodash'
+import { size, last, nth } from 'lodash'
 
 export const SET_BREADCRUMBS = 'SET_BREADCRUMBS'
 export const SET_BREADCRUMBS_ACTIVE = 'SET_BREADCRUMBS_ACTIVE'
@@ -98,7 +98,7 @@ export function setSprintBreadcrumbsHelper(project, optional_sprint, auto_set) {
                           selected_entities: {project: project,
                                               sprint: sprint}}]
     if ( sprint.id ) {
-        breadcrumbs.push({to: '/projects/' + project.id + '/sprints',
+        breadcrumbs.push({to: '/projects/' + project.id + '/sprints/' + sprint.id,
                           label: sprint.name,
                           type: 'sprint',
                           selected_entities: {project: project,
@@ -222,5 +222,9 @@ export function getRootEntityBreadcrumb(breadcrumbs) {
     if ( size(breadcrumbs) === 0 ) {
         return null
     }
-    return breadcrumbs[1]
+    return nth(breadcrumbs, 1)
+}
+
+export function getLeafEntityBreadcrumb(breadcrumbs) {
+    return last(breadcrumbs)
 }

@@ -30,8 +30,8 @@ class BookmarkSelector extends Component {
         const { bookmarks } = this.props
         return (
             <div>
-              { map(bookmarks, (bookmark) =>
-                  <div>
+              { map(bookmarks, (bookmark, index) =>
+                  <div key={`bookmarkselector_${bookmark.leaf_id}_${index}`}>
                     <Bookmark bookmark={bookmark} />
                     <div className="mien-editor-button-bar__button icon--small-delete" onClick={(event) => this.onRemoveBookmark(event, bookmark)}/>
                   </div>

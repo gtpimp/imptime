@@ -1,13 +1,14 @@
 import cookie from 'react-cookies'
 import { first, map, compact, filter, find } from 'lodash'
-import { getRootEntityBreadcrumb, getBreadcrumbs } from './Breadcrumbs'
+import { getRootEntityBreadcrumb, getLeafEntityBreadcrumb, getBreadcrumbs } from './Breadcrumbs'
 
 const KEY = 'bookmarks'
 const AUTO_KEY = 'auto_bookmarks'
 
 function createBookmarkFromBreadcrumbs(breadcrumbs) {
     const root_breadcrumb = getRootEntityBreadcrumb(breadcrumbs)
-    if ( root_breadcrumb === null ) {
+    const leaf_breadcrumb = getLeafEntityBreadcrumb(breadcrumbs)
+    if ( !root_breadcrumb || !leaf_breadcrumb  ) {
         return
     }
     const bookmark = {parts: []}
@@ -23,6 +24,7 @@ function createBookmarkFromBreadcrumbs(breadcrumbs) {
         return null
     }
     bookmark.id = `${bookmark.entity_type}_${bookmark.entity_id}`
+    bookmark.leaf_id = leaf_breadcrumb.to
     
     map(breadcrumbs, (breadcrumb) => {
         bookmark.parts.push( {label: breadcrumb.label,
@@ -39,7 +41,7 @@ export function autoBookmarkCurrent() {
         const state = getState()
         const breadcrumbs = getBreadcrumbs(state)
         const new_auto_bookmark = createBookmarkFromBreadcrumbs(breadcrumbs)
-        if ( new_auto_bookmark === null ) {
+        if ( !new_auto_bookmark ) {
             return null
         }
 
@@ -58,7 +60,7 @@ export function bookmarkCurrent() {
         const state = getState()
         const breadcrumbs = getBreadcrumbs(state)
         const new_bookmark = createBookmarkFromBreadcrumbs(breadcrumbs)
-        if ( new_bookmark === null ) {
+        if ( !new_bookmark ) {
             return null
         }
         addBookmark(new_bookmark)
@@ -67,7 +69,7 @@ export function bookmarkCurrent() {
 
 export function addBookmark(new_bookmark) {
     const bookmarks = getBookmarks()
-    if ( find(bookmarks, (x) => x.id === new_bookmark.id) ) {
+    if ( find(bookmarks, (x) => x.leaf_id === new_bookmark.leaf_id) ) {
         return pushBookmarkToTop(new_bookmark)
     }
     
@@ -85,8 +87,7 @@ export function removeBookmark(bookmark) {
 
 export function pushBookmarkToTop(bookmark) {
     let bookmarks = getBookmarks()
-    const existing_bookmark = find(bookmarks, (x) => x.id === bookmark.id)
-    bookmarks = filter(bookmarks, (x) => x.id !== existing_bookmark.id)
+    bookmarks = filter(bookmarks, (x) => x.leaf_id !== bookmark.leaf_id)
     bookmarks.unshift(bookmark)
     saveBookmarks(bookmarks)
     return bookmarks
