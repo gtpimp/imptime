@@ -57,6 +57,8 @@ import DivTableCell from './DivTableCell'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import Timestamp from './Timestamp'
 import FeatureName from './FeatureName'
+import EditableSprintStatus from './EditableSprintStatus'
+import EditableSprintType from './EditableSprintType'
 
 const deadline_row_cell = css`padding-right:${theme.spacing.horizontal_space_inline};`
 
@@ -138,14 +140,14 @@ class ProjectRoadmap extends Component {
                             return (
                                 <DivTableCell key={header_key}
                                               extra_style={getCellStyle(header)}>
-                                  {sprint.status_name}
+                                  <EditableSprintStatus sprint_ids={[sprint.id]} />
                                 </DivTableCell>
                             )
                         case "sprint_type":
                             return (
                                 <DivTableCell key={header_key}
                                               extra_style={getCellStyle(header)}>
-                                  {sprint.sprint_type}
+                                  <EditableSprintType sprint_ids={[sprint.id]} />
                                 </DivTableCell>
                             )
                         case "sprint_eta":
