@@ -33,8 +33,8 @@ class IssueEstimateForm extends Component {
     }
     
     quickSelectDefaultEstimate(time_estimate) {
-        const { dispatch } = this.props
-        dispatch(change("issue_estimate_form", "estimate", time_estimate))
+        const { onSubmitted } = this.props
+        onSubmitted({estimate:time_estimate})
     }
 
     renderInput(field) {
