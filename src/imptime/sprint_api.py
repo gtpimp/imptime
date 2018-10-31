@@ -43,7 +43,7 @@ class SprintViewSet(BaseViewSet):
 
             if 'project_id' in filter_args:
                 sprints = sprints.order_by_business_id(business_id=filter_args['project_id'],  #sic
-                                                       by_type_first=True)
+                                                       by_type_first=False)
             
             sprints = self.apply_pagination(qs=sprints,
                                             pagination=pagination)

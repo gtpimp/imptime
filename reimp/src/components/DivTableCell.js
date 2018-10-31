@@ -25,7 +25,6 @@ class DivTableCell extends Component {
 
                                 &:hover {
                                     color: ${theme.colours.list_text};
-                                    text-decoration: underline;
                                 }
                 `, extra_style)}
                  onClick={onClick}>

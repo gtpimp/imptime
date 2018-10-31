@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { each, map, union, includes, difference, keys } from 'lodash'
+import { each, map, union, includes, difference, keys, flatten, get } from 'lodash'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import {
     SPRINT_TYPE_ORDER,
     HEADER_LIST_NAME__SPRINT,
+    MERGED_ACTIVE_SPRINT_TYPES,
     getCellStyle
 } from '../actions/ItemListKeyRegistry'
 import {
@@ -234,12 +235,18 @@ class SprintList extends Component {
 function collect_sprints_by_type(sprints) {
     const sprints_by_type = {}
     each(sprints, function (sprint, index) {
-        if ( sprints_by_type[sprint.sprint_type] === undefined ) {
-            sprints_by_type[sprint.sprint_type] = []
+
+        let sprint_type = sprint.sprint_type
+        if ( includes(MERGED_ACTIVE_SPRINT_TYPES, sprint_type) ) {
+            sprint_type = 'active'
         }
-        sprints_by_type[sprint.sprint_type].push(sprint)
+        
+        if ( sprints_by_type[sprint_type] === undefined ) {
+            sprints_by_type[sprint_type] = []
+        }
+        sprints_by_type[sprint_type].push(sprint)
     })
-    
+
     return sprints_by_type
 }
 
