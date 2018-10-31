@@ -245,14 +245,10 @@ export var ISSUE_HEADER_LIST_VISUAL_SPEC_DOCUMENT_PAGE = {
 
 export var SPRINT_TYPE_ORDER = [ 'inbox',
                                  'minutes',
-                                 'active', // merged sprint and spec
                                  'sprinkle',
-                                 // 'sprint',
-                                 // 'spec',
+                                 'sprint',
                                  'checklist',
                                  'template',
                                  'regression',
                                  'audit',
                                  'backlog' ]
-
-export const MERGED_ACTIVE_SPRINT_TYPES = [ 'sprint', 'spec' ]

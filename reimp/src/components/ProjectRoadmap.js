@@ -15,7 +15,8 @@ import {
     haveItemsBeenRetrieved,
     getLoadingItemIds,
     update_list_filter,
-    update_list_format
+    update_list_format,
+    update_list_ordering
 } from '../actions/ItemList'
 import {
     getSprintWidthMode,
@@ -74,6 +75,7 @@ class ProjectRoadmap extends Component {
                         sprint_types: ['sprint', 'spec', 'backlog']}
         dispatch(update_list_filter(sprint_list_key, filter))
         dispatch(update_list_format(sprint_list_key, {roadmap: true}))
+        dispatch(update_list_ordering(sprint_list_key, {'sprint_type': 'desc'}))
         dispatch(fetchSprintsIfNeeded(sprint_list_key))
         dispatch(ensureSprintDeadlinesLoaded(sprint_deadline_ids))
         dispatch(ensureFeaturesLoaded(all_feature_ids))
@@ -189,7 +191,7 @@ class ProjectRoadmap extends Component {
 
     render() {
 
-        const { is_loading, sprints, project_id } = this.props
+        const { sprints, project_id } = this.props
 
         return (
             <div ref={ (el) => this.project_roadmap_el = el }>

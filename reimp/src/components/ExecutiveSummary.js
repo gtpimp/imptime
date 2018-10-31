@@ -16,13 +16,11 @@ import {
 } from '../actions/Projects'
 import {
     ensureSprintsLoaded,
-    getSprint,
-    getExecutiveSummaryUrl
+    getSprint
 } from '../actions/Sprints'
 import {
     getCostSummary,
-    ensureCostSummaryLoaded,
-    isLoadingCostSummary
+    ensureCostSummaryLoaded
 } from '../actions/CostSummary'
 import { has_permission } from '../actions/Users'
 import { showMoney } from '../actions/Mien'
@@ -106,7 +104,7 @@ class ExecutiveSummary extends Component {
                   </div>
                 </div>
                 <div className={ image_section }>
-                  <img className={ placeholder_image } src={ placeholder } />
+                  <img alt="#" className={ placeholder_image } src={ placeholder } />
                 </div>
                 <div className={ summary_content }>
                   <div className={ deadline_row }>

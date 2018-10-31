@@ -69,7 +69,6 @@ import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueEstimate from './EditableIssueEstimate'
 import Timestamp from './Timestamp'
 import Hours from './Hours'
-import OtherUser from './OtherUser'
 import Progress from './Progress'
 import TagListFlat from './TagListFlat'
 

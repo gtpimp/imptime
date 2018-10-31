@@ -1073,11 +1073,11 @@ class ProjectQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         return self.filter(business__in=BusinessPermissions.active_businesses_for_user(user))
 
-    def order_by_business_id(self, business_id, descending=False, by_type_first=False):
+    def order_by_business_id(self, business_id, descending=False, by_type_first=None):
         if business_id:
             orderings = []
-            if by_type_first:
-                orderings.append("project__project_type")
+            if by_type_first is not None:
+                orderings.append(("-" if by_type_first == 'desc' else "") + "project__project_type")
             orderings.append(("-" if descending else "") + "order")
             project_ids_in_order = BusinessProjectOrder.objects.filter(business_id=business_id)\
                                                           .order_by(*orderings)\
@@ -1284,6 +1284,7 @@ class Project(BaseModel):
     PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
                          ('quote sent', 'quote sent'),
                          ('pending', 'pending'),
+                         ('spec', 'spec'),
                          ('hopeful', 'hopeful'),
                          ('in dev', 'in development'),
                          ('in client qa', 'in client qa'),
@@ -1301,7 +1302,6 @@ class Project(BaseModel):
                       ('backlog', 'Backlog'),
                       ('regression', 'Regression'),
                       ('audit', 'Audit'),
-                      ('spec', 'Spec'),
                       ('inbox', 'Inbox') )
 
     CLOCKABLE_PROJECT_TYPES = [ "sprint", "spec", "minutes" ]
@@ -1735,7 +1735,7 @@ class Project(BaseModel):
         
     @classmethod
     def active_states(self):
-        return ( 'open', 'in dev', 'in development', 'waiting to invoice', 'invoiced', 'in client qa' )
+        return ( 'open', 'in dev', 'in development', 'waiting to invoice', 'invoiced', 'in client qa', 'spec' )
 
     @classmethod
     def pending_states(self):

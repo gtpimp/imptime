@@ -37,17 +37,16 @@ class SprintViewSet(BaseViewSet):
             pagination = params.get('pagination', {})
             filter_args = self._set_default_filter(params.get('filter', {}))
             format_args = params.get('format', {})
+            ordering = params.get('ordering', {})
 
             sprints = self.allowed_sprints()
             sprints = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
 
             if 'project_id' in filter_args:
+                by_type_first = ordering.get('sprint_type', None)
                 sprints = sprints.order_by_business_id(business_id=filter_args['project_id'],  #sic
-                                                       by_type_first=False)
-            
-            sprints = self.apply_pagination(qs=sprints,
-                                            pagination=pagination)
-
+                                                       by_type_first=by_type_first)
+            sprints = self.apply_pagination(qs=sprints, pagination=pagination)
             
             if format_args.get('ids_only'):
                 context['ids'] = [str(x) for x in sprints.values_list(

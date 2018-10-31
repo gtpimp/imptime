@@ -1,7 +1,5 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
-import { css } from 'emotion'
 import {
     ensureProjectsLoaded,
     getProject
@@ -11,7 +9,6 @@ import {
     getSprint,
     getExecutiveSummaryUrl
 } from '../actions/Sprints'
-import ExecutiveSummary from '../components/ExecutiveSummary'
 import PrimaryButton from '../components/PrimaryButton'
 import ModalDialog from './ModalDialog'
 
@@ -36,7 +33,6 @@ class ExecutiveSummaryShareButton extends Component {
     }
 
     onShareExecutiveSummary = () => {
-        const { project_id, sprint_id, project, sprint } = this.props
         this.toggleModal()
     }
 

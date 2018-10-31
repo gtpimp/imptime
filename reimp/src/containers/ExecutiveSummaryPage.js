@@ -8,7 +8,7 @@ import { css } from 'emotion'
 class ExecutiveSummaryPage extends Component {
 
     render() {
-        const { project_id, sprint_id, project, sprint } = this.props
+        const { project_id, sprint_id } = this.props
         return (
             <div className={ main }>
               <div className={ actions }>
