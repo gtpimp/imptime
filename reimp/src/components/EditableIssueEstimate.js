@@ -22,7 +22,7 @@ class EditableIssueEstimate extends Component {
     }
 
     render() {
-        const { issue, can_edit, actual, estimate_hours, class_name, project_id } = this.props
+        const { issue, can_edit, actual, estimate_hours, class_name, project_id, renderReadOnly } = this.props
 
         return (
             <PermissionInspectorHighlighter project_id={project_id}
@@ -37,15 +37,20 @@ class EditableIssueEstimate extends Component {
               >
                 <IssueEstimateForm />
                 <div className="text-component--readonly">
-                  { estimate_hours &&
-                  <Progress issue={issue} actual={actual} estimate={estimate_hours} force_show={true} />
-                  }
-                  { can_edit && ! estimate_hours &&
-                    <div>
-                      <Hours hours={actual} />
-                      <div className="icon--timer-estimate"/>
-                    </div>
-                  }
+                  { renderReadOnly && renderReadOnly() }
+                  { ! renderReadOnly && (
+                        <div>
+                          { estimate_hours &&
+                            <Progress issue={issue} actual={actual} estimate={estimate_hours} force_show={true} />
+                          }
+                          { can_edit && ! estimate_hours &&
+                            <div>
+                              <Hours hours={actual} />
+                              <div className="icon--timer-estimate"/>
+                            </div>
+                          }
+                        </div>
+                  )}
                 </div>
                 <div className="text-component--empty">0</div>
               </EditableProperty>
@@ -55,7 +60,7 @@ class EditableIssueEstimate extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { issue_id, class_name, actual } = props
+    const { issue_id, class_name, actual, renderReadOnly } = props
     const issue = getIssue(state, issue_id) || {}
     const can_edit = has_permission(state, issue.project_id, 'has_estimate_own_points')
     const estimate_hours = ((issue.my_estimate || [])[0] || {}).estimate_hours || null
@@ -66,7 +71,8 @@ function mapStateToProps(state, props) {
         project_id: issue.project_id,
         estimate_hours,
         class_name,
-        actual
+        actual,
+        renderReadOnly
     }
 }
 

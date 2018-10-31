@@ -1,5 +1,6 @@
 import logging
 from rest_framework import serializers
+import itertools
 from dateutil.relativedelta import relativedelta
 from base_serializer import BaseSerializer
 from django.db.models import Count, Min, Max
@@ -19,6 +20,7 @@ class SprintRoadmapSerializer(BaseSerializer):
     num_issues = serializers.IntegerField()
     hours_per_day = serializers.ListField(child=serializers.DictField())
     issues_created_by_day = serializers.ListField(child=serializers.DictField())
+    feature_ids = serializers.ListField(child=serializers.CharField())
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
@@ -27,6 +29,12 @@ class SprintRoadmapSerializer(BaseSerializer):
     def to_representation(self, sprint_roadmap, *args, **kwargs):
         sprint_roadmap.first_entry = Entry.objects.filter(issue__project_id=sprint_roadmap.id).order_by('start_time').first()
         sprint_roadmap.last_entry = Entry.objects.filter(issue__project_id=sprint_roadmap.id).order_by('-end_time').first()
+
+        issues = sprint_roadmap.issues.all()
+        implements_testables = itertools.chain.from_iterable([issue.implements_testables.all() for issue in issues])
+        features = itertools.chain.from_iterable([t.features.all() for t in implements_testables])
+        sprint_roadmap.feature_ids = [f.id for f in features]
+        
         self._populate_activity(sprint_roadmap)
 
         return super(SprintRoadmapSerializer, self).to_representation(sprint_roadmap, *args, **kwargs)

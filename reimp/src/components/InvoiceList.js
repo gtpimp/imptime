@@ -18,7 +18,6 @@ import {
     fetchInvoicesIfNeeded,
     ALL_AVAILABLE_INVOICE_HEADERS,
 } from '../actions/Invoices'
-import Pagination from './Pagination'
 import CommonTable from './CommonTable'
 import StatusCircle from './StatusCircle'
 import CurrencyValue from './CurrencyValue'
@@ -64,7 +63,7 @@ class InvoiceList extends Component {
     }
 
     onClickedInvoice(event, invoice_id) {
-        const {dispatch, onSelectInvoices, selected_ids} = this.props
+        const {onSelectInvoices, selected_ids} = this.props
         if ( event ) {
             event.stopPropagation()
         }
@@ -278,7 +277,7 @@ class InvoiceList extends Component {
     }
 
     render() {
-        const { list_key, invoices, selected_item_ids, all_headers } = this.props
+        const { invoices, selected_item_ids, all_headers } = this.props
 	return (
             <CommonTable all_headers={all_headers}
                          header_list_name={HEADER_LIST_NAME__INVOICE}

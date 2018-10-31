@@ -93,7 +93,6 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/bulkCreateFeatures" component={BulkFeatureCreatorPage}/>
               <Route exact path="/projects/:projectId/features/:featureId" component={FeaturesPage}/>
               <Route exact path="/projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
-              <Route exact path="/projects/:projectId/executiveSummary" component={ProjectRoadmapPage}/>
               <Route exact path="/projects/:projectId/wiki/" component={ProjectWikiPage}/>
               <Route exact path="/projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId" component={SprintsPage}/>

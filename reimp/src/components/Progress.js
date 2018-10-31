@@ -3,19 +3,34 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import Duration from '../components/Duration'
 import TimeProgressBar from './TimeProgressBar'
+import ProgressBar from './ProgressBar'
 import { format_hours } from '../actions/lib'
 
 class Progress extends Component {
     
     render() {
         const {estimate, hours, force_show} = this.props
-        const current = format_hours(hours)
-        const max = format_hours(estimate)
-        const max_valid = estimate !== undefined && estimate > 0
-        const current_valid = hours !== undefined && hours > 0
+        let current = format_hours(hours)
+        let max = format_hours(estimate)
 
-        const show = force_show || hours > 0 || estimate > 0
+        if ( force_show ) {
+            if ( hours === null && estimate === null ) {
+                return (
+                    <div className="progress">
+                      <div className="progress__component progress__component--progress">
+                        <ProgressBar current={null} max={null} />
+                      </div>
+                    </div>
+                )
+            }
+        }
         
+        let max_valid = estimate !== undefined && estimate > 0
+        let current_valid = hours !== undefined && hours > 0
+
+        
+        const show = force_show || hours > 0 || estimate > 0
+
         return (
             <div className="progress">
               { show && 
@@ -60,7 +75,7 @@ function mapStateToProps(state, props) {
     return {
         hours,
         force_show,
-        estimate: estimate || 0
+        estimate: estimate
     }
 }
 

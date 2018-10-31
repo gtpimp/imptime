@@ -17,7 +17,6 @@ import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import MienFeature from './MienFeature'
 import TagListFlat from './TagListFlat'
 import EditableIssueInSprint from './EditableIssueInSprint'
-import EditableIssueParent from './EditableIssueParent'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueType from './EditableIssueType'
 import EditableIssueEstimate from './EditableIssueEstimate'
@@ -209,12 +208,6 @@ class IssueSidebar extends Component {
                 </div>
                 </div> */}
               </SidebarDetail>
-
-              { false && 
-                <SidebarDetail label="Grouping issue">
-                  <EditableIssueParent issue_ids={[issue.id]}/>
-                </SidebarDetail>
-              }
 
               <SidebarDetail label="Type">
                 <EditableIssueType issue_ids={[issue.id]} project_id={issue.project_id}/>

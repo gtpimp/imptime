@@ -40,7 +40,7 @@ class SprintRoadmapViewSet(BaseViewSet):
                     'id', flat=True)]
             else:
                 sprints = sprints.select_related("status3")
-                sprints = sprints.annotate(num_issues=Count('issues'))
+                sprints = self._enrich_qs(sprints)
                 s = SprintRoadmapSerializer(sprints, many=True, logged_in_user=request.user)
                 sprints_data = s.data
                 context['sprint_roadmaps'] = sprints_data
@@ -52,6 +52,11 @@ class SprintRoadmapViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    def _enrich_qs(self, qs):
+        qs = qs.annotate(num_issues=Count('issues'))\
+               .prefetch_related('issues__implements_testables__features')
+        return qs
+    
     def apply_filter(self, qs, raw_filter_args):
         project_id = raw_filter_args.pop('project_id', None)
         if project_id:

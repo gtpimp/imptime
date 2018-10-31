@@ -43,6 +43,7 @@ import {
     LIST_KEY__SPRINT_LIST,
     LIST_KEY__ISSUE_LIST,
     LIST_KEY__NUDGE_LIST,
+    LIST_KEY__SPRINT_ROADMAP,
     LIST_KEY__COMPANY_PROBLEM_LIST,
     LIST_KEY__COMPANY_LIST,
     LIST_KEY__DECISION_JOURNAL_LIST,
@@ -217,6 +218,7 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__FORM_TAG_LIST] = true
     } else if ( d.entity_name === 'feature' ) {
         list_keys_to_invalidate[LIST_KEY__FEATURE_LIST] = true
+        list_keys_to_invalidate[LIST_KEY__SPRINT_ROADMAP] = true
     } else if ( d.entity_name === "wikipage" ) {
         list_keys_to_invalidate[LIST_KEY__WIKI_LIST] = true
     } else if ( d.entity_name === "projectdeadline" ) {

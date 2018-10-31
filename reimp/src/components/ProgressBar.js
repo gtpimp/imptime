@@ -18,7 +18,12 @@ class ProgressBar extends Component {
         const {current, max} = this.props
         const sections = []
 
-        if ( !max && current>0 ) {
+        if ( max === null && current === null ) {
+            sections.push({
+                percentage: 1.0,
+                style: 'notset'
+            })
+        } else if ( !max && current>0 ) {
             sections.push({
                 percentage: 1.0,
                 style: 'invalid'

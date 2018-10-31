@@ -73,8 +73,8 @@ const menu_buttons = {
         { label: (objs) => "Summaries",
           type: "heading"
         },
-        { label: (objs) => 'Executive Summary',
-          nav_url: (objs) => '/projects/' + objs.project.id + '/executiveSummary'
+        { label: (objs) => 'Roadmap',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/roadmap'
         },
         { label: (objs) => 'Dashboard',
           nav_url: (objs) => '/projects/' + objs.project.id + '/dashboard'
