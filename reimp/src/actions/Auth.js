@@ -53,10 +53,10 @@ export function auto_login(auto_login_token) {
         const data = { 'token': auto_login_token }
 
         const params = {method: "POST",
-                  credentials: 'same-origin',
-                  data: data,
-                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
-                  body: JSON.stringify(data)}
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
         
         return impfetch(state, 'imp/autologin/', dispatch, params)
             .then(response => response.json())
@@ -83,10 +83,10 @@ export function login(username, password) {
                        'password': password }
 
         const params = {method: "POST",
-                  credentials: 'same-origin',
-                  data: data,
-                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
-                  body: JSON.stringify(data)}
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
         
         return impfetch(state, 'imp/login/', dispatch, params)
             .then(response => response.json())
@@ -96,7 +96,7 @@ export function login(username, password) {
                                           json.user_id, json.has_usable_password,
                                           json.is_superuser))
                 } else {
-                    throw new SubmissionError({ _error: 'Invalid credentials' })
+                    throw new SubmissionError({ _error: 'Invalid username/password combination' })
                 }
             })
     }
@@ -109,10 +109,10 @@ export function forgot_password(username, on_done) {
         const state = getState()
         const data = { 'username': username }
         const params = {method: "POST",
-                  credentials: 'same-origin',
-                  data: data,
-                  headers: {"Content-type": "application/json; charset=UTF-8"}, 
-                  body: JSON.stringify(data)}
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
         return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params)
             .then( on_done() )
     }
@@ -228,4 +228,8 @@ export function highlightObjectForPermissionInspector(project_id, permission_nam
 
 export function getHighlightedObjectForPermissionInspector(state) {
     return get(state, [ "auth", "permission_inspector_object"], null)
+}
+
+export function isValidEmail(value) {
+    return value && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ? true : false
 }

@@ -30,7 +30,7 @@ class LoginPage extends Component {
               <div className={ main }>
                 <div className={ box }>
                   <div className={ header }>
-                    <PageTitle>Sign in to Imptime</PageTitle>
+                    <PageTitle>Sign in to ImpTime</PageTitle>
                   </div>
                   <div className={ login_form }>
                     <LoginForm onSubmit={ this.onLogin } />

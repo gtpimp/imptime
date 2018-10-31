@@ -1,24 +1,40 @@
-import React, {Component} from 'react'
+import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import { cx, css } from 'emotion'
-import {login} from '../../actions/Auth'
+import { login, isValidEmail } from '../../actions/Auth'
 import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'
-import { Field, reduxForm } from 'redux-form'
+import { Field, reduxForm, formValueSelector } from 'redux-form'
 import Message from '../../components/Message'
 import PagePrimaryButton from '../../components/PagePrimaryButton'
 import InputField from './InputField'
+
+const FORM_NAME = 'login_page'
+const valueSelector = formValueSelector(FORM_NAME)
 
 class LoginForm extends Component {
 
     constructor(props) {
         super(props)
-        this.state = { show_otp_buttons: false, otp_sent_by_email: false, otp_sent_by_text_message: false }
+        this.state = {
+            show_otp_buttons: false,
+            otp_sent_by_email: false,
+            otp_sent_by_text_message: false,
+            invalid_email_address: false
+        }
     }
 
     onClickedGetOtp = (evt) => {
         evt.preventDefault()
-        this.setState({show_otp_buttons: true})
+        const { username } = this.props
+        if (!isValidEmail(username)) {
+            this.setState({invalid_email_address: true})
+        } else {
+            this.setState({
+                show_otp_buttons: true,
+                invalid_email_address: false
+            })
+        }
     }
 
     onSendOtpTextMessage = (evt) => {
@@ -35,12 +51,49 @@ class LoginForm extends Component {
         })
     }
 
+    renderOtpSection = () => {
+        const { submitting } = this.props
+        const {
+            show_otp_buttons,
+            otp_sent_by_text_message,
+            otp_sent_by_email
+        } = this.state
+
+        return (
+            <Fragment>
+              { show_otp_buttons && (
+                    <div className={ otp_section_main }>
+                      <p className={ otp_instruction }>Send me a one time password via</p>
+                      <div className={ otp_actions }>
+                        <PagePrimaryButton
+                            label="EMAIL"
+                            disabled={submitting}
+                            onButtonClick={this.onSendOtpEmail} />
+                        <PagePrimaryButton
+                            label="TEXT MESSAGE"
+                            disabled={submitting}
+                            onButtonClick={this.onSendOtpTextMessage} />
+                      </div>
+
+                      { (otp_sent_by_email || otp_sent_by_text_message) && (
+                            <div className={css`margin-top: ${theme.spacing.two}; color: ${theme.colours.ok}; font: ${theme.fonts.regular_normal};line-height: 1.8;`}>
+                              { otp_sent_by_email && "If an ImpTime account exists for this email address, an email will be sent with your one time password" }
+                              { otp_sent_by_text_message && "If an ImpTime account exists for this email address, a text message will be sent with your one time password" }
+                            </div>
+                      )}
+                    </div>
+              )}
+            </Fragment>
+        )
+    }
+
     render() {
-
         const { handleSubmit, error, submitting } = this.props
-        const { show_otp_buttons, otp_sent_by_text_message, otp_sent_by_email } = this.state
+        const {
+            show_otp_buttons,
+            invalid_email_address
+        } = this.state
 
-        console.log("errorerrorerror", error)
         return (
             <form onSubmit={ handleSubmit }>
               <div className={inputFieldDiv}>
@@ -70,37 +123,17 @@ class LoginForm extends Component {
                       disabled={submitting} />
                 }
               </div>
-
-              { show_otp_buttons && (
-                    <div className={css`margin-bottom: 20px;`}>
-                      <div className={css`margin-bottom: 10px`}>Send me a one time password via</div>
-                      <div className={css`display: flex; justify-content:space-betweeen`}>
-                        <div className={css`flex-grow: 1 `}>
-                          <PagePrimaryButton
-                              label="EMAIL"
-                              disabled={submitting}
-                              onButtonClick={this.onSendOtpEmail} />
-                        </div>
-                        <div className={css`width: ${theme.spacing.one}`}/>
-                        <div className={css`flex-grow: 1 `}>
-                          <PagePrimaryButton
-                              label="TEXT MESSAGE"
-                              disabled={submitting}
-                              onButtonClick={this.onSendOtpTextMessage} />
-                        </div>
-                      </div>
-                      { (otp_sent_by_email || otp_sent_by_text_message) && (
-                            <div className={css`margin-top: ${theme.spacing.two}; color: ${theme.colours.ok}; font: ${theme.fonts.regular_normal};line-height: 1.8;`}>
-                              { otp_sent_by_email && "If an ImpTime account exists for this email address, an email will be sent with your one time password" }
-                              { otp_sent_by_text_message && "If an ImpTime account exists for this email address, a text message will be sent with your one time password" }
-                            </div>
-                      )}
-                    </div>
-              )}
+              { this.renderOtpSection() }
 
               { error &&
                 <div className="login-form__message">
-                  <Message variant="error">Invalid username/password combination</Message>
+                  <Message variant="error">{ error && error }</Message>
+                </div>
+              }
+
+              { invalid_email_address &&
+                <div className="login-form__message">
+                  <Message variant="error">Please enter your email address</Message>
                 </div>
               }
             </form>
@@ -109,15 +142,38 @@ class LoginForm extends Component {
 }
 function mapStateToProps(state, props) {
     return {
-        settings: state.settings
+        settings: state.settings,
+        username: valueSelector(state, 'username'),
     }
 }
-export default withRouter(connect(mapStateToProps)(reduxForm({form:'login_page'})(LoginForm)))
+export default withRouter(connect(mapStateToProps)(reduxForm({form:FORM_NAME})(LoginForm)))
 
 const inputFieldDiv = css`margin-bottom: 40px`
 
 const form_actions = css`
-margin-bottom: 20px;
+margin-bottom: 34px;
 display:flex;
+justify-content: space-between;
+`
+
+const otp_section_main = css`
+margin-bottom: 18px;
+justify-content: center;
+align-items: center;
+border-top: 1px solid #e0e0e0;
+padding-top: 18px;
+`
+
+const otp_actions = css`
+display: flex;
+flex: 1;
+align-items: center;
 justify-content:space-between;
+padding-top: 18px;
+`
+
+const otp_instruction = css`
+font: ${theme.fonts.regular_large};
+margin: 0;
+text-align: center;
 `
