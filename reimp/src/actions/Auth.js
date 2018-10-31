@@ -102,6 +102,26 @@ export function login(username, password) {
     }
 }
 
+export function sendOtpEmail(username) {
+
+    return (dispatch, getState) => {
+        const state = getState()
+        const data = { 'username': username}
+
+        const params = {method: "POST",
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
+        
+        return impfetch(state, 'imp/otp_email/', dispatch, params)
+            .then(response => response.json())
+            .then(json => {
+                
+            })
+    }
+}
+
 export function forgot_password(username, on_done) {
 
     return (dispatch, getState) => {

@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import { cx, css } from 'emotion'
-import { login, isValidEmail } from '../../actions/Auth'
+import { isValidEmail, sendOtpEmail } from '../../actions/Auth'
 import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'
 import { Field, reduxForm, formValueSelector } from 'redux-form'
@@ -45,6 +45,8 @@ class LoginForm extends Component {
     }
 
     onSendOtpEmail = (evt) => {
+        const { dispatch, username } = this.props
+        dispatch(sendOtpEmail(username))
         this.setState({
             otp_sent_by_email: true,
             otp_sent_by_text_message: false

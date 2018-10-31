@@ -1,0 +1,1 @@
+Your one time password is <strong>{{ otp }}</strong>

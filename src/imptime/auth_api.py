@@ -42,6 +42,30 @@ class LoginViewSet(rest_views.ObtainAuthToken):
                          'is_superuser': user.is_superuser,
                          'has_usable_password': user.has_usable_password()})
 
+class OtpEmailViewSet(rest_views.ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username', None)
+        user = User.objects.filter(email=username).first()
+        if user is None:
+            user_by_email = User.objects.filter(email=username).first()
+            if user_by_email:
+                user = user_by_email
+
+        if user:
+            email_context = {
+                'otp': '123123'
+            }
+            html_template = template.loader.get_template("imptime/emails/email_otp.html")
+            plain_template = template.loader.get_template("imptime/emails/email_otp.txt")
+            html_content = html_template.render(email_context)
+            plain_content = plain_template.render(email_context)
+            queue_email(subject_content="ImpTime: Email One Time Password",
+                        from_address=settings.FROM_EMAIL,
+                        text_content=plain_content,
+                        html_content=html_content,
+                        to_addresses=[user.email])
+        return Response({'success': 'ok'})
+
     
 @permission_classes((IsAuthenticated,))
 class AuthViewSet(BaseViewSet):
