@@ -39,8 +39,16 @@ class ProgressBar extends Component {
                     style: 'remaining'
                 })
             } else if (current > max) {
+
+                const over_by_ratio = max/current
+                
                 sections.push({
-                    percentage: 1.0,
+                    percentage: over_by_ratio,
+                    style: 'progress'
+                })
+                
+                sections.push({
+                    percentage: 1.0-over_by_ratio,
                     style: 'over'
                 })
             }
