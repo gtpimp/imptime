@@ -10,6 +10,7 @@ import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import CommonTable from './CommonTable'
+import IssueEstimatesSummary from './IssueEstimatesSummary'
 import 'react-virtualized/styles.css';
 import {
     makeSelTagCategoryNamesForIssues,
@@ -747,23 +748,27 @@ class IssueList extends Component {
                 )
                 break
             case "estimate_columns":
+                const user_id = issue.assigned_to_id
                 content = (
-                    map(sprint.user_ids_who_can_estimate, (user_id) =>
-                        <DivTableCell key={user_id}
-                                      secondary={true}
-                                      >
-                          {logged_in_user_id === user_id &&
-                           <EditableIssueEstimate issue_id={issue.id}
-                                                  actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                                  class_name="issue-cell__my-estimate"/> }
+                    <DivTableCell key={user_id} secondary={true} >
 
-                           {logged_in_user_id !== user_id &&
-                            <Progress issue={issue}
-                                      actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                      estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
-                           }
-                        </DivTableCell>
-                    )
+                      <Floater title={"Comparative estimates"}
+                               disableHoverToClick
+                               event="hover"
+                               eventDelay={0}
+                               placement="left"
+                               content={<div><IssueEstimatesSummary issue_id={issue.id} /></div>}
+                      >
+                        <EditableIssueEstimate issue_id={issue.id}
+                                               actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                               class_name="issue-cell__my-estimate"
+                                               renderReadOnly={() => <Progress issue={issue}
+                                                                               force_show={true}
+                                                                               actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                                               estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />}
+                        />
+                      </Floater>
+                    </DivTableCell>
                 )
                 break
             case "my_estimate":
