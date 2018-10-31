@@ -26,7 +26,7 @@ class LoginViewSet(rest_views.ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         # cut and pasted from venv/lib/python2.7/site-packages/rest_framework/authtoken/views.py
 
-        username = request.data['username']
+        username = request.data.get('username', None)
         if not User.objects.filter(username=username).exists():
             user_by_email = User.objects.filter(email=username).first()
             if user_by_email:

@@ -9,8 +9,6 @@ import Message from '../../components/Message'
 import PagePrimaryButton from '../../components/PagePrimaryButton'
 import InputField from './InputField'
 
-const inputFieldDiv = css`margin-bottom: 40px`
-
 class LoginForm extends Component {
 
     constructor(props) {
@@ -24,31 +22,42 @@ class LoginForm extends Component {
     }
 
     onSendOtpTextMessage = (evt) => {
-        this.setState({otp_sent_by_text_message: true,
-                       otp_sent_by_email: false})
+        this.setState({
+            otp_sent_by_text_message: true,
+            otp_sent_by_email: false
+        })
     }
 
     onSendOtpEmail = (evt) => {
-        this.setState({otp_sent_by_email: true,
-                       otp_sent_by_text_message: false})
+        this.setState({
+            otp_sent_by_email: true,
+            otp_sent_by_text_message: false
+        })
     }
 
     render() {
 
         const { handleSubmit, error, submitting } = this.props
         const { show_otp_buttons, otp_sent_by_text_message, otp_sent_by_email } = this.state
-        
+
+        console.log("errorerrorerror", error)
         return (
             <form onSubmit={ handleSubmit }>
               <div className={inputFieldDiv}>
-                <Field name="username" type="text" placeholder="Email Address" component={ InputField } />
+                <Field
+                    name="username"
+                    type="text"
+                    placeholder="Email Address"
+                    component={ InputField } />
               </div>
-              <div className={cx(inputFieldDiv)}>
-                <Field name="password" type="password" placeholder={(show_otp_buttons && "One time password") || "Password"} component={ InputField } />
-
+              <div className={inputFieldDiv}>
+                <Field
+                    name="password"
+                    type="password"
+                    placeholder={(show_otp_buttons && "One time password") || "Password"}
+                    component={ InputField } />
               </div>
-
-              <div className={css`margin-bottom: 20px;display:flex;justify-content:space-between`}>
+              <div className={ form_actions }>
                 <PagePrimaryButton
                     label="SIGN IN"
                     type="submit"
@@ -63,7 +72,7 @@ class LoginForm extends Component {
               </div>
 
               { show_otp_buttons && (
-                    <div className={css`margin-bottom: 20px`}>
+                    <div className={css`margin-bottom: 20px;`}>
                       <div className={css`margin-bottom: 10px`}>Send me a one time password via</div>
                       <div className={css`display: flex; justify-content:space-betweeen`}>
                         <div className={css`flex-grow: 1 `}>
@@ -104,3 +113,11 @@ function mapStateToProps(state, props) {
     }
 }
 export default withRouter(connect(mapStateToProps)(reduxForm({form:'login_page'})(LoginForm)))
+
+const inputFieldDiv = css`margin-bottom: 40px`
+
+const form_actions = css`
+margin-bottom: 20px;
+display:flex;
+justify-content:space-between;
+`
