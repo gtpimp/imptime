@@ -679,39 +679,6 @@ class IssueList extends Component {
                     </DivTableCell>
                 )
                 break
-            case "estimate_summary":
-                content = (
-                    <DivTableCell key={key}
-                                  secondary={true}
-                                  >
-                      <div className="issue-cell__estimate_summary">
-                        {map(sprint.user_ids_who_can_estimate, function(user_id) {
-                             const actual = (all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null
-                             const estimate = (all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null
-                             if ( actual || estimate ) {
-                                 return (
-                                     <div className="issue-cell__estimate_summary__user" key={user_id}>
-                                       <div className="issue-cell__estimate_summary__user__cell">
-                                         <OtherUser user_id={user_id}/>
-                                       </div>
-                                       <div className="issue-cell__estimate_summary__user__cell">
-                                         {logged_in_user_id === user_id &&
-                                          <EditableIssueEstimate issue_id={issue.id}
-                                                                 actual={actual}
-                                                                 class_name="issue-cell__my-estimate"/>
-                                         }
-                                          {logged_in_user_id !== user_id &&
-                                           <Progress issue={issue} actual={actual} estimate={estimate} />
-                                          }
-                                       </div>
-                                     </div>
-                                 )
-                             }
-                         })}
-                      </div>
-                    </DivTableCell>
-                )
-                break
             case "tags":
                 content = (
                     <DivTableCell key={key}
@@ -747,7 +714,7 @@ class IssueList extends Component {
 
                 )
                 break
-            case "estimate_columns":
+            case "estimate_summary":
                 const user_id = issue.assigned_to_id
                 content = (
                     <DivTableCell key={user_id} secondary={true} >
@@ -771,6 +738,26 @@ class IssueList extends Component {
                     </DivTableCell>
                 )
                 break
+            case "estimate_columns":
+                content = (
+                    map(sprint.user_ids_who_can_estimate, (user_id) =>
+                        <DivTableCell key={user_id}
+                                      secondary={true}
+                                      >
+                          {logged_in_user_id === user_id &&
+                           <EditableIssueEstimate issue_id={issue.id}
+                                                  actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                                  class_name="issue-cell__my-estimate"/> }
+
+                           {logged_in_user_id !== user_id &&
+                            <Progress issue={issue}
+                                      actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                      estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />
+                           }
+                        </DivTableCell>
+                    )
+                )
+                break
             case "my_estimate":
                 const actual = (all_actuals_by_user_id[logged_in_user_id] && all_actuals_by_user_id[logged_in_user_id].hours) || null
                 content = (
@@ -780,11 +767,16 @@ class IssueList extends Component {
                       {logged_in_user_can_estimate_user_id &&
                        <EditableIssueEstimate issue_id={issue.id}
                                               actual={actual}
-                                              class_name="issue-cell__my-estimate"/>
+                                              class_name="issue-cell__my-estimate"
+                                              renderReadOnly={() => <Progress issue={issue}
+                                                                              force_show={true}
+                                                                              actual={(all_actuals_by_user_id[logged_in_user_id] && all_actuals_by_user_id[logged_in_user_id].hours) || null}
+                                                                              estimate={(all_estimates_by_user_id[logged_in_user_id] && all_estimates_by_user_id[logged_in_user_id].estimate_hours) || null} />}
+                       />
                       }
-                       {!logged_in_user_can_estimate_user_id &&
+                      {!logged_in_user_can_estimate_user_id &&
                         <Hours hours={actual} />
-                       }
+                      }
                     </DivTableCell>
                 )
                 break
