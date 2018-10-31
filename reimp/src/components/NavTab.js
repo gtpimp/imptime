@@ -57,7 +57,7 @@ class NavTab extends Component {
     }
     
     render() {
-        const {match, to, children, variant, expanded, colourName} = this.props
+        const {match, to, children, variant, expanded, colourName, position} = this.props
         const {sub_menu_visible} = this.state
 
         if (variant === 'link') {
@@ -94,7 +94,7 @@ class NavTab extends Component {
                   </NavDropdownIcon>
 
                   { sub_menu_visible && 
-                    <NavTabPopup>
+                    <NavTabPopup position={position}>
                       <PopupPanel>
                         {children}
                       </PopupPanel>
@@ -110,11 +110,12 @@ class NavTab extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { colourName } = props
+    const { colourName, position } = props
     
     return {
         variant: props.variant || 'link',
-        colourName
+        colourName,
+        position
     }
 }
 

@@ -33,13 +33,10 @@ function createBookmarkFromBreadcrumbs(breadcrumbs) {
     return bookmark
 }
 
-export function autoBookmarkCurrent() {
+export function autoBookmarkCurrent(optional_breadcrumbs) {
     return (dispatch, getState) => {
-
-        return null
-        
         const state = getState()
-        const breadcrumbs = getBreadcrumbs(state)
+        const breadcrumbs = optional_breadcrumbs || getBreadcrumbs(state)
         const new_auto_bookmark = createBookmarkFromBreadcrumbs(breadcrumbs)
         if ( !new_auto_bookmark ) {
             return null

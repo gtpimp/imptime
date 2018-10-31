@@ -1,4 +1,5 @@
 import { size, last, nth } from 'lodash'
+import { autoBookmarkCurrent } from './Bookmarks'
 
 export const SET_BREADCRUMBS = 'SET_BREADCRUMBS'
 export const SET_BREADCRUMBS_ACTIVE = 'SET_BREADCRUMBS_ACTIVE'
@@ -196,10 +197,13 @@ export function setDecisionJournalBreadcrumbsHelper(project, optional_decision_j
 
 
 export function setBreadcrumbs(breadcrumbs) {
-    return {
-        type: SET_BREADCRUMBS,
-        breadcrumbs: breadcrumbs,
-        is_active: true
+    return (dispatch, getState) => {
+        dispatch({
+            type: SET_BREADCRUMBS,
+            breadcrumbs: breadcrumbs,
+            is_active: true
+        })
+        dispatch(autoBookmarkCurrent(breadcrumbs))
     }
 }
 

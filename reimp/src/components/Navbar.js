@@ -59,7 +59,7 @@ class Navbar extends Component {
                                   margin-right: 3px;
                                  `}>
 
-                <NavTab variant="dashboard-toggle" label="Projects">
+                <NavTab variant="dashboard-toggle" label="Projects" position="0px">
                   <ProjectFinder />
                 </NavTab>
                 <NavTab to="/companies" label="Companies" />

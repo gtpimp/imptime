@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter, Link} from 'react-router-dom'
+import {withRouter} from 'react-router-dom'
 import { css } from 'emotion'
-import { map } from 'lodash'
+import { size, take, map } from 'lodash'
 import Bookmark from './Bookmark'
+import { default_theme as theme } from '../theme/default'
 import { getAutoBookmarks } from '../actions/Bookmarks'
+import PopupPanelLink from './PopupPanelLink'
 
 class ProjectFinder extends Component {
 
@@ -14,12 +16,16 @@ class ProjectFinder extends Component {
             <div className={css`display: flex;
                                 flex-direction: column;
                             `}>
-
-              { map(bookmarks, (bookmark) => (
-                    <Bookmark bookmark={bookmark} />
-              ))}
+              { size(bookmarks) > 0 &&
+                <div className={css`margin-bottom:${theme.spacing.two}`}>
+                  { map(bookmarks, (bookmark, index) => (
+                        <Bookmark key={`project_finder_bookmarks_${index}`}
+                                  bookmark={bookmark} />
+                    ))}
+                </div>
+              }
               
-              <Link to="/projects">All projects</Link>
+              <PopupPanelLink to="/projects">All projects</PopupPanelLink>
             </div>
         )
     }
@@ -27,7 +33,7 @@ class ProjectFinder extends Component {
 
 function mapStateToProps(state, props) {
 
-    const bookmarks = getAutoBookmarks()
+    const bookmarks = take(getAutoBookmarks(), 20)
     
     return {
         bookmarks
