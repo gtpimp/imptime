@@ -53,7 +53,7 @@ export const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", descripti
                                              {key:'my_estimate', label:"My Estimate", description:"My time estimate", width:small_col_width},
                                              {key:'estimate_summary', label:"Time", description:"Condensed summary of all times", width:medium_col_width, is_default:true},
                                              {key:'estimate_columns', label:"Estimates", description:"Columns for each user", width:medium_col_width},
-                                             {key:'small_delete', label:"", description:"Delete issue", width:tiny_col_width, is_default:true},
+                                             {key:'small_delete', label:"", description:"Delete issue", width:tiny_col_width},
                                              {key:'view_in_sprint', label:"", description:"View in sprint", width:tiny_col_width},
 ]
 

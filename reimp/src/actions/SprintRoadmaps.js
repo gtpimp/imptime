@@ -18,8 +18,9 @@ import {
 export const ALL_AVAILABLE_SPRINT_ROADMAP_HEADERS =
     [ {key:'sprint_name', label:'Sprint', description:'Sprint name', width:large_col_width, is_default:true},
       {key:'sprint_status', label:'Status', description:'Sprint status', width:medium_col_width, is_default:true},
+      {key:'sprint_type', label:'Type', description:'Sprint type', width:medium_col_width, is_default:true},
       {key:'sprint_eta', label:'ETA', description:'Configured end date of sprint', width:medium_col_width, is_default:true},
-      {key:'features', label:'features', description:'Features in this sprint', width:medium_col_width, is_default:true}
+      {key:'features', label:'features', description:'Features in this sprint', width:medium_col_width, is_default:true},
     ]
 
 export function getSprintRoadmapIdsFromSprintIds(sprint_ids) {

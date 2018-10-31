@@ -71,7 +71,7 @@ class ProjectRoadmap extends Component {
 
         const filter = {project_id: project_id,
                         sprint_status: 'open',
-                        sprint_types: ['sprint', 'inbox']}
+                        sprint_types: ['sprint', 'spec', 'backlog']}
         dispatch(update_list_filter(sprint_list_key, filter))
         dispatch(update_list_format(sprint_list_key, {roadmap: true}))
         dispatch(fetchSprintsIfNeeded(sprint_list_key))
@@ -131,6 +131,13 @@ class ProjectRoadmap extends Component {
                                 <DivTableCell key={header_key}
                                               extra_style={getCellStyle(header)}>
                                   {sprint.status_name}
+                                </DivTableCell>
+                            )
+                        case "sprint_type":
+                            return (
+                                <DivTableCell key={header_key}
+                                              extra_style={getCellStyle(header)}>
+                                  {sprint.sprint_type}
                                 </DivTableCell>
                             )
                         case "sprint_eta":
