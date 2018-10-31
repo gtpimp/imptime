@@ -1,18 +1,32 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
-
 import { css, cx } from 'emotion'
 import { default_theme as theme } from '../theme/default'
-import placeholder from '../images/executive_summary_placeholder.jpg'
 import {
     ResponsiveContainer,
     BarChart,
     Bar,
     XAxis,
     YAxis,
-    ReferenceDot
 } from 'recharts'
+
+import {
+    ensureProjectsLoaded,
+    getProject
+} from '../actions/Projects'
+import {
+    ensureSprintsLoaded,
+    getSprint,
+    getExecutiveSummaryUrl
+} from '../actions/Sprints'
+import {
+    getCostSummary,
+    ensureCostSummaryLoaded,
+    isLoadingCostSummary
+} from '../actions/CostSummary'
+import { has_permission } from '../actions/Users'
+import { showMoney } from '../actions/Mien'
+import placeholder from '../images/executive_summary_placeholder.jpg'
 
 const resource_data = [
     {name: 'resources', spent: 7500, remaining: 2500}
@@ -22,17 +36,16 @@ const status_data = [
     {name: 'status', ontime: 200, warning: 300, danger: 400}
 ];
 
-const SmallDot = (props)=> {
-    const radius = 2.5;
-    const diameter = radius * 2;
-    return (
-        <svg width={diameter} height={diameter} style={{"overflow": "visible"}}>
-          <circle cx={props.cx} cy={props.cy} r={radius} stroke="green" strokeWidth="0" fill={props.color} />
-        </svg>
-    );
-}
-
 class ExecutiveSummary extends Component {
+
+    componentDidMount() {
+        const {dispatch, sprint_id, project_id, sprint} = this.props
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureSprintsLoaded([sprint_id]))
+        if (sprint && sprint.sprint_type_is_clockable) {
+            dispatch(ensureCostSummaryLoaded(sprint_id))
+        }
+    }
 
     renderResourceChart = () => {
         return (
@@ -65,37 +78,26 @@ class ExecutiveSummary extends Component {
                         layout="vertical">
                 <XAxis type="number" hide={ true } />
                 <YAxis dataKey="name" type="category" hide={ true } />
-
-                {/* <ReferenceDot shape={<SmallDot color={'#912424'} /> } /> */}
                 <Bar
                     isAnimationActive={ false }
                     dataKey="ontime"
                     stackId="a"
                     fill="#249134" />
-                {/* <Bar
-                    isAnimationActive={ false }
-                    dataKey="warning"
-                    stackId="a"
-                    fill="#916c24" />
-                    <Bar
-                    isAnimationActive={ false }
-                    dataKey="danger"
-                    stackId="a"
-                    fill="#912424" /> */}
               </BarChart>
             </ResponsiveContainer>
         );
     }
     
     render() {
-
+        const { sprint, cost_summary } = this.props
+        console.log("cost_summary", cost_summary)
         return (
             <div className={ main }>
               <div className={ box }>
                 <div className={ summary_header }>
                   <div className={ title_row }>
                     <span className={ circle }></span>
-                    <span className={ card_title }>Rebranding</span>
+                    <span className={ card_title }>{sprint.name}</span>
                   </div>
                   <div className={ status_row }>
                     <span className={ status_text }>Under budget</span>
@@ -133,7 +135,7 @@ class ExecutiveSummary extends Component {
                   </div>
                   <div className={context_description}>
                     <span className={content_title}>Description</span>
-                    <span className={ description_text }>Apply the new colour scheme to the web app, the mobile app and the emails. Note: does not include updating promotional website.</span>
+                    <span className={ description_text }>{ sprint.description || 'No description'}</span>
                   </div>
                 </div>
               </div>
@@ -142,11 +144,25 @@ class ExecutiveSummary extends Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {}
+function mapStateToProps(state, props) {
+    const sprint_id = props.sprint_id
+    const project_id = props.project_id
+    const project = getProject(state, project_id) || {}
+    const sprint = getSprint(state, sprint_id) || {}
+    const cost_summary = getCostSummary(state, sprint_id)
+    const show_money = sprint && showMoney(state, sprint.project_id)
+    const can_view_budget = show_money && sprint && has_permission(state, sprint.project_id, 'has_view_budget')
+    console.log("can_view_budget", can_view_budget)
+    return {
+        sprint_id: sprint_id,
+        project_id: project_id,
+        project: project,
+        sprint: sprint,
+        cost_summary: cost_summary
+    }
 }
 
-export default withRouter(connect(mapStateToProps)(ExecutiveSummary))
+export default connect(mapStateToProps)(ExecutiveSummary)
 
 const main = css`
 display: flex;
