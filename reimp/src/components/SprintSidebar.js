@@ -27,7 +27,7 @@ class SprintSidebar extends Component {
 
     constructor(props) {
         super(props)
-        this.showEmacsSprint = this.showEmacsSprint.bind(this)
+        this.state = {emacs_hint_enabled: false}
     }
     
     componentDidMount() {
@@ -53,6 +53,10 @@ class SprintSidebar extends Component {
 	}
     }
 
+    toggleShowEmacsHints = () => {
+        this.setState({emacs_hint_enabled:!this.state.emacs_hint_enabled})
+    }
+
     showEmacsSprint() {
         const { sprint } = this.props
         const text = "** sprint#" + sprint.id + " " + sprint.name
@@ -69,6 +73,30 @@ class SprintSidebar extends Component {
                   Cloned from <SprintName sprint_id={sprint.sprint_template_id} />
                 </div>
               }
+            </SidebarProperty>
+        )
+    }
+
+    renderEmacsHintStack() {
+        const {sprint} = this.props
+        const { emacs_hint_enabled } = this.state
+        return (
+            <SidebarProperty key="emacshintstack">
+              <MienFeature feature_name="emacs">
+                <div>
+                  <div className="issue_sidebar__emacs_copy_img" onClick={this.toggleShowEmacsHints} />
+                  { emacs_hint_enabled &&
+                    <div className="property-row">
+                      <div className="property-label">
+                        Emacs sprint
+                      </div>
+                      <div className="property-value">
+                        <input value={"** sprint" + sprint.id + " " + sprint.name}/>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </MienFeature>
             </SidebarProperty>
         )
     }
@@ -186,6 +214,7 @@ class SprintSidebar extends Component {
                       this.renderCloneInfo(),
                       this.renderTitleStack(),
                       this.renderDescriptionStack(),
+                      this.renderEmacsHintStack(),
                       this.renderInfoStack(),
                       this.renderReviewStack(),
                       this.renderDeadlineStack(),
