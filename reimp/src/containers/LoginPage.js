@@ -30,27 +30,25 @@ class LoginPage extends Component {
     render() {
         const { initialValues } = this.props
         return (
-            <ResponsiveLayout>
-              <div className={ main }>
-                <div className={ box }>
-                  <div className={ header }>
-                    <PageTitle>Sign in to ImpTime</PageTitle>
-                  </div>
-                  <div className={ login_form }>
-                    <LoginForm
-                        initialValues={ initialValues }
-                        onSubmit={ this.onLogin } />
-                  </div>
-                  <div className={ link_container }>
-                    <a href="#"
-                       className={ link }
-                       onClick={this.onClickedCreateAccount}>
-                      Create an account
-                    </a>
-                  </div>
+            <div className={ main }>
+              <div className={ box }>
+                <div className={ header }>
+                  <PageTitle>Sign in to ImpTime</PageTitle>
+                </div>
+                <div className={ login_form }>
+                  <LoginForm
+                      initialValues={ initialValues }
+                      onSubmit={ this.onLogin } />
+                </div>
+                <div className={ link_container }>
+                  <a href="#"
+                     className={ link }
+                     onClick={this.onClickedCreateAccount}>
+                    Create an account
+                  </a>
                 </div>
               </div>
-            </ResponsiveLayout>
+            </div>
         )
     }
 }
@@ -66,9 +64,13 @@ export default withRouter(connect(mapStateToProps)(LoginPage))
 
 const main = css`
 display: flex;
-flex: 1;
 justify-content: center;
-align-items: center;
+padding-top: 50px;
+
+@media (max-width: ${theme.breakpoints.mobile}) {
+    padding-top: 0;
+    justify-content: flex-start;
+}
 `
 
 const box = css`
@@ -76,6 +78,14 @@ width: 400px;
 background-color: #FFFFFF;
 box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
 border-radius: 2px;
+
+@media (max-width: ${theme.breakpoints.mobile}) {
+    width: 100%;
+    height: 100%;
+    box-shadow: none;
+    border-radius: 0;
+    border: none;
+}
 `
 
 const header = css`

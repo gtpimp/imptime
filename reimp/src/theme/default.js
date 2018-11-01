@@ -116,5 +116,8 @@ export const default_theme = {
 
     circles: {
         red: css`width: 21px; height: 21px; border-radius: 50%; background-color: #E25A50`
+    },
+    breakpoints: {
+        mobile: '850px'
     }
 }
