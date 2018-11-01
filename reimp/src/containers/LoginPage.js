@@ -1,6 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { cx, css } from 'emotion'
+import {withRouter} from 'react-router-dom'
+import queryString from 'query-string'
+import { get } from 'lodash'
 
 import {login} from '../actions/Auth'
 import { default_theme as theme } from '../theme/default'
@@ -25,6 +28,7 @@ class LoginPage extends Component {
     }
 
     render() {
+        const { initialValues } = this.props
         return (
             <ResponsiveLayout>
               <div className={ main }>
@@ -33,7 +37,9 @@ class LoginPage extends Component {
                     <PageTitle>Sign in to ImpTime</PageTitle>
                   </div>
                   <div className={ login_form }>
-                    <LoginForm onSubmit={ this.onLogin } />
+                    <LoginForm
+                        initialValues={ initialValues }
+                        onSubmit={ this.onLogin } />
                   </div>
                   <div className={ link_container }>
                     <a href="#"
@@ -49,9 +55,14 @@ class LoginPage extends Component {
     }
 }
 function mapStateToProps(state, props) {
-    return {}
+    const query_params = queryString.parse(props.location.search)
+    return {
+        initialValues: {
+            username: get(query_params, 'u', '')
+        }
+    }
 }
-export default connect(mapStateToProps)(LoginPage)
+export default withRouter(connect(mapStateToProps)(LoginPage))
 
 const main = css`
 display: flex;
