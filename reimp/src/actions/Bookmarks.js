@@ -34,13 +34,16 @@ function createBookmarkFromBreadcrumbs(breadcrumbs) {
 }
 
 function doesBookmarkASubsumeBookmarkB(bookmark_a, bookmark_b) {
+    if ( ! bookmark_a || ! bookmark_b ) {
+        return false
+    }
     if ( size(bookmark_a.parts) <= size(bookmark_b.parts) ) {
         return false
     }
     let subsumes = true
     map(bookmark_b.parts, (part_b, index) => {
         const part_a = bookmark_b.parts[index]
-        if (part_a.url != part_b.url) {
+        if (part_a.url !== part_b.url) {
             subsumes = false
             return
         }
