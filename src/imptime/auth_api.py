@@ -43,7 +43,8 @@ class LoginViewSet(rest_views.ObtainAuthToken):
         return Response({'token': token.key,
                          'user_id': user.id,
                          'is_superuser': user.is_superuser,
-                         'has_usable_password': user.has_usable_password()})
+                         'has_usable_password': user.has_usable_password(),
+                         'is_onboarded': user.is_onboarded})
 
 class OtpEmailViewSet(rest_views.ObtainAuthToken):
     def post(self, request, *args, **kwargs):

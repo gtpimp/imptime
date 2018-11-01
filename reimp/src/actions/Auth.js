@@ -63,7 +63,7 @@ export function auto_login(auto_login_token) {
             .then(json => {
                 if ( json.token ) {
                     dispatch(setAuthToken(json.username, json.token, json.user_id,
-                                          json.has_usable_password, json.is_superuser))
+                                          json.has_usable_password, json.is_superuser, json.is_onboarded))
                     if ( json.has_usable_password === "false" ) {
                         window.open('/password/change')
                     }
@@ -94,7 +94,8 @@ export function login(username, password) {
                 if ( json.token ) {
                     dispatch(setAuthToken(username, json.token,
                                           json.user_id, json.has_usable_password,
-                                          json.is_superuser))
+                                          json.is_superuser,
+                                          json.is_onboarded))
                 } else {
                     throw new SubmissionError({ _error: 'Invalid username/password combination' })
                 }
