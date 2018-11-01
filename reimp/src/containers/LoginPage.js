@@ -85,6 +85,9 @@ border-radius: 2px;
     box-shadow: none;
     border-radius: 0;
     border: none;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 `
 

@@ -152,7 +152,7 @@ function mapStateToProps(state, props) {
     const cost_summary = getCostSummary(state, sprint_id)
     const show_money = sprint && showMoney(state, sprint.project_id)
     const can_view_budget = show_money && sprint && has_permission(state, sprint.project_id, 'has_view_budget')
-    console.log("can_view_budget", can_view_budget)
+
     return {
         sprint_id: sprint_id,
         project_id: project_id,
