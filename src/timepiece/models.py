@@ -3907,18 +3907,18 @@ class UserOtpToken(BaseModel):
         a.save()
         return a.token
 
+    @classmethod
     def _generate_otp_token(self):
         return ''.join([str(random.randint(0,9)) for _ in range(6)])
 
 
     @classmethod
-    def check_and_use_otp(self, token):
-        a = UserOtpToken.objects.filter(token=token).first()
+    def is_valid_otp(self, user, token):
+        a = UserOtpToken.objects.filter(user=user, token=token).first()
         if a is None or a.used == True or a.expire_at < timezone.now():
-            return None
-        a.used = True
-        a.save()
-        return a.user
+            return False
+        a.delete()
+        return True
 
 
 class ProjectHours(BaseModel):
