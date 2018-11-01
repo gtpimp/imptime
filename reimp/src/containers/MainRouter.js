@@ -45,6 +45,7 @@ import ExecutiveSummaryPage from './ExecutiveSummaryPage'
 import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
+import OnboardingPage from './OnboardingPage'
 import { setBrowserTitle } from '../actions/Page'
 
 class MainRouter extends Component {
@@ -58,6 +59,7 @@ class MainRouter extends Component {
               <Route exact path="/" component={WelcomePage}/>
               <Route exact path="/account/create" component={AccountCreatePage}/>
               <Route exact path="/account/created" component={AccountCreatedPage}/>
+              <Route exact path="/onboarding" component={OnboardingPage}/>
               <Route exact path="/work_summary" component={WorkSummaryPage}/>
               <Route exact path="/calendar/" component={CalendarPage}/>
               <Route exact path="/calendar/:scheduleId/" component={CalendarPage}/>

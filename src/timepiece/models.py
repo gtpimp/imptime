@@ -3845,6 +3845,7 @@ class UserProfile(BaseModel):
     impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='profiles')
 
     required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
+    is_onboarded = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('user',)

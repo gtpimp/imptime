@@ -66,12 +66,16 @@ class MainLayout extends Component {
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, history, location, logged_in_user_id, settings,
-                has_usable_password } = props
+                has_usable_password, is_user_onboarded } = props
         
         if ( logged_in_user_id ) {
             dispatch(ensureUsersLoaded([logged_in_user_id]))
             if ( !has_usable_password ) {
                 history.push('/password/change')
+            }
+
+            if ( !is_user_onboarded ) {
+                history.push('/onboarding')
             }
         } else {
             if ( settings.configured && location && location.search ) {
@@ -84,7 +88,7 @@ class MainLayout extends Component {
     }
 
     render() {
-        const { is_logged_in, are_settings_loaded } = this.props
+        const { is_logged_in, are_settings_loaded, is_user_onboarded } = this.props
 
         const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') !== -1 ||
                                this.props.location.pathname.indexOf('password/reminded') !== -1 ||
@@ -116,6 +120,15 @@ class MainLayout extends Component {
                 <AppDiv id="app">
                   <Maintenance/>
                   <Error/>
+                  <MainRouter />
+                </AppDiv>
+            )
+        }
+
+        if (!is_user_onboarded) {
+            return (
+                <AppDiv id="app">
+                  <Websocket/>
                   <MainRouter />
                 </AppDiv>
             )
@@ -177,7 +190,8 @@ function mapStateToProps(state) {
         has_usable_password: has_usable_password,
         settings: state.settings,
         current_mien_id,
-        current_mien
+        current_mien,
+        is_onboarded: false
     }
 }
 
