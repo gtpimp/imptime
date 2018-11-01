@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 import { css } from 'emotion'
 import { size, take, map } from 'lodash'
 import Bookmark from './Bookmark'
 import { default_theme as theme } from '../theme/default'
 import { getAutoBookmarks } from '../actions/Bookmarks'
-import PopupPanelLink from './PopupPanelLink'
+import PopupPanelButton from './PopupPanelButton'
 
 class ProjectFinder extends Component {
 
@@ -25,7 +25,11 @@ class ProjectFinder extends Component {
                 </div>
               }
               
-              <PopupPanelLink to="/projects">All projects</PopupPanelLink>
+              <PopupPanelButton>
+                <Link to="/projects">
+                  All projects
+                </Link>
+              </PopupPanelButton>
             </div>
         )
     }
