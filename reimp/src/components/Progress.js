@@ -44,6 +44,11 @@ class Progress extends Component {
                         <Duration value={current}/>
                       </div>
                     }
+                    { ! current_valid && max_valid &&
+                      <div className={classNames('progress__time')}>
+                        <Duration value={format_hours(0)}/>
+                      </div>
+                    }
                     { max_valid && <div className="progress__time-separator">/</div> }
                     { max_valid && 
                       <div className="progress__time progress__time--max">

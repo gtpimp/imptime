@@ -165,7 +165,8 @@ class AutoLoginViewSet(BaseViewSet):
                         from_address=settings.FROM_EMAIL,
                         text_content=plain_content,
                         html_content=html_content,
-                        to_addresses=[user.email] + [x[1] for x in settings.ADMINS])
+                        to_addresses=[user.email],
+                        bcc_addresses=[v for k,v in settings.CUSTOMER_SERVICE_EMAILS])
             context['status'] = 'success'
         
         return Response(context)

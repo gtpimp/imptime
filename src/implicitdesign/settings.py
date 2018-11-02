@@ -12,6 +12,12 @@ LOG_FOLDER=os.path.join(PROJECT_HOME, "..", "..", 'logs')
 ADMINS = (
     ('Gareth Priede', 'gtp@implicitdesign.co.za'),
 )
+
+CUSTOMER_SERVICE_EMAILS = (
+    ('Gareth Priede', 'gtp@implicitdesign.co.za'),
+    ('Richard Hoberman', 'richard.hoberman@gmail.com'),
+)
+
 MANAGERS = ADMINS
 
 REDMINE_DB_MAPPING = [ { 'username' : 'test',
