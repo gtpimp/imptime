@@ -301,6 +301,8 @@ class IssueSidebar extends Component {
               { map(feature_testables, function (testable, index) {
                     const feature_id = testable.feature_ids[0]
                     return (
+                        <EditableIssueFeature issue_id={issue_id} feature_id={feature_id} feature_testable_id={feature_testable_id} />
+                        
                         <Floater key={`feature_testable_${feature_id}`}
                                  title={<div>This issue implements part of feature <FeatureName feature_id={feature_id} /></div>}
                                  disableHoverToClick

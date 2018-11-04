@@ -27,7 +27,6 @@ class Progress extends Component {
         
         let max_valid = estimate !== undefined && estimate > 0
         let current_valid = hours !== undefined && hours > 0
-
         
         const show = force_show || hours > 0 || estimate > 0
 
