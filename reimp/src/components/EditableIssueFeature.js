@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
+import { first, filter } from 'lodash'
 import EditableProperty from './form/EditableProperty'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
@@ -11,6 +11,7 @@ import {
 import SidebarAddButton from './SidebarAddButton'
 import { has_permission } from '../actions/Users'
 import IssueFeature from './IssueFeature'
+import FeatureSelectorForm from './form/FeatureSelectorForm'
 
 class EditableIssueFeature extends Component {
 
@@ -34,37 +35,38 @@ class EditableIssueFeature extends Component {
     }
 
     render() {
-        const {feature_testable, can_edit, issue_id, project_id} = this.props
+        const {feature_testable, feature_id, can_edit, issue_id, project_id} = this.props
         return (
             <PermissionInspectorHighlighter project_id={project_id}
                                             permission_name='has_edit_issue_feature'>
-              { feature_testable.id &&
-                <EditableProperty property_key={'issue_comment_'+issue_id+'_'+feature_testable.id}
+              { feature_testable &&
+                <EditableProperty property_key={'issue_feature_'+issue_id+'_'+feature_testable.id}
                                   initial_value={feature_testable.id}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                     >
-                  <IssueCommentForm form={'issue_comment_form_'+issue_id+'_'+comment.id}
-                                    issue_id={issue_id} comment={comment}/>
-                  <IssueComment issue_id={issue_id}
-                                comment={comment}
+                  <FeatureSelectorForm form={'issue_feature_form_'+issue_id+'_'+feature_id}
+                                       default_feature_id={feature_id}/>
+                  <IssueFeature issue_id={issue_id}
+                                feature_id={feature_id}
+                                feature_testable_id={feature_testable.id}
                                 onDelete={this.onDelete} />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
 
-              { ! comment.id &&
+              { ! feature_testable &&
                 <div>
-                  <EditableProperty property_key={'issue_comment_'+issue_id}
+                  <EditableProperty property_key={'issue_feature_'+issue_id}
                                     initial_value=''
                                     onChange={this.onChange}
                                     can_edit={can_edit}
                     >
-                    <IssueCommentForm form={'issue_comment_form_'+issue_id} issue_id={issue_id} />
+                    <FeatureSelectorForm form={'issue_feature_form_'+issue_id} />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">
-                      <div className="text-component--comment">
-                        <SidebarAddButton label="Add comment" />
+                      <div className="text-component--feature">
+                        <SidebarAddButton label="Add feature" />
                       </div>
                     </div>
                   </EditableProperty>

@@ -148,7 +148,7 @@ class IssueDependancies extends Component {
         return (
             <SidebarProperty key="predecessorissues">
               <div className={ info_tip }>
-                Predecessor issues - required in order to complete this issue.
+                Required issues that must be closed first.
               </div>
               <div>
                 { map(issue.needs_issue_ids, (issue_id) =>
@@ -156,7 +156,7 @@ class IssueDependancies extends Component {
                 )}
                 <SidebarAddButton
                     onButtonClick={this.onStartAddingNeedsIssue}
-                    label="Add predecessor issue" />
+                    label="Add required issue" />
               </div>
             </SidebarProperty>
         )
@@ -167,7 +167,7 @@ class IssueDependancies extends Component {
         return (
             <SidebarProperty key="dependantissues">
               <div className={ info_tip }>
-                Dependant issues - can only be done after this issue.
+                Waiting issues that can't be until closing this issue.
               </div>
               <div>
                 { map(issue.issue_ids_needing_us, (issue_id) =>
@@ -176,7 +176,7 @@ class IssueDependancies extends Component {
               </div>
               <SidebarAddButton
                   onButtonClick={this.onStartAddingIssueNeedingUs}
-                  label="Add dependant issue" />
+                  label="Add waiting issue" />
             </SidebarProperty>
         )
     }

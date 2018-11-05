@@ -1,13 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { css } from 'emotion'
 import { map, size } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import PropertyStack from './PropertyStack'
-import FeatureName from './FeatureName'
-import Floater from "react-floater"
-import Testable from './Testable'
-import EditableIssueDescription from './EditableIssueDescription'
+ import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueDueDate from './EditableIssueDueDate'
 import EditableIssueRisky from './EditableIssueRisky'
@@ -20,6 +16,7 @@ import EditableIssueInSprint from './EditableIssueInSprint'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueType from './EditableIssueType'
 import EditableIssueEstimate from './EditableIssueEstimate'
+import EditableIssueFeature from './EditableIssueFeature'
 import IssueReviewPanel from './IssueReviewPanel'
 import VisualSpecDocumentGallery from './visual_spec/VisualSpecDocumentGallery'
 import VisualSpecDocumentForm from './visual_spec/VisualSpecDocumentForm'
@@ -291,35 +288,19 @@ class IssueSidebar extends Component {
     }
 
     renderFeaturesStack() {
-        const { feature_testables } = this.props
+        const { issue_id, feature_testables } = this.props
         if (size(feature_testables) === 0 ) {
             return null
         }
         return (
             <div key="featuresstack">
               <SidebarSectionTitle title="Feature testables" />
-              { map(feature_testables, function (testable, index) {
-                    const feature_id = testable.feature_ids[0]
+              { map(feature_testables, function (feature_testable, index) {
+                    const feature_id = feature_testable.feature_ids[0]
                     return (
-                        <EditableIssueFeature issue_id={issue_id} feature_id={feature_id} feature_testable_id={feature_testable_id} />
-                        
-                        <Floater key={`feature_testable_${feature_id}`}
-                                 title={<div>This issue implements part of feature <FeatureName feature_id={feature_id} /></div>}
-                                 disableHoverToClick
-                                 event="hover"
-                                 eventDelay={0}
-                                 placement="bottom"
-                                 content={
-                                     <Testable key={`feature_testable_${testable.id}`}
-                                                   testable={testable}
-                                                   feature_id={feature_id.id}
-                                     />
-                                 }
-                            >
-                          <div className={css`display: flex`}>
-                            <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{Testable.name}
-                          </div>
-                        </Floater>
+                        <EditableIssueFeature issue_id={issue_id}
+                                              feature_id={feature_id}
+                                              feature_testable_id={feature_testable.id} />
                     )
                 })
               }
@@ -370,24 +351,6 @@ class IssueSidebar extends Component {
         )
     }
 
-    renderFeatureStack() {
-        const { issue } = this.props
-        if ( ! issue.can_group_issues ) {
-            return null
-        }
-        return (
-            <SidebarProperty key="featurestack">
-              <SidebarSectionTitle title="Features" />
-              <div>
-                Bring this feature's issues
-                <button className="button button--primary sprint_sidebar--button" onClick={this.makeFeatureIssuesSuccessive}>
-                  together
-                </button>
-              </div>
-            </SidebarProperty>
-        )
-    }
-
     renderReviewsStack() {
         const { issue } = this.props
         return (
@@ -421,7 +384,6 @@ class IssueSidebar extends Component {
                         this.renderEstimatesStack(),
                         this.renderDependancyStack(),
                         this.renderAttachmentsStack(),
-                        this.renderFeatureStack(),
                         this.renderReviewsStack()
                     ]
                   }
@@ -459,7 +421,6 @@ class IssueSidebar extends Component {
                             { this.renderInfoStack() }
                             { this.renderEstimatesStack() }
                             { this.renderAttachmentsStack() }
-                            { this.renderFeatureStack() }
                           </div>
                         </div>
                       </div>
