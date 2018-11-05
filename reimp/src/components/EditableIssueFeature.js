@@ -8,6 +8,9 @@ import {
     getIssue,
     is_issue_invalidated
 } from '../actions/Issues'
+import {
+    removeIssueToFeatureTestable
+} from '../actions/Features'
 import SidebarAddButton from './SidebarAddButton'
 import { has_permission } from '../actions/Users'
 import IssueFeature from './IssueFeature'
@@ -30,8 +33,16 @@ class EditableIssueFeature extends Component {
         alert("changing")
     }
 
-    onDelete = () => {
-        alert("Deleting")
+    onDelete = (evt) => {
+        const { dispatch, feature_id, feature_testable_id, issue_id } = this.props
+        if ( evt ) {
+            evt.preventDefault()
+            evt.stopPropagation()
+        }
+        if (! window.confirm("Unassociate this feature from the issue?") ) {
+            return false
+        }
+        dispatch(removeIssueToFeatureTestable(feature_id, feature_testable_id, issue_id))
     }
 
     render() {
@@ -50,7 +61,7 @@ class EditableIssueFeature extends Component {
                   <IssueFeature issue_id={issue_id}
                                 feature_id={feature_id}
                                 feature_testable_id={feature_testable.id}
-                                onDelete={this.onDelete} />
+                                onDelete={can_edit && this.onDelete} />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }

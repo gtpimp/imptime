@@ -30,6 +30,7 @@ class ProjectUserPermissionSerializer(BaseSerializer):
     has_add_issue_comment = serializers.BooleanField()
     has_edit_subject = serializers.BooleanField()
     has_edit_feature = serializers.BooleanField()
+    has_edit_issue_feature = serializers.BooleanField()
     has_create_sprint = serializers.BooleanField()
     has_edit_sprint_status = serializers.BooleanField()
     has_edit_sprint_type = serializers.BooleanField()

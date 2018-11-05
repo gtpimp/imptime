@@ -172,7 +172,7 @@ issue--grouped {
     width: 100%;
 }
 
-.issue-comment__info, .issue-testable__info {
+.issue-comment__info, .issue-testable__info, .issue-feature__info {
     display: flex;
     flex-direction: column;
     font-size: $font-size-small;

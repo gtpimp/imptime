@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import {withRouter} from 'react-router-dom'
 import { filter, first } from 'lodash'
 import { getIssue, ensureIssuesLoaded } from '../actions/Issues'
 import FeatureName from './FeatureName'
@@ -17,6 +18,13 @@ class IssueFeature extends Component {
     componentWillReceiveProps(new_props) {
         const { dispatch, issue_id } = new_props
         dispatch(ensureIssuesLoaded([issue_id]))
+    }
+
+    onFeatureClicked = (evt) => {
+        const { history, issue, feature_id } = this.props
+        evt.preventDefault()
+        const project_id = issue.project_id
+        history.push(`/projects/${project_id}/features/${feature_id}`)
     }
 
     render() {
@@ -38,15 +46,19 @@ class IssueFeature extends Component {
                                                               />
                                }
               >
-                           <div className={css`display: flex`}>
+                           <div className={css`display: flex`} onClick={this.onFeatureClicked}>
                              <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{feature_testable.name}
                            </div>
               </Floater>
-              { onDelete &&
-                <div onClick={onDelete} className="issue_sidebar__options__left">
-                  Remove
+              <div className="issue-feature__info">
+                <div className="issue_sidebar__options">
+                  { onDelete &&
+                    <div onClick={onDelete} className="issue_sidebar__options__left">
+                      Remove
+                    </div>
+                  }
                 </div>
-              }
+              </div>
             </div>
         )
     }
@@ -67,4 +79,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default connect(mapStateToProps)(IssueFeature)
+export default withRouter(connect(mapStateToProps)(IssueFeature))
