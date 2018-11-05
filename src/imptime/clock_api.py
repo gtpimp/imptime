@@ -253,8 +253,7 @@ class ClockViewSet(BaseViewSet):
 
             for entry_pk in entry_pks:
                 entry = self.allowed_timesheet_entry(entry_pk)
-
-                if not entry.issue.project.can_add_dev_time(): #sic
+                if entry.issue_id and not entry.issue.project.can_add_dev_time(): #sic
                     raise Exception("Can't delete entries for locked sprints: %s" % entry.issue.project) #sic
                 
                 entry.delete()
