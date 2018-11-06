@@ -36,6 +36,7 @@ class Testable(models.Model):
 
     def copy(self):
         return Testable.objects.create(include_in_regression_test=self.include_in_regression_test,
+                                       project_id=self.project_id,
                                        issue=self.issue,
                                        steps=self.steps,
                                        order=self.order,
