@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map, size } from 'lodash'
+import { map } from 'lodash'
 import {withRouter} from 'react-router-dom'
+import Floater from "react-floater"
 import PropertyStack from './PropertyStack'
- import EditableIssueDescription from './EditableIssueDescription'
+import EditableIssueDescription from './EditableIssueDescription'
 import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueDueDate from './EditableIssueDueDate'
 import EditableIssueRisky from './EditableIssueRisky'
@@ -289,21 +290,34 @@ class IssueSidebar extends Component {
 
     renderFeaturesStack() {
         const { issue_id, feature_testables } = this.props
-        if (size(feature_testables) === 0 ) {
-            return null
-        }
         return (
             <div key="featuresstack">
-              <SidebarSectionTitle title="Feature testables" />
+              <Floater key={`feature_testable_hint_${issue_id}`}
+                       title={<div>Features implemented</div>}
+                       disableHoverToClick
+                       event="hover"
+                       eventDelay={0}
+                       placement="bottom"
+                       content={
+                           <div>A list of features which this issue either partly or completely implements</div>
+                               }
+              >
+                           <SidebarSectionTitle title="Features implemented" />
+              </Floater>
               { map(feature_testables, function (feature_testable, index) {
                     const feature_id = feature_testable.feature_ids[0]
                     return (
-                        <EditableIssueFeature issue_id={issue_id}
+                        <EditableIssueFeature key={`issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}
+                                              issue_id={issue_id}
                                               feature_id={feature_id}
                                               feature_testable_id={feature_testable.id} />
                     )
                 })
               }
+              <EditableIssueFeature key={`issue_feature_${issue_id}_new`}
+                                    issue_id={issue_id}
+                                    feature_id={null}
+                                    feature_testable_id={null} />
             </div>
         )
     }
