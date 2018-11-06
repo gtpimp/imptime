@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import { cx, css } from 'emotion'
 
-import { default_theme as theme } from '../theme/default'
-import PagePrimaryButton from './PagePrimaryButton'
+import { default_theme as theme } from '../../theme/default'
+import PagePrimaryButton from '../PagePrimaryButton'
 
 class OnboardingFooter extends Component {
     render() {

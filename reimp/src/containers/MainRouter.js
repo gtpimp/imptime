@@ -45,7 +45,7 @@ import ExecutiveSummaryPage from './ExecutiveSummaryPage'
 import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
-import OnboardingPage from './OnboardingPage'
+import OnboardingPage from '../components/onboarding/OnboardingPage'
 import { setBrowserTitle } from '../actions/Page'
 
 class MainRouter extends Component {

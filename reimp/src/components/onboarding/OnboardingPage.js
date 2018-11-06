@@ -3,8 +3,8 @@ import {connect} from 'react-redux'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 
-import { default_theme as theme } from '../theme/default'
-import OnboardingWizard from '../components/OnboardingWizard'
+import { default_theme as theme } from '../../theme/default'
+import OnboardingWizard from './OnboardingWizard'
 
 class OnboardingPage extends Component {
 
