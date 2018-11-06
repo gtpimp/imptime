@@ -417,14 +417,6 @@ class AutoClockPopup extends Component {
             return null
         }
 
-        if ( most_recent_entry &&
-             most_recent_entry.issue_id === available_issue_id &&
-             most_recent_entry.sprint_id === available_sprint_id &&
-             most_recent_entry.project_id === available_project_id ) {
-            
-            return null
-        }
-        
         return (
             <div>
               <PopupPanelHeading>
