@@ -86,17 +86,17 @@ class AutoClockPopup extends Component {
     componentDidMount() {
         const { dispatch, list_key, list_key_by_issue, list_key_unallocated } = this.props
         dispatch(initList(list_key))
-        dispatch(update_list_ordering(list_key, { 'start_time': 'desc' }))
+        dispatch(update_list_ordering(list_key, { 'end_time': 'desc' }))
         dispatch(update_list_pagination(list_key, { page_size: 1 }))
 
         dispatch(initList(list_key_by_issue))
-        dispatch(update_list_ordering(list_key_by_issue, { 'start_time': 'desc' }))
+        dispatch(update_list_ordering(list_key_by_issue, { 'end_time': 'desc' }))
         dispatch(update_list_format(list_key_by_issue, { 'distinct_by_issue': true }))
         dispatch(update_list_filter(list_key_by_issue, { 'is_active': false }))
         dispatch(update_list_pagination(list_key_by_issue, { page_size: 6 }))
 
         dispatch(initList(list_key_unallocated))
-        dispatch(update_list_ordering(list_key_unallocated, { 'start_time': 'desc' }))
+        dispatch(update_list_ordering(list_key_unallocated, { 'end_time': 'desc' }))
         dispatch(update_list_filter(list_key_unallocated, { 'is_unallocated': true }))
         dispatch(update_list_pagination(list_key_unallocated, { page_size: 6 }))
 
