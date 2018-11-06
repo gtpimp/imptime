@@ -22,6 +22,7 @@ const modal_dialog_default = css`left: 40%; width:20%;`
 const modal_dialog_large = css`left: 25%; width:50%;`
 const modal_dialog_medium = css`left: 33%; width:33%;`
 const modal_dialog_full = css`left: 20%; width:60%; height:100%;`
+const modal_dialog_fixed = css`left: 20%; width:60%; height:400px;`
 
 class ModalDialog extends Component {
 
@@ -35,6 +36,7 @@ class ModalDialog extends Component {
                                  variant==="default" ? modal_dialog_default : null,
                                  variant==="large" ? modal_dialog_large : null,
                                  variant==="medium" ? modal_dialog_medium : null,
+                                 variant==="fixed" ? modal_dialog_fixed : null,
                                  variant==="full" ? modal_dialog_full : null)}
                    overlayClassName="modal-dialog__overlay"
                    onRequestClose={onClose || function () { }}

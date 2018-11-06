@@ -9,7 +9,8 @@ import {
     is_issue_invalidated
 } from '../actions/Issues'
 import {
-    removeIssueToFeatureTestable
+    removeIssueToFeatureTestable,
+    addIssueToFeature_AutoCreateTestable
 } from '../actions/Features'
 import SidebarAddButton from './SidebarAddButton'
 import { has_permission } from '../actions/Users'
@@ -29,8 +30,9 @@ class EditableIssueFeature extends Component {
         dispatch(ensureIssuesLoaded([issue_id]))
     }
 
-    onChange = () => {
-        alert("changing")
+    onChange = (new_value) => {
+        const { dispatch, issue } = this.props
+        dispatch(addIssueToFeature_AutoCreateTestable(new_value.feature_id, issue.id))
     }
 
     onDelete = (evt) => {
@@ -52,11 +54,14 @@ class EditableIssueFeature extends Component {
                                             permission_name='has_edit_issue_feature'>
               { feature_testable &&
                 <EditableProperty property_key={'issue_feature_'+issue_id+'_'+feature_testable.id}
+                                  edit_as_modal={true}
+                                  modal_variant="large"
                                   initial_value={feature_testable.id}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                     >
                   <FeatureSelectorForm form={'issue_feature_form_'+issue_id+'_'+feature_id}
+                                       project_id={project_id}
                                        default_feature_id={feature_id}/>
                   <IssueFeature issue_id={issue_id}
                                 feature_id={feature_id}
@@ -69,11 +74,15 @@ class EditableIssueFeature extends Component {
               { ! feature_testable &&
                 <div>
                   <EditableProperty property_key={'issue_feature_'+issue_id}
+                                    edit_as_modal={true}
+                                    modal_variant="fixed"
                                     initial_value=''
                                     onChange={this.onChange}
                                     can_edit={can_edit}
                     >
-                    <FeatureSelectorForm form={'issue_feature_form_'+issue_id} />
+                    <FeatureSelectorForm form={'issue_feature_form_'+issue_id}
+                                         project_id={project_id}
+                    />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">
                       <div className="text-component--feature">

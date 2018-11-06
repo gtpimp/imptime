@@ -1,6 +1,7 @@
 export const LIST_KEY__PROJECT_LIST = 'projects'
 export const LIST_KEY__SPRINT_LIST = 'sprints'
 export const LIST_KEY__FEATURE_LIST = 'features'
+export const LIST_KEY__FEATURE_SELECTOR_LIST = 'feature_selector'
 export const LIST_KEY__COMPANY_LIST = 'companies'
 export const LIST_KEY__COMPANY_USER_LIST = 'company_users'
 export const LIST_KEY__DECISION_JOURNAL_LIST = 'decision_journals'

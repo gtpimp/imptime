@@ -270,6 +270,16 @@ export function deleteFeatureTestable(feature_id, testable_id) {
     return itemPost(ENTITY_KEY__FEATURE, [feature_id], url, field_name, field_value, method, data)
 }
 
+export function addIssueToFeature_AutoCreateTestable(feature_id, issue_id) {
+    const url = `imp/feature/${feature_id}/addIssueToFeatureTestableAutoCreate/`
+    const field_name = "issue_id"
+    const field_value = issue_id
+    const method = "PUT"
+    const data = { feature_id: feature_id,
+                   issue_id: issue_id}
+    return itemPost(ENTITY_KEY__FEATURE, [feature_id], url, field_name, field_value, method, data)
+}
+
 export function addIssueToFeatureTestable(feature_id, testable_id, issue_id) {
     const url = `imp/feature/${feature_id}/addIssueToFeatureTestable/`
     const field_name = "issue_id"

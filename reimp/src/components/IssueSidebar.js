@@ -307,17 +307,21 @@ class IssueSidebar extends Component {
               { map(feature_testables, function (feature_testable, index) {
                     const feature_id = feature_testable.feature_ids[0]
                     return (
-                        <EditableIssueFeature key={`issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}
-                                              issue_id={issue_id}
-                                              feature_id={feature_id}
-                                              feature_testable_id={feature_testable.id} />
+                        <div>
+                          <EditableIssueFeature key={`issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}
+                                                issue_id={issue_id}
+                                                feature_id={feature_id}
+                                                feature_testable_id={feature_testable.id} />
+                        </div>
                     )
                 })
               }
-              <EditableIssueFeature key={`issue_feature_${issue_id}_new`}
-                                    issue_id={issue_id}
-                                    feature_id={null}
-                                    feature_testable_id={null} />
+                        <div>
+                          <EditableIssueFeature key={`issue_feature_${issue_id}_new`}
+                                                issue_id={issue_id}
+                                                feature_id={null}
+                                                feature_testable_id={null} />
+                        </div>
             </div>
         )
     }
