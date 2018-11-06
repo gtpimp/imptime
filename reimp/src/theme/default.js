@@ -5,6 +5,7 @@ const fonts_raw = { 'regular-12': "normal normal 400 12px 'Fira Sans', 'sans-ser
                     'semibold-15': "normal normal 500 15px 'Fira Sans', sans-serif",
                     'regular-13': "normal normal 400 13px 'Fira Sans', sans-serif",
                     'regular-15': "normal normal 400 15px 'Fira Sans', sans-serif",
+                    'regular-16': "normal normal 400 16px 'Fira Sans', sans-serif",
                     'regular-18': "normal normal 400 18px 'Fira Sans', sans-serif",
                     'bold-12': "normal normal 600 12px 'Fira Sans', sans-serif",
                     'bold-15': "normal normal 600 15px 'Fira Sans', sans-serif",
@@ -49,7 +50,8 @@ export const default_theme = {
                white: '#FFFFFF',
                black: '#000000',
                red: '#E25A50',
-               border_strong: '#888888'
+               border_strong: '#888888',
+               input_border: '#BDBDBD'
     },
 
     fonts: {
@@ -58,6 +60,7 @@ export const default_theme = {
         bold_normal: fonts_raw['bold-12'],
         bold_huge: fonts_raw['bold-20'],
         regular_large: fonts_raw['regular-15'],
+        regular_input: fonts_raw['regular-16'],
         semibold_large: fonts_raw['semibold-15'],
         bold_large: fonts_raw['bold-15'],
         regular_larger: fonts_raw['regular-13'],
@@ -94,6 +97,7 @@ export const default_theme = {
     spacing: {
         horizontal_space_inline: "5px",
         horizontal_text_space_inside_button: "12px",
+        horizontal_row_space_tight: "2px",
         vertical_row_space_tight: "2px",
         mini_button_height: "24px",
         vertical_section_gap: "20px",
@@ -112,5 +116,8 @@ export const default_theme = {
 
     circles: {
         red: css`width: 21px; height: 21px; border-radius: 50%; background-color: #E25A50`
+    },
+    breakpoints: {
+        mobile: '850px'
     }
 }

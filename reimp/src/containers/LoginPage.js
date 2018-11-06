@@ -1,33 +1,25 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {login} from '../actions/Auth'
+import { cx, css } from 'emotion'
 import {withRouter} from 'react-router-dom'
-import { Field, reduxForm } from 'redux-form'
-import Message from '../components/Message'
+import queryString from 'query-string'
+import { get } from 'lodash'
+
+import {login} from '../actions/Auth'
+import { default_theme as theme } from '../theme/default'
+import LoginForm from '../components/form/LoginForm'
+import ResponsiveLayout from './ResponsiveLayout'
+import PageTitle from '../components/PageTitle'
 
 class LoginPage extends Component {
 
-    constructor(props) {
-        super(props)
-        this.onLogin = this.onLogin.bind(this)
-        this.onClickedForgotPassword = this.onClickedForgotPassword.bind(this)
-        this.onClickedCreateAccount = this.onClickedCreateAccount.bind(this)
-    }
-
-    onLogin(values) {
+    onLogin = (values) => {
         const { dispatch } = this.props
+        this.setState({show_otp_buttons: false})
         return dispatch(login(values.username, values.password))
     }
 
-    onClickedForgotPassword(evt) {
-        const { history } = this.props
-        if ( evt ) {
-            evt.preventDefault()
-        }
-        history.push('/password/forgot');
-    }
-
-    onClickedCreateAccount(evt) {
+    onClickedCreateAccount = (evt) => {
         const { history } = this.props
         if ( evt ) {
             evt.preventDefault()
@@ -36,47 +28,89 @@ class LoginPage extends Component {
     }
 
     render() {
-
-        const { handleSubmit, error, submitting } = this.props
-        
+        const { initialValues } = this.props
         return (
-            <div className="login-page">
-                <div className="login-page__header">
-                    <div className="login-page__logo"></div>
-                    <div className="login-page__title">Log In</div>
+            <div className={ main }>
+              <div className={ box }>
+                <div className={ header }>
+                  <PageTitle>Sign in to ImpTime</PageTitle>
                 </div>
-
-                <div className="login-container">
-                    <div className="login-form" >
-                        <div className="login__header">Log In</div>
-                        <div className="login__body">
-                            <form onSubmit={handleSubmit(this.onLogin)}>
-                                <Field name="username" type="text" placeholder="Email Address" component="input" />
-                                <Field name="password" type="password" placeholder="Password" component="input" />
-                                { error &&
-                                  <div className="login-form__message">
-                                      <Message variant="error">Invalid username/password combination</Message>
-                                  </div>
-                                }
-                                  <button disabled={submitting} type="submit" className="button button--large button--login">Log In</button>
-                                  <div className="login__secondary_buttons">
-                                    <button className="button button--large login__forgot-password-link" onClick={this.onClickedForgotPassword}>forgot password</button>
-                                    <button className="button button--large" onClick={this.onClickedCreateAccount}>New account</button>
-                                  </div>
-                            </form>
-                        </div>
-                    </div>
+                <div className={ login_form }>
+                  <LoginForm
+                      initialValues={ initialValues }
+                      onSubmit={ this.onLogin } />
                 </div>
+                <div className={ link_container }>
+                  <a href="#"
+                     className={ link }
+                     onClick={this.onClickedCreateAccount}>
+                    Create an account
+                  </a>
+                </div>
+              </div>
             </div>
         )
     }
 }
-
 function mapStateToProps(state, props) {
-
+    const query_params = queryString.parse(props.location.search)
     return {
-        settings: state.settings
+        initialValues: {
+            username: get(query_params, 'u', '')
+        }
     }
 }
+export default withRouter(connect(mapStateToProps)(LoginPage))
 
-export default withRouter(connect(mapStateToProps)(reduxForm({form:'login_page'})(LoginPage)))
+const main = css`
+display: flex;
+justify-content: center;
+padding-top: 50px;
+
+@media (max-width: ${theme.breakpoints.mobile}) {
+    padding-top: 0;
+    justify-content: flex-start;
+}
+`
+
+const box = css`
+width: 400px;
+background-color: #FFFFFF;
+box-shadow: 0 4px 12px 0 rgba(0,0,0,0.3);
+border-radius: 2px;
+
+@media (max-width: ${theme.breakpoints.mobile}) {
+    width: 100%;
+    height: 100%;
+    box-shadow: none;
+    border-radius: 0;
+    border: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+`
+
+const header = css`
+border-bottom: 1px solid #e0e0e0;
+padding: 18px;
+`
+
+const login_form = css`
+padding: 18px;
+`
+
+const link_container = css`
+display: flex;
+flex: 1;
+justify-content: center;
+align-items: center;
+border-top: 1px solid #e0e0e0;
+padding: 18px;
+`
+
+const link = css`
+font: ${theme.fonts.regular_large};
+color: ${theme.colours.list_text};
+text-decoration: underline;
+`

@@ -28,6 +28,8 @@ function announceLoadingUsers(user_ids) {
 
 function announceUsersLoaded(payload) {
 
+    console.log("payloadpayloadpayload", payload)
+
     let items_by_id = {}
     each(payload.users, (item) => {
         items_by_id[item.id] = item

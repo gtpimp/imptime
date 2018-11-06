@@ -13,7 +13,7 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import UserAutoLoginToken, User, UserProfile
+from timepiece.models import UserAutoLoginToken, User, UserProfile, UserOtpToken
 from rest_framework.authtoken import views as rest_views
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -26,21 +26,50 @@ class LoginViewSet(rest_views.ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         # cut and pasted from venv/lib/python2.7/site-packages/rest_framework/authtoken/views.py
 
-        username = request.data['username']
-        if not User.objects.filter(username=username).exists():
-            user_by_email = User.objects.filter(email=username).first()
-            if user_by_email:
-                request.data['username'] = user_by_email.username
+        username = request.data.get('username', None)
+        user = User.objects.filter(Q(username=username) | Q(email=username)).first()
+        if user.username != username:
+            request.data['username'] = user.username
         
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
+        is_valid = serializer.is_valid(raise_exception=False)
+        otp = request.data.get('password', None)
+        if not is_valid and otp is not None:
+            is_valid_otp = UserOtpToken.is_valid_otp(user, otp)
+            if not is_valid_otp:
+                return Response({'success': 'failed'})
         Token.objects.filter(user=user).delete()
         token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
                          'user_id': user.id,
                          'is_superuser': user.is_superuser,
-                         'has_usable_password': user.has_usable_password()})
+                         'has_usable_password': user.has_usable_password(),
+                         'is_onboarded': user.is_onboarded})
+
+class OtpEmailViewSet(rest_views.ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username', None)
+        user = User.objects.filter(email=username).first()
+        if user is None:
+            user_by_email = User.objects.filter(email=username).first()
+            if user_by_email:
+                user = user_by_email
+
+        if user:
+            otp = UserOtpToken.get_otp_token(user)
+            email_context = {
+                'otp': otp
+            }
+            html_template = template.loader.get_template("imptime/emails/email_otp.html")
+            plain_template = template.loader.get_template("imptime/emails/email_otp.txt")
+            html_content = html_template.render(email_context)
+            plain_content = plain_template.render(email_context)
+            queue_email(subject_content="ImpTime: Email One Time Password",
+                        from_address=settings.FROM_EMAIL,
+                        text_content=plain_content,
+                        html_content=html_content,
+                        to_addresses=[user.email])
+        return Response({'success': 'ok'})
 
     
 @permission_classes((IsAuthenticated,))

@@ -54,6 +54,8 @@ import SprintName from './SprintName'
 import DivTable from './DivTable'
 import DivTableRow from './DivTableRow'
 import DivTableCell from './DivTableCell'
+import DivTableHeaderRow from './DivTableHeaderRow'
+import DivTableHeaderCell from './DivTableHeaderCell'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import Timestamp from './Timestamp'
 import FeatureName from './FeatureName'
@@ -199,12 +201,18 @@ class ProjectRoadmap extends Component {
 
     render() {
 
-        const { sprints, project_id } = this.props
-        const that = this
 
+        const { is_loading, sprints, project_id } = this.props
+        const that = this
+        if ( is_loading ) {
+            return (
+                <div>Loading...</div>
+            )
+        }
+        
         return (
             <div ref={ (el) => this.project_roadmap_el = el }>
-                
+              
               <MienListColumnConfigurable all_headers={ALL_AVAILABLE_SPRINT_ROADMAP_HEADERS}
                                           header_list_name={HEADER_LIST_NAME__SPRINT_ROADMAP}
                 >
@@ -217,6 +225,19 @@ class ProjectRoadmap extends Component {
                    )}
                 </MienListColumnConfigurable>
             </div>
+        )
+    }
+
+    renderHeader = (header_list) => {
+        return (
+            <DivTableHeaderRow>
+              { map(header_list, (v, index) => (
+                  <DivTableHeaderCell key={index}
+                                      extra_style={getCellStyle(v)}>
+                    { v.key !== "name" && v.label }
+                  </DivTableHeaderCell>
+              ))}
+            </DivTableHeaderRow>
         )
     }
 }

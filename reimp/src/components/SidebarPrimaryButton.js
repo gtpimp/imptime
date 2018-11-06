@@ -1,11 +1,5 @@
 import React, {Component} from 'react'
 import PrimaryButton from './PrimaryButton'
 
-class SidebarPrimaryButton extends Component {
-    render() {
-        return (
-            <PrimaryButton {...this.props} />
-        )
-    }
-}
+class SidebarPrimaryButton extends PrimaryButton {}
 export default SidebarPrimaryButton

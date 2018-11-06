@@ -150,6 +150,7 @@ router.register(r'work_summary', work_summary_api.WorkSummaryViewSet,
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^login/', auth_api.LoginViewSet.as_view()),
+    url(r'^otp_email/', auth_api.OtpEmailViewSet.as_view()),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/download', VisualSpecDocumentDownloadView.as_view(), name='download_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/hires', VisualSpecDocumentHiresView.as_view(), name='hires_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/preview', VisualSpecDocumentPreviewView.as_view(), name='preview_visual_spec_document'),

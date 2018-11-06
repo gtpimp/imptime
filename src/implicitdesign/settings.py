@@ -402,6 +402,7 @@ LOGIN_REDIRECT_URL = "/"
 
 # The number of hours before auto-login tokens expire
 AUTO_LOGIN_EXPIRE_IN_HOURS = 24
+OTP_EXPIRE_IN_HOURS = 24
 
 # Websockets
 CHANNEL_LAYERS = {

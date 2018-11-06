@@ -88,7 +88,6 @@ class ExecutiveSummary extends Component {
     
     render() {
         const { sprint, cost_summary } = this.props
-        console.log("cost_summary", cost_summary)
         return (
             <div className={ main }>
               <div className={ box }>
@@ -150,7 +149,7 @@ function mapStateToProps(state, props) {
     const cost_summary = getCostSummary(state, sprint_id)
     const show_money = sprint && showMoney(state, sprint.project_id)
     const can_view_budget = show_money && sprint && has_permission(state, sprint.project_id, 'has_view_budget')
-    console.log("can_view_budget", can_view_budget)
+
     return {
         sprint_id: sprint_id,
         project_id: project_id,
@@ -172,12 +171,22 @@ align-items: center;
 `
 
 const box = css`
-display: flex;
-flex-direction: column;
 width: 560px;
 background-color: ${theme.colours.white};
 margin-top: 50px;
 box-shadow: ${theme.box_shadows.main};
+
+@media (max-width: ${theme.breakpoints.mobile}) {
+    width: 100%;
+    height: 100%;
+    box-shadow: none;
+    border-radius: 0;
+    border: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin-top: 0;
+}
 `
 
 const summary_header = css`
