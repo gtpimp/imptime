@@ -80,8 +80,8 @@ const right = css``
 
 const circle = css`
 display: block;
-width: 18px; 
-height: 18px; 
+width: 6px; 
+height: 6px; 
 border-radius: 50%; 
 background-color: ${theme.colours.white};
 border: 1px solid ${theme.colours.list_text};
@@ -89,8 +89,8 @@ border: 1px solid ${theme.colours.list_text};
 
 const circle_active = css`
 display: block;
-width: 18px; 
-height: 18px; 
+width: 6px; 
+height: 6px; 
 border-radius: 50%; 
 background-color: ${theme.colours.list_text};
 `
