@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 
-class OnboardingStep1 extends Component {
+class OnboardingStepUserDetails extends Component {
     render() {
         return (
             <Fragment>
@@ -10,4 +10,4 @@ class OnboardingStep1 extends Component {
         )
     }
 }
-export default OnboardingStep1
+export default OnboardingStepUserDetails

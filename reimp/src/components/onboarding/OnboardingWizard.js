@@ -12,7 +12,8 @@ import ResponsiveLayout from '../../containers/ResponsiveLayout'
 import PageTitle from '../PageTitle'
 import PagePrimaryButton from '../PagePrimaryButton'
 import OnboardingFooter from './OnboardingFooter'
-import OnboardingStep1 from './OnboardingStep1'
+import OnboardingStepWelcome from './OnboardingStepWelcome'
+import OnboardingStepUserDetails from './OnboardingStepUserDetails'
 
 class OnboardingWizard extends Component {
 
@@ -53,10 +54,10 @@ class OnboardingWizard extends Component {
               </div>
               <div className={ content }>
                 { current_step === 1 &&
-                  <OnboardingStep1 />
+                  <OnboardingStepWelcome />
                 }
                 { current_step === 2 &&
-                  <p>Step 2</p>
+                  <p><OnboardingStepUserDetails /></p>
                 }
                 { current_step === 3 &&
                   <p>Step 3</p>
