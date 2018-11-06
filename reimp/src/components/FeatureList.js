@@ -61,9 +61,9 @@ class FeatureList extends Component {
 
     onSelectedFeature = (node) => {
         const {dispatch, onSelectFeatures} = this.props
-        let selected_feature_ids = [node.id]
+        let selected_features = [node]
         if ( onSelectFeatures )  {
-            onSelectFeatures(selected_feature_ids)
+            onSelectFeatures(selected_features)
         }
         dispatch(cancelCandidateFeature())
     }

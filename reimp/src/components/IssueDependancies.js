@@ -167,7 +167,7 @@ class IssueDependancies extends Component {
         return (
             <SidebarProperty key="dependantissues">
               <div className={ info_tip }>
-                Waiting issues that can't be until closing this issue.
+                Waiting issues that can't be worked on until closing this issue.
               </div>
               <div>
                 { map(issue.issue_ids_needing_us, (issue_id) =>

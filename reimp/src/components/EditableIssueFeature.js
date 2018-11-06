@@ -31,8 +31,8 @@ class EditableIssueFeature extends Component {
     }
 
     onChange = (new_value) => {
-        const { dispatch, issue } = this.props
-        dispatch(addIssueToFeature_AutoCreateTestable(new_value.feature_id, issue.id))
+        const { dispatch, issue_id } = this.props
+        dispatch(addIssueToFeature_AutoCreateTestable(new_value.feature_id, issue_id))
     }
 
     onDelete = (evt) => {
@@ -48,11 +48,11 @@ class EditableIssueFeature extends Component {
     }
 
     render() {
-        const {feature_testable, feature_id, can_edit, issue_id, project_id} = this.props
+        const {feature_testable, feature_testable_id, feature_id, can_edit, issue_id, project_id} = this.props
         return (
             <PermissionInspectorHighlighter project_id={project_id}
                                             permission_name='has_edit_issue_feature'>
-              { feature_testable &&
+              { feature_testable_id &&
                 <EditableProperty property_key={'issue_feature_'+issue_id+'_'+feature_testable.id}
                                   edit_as_modal={true}
                                   modal_variant="large"
@@ -62,6 +62,7 @@ class EditableIssueFeature extends Component {
                     >
                   <FeatureSelectorForm form={'issue_feature_form_'+issue_id+'_'+feature_id}
                                        project_id={project_id}
+                                       onChange={this.onChange}
                                        default_feature_id={feature_id}/>
                   <IssueFeature issue_id={issue_id}
                                 feature_id={feature_id}
@@ -71,7 +72,7 @@ class EditableIssueFeature extends Component {
                 </EditableProperty>
               }
 
-              { ! feature_testable &&
+              { ! feature_testable_id &&
                 <div>
                   <EditableProperty property_key={'issue_feature_'+issue_id}
                                     edit_as_modal={true}
@@ -82,6 +83,7 @@ class EditableIssueFeature extends Component {
                     >
                     <FeatureSelectorForm form={'issue_feature_form_'+issue_id}
                                          project_id={project_id}
+                                         onChange={this.onChange}
                     />
                     <div className="text-component--readonly"></div>
                     <div className="text-component--empty">

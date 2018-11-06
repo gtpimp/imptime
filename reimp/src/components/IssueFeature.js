@@ -42,7 +42,7 @@ class IssueFeature extends Component {
                        content={
                            <Testable key={`feature_testable_${feature_testable.id}`}
                                                    testable={feature_testable}
-                                                   feature_id={feature_id.id}
+                                                   feature_id={feature_id}
                                                               />
                                }
               >

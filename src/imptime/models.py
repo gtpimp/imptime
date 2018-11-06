@@ -1022,6 +1022,44 @@ class Feature(BaseModel):
         issue.save()
         self.save()
 
+    def link_feature_to_issue_testable(self, logged_in_user, issue_testable):
+        bp = ProjectPermissions.for_user(logged_in_user, self.project)  # sic
+        if not bp.has_edit_issues:
+            raise Exception("Can't edit issues")
+        issue = issue_testable.issue
+
+        feature_testable = issue_testable.copy()
+        feature_testable.issue = None
+        feature_testable.features.add(self)
+        feature_testable.implementing_issues.add(issue)
+        feature_testable.save()
+
+        Testable.renumber_for_feature(self)
+
+        FeatureHistory.add_history(logged_in_user, self,
+                                   "added implementing issue for testable %s (from issue)" % feature_testable.name,
+                                   "", "%s %s" % (issue.number, issue.subject))
+
+        IssueHistory.add_history(logged_in_user, issue,
+                                 "added as implementing issue (from issue)",
+                                 "", "for feature %s %s" % (self.number, self.name))
+
+        for vsf in issue.visual_spec_issues.all():
+            annotated_vsd = AnnotatedVisualSpecDocument.clone(vsf.annotated_visual_spec_document)
+            _, created = VisualSpecFeature.objects.get_or_create(annotated_visual_spec_document=annotated_vsd,
+                                                                 feature=self,
+                                                                 defaults={'order':VisualSpecFeature.get_next_order(issue.id)})
+            if created:
+                FeatureHistory.add_history(logged_in_user,
+                                           self,
+                                           "linked attachment from issue %s %s" % (issue.number, issue.subject),
+                                           "",
+                                           annotated_vsd.visual_spec_document.name)
+
+        issue.save()
+        self.save()
+
+        
     def unlink_issue_from_testable(self, logged_in_user, testable_id, issue_id):
         testable = self.testables.get(pk=testable_id)
         bp = ProjectPermissions.for_user(logged_in_user, self.project)  # sic

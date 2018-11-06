@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
+import { map, size } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import Floater from "react-floater"
 import PropertyStack from './PropertyStack'
@@ -289,7 +289,7 @@ class IssueSidebar extends Component {
     }
 
     renderFeaturesStack() {
-        const { issue_id, feature_testables } = this.props
+        const { issue_id, feature_testables, testables } = this.props
         return (
             <div key="featuresstack">
               <Floater key={`feature_testable_hint_${issue_id}`}
@@ -307,8 +307,8 @@ class IssueSidebar extends Component {
               { map(feature_testables, function (feature_testable, index) {
                     const feature_id = feature_testable.feature_ids[0]
                     return (
-                        <div>
-                          <EditableIssueFeature key={`issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}
+                        <div key={`issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}>
+                          <EditableIssueFeature key={`editable_issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}
                                                 issue_id={issue_id}
                                                 feature_id={feature_id}
                                                 feature_testable_id={feature_testable.id} />
@@ -317,10 +317,15 @@ class IssueSidebar extends Component {
                 })
               }
                         <div>
-                          <EditableIssueFeature key={`issue_feature_${issue_id}_new`}
-                                                issue_id={issue_id}
-                                                feature_id={null}
-                                                feature_testable_id={null} />
+                          { size(testables) === 0 &&
+                            <div>Add a testable to this issue before linking to a feature</div>
+                          }
+                          { size(testables) > 0 &&
+                            <EditableIssueFeature key={`issue_feature_${issue_id}_new`}
+                                                  issue_id={issue_id}
+                                                  feature_id={null}
+                                                  feature_testable_id={null} />
+                          }
                         </div>
             </div>
         )

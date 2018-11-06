@@ -261,6 +261,30 @@ class FeatureViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
 
     @detail_route(methods=['PUT'])
+    def addIssueToFeatureTestableAutoCreate(self, request, pk):
+        try:
+            params = request.data
+            feature_id = params['feature_id']
+            issue_id = params['issue_id']
+            feature = self.allowed_feature(feature_id)
+
+            issue = self.allowed_issue(issue_id)
+            project = issue.project.business #sic
+            if not self.logged_in_permissions(project).has_edit_feature:
+                raise Exception("Can't edit features")
+
+            for issue_testable in issue.testables.all():
+                feature.link_feature_to_issue_testable(request.user, issue_testable)
+            data = {'status': 'success'}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+
+    @detail_route(methods=['PUT'])
     def removeIssueFromFeatureTestable(self, request, pk):
         try:
             params = request.data

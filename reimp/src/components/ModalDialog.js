@@ -48,7 +48,7 @@ class ModalDialog extends Component {
                     <div className="modal-dialog__close"><i className="material-icons" onClick={onClose || function () { }}>close</i></div>
                   }
                 </div>
-                <div>
+                <div className={css`height:100%`}>
                   {children}
                 </div>
               </PopupPanel>

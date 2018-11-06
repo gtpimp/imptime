@@ -8,6 +8,7 @@ from issue_comment_serializer import IssueCommentSerializer, IssueShareCommentSe
 from imptime.models import AnnotatedVisualSpecDocument
 from timepiece.models import BusinessPermissions, Issue
 from testable_serializer import TestableSerializer
+from testable.models import Testable
 logger = logging.getLogger(__name__)
 
 class IssueSerializer(BaseSerializer):
@@ -115,7 +116,9 @@ class IssueSerializer(BaseSerializer):
         issue.needs_issue_ids = [ x.id for x in issue.needs_issues.all() ]
         issue.issue_ids_needing_us = [ x.id for x in issue.issues_needing_us.all() ]
         issue.needs_open_issues_ids = [ x.id for x in issue.needs_issues.all() if x.status2.name in Issue.STATUSES_INDICATING_INCOMPLETE['developer'] ]
-        issue.feature_testables = [ x for x in issue.implements_testables.all() ]
+
+        # Hack: very odd, the feature_testables has no id after being serialized unless I do this. Could't figure it out.
+        issue.feature_testables = Testable.objects.filter(pk__in=[x.id for x in issue.implements_testables.all() ])
         
         return super(IssueSerializer, self).to_representation(issue, *args, **kwargs)
 

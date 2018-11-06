@@ -4,13 +4,13 @@ from rest_framework import serializers
 logger = logging.getLogger(__name__)
 
 class TestableStepSerializer(BaseSerializer):
-    id = serializers.CharField(source="pk")
+    id = serializers.CharField()
     instruction = serializers.CharField()
     order = serializers.IntegerField()
     refers_to_testable_id = serializers.CharField()
 
 class TestableSerializer(BaseSerializer):
-    id = serializers.CharField(source="pk")
+    id = serializers.CharField()
     steps = serializers.CharField()
     enriched_steps = serializers.CharField()
     name = serializers.CharField()

@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { first } from 'lodash'
+import { css } from 'emotion'
 // import {Field} from 'redux-form'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import { LIST_KEY__FEATURE_SELECTOR_LIST } from '../../actions/ItemListKeyRegistry'
@@ -10,9 +11,15 @@ import {
 } from '../../actions/ItemList'
 import Loading from '../Loading'
 import FeatureList from '../FeatureList'
+import PopupPanelButton from '../PopupPanelButton'
 
 class FeatureSelectorForm extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = { selected_feature_node: null }
+    }
+    
     componentDidMount() {
         const { dispatch, list_key, project_id, default_filter } = this.props
         this.refresh()
@@ -36,45 +43,30 @@ class FeatureSelectorForm extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
     }
 
-    onFieldChange(user_id, fieldOnChange) {
-        const {onChange} = this.props
-        fieldOnChange(user_id)
-        if ( onChange ) {
-            onChange(user_id)
-        }
+    onFeaturesSelected = (feature_nodes) => {
+        const feature_node = first(feature_nodes)
+        this.setState({selected_feature_node:feature_node})
     }
 
-    /* renderSingleValueSelector(field) {
-     *     const {input, data, ...rest} = field
-     *     const { project_id, auto_focus } = this.props
-     *     return (
-     *         <SingleValueSelector
-     *             onChange={(user_id) => this.onFieldChange(user_id, input.onChange)}
-     *             value={input.value}
-     *             options={data}
-     *             auto_focus={auto_focus}
-     *             rememberer_key={"user_"+project_id}
-     *             {...rest}
-     *         />
-     *     )
-     * }*/
-
-    onFeaturesSelected(feature_ids) {
-        const { onChange } = this.props
-        const feature_id = first(feature_ids)
-        alert("You chose feature " + feature_id)
-        onChange(feature_id)
+    onSubmit = () => {
+        const { selected_feature_node } = this.state
+        const { onSubmitted } = this.props
+        onSubmitted({feature_id:selected_feature_node.id})
     }
     
     render() {
         const { filter, list_key } = this.props
+        const { selected_feature_node } = this.state
         if ( ! filter.project_id ) {
             return <Loading/>
         }
         
         return (
-            <div>
+            <div className={css`height:100%`}>
               <FeatureList list_key={list_key} onSelectFeatures={this.onFeaturesSelected} />
+              { selected_feature_node && 
+                <PopupPanelButton onClick={this.onSubmit}>Select {selected_feature_node.name}</PopupPanelButton>
+              }
             </div>
         )
     }
