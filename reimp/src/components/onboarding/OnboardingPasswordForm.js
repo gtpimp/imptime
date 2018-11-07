@@ -29,10 +29,25 @@ class OnboardingPasswordForm extends Component {
         }
     }
 
-    onToggleShowPhoneNumberSection = () => {
+    onToggleShowPhoneNumberSection = (e, fieldOnChange) => {
         const { show_phone_number_section } = this.state
         this.setState({show_phone_number_section: !show_phone_number_section,
                        already_toggled_show_phone_number_section: true})
+        fieldOnChange(e)
+    }
+
+    renderEnablePhoneNumberPinInput = (field) => {
+        const {input} = field
+        const { show_phone_number_section } = this.state
+        return (
+            <label>
+              <input type="checkbox"
+                     label="Enable sign-in through mobile"
+                     checked={show_phone_number_section}
+                     onChange={(e) => this.onToggleShowPhoneNumberSection(e, input.onChange)} />
+              Enable sign-in through mobile
+            </label>
+        )
     }
     
     renderPasswordInput(field) {
@@ -69,13 +84,8 @@ class OnboardingPasswordForm extends Component {
                 </p>
               </PageParagraph>
 
-              <label>
-                <input type="checkbox"
-                       name="enable_mobile_phone_number_pin"
-                       checked={show_phone_number_section}
-                       onChange={this.onToggleShowPhoneNumberSection} />
-                Enable sign-in through mobile
-              </label>
+              <Field name="enable_mobile_phone_number_pin"
+                     component={this.renderEnablePhoneNumberPinInput} />
               { show_phone_number_section && 
                 <PageParagraph>
                   Enter the phone number where you would like to receive your one time pins.
