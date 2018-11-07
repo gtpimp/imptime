@@ -22,8 +22,6 @@ import {
     getCostSummary,
     ensureCostSummaryLoaded
 } from '../actions/CostSummary'
-import { has_permission } from '../actions/Users'
-import { showMoney } from '../actions/Mien'
 import placeholder from '../images/executive_summary_placeholder.jpg'
 
 const resource_data = [
@@ -87,7 +85,7 @@ class ExecutiveSummary extends Component {
     }
     
     render() {
-        const { sprint, cost_summary } = this.props
+        const { sprint } = this.props
         return (
             <div className={ main }>
               <div className={ box }>
@@ -147,8 +145,6 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const cost_summary = getCostSummary(state, sprint_id)
-    const show_money = sprint && showMoney(state, sprint.project_id)
-    const can_view_budget = show_money && sprint && has_permission(state, sprint.project_id, 'has_view_budget')
 
     return {
         sprint_id: sprint_id,

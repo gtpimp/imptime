@@ -2,24 +2,21 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
-
 import { default_theme as theme } from '../../theme/default'
-import OnboardingWizard from './OnboardingWizard'
 
 class OnboardingPage extends Component {
 
     render() {
-        const { initialValues } = this.props
+        const { children } = this.props
         return (
             <div className={ main }>
-              <OnboardingWizard />
+              { children }
             </div>
         )
     }
 }
 function mapStateToProps(state, props) {
     return {
-        
     }
 }
 export default withRouter(connect(mapStateToProps)(OnboardingPage))

@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import {connect} from 'react-redux'
-import { cx, css } from 'emotion'
+import { css } from 'emotion'
 import { isValidEmail, sendOtpEmail } from '../../actions/Auth'
 import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'

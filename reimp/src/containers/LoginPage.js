@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { cx, css } from 'emotion'
+import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import queryString from 'query-string'
 import { get } from 'lodash'
@@ -8,7 +8,6 @@ import { get } from 'lodash'
 import {login} from '../actions/Auth'
 import { default_theme as theme } from '../theme/default'
 import LoginForm from '../components/form/LoginForm'
-import ResponsiveLayout from './ResponsiveLayout'
 import PageTitle from '../components/PageTitle'
 
 class LoginPage extends Component {
@@ -41,7 +40,7 @@ class LoginPage extends Component {
                       onSubmit={ this.onLogin } />
                 </div>
                 <div className={ link_container }>
-                  <a href="#"
+                  <a href="/"
                      className={ link }
                      onClick={this.onClickedCreateAccount}>
                     Create an account

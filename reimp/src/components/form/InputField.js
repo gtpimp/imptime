@@ -4,9 +4,7 @@ import { default_theme as theme } from '../../theme/default'
 
 class InputField extends Component {
     render() {
-        const { InputElement, className, placeholder, input, label, type, meta: { touched, error, warning }, ...extraProps } = this.props
-        const { checkboxLabel } = this.props
-        const { value, onChange } = this.props.input
+        const { InputElement, className, placeholder, input, label, type, ...extraProps } = this.props
         return (
             <input {...input}
                    {...extraProps}

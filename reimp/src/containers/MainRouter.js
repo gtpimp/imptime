@@ -45,7 +45,7 @@ import ExecutiveSummaryPage from './ExecutiveSummaryPage'
 import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
-import OnboardingPage from '../components/onboarding/OnboardingPage'
+import OnboardingRouter from '../components/onboarding/OnboardingRouter'
 import { setBrowserTitle } from '../actions/Page'
 
 class MainRouter extends Component {
@@ -59,7 +59,7 @@ class MainRouter extends Component {
               <Route exact path="/" component={WelcomePage}/>
               <Route exact path="/account/create" component={AccountCreatePage}/>
               <Route exact path="/account/created" component={AccountCreatedPage}/>
-              <Route exact path="/onboarding" component={OnboardingPage}/>
+              <Route path="/onboarding" component={OnboardingRouter}/>
               <Route exact path="/work_summary" component={WorkSummaryPage}/>
               <Route exact path="/calendar/" component={CalendarPage}/>
               <Route exact path="/calendar/:scheduleId/" component={CalendarPage}/>
@@ -111,7 +111,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/users" component={ProjectUserPage}/>
               <Route exact path="/projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
 
-              <Route exact path="/simplified/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage}/>
+              <Route exact path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage}/>
 
               <Route exact path="/fullscreen/projects/:projectId/image/:annotatedVisualSpecDocumentId" component={VisualSpecDocumentGalleryFullScreenPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>

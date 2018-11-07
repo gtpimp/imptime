@@ -388,5 +388,5 @@ export function is_sprint_invalidated(state, sprint_id) {
 }
 
 export function getExecutiveSummaryUrl(project_id, sprint_id) {
-    return window.location.origin + `/simplified/projects/${project_id}/sprints/${sprint_id}/executive_summary`
+    return window.location.origin + `/wd/projects/${project_id}/sprints/${sprint_id}/executive_summary`
 }

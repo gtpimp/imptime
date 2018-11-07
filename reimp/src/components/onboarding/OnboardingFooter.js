@@ -11,7 +11,8 @@ class OnboardingFooter extends Component {
             onLogout,
             onNextStep,
             onPrevStep,
-            onComplete
+            onComplete,
+            next_step_label
         } = this.props
         return (
             <div className={ footer }>
@@ -21,11 +22,11 @@ class OnboardingFooter extends Component {
                       label="Logout"
                       onButtonClick={ onLogout } />
                 }
-                { current_step > 1 &&
-                  <PagePrimaryButton
-                      label="Back"
-                      onButtonClick={ onPrevStep } />
-                }
+                  { onPrevStep && 
+                    <PagePrimaryButton
+                        label="Back"
+                        onButtonClick={ onPrevStep } />
+                  }
               </div>
               <div className={ center }>
                 <span className={ cx(circle, { [circle_active]: current_step >= 1 }) }></span>
@@ -34,17 +35,12 @@ class OnboardingFooter extends Component {
                 <span className={ cx(circle, { [circle_active]: current_step >= 4 }) }></span>
               </div>
               <div className={ right }>
-                { current_step === 1 &&
+                { onNextStep &&
                   <PagePrimaryButton
-                      label="Start"
+                      label={next_step_label || "Next"}
                       onButtonClick={ onNextStep } />
                 }
-                { current_step > 1 && current_step !== 4 && 
-                  <PagePrimaryButton
-                      label="Next"
-                      onButtonClick={ onNextStep } />
-                }
-                { current_step === 4 && 
+                { !onNextStep && 
                   <PagePrimaryButton
                       label="Close"
                       onButtonClick={ onComplete } />

@@ -1,41 +1,31 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { cx, css } from 'emotion'
+import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
-import queryString from 'query-string'
-import { get } from 'lodash'
 
 import { logout } from '../../actions/Auth'
 import { default_theme as theme } from '../../theme/default'
-import LoginForm from '../form/LoginForm'
-import ResponsiveLayout from '../../containers/ResponsiveLayout'
 import PageTitle from '../PageTitle'
-import PagePrimaryButton from '../PagePrimaryButton'
 import OnboardingFooter from './OnboardingFooter'
-import OnboardingStepWelcome from './OnboardingStepWelcome'
-import OnboardingStepUserDetails from './OnboardingStepUserDetails'
 
 class OnboardingWizard extends Component {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            current_step: 1
+    onNextStep = () => {
+        const { history, next_step } = this.props
+        if ( next_step ) {
+            history.push(`/onboarding/${next_step}`)
         }
     }
 
-    onNextStep = () => {
-        const { current_step } = this.state
-        this.setState({current_step: current_step + 1})
-    }
-
     onPrevStep = () => {
-        const { current_step } = this.state
-        this.setState({current_step: current_step -1})
+        const { history, prev_step } = this.state
+        if ( prev_step ) {
+            history.push(`/onboarding/${prev_step}`)
+        }
     }
 
     onComplete = () => {
-        const { dispatch, history } = this.props
+        const { history } = this.props
         history.push('/')
     }
 
@@ -46,39 +36,33 @@ class OnboardingWizard extends Component {
     }
 
     render() {
-        const { current_step } = this.state
+        const { children, current_step, next_step, next_step_label, prev_step } = this.props
         return (
             <div className={ box }>
               <div className={ header }>
                 <PageTitle>Account Setup</PageTitle>
               </div>
               <div className={ content }>
-                { current_step === 1 &&
-                  <OnboardingStepWelcome />
-                }
-                { current_step === 2 &&
-                  <p><OnboardingStepUserDetails /></p>
-                }
-                { current_step === 3 &&
-                  <p>Step 3</p>
-                }
-                { current_step === 4 &&
-                  <p>Step 4</p>
-                }
+                {children}
               </div>
               <OnboardingFooter
                   current_step={ current_step }
                   onLogout={ this.onLogout }
-                  onNextStep={ this.onNextStep }
-                  onPrevStep={ this.onPrevStep }
+                  onNextStep={ next_step && this.onNextStep }
+                  next_step_label={ next_step_label }
+                  onPrevStep={ prev_step && this.onPrevStep }
                   onComplete={ this.onComplete } />
             </div>
         )
     }
 }
 function mapStateToProps(state, props) {
+    const { current_step, next_step, prev_step, next_step_label } = props
     return {
-        
+        current_step,
+        next_step,
+        next_step_label,
+        prev_step
     }
 }
 export default withRouter(connect(mapStateToProps)(OnboardingWizard))

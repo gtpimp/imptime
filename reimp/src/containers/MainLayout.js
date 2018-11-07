@@ -99,7 +99,7 @@ class MainLayout extends Component {
         const self_contained_page = this.props.location.pathname.indexOf("fullscreen/") !== -1
 
         // hack, better to abstract the router up one level
-        const self_contained_simplified_page = this.props.location.pathname.indexOf("simplified/") !== -1
+        const self_contained_simplified_page = this.props.location.pathname.indexOf("wd/") !== -1
 
         if ( ! are_settings_loaded ) {
             return (

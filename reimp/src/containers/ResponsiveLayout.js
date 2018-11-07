@@ -1,6 +1,4 @@
 import React, {Component} from 'react'
-import { cx, css } from 'emotion'
-import { default_theme as theme } from '../theme/default'
 
 class ResponsiveLayout extends Component {
     render() {
