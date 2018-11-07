@@ -43,7 +43,7 @@ class OnboardingPasswordForm extends Component {
             <label>
               <input type="checkbox"
                      label="Enable sign-in through mobile"
-                     checked={show_phone_number_section}
+                     checked={input.value}
                      onChange={(e) => this.onToggleShowPhoneNumberSection(e, input.onChange)} />
               Enable sign-in through mobile
             </label>

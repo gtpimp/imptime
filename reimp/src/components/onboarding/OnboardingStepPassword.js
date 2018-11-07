@@ -47,13 +47,14 @@ class OnboardingStepPassword extends Component {
                 <Fragment>
                   <PageSubTitle>Secure your account</PageSubTitle>
 
-                  { user && 
+                  { user.loaded && 
                     <OnboardingPasswordForm onSubmit={this.onSubmit}
                                             initially_show_mobile_phone_number_section={size(mobile_phone_number)>0}
-                                            initialValues={{mobile_phone_number}}
+                                            initialValues={{mobile_phone_number,
+                                                            enable_mobile_phone_number_pin:size(mobile_phone_number)>0}}
                   />
                   }
-                  { ! user && <Loading/> }
+                  { ! user.loaded && <Loading/> }
                 </Fragment>
               </OnboardingWizard>
             </OnboardingPage>
@@ -66,7 +67,13 @@ function mapStateToProps(state, props) {
     let user = logged_in_user()
     const user_id = user.user_id
     if ( user_id ) {
-        user = Object.assign({}, user, getUser(state, user_id))
+        const loaded_user = getUser(state, user_id)
+        if ( loaded_user ) {
+            user = Object.assign({}, user, loaded_user)
+            user.loaded = true
+        } else {
+            user.loaded = false
+        }
     }
     
     return {
