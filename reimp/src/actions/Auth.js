@@ -17,6 +17,9 @@ export const ANNOUNCE_ACCOUNT_CREATION_FAILED = "ANNOUNCE_ACCOUNT_CREATION_FAILE
 export const START_PERMISSION_INSPECTOR = "START_PERMISSION_INSPECTOR"
 export const STOP_PERMISSION_INSPECTOR = "STOP_PERMISSION_INSPECTOR"
 export const HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT = "HIGHLIGHT_PERMISSION_INSPECTOR_OBJECT"
+export const ANNOUNCE_SAVING_USER_PROFILE = "ANNOUNCE_SAVING_USER_PROFILE"
+export const ANNOUNCE_SAVE_USER_PROFILE_FAILED = "ANNOUNCE_SAVE_USER_PROFILE_FAILED"
+export const ANNOUNCE_SAVED_USER_PROFILE = "ANNOUNCE_SAVED_USER_PROFILE"
 
 export function requestingNewUserPassword() {
     return { type: ANNOUNCE_REQUEST_NEW_USER_PASSWORD }
@@ -136,6 +139,35 @@ export function forgot_password(username, on_done) {
                         body: JSON.stringify(data)}
         return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params)
             .then( on_done() )
+    }
+}
+
+export function update_profile({first_name, last_name, on_done}) {
+
+    return (dispatch, getState) => {
+        const state = getState()
+        dispatch({type: ANNOUNCE_SAVING_USER_PROFILE})
+        const data = {first_name, last_name}
+        const params = {method: "POST",
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
+        
+        return impfetch(state, 'imp/auth/update_profile/', dispatch, params)
+            .then(response => response.json())
+            .then(json => {
+                if ( json.status !== 'success' ) {
+                    dispatch({type: ANNOUNCE_SAVE_USER_PROFILE_FAILED,
+                              error: json.error})
+                } else {
+                    dispatch({type: ANNOUNCE_SAVED_USER_PROFILE})
+                    on_done()
+                }
+            })
+            .catch(function (error) {
+                dispatch({type: ANNOUNCE_SAVE_USER_PROFILE_FAILED, error: error})
+            })
     }
 }
 

@@ -76,6 +76,20 @@ class OtpEmailViewSet(rest_views.ObtainAuthToken):
 class AuthViewSet(BaseViewSet):
 
     @list_route(methods=['POST'])
+    def update_profile(self, request):
+        first_name = request.data['first_name']
+        last_name = request.data['last_name']
+        context = {}
+        user = request.user
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+        context['status'] = 'success'
+        RefreshNotifier().notify_model_update(user)
+        return Response(context)
+
+    
+    @list_route(methods=['POST'])
     def change_password(self, request):
         new_password = request.data['new_password']
         old_password = request.data.get('old_password', None)

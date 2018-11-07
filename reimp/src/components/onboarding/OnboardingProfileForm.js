@@ -35,9 +35,6 @@ class OnboardingProfileForm extends Component {
                 <PageParagraph>
                   <Field name="last_name" component={this.renderLastNameInput} />
                 </PageParagraph>
-                <PageParagraph>
-                  <button className="button issue_sidebar--textarea" type="submit">Create</button>
-                </PageParagraph>
             </form>
         )
     }
@@ -45,11 +42,10 @@ class OnboardingProfileForm extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { onSubmit, onCancel } = props
+    const { onSubmit } = props
     
     return {
         onSubmit,
-        onCancel,
         enableReinitialize: true,
     }
 }

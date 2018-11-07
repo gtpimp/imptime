@@ -183,8 +183,6 @@ function mapStateToProps(state) {
     const current_mien_id =  getCurrentMienId(state)
     const current_mien = getCurrentMien(state)
 
-    console.log("user", user)
-    
     return {
         is_logged_in: is_authenticated(),
         are_settings_loaded: configured,

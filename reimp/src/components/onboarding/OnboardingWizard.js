@@ -11,14 +11,19 @@ import OnboardingFooter from './OnboardingFooter'
 class OnboardingWizard extends Component {
 
     onNextStep = () => {
-        const { history, next_step } = this.props
+        const { history, next_step, onNextHook } = this.props
+        const gotoNextPage = () => history.push(`/onboarding/${next_step}`)
         if ( next_step ) {
-            history.push(`/onboarding/${next_step}`)
+            if ( onNextHook ) {
+                onNextHook(gotoNextPage)
+            } else {
+                gotoNextPage()
+            }
         }
     }
 
     onPrevStep = () => {
-        const { history, prev_step } = this.state
+        const { history, prev_step } = this.props
         if ( prev_step ) {
             history.push(`/onboarding/${prev_step}`)
         }
@@ -57,12 +62,13 @@ class OnboardingWizard extends Component {
     }
 }
 function mapStateToProps(state, props) {
-    const { current_step, next_step, prev_step, next_step_label } = props
+    const { current_step, next_step, prev_step, next_step_label, onNextHook } = props
     return {
         current_step,
         next_step,
         next_step_label,
-        prev_step
+        prev_step,
+        onNextHook
     }
 }
 export default withRouter(connect(mapStateToProps)(OnboardingWizard))
