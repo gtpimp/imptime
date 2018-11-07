@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import { Route, Switch, withRouter } from 'react-router-dom'
 import OnboardingStepWelcome from './OnboardingStepWelcome'
 import OnboardingStepUserDetails from './OnboardingStepUserDetails'
+import OnboardingStepPassword from './OnboardingStepPassword'
 
 class OnboardingRouter extends Component {
 
@@ -15,6 +16,7 @@ class OnboardingRouter extends Component {
               <Route exact path={match.path} component={OnboardingStepWelcome}/>
               <Route exact path={`${match.path}/1`} component={OnboardingStepWelcome}/>
               <Route exact path={`${match.path}/2`} component={OnboardingStepUserDetails}/>
+              <Route exact path={`${match.path}/3`} component={OnboardingStepPassword}/>
             </Switch>
         )
     }

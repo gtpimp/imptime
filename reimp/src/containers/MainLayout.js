@@ -191,7 +191,7 @@ function mapStateToProps(state) {
         settings: state.settings,
         current_mien_id,
         current_mien,
-        is_onboarded: false
+        is_onboarded: user.is_onboarded
     }
 }
 

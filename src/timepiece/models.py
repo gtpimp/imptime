@@ -3838,6 +3838,7 @@ class PersonSchedule(BaseModel):
 
 class UserProfile(BaseModel):
     user = models.OneToOneField(User, unique=True, related_name='profile')
+    mobile_phone_number = models.CharField(max_length=100, blank=True, null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)

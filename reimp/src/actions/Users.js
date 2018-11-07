@@ -4,7 +4,7 @@ import { ENTITY_KEY__USER } from '../actions/ItemListKeyRegistry'
 import { logged_in_user } from './Auth'
 import { getProject } from './Projects'
 import { getCompany } from './Companies'
-import each from 'lodash/each'
+import { keyBy } from 'lodash'
 
 export const ANNOUNCE_USERS_LOADED = 'ANNOUNCE_USERS_LOADED'
 export const ANNOUNCE_USERS_LOAD_FAILED = 'ANNOUNCE_USERS_LOAD_FAILED'
@@ -27,18 +27,13 @@ function announceLoadingUsers(user_ids) {
 }
 
 function announceUsersLoaded(payload) {
-
-    console.log("payloadpayloadpayload", payload)
-
     let items_by_id = {}
-    each(payload.users, (item) => {
-        items_by_id[item.id] = item
-    })
+    items_by_id = keyBy(payload.users, 'id')
 
     return {
         type: ANNOUNCE_USERS_LOADED,
         items_by_id: items_by_id,
-	      received_at: Date.now()
+	received_at: Date.now()
     }
 }
 

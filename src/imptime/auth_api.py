@@ -77,33 +77,41 @@ class AuthViewSet(BaseViewSet):
 
     @list_route(methods=['POST'])
     def update_profile(self, request):
-        first_name = request.data['first_name']
-        last_name = request.data['last_name']
+        first_name = request.data.get('first_name', None)
+        last_name = request.data.get('last_name', None)
+        mobile_phone_number = request.data.get('mobile_phone_number')
         context = {}
         user = request.user
-        user.first_name = first_name
-        user.last_name = last_name
+        if first_name is not None:
+            user.first_name = first_name
+        if last_name is not None:
+            user.last_name = last_name
+        if mobile_phone_number is not None:
+            profile = user.profile
+            profile.mobile_phone_number = mobile_phone_number
+            profile.save()
         user.save()
         context['status'] = 'success'
         RefreshNotifier().notify_model_update(user)
         return Response(context)
-
     
     @list_route(methods=['POST'])
     def change_password(self, request):
-        new_password = request.data['new_password']
+        new_password = request.data.get('new_password', None)
         old_password = request.data.get('old_password', None)
-        first_name = request.data['first_name']
-        last_name = request.data['last_name']
+        first_name = request.data.get('first_name', None)
+        last_name = request.data.get('last_name', None)
         context = {}
         user = request.user
-        if user.has_usable_password() and not user.check_password(old_password):
+        if user.has_usable_password() and (old_password and not user.check_password(old_password)):
             context['status'] = 'failure'
             context['error'] = 'Incorrect password'
         else:
             user.set_password(new_password)
-            user.first_name = first_name
-            user.last_name = last_name
+            if first_name is not None:
+                user.first_name = first_name
+            if last_name is not None:
+                user.last_name = last_name
             user.save()
             context['status'] = 'success'
             RefreshNotifier().notify_model_update(user)

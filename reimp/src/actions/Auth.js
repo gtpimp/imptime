@@ -29,14 +29,15 @@ export function getChangeUserPasswordError(state) {
     return get(state, ['auth', 'change_password_error_message'])
 }
 
-function setAuthToken(username, token, user_id, has_usable_password, is_superuser) {
+function setAuthToken(username, token, user_id, has_usable_password, is_superuser, is_onboarded) {
     return {
         type: SET_AUTH_TOKEN,
-        username: username,
-        token: token,
-        user_id: user_id,
-        has_usable_password: has_usable_password,
-        is_superuser: is_superuser
+        username,
+        token,
+        user_id,
+        has_usable_password,
+        is_superuser,
+        is_onboarded
     }
 }
 
@@ -142,12 +143,12 @@ export function forgot_password(username, on_done) {
     }
 }
 
-export function update_profile({first_name, last_name, on_done}) {
+export function update_profile({first_name, last_name, mobile_phone_number, on_done}) {
 
     return (dispatch, getState) => {
         const state = getState()
         dispatch({type: ANNOUNCE_SAVING_USER_PROFILE})
-        const data = {first_name, last_name}
+        const data = {first_name, last_name, mobile_phone_number}
         const params = {method: "POST",
                         credentials: 'same-origin',
                         data: data,

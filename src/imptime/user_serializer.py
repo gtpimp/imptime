@@ -13,10 +13,12 @@ class UserSerializer(BaseSerializer):
     username = serializers.CharField()
     first_name = serializers.CharField()
     last_name = serializers.CharField()
+    mobile_phone_number = serializers.CharField(source="profile.mobile_phone_number")
     visible_name = serializers.CharField()
     known_user_ids = serializers.ListField(child=serializers.CharField()) # only set for the logged in user
     has_usable_password = serializers.BooleanField(source="logged_in_user_has_usable_password")
     default_schedule_id = serializers.CharField()
+    is_onboarded = serializers.BooleanField(source="profile.is_onboarded")
     
     def __init__(self, *args, **kwargs):
         logged_in_user = kwargs.pop('logged_in_user', None)
