@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes} from 'lodash'
+import {includes, map} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import FeatureList from '../components/FeatureList'
 import FeatureSidebar from '../components/FeatureSidebar'
@@ -88,9 +88,11 @@ class FeaturesPage extends Component {
         }
     }
 
-    onSelectFeatures(feature_ids) {
+    onSelectFeatures(feature_nodes) {
         const {dispatch, history, project_id,
                list_key, page_key} = this.props
+
+        const feature_ids = map(feature_nodes, (feature_node) => feature_node.id)
         dispatch(selectItems(list_key, feature_ids))
         dispatch(select_features(page_key, feature_ids))
         
