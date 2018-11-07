@@ -4,6 +4,7 @@ import { Route, Switch, withRouter } from 'react-router-dom'
 import OnboardingStepWelcome from './OnboardingStepWelcome'
 import OnboardingStepUserDetails from './OnboardingStepUserDetails'
 import OnboardingStepPassword from './OnboardingStepPassword'
+import OnboardingStepBeta from './OnboardingStepBeta'
 
 class OnboardingRouter extends Component {
 
@@ -17,6 +18,7 @@ class OnboardingRouter extends Component {
               <Route exact path={`${match.path}/1`} component={OnboardingStepWelcome}/>
               <Route exact path={`${match.path}/2`} component={OnboardingStepUserDetails}/>
               <Route exact path={`${match.path}/3`} component={OnboardingStepPassword}/>
+              <Route exact path={`${match.path}/4`} component={OnboardingStepBeta}/>
             </Switch>
         )
     }

@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 
-import { logout } from '../../actions/Auth'
+import { logout, onboarding_complete } from '../../actions/Auth'
 import { default_theme as theme } from '../../theme/default'
 import PageTitle from '../PageTitle'
 import OnboardingFooter from './OnboardingFooter'
@@ -11,7 +11,7 @@ import OnboardingFooter from './OnboardingFooter'
 class OnboardingWizard extends Component {
 
     onNextStep = () => {
-        const { history, next_step, onNextHook } = this.props
+        const { dispatch, history, next_step, onNextHook } = this.props
         const gotoNextPage = () => history.push(`/onboarding/${next_step}`)
         if ( next_step ) {
             if ( onNextHook ) {
@@ -19,6 +19,8 @@ class OnboardingWizard extends Component {
             } else {
                 gotoNextPage()
             }
+        } else {
+            dispatch(onboarding_complete(this.onComplete))
         }
     }
 

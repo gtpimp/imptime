@@ -94,6 +94,17 @@ class AuthViewSet(BaseViewSet):
         context['status'] = 'success'
         RefreshNotifier().notify_model_update(user)
         return Response(context)
+
+    @list_route(methods=['POST'])
+    def onboarded(self, request):
+        context = {}
+        user = request.user
+        profile = user.profile
+        profile.is_onboarded = True
+        profile.save()
+        context['status'] = 'success'
+        response = RefreshNotifier().notify_model_update(user)
+        return response
     
     @list_route(methods=['POST'])
     def change_password(self, request):

@@ -143,6 +143,22 @@ export function forgot_password(username, on_done) {
     }
 }
 
+export function onboarding_complete(on_done) {
+
+    return (dispatch, getState) => {
+
+        const state = getState()
+        const data = {}
+        const params = {method: "POST",
+                        credentials: 'same-origin',
+                        data: data,
+                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        body: JSON.stringify(data)}
+        return impfetch(state, 'imp/auth/onboarded/', dispatch, params)
+            .then( on_done() )
+    }
+}
+
 export function update_profile({first_name, last_name, mobile_phone_number, on_done}) {
 
     return (dispatch, getState) => {
