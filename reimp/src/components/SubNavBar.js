@@ -66,8 +66,14 @@ class SubNavBar extends Component {
                 <DueIssueList />
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
 
+                  { false && 
+                    <div className={`${navbar_submenu_item}`}>
+                      <Link to='/password/change'>Edit profile</Link>
+                    </div>
+                  }
+
                   <div className={`${navbar_submenu_item}`}>
-                    <Link to='/password/change'>Edit profile</Link>
+                    <Link to='/onboarding'>Onboarding</Link>
                   </div>
                   
                   { has_edit_release_notes_permission &&
