@@ -201,8 +201,6 @@ class AutoLoginViewSet(BaseViewSet):
     def create_account(self, request):
         context = {}
         email = request.data['email']
-        first_name = request.data['first_name']
-        last_name = request.data['last_name']
         user = User.objects.filter(Q(email=email)).first()
         if user is not None:
             context['status'] = 'error'
@@ -210,9 +208,7 @@ class AutoLoginViewSet(BaseViewSet):
             context['field_errors'] = {'email': 'Email address is already in use'}
         else:
             user = User.objects.create(email=email,
-                                       username=email,
-                                       first_name=first_name,
-                                       last_name=last_name)
+                                       username=email)
             UserProfile.objects.create(user=user)
             user.set_unusable_password()
             user.save()
@@ -220,7 +216,7 @@ class AutoLoginViewSet(BaseViewSet):
             
             auto_login_token = UserAutoLoginToken.get_auto_login_token(user)
 
-            email_context = {'login_link':settings.WEB_URL_BASE + "password/change?autologin="+auto_login_token}
+            email_context = {'login_link':settings.WEB_URL_BASE + "/onboarding?autologin="+auto_login_token}
             plain_content = template.loader.get_template("imptime/emails/new_account.txt").render(email_context)
             html_content = template.loader.get_template("imptime/emails/new_account.html").render(email_context)
 

@@ -3,6 +3,9 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { Field, reduxForm } from 'redux-form'
 import { create_account } from '../actions/Auth'
+import InputField from '../components/form/InputField'
+import PageParagraph from '../components/PageParagraph'
+import PageSubTitle from '../components/PageSubTitle'
 
 const required = value => value ? undefined : 'Required'
  
@@ -24,7 +27,7 @@ class AccountCreatePage extends Component {
             <div>
               <label>{label}</label>
               <div>
-                <input {...input} placeholder={placeholder} type={type}/>
+                <InputField {...input} placeholder={placeholder} type={type}/>
                 {touched && error && <span>{error}</span>}
               </div>
             </div>
@@ -36,35 +39,17 @@ class AccountCreatePage extends Component {
         
         return (
             <div className="blank-page">
-              <div className="blank-page__header">
-                <div className="blank-page__logo"></div>
-                <div className="blank-page__title">New account</div>
-              </div>
               <div className="blank-container">
                 <div className="blank-text">
-                  <h2>New ImpTime account</h2>
+                  <PageSubTitle>Create a new ImpTime account</PageSubTitle>
                   <form onSubmit={handleSubmit(this.onCreateAccount)}>
-                    <div className="blank-page__line">
+                    <PageParagraph>
                       <Field name="email"
                              type="text"
                              component={this.renderField}
                              validate={[required]}
                              placeholder="Email" />
-                    </div>
-                    <div className="blank-page__line">
-                      <Field name="first_name"
-                             type="text"
-                             placeholder="First name"
-                             validate={[required]}
-                             component={this.renderField} />
-                    </div>
-                    <div className="blank-page__line">
-                      <Field name="last_name"
-                             type="text"
-                             placeholder="Last name"
-                             validate={[required]}
-                             component={this.renderField} />
-                    </div>
+                    </PageParagraph>
                     <button disabled={submitting} type="submit" className="button button--large">Create</button>
                   </form>
                 </div>
