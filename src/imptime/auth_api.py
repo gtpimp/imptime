@@ -44,7 +44,7 @@ class LoginViewSet(rest_views.ObtainAuthToken):
                          'user_id': user.id,
                          'is_superuser': user.is_superuser,
                          'has_usable_password': user.has_usable_password(),
-                         'is_onboarded': user.is_onboarded})
+                         'is_onboarded': user.profile.is_onboarded})
 
 class OtpEmailViewSet(rest_views.ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -118,7 +118,8 @@ class AuthViewSet(BaseViewSet):
             context['status'] = 'failure'
             context['error'] = 'Incorrect password'
         else:
-            user.set_password(new_password)
+            if new_password is not None:
+                user.set_password(new_password)
             if first_name is not None:
                 user.first_name = first_name
             if last_name is not None:

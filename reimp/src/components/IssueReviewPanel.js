@@ -116,7 +116,7 @@ function mapStateToProps(state, props) {
     const review_due_at_by_any_user = (issue_reviews.length > 0 && issue_reviews[0].review_due_at_by_any_user) || null
     const has_ever_been_reviewed = issue_reviews.length > 0
     const issue_reviews_by_user_id = keyBy(issue_reviews, 'reviewed_by_id')
-    const logged_in_user_id = "" + logged_in_user().user_id
+    const logged_in_user_id = "" + logged_in_user(state).user_id
     const is_loading = isLoadingSprintReviews(state, sprint.review_ids)
     
     return {

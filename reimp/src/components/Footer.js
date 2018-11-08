@@ -24,7 +24,7 @@ class Footer extends Component {
 
 function mapStateToProps(state) {
 
-    const user = logged_in_user()
+    const user = logged_in_user(state)
     const has_usable_password = user['has_usable_password'] || false
     const is_permission_inspector_active = isPermissionInspectorActive(state)
     return {

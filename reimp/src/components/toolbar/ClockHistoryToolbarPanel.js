@@ -42,7 +42,7 @@ class ClockHistoryToolbarPanel extends Component {
 function mapStateToProps(state, props) {
     const list_key = LIST_KEY__CLOCK_HISTORY_LIST
     const list_filter = getListFilter(state, list_key)
-    const logged_in_user_id = logged_in_user().user_id
+    const logged_in_user_id = logged_in_user(state).user_id
     const logged_in_users_entries_only = list_filter.user_id === logged_in_user_id
 
     return {

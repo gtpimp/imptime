@@ -57,7 +57,7 @@ class OnboardingStepUserDetails extends Component {
 
 function mapStateToProps(state, props) {
 
-    let user = logged_in_user()
+    let user = logged_in_user(state)
     const user_id = user.user_id
     if ( user_id ) {
         user = Object.assign({}, user, getUser(state, user_id))

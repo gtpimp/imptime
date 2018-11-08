@@ -959,7 +959,7 @@ const makeMapStateToProps = () => {
         const issue_items = selIssueObjectsToRender(state, props)
         const tag_category_names = selTagCategoryNamesForIssues(state, props)
         const all_tags_by_id = selGetAllTagsById(state, props)
-        const logged_in_user_id = logged_in_user().user_id
+        const logged_in_user_id = logged_in_user(state).user_id
         const logged_in_user_can_estimate_user_id = (includes(sprint.user_ids_who_can_estimate, logged_in_user_id) && logged_in_user_id) || null
         const issue_ids = selIssueIds(state, props)
         const all_headers = custom_issue_header_list || ALL_AVAILABLE_ISSUE_HEADERS

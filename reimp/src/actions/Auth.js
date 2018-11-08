@@ -2,6 +2,7 @@ import { get } from 'lodash'
 import { impfetch } from './lib.js'
 import cookie from 'react-cookies';
 import { SubmissionError } from 'redux-form'
+import { getUser } from './Users'
 
 export const SET_AUTH_TOKEN = "SET_AUTH_TOKEN"
 export const CLEAR_AUTH_TOKEN = "CLEAR_AUTH_TOKEN"
@@ -218,13 +219,23 @@ export function change_password(values, on_done) {
     }
 }
 
-export function logged_in_user() {
-    return { username: cookie.load('username'),
-             token: cookie.load('token'),
-             user_id: cookie.load('user_id'),
-             has_usable_password: cookie.load('has_usable_password') === "true",
-             is_superuser: cookie.load('is_superuser') // deprecated, still used for the release note creator page
+export function logged_in_user(state) {
+    let user = { username: cookie.load('username'),
+                 token: cookie.load('token'),
+                 user_id: cookie.load('user_id'),
+                 has_usable_password: cookie.load('has_usable_password') === "true",
+                 is_superuser: cookie.load('is_superuser') // deprecated, still used for the release note creator page
     }
+    if ( state ) {
+        const loaded_user = getUser(state, user.user_id)
+        if ( loaded_user ) {
+            user = Object.assign({}, user, loaded_user)
+            user.loaded = true
+        } else {
+            user.loaded = false
+        }
+    }
+    return user
 }
 
 export function is_authenticated() {

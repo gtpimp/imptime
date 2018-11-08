@@ -33,7 +33,7 @@ class Header extends Component {
 
 function mapStateToProps(state) {
 
-    const user = logged_in_user()
+    const user = logged_in_user(state)
     const has_usable_password = user['has_usable_password'] || false
     return {
         has_usable_password

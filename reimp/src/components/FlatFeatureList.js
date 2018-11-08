@@ -115,7 +115,7 @@ const makeMapStateToProps = () => {
         const invalidated_item_ids = selInvalidatedFeatureIds(state, props)
         const items = selFeatures(state, props)
         const feature_items = selFeatureObjectsToRender(state, props)
-        const logged_in_user_id = logged_in_user().user_id
+        const logged_in_user_id = logged_in_user(state).user_id
         const feature_ids = selFeatureIds(state, props)
         const features_as_structured_tree = selFeaturesAsStructuredTree(state, props)
 

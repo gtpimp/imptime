@@ -7,7 +7,7 @@ import OnboardingWizard from './OnboardingWizard'
 import OnboardingPasswordForm from './OnboardingPasswordForm'
 import { submit } from 'redux-form'
 import { update_profile, change_password, logged_in_user } from '../../actions/Auth'
-import { ensureUsersLoaded, getUser } from '../../actions/Users'
+import { ensureUsersLoaded } from '../../actions/Users'
 import Loading from '../Loading'
 
 class OnboardingStepPassword extends Component {
@@ -64,20 +64,9 @@ class OnboardingStepPassword extends Component {
 
 function mapStateToProps(state, props) {
 
-    let user = logged_in_user()
-    const user_id = user.user_id
-    if ( user_id ) {
-        const loaded_user = getUser(state, user_id)
-        if ( loaded_user ) {
-            user = Object.assign({}, user, loaded_user)
-            user.loaded = true
-        } else {
-            user.loaded = false
-        }
-    }
-    
+    const user = logged_in_user(state)
     return {
-        user_id,
+        user_id: user.user_id,
         user,
         mobile_phone_number: user.mobile_phone_number
     }

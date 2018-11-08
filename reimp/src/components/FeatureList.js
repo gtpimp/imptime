@@ -243,7 +243,7 @@ const makeMapStateToProps = () => {
         const candidate_feature = getCandidateFeature(state)
         const is_creating_feature = candidate_feature || false
         const feature_items = selFeatureObjectsToRender(state, props)
-        const logged_in_user_id = logged_in_user().user_id
+        const logged_in_user_id = logged_in_user(state).user_id
         const feature_ids = selFeatureIds(state, props)
         const features_as_structured_tree = selFeaturesAsStructuredTree(state, props)
 

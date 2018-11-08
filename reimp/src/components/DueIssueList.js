@@ -125,7 +125,7 @@ function mapStateToProps(state, props) {
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const items_by_id = getIssuesById(state, visible_item_ids)
     const filter = getListFilter(state, list_key)
-    const logged_in_user_id = logged_in_user().user_id || -1
+    const logged_in_user_id = logged_in_user(state).user_id || -1
     const pagination = getListPagination(state, list_key)
     const header_list = ALL_AVAILABLE_POPUP_ISSUE_HEADERS
 

@@ -83,7 +83,7 @@ const makeMapStateToProps = () => {
     
         const { issue_id, running_actual_increment, optional_user_id, enable_live_timer } = props
         const issue = getIssue(state, issue_id)
-        const user_id = optional_user_id || logged_in_user().user_id
+        const user_id = optional_user_id || logged_in_user(state).user_id
 
         const all_actuals_by_user_id = selActualsByUserId(state, props)
         const all_estimates_by_user_id = selEstimatesByUserId(state, props)

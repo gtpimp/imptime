@@ -608,7 +608,7 @@ function mapStateToProps(state, props) {
     const recent_entries_unallocated = items_by_id_unallocated
     const pagination_unallocated = getListPagination(state, list_key_unallocated)
     
-    const logged_in_user_id = logged_in_user().user_id || -1
+    const logged_in_user_id = logged_in_user(state).user_id || -1
     const auto_clocking_enabled = isAutoClockingEnabled(state)
 
     return {

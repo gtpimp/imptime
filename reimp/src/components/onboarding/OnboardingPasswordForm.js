@@ -38,7 +38,6 @@ class OnboardingPasswordForm extends Component {
 
     renderEnablePhoneNumberPinInput = (field) => {
         const {input} = field
-        const { show_phone_number_section } = this.state
         return (
             <label>
               <input type="checkbox"

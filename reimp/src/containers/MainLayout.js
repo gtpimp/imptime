@@ -65,16 +65,13 @@ class MainLayout extends Component {
 
     refresh(these_props) {
         const props = these_props || this.props
-        const { dispatch, history, location, logged_in_user_id, settings,
-                has_usable_password, is_user_onboarded } = props
+        const { dispatch, history, location, logged_in_user_id, settings, are_settings_loaded,
+                has_usable_password, is_onboarded } = props
+        const is_onboarding = this.props.location.pathname.indexOf("onboarding/") !== -1
         
         if ( logged_in_user_id ) {
             dispatch(ensureUsersLoaded([logged_in_user_id]))
-            if ( !has_usable_password ) {
-                history.push('/password/change')
-            }
-
-            if ( !is_user_onboarded ) {
+            if ( are_settings_loaded && !is_onboarding && (!has_usable_password || !is_onboarded) ) {
                 history.push('/onboarding')
             }
         } else {
@@ -88,7 +85,7 @@ class MainLayout extends Component {
     }
 
     render() {
-        const { is_logged_in, are_settings_loaded, is_user_onboarded } = this.props
+        const { is_logged_in, are_settings_loaded } = this.props
 
         const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') !== -1 ||
                                this.props.location.pathname.indexOf('password/reminded') !== -1 ||
@@ -96,14 +93,15 @@ class MainLayout extends Component {
                                this.props.location.pathname.indexOf('share/') !== -1
 
         // hack, better to abstract the router up one level
-        const self_contained_page = this.props.location.pathname.indexOf("fullscreen/") !== -1
+        const self_contained_page = this.props.location.pathname.indexOf("fullscreen/") !== -1 ||
+                                    this.props.location.pathname.indexOf("/onboarding") !== -1
 
         // hack, better to abstract the router up one level
         const self_contained_simplified_page = this.props.location.pathname.indexOf("wd/") !== -1
 
         if ( ! are_settings_loaded ) {
             return (
-                <AppDiv id="app">Loading settings...</AppDiv>
+                <AppDiv id="app"></AppDiv>
             )
         }
 
@@ -120,15 +118,6 @@ class MainLayout extends Component {
                 <AppDiv id="app">
                   <Maintenance/>
                   <Error/>
-                  <MainRouter />
-                </AppDiv>
-            )
-        }
-
-        if (!is_user_onboarded) {
-            return (
-                <AppDiv id="app">
-                  <Websocket/>
                   <MainRouter />
                 </AppDiv>
             )
@@ -177,7 +166,7 @@ class MainLayout extends Component {
 
 function mapStateToProps(state) {
     const { configured } = isConfigured(state)
-    const user = logged_in_user()
+    const user = logged_in_user(state)
     const logged_in_user_id = user['user_id'] || null
     const has_usable_password = user['has_usable_password'] || false
     const current_mien_id =  getCurrentMienId(state)
@@ -185,7 +174,7 @@ function mapStateToProps(state) {
 
     return {
         is_logged_in: is_authenticated(),
-        are_settings_loaded: configured,
+        are_settings_loaded: configured && user.loaded === true,
         logged_in_user_id: logged_in_user_id,
         has_usable_password: has_usable_password,
         settings: state.settings,

@@ -95,7 +95,7 @@ const makeMapStateToProps = () => {
         const project = getProject(state, project_id) || {}
         const loading_item_ids = selLoadingFeatureIds(state, props)
         const invalidated_item_ids = selInvalidatedFeatureIds(state, props)
-        const logged_in_user_id = logged_in_user().user_id
+        const logged_in_user_id = logged_in_user(state).user_id
         const top_level_features = selTopLevelFeaturesList(state, props)
 
         return {
