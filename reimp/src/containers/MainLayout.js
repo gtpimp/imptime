@@ -171,10 +171,11 @@ function mapStateToProps(state) {
     const has_usable_password = user['has_usable_password'] || false
     const current_mien_id =  getCurrentMienId(state)
     const current_mien = getCurrentMien(state)
+    const is_logged_in = is_authenticated()
 
     return {
-        is_logged_in: is_authenticated(),
-        are_settings_loaded: configured && user.loaded === true,
+        is_logged_in,
+        are_settings_loaded: configured && (!is_logged_in || user.loaded === true),
         logged_in_user_id: logged_in_user_id,
         has_usable_password: has_usable_password,
         settings: state.settings,
