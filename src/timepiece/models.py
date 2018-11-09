@@ -584,6 +584,7 @@ class BusinessPermissions(BaseModel):
     can_add_issue_comment = models.BooleanField(default=True, verbose_name="Can Add Issue Comment")
     can_edit_subject = models.BooleanField(default=True, verbose_name="Can Edit Subject")
     can_edit_feature = models.BooleanField(default=True, verbose_name="Can Edit Feature")
+    can_edit_issue_feature = models.BooleanField(default=True, verbose_name="Can Edit Issue Feature")
     can_edit_tags = models.BooleanField(default=True, verbose_name="Can Edit Tags")
     can_create_sprint = models.BooleanField(default=True, verbose_name="Can Create Sprint")
     can_edit_sprint_status = models.BooleanField(default=True, verbose_name="Can Edit Sprint Status")
@@ -691,6 +692,7 @@ class BusinessPermissions(BaseModel):
         bp.can_add_issue_comment = True
         bp.can_edit_subject = True
         bp.can_edit_feature = True
+        bp.can_edit_issue_feature = True
         bp.can_edit_tags = True
         bp.can_create_sprint = True
         bp.can_edit_sprint_status = True
@@ -959,7 +961,7 @@ class BusinessPermissions(BaseModel):
 
     @property
     def has_edit_issue_feature(self):
-        return self.is_active_member_of_business and self.has_edit_feature
+        return self.is_active_member_of_business and self.can_edit_issue_feature
 
     @property
     def has_edit_tags(self):

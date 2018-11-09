@@ -31,6 +31,7 @@ const QUICK_ROLES = { 'owner': [ 'has_delete_project',
                                    'has_add_issue_comment',
                                    'has_edit_subject',
                                    'has_edit_feature',
+                                   'has_edit_issue_feature',
                                    'has_edit_tags',
                                    'has_view_deadlines',
                                    'has_edit_issue_states',
@@ -189,8 +190,6 @@ class ProjectUserPermissionForm extends Component {
 
         return (
             <div className="user-permission">
-              { !pup_id && <div>loading</div> }
-
               { this.renderQuickRoleNames() }
               <form onSubmit={handleSubmit}>
 

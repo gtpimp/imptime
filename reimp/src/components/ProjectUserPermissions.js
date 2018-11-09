@@ -13,6 +13,7 @@ import {
     updateProjectUserPermissions
 } from '../actions/ProjectUserPermissions'
 import '../sass/user-permission.css'
+import Loading from './Loading'
 
 class ProjectUserPermissions extends Component {
 
@@ -68,14 +69,14 @@ class ProjectUserPermissions extends Component {
                 <h2>Permissions for {user.username} in project {project.name}</h2>
 
 	                { is_loading &&
-                          <div>Loading...</div>
+                          <Loading/>
                         }
 
                         { !is_loading && ! logged_in_users_permissions.has_view_permissions &&
                           <div>You are not allowed to view permissions</div>
                         }
 
-                        { !is_loading && logged_in_users_permissions.has_view_permissions &&
+                        { logged_in_users_permissions.has_view_permissions &&
 
                           <ProjectUserPermissionForm permission_names={permission_names}
                                                      user_id={user.id}

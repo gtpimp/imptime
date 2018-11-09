@@ -250,6 +250,12 @@ class FeatureViewSet(BaseViewSet):
             feature_id = params['feature_id']
             testable_id = params['testable_id']
             issue_id = params['issue_id']
+
+            issue = self.allowed_issue(issue_id)
+            project = issue.project.business #sic
+            if not self.logged_in_permissions(project).has_edit_issue_feature:
+                raise Exception("Can't edit issue features")
+            
             feature = self.allowed_feature(feature_id)
             feature.link_issue_to_testable(request.user, issue_id, testable_id)
             data = {'status': 'success'}
@@ -270,8 +276,8 @@ class FeatureViewSet(BaseViewSet):
 
             issue = self.allowed_issue(issue_id)
             project = issue.project.business #sic
-            if not self.logged_in_permissions(project).has_edit_feature:
-                raise Exception("Can't edit features")
+            if not self.logged_in_permissions(project).has_edit_issue_feature:
+                raise Exception("Can't edit issue features")
 
             for issue_testable in issue.testables.all():
                 feature.link_feature_to_issue_testable(request.user, issue_testable)
@@ -292,6 +298,11 @@ class FeatureViewSet(BaseViewSet):
             testable_id = params['testable_id']
             issue_id = params['issue_id']
 
+            issue = self.allowed_issue(issue_id)
+            project = issue.project.business #sic
+            if not self.logged_in_permissions(project).has_edit_issue_feature:
+                raise Exception("Can't edit issue features")
+            
             feature = self.allowed_feature(feature_id)
             feature.unlink_issue_from_testable(request.user, testable_id, issue_id)
             data = {'status': 'success'}
