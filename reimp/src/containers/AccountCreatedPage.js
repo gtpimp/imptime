@@ -2,25 +2,22 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { PAGE_KEY__AUTH_PAGE } from '../actions/ItemListKeyRegistry'
+import { sendOtpEmail } from '../actions/Auth'
 import {
     set_toolbars,
 } from '../actions/Page'
 
 class AccountCreatedPage extends Component {
-
-    constructor(props) {
-        super(props)
-        this.onClickedHome = this.onClickedHome.bind(this)
-    }
     
     componentDidMount() {
         const {dispatch} = this.props
         dispatch(set_toolbars(PAGE_KEY__AUTH_PAGE, []))
     }
 
-    onClickedHome() {
-        const { history } = this.props
-        history.push('/projects');
+    onSendOtpEmail = () => {
+        const { dispatch, username } = this.props
+        // username currently undefined. to get username from state/props
+        dispatch(sendOtpEmail(username))
     }
     
     render() {
@@ -36,7 +33,10 @@ class AccountCreatedPage extends Component {
                   <br/><br/>
                   Please check your emails and click the link to login and set your password.
                   <br/><br/><br/>
-                  <button onClick={this.onClickedHome} className="button button--large button--login">Home</button>
+                  <button onClick={this.onSendOtpEmail}
+                          className="button button--large button--login">
+                    Resend Email
+                  </button>
                 </div>
               </div>
             </div>

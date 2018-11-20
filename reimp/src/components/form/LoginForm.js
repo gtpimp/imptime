@@ -4,6 +4,7 @@ import { css } from 'emotion'
 import { isValidEmail, sendOtpEmail } from '../../actions/Auth'
 import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'
+import CardDynamicDropdownField from '../CardDynamicDropdownField'
 import { Field, reduxForm, formValueSelector } from 'redux-form'
 import Message from '../../components/Message'
 import PagePrimaryButton from '../../components/PagePrimaryButton'
@@ -22,6 +23,10 @@ class LoginForm extends Component {
             otp_sent_by_text_message: false,
             invalid_email_address: false
         }
+        this.login_options = [{value: 'email', label: 'Send one time password via email'},
+                              {value: 'text', label: 'Send one time password via text'},
+                              {value: 'password', label: 'Enter password'}
+        ]
     }
 
     onClickedGetOtp = (evt) => {
@@ -37,14 +42,14 @@ class LoginForm extends Component {
         }
     }
 
-    onSendOtpTextMessage = (evt) => {
+    onSendOtpTextMessage = () => {
         this.setState({
             otp_sent_by_text_message: true,
             otp_sent_by_email: false
         })
     }
 
-    onSendOtpEmail = (evt) => {
+    onSendOtpEmail = () => {
         const { dispatch, username } = this.props
         dispatch(sendOtpEmail(username))
         this.setState({
@@ -89,12 +94,51 @@ class LoginForm extends Component {
         )
     }
 
+    renderPasswordInput() {
+        const { login_method } = this.props
+        const { show_otp_buttons } = this.state
+
+        if (login_method === 'password') {
+            return (
+                <div className={inputFieldDiv}>
+                  <Field
+                      name="password"
+                      type="password"
+                      placeholder={(show_otp_buttons && "One time password") || "Password"}
+                      component={ InputField } />
+                </div>
+            )
+        }
+    }
+
+    renderButtons() {
+        const { login_method, submitting } = this.props
+        const { show_otp_buttons } = this.state
+        
+        return (
+            <div className={ form_actions }>
+              { login_method === 'password' &&
+                <PagePrimaryButton
+                    label="SIGN IN"
+                    type="submit"
+                    disabled={submitting} />
+              }
+              { !show_otp_buttons &&
+                (login_method === "email" ||
+                 login_method === "text") &&
+                <PagePrimaryButton
+                    label="GET ONE TIME PASSWORD"
+                    type="submit"
+                    onButtonClick={this.onClickedGetOtp}
+                    disabled={submitting} />
+              }
+            </div>
+        )
+    }
+
     render() {
-        const { handleSubmit, error, submitting } = this.props
-        const {
-            show_otp_buttons,
-            invalid_email_address
-        } = this.state
+        const { handleSubmit, error } = this.props
+        const { invalid_email_address } = this.state
 
         return (
             <form onSubmit={ handleSubmit }>
@@ -107,24 +151,14 @@ class LoginForm extends Component {
               </div>
               <div className={inputFieldDiv}>
                 <Field
-                    name="password"
-                    type="password"
-                    placeholder={(show_otp_buttons && "One time password") || "Password"}
-                    component={ InputField } />
+                    name="login_method"
+                    placeholder="Choose authentication method"
+                    options={this.login_options}
+                    value_key="value"
+                    component={ CardDynamicDropdownField } />
               </div>
-              <div className={ form_actions }>
-                <PagePrimaryButton
-                    label="SIGN IN"
-                    type="submit"
-                    disabled={submitting} />
-                { !show_otp_buttons &&
-                  <PagePrimaryButton
-                      label="GET ONE TIME PASSWORD"
-                      type="submit"
-                      onButtonClick={this.onClickedGetOtp}
-                      disabled={submitting} />
-                }
-              </div>
+              { this.renderPasswordInput() }
+              { this.renderButtons() }
               { this.renderOtpSection() }
 
               { error &&
@@ -142,10 +176,11 @@ class LoginForm extends Component {
         )
     }
 }
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
     return {
         settings: state.settings,
         username: valueSelector(state, 'username'),
+        login_method: valueSelector(state, 'login_method'),
     }
 }
 export default withRouter(connect(mapStateToProps)(reduxForm({form:FORM_NAME})(LoginForm)))
@@ -170,7 +205,7 @@ const otp_actions = css`
 display: flex;
 flex: 1;
 align-items: center;
-justify-content:space-between;
+justify-content: space-between;
 padding-top: 18px;
 `
 

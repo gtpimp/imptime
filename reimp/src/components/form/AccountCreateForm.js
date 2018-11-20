@@ -8,23 +8,17 @@ import PageParagraph from '../components/PageParagraph'
 import PageSubTitle from '../components/PageSubTitle'
 
 const required = value => value ? undefined : 'Required'
- 
-class AccountCreatePage extends Component {
+
+class AccountCreateForm extends Component {
 
     componentDidMount() {
         this.onCreateAccount = this.onCreateAccount.bind(this)
         this.renderField = this.renderField.bind(this)
-        this.onFormSubmitSuccess = this.onFormSubmitSuccess.bind(this)
     }
 
     onCreateAccount(values) {
         const { dispatch } = this.props
         return dispatch(create_account(values))
-    }
-
-    onFormSubmitSuccess() {
-        const { history } = this.props
-        history.push('/account/created')
     }
 
     renderField(field) {
@@ -39,22 +33,6 @@ class AccountCreatePage extends Component {
             </div>
         )
     }
-
-    /* render() {
-     *     
-     *     return (
-     *         <div className="blank-page">
-     *           <div className="blank-container">
-     *             <div className="blank-text">
-     *               <PageSubTitle>Create a new ImpTime account</PageSubTitle>
-     *               <AccountCreateForm onFormSubmit={this.onCreateAccount}
-     *                                  onFormSubmitSuccess={this.onFormSubmitSuccess}
-     *               />
-     *             </div>
-     *           </div>
-     *         </div>
-     *     )
-     * }*/
     
     render() {
         const { handleSubmit, submitting } = this.props
@@ -91,5 +69,14 @@ function mapStateToProps() {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(reduxForm({form: 'account_create_page'})(AccountCreatePage))
+export default withRouter(connect(mapStateToProps)(reduxForm({
+    onFormSubmit: (new_values, dispatch, props) => {
+        const { onFormSubmit } = props
+        onFormSubmit(new_values)
+    },
+    onFormSubmitSuccess: (values, dispatch, props) => {
+        const { onFormSubmitSuccess } = props
+        onFormSubmitSuccess(values)
+    },
+    form: 'account_create_form'})(AccountCreateForm))
 )

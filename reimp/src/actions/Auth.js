@@ -123,7 +123,7 @@ export function sendOtpEmail(username) {
         return impfetch(state, 'imp/otp_email/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                
+                return json
             })
     }
 }
