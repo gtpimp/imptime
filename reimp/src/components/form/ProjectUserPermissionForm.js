@@ -185,7 +185,7 @@ class ProjectUserPermissionForm extends Component {
     }
 
     render() {
-        const { pup_id, pup, permission_names, handleSubmit, can_edit, initialValues } = this.props
+        const { pup, permission_names, handleSubmit, can_edit, initialValues } = this.props
         const that = this;
 
         return (

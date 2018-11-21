@@ -26,6 +26,7 @@ import NudgeList from '../components/NudgeList'
 import PlanningCalendar from '../components/PlanningCalendar'
 import IssueList from '../components/IssueList'
 import SprintName from '../components/SprintName'
+import OtherUser from '../components/OtherUser'
 import { convertIssuesToNudges } from '../actions/Nudges'
 
 class ScheduleItemPage extends Component {
@@ -104,12 +105,16 @@ class ScheduleItemPage extends Component {
     }
 
     renderNudgeList() {
+        const { schedule } = this.props
         return (
             <div>
-              <h3>Projects and sprints that require attention, showing the most important issue for each sprint</h3>
-              <NudgeList list_key={LIST_KEY__NUDGE_LIST}
-                         onShowMoreIssues={this.onShowMoreIssues}
-                         onSelect={this.onSelectNudge}/>
+                { schedule && 
+                  <h3>Next issues in order for <OtherUser user_id={schedule.owner_id}/> </h3>
+                }
+                <NudgeList list_key={LIST_KEY__NUDGE_LIST}
+                           onShowMoreIssues={this.onShowMoreIssues}
+                           onSelect={this.onSelectNudge}
+                />
             </div>
         )
     }
