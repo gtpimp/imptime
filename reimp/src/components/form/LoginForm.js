@@ -43,23 +43,26 @@ class LoginForm extends Component {
     }
 
     onSendOtpTextMessage = () => {
+        const { submit } = this.props        
         this.setState({
             otp_sent_by_text_message: true,
             otp_sent_by_email: false
         })
+        return submit()
     }
 
     onSendOtpEmail = () => {
-        const { dispatch, username } = this.props
-        dispatch(sendOtpEmail(username))
+        const { submit } = this.props
+        
         this.setState({
             otp_sent_by_email: true,
             otp_sent_by_text_message: false
         })
+        return submit()
     }
 
     renderOtpSection = () => {
-        const { submitting } = this.props
+        const { submitting, submit } = this.props
         const {
             show_otp_buttons,
             otp_sent_by_text_message,
@@ -81,7 +84,6 @@ class LoginForm extends Component {
                             disabled={submitting}
                             onButtonClick={this.onSendOtpTextMessage} />
                       </div>
-
                       { (otp_sent_by_email || otp_sent_by_text_message) && (
                             <div className={css`margin-top: ${theme.spacing.two}; color: ${theme.colours.ok}; font: ${theme.fonts.regular_normal};line-height: 1.8;`}>
                               { otp_sent_by_email && "If an ImpTime account exists for this email address, an email will be sent with your one time password" }
@@ -112,7 +114,7 @@ class LoginForm extends Component {
     }
 
     renderButtons() {
-        const { login_method, submitting } = this.props
+        const { submit, login_method, submitting } = this.props
         const { show_otp_buttons } = this.state
         
         return (
@@ -121,6 +123,7 @@ class LoginForm extends Component {
                 <PagePrimaryButton
                     label="SIGN IN"
                     type="submit"
+                    onButtonClick={submit}
                     disabled={submitting} />
               }
               { !show_otp_buttons &&
@@ -137,11 +140,11 @@ class LoginForm extends Component {
     }
 
     render() {
-        const { handleSubmit, error } = this.props
+        const { error } = this.props
         const { invalid_email_address } = this.state
 
         return (
-            <form onSubmit={ handleSubmit }>
+            <form>
               <div className={inputFieldDiv}>
                 <Field
                     name="username"
@@ -183,7 +186,17 @@ function mapStateToProps(state) {
         login_method: valueSelector(state, 'login_method'),
     }
 }
-export default withRouter(connect(mapStateToProps)(reduxForm({form:FORM_NAME})(LoginForm)))
+
+export default withRouter(connect(mapStateToProps)(reduxForm({
+    onSubmit: (new_values, dispatch, props) => {
+        const { onFormSubmit } = props
+        return onFormSubmit(new_values)
+    },
+    onSubmitSuccess: (res, dispatch, props) => {
+        const { onFormSubmitSuccess } = props
+        return onFormSubmitSuccess(res)
+    },
+    form: FORM_NAME })(LoginForm)))
 
 const inputFieldDiv = css`margin-bottom: 40px`
 
