@@ -2,7 +2,6 @@ import React, {Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
 import { default_theme as theme } from '../../theme/default'
-import {withRouter} from 'react-router-dom'
 import CardDynamicDropdownField from '../CardDynamicDropdownField'
 import { Field, reduxForm, formValueSelector } from 'redux-form'
 import Message from '../../components/Message'
@@ -109,7 +108,7 @@ function mapStateToProps(state) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(reduxForm({
+export default connect(mapStateToProps)(reduxForm({
     onSubmit: (new_values, dispatch, props) => {
         const { onFormSubmit } = props
         return onFormSubmit(new_values)
@@ -118,7 +117,7 @@ export default withRouter(connect(mapStateToProps)(reduxForm({
         const { onFormSubmitSuccess } = props
         return onFormSubmitSuccess(res)
     },
-    form: FORM_NAME })(LoginForm)))
+    form: FORM_NAME })(LoginForm))
 
 
 

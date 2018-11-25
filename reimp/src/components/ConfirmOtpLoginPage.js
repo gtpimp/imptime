@@ -4,11 +4,22 @@ import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
 import PageTitle from './PageTitle'
+import ConfirmOtpLoginForm from '../components/form/ConfirmOtpLoginForm'
 
 class ConfirmOtpLoginPage extends Component {
 
+    onSubmitOtp = () => {
+        const { dispatch } = this.props
+        //dispatch() otp check api call
+    }
+
+    onFormSubmitSuccess = () => {
+        const { history } = this.props
+        //history.push(`/`) push to new page if otp confirmed
+    }
+
     render() {
-        console.log("FdddddddddddD")
+        
         return (
             <div className={ main }>
               <div className={ box }>
@@ -16,7 +27,10 @@ class ConfirmOtpLoginPage extends Component {
                   <PageTitle>Confirm OTP</PageTitle>
                 </div>
                 <div className={ login_form }>
-                  fdsfds
+                  <ConfirmOtpLoginForm
+                      onFormSubmit={this.onSubmitOtp}
+                      onFormSubmitSuccess={this.onFormSubmitSuccess}
+                  />
                 </div>
               </div>
             </div>

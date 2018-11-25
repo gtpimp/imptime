@@ -13,7 +13,7 @@ class InputField extends Component {
                      placeholder={placeholder}
                      className={ input_style }
                      type={type} />
-              { meta.invalid && meta.error && meta.error }
+              { meta.invalid && meta.touched && meta.error && meta.error }
             </Fragment>
         )
     }
