@@ -8,7 +8,7 @@ import PageTitle from './PageTitle'
 class ConfirmOtpLoginPage extends Component {
 
     render() {
-        
+        console.log("FdddddddddddD")
         return (
             <div className={ main }>
               <div className={ box }>
