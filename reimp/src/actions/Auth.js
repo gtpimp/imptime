@@ -280,13 +280,13 @@ export function create_account(values) {
         return impfetch(state, 'imp/autologin/create_account/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                if ( json.status !== 'success' ) {
+                if (json.status !== 'success') {
                     dispatch({type: ANNOUNCE_CREATE_ACCOUNT_REJECTED,
                               error: json.error})
                     throw new SubmissionError(json.field_errors)
                 } else {
                     dispatch({type: ANNOUNCE_ACCOUNT_CREATED})
-                    window.open('/account/created')
+                    return json
                 }
             })
     }
