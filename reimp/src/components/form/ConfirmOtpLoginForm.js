@@ -14,21 +14,24 @@ const required = value => (value ? undefined : 'Required')
 class ConfirmOtpLoginForm extends Component {
 
     render() {
-        const { login_method, error, submit, submitting } = this.props
+        const { email_or_mobile_value, login_method, error, submit, submitting } = this.props
 
         let placeholder
         if (login_method === 'email') {
             placeholder = 'Email One Time Pin'
         } else if (login_method === 'sms') {
             placeholder = 'Sms One Time Pin'
-        }
+        }        
 
         return (
             <Fragment>
               <div className={otp_instruction}>
-                We've sent a pin to you phone. &nbsp;
+                {`We've sent a pin to ${email_or_mobile_value}.`};
+              </div>
+              <div className={otp_instruction}>
                 <a className={btn_link}>
-                  I didn't recieve a pin. </a>
+                  I didn't recieve a pin.
+                </a>
               </div>
               <div className={inputFieldDiv}>
                 <Field
@@ -56,10 +59,10 @@ function mapStateToProps(state, props) {
     
     const login_method = match.params.login_method
 
-    const email_or_mobile = match.params.username
+    const email_or_mobile_value = match.params.username
     
     return {
-        email_or_mobile,
+        email_or_mobile_value,
         login_method
     }
 }
