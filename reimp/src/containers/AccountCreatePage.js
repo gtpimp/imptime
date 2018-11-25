@@ -13,7 +13,6 @@ class AccountCreatePage extends Component {
 
     componentDidMount() {
         this.onCreateAccount = this.onCreateAccount.bind(this)
-        this.renderField = this.renderField.bind(this)
         this.onFormSubmitSuccess = this.onFormSubmitSuccess.bind(this)
     }
 
@@ -25,19 +24,6 @@ class AccountCreatePage extends Component {
     onFormSubmitSuccess() {
         const { history } = this.props
         history.push('/account/created')
-    }
-
-    renderField(field) {
-        const { input, placeholder, label, type, meta: { touched, error } } = field
-        return (
-            <div>
-              <label>{label}</label>
-              <div>
-                <InputField {...input} placeholder={placeholder} type={type}/>
-                {touched && error && <span>{error}</span>}
-              </div>
-            </div>
-        )
     }
 
     /* render() {
@@ -68,7 +54,7 @@ class AccountCreatePage extends Component {
                     <PageParagraph>
                       <Field name="email"
                              type="text"
-                             component={this.renderField}
+                             component={InputField}
                              validate={[required]}
                              placeholder="Email" />
                     </PageParagraph>
