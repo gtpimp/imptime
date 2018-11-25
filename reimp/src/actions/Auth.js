@@ -96,7 +96,7 @@ export function login(username, password) {
         return impfetch(state, 'imp/login/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                if ( json.token ) {
+                if (json.token) {
                     dispatch(setAuthToken(username, json.token,
                                           json.user_id, json.has_usable_password,
                                           json.is_superuser,
@@ -108,11 +108,11 @@ export function login(username, password) {
     }
 }
 
-export function sendOtpEmail(username) {
+export function sendOtpEmail(values) {
 
     return (dispatch, getState) => {
         const state = getState()
-        const data = { 'username': username}
+        const data = { 'username': values.username}
 
         const params = {method: "POST",
                         credentials: 'same-origin',
@@ -123,7 +123,11 @@ export function sendOtpEmail(username) {
         return impfetch(state, 'imp/otp_email/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                return json
+                if (!json.success) {
+                    throw new SubmissionError({ _error: 'Login Failed' })
+                } else {
+                    return values
+                }
             })
     }
 }

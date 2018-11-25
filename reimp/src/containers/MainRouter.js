@@ -46,6 +46,7 @@ import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
 import OnboardingRouter from '../components/onboarding/OnboardingRouter'
+import ConfirmOtpLoginPage from '../components/ConfirmOtpLoginPage'
 import { setBrowserTitle } from '../actions/Page'
 
 class MainRouter extends Component {
@@ -58,6 +59,7 @@ class MainRouter extends Component {
             <Switch>
               <Route exact path="/" component={WelcomePage}/>
               <Route exact path="/account/create" component={AccountCreatePage}/>
+              <Route exact path="/account/confirm-otp/:username/:login_method" component={ConfirmOtpLoginPage}/>
               <Route exact path="/account/created" component={AccountCreatedPage}/>
               <Route path="/onboarding" component={OnboardingRouter}/>
               <Route exact path="/work_summary" component={WorkSummaryPage}/>

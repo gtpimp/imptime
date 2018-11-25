@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
+import { SubmissionError } from 'redux-form'
 import {withRouter} from 'react-router-dom'
 import queryString from 'query-string'
 import { get } from 'lodash'
 
-import { isValidEmail, sendOtpEmail } from '../actions/Auth'
-import {login} from '../actions/Auth'
+import { login, isValidEmail, sendOtpEmail } from '../actions/Auth'
 import { default_theme as theme } from '../theme/default'
 import LoginForm from '../components/form/LoginForm'
 import PageTitle from '../components/PageTitle'
@@ -17,9 +17,8 @@ class LoginPage extends Component {
     onLoginFormSubmit = (new_values) => {
         
         const login_method = new_values.login_method
-        
         if (login_method === 'password') {
-            return this.login(new_values)
+            return this.onLogin(new_values)
         } else if (login_method === 'email') {
             return this.onSendOtpEmail(new_values)
         } else if (login_method === 'sms') {
@@ -29,7 +28,6 @@ class LoginPage extends Component {
 
     onLogin = (values) => {
         const { dispatch } = this.props
-        this.setState({show_otp_buttons: false})
         return dispatch(login(values.username, values.password))
     }
 
@@ -47,11 +45,17 @@ class LoginPage extends Component {
     
     onSendOtpEmail = (values) => {
         const { dispatch } = this.props
-        return dispatch(sendOtpEmail(values.username))
+        if (!isValidEmail(values.username)) {
+            throw new SubmissionError({ _error: 'Invalid email' })
+        }
+        return dispatch(sendOtpEmail(values))
     }
 
-    onFormSubmitSuccess = (values) => {
-        console.log(values)
+    onFormSubmitSuccess = (res) => {
+        const { history } = this.props
+        if (res.login_method === 'email') {
+            history.push(`/account/confirm-otp/${res.username}/${res.login_method}`)
+        }
     }
 
     render() {

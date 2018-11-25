@@ -1,16 +1,20 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { css } from 'react-emotion'
 import { default_theme as theme } from '../../theme/default'
 
 class InputField extends Component {
     render() {
-        const { InputElement, className, placeholder, input, label, type, ...extraProps } = this.props
+        const { meta, placeholder, input, type, ...extraProps } = this.props
+
         return (
-            <input {...input}
-                   {...extraProps}
-                   placeholder={placeholder}
-                   className={ input_style }
-                   type={type} />
+            <Fragment>
+              <input {...input}
+                     {...extraProps}
+                     placeholder={placeholder}
+                     className={ input_style }
+                     type={type} />
+              { meta.invalid && meta.error && meta.error }
+            </Fragment>
         )
     }
 }

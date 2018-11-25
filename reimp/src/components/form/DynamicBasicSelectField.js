@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import Select from 'react-select'
 
 class DynamicBasicSelectField extends Component {
@@ -36,18 +36,21 @@ class DynamicBasicSelectField extends Component {
                 placeholder, name } = this.props
 
         return (
-            <Select
-                cacheOptions={false}
-                name={name}
-                escapeClearsValue={true}
-                options={options}
-                onInputChange={this._onInputChange}
-                defaultValue={meta.initial}
-                isDisabled={isDisabled}
-                onChange={this._onChange}                
-                placeholder={placeholder}
-                styles={selectStyles}
-            />
+            <Fragment>
+              <Select
+                  cacheOptions={false}
+                  name={name}
+                  escapeClearsValue={true}
+                  options={options}
+                  onInputChange={this._onInputChange}
+                  defaultValue={meta.initial}
+                  isDisabled={isDisabled}
+                  onChange={this._onChange}
+                  placeholder={placeholder}
+                  styles={selectStyles}
+              />
+              { meta.invalid && meta.error && meta.error }
+            </Fragment>
         )
     }
 }
