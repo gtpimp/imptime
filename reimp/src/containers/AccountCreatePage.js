@@ -14,8 +14,8 @@ class AccountCreatePage extends Component {
 
     onFormSubmitSuccess = () => {
         const { history } = this.props
-        console.log("DS")
         history.push('/account/created')
+        return
     }
     
     render() {

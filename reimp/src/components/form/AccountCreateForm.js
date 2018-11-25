@@ -39,10 +39,10 @@ function mapStateToProps() {
 export default connect(mapStateToProps)(reduxForm({
     onSubmit: (new_values, dispatch, props) => {
         const { onFormSubmit } = props
-        onFormSubmit(new_values)
+        return onFormSubmit(new_values)
     },
     onSubmitSuccess: (values, dispatch, props) => {
         const { onFormSubmitSuccess } = props
-        onFormSubmitSuccess(values)
+        return onFormSubmitSuccess(values)
     },
     form: 'account_create_form'})(AccountCreateForm))
