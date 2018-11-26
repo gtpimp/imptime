@@ -67,10 +67,11 @@ class LoginForm extends Component {
                     disabled={submitting} />
               }
               { login_method === "sms" &&
-                <PagePrimaryButton
-                    label="CHANGE MOBILE NUMBER"
-                    onButtonClick={this.onChangeMobileClick}
-                    disabled={submitting} />
+                <a className={ link }
+                    onClick={this.onChangeMobileClick}
+                    disabled={submitting}>
+                  Change mobile number
+                </a>
               }
             </div>
         )
@@ -140,6 +141,7 @@ const form_actions = css`
 margin-bottom: 34px;
 display:flex;
 justify-content: space-between;
+align-items: center;
 `
 
 const otp_section_main = css`
@@ -162,4 +164,10 @@ const otp_instruction = css`
 font: ${theme.fonts.regular_large};
 margin: 0;
 text-align: center;
+`
+const link = css`
+font: ${theme.fonts.regular_large};
+color: ${theme.colours.list_text};
+text-decoration: none;
+cursor: pointer;
 `

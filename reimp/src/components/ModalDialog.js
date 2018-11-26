@@ -29,7 +29,7 @@ class ModalDialog extends Component {
     render() {
 
         const { isOpen, onClose, title, variant, children } = this.props
-        
+
         return (
             <Modal isOpen={isOpen || false}
                    className={cx(modal_dialog,
@@ -58,15 +58,15 @@ class ModalDialog extends Component {
 }
 
 function mapStateToProps(state, props) {
-
     const { onClose, isOpen, title, variant } = props
-    
+
     return {
         onClose,
-        isOpen: isOpen || true,
+        isOpen: isOpen,
         variant: variant || 'default',
         title
     }
 }
 
 export default connect(mapStateToProps)(ModalDialog)
+

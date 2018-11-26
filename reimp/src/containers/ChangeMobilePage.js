@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
 import { withRouter } from 'react-router-dom'
-import { get } from 'lodash'
-
 import { login } from '../actions/Auth'
 import { default_theme as theme } from '../theme/default'
 import ChangeMobileForm from '../components/form/ChangeMobileForm'
