@@ -27,6 +27,7 @@ class LoginViewSet(rest_views.ObtainAuthToken):
         # cut and pasted from venv/lib/python2.7/site-packages/rest_framework/authtoken/views.py
 
         username = request.data.get('username', None)
+        mobile_phone_number = request.data.get('mobile_phone_number', None)
         user = User.objects.filter(Q(username=username) | Q(email=username)).first()
         if user.username != username:
             request.data['username'] = user.username
@@ -39,6 +40,9 @@ class LoginViewSet(rest_views.ObtainAuthToken):
             if not is_valid_otp:
                 return Response({'success': 'failed'})
         Token.objects.filter(user=user).delete()
+        if mobile_phone_number and user:
+            user.update(mobile_phone_number=mobile_phone_number)
+            user.save()
         token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
                          'user_id': user.id,

@@ -16,10 +16,11 @@ class LoginForm extends Component {
 
     constructor(props) {
         super(props)
+        this.onChangeMobileClick = this.onChangeMobileClick.bind(this)
         this.login_options = [
             {value: 'password', label: 'Enter password'},
             {value: 'email', label: 'Send one time password via email'},
-            {value: 'text', label: 'Send one time password via text'}
+            {value: 'sms', label: 'Send one time password via sms'}
         ]
     }
     
@@ -39,6 +40,13 @@ class LoginForm extends Component {
             )
         }
     }
+    
+    onChangeMobileClick() {
+        const { handleSubmit, onFormSubmit, dispatch } = this.props
+        dispatch(handleSubmit(async (values, dispatch, props) => {
+            return await onFormSubmit({...values, request_mobile_change: true}, dispatch, props)
+        }))
+    }
 
     renderButtons() {
         const { submit, login_method, submitting } = this.props
@@ -52,10 +60,16 @@ class LoginForm extends Component {
                     disabled={submitting} />
               }
               { (login_method === "email" ||
-                 login_method === "text") &&
+                 login_method === "sms") &&
                 <PagePrimaryButton
                     label="GET ONE TIME PASSWORD"
                     onButtonClick={submit}
+                    disabled={submitting} />
+              }
+              { login_method === "sms" &&
+                <PagePrimaryButton
+                    label="CHANGE MOBILE NUMBER"
+                    onButtonClick={this.onChangeMobileClick}
                     disabled={submitting} />
               }
             </div>
@@ -63,12 +77,13 @@ class LoginForm extends Component {
     }
 
     renderLoginMethod() {
+
         return (
             <Fragment>
               <div className={inputFieldDiv}>
                 <Field
                     name="username"
-                    type="text"
+                    type="sms"
                     placeholder="Email Address"
                     component={ InputField } />
               </div>
@@ -86,24 +101,24 @@ class LoginForm extends Component {
 
     render() {
         const { error } = this.props
-
+        
         return (
-            <Fragment>
+            <form>
               { this.renderLoginMethod() }
               { this.renderPasswordInput() }
               { this.renderButtons() }
               { error &&
-              <div className="login-form__message">
-                <Message variant="error">{ error && error }</Message>
-              </div>
+                <div className="login-form__message">
+                  <Message variant="error">{ error && error }</Message>
+                </div>
               }
-            </Fragment>
+            </form>
         )
     }
 }
 function mapStateToProps(state) {
     return {
-        settings: state.settings,        
+        settings: state.settings,
         login_method: valueSelector(state, 'login_method'),
     }
 }
@@ -118,9 +133,6 @@ export default connect(mapStateToProps)(reduxForm({
         return onFormSubmitSuccess(res)
     },
     form: FORM_NAME })(LoginForm))
-
-
-
 
 const inputFieldDiv = css`margin-bottom: 40px`
 

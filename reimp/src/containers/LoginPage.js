@@ -13,16 +13,19 @@ import PageTitle from '../components/PageTitle'
 
 class LoginPage extends Component {
 
-
     onLoginFormSubmit = (new_values) => {
         
         const login_method = new_values.login_method
+        const request_mobile_change = new_values.request_mobile_change
+        
         if (login_method === 'password') {
             return this.onLogin(new_values)
         } else if (login_method === 'email') {
             return this.onSendOtpEmail(new_values)
-        } else if (login_method === 'sms') {
-            this.onSendOtpTextMessage()
+        } else if (login_method === 'sms' && !request_mobile_change) {
+            return this.onSendOtpTextMessage(new_values)
+        } else if (login_method === 'sms' && request_mobile_change) {
+            return this.onRequestMobileChangeByOtp(new_values)
         }
     }
 
@@ -42,19 +45,25 @@ class LoginPage extends Component {
     onSendOtpTextMessage = (values) => {
         console.log(values)
     }
+
+    onRequestMobileChangeByOtp(values) {
+        return this.onSendOtpEmail(values)
+    }
     
-    onSendOtpEmail = (values) => {
+    async onSendOtpEmail(values) {
         const { dispatch } = this.props
         if (!isValidEmail(values.username)) {
             throw new SubmissionError({ _error: 'Invalid email' })
         }
-        return dispatch(sendOtpEmail(values))
+        return await dispatch(sendOtpEmail(values))
     }
 
     onFormSubmitSuccess = (res) => {
         const { history } = this.props
         if (res.login_method === 'email') {
             history.push(`/account/confirm-otp/${res.username}/${res.login_method}`)
+        } else if (res.login_method === 'sms' && res.request_mobile_change) {
+            history.push(`/account/change-mobile-by-otp/${res.username}`)
         }
     }
 

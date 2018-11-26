@@ -29,7 +29,7 @@ class PrimaryButton extends Component {
             evt.preventDefault()
         } else if ( onButtonClick ) {
             evt.preventDefault()
-            onButtonClick(evt)
+            return onButtonClick(evt)
         }
     }
 

@@ -80,12 +80,13 @@ export function auto_login(auto_login_token) {
     
 }
 
-export function login(username, password) {
+export function login(username, password, mobile_phone_number) {
 
     return (dispatch, getState) => {
         const state = getState()
-        const data = { 'username': username,
-                       'password': password }
+        const data = { username: username,
+                       password: password,
+                       mobile_phone_number: mobile_phone_number}
 
         const params = {method: "POST",
                         credentials: 'same-origin',
@@ -102,7 +103,7 @@ export function login(username, password) {
                                           json.is_superuser,
                                           json.is_onboarded))
                 } else {
-                    throw new SubmissionError({ _error: 'Invalid username/password combination' })
+                    throw new SubmissionError({ _error: 'Invalid username/password combination.' })
                 }
             })
     }
