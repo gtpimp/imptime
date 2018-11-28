@@ -15,6 +15,11 @@ import {
 } from '../../actions/AnnotatedVisualSpecDocuments'
 import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
 import { tokenisedApiUrl } from '../../actions/Print'
+import ModalDialog from '../ModalDialog';
+import VisualSpecDocumentGalleryFullScreen from './VisualSpecDocumentGalleryFullScreen'
+import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
+import VisualSpecToolbar from './VisualSpecToolbar'
+
 
 const DEFAULT_ANNOTATION_SIZE = 25
 
@@ -25,7 +30,11 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.hideVisualSpecDocumentImageLoadingImage = this.hideVisualSpecDocumentImageLoadingImage.bind(this)
         this.onClickDownload = this.onClickDownload.bind(this)
         this.onClickPreview = this.onClickPreview.bind(this)
-        this.state = { visual_spec_document_image_loaded: false }
+        this.showImageModal = this.showImageModal.bind(this)
+        this.hideImageModal = this.hideImageModal.bind(this)
+        this.renderImageModal = this.renderImageModal.bind(this)
+        this.state = { visual_spec_document_image_loaded: false,
+                       show_preview_modal: false}
     }
 
     componentDidMount() {
@@ -69,6 +78,38 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.setFullScreenMode()
     }
 
+    renderImageModal(preview_image_url) {
+        const { annotated_visual_spec_document_id, img_element_unique_id,
+                hires_url, visual_spec_document } = this.props
+        
+        return (
+            <ModalDialog isOpen={true}
+                         variant={"full"}
+                         onClose={this.hideImageModal}
+                         title={visual_spec_document.name}>
+              <VisualSpecToolbar annotated_visual_spec_document_id={annotated_visual_spec_document_id}
+                                 onClose={this.hideImageModal}/>
+              <VisualSpecAnnotationToolbar />
+              <img id={img_element_unique_id}
+                   src={hires_url}
+                   onLoad={this.onVisualSpecDocumentImageLoaded}
+                   alt=""
+                   onClick={this.showImageModal}
+                   style={{maxWidth:'100%'}}
+              />
+            </ModalDialog>
+        )
+    }
+    
+    showImageModal() {
+        this.setState({ show_preview_modal: true })
+    }
+
+    hideImageModal() {
+        this.setState({ show_preview_modal: false })
+    }
+
+    
     createVisualSpecAnnotation(params) {
         const { onCreateAnnotation, visual_spec_document_id } = this.props
         if ( onCreateAnnotation ) {
@@ -93,7 +134,7 @@ class VisualSpecDocumentGalleryImage extends Component {
     resolveThumbnailElement(preview_image_url) {
         const { visual_spec_document, img_element_unique_id, image_class, is_image,
                 content_type, project_id, annotated_visual_spec_document_id } = this.props
-  
+
         const full_screen_url = `/fullscreen/projects/${project_id}/image/${annotated_visual_spec_document_id}`
         
         if ( ! preview_image_url ) {
@@ -121,14 +162,13 @@ class VisualSpecDocumentGalleryImage extends Component {
         } else {
             const class_name = image_class || "visual_spec_document_gallery__image"
             return (
-                <Link to={full_screen_url}>
-                  <img id={img_element_unique_id}
-                       className={class_name}
-                       src={preview_image_url}
-                       onLoad={this.onVisualSpecDocumentImageLoaded}
-                       alt=""
-                  />
-                </Link>
+                <img id={img_element_unique_id}
+                     className={class_name}
+                     src={preview_image_url}
+                     onLoad={this.onVisualSpecDocumentImageLoaded}
+                     alt=""
+                     onClick={this.showImageModal}
+                />
             )
         }
     }
@@ -162,7 +202,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                                                 tooltips_enabled={false}
                                                 visual_spec_annotation={visual_spec_annotation} />
                       )
-                  })
+                })
                 }
               </div>
 
@@ -172,8 +212,8 @@ class VisualSpecDocumentGalleryImage extends Component {
                   <h2>Loading Image...</h2>
                 </div>
               }
-
-              </div>
+              { this.state.show_preview_modal && this.renderImageModal() }
+            </div>
         ))
     }
 }

@@ -11,7 +11,7 @@ import VisualSpecDocumentGalleryFullScreen from './VisualSpecDocumentGalleryFull
 
 const header_height = 36;
 
-class VisualSpecDocumentGalleryFullScreenImage extends Component {
+class VisualSpecDocumentGalleryFullScreenPage extends Component {
 
     componentDidMount() {
         this.refresh()
@@ -97,5 +97,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(VisualSpecDocumentGalleryFullScreenImage))
+export default withRouter(connect(mapStateToProps)(VisualSpecDocumentGalleryFullScreenPage))
 
