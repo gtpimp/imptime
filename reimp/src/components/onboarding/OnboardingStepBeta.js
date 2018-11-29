@@ -9,10 +9,10 @@ class OnboardingStepWelcome extends Component {
         return (
             <OnboardingPage>
               <OnboardingWizard current_step={4}
-                                next_step={null}
+                                is_final_step={true}
+                                next_step={true}
                                 prev_step={3}
-                                next_step_label="Close"
-              >
+                                next_step_label="Close">
                 <Fragment>
                   <PageSubTitle>Thanks for becoming an early adopter</PageSubTitle>
                   <p>

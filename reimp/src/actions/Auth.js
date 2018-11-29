@@ -80,31 +80,30 @@ export function auto_login(auto_login_token) {
     
 }
 
-export function login(username, password, mobile_phone_number) {
+export function login(values) {
 
     return (dispatch, getState) => {
         const state = getState()
-        const data = { username: username,
-                       password: password,
-                       mobile_phone_number: mobile_phone_number}
 
         const params = {method: "POST",
                         credentials: 'same-origin',
-                        data: data,
+                        data: values,
                         headers: {"Content-type": "application/json; charset=UTF-8"}, 
-                        body: JSON.stringify(data)}
+                        body: JSON.stringify(values)}
         
         return impfetch(state, 'imp/login/', dispatch, params)
             .then(response => response.json())
             .then(json => {
                 if (json.token) {
-                    dispatch(setAuthToken(username, json.token,
+                    cookie.save('preferred_login_method', values.login_method, { path: '/' })
+                    dispatch(setAuthToken(values.username, json.token,
                                           json.user_id, json.has_usable_password,
                                           json.is_superuser,
                                           json.is_onboarded))
                 } else {
                     throw new SubmissionError({ _error: 'Invalid username/password combination.' })
                 }
+                return values
             })
     }
 }
@@ -145,7 +144,7 @@ export function forgot_password(username, on_done) {
                         headers: {"Content-type": "application/json; charset=UTF-8"}, 
                         body: JSON.stringify(data)}
         return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params)
-            .then( on_done() )
+            .then(on_done && on_done())
     }
 }
 
@@ -161,7 +160,7 @@ export function onboarding_complete(on_done) {
                         headers: {"Content-type": "application/json; charset=UTF-8"}, 
                         body: JSON.stringify(data)}
         return impfetch(state, 'imp/auth/onboarded/', dispatch, params)
-            .then( on_done() )
+            .then(on_done && on_done())
     }
 }
 
@@ -185,7 +184,7 @@ export function update_profile({first_name, last_name, mobile_phone_number, on_d
                               error: json.error})
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PROFILE})
-                    on_done()
+                    on_done && on_done()
                 }
             })
             .catch(function (error) {
@@ -215,7 +214,7 @@ export function change_password(values, on_done) {
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PASSWORD})
                     cookie.save('has_usable_password', true, { path: '/' })
-                    on_done()
+                    on_done && on_done()
                 }
             })
             .catch(function (error) {

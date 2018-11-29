@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
+import cookie from 'react-cookies'
 import { SubmissionError } from 'redux-form'
 import {withRouter} from 'react-router-dom'
 import queryString from 'query-string'
@@ -12,6 +13,17 @@ import LoginForm from '../components/form/LoginForm'
 import PageTitle from '../components/PageTitle'
 
 class LoginPage extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = { preferred_login_method: undefined }
+    }
+   
+
+    compenentDidMount() {
+        const preferred_login_method = cookie.load('preferred_login_method')
+        this.setState({preferred_login_method: preferred_login_method})
+    }
 
     onLoginFormSubmit = (new_values) => {
         
@@ -31,7 +43,7 @@ class LoginPage extends Component {
 
     onLogin = (values) => {
         const { dispatch } = this.props
-        return dispatch(login(values.username, values.password))
+        return dispatch(login(values))
     }
 
     onClickedCreateAccount = (evt) => {
@@ -60,6 +72,7 @@ class LoginPage extends Component {
 
     onFormSubmitSuccess = (res) => {
         const { history } = this.props
+        console.log(res)
         if (res.login_method === 'email') {
             history.push(`/account/confirm-otp/${res.username}/${res.login_method}`)
         } else if (res.login_method === 'sms' && res.request_mobile_change) {
@@ -77,7 +90,7 @@ class LoginPage extends Component {
                 </div>
                 <div className={ login_form }>
                   <LoginForm
-                      initialValues={ initialValues }
+                      initialValues={ {...initialValues, login_method: this.state.preferred_login_method }}
                       onFormSubmit={this.onLoginFormSubmit}
                       onFormSubmitSuccess={this.onFormSubmitSuccess}
                   />

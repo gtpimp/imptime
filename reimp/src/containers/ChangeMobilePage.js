@@ -11,7 +11,7 @@ class ChangeMobilePage extends Component {
     
     onFormSubmit = (new_values) => {
         const { dispatch } = this.props
-        return dispatch(login(new_values.username, new_values.password, new_values.mobile_phone_number))
+        return dispatch(login(new_values))
     }
 
     onFormSubmitSuccess = (res) => {

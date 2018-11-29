@@ -6,7 +6,7 @@ import OnboardingPage from './OnboardingPage'
 import OnboardingWizard from './OnboardingWizard'
 import OnboardingPasswordForm from './OnboardingPasswordForm'
 import { submit } from 'redux-form'
-import { update_profile, change_password, logged_in_user } from '../../actions/Auth'
+import { update_profile, change_password, logged_in_user, onboarding_complete } from '../../actions/Auth'
 import { ensureUsersLoaded } from '../../actions/Users'
 import Loading from '../Loading'
 
@@ -26,7 +26,7 @@ class OnboardingStepPassword extends Component {
     onSubmit = ({ new_password, mobile_phone_number, enable_mobile_phone_number_pin }) => {
         const { dispatch } = this.props
 
-        if ( ! enable_mobile_phone_number_pin ) {
+        if (!enable_mobile_phone_number_pin) {
             mobile_phone_number = ''
         }
         

@@ -11,28 +11,30 @@ import OnboardingFooter from './OnboardingFooter'
 class OnboardingWizard extends Component {
 
     onNextStep = () => {
-        const { dispatch, history, next_step, onNextHook } = this.props
+        const { dispatch, history, is_final_step, next_step, onNextHook } = this.props
         const gotoNextPage = () => history.push(`/onboarding/${next_step}`)
-        if ( next_step ) {
-            if ( onNextHook ) {
+        
+        if (next_step) {
+            if (onNextHook) {
                 onNextHook(gotoNextPage)
             } else {
                 gotoNextPage()
             }
-        } else {
+        }
+        if (is_final_step) {
             dispatch(onboarding_complete(this.onComplete))
         }
     }
 
     onPrevStep = () => {
         const { history, prev_step } = this.props
-        if ( prev_step ) {
+        if (prev_step) {
             history.push(`/onboarding/${prev_step}`)
         }
     }
 
     onComplete = () => {
-        const { history } = this.props
+        const { history } = this.props;
         history.push('/')
     }
 

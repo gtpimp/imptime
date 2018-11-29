@@ -79,7 +79,14 @@ class DueIssueList extends Component {
                        event="hover"
                        eventDelay={0}
                        placement="left"
-                       content={<div>You have {num_issues} open&nbsp;<Pluralize singular="issue" showCount={false} count={num_issues}/>&nbsp;due today.</div>}>
+                       content={
+                           <div>
+                             You have {num_issues} open&nbsp;
+                             <Pluralize singular="issue"
+                                                  showCount={false}
+                                                  count={num_issues}/>
+                               &nbsp;due today.
+                           </div>}>
                 <div className={css`border-radius: 10px; 
                                     min-width:20px; 
                                     border: 1px solid ${theme.colours.notok}; 

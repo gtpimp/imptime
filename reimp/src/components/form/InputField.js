@@ -11,6 +11,8 @@ class InputField extends Component {
               <input {...input}
                      {...extraProps}
                      placeholder={placeholder}
+                     value={input.value}
+                     onChange={input.onChange}
                      className={ input_style }
                      type={type} />
               { meta.invalid && meta.touched && meta.error && meta.error }
@@ -18,7 +20,7 @@ class InputField extends Component {
         )
     }
 }
-export default InputField;
+export default InputField
 
 const input_style = css`
 font: ${theme.fonts.regular_input};
