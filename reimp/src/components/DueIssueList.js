@@ -50,6 +50,7 @@ class DueIssueList extends Component {
     }
 
     onHidePopup = () => {
+        // Passing state changes to another can lead to errors if 
         this.setState({show_popup:false})
     }
 
@@ -66,7 +67,7 @@ class DueIssueList extends Component {
     renderDueAlert() {
         const { pagination } = this.props
         const num_issues = pagination && pagination.num_items
-        if ( num_issues === 0 ) {
+        if (num_issues === 0) {
             return null
         }
         return (
@@ -99,9 +100,9 @@ class DueIssueList extends Component {
     }
 
     renderPopup() {
-        const { list_key, header_list } = this.props
+        const { show_popup, list_key, header_list } = this.props
         return (
-            <ModalDialog isOpen={true}
+            <ModalDialog isOpen={show_popup}
                          onClose={this.onHidePopup}
                          title="Issues due today"
                          variant="full">
@@ -121,7 +122,7 @@ class DueIssueList extends Component {
         return (
             <div>
               { this.renderDueAlert() }
-              { show_popup && this.renderPopup() }
+              { this.renderPopup() }
             </div>
         )
     }
