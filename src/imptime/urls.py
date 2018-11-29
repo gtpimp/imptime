@@ -47,7 +47,7 @@ import visual_spec_annotation_api
 import wiki_api 
 from rest_framework.routers import DefaultRouter
 from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
-from visual_spec_document_download import VisualSpecDocumentHiresView
+from visual_spec_document_download import VisualSpecDocumentHiresView, VisualSpecDocumentMediumResPreviewView
 
 router = DefaultRouter()
 router.register(r'auth', auth_api.AuthViewSet,
@@ -153,6 +153,7 @@ urlpatterns = [
     url(r'^otp_email/', auth_api.OtpEmailViewSet.as_view()),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/download', VisualSpecDocumentDownloadView.as_view(), name='download_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/hires', VisualSpecDocumentHiresView.as_view(), name='hires_visual_spec_document'),
+    url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/medium_res', VisualSpecDocumentMediumResPreviewView.as_view(), name='hires_visual_spec_document'),
     url(r'^visual_spec_document/(?P<visual_spec_document_id>.*)/preview', VisualSpecDocumentPreviewView.as_view(), name='preview_visual_spec_document'),
     url(r'^pdf/(?P<filename>.*)/', print_api.PrintViewSet.as_view(), name='print_pdf'),
 

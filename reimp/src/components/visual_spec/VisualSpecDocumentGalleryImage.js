@@ -91,7 +91,9 @@ class VisualSpecDocumentGalleryImage extends Component {
     renderImageModal(preview_image_url) {
         const { annotated_visual_spec_document_id, img_element_unique_id,
                 hires_url, visual_spec_document } = this.props
-        
+
+        const { visual_spec_document_image_loaded } = this.state
+
         return (
             <ModalDialog isOpen={true}
                          variant={"largest"}
@@ -112,11 +114,12 @@ class VisualSpecDocumentGalleryImage extends Component {
                                          annotated_visual_spec_document_id={annotated_visual_spec_document_id}
                                          onLoad={this.onVisualSpecDocumentImageLoaded}
                                          document={hires_url}
-                                         img_id={img_element_unique_id} />
+                                         img_id={img_element_unique_id}
+                                         documentLoaded={visual_spec_document_image_loaded} />
             </ModalDialog>
         )
     }
-    
+
     showImageModal() {
         this.setState({ show_preview_modal: true })
     }
@@ -125,7 +128,6 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.setState({ show_preview_modal: false })
     }
 
-    
     createVisualSpecAnnotation(params) {
         const { onCreateAnnotation, visual_spec_document_id } = this.props
         if ( onCreateAnnotation ) {
@@ -152,7 +154,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                 content_type, project_id, annotated_visual_spec_document_id } = this.props
 
         const full_screen_url = `/fullscreen/projects/${project_id}/image/${annotated_visual_spec_document_id}`
-        
+
         if ( ! preview_image_url ) {
             return (
                 <div id={img_element_unique_id}
@@ -251,14 +253,13 @@ function mapStateToProps(state, props) {
     const project = project_id && getProject(state, project_id)
     const can_edit = allow_edit !== false && visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
     const is_invalidated = is_annotated_visual_spec_document_invalidated(state, annotated_visual_spec_document_id)
-
-    
     
     return {
         project,
         project_id,
         preview_image_url: tokenisedApiUrl(state, preview_url),
         hires_url: tokenisedApiUrl(state, visual_spec_document.hires_url),
+        medium_res_url: tokenisedApiUrl(state, visual_spec_document.medium_res_url),
         download_url: tokenisedApiUrl(state, visual_spec_document.download_url),
         content_type,
         is_image,

@@ -9,24 +9,29 @@ const preview_toolbar = css`display:flex;
                             align-items:center;`
 
 const preview_container = css`display:flex;
-                              justify-content:center;`
+                              justify-content:center;
+                              width:100%;
+                              height:95%;`
+
+const preview_image = css`width:100%;
+                          height:100%;
+                          background-repeat: no-repeat;
+                          background-size: contain;
+                          padding-top:15px;
+                          background-position: center;`
 
 class VisualSpecDocumentPreview extends Component {
     render() {
-        const {show, hide, annotated_visual_spec_document_id, onLoad, document, img_id} = this.props
-        
+        const {show, hide, annotated_visual_spec_document_id,
+               onLoad, document, img_id, visual_spec_document_image_loaded} = this.props
         return (
-            <div>
               <div className={preview_container}>
-                <img id={img_id}
-                     src={document}
-                     onLoad={onLoad}
-                     alt=""
+                <div id={img_id}
                      onClick={show}
-                     style={{maxWidth:'100%', paddingTop:'15px'}}
-                />
+                     className={preview_image}
+                     style={{backgroundImage: `url('${document}')`}}>
+                </div>
               </div>
-            </div>
         )
     }
 }

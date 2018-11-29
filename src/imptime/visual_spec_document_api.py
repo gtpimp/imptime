@@ -47,8 +47,11 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             else:
 
                 for vsd in visual_spec_documents:
+                    if vsd.id == 1689:
+                        import ipdb; ipdb.set_trace()
                     vsd.download_url = VisualSpecDocumentSerializer.get_download_url(self.request, vsd)
                     vsd.hires_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
+                    vsd.medium_res_url = VisualSpecDocumentSerializer.get_medium_res_url(self.request, vsd)
                     vsd.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd)
                 s = VisualSpecDocumentSerializer(visual_spec_documents, many=True)
                 visual_spec_documents_data = s.data
