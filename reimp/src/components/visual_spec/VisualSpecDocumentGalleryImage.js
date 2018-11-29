@@ -19,9 +19,19 @@ import ModalDialog from '../ModalDialog';
 import VisualSpecDocumentGalleryFullScreen from './VisualSpecDocumentGalleryFullScreen'
 import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
 import VisualSpecToolbar from './VisualSpecToolbar'
-
+import VisualSpecDocumentPreview from './VisualSpecDocumentPreview'
+import { css, cx } from 'emotion'
 
 const DEFAULT_ANNOTATION_SIZE = 25
+
+
+const preview_toolbar = css`display:flex;
+                            align-items:center;`
+
+const preview_container = css`display:flex;
+                              justify-content:center;`
+
+
 
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
@@ -84,19 +94,25 @@ class VisualSpecDocumentGalleryImage extends Component {
         
         return (
             <ModalDialog isOpen={true}
-                         variant={"full"}
+                         variant={"largest"}
                          onClose={this.hideImageModal}
-                         title={visual_spec_document.name}>
-              <VisualSpecToolbar annotated_visual_spec_document_id={annotated_visual_spec_document_id}
-                                 onClose={this.hideImageModal}/>
-              <VisualSpecAnnotationToolbar />
-              <img id={img_element_unique_id}
-                   src={hires_url}
-                   onLoad={this.onVisualSpecDocumentImageLoaded}
-                   alt=""
-                   onClick={this.showImageModal}
-                   style={{maxWidth:'100%'}}
-              />
+                         title={
+                             visual_spec_document.name
+                         }
+                         extra_buttons={
+                             <div className={preview_toolbar}>
+                               <VisualSpecToolbar
+                                 annotated_visual_spec_document_id={annotated_visual_spec_document_id}
+                                                                   onClose={this.hideImageModal}/>
+                               <VisualSpecAnnotationToolbar />
+                             </div>
+                         }>
+              <VisualSpecDocumentPreview hide={this.hideImageModal}
+                                         show={this.showImageModal}
+                                         annotated_visual_spec_document_id={annotated_visual_spec_document_id}
+                                         onLoad={this.onVisualSpecDocumentImageLoaded}
+                                         document={hires_url}
+                                         img_id={img_element_unique_id} />
             </ModalDialog>
         )
     }
