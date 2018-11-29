@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import Select from 'react-select'
+import { filter } from 'lodash'
 
 class DynamicBasicSelectField extends Component {
 
@@ -7,6 +8,7 @@ class DynamicBasicSelectField extends Component {
         super(props)
         this._onChange = this._onChange.bind(this)
         this._onInputChange = this._onInputChange.bind(this)
+        this.state = {initial_value: null}
     }
 
     _onInputChange(value) {
@@ -33,7 +35,12 @@ class DynamicBasicSelectField extends Component {
     
     render() {
         const { meta, isDisabled, selectStyles, options,
-                placeholder, name } = this.props
+                placeholder, name, value_key } = this.props
+
+        let default_value
+        if (meta.initial && !this.state.initial_value) {
+            default_value = filter(options, (option) => option[value_key || 'id'] === meta.initial)
+        }
 
         return (
             <Fragment>
@@ -43,7 +50,7 @@ class DynamicBasicSelectField extends Component {
                   escapeClearsValue={true}
                   options={options}
                   onInputChange={this._onInputChange}
-                  defaultValue={meta.initial}
+                  defaultValue={default_value}
                   isDisabled={isDisabled}
                   onChange={this._onChange}
                   placeholder={placeholder}

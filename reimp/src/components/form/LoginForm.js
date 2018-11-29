@@ -17,11 +17,6 @@ class LoginForm extends Component {
     constructor(props) {
         super(props)
         this.onChangeMobileClick = this.onChangeMobileClick.bind(this)
-        this.login_options = [
-            {value: 'password', label: 'Enter password'},
-            {value: 'email', label: 'Send one time password via email'},
-            {value: 'sms', label: 'Send one time password via sms'}
-        ]
     }
     
     renderPasswordInput() {
@@ -78,7 +73,8 @@ class LoginForm extends Component {
     }
 
     renderLoginMethod() {
-
+        const { login_options } = this.props
+        
         return (
             <Fragment>
               <div className={inputFieldDiv}>
@@ -91,10 +87,10 @@ class LoginForm extends Component {
               <div className={inputFieldDiv}>
                 <Field
                     name="login_method"
-                    placeholder="Choose authentication method"
-                    options={this.login_options}
+                    placeholder="Choose authentication method"                    
+                    options={login_options}
                     value_key="value"
-                    component={ CardDynamicDropdownField } />
+                    component={CardDynamicDropdownField} />
               </div>
             </Fragment>
         )
@@ -117,7 +113,8 @@ class LoginForm extends Component {
         )
     }
 }
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
+    
     return {
         settings: state.settings,
         login_method: valueSelector(state, 'login_method'),
