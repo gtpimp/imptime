@@ -18,14 +18,14 @@ class OnboardingStepWelcome extends Component {
                   <p>
                     Now that you're registered, we'll be in touch to guide you through your first steps.
                   </p>
-                  <p>
+                  <div>
                     <ul>
                       <li>We know it still looks rough</li>
                       <li>Under the hood it's very powerful</li>
                       <li>We're highly responsive to changes</li>
                       <li>Ask and we'll fix it</li>
                     </ul>
-                  </p>
+                  </div>
                 </Fragment>
               </OnboardingWizard>
             </OnboardingPage>
