@@ -7,7 +7,7 @@ import VisualSpecToolbar from './VisualSpecToolbar'
 import {
     getAnnotatedVisualSpecDocument,
 } from '../../actions/AnnotatedVisualSpecDocuments'
-
+import loading_gif from "../../images/loading.gif"
 
 
 const preview_container = css`display:flex;
@@ -18,7 +18,7 @@ const preview_container = css`display:flex;
 const preview_image = css`width:100%;
                           height:100%;
                           background-repeat: no-repeat;
-                          background-size: contain;
+                          background-size: contain, auto;
                           padding-top:15px;
                           background-position: center;`
 
@@ -26,27 +26,16 @@ class VisualSpecDocumentPreview extends Component {
     render() {
         const {show, hide, annotated_visual_spec_document_id,
                onLoad, document, img_id, visual_spec_document_image_loaded} = this.props
+        console.log(document)
         return (
-              <div className={preview_container}>
-                <div id={img_id}
-                     onClick={show}
-                     className={preview_image}
-                     style={{backgroundImage: `url('${document}')`}}>
-                </div>
+            <div className={preview_container}>
+              <div id={img_id}
+                   onClick={show}
+                   className={preview_image}
+                   style={{backgroundImage: `url('${document}'), url(${loading_gif})`}}>
               </div>
+            </div>
         )
-    }
-}
-
-function mapStateToProps(state, props) {
-
-    const { annotated_visual_spec_document_id } = props
-    
-    const annotated_visual_spec_document = getAnnotatedVisualSpecDocument(state, annotated_visual_spec_document_id)
-    const visual_spec_document = (annotated_visual_spec_document && annotated_visual_spec_document.visual_spec_document) || {}
-    
-    return {
-        visual_spec_document: visual_spec_document
     }
 }
 

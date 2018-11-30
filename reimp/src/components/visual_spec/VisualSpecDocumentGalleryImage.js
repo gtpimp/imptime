@@ -104,7 +104,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                                          show={this.showPreviewModal}
                                          annotated_visual_spec_document_id={annotated_visual_spec_document_id}
                                          onLoad={this.onVisualSpecDocumentImageLoaded}
-                                         document_id={annotated_visual_spec_document_id}
+                                         document={hires_url}
                                          img_id={img_element_unique_id}
                                          documentLoaded={visual_spec_document_image_loaded} />
             </ModalDialog>
