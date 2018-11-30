@@ -28,11 +28,6 @@ const DEFAULT_ANNOTATION_SIZE = 25
 const preview_toolbar = css`display:flex;
                             align-items:center;`
 
-const preview_container = css`display:flex;
-                              justify-content:center;`
-
-
-
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
         super(props)
@@ -40,9 +35,10 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.hideVisualSpecDocumentImageLoadingImage = this.hideVisualSpecDocumentImageLoadingImage.bind(this)
         this.onClickDownload = this.onClickDownload.bind(this)
         this.onClickPreview = this.onClickPreview.bind(this)
-        this.showImageModal = this.showImageModal.bind(this)
-        this.hideImageModal = this.hideImageModal.bind(this)
-        this.renderImageModal = this.renderImageModal.bind(this)
+        this.showPreviewModal = this.showPreviewModal.bind(this)
+        this.hidePreviewModal = this.hidePreviewModal.bind(this)
+        this.renderPreviewModal = this.renderPreviewModal.bind(this)
+        this.renderPreviewDocumentButtons = this.renderPreviewDocumentButtons.bind(this)
         this.state = { visual_spec_document_image_loaded: false,
                        show_preview_modal: false}
     }
@@ -88,7 +84,7 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.setFullScreenMode()
     }
 
-    renderImageModal(preview_image_url) {
+    renderPreviewModal(preview_image_url) {
         const { annotated_visual_spec_document_id, img_element_unique_id,
                 hires_url, visual_spec_document } = this.props
 
@@ -97,34 +93,40 @@ class VisualSpecDocumentGalleryImage extends Component {
         return (
             <ModalDialog isOpen={true}
                          variant={"largest"}
-                         onClose={this.hideImageModal}
+                         onClose={this.hidePreviewModal}
                          title={
                              visual_spec_document.name
                          }
                          extra_buttons={
-                             <div className={preview_toolbar}>
-                               <VisualSpecToolbar
-                                 annotated_visual_spec_document_id={annotated_visual_spec_document_id}
-                                                                   onClose={this.hideImageModal}/>
-                               <VisualSpecAnnotationToolbar />
-                             </div>
+                             this.renderPreviewDocumentButtons(annotated_visual_spec_document_id)
                          }>
-              <VisualSpecDocumentPreview hide={this.hideImageModal}
-                                         show={this.showImageModal}
+              <VisualSpecDocumentPreview hide={this.hidePreviewModal}
+                                         show={this.showPreviewModal}
                                          annotated_visual_spec_document_id={annotated_visual_spec_document_id}
                                          onLoad={this.onVisualSpecDocumentImageLoaded}
-                                         document={hires_url}
+                                         document_id={annotated_visual_spec_document_id}
                                          img_id={img_element_unique_id}
                                          documentLoaded={visual_spec_document_image_loaded} />
             </ModalDialog>
         )
     }
 
-    showImageModal() {
+    renderPreviewDocumentButtons(annotated_visual_spec_document_id) {
+        return (
+            <div className={preview_toolbar}>
+              <VisualSpecToolbar
+                  annotated_visual_spec_document_id={annotated_visual_spec_document_id}
+                  onClose={this.hidePreviewModal}/>
+              <VisualSpecAnnotationToolbar />
+            </div>
+        )
+    }
+    
+    showPreviewModal() {
         this.setState({ show_preview_modal: true })
     }
 
-    hideImageModal() {
+    hidePreviewModal() {
         this.setState({ show_preview_modal: false })
     }
 
@@ -168,7 +170,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                 <div id={img_element_unique_id}
                      className={"visual_spec_document_gallery__image " +
                                 "visual_spec_document_gallery__image--no-preview"}
-                     onClick={this.onClickPreview}
+                     onClick={this.showPreviewModal}
                 >
                   {visual_spec_document.name}
                   <div className="visual_spec_document_gallery__image--no-preview--icon">
@@ -185,7 +187,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                      src={preview_image_url}
                      onLoad={this.onVisualSpecDocumentImageLoaded}
                      alt=""
-                     onClick={this.showImageModal}
+                     onClick={this.showPreviewModal}
                 />
             )
         }
@@ -230,7 +232,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                   <h2>Loading Image...</h2>
                 </div>
               }
-              { this.state.show_preview_modal && this.renderImageModal() }
+              { this.state.show_preview_modal && this.renderPreviewModal() }
             </div>
         ))
     }

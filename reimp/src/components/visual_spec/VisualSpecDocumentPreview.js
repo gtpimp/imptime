@@ -4,9 +4,11 @@ import classNames from 'classnames'
 import {default_theme as theme} from '../../theme/default'
 import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
 import VisualSpecToolbar from './VisualSpecToolbar'
+import {
+    getAnnotatedVisualSpecDocument,
+} from '../../actions/AnnotatedVisualSpecDocuments'
 
-const preview_toolbar = css`display:flex;
-                            align-items:center;`
+
 
 const preview_container = css`display:flex;
                               justify-content:center;
@@ -33,6 +35,18 @@ class VisualSpecDocumentPreview extends Component {
                 </div>
               </div>
         )
+    }
+}
+
+function mapStateToProps(state, props) {
+
+    const { annotated_visual_spec_document_id } = props
+    
+    const annotated_visual_spec_document = getAnnotatedVisualSpecDocument(state, annotated_visual_spec_document_id)
+    const visual_spec_document = (annotated_visual_spec_document && annotated_visual_spec_document.visual_spec_document) || {}
+    
+    return {
+        visual_spec_document: visual_spec_document
     }
 }
 
