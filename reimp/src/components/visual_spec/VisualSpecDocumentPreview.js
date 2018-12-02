@@ -24,16 +24,19 @@ const preview_image = css`width:100%;
 
 class VisualSpecDocumentPreview extends Component {
     render() {
-        const {show, hide, annotated_visual_spec_document_id,
-               onLoad, document, img_id, visual_spec_document_image_loaded} = this.props
-        console.log(document)
+        const {show, document, img_id, is_image, visual_spec_document} = this.props
         return (
             <div className={preview_container}>
-              <div id={img_id}
-                   onClick={show}
-                   className={preview_image}
-                   style={{backgroundImage: `url('${document}'), url(${loading_gif})`}}>
-              </div>
+              { !is_image &&
+                <p>{visual_spec_document.name}</p>
+              }
+              { is_image &&
+                <div id={img_id}
+                     onClick={show}
+                     className={preview_image}
+                     style={{backgroundImage: `url('${document}'), url(${loading_gif})`}}>
+                </div>
+              }
             </div>
         )
     }

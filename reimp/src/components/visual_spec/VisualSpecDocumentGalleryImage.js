@@ -86,9 +86,7 @@ class VisualSpecDocumentGalleryImage extends Component {
 
     renderPreviewModal(preview_image_url) {
         const { annotated_visual_spec_document_id, img_element_unique_id,
-                hires_url, visual_spec_document } = this.props
-
-        const { visual_spec_document_image_loaded } = this.state
+                hires_url, visual_spec_document, is_image } = this.props
 
         return (
             <ModalDialog isOpen={true}
@@ -102,11 +100,10 @@ class VisualSpecDocumentGalleryImage extends Component {
                          }>
               <VisualSpecDocumentPreview hide={this.hidePreviewModal}
                                          show={this.showPreviewModal}
-                                         annotated_visual_spec_document_id={annotated_visual_spec_document_id}
-                                         onLoad={this.onVisualSpecDocumentImageLoaded}
+                                         visual_spec_document={visual_spec_document}
                                          document={hires_url}
-                                         img_id={img_element_unique_id}
-                                         documentLoaded={visual_spec_document_image_loaded} />
+                                         is_image={is_image}
+                                         img_id={img_element_unique_id} />
             </ModalDialog>
         )
     }
