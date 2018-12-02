@@ -1,6 +1,7 @@
 import React, {Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
+import { Link } from 'react-router-dom'
 import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'
 import { Field, reduxForm } from 'redux-form'
@@ -14,7 +15,7 @@ const required = value => (value ? undefined : 'Required')
 class ConfirmOtpLoginForm extends Component {
 
     render() {
-        const { email_or_mobile_value, login_method, error, submit, submitting } = this.props
+        const { email, login_method, error, submit, submitting } = this.props
 
         let placeholder
         if (login_method === 'email') {
@@ -26,7 +27,14 @@ class ConfirmOtpLoginForm extends Component {
         return (
             <Fragment>
               <div className={otp_instruction}>
-                {`We've sent a pin to ${email_or_mobile_value}.`}
+                <div>
+                  {`We've sent a pin to ${email}.`} &nbsp;
+                </div>
+                <Link
+                    className={btn_link}
+                    to={`/account/pin-failure/${email}`}>
+                  I didn't recieve a pin
+                </Link>
               </div>
               <div className={inputFieldDiv}>
                 <Field
@@ -41,15 +49,17 @@ class ConfirmOtpLoginForm extends Component {
                     label="Login"
                     onButtonClick={submit}
                     disabled={submitting} />
-                <a className={btn_link}>
-                  I didn't recieve a pin
-                </a>
+                <Link
+                    className={btn_link}
+                    to="/">
+                  Back
+                </Link>
               </div>
-                { error &&
-                  <div className="login-form__message">
-                    <Message variant="error">{ error && error }</Message>
-                  </div>
-                }
+              { error &&
+                <div className="login-form__message">
+                  <Message variant="error">{ error && error }</Message>
+                </div>
+              }
             </Fragment>
         )
     }
@@ -59,10 +69,10 @@ function mapStateToProps(state, props) {
     
     const login_method = match.params.login_method
 
-    const email_or_mobile_value = match.params.username
+    const email = match.params.username
     
     return {
-        email_or_mobile_value,
+        email,
         login_method
     }
 }

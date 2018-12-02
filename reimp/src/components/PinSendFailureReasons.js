@@ -1,32 +1,47 @@
 import React, { Component } from 'react'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
+import { withRouter } from 'react-router-dom'
+import PageTitle from './PageTitle'
 
 class PinSendFailureReasons extends Component {
 
     render() {
-        const { email } = this.props
-        
+        const { history, match } = this.props
+        console.log(this.props)
         return (
-            <div>
-              <div>
-                Reasons why you may not have recieved a pin:
-              </div>
-              <div>
-                {`- There may be no account registered to ${email};`}
-              </div>
-              <div>
-                You might not have registered a phone with this account,
-              </div>
-              <div>
-                There may be a network error, try resending.
+            <div className={ main }>
+              <div className={ box }>
+                <div className={ header }>
+                  <PageTitle>One Time Pin</PageTitle>
+                </div>
+                <div className={body}>
+                  <div className={text_section_1}>
+                    Reasons why you may not have recieved a pin:
+                  </div>
+                  <div className={text_section_1}>
+                    {`There may be no account registered to ${match.params.email}`}
+                  </div>
+                  <div className={text_section_1}>
+                    You might not have registered a phone with this account,
+                  </div>
+                  <div className={text_section_1}>
+                    There may be a network error, try resending.
+                  </div>
+                </div>
+                <div className={ link_container }>
+                  <a className={link}
+                     onClick={history.goBack}>
+                    Back
+                  </a>
+                </div>
               </div>
             </div>
         )
     }
 }
 
-export default PinSendFailureReasons
+export default withRouter(PinSendFailureReasons)
 
 const main = css`
 display: flex;
@@ -62,8 +77,12 @@ border-bottom: 1px solid #e0e0e0;
 padding: 18px;
 `
 
-const login_form = css`
+const body = css`
 padding: 18px;
+`
+
+const text_section_1 = css`
+padding: 5px 0px 5px 0px;
 `
 
 const link_container = css`
