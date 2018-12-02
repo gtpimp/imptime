@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, { Component, Fragment} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form'
 import InputField from '../form/InputField'
@@ -7,10 +7,9 @@ import PageParagraph from '../PageParagraph'
 class OnboardingProfileForm extends Component {
     
     render() {
-        const { handleSubmit } = this.props
-        
+
         return (
-            <form onSubmit={handleSubmit}>
+            <Fragment>
               <PageParagraph>
                 <Field name="first_name"
                        component={InputField}
@@ -24,20 +23,26 @@ class OnboardingProfileForm extends Component {
                        placeholder="Last name"
                 />
               </PageParagraph>
-            </form>
+            </Fragment>
         )
     }
 }
 
-function mapStateToProps(state, props) {
+function mapStateToProps() {
 
-    const { onSubmit } = props
-    
     return {
-        onSubmit,
         enableReinitialize: true,
     }
 }
 
-
-export default connect(mapStateToProps)(reduxForm({form:'onboarding_profile_form'})(OnboardingProfileForm))
+export default connect(mapStateToProps)(reduxForm({
+    onSubmit: (new_values, dispatch, props) => {
+        const { onFormSubmit } = props
+        return onFormSubmit(new_values)
+    },
+    onSubmitSuccess: (values, dispatch, props) => {
+        const { onFormSubmitSuccess } = props
+        return onFormSubmitSuccess(values)
+    },
+    form: 'onboarding_profile_form'})
+    (OnboardingProfileForm))

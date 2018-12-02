@@ -21,17 +21,12 @@ class ConfirmOtpLoginForm extends Component {
             placeholder = 'Email One Time Pin'
         } else if (login_method === 'sms') {
             placeholder = 'Sms One Time Pin'
-        }        
+        }
 
         return (
             <Fragment>
               <div className={otp_instruction}>
-                {`We've sent a pin to ${email_or_mobile_value}.`};
-              </div>
-              <div className={otp_instruction}>
-                <a className={btn_link}>
-                  I didn't recieve a pin.
-                </a>
+                {`We've sent a pin to ${email_or_mobile_value}.`}
               </div>
               <div className={inputFieldDiv}>
                 <Field
@@ -41,15 +36,20 @@ class ConfirmOtpLoginForm extends Component {
                     placeholder={placeholder}
                     component={ InputField } />
               </div>
-              <PagePrimaryButton
-                  label="Login"
-                  onButtonClick={submit}
-                  disabled={submitting} />
-              { error &&
-                <div className="login-form__message">
-                  <Message variant="error">{ error && error }</Message>
-                </div>
-              }
+              <div className={otp_actions}>
+                <PagePrimaryButton
+                    label="Login"
+                    onButtonClick={submit}
+                    disabled={submitting} />
+                <a className={btn_link}>
+                  I didn't recieve a pin
+                </a>
+              </div>
+                { error &&
+                  <div className="login-form__message">
+                    <Message variant="error">{ error && error }</Message>
+                  </div>
+                }
             </Fragment>
         )
     }
@@ -106,9 +106,10 @@ const otp_instruction = css`
 font: ${theme.fonts.regular_large};
 margin: 0;
 margin-bottom: 10px;
-text-align: center;
+text-align: left;
 `
 
 const btn_link = css`
 color: blue;
+cursor: pointer;
 `

@@ -173,22 +173,19 @@ export function update_profile({first_name, last_name, mobile_phone_number, on_d
         const params = {method: "POST",
                         credentials: 'same-origin',
                         data: data,
-                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        headers: {"Content-type": "application/json; charset=UTF-8"},
                         body: JSON.stringify(data)}
-        
         return impfetch(state, 'imp/auth/update_profile/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                if ( json.status !== 'success' ) {
+                if (json.status !== 'success') {
                     dispatch({type: ANNOUNCE_SAVE_USER_PROFILE_FAILED,
-                              error: json.error})
+                              error: json.error})                    
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PROFILE})
                     on_done && on_done()
+                    return json
                 }
-            })
-            .catch(function (error) {
-                dispatch({type: ANNOUNCE_SAVE_USER_PROFILE_FAILED, error: error})
             })
     }
 }

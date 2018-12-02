@@ -6,7 +6,7 @@ import OnboardingPage from './OnboardingPage'
 import OnboardingWizard from './OnboardingWizard'
 import OnboardingPasswordForm from './OnboardingPasswordForm'
 import { submit } from 'redux-form'
-import { update_profile, change_password, logged_in_user, onboarding_complete } from '../../actions/Auth'
+import { update_profile, change_password, logged_in_user } from '../../actions/Auth'
 import { ensureUsersLoaded } from '../../actions/Users'
 import Loading from '../Loading'
 
@@ -37,24 +37,23 @@ class OnboardingStepPassword extends Component {
     
     render() {
         const { user, mobile_phone_number } = this.props
+//        console.log(user)
         return (
             <OnboardingPage>
               <OnboardingWizard current_step={3}
                                 next_step={4}
                                 prev_step={2}
-                                onNextHook={this.onNext}
-              >
+                                onNextHook={this.onNext}>
                 <Fragment>
                   <PageSubTitle>Secure your account</PageSubTitle>
-
-                  { user.loaded && 
+                  { user.loaded &&
                     <OnboardingPasswordForm onSubmit={this.onSubmit}
                                             initially_show_mobile_phone_number_section={size(mobile_phone_number)>0}
                                             initialValues={{mobile_phone_number,
                                                             enable_mobile_phone_number_pin:size(mobile_phone_number)>0}}
                   />
                   }
-                  { ! user.loaded && <Loading/> }
+                  { !user.loaded && <Loading/> }
                 </Fragment>
               </OnboardingWizard>
             </OnboardingPage>
@@ -62,7 +61,7 @@ class OnboardingStepPassword extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
 
     const user = logged_in_user(state)
     return {
