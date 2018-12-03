@@ -76,7 +76,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             feature = self.allowed_feature(feature_pk) if feature_pk else None
             wiki = self.allowed_wiki_pages().get(pk=wiki_pk) if wiki_pk else None
                 
-            for name, f in request.FILES.items():
+            for name, f in request.FILES.items():                
                 VisualSpecDocument.create_for_doc(user=request.user,
                                                   project=project,
                                                   doc=f,
@@ -85,6 +85,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                                                   issue=issue,
                                                   feature=feature,
                                                   wiki=wiki)
+                
             data = {'status': 'success'}
 
         except Exception, ex:

@@ -20,6 +20,7 @@ from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from project_statement_calculator import ProjectStatementCalculator
 from time_summary_calculator import TimeSummaryCalculator
 from estimate_summary_calculator import EstimateSummaryCalculator
+from django.utils import timezone
 import PIL
 import hashlib
 import logging
@@ -58,6 +59,10 @@ class VisualSpecDocument(BaseModel):
 
     @classmethod
     def create_for_doc(self, user, project, doc, name, content_type, issue=None, feature=None, wiki=None):
+        if doc:
+            time_now = timezone.now()
+            time_stamp = "vsd_" + time_now.strftime("%x_%X")
+            doc._name = time_stamp
         d_file = doc
         is_image = content_type.startswith('image')
         if is_image:
