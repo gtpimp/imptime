@@ -6,7 +6,7 @@ from lib.json_helper import json_dump
 from django.db import models
 from django.db.models import Max
 from impasync.refresh_notifier import RefreshNotifier
-from lib.fields import HiResImageField, ThumbnailImageField
+from lib.fields import HiResImageField, ThumbnailImageField, MediumResImageField
 from lib.fields import UploadTo, ProtectedForeignKey
 from lib.models import BaseModel
 from timepiece.models import Business as Project
@@ -34,6 +34,7 @@ class VisualSpecDocument(BaseModel):
     hires_width = models.IntegerField()
     hires_height = models.IntegerField()
     md5sum = models.CharField(max_length=255)
+    medium_res = MediumResImageField(source="hires")
 
     is_image = models.BooleanField(default=True)
     name = models.CharField(max_length=255)
@@ -81,7 +82,8 @@ class VisualSpecDocument(BaseModel):
                                                     is_image=is_image)
 
         annotated_vsd = AnnotatedVisualSpecDocument.objects.create(visual_spec_document=vsd)
-            
+
+
         VisualSpecProject.objects.get_or_create(visual_spec_document=vsd,
                                                 project_id=project.id,
                                                 defaults={'order':VisualSpecProject.get_next_order(project.id)})

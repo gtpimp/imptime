@@ -57,7 +57,20 @@ class VisualSpecDocumentHiresView(VisualSpecDocumentBase):
             download = True
         return self.fetch_file(request, url, vsd, download=download)
 
-    
+class VisualSpecDocumentMediumResPreviewView(VisualSpecDocumentBase):
+    def get(self, request, visual_spec_document_id):
+        vsd = self.get_visual_spec_document(request, visual_spec_document_id)
+        if vsd is None:
+            return PermissionDenied()
+        download = False
+        vsd.medium_res.url
+        url = vsd.medium_res.name
+        if not url:
+            # If no hires then this isn't an image, so switch to downloading it.
+            url = vsd.original_doc.name
+            download = True
+        return self.fetch_file(request, url, vsd, download=download)
+
 class VisualSpecDocumentPreviewView(VisualSpecDocumentBase):
     def get(self, request, visual_spec_document_id):
         vsd = self.get_visual_spec_document(request, visual_spec_document_id)
@@ -68,3 +81,4 @@ class VisualSpecDocumentPreviewView(VisualSpecDocumentBase):
             return HttpResponse("no_preview_available")
             
         return self.fetch_file(request, url, vsd, download=False)
+

@@ -63,3 +63,10 @@ class ThumbnailImageField(ProcessedImageField):
     def deconstruct(self):
         name, path, args, kwargs = super(ThumbnailImageField, self).deconstruct()
         return name, path, args, kwargs
+
+class MediumResImageField(ImageSpecField):
+    def __init__(self, *args, **kwargs):
+        super(MediumResImageField, self).__init__(processors=[ResizeWithAspect(1600)], 
+                                                  options={'quality': 80},
+                                                  *args, **kwargs)
+        

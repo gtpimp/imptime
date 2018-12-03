@@ -39,6 +39,7 @@ class AnnotatedVisualSpecDocumentViewSet(BaseViewSet):
                 for vsd in annotated_visual_spec_documents:
                     vsd.visual_spec_document.download_url = VisualSpecDocumentSerializer.get_download_url(self.request, vsd.visual_spec_document)
                     vsd.visual_spec_document.hires_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd.visual_spec_document)
+                    vsd.visual_spec_document.medium_res_url = VisualSpecDocumentSerializer.get_medium_res_url(self.request, vsd.visual_spec_document)
                     vsd.visual_spec_document.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd.visual_spec_document)
                 s = AnnotatedVisualSpecDocumentSerializer(annotated_visual_spec_documents, many=True)
                 annotated_visual_spec_documents_data = s.data
