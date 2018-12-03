@@ -32,6 +32,7 @@ class VisualSpecDocumentGallery extends Component {
     }
 
     selectDocument(event, annotated_visual_spec_document_id) {
+        // is this ever called?
         const { history, onSelect, issue } = this.props
         if ( onSelect ){
             onSelect(annotated_visual_spec_document_id)

@@ -15,8 +15,18 @@ import {
 } from '../../actions/AnnotatedVisualSpecDocuments'
 import {ensureProjectsLoaded, getProject} from '../../actions/Projects'
 import { tokenisedApiUrl } from '../../actions/Print'
+import ModalDialog from '../ModalDialog';
+import VisualSpecDocumentGalleryFullScreen from './VisualSpecDocumentGalleryFullScreen'
+import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
+import VisualSpecToolbar from './VisualSpecToolbar'
+import VisualSpecDocumentPreview from './VisualSpecDocumentPreview'
+import { css, cx } from 'emotion'
 
 const DEFAULT_ANNOTATION_SIZE = 25
+
+
+const preview_toolbar = css`display:flex;
+                            align-items:center;`
 
 class VisualSpecDocumentGalleryImage extends Component {
     constructor(props) {
@@ -25,7 +35,12 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.hideVisualSpecDocumentImageLoadingImage = this.hideVisualSpecDocumentImageLoadingImage.bind(this)
         this.onClickDownload = this.onClickDownload.bind(this)
         this.onClickPreview = this.onClickPreview.bind(this)
-        this.state = { visual_spec_document_image_loaded: false }
+        this.showPreviewModal = this.showPreviewModal.bind(this)
+        this.hidePreviewModal = this.hidePreviewModal.bind(this)
+        this.renderPreviewModal = this.renderPreviewModal.bind(this)
+        this.renderPreviewDocumentButtons = this.renderPreviewDocumentButtons.bind(this)
+        this.state = { visual_spec_document_image_loaded: false,
+                       show_preview_modal: false}
     }
 
     componentDidMount() {
@@ -69,6 +84,49 @@ class VisualSpecDocumentGalleryImage extends Component {
         this.setFullScreenMode()
     }
 
+    renderPreviewModal(preview_image_url) {
+        const { annotated_visual_spec_document_id, img_element_unique_id,
+                hires_url, visual_spec_document, is_image } = this.props
+
+        return (
+            <ModalDialog isOpen={true}
+                         variant={"largest"}
+                         onClose={this.hidePreviewModal}
+                         title={
+                             visual_spec_document.name
+                         }
+                         extra_buttons={
+                             this.renderPreviewDocumentButtons(annotated_visual_spec_document_id)
+                         }>
+              <VisualSpecDocumentPreview hide={this.hidePreviewModal}
+                                         show={this.showPreviewModal}
+                                         visual_spec_document={visual_spec_document}
+                                         document={hires_url}
+                                         is_image={is_image}
+                                         img_id={img_element_unique_id} />
+            </ModalDialog>
+        )
+    }
+
+    renderPreviewDocumentButtons(annotated_visual_spec_document_id) {
+        return (
+            <div className={preview_toolbar}>
+              <VisualSpecToolbar
+                  annotated_visual_spec_document_id={annotated_visual_spec_document_id}
+                  onClose={this.hidePreviewModal}/>
+              <VisualSpecAnnotationToolbar />
+            </div>
+        )
+    }
+    
+    showPreviewModal() {
+        this.setState({ show_preview_modal: true })
+    }
+
+    hidePreviewModal() {
+        this.setState({ show_preview_modal: false })
+    }
+
     createVisualSpecAnnotation(params) {
         const { onCreateAnnotation, visual_spec_document_id } = this.props
         if ( onCreateAnnotation ) {
@@ -93,9 +151,9 @@ class VisualSpecDocumentGalleryImage extends Component {
     resolveThumbnailElement(preview_image_url) {
         const { visual_spec_document, img_element_unique_id, image_class, is_image,
                 content_type, project_id, annotated_visual_spec_document_id } = this.props
-  
+
         const full_screen_url = `/fullscreen/projects/${project_id}/image/${annotated_visual_spec_document_id}`
-        
+
         if ( ! preview_image_url ) {
             return (
                 <div id={img_element_unique_id}
@@ -109,7 +167,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                 <div id={img_element_unique_id}
                      className={"visual_spec_document_gallery__image " +
                                 "visual_spec_document_gallery__image--no-preview"}
-                     onClick={this.onClickPreview}
+                     onClick={this.showPreviewModal}
                 >
                   {visual_spec_document.name}
                   <div className="visual_spec_document_gallery__image--no-preview--icon">
@@ -121,14 +179,13 @@ class VisualSpecDocumentGalleryImage extends Component {
         } else {
             const class_name = image_class || "visual_spec_document_gallery__image"
             return (
-                <Link to={full_screen_url}>
-                  <img id={img_element_unique_id}
-                       className={class_name}
-                       src={preview_image_url}
-                       onLoad={this.onVisualSpecDocumentImageLoaded}
-                       alt=""
-                  />
-                </Link>
+                <img id={img_element_unique_id}
+                     className={class_name}
+                     src={preview_image_url}
+                     onLoad={this.onVisualSpecDocumentImageLoaded}
+                     alt=""
+                     onClick={this.showPreviewModal}
+                />
             )
         }
     }
@@ -162,7 +219,7 @@ class VisualSpecDocumentGalleryImage extends Component {
                                                 tooltips_enabled={false}
                                                 visual_spec_annotation={visual_spec_annotation} />
                       )
-                  })
+                })
                 }
               </div>
 
@@ -172,8 +229,8 @@ class VisualSpecDocumentGalleryImage extends Component {
                   <h2>Loading Image...</h2>
                 </div>
               }
-
-              </div>
+              { this.state.show_preview_modal && this.renderPreviewModal() }
+            </div>
         ))
     }
 }
@@ -195,14 +252,13 @@ function mapStateToProps(state, props) {
     const project = project_id && getProject(state, project_id)
     const can_edit = allow_edit !== false && visual_spec_document && visual_spec_document.project_ids && has_permission(state, visual_spec_document.project_ids[0], 'has_edit_issues')
     const is_invalidated = is_annotated_visual_spec_document_invalidated(state, annotated_visual_spec_document_id)
-
-    
     
     return {
         project,
         project_id,
         preview_image_url: tokenisedApiUrl(state, preview_url),
         hires_url: tokenisedApiUrl(state, visual_spec_document.hires_url),
+        medium_res_url: tokenisedApiUrl(state, visual_spec_document.medium_res_url),
         download_url: tokenisedApiUrl(state, visual_spec_document.download_url),
         content_type,
         is_image,
