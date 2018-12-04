@@ -10,6 +10,7 @@ import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType from '../components/EditableSprintType'
 import EditableSprintDeadline from '../components/EditableSprintDeadline'
+import EditableSprintDescription from './EditableSprintDescription'
 //import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
 import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
@@ -116,7 +117,8 @@ class SprintSidebar extends Component {
         const { sprint } = this.props
         return (
             <SidebarProperty key="descriptionstack">
-              <div className="property-text">{sprint.description}</div>
+              <SidebarSectionTitle title="Description" />
+              <EditableSprintDescription sprint_id={sprint.id}/>
             </SidebarProperty>
         )
     }
