@@ -1,7 +1,12 @@
 @import 'variables.scss';
 
 .sprint-deadline__card {
-    border-bottom: 1px solid $form-field-border;
+    margin-top: 3px;
+    border-top: 1px solid $form-field-border;
+}
+
+.sprint-deadline {
+    padding-top: 12px;
 }
 
 .sprint-deadline--heading {

@@ -53,7 +53,6 @@ class IssueSidebar extends Component {
         super(props)
         this.toggleShowEmacsHints = this.toggleShowEmacsHints.bind(this)
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
-        this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
         this.onFullscreen = this.onFullscreen.bind(this)
         this.onExitFullscreen = this.onExitFullscreen.bind(this)
         this.showAddVisualSpecDoc = this.showAddVisualSpecDoc.bind(this)
@@ -72,11 +71,6 @@ class IssueSidebar extends Component {
 
     toggleShowEmacsHints() {
         this.setState({emacs_hint_enabled:!this.state.emacs_hint_enabled})
-    }
-
-    showIssueVisualSpecGallery() {
-        const { issue, history } = this.props
-        history.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id+'/gallery/')
     }
 
     showAddVisualSpecDoc() {
