@@ -86,7 +86,7 @@ class FlatFeature extends Component {
         
         return (
             <div ref={autoForwardedInnerRef}
-                 className={css`margin-bottom: 50px;`}>
+                 className={css`margin-bottom: 50px; page-break-inside: avoid;`}>
               <div>{this.renderFeatureDescription()}</div>
               <div>{this.renderFeatureImages()}</div>
               <div>{this.renderFeatureTestables()}</div>
