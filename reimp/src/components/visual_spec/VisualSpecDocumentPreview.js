@@ -3,7 +3,6 @@ import { css, cx } from 'emotion'
 import classNames from 'classnames'
 import {default_theme as theme} from '../../theme/default'
 import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
-import VisualSpecToolbar from './VisualSpecToolbar'
 import {
     getAnnotatedVisualSpecDocument,
 } from '../../actions/AnnotatedVisualSpecDocuments'

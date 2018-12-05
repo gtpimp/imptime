@@ -113,7 +113,9 @@ class VisualSpecDocumentGalleryImage extends Component {
             <div className={preview_toolbar}>
               <VisualSpecToolbar
                   annotated_visual_spec_document_id={annotated_visual_spec_document_id}
-                  onClose={this.hidePreviewModal}/>
+                  onClose={this.hidePreviewModal}
+                  new_tab_button={true}
+              />
               <VisualSpecAnnotationToolbar />
             </div>
         )
