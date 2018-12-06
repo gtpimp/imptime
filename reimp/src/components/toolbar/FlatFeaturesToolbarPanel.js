@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { cx, css } from 'emotion'
-import { getGloballySelectedProjectId } from '../../actions/Page'
+import { getGloballySelectedProjectId, toggleShowFlatFeatureListTestables } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
 import FlatFeatureNavigation from '../FlatFeatureNavigation'
 import ReactToPrint from "react-to-print"
