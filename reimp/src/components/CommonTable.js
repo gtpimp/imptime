@@ -78,37 +78,38 @@ class CommonTable extends Component {
             >
               {({active_headers}) => (
 
-                   <div className="common-table">
-                     <AutoSizer>
-                       {({width, height}) => (
-                            <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
-                                           height={table_params.height || height} 
-                                           headerHeight={40}
-                                           rowCount={size(items)}
-                                           onRowClick={this.onRowClicked}
-                                           onSortEnd={this.onRowSorted}
-                                           distance={5}
-                                           rowHeight={30}
-                                           width={width}
-                                           useDragHandle
-                                           rowRenderer={this.rowRenderer}
-                                           rowGetter={({ index }) => items[index]}
-                            >
-                              { map(active_headers, (header) =>
-                                  <Column key={header.key}
-                                          headerClassName="common-table__header__column"
-                                          label={header.label}
-                                          dataKey={header.key}
-                                          cellRenderer={(args) => this.renderDraggableColumn(active_headers, args)}
-                                          flexGrow={parseInt(header.flex || 0, 10)}
-                                          flexShrink={parseInt(header.flex || 0, 10)}
-                                          width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
-                                )}
-                            </SortableTable>
-                        )}
-                     </AutoSizer>
-                   </div>
-               )}
+                  <div className="common-table">
+                    <AutoSizer>
+                      {({width, height}) => (
+                          <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
+                                         height={table_params.height || height} 
+                                         headerHeight={40}
+                                         rowCount={size(items)}
+                                         onRowClick={this.onRowClicked}
+                                         onSortEnd={this.onRowSorted}
+                                         distance={5}
+                                         rowHeight={30}
+                                         width={width}
+                                         useDragHandle
+                                         rowRenderer={this.rowRenderer}
+                                         rowGetter={({ index }) => items[index]}
+                                         scrollToIndex={100}
+                          >
+                          { map(active_headers, (header) =>
+                              <Column key={header.key}
+                                      headerClassName="common-table__header__column"
+                                      label={header.label}
+                                      dataKey={header.key}
+                                      cellRenderer={(args) => this.renderDraggableColumn(active_headers, args)}
+                                      flexGrow={parseInt(header.flex || 0, 10)}
+                                      flexShrink={parseInt(header.flex || 0, 10)}
+                                      width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
+                          )}
+                          </SortableTable>
+                      )}
+                    </AutoSizer>
+                  </div>
+              )}
               
             </MienListColumnConfigurable>
         )        
