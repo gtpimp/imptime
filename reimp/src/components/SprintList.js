@@ -45,17 +45,18 @@ class SprintList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, project_id} = this.props
+        const {dispatch, list_key, project_id, selected_sprint} = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(fetchSprintsIfNeeded(list_key))
         }
         setTimeout(() => {
-            console.log("time")
-            this.setState({
-                new_index: 100
-            }, 3000)
-        })
+            if (selected_sprint) {
+                var selected_sprint_id = "sprint_" + selected_sprint.id
+                var selected_sprint_row = document.getElementById(selected_sprint_id)
+                selected_sprint_row && selected_sprint_row.scrollIntoView()
+            }
+        }, 5000)
     }
 
     componentWillReceiveProps(new_props) {
@@ -266,6 +267,7 @@ function mapStateToProps(state, props) {
     const candidate_sprint = (sprint && sprint.candidate_sprint) || null
     const is_creating_sprint = candidate_sprint || false
     const sprints_by_type = collect_sprints_by_type(items)
+    const selected_sprint = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
 
     return {
         list_key: list_key,
@@ -284,7 +286,8 @@ function mapStateToProps(state, props) {
         is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
         candidate_sprint: candidate_sprint,
-        is_creating_sprint: is_creating_sprint
+        is_creating_sprint: is_creating_sprint,
+        selected_sprint: selected_sprint
     }
 }
 

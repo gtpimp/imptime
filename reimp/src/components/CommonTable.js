@@ -37,16 +37,6 @@ class CommonTable extends Component {
         this.forceUpdate()
     }
 
-    componentDidMount() {
-        console.log("component mounted")
-        setTimeout(() => {
-            console.log("time")
-            this.setState({
-                new_index: 100
-            }, 3000)
-        })
-    }
-
     onRowClicked = ({event, rowData}) => {
         const { onRowSelected } = this.props
         onRowSelected(event, rowData.id)
