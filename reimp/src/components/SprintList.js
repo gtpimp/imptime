@@ -50,6 +50,12 @@ class SprintList extends Component {
             dispatch(initList(list_key))
             dispatch(fetchSprintsIfNeeded(list_key))
         }
+        setTimeout(() => {
+            console.log("time")
+            this.setState({
+                new_index: 100
+            }, 3000)
+        })
     }
 
     componentWillReceiveProps(new_props) {

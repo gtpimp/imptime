@@ -6,7 +6,7 @@ class DivTableRow extends Component {
 
     render() {
 
-        const { divkey, is_selected, onClick } = this.props
+        const { divkey, is_selected, onClick, item_id } = this.props
 
         const action = onClick || null
         
@@ -24,8 +24,9 @@ class DivTableRow extends Component {
                                 padding-left: 24px;
                             `}
                  onClick={action}
-                 key={divkey}>
-                 {this.props.children}
+                 key={divkey}
+                 id={item_id}>
+            {this.props.children}
             </div>
         )
     }
