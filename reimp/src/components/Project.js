@@ -78,7 +78,8 @@ class Project extends Component {
 	    )
 	} else {
             return (
-		<DivTableRow key={this.key+"."+project.id} is_selected={is_selected}>
+		<DivTableRow key={this.key+"."+project.id}
+                             is_selected={is_selected}>
                   {includes(visible_header_keys, "name") &&
 		   <DivTableCell
                        onClick={onClickedProject}

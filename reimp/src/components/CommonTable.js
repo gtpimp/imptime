@@ -21,7 +21,7 @@ class CommonTable extends Component {
 
     constructor(props) {
         super(props)
-        this.state = {new_index: -1}
+        this.state = {new_index: 10}
     }
     
     onRowSorted = (args) => {
@@ -98,7 +98,7 @@ class CommonTable extends Component {
                                            useDragHandle
                                            rowRenderer={this.rowRenderer}
                                            rowGetter={({ index }) => items[index]}
-                                           scrollToIndex={this.state.new_index}                              
+                                           scrollToRow={10}
                             >
                               { map(active_headers, (header) =>
                                   <Column key={header.key}
