@@ -50,16 +50,20 @@ class SprintList extends Component {
             dispatch(initList(list_key))
             dispatch(fetchSprintsIfNeeded(list_key))
         }
-        setTimeout(() => {
-            if (selected_sprint) {
-                var selected_sprint_id = "sprint_" + selected_sprint.id
-                var selected_sprint_row = document.getElementById(selected_sprint_id)
-                selected_sprint_row && selected_sprint_row.scrollIntoView()
-                console.log(selected_sprint)
-            }
-        }, 10000)
     }
 
+
+    
+    componentDidUpdate() {
+        const {selected_sprint} = this.props
+        
+        if (selected_sprint) {
+            var selected_sprint_id = "sprint_" + selected_sprint.id
+            var selected_sprint_row = document.getElementById(selected_sprint_id)
+            selected_sprint_row && selected_sprint_row.scrollIntoView()
+        }
+    }
+    
     componentWillReceiveProps(new_props) {
         const {dispatch, list_key} = this.props
         const { project_id } = new_props
