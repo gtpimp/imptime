@@ -55,7 +55,6 @@ class SprintList extends Component {
         }
 
         if (last_selected_sprint_id) {
-            console.log(project_id, last_selected_sprint_id)
             dispatch(setGloballySelectedSprintId(project_id, last_selected_sprint_id))
             onSelectSprints([last_selected_sprint_id])
         }

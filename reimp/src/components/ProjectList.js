@@ -64,7 +64,6 @@ class ProjectList extends Component {
         //dispatch(fetchProjectsIfNeeded(list_key))
 
         if (last_selected_project_id) {
-            console.log(project_id, last_selected_project_id)
             dispatch(setGloballySelectedProjectId(project_id))
             onSelectProjects([last_selected_project_id])
         }
