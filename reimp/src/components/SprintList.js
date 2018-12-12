@@ -55,8 +55,9 @@ class SprintList extends Component {
                 var selected_sprint_id = "sprint_" + selected_sprint.id
                 var selected_sprint_row = document.getElementById(selected_sprint_id)
                 selected_sprint_row && selected_sprint_row.scrollIntoView()
+                console.log(selected_sprint)
             }
-        }, 5000)
+        }, 10000)
     }
 
     componentWillReceiveProps(new_props) {
