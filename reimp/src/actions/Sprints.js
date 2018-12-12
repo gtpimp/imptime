@@ -28,6 +28,7 @@ export const ANNOUNCE_SAVING_NEW_SPRINT_FAILED = 'ANNOUNCE_SAVING_NEW_SPRINT_FAI
 export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
 export const ANNOUNCE_CLONE_SPRINT_FAILED = 'ANNOUNCE_CLONE_SPRINT_FAILED'
+export const SET_LAST_SELECTED_SPRINT = 'SET_LAST_SELECTED_SPRINT'
 
 export const ALL_AVAILABLE_SPRINT_HEADERS =
     [ {key:'name', label:'name', description:'Name', width:large_col_width, is_default:true},
@@ -393,4 +394,11 @@ export function is_sprint_invalidated(state, sprint_id) {
 
 export function getExecutiveSummaryUrl(project_id, sprint_id) {
     return window.location.origin + `/wd/projects/${project_id}/sprints/${sprint_id}/executive_summary`
+}
+
+export function setLastSelectedSprintId(sprint_id) {
+    return {
+        type: SET_LAST_SELECTED_SPRINT,
+        sprint_id: sprint_id
+    }
 }
