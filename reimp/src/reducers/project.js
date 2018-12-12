@@ -19,7 +19,8 @@ import {
     CANCEL_CREATING_NEW_PROJECT,
     ANNOUNCE_SAVING_NEW_PROJECT,
     ANNOUNCE_SAVED_NEW_PROJECT,
-    ANNOUNCE_SAVING_NEW_PROJECT_FAILED
+    ANNOUNCE_SAVING_NEW_PROJECT_FAILED,
+    SET_LAST_SELECTED_PROJECT
 } from '../actions/Projects.js'
 
 const initialState = {
@@ -111,6 +112,10 @@ export default function project(state = initialState, action) {
 		{candidate_project: Object.assign({},
 						  state.candidate_project || {},
 						  {is_saving: false})})
+
+        case SET_LAST_SELECTED_PROJECT:
+            return Object.assign({}, state,
+                                 {last_selected_project_id: action.project_id})
 
         default:
             return state
