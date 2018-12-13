@@ -207,7 +207,7 @@ class AutoLoginViewSet(BaseViewSet):
         email = request.data['email']
         user = User.objects.filter(email=email).first()
         if user is not None:
-            context['status'] = 'error'
+            context['status'] = 'success'
         else:
             user = User.objects.create(email=email,
                                        username=email)

@@ -38,7 +38,7 @@ class ConfirmOtpLoginForm extends Component {
               </div>
               <div className={inputFieldDiv}>
                 <Field
-                    name="otp"
+                    name="password"
                     type="text"
                     validate={[required]}
                     placeholder={placeholder}

@@ -5,12 +5,14 @@ import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
 import PageTitle from './PageTitle'
 import ConfirmOtpLoginForm from '../components/form/ConfirmOtpLoginForm'
+import { login } from '../actions/Auth'
 
 class ConfirmOtpLoginPage extends Component {
 
-    onSubmitOtp = () => {
-        const { dispatch } = this.props
-        //dispatch() otp check api call
+    onSubmitOtp = (values) => {
+        const { dispatch, match } = this.props
+        values.username = match.params.username
+        return dispatch(login(values))
     }
 
     onFormSubmitSuccess = () => {

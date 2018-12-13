@@ -81,14 +81,14 @@ export function auto_login(auto_login_token) {
 }
 
 export function login(values) {
-
+    console.log(values)
     return (dispatch, getState) => {
         const state = getState()
 
         const params = {method: "POST",
                         credentials: 'same-origin',
                         data: values,
-                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        headers: {"Content-type": "application/json; charset=UTF-8"},
                         body: JSON.stringify(values)}
         
         return impfetch(state, 'imp/login/', dispatch, params)
@@ -271,7 +271,7 @@ export function create_account(values) {
         const params = {method: "POST",
                         credentials: 'same-origin',
                         data: data,
-                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        headers: {"Content-type": "application/json; charset=UTF-8"},
                         body: JSON.stringify(data)}
         
         return impfetch(state, 'imp/autologin/create_account/', dispatch, params)
@@ -280,7 +280,6 @@ export function create_account(values) {
                 if (json.status !== 'success') {
                     dispatch({type: ANNOUNCE_CREATE_ACCOUNT_REJECTED,
                               error: json.error})
-                    throw new SubmissionError(json.field_errors)
                 } else {
                     dispatch({type: ANNOUNCE_ACCOUNT_CREATED})
                     return json

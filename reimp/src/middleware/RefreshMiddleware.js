@@ -248,15 +248,14 @@ export default function refreshMiddleware(_ref) {
 
     return function (next) {
         return function (action) {
-
+            
             if (action && action.type === ASYNC_REFRESH_NOTIFICATION) {
-
+                
                 const payload = action.payload || [{}]
 
-                let list_keys_to_invalidate = {}
-
+                let list_keys_to_invalidate = {}                
                 each(payload, (d) => {
-
+                    
                     if ( d.action_type === "create" ) {
                         triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate)
                     } else if ( d.action_type === "update" ) {
