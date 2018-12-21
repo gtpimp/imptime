@@ -460,7 +460,7 @@ export function ensureItemsLoaded(entity_key, item_ids, additional_get_args) {
         const state = getState()
         const item_ids_to_load = getMissingItemIds((state || {}).item || {}, item_ids, entity_key)
         if ( item_ids_to_load.length > 0 ) {
-            fetchItemsPromise(dispatch, state, entity_key, item_ids_to_load, additional_get_args)
+            return fetchItemsPromise(dispatch, state, entity_key, item_ids_to_load, additional_get_args)
         }
     }
 }

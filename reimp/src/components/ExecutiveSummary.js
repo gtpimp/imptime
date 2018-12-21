@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
+import moment from 'moment'
+import { sortBy, isEmpty, forEachRight } from 'lodash'
 import { css, cx } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import {
@@ -23,6 +25,8 @@ import {
     ensureCostSummaryLoaded
 } from '../actions/CostSummary'
 import placeholder from '../images/executive_summary_placeholder.jpg'
+import TimeStamp from './Timestamp'
+import { ensureSprintDeadlinesLoaded, getSprintDeadlines } from '../actions/SprintDeadlines'
 
 const resource_data = [
     {name: 'resources', spent: 7500, remaining: 2500}
@@ -34,13 +38,44 @@ const status_data = [
 
 class ExecutiveSummary extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {deadline_shown: null}
+    }
+
     componentDidMount() {
-        const {dispatch, sprint_id, project_id, sprint} = this.props
+        this.refresh(this.props)
+        this.getNextDeadlineFromNow()
+    }
+    
+    getNextDeadlineFromNow() {
+        const { sprint_deadlines } = this.props
+        let sorted_deadlines
+        const now = moment()
+        
+        if (!isEmpty(sprint_deadlines)) {
+            sorted_deadlines = sortBy(sprint_deadlines, ['deadline'])
+            forEachRight(sorted_deadlines, (deadline) => {
+                if (now <= deadline.deadline) {
+                    return false
+                }
+                this.setState({deadline_shown: deadline})
+            })
+        }
+    }
+
+    componentDidUpdate(prev_props) {
+        this.refresh(prev_props)
+    }
+
+    refresh(props) {
+        const { dispatch, sprint_id, project_id, sprint, sprint_deadline_ids } = props
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
         if (sprint && sprint.sprint_type_is_clockable) {
             dispatch(ensureCostSummaryLoaded(sprint_id))
         }
+        dispatch(ensureSprintDeadlinesLoaded(sprint_deadline_ids))
     }
 
     renderResourceChart = () => {
@@ -85,7 +120,8 @@ class ExecutiveSummary extends Component {
     }
     
     render() {
-        const { sprint } = this.props
+        const { sprint, sprint_deadlines } = this.props
+        console.log(this.state)
         return (
             <div className={ main }>
               <div className={ box }>
@@ -105,9 +141,12 @@ class ExecutiveSummary extends Component {
                 </div>
                 <div className={ summary_content }>
                   <div className={ deadline_row }>
-                    <span className={content_title}>Deadline</span>
-                    <span>24 Sept 2018</span>
-                    <span>ETA: 28 Sept 2018</span>
+                    <span className={content_title}>Next Deadline</span>
+                    <span> <TimeStamp value={(sprint_deadlines[0] || {}).deadline}
+                                      format="date"
+                      />
+                    </span>
+                    {/* <span>ETA: 28 Sept 2018</span> */}
                     <span className={ css`width: 100px;`}></span>
                   </div>
                   <div className={ content_row }>
@@ -142,16 +181,23 @@ class ExecutiveSummary extends Component {
 function mapStateToProps(state, props) {
     const sprint_id = props.sprint_id
     const project_id = props.project_id
+    
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
     const cost_summary = getCostSummary(state, sprint_id)
 
+    const sprint_deadline_ids = sprint.deadline_ids
+
+    const sprint_deadlines = getSprintDeadlines(state, sprint_deadline_ids)
+    
     return {
         sprint_id: sprint_id,
         project_id: project_id,
         project: project,
         sprint: sprint,
-        cost_summary: cost_summary
+        cost_summary: cost_summary,
+        sprint_deadline_ids: sprint_deadline_ids,
+        sprint_deadlines: sprint_deadlines
     }
 }
 

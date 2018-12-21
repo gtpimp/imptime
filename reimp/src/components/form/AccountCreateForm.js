@@ -2,7 +2,7 @@ import React, {Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form'
 import InputField from './InputField'
-import PageParagraph from '..//PageParagraph'
+import PageParagraph from '../PageParagraph'
 
 const required = value => value ? undefined : 'Required'
 

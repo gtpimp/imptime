@@ -244,7 +244,7 @@ export function ensureSprintsLoaded(sprint_ids) {
 
         const sprint_ids_to_load = getMissingItemIds(state, sprint_ids, 'sprint')
         if ( sprint_ids_to_load.length > 0 ) {
-            fetchSprintsPromise(dispatch, state, sprint_ids_to_load)
+            return fetchSprintsPromise(dispatch, state, sprint_ids_to_load)
         }
     }
 }

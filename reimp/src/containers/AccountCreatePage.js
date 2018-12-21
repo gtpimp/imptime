@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import { css } from 'emotion'
 import { create_account } from '../actions/Auth'
-import PageSubTitle from '../components/PageSubTitle'
+import PageTitle from '../components/PageTitle'
 import AccountCreateForm from '../components/form/AccountCreateForm'
 import { default_theme as theme } from '../theme/default'
 
@@ -26,7 +26,7 @@ class AccountCreatePage extends Component {
             <div className={ main }>
               <div className={ box }>
                 <div className={ header }>
-                  <PageSubTitle>Create a new ImpTime account</PageSubTitle>
+                  <PageTitle>Create a new ImpTime account</PageTitle>
                   <AccountCreateForm onFormSubmit={this.onCreateAccount}
                                      onFormSubmitSuccess={this.onFormSubmitSuccess} />
                 </div>

@@ -4,11 +4,48 @@ import {withRouter} from 'react-router-dom'
 import ExecutiveSummary from '../components/ExecutiveSummary'
 import ExecutiveSummaryShareButton from '../components/ExecutiveSummaryShareButton'
 import { css } from 'emotion'
+import { ensureSprintDeadlinesLoaded,
+         getSprintDeadlines
+} from '../actions/SprintDeadlines'
+import {
+    ensureProjectsLoaded,
+    getProject
+} from '../actions/Projects'
+import {
+    ensureSprintsLoaded,
+    getSprint
+} from '../actions/Sprints'
 
 class ExecutiveSummaryPage extends Component {
 
+
+    constructor(props) {
+        super(props)
+        this.state = {deadline_shown: null}
+    }
+
+    componentDidMount() {
+        this.refresh(this.props)
+    }
+
+    componentDidUpdate(prev_props) {
+        this.refresh(prev_props)
+    }
+
+    async refresh(props) {
+        const { dispatch, sprint_id, project_id, sprint_deadline_ids } = props
+        await dispatch(ensureProjectsLoaded([project_id]))
+        await dispatch(ensureSprintsLoaded([sprint_id]))
+        return await dispatch(ensureSprintDeadlinesLoaded(sprint_deadline_ids))
+    }
+
     render() {
-        const { project_id, sprint_id } = this.props
+        const { project_id, sprint_id, project, sprint } = this.props
+
+        if (!project.id || !sprint.id) {
+            return null
+        }
+        console.log(project.id, sprint.id)
         return (
             <div className={ main }>
               <div className={ actions }>
@@ -24,9 +61,21 @@ class ExecutiveSummaryPage extends Component {
 function mapStateToProps(state, props) {
     const sprint_id = props.match.params.sprintId
     const project_id = props.match.params.projectId
+
+    const project = getProject(state, project_id) || {}
+    const sprint = getSprint(state, sprint_id) || {}
+
+    const sprint_deadline_ids = sprint.deadline_ids
+    
+    const sprint_deadlines = getSprintDeadlines(state, sprint_deadline_ids)
+    
     return {
         sprint_id: sprint_id,
-        project_id: project_id
+        project_id: project_id,
+        project: project,
+        sprint: sprint,
+        sprint_deadline_ids: sprint_deadline_ids,
+        sprint_deadlines: sprint_deadlines
     }
 }
 export default withRouter(connect(mapStateToProps)(ExecutiveSummaryPage))
