@@ -26,7 +26,8 @@ import {
     select_projects,
     getPageFlag,
     setPageFlag,
-    setBrowserTitle
+    setBrowserTitle,
+    getGloballySelectedEntityIds
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -220,7 +221,7 @@ function mapStateToProps(state, props) {
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
     const sidebar_view_mode = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "sidebar_view_mode", "right")
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
-
+    
     return {
         filter_sprint_id,
         sprint_id: sprint_id,

@@ -5,7 +5,8 @@ import {
     UPDATE_PAGE_SETTINGS,
     UPDATE_PAGE_SELECTION,
     SET_PAGE_FLAG,
-    UPDATE_HEADER_LIST
+    UPDATE_HEADER_LIST,
+    SET_LAST_SELECTED_SPRINT
 } from '../actions/Page.js'
 
 const initialState = {}
@@ -84,7 +85,7 @@ export default function page(state = initialState, action) {
             state_copy[action.page_key] = Object.assign({}, l,
                                                         {"header_list": action.header_list})
             return state_copy
-
+            
         default:
             return state
     }

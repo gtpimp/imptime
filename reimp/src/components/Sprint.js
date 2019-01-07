@@ -29,7 +29,7 @@ class Sprint extends Component {
         const { sprint, sprint_id, is_loading, is_selected, onClickedSprint, header_list} = this.props
         const headers_by_key = keyBy(header_list, "key")
         const visible_header_keys = keys(headers_by_key)
-
+        
 	if ( ! sprint ) {
 	    return (
                 <DivTableRow>
@@ -55,6 +55,7 @@ class Sprint extends Component {
 		<DivTableRow key={this.key+"."+sprint.id}
                              onClick={onClickedSprint}
                              is_selected={is_selected}
+                             item_id={"sprint_"+sprint.id}
 		>
                   { map(visible_header_keys, function(header_key) {
                         const header = headers_by_key[header_key]
@@ -145,7 +146,7 @@ class Sprint extends Component {
                                       { sprint.hours_by_assignee && 
                                         <Hours hours={sprint.hours_by_assignee} />
                                       }
-                                        { ! sprint.hours_by_assignee && "" }
+                                      { ! sprint.hours_by_assignee && "" }
                                     </DivTableCell>
                                 )
                             case "estimates_by_assignee":
@@ -172,9 +173,9 @@ class Sprint extends Component {
                                       {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee > 0) &&
                                        <StatusCircle colour="green"/>
                                       }
-                                       {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee <= 0) &&
-                                        <StatusCircle colour="gray"/>
-                                       }
+                                      {(sprint.hours_by_assignee !== undefined && sprint.hours_by_assignee <= 0) &&
+                                       <StatusCircle colour="gray"/>
+                                      }
                                     </DivTableCell>
                                 )
                             case "state_summary":
@@ -191,7 +192,7 @@ class Sprint extends Component {
                                 
                         }
                     }
-                    )}
+                  )}
                 </DivTableRow>
             )
 	}
