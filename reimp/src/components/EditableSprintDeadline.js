@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { css } from 'emotion'
 import EditableProperty from './form/EditableProperty'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
@@ -16,6 +17,12 @@ import SprintDeadlineForm from './form/SprintDeadlineForm'
 import { has_permission } from '../actions/Users'
 import SprintDeadline from './SprintDeadline'
 import moment from 'moment'
+import SidebarPrimaryButton from './SidebarPrimaryButton'
+import SidebarDangerButton from './SidebarDangerButton'
+
+const button_block = css`
+padding: 12px 0 12px 0;
+`
 
 class EditableSprintDeadline extends Component {
 
@@ -81,40 +88,41 @@ class EditableSprintDeadline extends Component {
                     <EditableProperty property_key={'sprint_deadline_'+sprint_id+'_'+deadline.id}
                                       initial_value={deadline.deadline}
                                       onChange={this.onChange}
-                                      class_name="sprint-deadline__card"
                                       actionLabel="Sprint deadline"
                                       edit_as_modal={true}
                                       can_edit={can_edit}
-                    >
+                      >
                       <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id+'_'+deadline.id}
                                           sprint_id={sprint_id}
                                           deadline={deadline}/>
                       <div className="sprint-deadline__card">
                         <SprintDeadline deadline_id={deadline.id} />
-                        <button className="button button--danger sprint_sidebar--button" onClick={this.onDelete}>delete</button>
+                        <div className={ button_block }>
+                          <SidebarDangerButton onButtonClick={this.onDelete} label="Delete" />
+                        </div>
                       </div>
                     </EditableProperty>
                   </div>
                 }
 
-                  { ! deadline.id && can_edit &&
-                    <div>
-                      <EditableProperty property_key={'sprint_deadline_'+sprint_id}
-                                        initial_value=''
-                                        onChange={this.onChange}
-                                        actionLabel="Sprint deadline"
-                                        edit_as_modal={true}
-                                        can_edit={can_edit}
+                { ! deadline.id && can_edit &&
+                  <div>
+                    <EditableProperty property_key={'sprint_deadline_'+sprint_id}
+                                      initial_value=''
+                                      onChange={this.onChange}
+                                      actionLabel="Sprint deadline"
+                                      edit_as_modal={true}
+                                      can_edit={can_edit}
                       >
-                        <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id}
-                                            sprint_id={sprint_id} />
-                        <div className="text-component--readonly"></div>
-                        <div className="text-component--empty">
-                          <button className="button button--primary sprint_sidebar--button">Create deadline</button>
-                        </div>
-                      </EditableProperty>
-                    </div>
-                  }
+                      <SprintDeadlineForm form={'sprint_deadline_form_'+sprint_id}
+                                          sprint_id={sprint_id} />
+                      <div className="text-component--readonly"></div>
+                      <div className={ button_block }>
+                        <SidebarPrimaryButton label="Create Deadline" />
+                      </div>
+                    </EditableProperty>
+                  </div>
+                }
 
               </PermissionInspectorHighlighter>
             </PermissionInspectorHighlighter>

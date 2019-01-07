@@ -207,7 +207,7 @@ class SprintSidebar extends Component {
      *         </SidebarProperty>
      *     )
      * } */
-    
+
     render() {
         return (
             <SidebarContainer>
@@ -233,7 +233,7 @@ export function mapStateToProps(state, props) {
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
-    
+
     return {
         sprint_id,
         sprint,
