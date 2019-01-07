@@ -84,8 +84,7 @@ class FlatFeatureList extends Component {
         return (
             <AutoSizer>
               {({width, height}) => (
-                  <div className={css`overflow:auto`}
-                       style={{height:`${height-HACK_NUMBER_TO_PREVENT_DOUBLE_SCROLL}px`, width:`${width}px`}}>
+                  <div style={{height:`${height-HACK_NUMBER_TO_PREVENT_DOUBLE_SCROLL}px`, width:`${width}px`}}>
                     <div ref={renderableRef}>
                       {this.renderSubTree([], features_as_structured_tree[0])}
                     </div>
