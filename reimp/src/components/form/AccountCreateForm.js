@@ -1,28 +1,30 @@
-import React, { Component, Fragment} from 'react'
+import React, {Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form'
-import InputField from '../form/InputField'
+import InputField from './InputField'
 import PageParagraph from '../PageParagraph'
 
-class OnboardingProfileForm extends Component {
+const required = value => value ? undefined : 'Required'
+
+class AccountCreateForm extends Component {
     
     render() {
-
+        const { submitting, submit } = this.props
+        
         return (
             <Fragment>
               <PageParagraph>
-                <Field name="first_name"
+                <Field name="email"
+                       type="text"
                        component={InputField}
-                       placeholder="First name"
-                
-                />
+                       validate={[required]}
+                       placeholder="Email" />
               </PageParagraph>
-              <PageParagraph>
-                <Field name="last_name"
-                       component={InputField}
-                       placeholder="Last name"
-                />
-              </PageParagraph>
+              <button disabled={submitting}
+                      onClick={submit}
+                      className="button button--large">
+                Create
+              </button>
             </Fragment>
         )
     }
@@ -31,7 +33,6 @@ class OnboardingProfileForm extends Component {
 function mapStateToProps() {
 
     return {
-        enableReinitialize: true,
     }
 }
 
@@ -44,5 +45,4 @@ export default connect(mapStateToProps)(reduxForm({
         const { onFormSubmitSuccess } = props
         return onFormSubmitSuccess(values)
     },
-    form: 'onboarding_profile_form'})
-    (OnboardingProfileForm))
+    form: 'account_create_form'})(AccountCreateForm))

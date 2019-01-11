@@ -34,7 +34,6 @@ const popup_panel_right = css`display:flex;
 class ModalDialog extends Component {
 
     render() {
-
         const { isOpen, onClose, title, variant, children, extra_buttons } = this.props
         
         return (
@@ -73,15 +72,15 @@ class ModalDialog extends Component {
 }
 
 function mapStateToProps(state, props) {
-
     const { onClose, isOpen, title, variant } = props
-    
+
     return {
         onClose,
-        isOpen: isOpen || true,
+        isOpen: isOpen,
         variant: variant || 'default',
         title
     }
 }
 
 export default connect(mapStateToProps)(ModalDialog)
+

@@ -5,7 +5,7 @@ import { default_theme as theme } from '../../theme/default'
 import PagePrimaryButton from '../PagePrimaryButton'
 
 class OnboardingFooter extends Component {
-    render() {
+    render() {        
         const {
             current_step,
             onLogout,
@@ -14,6 +14,7 @@ class OnboardingFooter extends Component {
             onComplete,
             next_step_label
         } = this.props
+
         return (
             <div className={ footer }>
               <div className={ left }>
@@ -22,11 +23,11 @@ class OnboardingFooter extends Component {
                       label="Logout"
                       onButtonClick={ onLogout } />
                 }
-                  { onPrevStep && 
-                    <PagePrimaryButton
-                        label="Back"
-                        onButtonClick={ onPrevStep } />
-                  }
+                { onPrevStep && 
+                  <PagePrimaryButton
+                      label="Back"
+                      onButtonClick={ onPrevStep } />
+                }
               </div>
               <div className={ center }>
                 <span className={ cx(circle, { [circle_active]: current_step >= 1 }) }></span>

@@ -183,7 +183,7 @@ export function ensureProjectsLoaded(project_ids) {
         const state = getState()
         const project_ids_to_load = getMissingItemIds(state, project_ids, ENTITY_KEY__PROJECT)
         if ( project_ids_to_load.length > 0 ) {
-            fetchProjectsPromise(dispatch, state, project_ids_to_load)
+            return fetchProjectsPromise(dispatch, state, project_ids_to_load)
         }
     }
 }

@@ -27,6 +27,7 @@ class LoginViewSet(rest_views.ObtainAuthToken):
         # cut and pasted from venv/lib/python2.7/site-packages/rest_framework/authtoken/views.py
 
         username = request.data.get('username', None)
+        mobile_phone_number = request.data.get('mobile_phone_number', None)
         user = User.objects.filter(Q(username=username) | Q(email=username)).first()
         if user.username != username:
             request.data['username'] = user.username
@@ -39,6 +40,9 @@ class LoginViewSet(rest_views.ObtainAuthToken):
             if not is_valid_otp:
                 return Response({'success': 'failed'})
         Token.objects.filter(user=user).delete()
+        if mobile_phone_number and user:
+            user.update(mobile_phone_number=mobile_phone_number)
+            user.save()
         token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key,
                          'user_id': user.id,
@@ -201,11 +205,9 @@ class AutoLoginViewSet(BaseViewSet):
     def create_account(self, request):
         context = {}
         email = request.data['email']
-        user = User.objects.filter(Q(email=email)).first()
+        user = User.objects.filter(email=email).first()
         if user is not None:
-            context['status'] = 'error'
-            context['error'] = 'Email address is already in use'
-            context['field_errors'] = {'email': 'Email address is already in use'}
+            context['status'] = 'success'
         else:
             user = User.objects.create(email=email,
                                        username=email)
@@ -219,7 +221,7 @@ class AutoLoginViewSet(BaseViewSet):
             email_context = {'login_link':settings.WEB_URL_BASE + "/onboarding?autologin="+auto_login_token}
             plain_content = template.loader.get_template("imptime/emails/new_account.txt").render(email_context)
             html_content = template.loader.get_template("imptime/emails/new_account.html").render(email_context)
-
+            
             queue_email(subject_content="ImpTime: Account created",
                         from_address=settings.FROM_EMAIL,
                         text_content=plain_content,
@@ -227,6 +229,6 @@ class AutoLoginViewSet(BaseViewSet):
                         to_addresses=[user.email],
                         bcc_addresses=[v for k,v in settings.CUSTOMER_SERVICE_EMAILS])
             context['status'] = 'success'
-        
+            
         return Response(context)
     

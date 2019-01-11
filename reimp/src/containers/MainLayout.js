@@ -5,7 +5,7 @@ import {withRouter} from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import Websocket from '../components/Websocket'
-import LoginPage from '../containers/LoginPage'
+import NonAuthRouter from '../containers/NonAuthRouter'
 import { parse } from 'query-string'
 import { DragDropContext } from 'react-dnd';
 import { logged_in_user, is_authenticated, auto_login } from '../actions/Auth'
@@ -86,7 +86,7 @@ class MainLayout extends Component {
 
     render() {
         const { is_logged_in, are_settings_loaded } = this.props
-
+        
         const allow_non_auth = this.props.location.pathname.indexOf('password/forgot') !== -1 ||
                                this.props.location.pathname.indexOf('password/reminded') !== -1 ||
                                this.props.location.pathname.indexOf('account/create') !== -1 ||
@@ -108,7 +108,7 @@ class MainLayout extends Component {
         if ( ! is_logged_in && ! allow_non_auth  ) {
             return (
                 <AppDiv id="app">
-                  <LoginPage />
+                  <NonAuthRouter />
                 </AppDiv>
             )
         }
@@ -169,7 +169,7 @@ function mapStateToProps(state) {
     const user = logged_in_user(state)
     const logged_in_user_id = user['user_id'] || null
     const has_usable_password = user['has_usable_password'] || false
-    const current_mien_id =  getCurrentMienId(state)
+    const current_mien_id = getCurrentMienId(state)
     const current_mien = getCurrentMien(state)
     const is_logged_in = is_authenticated()
 

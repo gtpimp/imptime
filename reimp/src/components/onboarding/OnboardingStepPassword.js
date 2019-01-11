@@ -26,7 +26,7 @@ class OnboardingStepPassword extends Component {
     onSubmit = ({ new_password, mobile_phone_number, enable_mobile_phone_number_pin }) => {
         const { dispatch } = this.props
 
-        if ( ! enable_mobile_phone_number_pin ) {
+        if (!enable_mobile_phone_number_pin) {
             mobile_phone_number = ''
         }
         
@@ -37,24 +37,23 @@ class OnboardingStepPassword extends Component {
     
     render() {
         const { user, mobile_phone_number } = this.props
+//        console.log(user)
         return (
             <OnboardingPage>
               <OnboardingWizard current_step={3}
                                 next_step={4}
                                 prev_step={2}
-                                onNextHook={this.onNext}
-              >
+                                onNextHook={this.onNext}>
                 <Fragment>
                   <PageSubTitle>Secure your account</PageSubTitle>
-
-                  { user.loaded && 
+                  { user.loaded &&
                     <OnboardingPasswordForm onSubmit={this.onSubmit}
                                             initially_show_mobile_phone_number_section={size(mobile_phone_number)>0}
                                             initialValues={{mobile_phone_number,
                                                             enable_mobile_phone_number_pin:size(mobile_phone_number)>0}}
                   />
                   }
-                  { ! user.loaded && <Loading/> }
+                  { !user.loaded && <Loading/> }
                 </Fragment>
               </OnboardingWizard>
             </OnboardingPage>
@@ -62,7 +61,7 @@ class OnboardingStepPassword extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
+function mapStateToProps(state) {
 
     const user = logged_in_user(state)
     return {

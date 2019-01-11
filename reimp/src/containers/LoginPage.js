@@ -1,33 +1,85 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
+import cookie from 'react-cookies'
+import { get } from 'lodash'
+import { SubmissionError } from 'redux-form'
 import {withRouter} from 'react-router-dom'
 import queryString from 'query-string'
-import { get } from 'lodash'
 
-import {login} from '../actions/Auth'
+import { login, isValidEmail, sendOtpEmail } from '../actions/Auth'
 import { default_theme as theme } from '../theme/default'
 import LoginForm from '../components/form/LoginForm'
 import PageTitle from '../components/PageTitle'
 
+const LOGIN_OPTIONS = [
+    {value: 'password', label: 'Enter password'},
+    {value: 'email', label: 'Send one time password via email'},
+    {value: 'sms', label: 'Send one time password via sms'}
+]
+
+const PREFERRED_LOGIN_METHOD = cookie.load('preferred_login_method')
+
 class LoginPage extends Component {
+
+    onLoginFormSubmit = (new_values) => {
+        
+        const login_method = new_values.login_method
+        const request_mobile_change = new_values.request_mobile_change
+        
+        if (login_method === 'password') {
+            return this.onLogin(new_values)
+        } else if (login_method === 'email') {
+            return this.onSendOtpEmail(new_values)
+        } else if (login_method === 'sms' && !request_mobile_change) {
+            return this.onSendOtpTextMessage(new_values)
+        } else if (login_method === 'sms' && request_mobile_change) {
+            return this.onRequestMobileChangeByOtp(new_values)
+        }
+    }
 
     onLogin = (values) => {
         const { dispatch } = this.props
-        this.setState({show_otp_buttons: false})
-        return dispatch(login(values.username, values.password))
+        return dispatch(login(values))
     }
 
     onClickedCreateAccount = (evt) => {
         const { history } = this.props
-        if ( evt ) {
+        if (evt) {
             evt.preventDefault()
         }
-        history.push('/account/create');
+        history.push('/account/create')
+    }
+    
+    onSendOtpTextMessage = (values) => {
+        console.log(values)
+    }
+
+    onRequestMobileChangeByOtp(values) {
+        return this.onSendOtpEmail(values)
+    }
+    
+    async onSendOtpEmail(values) {
+        const { dispatch } = this.props
+        if (!isValidEmail(values.username)) {
+            throw new SubmissionError({ _error: 'Invalid email' })
+        }
+        return await dispatch(sendOtpEmail(values))
+    }
+
+    onFormSubmitSuccess = (res) => {
+        const { history } = this.props
+        
+        if (res.login_method === 'email') {
+            history.push(`/account/confirm-otp/${res.username}/${res.login_method}`)
+        } else if (res.login_method === 'sms' && res.request_mobile_change) {
+            history.push(`/account/change-mobile-by-otp/${res.username}`)
+        }
     }
 
     render() {
         const { initialValues } = this.props
+        
         return (
             <div className={ main }>
               <div className={ box }>
@@ -36,8 +88,11 @@ class LoginPage extends Component {
                 </div>
                 <div className={ login_form }>
                   <LoginForm
-                      initialValues={ initialValues }
-                      onSubmit={ this.onLogin } />
+                      initialValues={initialValues}
+                      login_options={LOGIN_OPTIONS}
+                      onFormSubmit={this.onLoginFormSubmit}
+                      onFormSubmitSuccess={this.onFormSubmitSuccess}
+                  />
                 </div>
                 <div className={ link_container }>
                   <a href="/"
@@ -51,14 +106,19 @@ class LoginPage extends Component {
         )
     }
 }
+
 function mapStateToProps(state, props) {
+    
     const query_params = queryString.parse(props.location.search)
+    
     return {
         initialValues: {
-            username: get(query_params, 'u', '')
-        }
+            username: get(query_params, 'u', ''),
+            login_method: PREFERRED_LOGIN_METHOD,
+        },
     }
 }
+
 export default withRouter(connect(mapStateToProps)(LoginPage))
 
 const main = css`

@@ -47,17 +47,7 @@ class OnboardingPasswordForm extends Component {
               Enable sign-in through mobile
             </label>
         )
-    }
-    
-    renderPasswordInput(field) {
-        const {input} = field
-        return <InputField maxLength="300"
-                           placeholder="Password"
-                           type="password"
-                           onChange={input.onChange}
-                           value={input.value}
-               />
-    }
+    }   
 
     renderPhoneNumberInput(field) {
         const {input} = field
@@ -79,7 +69,9 @@ class OnboardingPasswordForm extends Component {
                   Choose a password:
                   <Field name="new_password"
                          type="password"
-                         component={this.renderPasswordInput} />
+                         placeholder="Password"
+                         maxLength="300"
+                         component={InputField} />
                 </p>
               </PageParagraph>
 
@@ -90,7 +82,9 @@ class OnboardingPasswordForm extends Component {
                   Enter the phone number where you would like to receive your one time pins.
                   
                   <Field name="mobile_phone_number"
-                         component={this.renderPhoneNumberInput} />
+                         placeholder="Mobile phone number"
+                         maxLength="300"
+                         component={InputField} />
                   
                   (this number will not be used for any other purpose)
                 </PageParagraph>

@@ -80,39 +80,39 @@ export function auto_login(auto_login_token) {
     
 }
 
-export function login(username, password) {
-
+export function login(values) {
+    console.log(values)
     return (dispatch, getState) => {
         const state = getState()
-        const data = { 'username': username,
-                       'password': password }
 
         const params = {method: "POST",
                         credentials: 'same-origin',
-                        data: data,
-                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
-                        body: JSON.stringify(data)}
+                        data: values,
+                        headers: {"Content-type": "application/json; charset=UTF-8"},
+                        body: JSON.stringify(values)}
         
         return impfetch(state, 'imp/login/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                if ( json.token ) {
-                    dispatch(setAuthToken(username, json.token,
+                if (json.token) {
+                    cookie.save('preferred_login_method', values.login_method, { path: '/' })
+                    dispatch(setAuthToken(values.username, json.token,
                                           json.user_id, json.has_usable_password,
                                           json.is_superuser,
                                           json.is_onboarded))
                 } else {
-                    throw new SubmissionError({ _error: 'Invalid username/password combination' })
+                    throw new SubmissionError({ _error: 'Invalid username/password combination.' })
                 }
+                return values
             })
     }
 }
 
-export function sendOtpEmail(username) {
+export function sendOtpEmail(values) {
 
     return (dispatch, getState) => {
         const state = getState()
-        const data = { 'username': username}
+        const data = { 'username': values.username}
 
         const params = {method: "POST",
                         credentials: 'same-origin',
@@ -123,7 +123,11 @@ export function sendOtpEmail(username) {
         return impfetch(state, 'imp/otp_email/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                
+                if (!json.success) {
+                    throw new SubmissionError({ _error: 'Login Failed' })
+                } else {
+                    return values
+                }
             })
     }
 }
@@ -140,7 +144,7 @@ export function forgot_password(username, on_done) {
                         headers: {"Content-type": "application/json; charset=UTF-8"}, 
                         body: JSON.stringify(data)}
         return impfetch(state, 'imp/autologin/forgot_password/', dispatch, params)
-            .then( on_done() )
+            .then(on_done && on_done())
     }
 }
 
@@ -156,7 +160,7 @@ export function onboarding_complete(on_done) {
                         headers: {"Content-type": "application/json; charset=UTF-8"}, 
                         body: JSON.stringify(data)}
         return impfetch(state, 'imp/auth/onboarded/', dispatch, params)
-            .then( on_done() )
+            .then(on_done && on_done())
     }
 }
 
@@ -169,22 +173,19 @@ export function update_profile({first_name, last_name, mobile_phone_number, on_d
         const params = {method: "POST",
                         credentials: 'same-origin',
                         data: data,
-                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        headers: {"Content-type": "application/json; charset=UTF-8"},
                         body: JSON.stringify(data)}
-        
         return impfetch(state, 'imp/auth/update_profile/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                if ( json.status !== 'success' ) {
+                if (json.status !== 'success') {
                     dispatch({type: ANNOUNCE_SAVE_USER_PROFILE_FAILED,
-                              error: json.error})
+                              error: json.error})                    
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PROFILE})
-                    on_done()
+                    on_done && on_done()
+                    return json
                 }
-            })
-            .catch(function (error) {
-                dispatch({type: ANNOUNCE_SAVE_USER_PROFILE_FAILED, error: error})
             })
     }
 }
@@ -210,7 +211,7 @@ export function change_password(values, on_done) {
                 } else {
                     dispatch({type: ANNOUNCE_SAVED_USER_PASSWORD})
                     cookie.save('has_usable_password', true, { path: '/' })
-                    on_done()
+                    on_done && on_done()
                 }
             })
             .catch(function (error) {
@@ -270,19 +271,18 @@ export function create_account(values) {
         const params = {method: "POST",
                         credentials: 'same-origin',
                         data: data,
-                        headers: {"Content-type": "application/json; charset=UTF-8"}, 
+                        headers: {"Content-type": "application/json; charset=UTF-8"},
                         body: JSON.stringify(data)}
         
         return impfetch(state, 'imp/autologin/create_account/', dispatch, params)
             .then(response => response.json())
             .then(json => {
-                if ( json.status !== 'success' ) {
+                if (json.status !== 'success') {
                     dispatch({type: ANNOUNCE_CREATE_ACCOUNT_REJECTED,
                               error: json.error})
-                    throw new SubmissionError(json.field_errors)
                 } else {
                     dispatch({type: ANNOUNCE_ACCOUNT_CREATED})
-                    window.open('/account/created')
+                    return json
                 }
             })
     }
