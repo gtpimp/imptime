@@ -15,11 +15,6 @@ class ConfirmOtpLoginPage extends Component {
         return dispatch(login(values))
     }
 
-    onFormSubmitSuccess = () => {
-        const { history } = this.props
-        //history.push(`/`) push to new page if otp confirmed
-    }
-
     render() {
         
         return (
@@ -29,10 +24,7 @@ class ConfirmOtpLoginPage extends Component {
                   <PageTitle>Confirm OTP</PageTitle>
                 </div>
                 <div className={ login_form }>
-                  <ConfirmOtpLoginForm
-                      onFormSubmit={this.onSubmitOtp}
-                      onFormSubmitSuccess={this.onFormSubmitSuccess}
-                  />
+                  <ConfirmOtpLoginForm onFormSubmit={this.onSubmitOtp} />
                 </div>
               </div>
             </div>
@@ -87,17 +79,3 @@ const login_form = css`
 padding: 18px;
 `
 
-const link_container = css`
-display: flex;
-flex: 1;
-justify-content: center;
-align-items: center;
-border-top: 1px solid #e0e0e0;
-padding: 18px;
-`
-
-const link = css`
-font: ${theme.fonts.regular_large};
-color: ${theme.colours.list_text};
-text-decoration: underline;
-`

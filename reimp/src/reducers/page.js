@@ -5,8 +5,7 @@ import {
     UPDATE_PAGE_SETTINGS,
     UPDATE_PAGE_SELECTION,
     SET_PAGE_FLAG,
-    UPDATE_HEADER_LIST,
-    SET_LAST_SELECTED_SPRINT
+    UPDATE_HEADER_LIST
 } from '../actions/Page.js'
 
 const initialState = {}

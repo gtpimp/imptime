@@ -80,7 +80,7 @@ class ProjectList extends Component {
     }
 
     componentDidUpdate() {
-        const {last_selected_project_id, project_id, dispatch} = this.props
+        const {last_selected_project_id} = this.props
 
         if (last_selected_project_id) {
             var selected_project_id = "project_" + last_selected_project_id

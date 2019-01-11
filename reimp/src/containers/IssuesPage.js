@@ -26,8 +26,7 @@ import {
     select_projects,
     getPageFlag,
     setPageFlag,
-    setBrowserTitle,
-    getGloballySelectedEntityIds
+    setBrowserTitle
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
@@ -54,7 +53,7 @@ class IssuesPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, project, sprint, default_issue_id, selected_issue, selected_issue_in_current_sprint } = new_props
+        const { dispatch, project, sprint, default_issue_id, selected_issue } = new_props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
 

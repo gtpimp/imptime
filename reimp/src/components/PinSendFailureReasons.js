@@ -20,13 +20,7 @@ class PinSendFailureReasons extends Component {
                     Reasons why you may not have recieved a pin:
                   </div>
                   <div className={text_section_1}>
-                    {`- There may be no account registered to ${match.params.email};`}
-                  </div>
-                  <div className={text_section_1}>
-                    - You might not have registered a phone with this account;
-                  </div>
-                  <div className={text_section_1}>
-                    - There may be a network error, try resending.
+                    {`- There may be no account registered to ${match.params.email}`}
                   </div>
                 </div>
                 <div className={ link_container }>
@@ -95,6 +89,6 @@ padding: 18px;
 
 const link = css`
 font: ${theme.fonts.regular_large};
-color: ${theme.colours.list_text};
 text-decoration: underline;
+cursor: pointer;
 `

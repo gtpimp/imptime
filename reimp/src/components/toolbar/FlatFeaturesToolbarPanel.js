@@ -2,10 +2,9 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { cx, css } from 'emotion'
-import { getGloballySelectedProjectId, toggleShowFlatFeatureListTestables } from '../../actions/Page'
+import { getGloballySelectedProjectId } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
 import FlatFeatureNavigation from '../FlatFeatureNavigation'
-import ReactToPrint from "react-to-print"
 
 class FlatFeaturesToolbarPanel extends Component {
 
@@ -19,7 +18,7 @@ class FlatFeaturesToolbarPanel extends Component {
     }
     
     render() {
-        const { navigateToFeature, is_tree_view, list_key, getComponentRefForPrinting } = this.props
+        const { navigateToFeature, is_tree_view, list_key } = this.props
         return (
             <div className="toolbar-panel">
               <FlatFeatureNavigation list_key={list_key} navigateToFeature={navigateToFeature} />

@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map, concat } from 'lodash'
 import { AutoSizer } from 'react-virtualized'
-import { css }  from 'emotion'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { logged_in_user } from '../actions/Auth'
 import 'react-virtualized/styles.css';

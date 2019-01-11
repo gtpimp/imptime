@@ -48,7 +48,7 @@ class SprintList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, project_id, last_selected_sprint_id, sprint_id, onSelectSprints} = this.props
+        const {dispatch, list_key, project_id, last_selected_sprint_id, onSelectSprints} = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(fetchSprintsIfNeeded(list_key))
@@ -72,7 +72,7 @@ class SprintList extends Component {
     }
     
     componentDidUpdate() {
-        const {last_selected_sprint_id, project_id, sprint_id, dispatch} = this.props
+        const {last_selected_sprint_id} = this.props
 
         if (last_selected_sprint_id) {
             var selected_sprint_id = "sprint_" + last_selected_sprint_id

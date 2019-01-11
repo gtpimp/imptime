@@ -68,7 +68,7 @@ class OtpEmailViewSet(rest_views.ObtainAuthToken):
             plain_template = template.loader.get_template("imptime/emails/email_otp.txt")
             html_content = html_template.render(email_context)
             plain_content = plain_template.render(email_context)
-            queue_email(subject_content="ImpTime: Email One Time Password",
+            queue_email(subject_content="Your login OTP is %s" % otp,
                         from_address=settings.FROM_EMAIL,
                         text_content=plain_content,
                         html_content=html_content,

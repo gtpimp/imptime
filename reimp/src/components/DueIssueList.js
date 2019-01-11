@@ -117,8 +117,6 @@ class DueIssueList extends Component {
     }
 
     render() {
-        const { show_popup } = this.state
-
         return (
             <div>
               { this.renderDueAlert() }

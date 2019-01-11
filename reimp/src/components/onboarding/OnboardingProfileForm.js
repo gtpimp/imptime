@@ -44,5 +44,4 @@ export default connect(mapStateToProps)(reduxForm({
         const { onFormSubmitSuccess } = props
         return onFormSubmitSuccess(values)
     },
-    form: 'onboarding_profile_form'})
-    (OnboardingProfileForm))
+    form: 'onboarding_profile_form'}) (OnboardingProfileForm))

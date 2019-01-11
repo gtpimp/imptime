@@ -7,7 +7,7 @@ import { SubmissionError } from 'redux-form'
 import {withRouter} from 'react-router-dom'
 import queryString from 'query-string'
 
-import { login, isValidEmail, sendOtpEmail } from '../actions/Auth'
+import { login, isValidEmail, sendOtpEmail, getPreferredLoginMethod } from '../actions/Auth'
 import { default_theme as theme } from '../theme/default'
 import LoginForm from '../components/form/LoginForm'
 import PageTitle from '../components/PageTitle'
@@ -15,10 +15,8 @@ import PageTitle from '../components/PageTitle'
 const LOGIN_OPTIONS = [
     {value: 'password', label: 'Enter password'},
     {value: 'email', label: 'Send one time password via email'},
-    {value: 'sms', label: 'Send one time password via sms'}
+    // {value: 'sms', label: 'Send one time password via sms'}
 ]
-
-const PREFERRED_LOGIN_METHOD = cookie.load('preferred_login_method')
 
 class LoginPage extends Component {
 
@@ -114,7 +112,7 @@ function mapStateToProps(state, props) {
     return {
         initialValues: {
             username: get(query_params, 'u', ''),
-            login_method: PREFERRED_LOGIN_METHOD,
+            login_method: getPreferredLoginMethod(),
         },
     }
 }

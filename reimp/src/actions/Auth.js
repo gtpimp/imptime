@@ -95,7 +95,7 @@ export function login(values) {
             .then(response => response.json())
             .then(json => {
                 if (json.token) {
-                    cookie.save('preferred_login_method', values.login_method, { path: '/' })
+                    setPreferredLoginMethod(values.login_method)
                     dispatch(setAuthToken(values.username, json.token,
                                           json.user_id, json.has_usable_password,
                                           json.is_superuser,
@@ -314,3 +314,14 @@ export function getHighlightedObjectForPermissionInspector(state) {
 export function isValidEmail(value) {
     return value && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value) ? true : false
 }
+
+function setPreferredLoginMethod(login_method) {
+    if ( login_method ) {
+        cookie.save('preferred_login_method', login_method, { path: '/' })
+    }
+}
+
+export function getPreferredLoginMethod(login_method) {
+    return cookie.load('preferred_login_method')
+}
+

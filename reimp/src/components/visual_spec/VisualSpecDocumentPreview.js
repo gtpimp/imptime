@@ -1,11 +1,5 @@
 import React, {Component} from 'react'
-import { css, cx } from 'emotion'
-import classNames from 'classnames'
-import {default_theme as theme} from '../../theme/default'
-import VisualSpecAnnotationToolbar from './VisualSpecAnnotationToolbar'
-import {
-    getAnnotatedVisualSpecDocument,
-} from '../../actions/AnnotatedVisualSpecDocuments'
+import { css } from 'emotion'
 import loading_gif from "../../images/loading.gif"
 
 

@@ -15,9 +15,6 @@ import new_tab from '../../images/tab_24px.svg'
 import { downloadUrl } from '../../actions/Print.js'
 
 class VisualSpecToolbar extends Component {
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         this.refresh()

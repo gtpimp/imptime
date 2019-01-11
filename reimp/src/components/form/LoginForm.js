@@ -141,27 +141,6 @@ justify-content: space-between;
 align-items: center;
 `
 
-const otp_section_main = css`
-margin-bottom: 18px;
-justify-content: center;
-align-items: center;
-border-top: 1px solid #e0e0e0;
-padding-top: 18px;
-`
-
-const otp_actions = css`
-display: flex;
-flex: 1;
-align-items: center;
-justify-content: space-between;
-padding-top: 18px;
-`
-
-const otp_instruction = css`
-font: ${theme.fonts.regular_large};
-margin: 0;
-text-align: center;
-`
 const link = css`
 font: ${theme.fonts.regular_large};
 color: ${theme.colours.list_text};
