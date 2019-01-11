@@ -75,8 +75,10 @@ class OnboardingPasswordForm extends Component {
                 </p>
               </PageParagraph>
 
-              <Field name="enable_mobile_phone_number_pin"
-                     component={this.renderEnablePhoneNumberPinInput} />
+              { false &&
+                <Field name="enable_mobile_phone_number_pin"
+                component={this.renderEnablePhoneNumberPinInput} />
+              }
               { show_phone_number_section && 
                 <PageParagraph>
                   Enter the phone number where you would like to receive your one time pins.
