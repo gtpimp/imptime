@@ -47,8 +47,11 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             else:
 
                 for vsd in visual_spec_documents:
+                    if vsd.id == 1689:
+                        import ipdb; ipdb.set_trace()
                     vsd.download_url = VisualSpecDocumentSerializer.get_download_url(self.request, vsd)
                     vsd.hires_url = VisualSpecDocumentSerializer.get_hires_url(self.request, vsd)
+                    vsd.medium_res_url = VisualSpecDocumentSerializer.get_medium_res_url(self.request, vsd)
                     vsd.preview_url = VisualSpecDocumentSerializer.get_preview_url(self.request, vsd)
                 s = VisualSpecDocumentSerializer(visual_spec_documents, many=True)
                 visual_spec_documents_data = s.data
@@ -73,7 +76,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
             feature = self.allowed_feature(feature_pk) if feature_pk else None
             wiki = self.allowed_wiki_pages().get(pk=wiki_pk) if wiki_pk else None
                 
-            for name, f in request.FILES.items():
+            for name, f in request.FILES.items():                
                 VisualSpecDocument.create_for_doc(user=request.user,
                                                   project=project,
                                                   doc=f,
@@ -82,6 +85,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                                                   issue=issue,
                                                   feature=feature,
                                                   wiki=wiki)
+                
             data = {'status': 'success'}
 
         except Exception, ex:

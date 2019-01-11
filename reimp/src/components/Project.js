@@ -78,7 +78,9 @@ class Project extends Component {
 	    )
 	} else {
             return (
-		<DivTableRow key={this.key+"."+project.id} is_selected={is_selected}>
+		<DivTableRow key={this.key+"."+project.id}
+                             is_selected={is_selected}
+                             item_id={"project_"+project.id}>
                   {includes(visible_header_keys, "name") &&
 		   <DivTableCell
                        onClick={onClickedProject}
@@ -87,78 +89,78 @@ class Project extends Component {
                    </DivTableCell>
                   }
 
-                   {includes(visible_header_keys, "active") &&
-                    <DivTableCell extra_style={getCellStyle(header_list.active)}>
-                      <StatusCircle colour={ this.getProjectStatus(project) } />
-                    </DivTableCell>
-                   }
-                    
-                    {includes(visible_header_keys, "num_sprints") &&
-                     <DivTableCell secondary={true} extra_style={getCellStyle(header_list.num_sprints)}>
-                       <DivTableLink to={'/projects/'+project.id+'/sprints/'}
-                                     extra_style={getCellStyle(header_list.num_sprints)}>
-                         { project && project.num_open_sprints > 0 &&
-                           <div>
-                             {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
-                           </div>
-                         }
-                       </DivTableLink>
-                     </DivTableCell>
-                    }
-
-                     {includes(visible_header_keys, "created_at") &&
-                      <DivTableCell secondary={true} extra_style={getCellStyle(header_list.created_at)}>
-                        <div className="project-cell__created-at">
-                          <Timestamp
-                              value={project.recent_activity && project.recent_activity.project_created_at}
-                              format="from_now"/>
-                        </div>
-                      </DivTableCell>
-                     }
-
-                      
-                      {includes(visible_header_keys, "sort_reason") &&
-                       <DivTableCell secondary={true} extra_style={getCellStyle(header_list.sort_reason)}>
-                         <div className="project-cell__sort-reason">
-                           {project.recent_activity && project.recent_activity.sort_reason}
+                  {includes(visible_header_keys, "active") &&
+                   <DivTableCell extra_style={getCellStyle(header_list.active)}>
+                     <StatusCircle colour={ this.getProjectStatus(project) } />
+                   </DivTableCell>
+                  }
+                  
+                  {includes(visible_header_keys, "num_sprints") &&
+                   <DivTableCell secondary={true} extra_style={getCellStyle(header_list.num_sprints)}>
+                     <DivTableLink to={'/projects/'+project.id+'/sprints/'}
+                                   extra_style={getCellStyle(header_list.num_sprints)}>
+                       { project && project.num_open_sprints > 0 &&
+                         <div>
+                           {project.num_open_sprints} open sprint{project.num_open_sprints>1 && "s"}
                          </div>
-                       </DivTableCell>
-                      }
-
-
-
-                       {includes(visible_header_keys, "sort_date") &&
-                        <DivTableCell secondary={true} extra_style={getCellStyle(header_list.sort_date)}>
-                          <div className="project-cell__sort-date">
-                            <Timestamp
-                                value={project.recent_activity && project.recent_activity.sort_date}
-                                format="from_now"/>
-                          </div>
-                        </DivTableCell>
                        }
+                     </DivTableLink>
+                   </DivTableCell>
+                  }
 
-                        
-                        {includes(visible_header_keys, "delete") &&
-                         <DivTableCell secondary={true} extra_style={getCellStyle(header_list.delete)}>
-                           <div className="reveal-on-hover--block issue__cell--issue-delete">
-                             <DeleteProject
-                                 onDelete={this.onDeleteProject}
-                             />
-                           </div>
-                         </DivTableCell>
-                        }
+                  {includes(visible_header_keys, "created_at") &&
+                   <DivTableCell secondary={true} extra_style={getCellStyle(header_list.created_at)}>
+                     <div className="project-cell__created-at">
+                       <Timestamp
+                           value={project.recent_activity && project.recent_activity.project_created_at}
+                           format="from_now"/>
+                     </div>
+                   </DivTableCell>
+                  }
 
-                         { includes(visible_header_keys, "small_delete") &&
-                           <DivTableCell secondary={true} extra_style={getCellStyle(header_list.small_delete)}>
-                             { can_show_project_delete &&
-                               <div className={"reveal-on-hover--block"}>
-                                 <div className="project__small-delete-image"
-                                      onClick={this.onDeleteProject} />
-                               </div>
-                             }
-                           </DivTableCell>
-                         }
-                           
+                  
+                  {includes(visible_header_keys, "sort_reason") &&
+                   <DivTableCell secondary={true} extra_style={getCellStyle(header_list.sort_reason)}>
+                     <div className="project-cell__sort-reason">
+                       {project.recent_activity && project.recent_activity.sort_reason}
+                     </div>
+                   </DivTableCell>
+                  }
+
+
+
+                  {includes(visible_header_keys, "sort_date") &&
+                   <DivTableCell secondary={true} extra_style={getCellStyle(header_list.sort_date)}>
+                     <div className="project-cell__sort-date">
+                       <Timestamp
+                           value={project.recent_activity && project.recent_activity.sort_date}
+                           format="from_now"/>
+                     </div>
+                   </DivTableCell>
+                  }
+
+                  
+                  {includes(visible_header_keys, "delete") &&
+                   <DivTableCell secondary={true} extra_style={getCellStyle(header_list.delete)}>
+                     <div className="reveal-on-hover--block issue__cell--issue-delete">
+                       <DeleteProject
+                           onDelete={this.onDeleteProject}
+                       />
+                     </div>
+                   </DivTableCell>
+                  }
+
+                  { includes(visible_header_keys, "small_delete") &&
+                    <DivTableCell secondary={true} extra_style={getCellStyle(header_list.small_delete)}>
+                      { can_show_project_delete &&
+                        <div className={"reveal-on-hover--block"}>
+                          <div className="project__small-delete-image"
+                               onClick={this.onDeleteProject} />
+                        </div>
+                      }
+                    </DivTableCell>
+                  }
+                  
 		</DivTableRow>
             )
 	}

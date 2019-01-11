@@ -33,7 +33,7 @@ class EditableCopyIssueToSprint extends Component {
                                 can_edit={can_edit}
               >
                 <SelectSprintForm project_id={project_id} />
-                <span>&nbsp;(<span>Copy Sprint</span>)&nbsp;</span>
+                <span>&nbsp;(<span>Copy to Sprint</span>)&nbsp;</span>
                 <Blank/>
               </EditableProperty>
             </PermissionInspectorHighlighter>

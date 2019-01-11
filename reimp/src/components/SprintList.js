@@ -20,9 +20,12 @@ import {
     reorderSprints,
     startCandidateSprint,
     cancelCandidateSprint,
-    ALL_AVAILABLE_SPRINT_HEADERS
+    ALL_AVAILABLE_SPRINT_HEADERS,
+    setLastSelectedSprintId
 } from '../actions/Sprints'
-import { setGloballySelectedSprintId } from '../actions/Page'
+import {
+    setGloballySelectedSprintId,
+} from '../actions/Page'
 import Sprint from './Sprint'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
 import DivTable from './DivTable'
@@ -45,13 +48,42 @@ class SprintList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, project_id} = this.props
+        const {dispatch, list_key, project_id, last_selected_sprint_id, sprint_id, onSelectSprints} = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(fetchSprintsIfNeeded(list_key))
         }
+
+        if (last_selected_sprint_id) {
+            dispatch(setGloballySelectedSprintId(project_id, last_selected_sprint_id))
+            onSelectSprints([last_selected_sprint_id])
+        }
+
     }
 
+    elemInViewport(elem) {
+        var bounding = elem.getBoundingClientRect();
+        return (
+            bounding.top >= 0 &&
+            bounding.left >= 0 &&
+            bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+    
+    componentDidUpdate() {
+        const {last_selected_sprint_id, project_id, sprint_id, dispatch} = this.props
+
+        if (last_selected_sprint_id) {
+            var selected_sprint_id = "sprint_" + last_selected_sprint_id
+            var selected_sprint_row = document.getElementById(selected_sprint_id)
+
+            if (selected_sprint_row && !this.elemInViewport(selected_sprint_row)) {
+                selected_sprint_row.scrollIntoView()
+            }            
+        }
+    }
+    
     componentWillReceiveProps(new_props) {
         const {dispatch, list_key} = this.props
         const { project_id } = new_props
@@ -85,6 +117,7 @@ class SprintList extends Component {
             selected_sprint_ids = [sprint_id]
         }
         dispatch(setGloballySelectedSprintId(project_id, sprint_id))
+        dispatch(setLastSelectedSprintId(sprint_id))
         onSelectSprints(selected_sprint_ids)
     }
 
@@ -151,17 +184,17 @@ class SprintList extends Component {
     renderHeader(header_list, sprint_type) {
         return (
             <DivTableHeaderRow>
-                { map(header_list, (v, index) => (
-                      <DivTableHeaderCell key={index}
-                                          extra_style={getCellStyle(v)}>
-                        { v.key === "name" &&
-                          <div className={css`font: ${theme.fonts.bold_large}; `}>
-                            {sprint_type}
-                          </div>
-                        }
-                          { v.key !== "name" && v.label }
-                      </DivTableHeaderCell>
-                  ))}
+              { map(header_list, (v, index) => (
+                  <DivTableHeaderCell key={index}
+                                      extra_style={getCellStyle(v)}>
+                    { v.key === "name" &&
+                      <div className={css`font: ${theme.fonts.bold_large}; `}>
+                        {sprint_type}
+                      </div>
+                    }
+                    { v.key !== "name" && v.label }
+                  </DivTableHeaderCell>
+              ))}
             </DivTableHeaderRow>
         )
     }
@@ -193,27 +226,27 @@ class SprintList extends Component {
                                           header_list_name={HEADER_LIST_NAME__SPRINT}
               >
                 {({active_headers}) => (
-                     <div>
-                       { map(sprint_types, function(sprint_type) {
-                             const sprints = sprints_by_type[sprint_type]
-                             if ( !sprints || sprints.length === 0 ) {
-                                 return null
-                             }
-                             const sprint_rows = that.create_sprint_rows(sprints, active_headers)
-                             return (
-                                 <div key={sprint_type}>
-                                   <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
-                                             renderHeader={() => that.renderHeader(active_headers, sprint_type || "")}
-                                             project_id={project_id}
-                                             permission_name_for_dragging={'has_edit_sprint'} >
-                                     {sprint_rows}
-                                   </DivTable>
-                                 </div>
-                             )
+                    <div>
+                      { map(sprint_types, function(sprint_type) {
+                            const sprints = sprints_by_type[sprint_type]
+                            if ( !sprints || sprints.length === 0 ) {
+                                return null
+                            }
+                            const sprint_rows = that.create_sprint_rows(sprints, active_headers)
+                            return (
+                                <div key={sprint_type}>
+                                  <DivTable onReorder={(a,b) => that.reorderSprints(sprint_type, a,b)}
+                                            renderHeader={() => that.renderHeader(active_headers, sprint_type || "")}
+                                            project_id={project_id}
+                                            permission_name_for_dragging={'has_edit_sprint'} >
+                                    {sprint_rows}
+                                  </DivTable>
+                                </div>
+                            )
 
-                         })}
-                     </div>
-                 )}
+                        })}
+                    </div>
+                )}
               </MienListColumnConfigurable>
             </div>
         )
@@ -260,7 +293,8 @@ function mapStateToProps(state, props) {
     const candidate_sprint = (sprint && sprint.candidate_sprint) || null
     const is_creating_sprint = candidate_sprint || false
     const sprints_by_type = collect_sprints_by_type(items)
-
+    const last_selected_sprint_id = sprint.last_selected_sprint_id || null
+    
     return {
         list_key: list_key,
         project_id: project_id,
@@ -278,7 +312,8 @@ function mapStateToProps(state, props) {
         is_expanded: l.display_mode === "expanded" || !l.display_mode,
         last_updated: l.last_updated,
         candidate_sprint: candidate_sprint,
-        is_creating_sprint: is_creating_sprint
+        is_creating_sprint: is_creating_sprint,
+        last_selected_sprint_id: last_selected_sprint_id
     }
 }
 

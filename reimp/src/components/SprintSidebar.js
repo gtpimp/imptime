@@ -10,6 +10,7 @@ import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType from '../components/EditableSprintType'
 import EditableSprintDeadline from '../components/EditableSprintDeadline'
+import EditableSprintDescription from './EditableSprintDescription'
 //import EditableSprintReviewCycle from '../components/EditableSprintReviewCycle'
 import SprintName from './SprintName'
 import SprintReviewPanel from './SprintReviewPanel'
@@ -116,7 +117,8 @@ class SprintSidebar extends Component {
         const { sprint } = this.props
         return (
             <SidebarProperty key="descriptionstack">
-              <div className="property-text">{sprint.description}</div>
+              <SidebarSectionTitle title="Description" />
+              <EditableSprintDescription sprint_id={sprint.id}/>
             </SidebarProperty>
         )
     }
@@ -205,7 +207,7 @@ class SprintSidebar extends Component {
      *         </SidebarProperty>
      *     )
      * } */
-    
+
     render() {
         return (
             <SidebarContainer>
@@ -231,7 +233,7 @@ export function mapStateToProps(state, props) {
     const project = getProject(state, project_id)
     const sprint = getSprint(state, sprint_id) || {}
     const has_view_review_cycle_permission = has_permission(state, project_id, 'has_view_review_cycle')
-    
+
     return {
         sprint_id,
         sprint,

@@ -7,6 +7,7 @@ import EditableIssueInSprint from '../components/EditableIssueInSprint'
 import EditableIssueStatus from '../components/EditableIssueStatus'
 import EditableIssueType from '../components/EditableIssueType'
 import EditableIssueParent from './EditableIssueParent'
+import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
 import MultipleIssueSummary from './MultipleIssueSummary'
 import EditableIssueRisky from './EditableIssueRisky'
 import TagListFlat from './TagListFlat'
@@ -53,6 +54,7 @@ class MultipleIssueSidebar extends Component {
             <SidebarProperty key="infostack">
               <SidebarDetail label="Sprint">
                 <EditableIssueInSprint issue_ids={issue_ids}/>
+                <EditableCopyIssueToSprint issue_ids={issue_ids} />
                 {/* <div className="property-row">
                     <div className="property-value">
                     

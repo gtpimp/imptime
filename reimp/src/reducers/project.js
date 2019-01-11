@@ -19,7 +19,8 @@ import {
     CANCEL_CREATING_NEW_PROJECT,
     ANNOUNCE_SAVING_NEW_PROJECT,
     ANNOUNCE_SAVED_NEW_PROJECT,
-    ANNOUNCE_SAVING_NEW_PROJECT_FAILED
+    ANNOUNCE_SAVING_NEW_PROJECT_FAILED,
+    SET_LAST_SELECTED_PROJECT
 } from '../actions/Projects.js'
 
 const initialState = {
@@ -34,24 +35,24 @@ export default function project(state = initialState, action) {
     let new_items_by_id = null
 
     switch (action.type) {
-	      case INVALIDATE_ALL_PROJECTS:
-	          return Object.assign({}, state, {items_by_id: null})
+	case INVALIDATE_ALL_PROJECTS:
+	    return Object.assign({}, state, {items_by_id: null})
 
         case INVALIDATE_PROJECTS:
             return Object.assign({}, state, {items_by_id: without(state.items_by_id, action.project_ids_to_invalidate)})
 
         case ANNOUNCE_LOADING_PROJECTS:
-	          return Object.assign({}, state, {
-		            loading_item_ids: union(state.loading_item_ids, action.project_ids_to_load)
-	          })
+	    return Object.assign({}, state, {
+		loading_item_ids: union(state.loading_item_ids, action.project_ids_to_load)
+	    })
         case ANNOUNCE_PROJECTS_LOADED:
             state_copy = Object.assign({}, state, {
-		            loading_item_ids: Object.assign({},
-						                                    difference(state.loading_item_ids || [],
-							                                             keys(action.items_by_id))),
-		            items_by_id: Object.assign({},
-					                                 assign(state.items_by_id, action.items_by_id))
-	          })
+		loading_item_ids: Object.assign({},
+						difference(state.loading_item_ids || [],
+							   keys(action.items_by_id))),
+		items_by_id: Object.assign({},
+					   assign(state.items_by_id, action.items_by_id))
+	    })
             state_copy.items_by_id = Object.assign({}, assign(state_copy.items_by_id, action.items_by_id))
             return state_copy
         case ANNOUNCE_PROJECTS_LOAD_FAILED:
@@ -59,15 +60,15 @@ export default function project(state = initialState, action) {
             return state;
 
         case ANNOUNCE_PROJECTS_SAVING:
-	          return Object.assign({}, state, {
-		            saving_item_ids: union(state.saving_item_ids, action.project_ids_to_save)
-	          })
+	    return Object.assign({}, state, {
+		saving_item_ids: union(state.saving_item_ids, action.project_ids_to_save)
+	    })
         case ANNOUNCE_PROJECTS_SAVED:
             state_copy = Object.assign({}, state, {
-		            saving_item_ids: Object.assign({},
-					                                     difference(state.saving_item_ids || [],
-							                                            action.project_ids))
-	          })
+		saving_item_ids: Object.assign({},
+					       difference(state.saving_item_ids || [],
+							  action.project_ids))
+	    })
             return state_copy
         case ANNOUNCE_PROJECT_SAVE_FAILED:
             setErrorMessage("Failed to save projects: " + action.error_message)
@@ -111,6 +112,10 @@ export default function project(state = initialState, action) {
 		{candidate_project: Object.assign({},
 						  state.candidate_project || {},
 						  {is_saving: false})})
+
+        case SET_LAST_SELECTED_PROJECT:
+            return Object.assign({}, state,
+                                 {last_selected_project_id: action.project_id})
 
         default:
             return state

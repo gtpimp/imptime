@@ -41,7 +41,7 @@ class CommonTable extends Component {
         const { index,  } = args
         const { selected_item_ids, items } = this.props
         const is_selected = includes(selected_item_ids, items[index].id)
-
+        
         if ( is_selected ) {
             args.className += " common-table__row--selected"
         }
@@ -70,7 +70,7 @@ class CommonTable extends Component {
     
     render() {
         const { all_headers, header_list_name, items, table_params } = this.props
-
+        
         return (
 
             <MienListColumnConfigurable all_headers={all_headers}

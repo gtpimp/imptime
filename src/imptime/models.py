@@ -6,7 +6,7 @@ from lib.json_helper import json_dump
 from django.db import models
 from django.db.models import Max
 from impasync.refresh_notifier import RefreshNotifier
-from lib.fields import HiResImageField, ThumbnailImageField
+from lib.fields import HiResImageField, ThumbnailImageField, MediumResImageField
 from lib.fields import UploadTo, ProtectedForeignKey
 from lib.models import BaseModel
 from timepiece.models import Business as Project
@@ -20,6 +20,7 @@ from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from project_statement_calculator import ProjectStatementCalculator
 from time_summary_calculator import TimeSummaryCalculator
 from estimate_summary_calculator import EstimateSummaryCalculator
+from django.utils import timezone
 import PIL
 import hashlib
 import logging
@@ -34,6 +35,7 @@ class VisualSpecDocument(BaseModel):
     hires_width = models.IntegerField()
     hires_height = models.IntegerField()
     md5sum = models.CharField(max_length=255)
+    medium_res = MediumResImageField(source="hires")
 
     is_image = models.BooleanField(default=True)
     name = models.CharField(max_length=255)
@@ -57,6 +59,10 @@ class VisualSpecDocument(BaseModel):
 
     @classmethod
     def create_for_doc(self, user, project, doc, name, content_type, issue=None, feature=None, wiki=None):
+        if doc:
+            time_now = timezone.now()
+            time_stamp = "vsd_" + time_now.strftime("%x_%X")
+            doc._name = time_stamp
         d_file = doc
         is_image = content_type.startswith('image')
         if is_image:
@@ -81,7 +87,8 @@ class VisualSpecDocument(BaseModel):
                                                     is_image=is_image)
 
         annotated_vsd = AnnotatedVisualSpecDocument.objects.create(visual_spec_document=vsd)
-            
+
+
         VisualSpecProject.objects.get_or_create(visual_spec_document=vsd,
                                                 project_id=project.id,
                                                 defaults={'order':VisualSpecProject.get_next_order(project.id)})

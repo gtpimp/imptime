@@ -9,6 +9,7 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     name = serializers.CharField()
     download_url = serializers.CharField()
     hires_url = serializers.CharField()
+    medium_res_url = serializers.CharField()
     preview_url = serializers.CharField()
     hires_width = serializers.IntegerField()
     hires_height = serializers.IntegerField()
@@ -30,6 +31,10 @@ class VisualSpecDocumentSerializer(BaseSerializer):
     def get_hires_url(self, request, visual_spec_document):
         return 'imp/visual_spec_document/%s/hires'%(visual_spec_document.id)
 
+    @classmethod
+    def get_medium_res_url(self, request, visual_spec_document):
+        return 'imp/visual_spec_document/%s/medium_res'%(visual_spec_document.id)
+    
     @classmethod
     def get_preview_url(self, request, visual_spec_document):
         if not visual_spec_document.thumbnail.name:

@@ -278,7 +278,7 @@ REST_FRAMEWORK = {
    ),
    'PAGINATE_BY': PAGINATION_DEFAULT_PAGINATION,
 }
-
+IMAGEKIT_DEFAULT_CACHEFILE_STRATEGY = 'imagekit.cachefiles.strategies.Optimistic'
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',

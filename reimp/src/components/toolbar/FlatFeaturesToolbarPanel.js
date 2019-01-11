@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { cx, css } from 'emotion'
-import { getGloballySelectedProjectId } from '../../actions/Page'
+import { getGloballySelectedProjectId, toggleShowFlatFeatureListTestables } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
 import FlatFeatureNavigation from '../FlatFeatureNavigation'
 import ReactToPrint from "react-to-print"
@@ -14,8 +14,8 @@ class FlatFeaturesToolbarPanel extends Component {
         history.push('/projects/' + project_id + '/features')
     }
 
-    renderPrintButton = () => {
-        return <div className={cx("icon--print", css`cursor:pointer`)} />
+    printFlatFeatureList() {
+        window.print()
     }
     
     render() {
@@ -23,10 +23,8 @@ class FlatFeaturesToolbarPanel extends Component {
         return (
             <div className="toolbar-panel">
               <FlatFeatureNavigation list_key={list_key} navigateToFeature={navigateToFeature} />
-              <ReactToPrint
-                  trigger={this.renderPrintButton}
-                  content={getComponentRefForPrinting}
-              />
+              <div className={cx("icon--print", css`cursor:pointer`)}
+                   onClick={this.printFlatFeatureList} />
               <ToggleButton value={is_tree_view}
                             onChange={this.onToggleFlat}
                             on_label={"Tree"}

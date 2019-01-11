@@ -7,6 +7,7 @@ export const UPDATE_PAGE_SETTINGS = 'UPDATE_PAGE_SETTINGS'
 export const UPDATE_PAGE_SELECTION = 'UPDATE_PAGE_SELECTION'
 export const SET_PAGE_FLAG = 'SET_PAGE_FLAG'
 export const UPDATE_HEADER_LIST = 'UPDATE_HEADER_LIST'
+export const TOGGLE_SHOW_FLAT_FEATURE_LIST_TESTABLES = 'TOGGLE_SHOW_FLAT_FEATURE_LIST_TESTABLES'
 
 export function initList(page_key) {
     return {
@@ -242,4 +243,12 @@ export function setBrowserTitle(title) {
 
 export function getPageName(state) {
     return state.page.page_name
+}
+
+export function toggleShowFlatFeatureListTestables(show_testables) {
+    return {
+        type: TOGGLE_SHOW_FLAT_FEATURE_LIST_TESTABLES,
+        show_testables: !show_testables,
+    }
+    
 }

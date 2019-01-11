@@ -21,7 +21,8 @@ import {
 } from '../actions/ItemList'
 import {
     invalidateAllProjects,
-    fetchProjectsIfNeeded
+    fetchProjectsIfNeeded,
+    setLastSelectedProjectId
 } from '../actions/Projects'
 import { setGloballySelectedProjectId } from '../actions/Page'
 import Pagination from './Pagination'
@@ -56,12 +57,42 @@ class ProjectList extends Component {
     }
 
     componentDidMount() {
+        const {last_selected_project_id, onSelectProjects, project_id, dispatch} = this.props
+        
         this.switchToSampleContext()
-
         // only fetch on WillReceiveProps so that the pagination has time to take effect from the parent.
-        //dispatch(fetchProjectsIfNeeded(list_key)) 
+        //dispatch(fetchProjectsIfNeeded(list_key))
+
+        if (last_selected_project_id) {
+            dispatch(setGloballySelectedProjectId(project_id))
+            onSelectProjects([last_selected_project_id])
+        }
     }
 
+    elemInViewport(elem) {
+        var bounding = elem.getBoundingClientRect();
+        return (
+            bounding.top >= 0 &&
+            bounding.left >= 0 &&
+            bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
+    componentDidUpdate() {
+        const {last_selected_project_id, project_id, dispatch} = this.props
+
+        if (last_selected_project_id) {
+            var selected_project_id = "project_" + last_selected_project_id
+            var selected_project_row = document.getElementById(selected_project_id)
+
+            if (selected_project_row && !this.elemInViewport(selected_project_row)) {
+                selected_project_row.scrollIntoView()
+            }            
+        }
+        
+    }
+    
     componentWillReceiveProps() {
         const { dispatch, list_key } = this.props
         dispatch(fetchProjectsIfNeeded(list_key))
@@ -79,13 +110,13 @@ class ProjectList extends Component {
     }
     
     onCollapse() {
-	      const { dispatch, list_key } = this.props
-	      dispatch(collapse_list(list_key))
+	const { dispatch, list_key } = this.props
+	dispatch(collapse_list(list_key))
     }
 
     onExpand() {
-	      const { dispatch, list_key } = this.props
-	      dispatch(expand_list(list_key))
+	const { dispatch, list_key } = this.props
+	dispatch(expand_list(list_key))
     }
 
     onClickedProject(event, project_id) {
@@ -103,67 +134,68 @@ class ProjectList extends Component {
             selected_project_ids = [project_id]
         }
         dispatch(setGloballySelectedProjectId(project_id))
+        dispatch(setLastSelectedProjectId(project_id))
         onSelectProjects(selected_project_ids)
     }
 
     onChangePage() {
         const { dispatch, list_key } = this.props
-	      dispatch(invalidateList(list_key))
-	      dispatch(fetchProjectsIfNeeded(list_key))
+	dispatch(invalidateList(list_key))
+	dispatch(fetchProjectsIfNeeded(list_key))
     }
 
     onRefresh(event) {
         const { dispatch, list_key } = this.props
-	      dispatch(invalidateList(list_key))
-	      dispatch(invalidateAllProjects())
-	      dispatch(fetchProjectsIfNeeded(list_key))
-	      if ( event ) {
-	          event.stopPropagation()
-	      }
+	dispatch(invalidateList(list_key))
+	dispatch(invalidateAllProjects())
+	dispatch(fetchProjectsIfNeeded(list_key))
+	if ( event ) {
+	    event.stopPropagation()
+	}
     }
 
     renderHeader() {
         const { header_list } = this.props
         return (
             <DivTableHeaderRow>
-            { map(header_list, (v, k) => (
-                <DivTableHeaderCell key={k}
-                                    extra_style={getCellStyle(v)}>
-                  {v.label }
-                </DivTableHeaderCell>
-            ))}
+              { map(header_list, (v, k) => (
+                  <DivTableHeaderCell key={k}
+                                      extra_style={getCellStyle(v)}>
+                    {v.label }
+                  </DivTableHeaderCell>
+              ))}
             </DivTableHeaderRow>
         )
     }
     
     renderCollapsedProject(project) {
-	      const { list_key, loading_item_ids } = this.props
+	const { list_key, loading_item_ids } = this.props
         const is_loading=loading_item_ids.indexOf(project.id) !== -1
         
-	      return (
-	          <div key={"collapsed_project_"+project.id+"_"+list_key}>
+	return (
+	    <div key={"collapsed_project_"+project.id+"_"+list_key}>
               { is_loading && "Loading..." }
               { ! is_loading &&
                 <div>
                   Project: {project.name}
                 </div>
               }
-	          </div>
-	      )
+	    </div>
+	)
     }
 
     render_collapsed() {
-	      const { selected_items } = this.props
+	const { selected_items } = this.props
 
-	      return (
-	          <div className="panel panel--collapsed">
-		          <div className="panel-heading" onClick={this.onExpand}>
-		            <div className="panel__title">
-			            { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
-		            </div>
-		          </div>
-	          </div>
-	      )
+	return (
+	    <div className="panel panel--collapsed">
+	      <div className="panel-heading" onClick={this.onExpand}>
+		<div className="panel__title">
+		  { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
+		</div>
+	      </div>
+	    </div>
+	)
     }
 
     renderExpandedProject(project, index) {
@@ -192,7 +224,7 @@ class ProjectList extends Component {
 
         return (
             <DivTable renderHeader={this.renderHeader}>
-                {projects.map((project, index) => this.renderExpandedProject(project, index))}
+              {projects.map((project, index) => this.renderExpandedProject(project, index))}
             </DivTable>
         )
 
@@ -211,6 +243,7 @@ class ProjectList extends Component {
 }
 
 function mapStateToProps(state, props) {
+    const { project } = state
     const { list_key, header_list } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__PROJECT)
@@ -220,6 +253,7 @@ function mapStateToProps(state, props) {
     const loading_item_ids = getLoadingItemIds(state, list_key)
     const is_loading = isLoading(state, list_key)
     const last_updated = getLastUpdated(state, list_key)
+    const last_selected_project_id = project.last_selected_project_id || null
 
     return {
         list_key: list_key,
@@ -234,7 +268,8 @@ function mapStateToProps(state, props) {
         is_collapsed: display_mode === "collapsed",
         is_expanded: display_mode === "expanded" || display_mode,
         last_updated,
-        header_list
+        header_list,
+        last_selected_project_id: last_selected_project_id
     }
 }
 

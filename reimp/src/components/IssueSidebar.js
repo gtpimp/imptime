@@ -53,7 +53,6 @@ class IssueSidebar extends Component {
         super(props)
         this.toggleShowEmacsHints = this.toggleShowEmacsHints.bind(this)
         this.makeFeatureIssuesSuccessive = this.makeFeatureIssuesSuccessive.bind(this)
-        this.showIssueVisualSpecGallery = this.showIssueVisualSpecGallery.bind(this)
         this.onFullscreen = this.onFullscreen.bind(this)
         this.onExitFullscreen = this.onExitFullscreen.bind(this)
         this.showAddVisualSpecDoc = this.showAddVisualSpecDoc.bind(this)
@@ -72,11 +71,6 @@ class IssueSidebar extends Component {
 
     toggleShowEmacsHints() {
         this.setState({emacs_hint_enabled:!this.state.emacs_hint_enabled})
-    }
-
-    showIssueVisualSpecGallery() {
-        const { issue, history } = this.props
-        history.push('/projects/'+issue.project_id+'/sprints/'+issue.sprint_id+'/issues/'+issue.id+'/gallery/')
     }
 
     showAddVisualSpecDoc() {
@@ -193,18 +187,18 @@ class IssueSidebar extends Component {
             <SidebarProperty key="infostack">
               <SidebarDetail label="Sprint">
                 <EditableIssueInSprint issue_ids={[issue.id]}/>
-            <EditableCopyIssueToSprint issue_ids={[issue.id]} />
-            {/* <div className="property-row">
-                <div className="property-value">
-                
-                </div>
-                <div className="property-col-small">
-                <EditableMoveIssueToSprint issue_ids={[issue.id]} />
-                </div>
-                <div className="property-col-small">
                 <EditableCopyIssueToSprint issue_ids={[issue.id]} />
-                </div>
-                </div> */}
+                {/* <div className="property-row">
+                    <div className="property-value">
+                    
+                    </div>
+                    <div className="property-col-small">
+                    <EditableMoveIssueToSprint issue_ids={[issue.id]} />
+                    </div>
+                    <div className="property-col-small">
+                    <EditableCopyIssueToSprint issue_ids={[issue.id]} />
+                    </div>
+                    </div> */}
               </SidebarDetail>
 
               <SidebarDetail label="Type">
@@ -300,9 +294,9 @@ class IssueSidebar extends Component {
                        placement="bottom"
                        content={
                            <div>A list of features which this issue either partly or completely implements</div>
-                               }
+                       }
               >
-                           <SidebarSectionTitle title="Features implemented" />
+                <SidebarSectionTitle title="Features implemented" />
               </Floater>
               { map(feature_testables, function (feature_testable, index) {
                     const feature_id = feature_testable.feature_ids[0]
@@ -316,17 +310,17 @@ class IssueSidebar extends Component {
                     )
                 })
               }
-                        <div>
-                          { size(testables) === 0 &&
-                            <div>Add a testable to this issue before linking to a feature</div>
-                          }
-                          { size(testables) > 0 &&
-                            <EditableIssueFeature key={`issue_feature_${issue_id}_new`}
-                                                  issue_id={issue_id}
-                                                  feature_id={null}
-                                                  feature_testable_id={null} />
-                          }
-                        </div>
+              <div>
+                { size(testables) === 0 &&
+                  <div>Add a testable to this issue before linking to a feature</div>
+                }
+                { size(testables) > 0 &&
+                  <EditableIssueFeature key={`issue_feature_${issue_id}_new`}
+                                        issue_id={issue_id}
+                                        feature_id={null}
+                                        feature_testable_id={null} />
+                }
+              </div>
             </div>
         )
     }

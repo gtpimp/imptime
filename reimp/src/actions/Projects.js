@@ -24,6 +24,7 @@ export const ANNOUNCE_SAVING_NEW_PROJECT_FAILED = 'ANNOUNCE_SAVING_NEW_PROJECT_F
 export const ANNOUNCE_SAVING_INVITE = 'ANNOUNCE_SAVING_INVITE'
 export const ANNOUNCE_SAVED_INVITE = 'ANNOUNCE_SAVED_INVITE'
 export const ANNOUNCE_SAVE_INVITE_FAILED = 'ANNOUNCE_SAVE_INVITE_FAILED'
+export const SET_LAST_SELECTED_PROJECT = 'SET_LAST_SELECTED_PROJECT'
 
 export function invalidateAllProjects() {
     return {
@@ -328,4 +329,11 @@ export function canShowProjectDelete(project) {
 
 export function is_project_invalidated(state, project_id) {
     return get(state, ["project", "invalidated_item_ids"], []).indexOf(project_id) !== -1
+}
+
+export function setLastSelectedProjectId(project_id) {
+    return {
+        type: SET_LAST_SELECTED_PROJECT,
+        project_id: project_id
+    }
 }
