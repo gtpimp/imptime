@@ -23,25 +23,6 @@ class AccountCreatedPage extends Component {
         dispatch(sendOtpEmail(username))
     }
 
-    /* <div className="blank-page">
-     * <div className="blank-page__header">
-     * <div className="blank-page__logo"></div>
-     * <div className="blank-page__title">Account created</div>
-     * </div>
-     * <div className="blank-container">
-     * <div className="blank-text">
-     * Your account has been created.
-     *            <br/><br/>
-     * Please check your emails and click the link to login and set your password.
-     *                                                         <br/><br/><br/>
-     * <button onClick={this.onSendOtpEmail}
-     * className="button button--large button--login">
-     * Resend Email
-     * </button>
-     * </div>
-     * </div>
-     * </div>*/
-    
     render() {
         return (
             <div className={ main }>

@@ -1,6 +1,6 @@
 import React, {Component, Fragment } from 'react'
 import {connect} from 'react-redux'
-import { css, cx } from 'emotion'
+import { css } from 'emotion'
 import { Link } from 'react-router-dom'
 import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'
@@ -15,7 +15,7 @@ const required = value => (value ? undefined : 'Required')
 class ConfirmOtpLoginForm extends Component {
 
     keyDown = (event) => {
-        const { onCancel, submit } = this.props
+        const { submit } = this.props
         if (event.keyCode === 13) {
             event.preventDefault()
             submit()

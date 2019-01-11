@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
-import cookie from 'react-cookies'
 import { get } from 'lodash'
 import { SubmissionError } from 'redux-form'
 import {withRouter} from 'react-router-dom'
