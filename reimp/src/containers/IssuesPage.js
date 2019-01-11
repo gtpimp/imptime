@@ -54,7 +54,7 @@ class IssuesPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { dispatch, project, sprint, default_issue_id, selected_issue } = new_props
+        const { dispatch, project, sprint, default_issue_id, selected_issue, selected_issue_in_current_sprint } = new_props
         dispatch(ensureProjectsLoaded([new_props.project_id]))
         dispatch(ensureSprintsLoaded([new_props.sprint_id]))
 
@@ -78,7 +78,7 @@ class IssuesPage extends Component {
              ( (project && new_props.project.id !== this.props.project.id) ||
                (sprint && new_props.sprint.id !== this.props.sprint.id) ||
                (selected_issue && new_props.selected_issue.id !== this.props.selected_issue.id) ||
-               (selected_issue && selected_issue.loaded !== false && this.state.breadcrumb_issue_id !== selected_issue.id) ) ) {
+               (selected_issue && selected_issue.loaded !== false && this.state.breadcrumb_issue_id !== selected_issue.id)) ) {
             dispatch(setIssueBreadcrumbsHelper(project, sprint, selected_issue))
             this.setState({'breadcrumb_issue_id': selected_issue.id})
         }
@@ -173,10 +173,9 @@ class IssuesPage extends Component {
 
     render() {
 
-        const { show_sidebar, sidebar_view_mode, project } = this.props
+        const { show_sidebar, sidebar_view_mode, project, selected_issue_in_current_sprint } = this.props
 
         setBrowserTitle(project.name)
-
 
         if ( sidebar_view_mode === 'fullscreen' ) {
             if ( show_sidebar ) {
@@ -198,7 +197,7 @@ class IssuesPage extends Component {
             return (
                 <Splitter name="issues_page">
                   {this.renderLeftPane()}
-                  { (show_sidebar && this.renderRightPane()) || null }
+                  { (show_sidebar && selected_issue_in_current_sprint && this.renderRightPane()) || null }
                 </Splitter>
             )
         }
@@ -221,6 +220,7 @@ function mapStateToProps(state, props) {
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
     const sidebar_view_mode = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "sidebar_view_mode", "right")
     const selected_issue = ( selected_items && selected_items.length > 0 && selected_items[0] ) || null
+    const selected_issue_in_current_sprint = ( selected_issue && selected_issue.sprint_id === sprint_id ) || null
     
     return {
         filter_sprint_id,
@@ -235,7 +235,8 @@ function mapStateToProps(state, props) {
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,
-        sidebar_view_mode
+        sidebar_view_mode,
+        selected_issue_in_current_sprint
     }
 }
 

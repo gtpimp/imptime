@@ -132,6 +132,14 @@ class ScheduleItemPage extends Component {
         )
     }
 
+    renderSprintOptions() {
+        return (
+            <div>
+                <h3>Available projects</h3>
+            </div>
+        )
+    }
+
     renderIssuesForNudge(nudge) {
         const { show_issues_for_nudge } = this.props
         return (

@@ -50,7 +50,7 @@ class IssueViewSet(BaseViewSet):
                 issues = issues.order_by_project_id(project_id=filter_args['sprint_id']) #sic
             if 'copy_sprint_id' in filter_args:
                 issues = issues.order_by_project_id(project_id=filter_args['copy_sprint_id']) #sic
-
+                
             issues = self.apply_pagination(qs=issues, pagination=pagination)
 
             if format_args.get('ids_only', None):
@@ -430,7 +430,7 @@ class IssueViewSet(BaseViewSet):
         assigned_to_ids = raw_filter_args.pop('assigned_to_ids', None)
         if assigned_to_ids:
             qs = qs.filter(assigned_to__in=assigned_to_ids)
-            
+
         return super(IssueViewSet, self).apply_filter(qs=qs, raw_filter_args=raw_filter_args)
 
     @list_route(methods=['POST'])
