@@ -36,7 +36,7 @@ class ConfirmOtpLoginForm extends Component {
             <Fragment>
               <div className={otp_instruction}>
                 <div>
-                  {`We've sent a pin to ${email}.`} &nbsp;
+                  {`We've sent a pin to ${email}`} &nbsp;
                 </div>
               </div>
               <div className={inputFieldDiv}>
@@ -81,7 +81,7 @@ function mapStateToProps(state, props) {
     
     const login_method = match.params.login_method
 
-    const email = match.params.username
+    const email = match.params.username || props.email
     
     return {
         email,
@@ -113,7 +113,7 @@ padding-top: 18px;
 `
 
 const otp_instruction = css`
-font: ${theme.fonts.regular_large};
+font: ${theme.fonts.regular};
 margin: 0;
 margin-bottom: 10px;
 text-align: left;

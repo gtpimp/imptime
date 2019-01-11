@@ -14,10 +14,9 @@ class AccountCreatePage extends Component {
         return dispatch(create_account(values))
     }
 
-    onFormSubmitSuccess = () => {
+    onFormSubmitSuccess = (status, values) => {
         const { history } = this.props
-        history.push('/account/created')
-        return
+        history.push(`/account/created?username=${values.email}`)
     }
     
     render() {

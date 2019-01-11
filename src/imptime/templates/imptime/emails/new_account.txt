@@ -1,9 +1,5 @@
 {% extends "imptime/emails/base.txt" %}
 
 {% block content %}
-
-Your account has been created. Click the link below to login and choose a password:
-
-{{login_link}}
-
+Your account has been created. Please enter the OTP {{otp}} to finalise registration
 {% endblock %}

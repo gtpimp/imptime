@@ -215,14 +215,15 @@ class AutoLoginViewSet(BaseViewSet):
             user.set_unusable_password()
             user.save()
 
-            
-            auto_login_token = UserAutoLoginToken.get_auto_login_token(user)
+            otp = UserOtpToken.get_otp_token(user)
+            email_context = {'otp': otp}
 
-            email_context = {'login_link':settings.WEB_URL_BASE + "/onboarding?autologin="+auto_login_token}
-            plain_content = template.loader.get_template("imptime/emails/new_account.txt").render(email_context)
-            html_content = template.loader.get_template("imptime/emails/new_account.html").render(email_context)
+            plain_template = template.loader.get_template("imptime/emails/new_account.txt")
+            html_template = template.loader.get_template("imptime/emails/new_account.html")
+            plain_content = plain_template.render(email_context)
+            html_content = html_template.render(email_context)
             
-            queue_email(subject_content="ImpTime: Account created",
+            queue_email(subject_content="Account created, your OTP is %s" % otp,
                         from_address=settings.FROM_EMAIL,
                         text_content=plain_content,
                         html_content=html_content,

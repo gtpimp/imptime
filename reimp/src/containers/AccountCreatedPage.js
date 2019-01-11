@@ -2,36 +2,32 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
+import queryString from 'query-string'
 import PageTitle from '../components/PageTitle'
 import PageParagraph from '../components/PageParagraph'
-import { PAGE_KEY__AUTH_PAGE } from '../actions/ItemListKeyRegistry'
-import { sendOtpEmail } from '../actions/Auth'
-import {
-    set_toolbars,
-} from '../actions/Page'
 import { default_theme as theme } from '../theme/default'
+import { login } from '../actions/Auth'
+import ConfirmOtpLoginForm from '../components/form/ConfirmOtpLoginForm'
 
 class AccountCreatedPage extends Component {
     
-    componentDidMount() {
-        const {dispatch} = this.props
-        dispatch(set_toolbars(PAGE_KEY__AUTH_PAGE, []))
-    }
-
-    onSendOtpEmail = () => {
-        const { dispatch, username } = this.props        
-        dispatch(sendOtpEmail(username))
+    onSubmitOtp = (values) => {
+        const { dispatch, username } = this.props
+        values.username = username
+        return dispatch(login(values))
     }
 
     render() {
+        const { username } = this.props
         return (
             <div className={ main }>
               <div className={ box }>
                 <div className={ header }>
                   <PageTitle>Sign in to ImpTime</PageTitle>
                   <PageParagraph>
-                    Please check your emails and click the link to login and set your password.
+                    Please check your email account and enter the code below to continue registration.
                   </PageParagraph>
+                  <ConfirmOtpLoginForm email={username} onFormSubmit={this.onSubmitOtp} />
                 </div>
               </div>
             </div>
@@ -41,8 +37,11 @@ class AccountCreatedPage extends Component {
 
 function mapStateToProps(state, props) {
 
+    const query_params = queryString.parse(props.location.search)
+    
     return {
-        settings: state.settings
+        settings: state.settings,
+        username: query_params.username
     }
 }
 
