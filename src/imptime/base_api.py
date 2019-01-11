@@ -20,6 +20,7 @@ from imptime.models import Mien, CompanyProblem, SprintSnapshot
 from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature, AnnotatedVisualSpecDocument
 from testable.models import Testable
 from invoicing.models import Invoice
+from django.contrib.auth.models import User
 
 class PermissionHelper():
     @classmethod
@@ -193,7 +194,8 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_users(self):
         return ProjectPermissions.viewable_users(self.request.user).distinct()\
-            | CompanyPermissions.viewable_users(self.request.user).distinct()
+            | CompanyPermissions.viewable_users(self.request.user).distinct()\
+            | User.objects.filter(pk=self.request.user.id).distinct()
 
     def allowed_user(self, pk):
         return self.allowed_users().get(pk=pk)

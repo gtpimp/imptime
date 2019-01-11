@@ -107,8 +107,12 @@ class AuthViewSet(BaseViewSet):
         profile.is_onboarded = True
         profile.save()
         context['status'] = 'success'
-        response = RefreshNotifier().notify_model_update(user)
-        return response
+
+        from project_api import ProjectViewSet
+        ProjectViewSet.auto_create_self_project(user)
+        
+        RefreshNotifier().notify_model_update(user)
+        return Response(context)
     
     @list_route(methods=['POST'])
     def change_password(self, request):

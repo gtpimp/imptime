@@ -32,7 +32,9 @@ class Websocket extends Component {
     componentWillUnmount() {
         this._ismounted = false;
         let websocket = this.state.ws;
-        websocket.close();
+        if ( websocket ) {
+            websocket.close();
+        }
     }
 
     logging(logline) {
@@ -74,30 +76,32 @@ class Websocket extends Component {
         }
         let websocket = this.state.ws;
 
-        websocket.onopen = () => {
-            this.onConnectFromSocket();
-        };
+        if ( websocket ) {
+            websocket.onopen = () => {
+                this.onConnectFromSocket();
+            };
 
-        websocket.onmessage = (evt) => {
-            this.onMessageFromSocket(evt.data);
-        };
+            websocket.onmessage = (evt) => {
+                this.onMessageFromSocket(evt.data);
+            };
 
-        websocket.onclose = () => {
-            const that = this
-            this.logging('Websocket disconnected');
-            this.onDisconnectFromSocket()
+            websocket.onclose = () => {
+                const that = this
+                this.logging('Websocket disconnected');
+                this.onDisconnectFromSocket()
 
-            if (this.props.reconnect) {
-                let time = this.generateInterval(this.state.attempts);
-                if ( this._ismounted ) {
-                    this.setState({ws: null})
-                }
-                setTimeout(() => {
+                if (this.props.reconnect) {
+                    let time = this.generateInterval(this.state.attempts);
                     if ( this._ismounted ) {
-                        this.setState({attempts: that.state.attempts+1});
+                        this.setState({ws: null})
                     }
-                    this.setupWebsocket();
-                }, time);
+                    setTimeout(() => {
+                        if ( this._ismounted ) {
+                            this.setState({attempts: that.state.attempts+1});
+                        }
+                        this.setupWebsocket();
+                    }, time);
+                }
             }
         }
     }
