@@ -15,10 +15,10 @@ class NonAuthRouter extends Component {
         
         return (
             <Switch>
-              <Route exact path="/" component={LoginPage}/>
               <Route exact path="/account/confirm-otp/:username/:login_method" component={ConfirmOtpLoginPage}/>
               <Route exact path="/account/change-mobile-by-otp/:email" component={ChangeMobilePage}/>
               <Route exact path="/account/pin-failure/:email" component={PinSendFailureReasons}/>
+              <Route path="/" component={LoginPage}/>
             </Switch>
         )
     }
