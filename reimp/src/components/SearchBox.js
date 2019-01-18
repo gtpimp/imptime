@@ -57,7 +57,7 @@ class SearchBox extends Component {
         const {dispatch, filter_key, setTimeout} = this.props
         const value = evt.target.value
         const that = this
-
+        
         dispatch(clearResults(filter_key))
 
         if (this.filter_timeout_id != null) {
@@ -71,6 +71,7 @@ class SearchBox extends Component {
 
     onFilter(value) {
         const {dispatch, filter_key} = this.props
+        
         dispatch(runFilter(filter_key, value))
         dispatch(showResults(filter_key))
     }
@@ -201,9 +202,6 @@ class SearchBox extends Component {
                   No results
                 </div>
               }
-                
-                
-                
             </div>
         )
     }
@@ -224,13 +222,14 @@ class SearchBox extends Component {
                 </div>
               }
 
-                { show_results && results &&
-                  <ModalDialog variant="large"
-                               onClose={this.onHideResults}
-                               title="Search results">
-                    { this.renderResults(results) }
-                  </ModalDialog>
-              }
+            { show_results && results &&
+              <ModalDialog variant="large"
+                           isOpen={show_results}
+                           onClose={this.onHideResults}
+                           title="Search results">
+                { this.renderResults(results) }
+              </ModalDialog>
+            }
             </SearchBoxDiv>
         )
     }
