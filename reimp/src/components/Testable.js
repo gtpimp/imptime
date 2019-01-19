@@ -7,7 +7,7 @@ import classNames from 'classnames'
 class Testable extends Component {
 
     render() {
-        const { testable, onDelete, onPromoteToIssue, extraActions } = this.props
+        const { issue_id, testable, onDelete, onPromoteToIssue, extraActions } = this.props
 
         return (
             <div className="issue-testable">
@@ -16,7 +16,15 @@ class Testable extends Component {
                 <div>
                   {testable.name}
                 </div>
+                { map(testable.testable_steps, (testable_line) {
+                      <EditableIssueTestableLine issue_id={issue_id}
+                                                 testable_id={testable.id}
+                                                 testable_line_id={testable_line.id} />
+                })}
+
+                !!old!!
                 <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
+                !! old!!
               </div>
 
               <div className="issue-testable__info" >
@@ -63,7 +71,7 @@ class Testable extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { testable, onDelete, onPromoteToIssue, extraActions } = props
+    const { issue_id, testable, onDelete, onPromoteToIssue, extraActions } = props
     
     return {
         testable,

@@ -14,9 +14,9 @@ import {
 } from '../actions/Issues'
 
 import SidebarAddButton from './SidebarAddButton'
-import TestableForm from './form/TestableForm'
+import TestableLineForm from './form/TestableLineForm'
 import { has_permission } from '../actions/Users'
-import Testable from './Testable'
+import TestableLine from './TestableLine'
 
 class EditableIssueTestable extends Component {
 
@@ -24,7 +24,6 @@ class EditableIssueTestable extends Component {
         super(props)
         this.onChange = this.onChange.bind(this)
         this.onDelete = this.onDelete.bind(this)
-        this.onPromoteToIssue = this.onPromoteToIssue.bind(this)
     }
 
     componentWillMount() {
@@ -39,67 +38,58 @@ class EditableIssueTestable extends Component {
     }
 
     onChange(new_value) {
-        const { dispatch, issue_id, testable_id } = this.props
-        if ( testable_id ) {
-            dispatch(updateIssueTestable(issue_id, testable_id, new_value.testable, new_value.name))
+        const { dispatch, issue_id, testable_line_id } = this.props
+        if ( testable_line_id ) {
+            dispatch(updateIssueTestableLine(issue_id, testable_id, testable_line_id, new_value.testable_line))
         } else {
-            dispatch(createIssueTestable(issue_id, new_value.testable, new_value.name))
+            dispatch(createIssueTestableLine(issue_id, testable_id, new_value.testable_line))
         }
     }
 
     onDelete(event) {
-        const { dispatch, issue_id, testable_id } = this.props
+        const { dispatch, issue_id, testable_id, testable_line_id } = this.props
         event.stopPropagation()
-        if (! window.confirm("Are you sure you want to delete this testable?" ) ) {
+        if (! window.confirm("Are you sure you want to delete this testable line?" ) ) {
             return false;
         }
-        dispatch(deleteIssueTestable(issue_id, testable_id))
+        dispatch(deleteIssueTestableLine(issue_id, testable_id, testable_line_id))
     }
 
-    onPromoteToIssue(event) {
-        const { dispatch, issue_id, testable_id } = this.props
-        event.stopPropagation()
-        if ( ! window.confirm( "Convert this testable to a new issue?" ) ) {
-            return
-        }
-        dispatch(promoteIssueTestableToIssue(issue_id, testable_id))
-    }
-
-    render() {
-        const {testable, can_edit, issue_id, project_id} = this.props
+    render()
+    {
+        const {testable, testable_line, can_edit, issue_id, project_id} = this.props
         return (
 
             <PermissionInspectorHighlighter project_id={project_id}
                                             permission_name='has_edit_description'>
-              { testable.id &&
+              { testable_line.id &&
                 <EditableProperty property_key={'issue_testable_'+issue_id+'_'+testable.id}
                                   initial_value={testable}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                 >
-                  <TestableForm form={'issue_testable_form_'+issue_id+'_'+testable.id}
+                  <TestableLineForm form={'issue_testable_line_form_'+issue_id+'_'+testable.id+'_'+testable_line.id}
                                 testable={testable}/>
-                  <Testable testable={testable}
-                            onDelete={this.onDelete}
-                            onPromoteToIssue={this.onPromoteToIssue}
+                  <TestableLine testable_line={testable_line}
+                                onDelete={this.onDelete}
                   />
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
 
               <div className="issue-testable__button-bar">
-                { ! testable.id &&
+                { ! testable_line.id &&
                   <div className="issue-testable__button-bar__container">
                     <EditableProperty property_key={'issue_testable_'+issue_id}
                                       initial_value=''
                                       onChange={this.onChange}
                                       can_edit={can_edit}
                       >
-                      <TestableForm form={'issue_testable_form_'+issue_id} />
+                      <TestableLineForm form={'issue_testable_line_form_'+issue_id+'_'+testable.id} />
                       <div className="text-component--readonly"></div>
                       <div className="text-component--empty">
                         <div className="text-component--testable">
-                          <SidebarAddButton label="Add testable" />
+                          <SidebarAddButton label="Add testable line" />
                         </div>
                       </div>
                     </EditableProperty>
@@ -114,7 +104,7 @@ class EditableIssueTestable extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { issue_id, testable_id } = props
+    const { issue_id, testable_id, testable_line_id } = props
     const issue = getIssue(state, issue_id) || {}
     const can_edit = has_permission(state, issue.project_id, 'has_edit_description')
 
@@ -125,13 +115,22 @@ function mapStateToProps(state, props) {
         }
     })
 
+    let testable_line = { id: null }
+    map(get(testable, ["lines"], []), function(issue_testable_line, index) {
+        if ( issue_testable_line.id === testable_line_id ) {
+            testable_line = issue_testable_line
+        }
+    })
+    
+
     return {
-        issue_id: issue_id,
+        issue_id,
         issue,
         sprint_id: issue.sprint_id,
-        testable_id: testable_id,
-        testable: testable,
-        can_edit: can_edit,
+        testable_id,
+        testable,
+        testable_line,
+        can_edit,
         project_id: issue.project_id,
         is_invalidated: is_issue_invalidated(state, issue.id),
     }
