@@ -6,14 +6,23 @@ import {
     ensureFeaturesLoaded,
     getFeature,
     is_feature_invalidated,
-    /*addIssueToFeatureTestable*/
+    addIssueToFeatureTestable,
+    removeIssueToFeatureTestable
 } from '../actions/Features'
 import SidebarAddButton from './SidebarAddButton'
 import { has_permission } from '../actions/Users'
 import Testable from './Testable'
+import ModalDialog from './ModalDialog'
+import IssueSelectorForm from './form/IssueSelectorForm'
+import IssueName from './IssueName'
 
 class FeatureTestable extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = {creatingIssueForTestable: false}
+    }
+    
     componentWillMount() {
         const { dispatch, feature_id } = this.props
         dispatch(ensureFeaturesLoaded([feature_id]))
@@ -25,14 +34,72 @@ class FeatureTestable extends Component {
         dispatch(ensureFeaturesLoaded([feature_id]))
     }
 
-    render() {
-        const {testable, can_edit, project_id} = this.props
+    onCancelCreateIssueForTestable = () => {
+        this.setState({creatingIssueForTestable: false})
+    }
 
-        const extra_actions = [ {'label': 'Link issue',
-                                 'onClick': () => { alert("nope") } } ]
+    createIssueForTestable = (evt) => {
+        evt.stopPropagation()
+        this.setState({creatingIssueForTestable: true})
+    }
+
+    onRemoveIssueFromFeature = (evt, issue_id) => {
+        const { dispatch, feature_id, testable } = this.props
+        evt.stopPropagation()
+        if ( ! window.confirm("Unassociate this issue from this testable?\n(The issue won't be deleted)") ) {
+            return
+        }
+        dispatch(removeIssueToFeatureTestable(feature_id, testable.id, issue_id))
+    }
+
+    onCreatedIssueForTestable = (new_values) => {
+        const { dispatch, feature_id, testable } = this.props
+        const { issue_id } = new_values
+        this.setState({creatingIssueForTestable: false})
+        dispatch(addIssueToFeatureTestable(feature_id, testable.id, issue_id))
+    }
+
+    renderCreateIssueForTestable = () => {
+        const { testable } = this.props
+        return (
+            <ModalDialog isOpen={true}
+                         onClose={this.onCancelCreateIssueForTestable}
+                         title={`Select issue for testable`}
+                         variant="large">
+              <div className="editable-property-modal__row editable-property-modal__row--header">
+                <label className="editable-property-modal__title">
+                  Select or create an issue for testable {testable.name}
+                </label>
+              </div>
+              <IssueSelectorForm optional_default_issue_values={{issue_type:'issue'}}
+                                 onSubmitted={this.onCreatedIssueForTestable}/>
+            </ModalDialog>
+        )
+    }
+
+    render() {
+        const that = this
+        const {testable, can_edit, project_id} = this.props
+        const { creatingIssueForTestable } = this.state
+
+        const extra_actions = [ {label: 'Link issue',
+                                 onClick: this.createIssueForTestable} ]
+
+
+        map(testable.implementing_issue_ids, (issue_id) => {
+            extra_actions.push({onClick: null,
+                                label: (
+                                    <div>
+                                      <IssueName issue_id={issue_id}/>
+                                      <div className="issue__small-delete-image"
+                                           onClick={(evt) => that.onRemoveIssueFromFeature(evt, issue_id)} />
+                                    </div>
+                                )})
+        })
         
         return (
             <div>
+              { creatingIssueForTestable && this.renderCreateIssueForTestable() }
               { testable.id && 
                 <Testable testable={testable}
                           project_id={project_id}
