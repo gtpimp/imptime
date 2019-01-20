@@ -34,11 +34,11 @@ class Testable extends Component {
                   <EditableTestableName testable={testable}
                                         can_edit={can_edit} />
                 </div>
-                { map(testable.testable_line_ids, (testable_line_id) => {
+                { map(testable.testable_line_ids, (testable_line_id) =>
                       <EditableTestableLine testable_id={testable.id}
                                             can_edit={can_edit}
                                             testable_line_id={testable_line_id} />
-                })}
+                )}
 
                 !!old!!
                 <RenderedMarkdown content={testable.enriched_steps || testable.steps} />

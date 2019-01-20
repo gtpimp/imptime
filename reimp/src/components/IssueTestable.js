@@ -1,8 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import EditableProperty from './form/EditableProperty'
-import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     /*createIssueTestable,*/
     ensureIssuesLoaded,
@@ -86,6 +84,7 @@ function mapStateToProps(state, props) {
         testable: testable,
         project_id: issue.project_id,
         is_invalidated: is_issue_invalidated(state, issue.id),
+        can_edit
     }
 }
 

@@ -1,11 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
 import EditableProperty from './form/EditableProperty'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import SidebarAddButton from './SidebarAddButton'
 import TestableLineForm from './form/TestableLineForm'
-import { has_permission } from '../actions/Users'
 import TestableLine from './TestableLine'
 import Loading from './Loading'
 import {
@@ -116,6 +114,7 @@ function mapStateToProps(state, props) {
         testable_line_id,
         testable_line,
         can_edit,
+        testable_id,
         is_invalidated: is_testable_line_invalidated(state, testable_line_id),
     }
 }

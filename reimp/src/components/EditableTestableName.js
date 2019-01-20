@@ -1,13 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import map from 'lodash/map'
 import EditableProperty from './form/EditableProperty'
-import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     updateTestableName
 } from '../actions/Testables'
 import TestableNameForm from './form/TestableNameForm'
-import { has_permission } from '../actions/Users'
 
 class EditableTestableName extends Component {
 

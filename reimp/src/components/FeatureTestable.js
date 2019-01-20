@@ -1,14 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
-import EditableProperty from './form/EditableProperty'
-import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import {
     /*createFeatureTestable,*/
     ensureFeaturesLoaded,
     getFeature,
     is_feature_invalidated,
-    addIssueToFeatureTestable
+    /*addIssueToFeatureTestable*/
 } from '../actions/Features'
 import SidebarAddButton from './SidebarAddButton'
 import { has_permission } from '../actions/Users'
@@ -30,7 +28,8 @@ class FeatureTestable extends Component {
     render() {
         const {testable, can_edit, project_id} = this.props
 
-        const extra_actions = []
+        const extra_actions = [ {'label': 'Link issue',
+                                 'onClick': () => { alert("nope") } } ]
         
         return (
             <div>
@@ -76,6 +75,7 @@ function mapStateToProps(state, props) {
         testable: testable,
         project_id: feature.project_id,
         is_invalidated: is_feature_invalidated(state, feature.id),
+        can_edit
     }
 }
 

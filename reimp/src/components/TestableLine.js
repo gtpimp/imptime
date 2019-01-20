@@ -1,7 +1,5 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
-import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
 
 class TestableLine extends Component {
