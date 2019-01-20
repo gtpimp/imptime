@@ -1,13 +1,8 @@
 import logging
 from base_serializer import BaseSerializer
 from rest_framework import serializers
+from testable_line_serializer import TestableLineSerializer
 logger = logging.getLogger(__name__)
-
-class TestableStepSerializer(BaseSerializer):
-    id = serializers.CharField()
-    instruction = serializers.CharField()
-    order = serializers.IntegerField()
-    refers_to_testable_id = serializers.CharField()
 
 class TestableSerializer(BaseSerializer):
     id = serializers.CharField()
@@ -15,7 +10,7 @@ class TestableSerializer(BaseSerializer):
     enriched_steps = serializers.CharField()
     name = serializers.CharField()
     quality_error = serializers.CharField()
-    testable_steps = serializers.ListField(TestableStepSerializer, source="testable_steps_in_order")
+    testable_lines = serializers.ListField(TestableLineSerializer, source="testable_lines_in_order")
     implementing_issue_ids = serializers.ListField(serializers.CharField())
     feature_ids = serializers.ListField(serializers.CharField())
 
@@ -24,9 +19,9 @@ class TestableSerializer(BaseSerializer):
         obj.steps = self.convert_list_to_numbered_list(obj.steps)
         obj.implementing_issue_ids = [x.id for x in obj.implementing_issues.all()]
 
-        steps = [x for x in obj.testable_steps.all()]
-        steps.sort(key=lambda x: x.order)
-        obj.testable_steps_in_order = steps
+        lines = [x for x in obj.testable_lines.all()]
+        lines.sort(key=lambda x: x.order)
+        obj.testable_lines_in_order = lines
         obj.feature_ids = [x.id for x in obj.features.all()]
         
         return super(TestableSerializer, self).to_representation(obj, *args, **kwargs)

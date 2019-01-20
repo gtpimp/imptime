@@ -9,7 +9,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureFeaturesLoaded, getFeature, deleteFeatures} from '../actions/Features'
 import EditableFeatureName from './EditableFeatureName'
 import EditableFeatureDescription from './EditableFeatureDescription'
-import EditableFeatureTestable from './EditableFeatureTestable'
+import FeatureTestable from './FeatureTestable'
 import SidebarSectionTitle from './SidebarSectionTitle'
 import SidebarProperty from './SidebarProperty'
 import SidebarAddButton from './SidebarAddButton'
@@ -59,10 +59,10 @@ class FeatureSidebar extends Component {
         return (
             <PropertyStackComponent title="Testables">
               { map(testables, function (testable, index) {
-                    return <EditableFeatureTestable key={feature.id+"_"+testable.id} feature_id={feature.id} testable_id={testable.id}/>
+                    return <FeatureTestable feature_id={feature.id} testable_id={testable.id}/>
                 })
               }
-              <EditableFeatureTestable feature_id={feature.id} testable_id={null}/>
+              <FeatureTestable feature_id={feature.id} testable_id={null}/>
             </PropertyStackComponent>
         )
     }

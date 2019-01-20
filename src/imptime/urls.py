@@ -36,6 +36,7 @@ import sprint_roadmap_api
 import sprint_snapshot_api
 import sprint_user_rate_api
 import testable_api
+import testable_line_api
 import tag_api
 import time_chart_api
 import time_summary_api
@@ -98,6 +99,8 @@ router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
 router.register(r'feature/testable', testable_api.TestableViewSet,
                 base_name='testable')
+router.register(r'testable_line', testable_line_api.TestableLineViewSet,
+                base_name='testable_line')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,
                 base_name='visual_spec_document')
 router.register(r'annotated_visual_spec_document', annotated_visual_spec_document_api.AnnotatedVisualSpecDocumentViewSet,

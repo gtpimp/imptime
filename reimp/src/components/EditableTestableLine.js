@@ -108,10 +108,8 @@ class EditableTestableLine extends Component {
 
 function mapStateToProps(state, props) {
 
-    const { project_id, testable_id, testable_line_id } = props
-    const can_edit = has_permission(state, project_id, 'has_edit_description')
+    const { project_id, can_edit, testable_id, testable_line_id } = props
     const testable_line = getTestableLine(state, testable_line_id)
-    let testable = { id: null}
     
     return {
         project_id,
@@ -123,4 +121,4 @@ function mapStateToProps(state, props) {
 }
 
 
-export default connect(mapStateToProps)(EditableIssueTestable)
+export default connect(mapStateToProps)(EditableTestableLine)

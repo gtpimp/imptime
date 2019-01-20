@@ -18,7 +18,7 @@ from imptime.models import VisualSpecDocument, VisualSpecIssue, ReleaseNote, Nud
 from imptime.models import WikiPage, VisualSpecAnnotation
 from imptime.models import Mien, CompanyProblem, SprintSnapshot
 from imptime.models import Schedule, ScheduleItem, IssueHistory, Feature, AnnotatedVisualSpecDocument
-from testable.models import Testable
+from testable.models import Testable, TestableLine
 from invoicing.models import Invoice
 from django.contrib.auth.models import User
 
@@ -268,6 +268,9 @@ class BaseViewSet(viewsets.ViewSet):
 
     def allowed_testables(self):
         return Testable.objects.filter(project__in=self.allowed_projects()) 
+
+    def allowed_testable_lines(self):
+        return TestableLine.objects.filter(testable__project__in=self.allowed_projects())
     
     def allowed_issue_histories(self): 
         non_sensitive = IssueHistory.objects.filter(money_sensitive=False,

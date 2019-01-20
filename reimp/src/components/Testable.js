@@ -3,23 +3,26 @@ import {connect} from 'react-redux'
 import { map } from 'lodash'
 import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
+import EditableTestableLine from './EditableTestableLine'
+import EditableTestableName from './EditableTestableName'
 
 class Testable extends Component {
 
     render() {
-        const { issue_id, testable, onDelete, onPromoteToIssue, extraActions } = this.props
+        const { testable, onDelete, extraActions } = this.props
 
         return (
             <div className="issue-testable">
 
               <div className="issue-testable__text" >
                 <div>
-                  {testable.name}
+                  <EditableTestableName testable={testable}
+                                        can_edit={can_edit} />
                 </div>
                 { map(testable.testable_steps, (testable_line) {
-                      <EditableIssueTestableLine issue_id={issue_id}
-                                                 testable_id={testable.id}
-                                                 testable_line_id={testable_line.id} />
+                      <EditableTestableLine testable_id={testable.id}
+                                            can_edit={can_edit}
+                                            testable_line_id={testable_line.id} />
                 })}
 
                 !!old!!
@@ -40,11 +43,6 @@ class Testable extends Component {
                   </div>      
                 }
                 <div className="issue_sidebar__options">
-                  { onPromoteToIssue &&
-                    <div onClick={onPromoteToIssue} className="issue_sidebar__options__left">
-                      Promote to issue
-                    </div>
-                  }
                   { onDelete &&
                     <div onClick={onDelete} className="issue_sidebar__options__left">
                       <span className="issue_sidebar__options__spacer">|</span>
@@ -71,12 +69,13 @@ class Testable extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { issue_id, testable, onDelete, onPromoteToIssue, extraActions } = props
+    const { project_id, testable, can_edit, onDelete, extraActions } = props
     
     return {
+        project_id,
         testable,
+        can_edit, 
         onDelete,
-        onPromoteToIssue,
         extraActions
     }
 }

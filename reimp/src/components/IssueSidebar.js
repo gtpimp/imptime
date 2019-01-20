@@ -9,8 +9,8 @@ import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueDueDate from './EditableIssueDueDate'
 import EditableIssueRisky from './EditableIssueRisky'
 import EditableIssueComment from './EditableIssueComment'
-import EditableIssueTestable from './EditableIssueTestable'
 import EditableCopyIssueToSprint from './EditableCopyIssueToSprint'
+import IssueTestable from './IssueTestable'
 import MienFeature from './MienFeature'
 import TagListFlat from './TagListFlat'
 import EditableIssueInSprint from './EditableIssueInSprint'
@@ -255,15 +255,15 @@ class IssueSidebar extends Component {
     }
 
     renderTestablesStack() {
-        const { issue, testables } = this.props
+        const { issue_id, testables } = this.props
         return (
             <div key="testablestack">
               <SidebarSectionTitle title="Testables" />
               { map(testables, function (testable, index) {
-                    return <EditableIssueTestable key={issue.id+"_"+testable.id} issue_id={issue.id} testable_id={testable.id}/>
+                    return <IssueTestable issue_id={issue_id} testable_id={testable.id} />
                 })
               }
-              <EditableIssueTestable issue_id={issue.id} testable_id={null}/>
+              <IssueTestable issue_id={issue_id} testable_id={null} />
             </div>
         )
     }

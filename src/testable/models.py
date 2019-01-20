@@ -84,10 +84,10 @@ class Testable(models.Model):
             c += 1
 
             
-class TestableStep(models.Model):
+class TestableLine(models.Model):
     instruction = models.TextField(null=False)
-    testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_steps')
-    refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='referred_by_testable_steps')
+    testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_lines')
+    refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='referred_by_testable_lines')
     order = models.IntegerField(null=False, default=0)
 
 
