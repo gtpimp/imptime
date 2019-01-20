@@ -10,7 +10,7 @@ class TestableSerializer(BaseSerializer):
     enriched_steps = serializers.CharField()
     name = serializers.CharField()
     quality_error = serializers.CharField()
-    testable_lines = serializers.ListField(TestableLineSerializer, source="testable_lines_in_order")
+    testable_line_ids = serializers.ListField(serializers.CharField())
     implementing_issue_ids = serializers.ListField(serializers.CharField())
     feature_ids = serializers.ListField(serializers.CharField())
 
@@ -18,6 +18,7 @@ class TestableSerializer(BaseSerializer):
         obj.name = obj.name or "Testable %s" % obj.order
         obj.steps = self.convert_list_to_numbered_list(obj.steps)
         obj.implementing_issue_ids = [x.id for x in obj.implementing_issues.all()]
+        obj.testable_line_ids = obj.testable_lines.all().order_by("order").values_list("id", flat=True)
 
         lines = [x for x in obj.testable_lines.all()]
         lines.sort(key=lambda x: x.order)

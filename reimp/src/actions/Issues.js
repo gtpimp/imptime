@@ -206,18 +206,6 @@ export function deleteIssueComment(issue_id, comment_id) {
     return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
 }
 
-export function updateIssueTestable(issue_id, testable_id, new_testable, name) {
-    const url = "imp/issue/testable/0/"
-    const field_name = "testable"
-    const field_value = new_testable
-    const method = "PUT"
-    const data = { issue_id: issue_id,
-                   testable_id: testable_id,
-                   name: name,
-                   testable: new_testable }
-    return itemPost(ENTITY_KEY__ISSUE, [issue_id], url, field_name, field_value, method, data)
-}
-
 export function createIssueTestable(issue_id, new_testable, name) {
     const url = "imp/issue/testable/"
     const field_name = "testable"

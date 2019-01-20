@@ -71,6 +71,7 @@ export const ENTITY_KEY__SPRINT_USER_RATE = 'sprint_user_rate'
 export const ENTITY_KEY__WORK_SUMMARY = 'work_summary'
 export const ENTITY_KEY__SPRINT_COST_SUMMARY = 'sprint_cost_summary'
 export const ENTITY_KEY__SPRINT_SNAPSHOT = 'sprint_snapshot'
+export const ENTITY_KEY__TESTABLE = 'testable'
 export const ENTITY_KEY__TESTABLE_LINE = 'testable_line'
 
 // Temporary list to keep track of which entities are using the new actions/Item.js
@@ -90,6 +91,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT,
                                   ENTITY_KEY__SPRINT_COST_SUMMARY,
                                   ENTITY_KEY__SPRINT_SNAPSHOT,
+                                  ENTITY_KEY__TESTABLE,
                                   ENTITY_KEY__TESTABLE_LINE ]
 
 export const PAGE_KEY__CALENDAR_PAGE = 'calendar_page'

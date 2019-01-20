@@ -39,24 +39,26 @@ class IssueTestable extends Component {
     render() {
         const {testable, can_edit, project_id} = this.props
 
-        const extra_actions = { label: "Promote to issue",
-                                onClick: this.onPromoteToIssue }
+        const extra_actions = [ {label: "Promote to issue",
+                                 onClick: this.onPromoteToIssue} ]
         
         return (
-            { testable.id && 
-              <Testable testable={testable}
-                        project_id={project_id}
-                        can_edit={can_edit}
-                        onDelete={this.onDelete}
-                        extra_actions={extra_actions}
-              />
-            }
-            { ! testable.id && 
-              <div className="text-component--testable">
-                <SidebarAddButton label="Add testable"
-                                  onButtonClick={alert("not yet")} />
-              </div>
-            }
+            <div>
+              { testable.id && 
+                <Testable testable={testable}
+                          project_id={project_id}
+                          can_edit={can_edit}
+                          onDelete={this.onDelete}
+                          extra_actions={extra_actions}
+                />
+              }
+                { ! testable.id && 
+                  <div className="text-component--testable">
+                    <SidebarAddButton label="Add testable"
+                                      onButtonClick={alert("not yet")} />
+                  </div>
+                }
+            </div>
         )
     }
 }
@@ -68,7 +70,7 @@ function mapStateToProps(state, props) {
     const can_edit = has_permission(state, issue.project_id, 'has_edit_description')
 
     let testable = { id: null}
-    if { testable_id } {
+    if ( testable_id ) {
         map(issue.testables || [], function(issue_testable, index) {
             if ( issue_testable.id === testable_id ) {
                 testable = issue_testable

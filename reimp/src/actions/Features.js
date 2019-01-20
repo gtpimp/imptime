@@ -237,18 +237,6 @@ export function deleteTagFromFeatures(tag_id, feature_ids) {
     return itemPost(ENTITY_KEY__FEATURE, feature_ids, url, field_name, field_value, method, data)
 }
 
-export function updateFeatureTestable(feature_id, testable_id, new_testable, name) {
-    const url = "imp/issue/testable/0/"
-    const field_name = "testable"
-    const field_value = new_testable
-    const method = "PUT"
-    const data = { feature_id: feature_id,
-                   testable_id: testable_id,
-                   testable: new_testable,
-                   name: name }
-    return itemPost(ENTITY_KEY__FEATURE, [feature_id], url, field_name, field_value, method, data)
-}
-
 export function createFeatureTestable(feature_id, new_testable, name) {
     const url = "imp/issue/testable/"
     const field_name = "testable"

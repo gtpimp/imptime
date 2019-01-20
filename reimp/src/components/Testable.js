@@ -5,11 +5,26 @@ import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
 import EditableTestableLine from './EditableTestableLine'
 import EditableTestableName from './EditableTestableName'
+import { ensureTestableLinesLoaded } from '../actions/TestableLines'
 
 class Testable extends Component {
 
+    componentWillMount() {
+        const { dispatch, testable } = this.props
+        if ( testable.testable_line_ids ) {
+            dispatch(ensureTestableLinesLoaded(testable.testable_line_ids))
+        }
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { dispatch, testable } = new_props
+        if ( testable.testable_line_ids ) {
+            dispatch(ensureTestableLinesLoaded(testable.testable_line_ids))
+        }
+    }
+    
     render() {
-        const { testable, onDelete, extraActions } = this.props
+        const { testable, onDelete, extraActions, can_edit } = this.props
 
         return (
             <div className="issue-testable">
@@ -19,10 +34,10 @@ class Testable extends Component {
                   <EditableTestableName testable={testable}
                                         can_edit={can_edit} />
                 </div>
-                { map(testable.testable_steps, (testable_line) {
+                { map(testable.testable_line_ids, (testable_line_id) => {
                       <EditableTestableLine testable_id={testable.id}
                                             can_edit={can_edit}
-                                            testable_line_id={testable_line.id} />
+                                            testable_line_id={testable_line_id} />
                 })}
 
                 !!old!!

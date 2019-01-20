@@ -99,6 +99,8 @@ router.register(r'issue/testable', testable_api.TestableViewSet,
                 base_name='testable')
 router.register(r'feature/testable', testable_api.TestableViewSet,
                 base_name='testable')
+router.register(r'testable', testable_api.TestableViewSet,
+                base_name='testable')
 router.register(r'testable_line', testable_line_api.TestableLineViewSet,
                 base_name='testable_line')
 router.register(r'visual_spec_document', visual_spec_document_api.VisualSpecDocumentViewSet,

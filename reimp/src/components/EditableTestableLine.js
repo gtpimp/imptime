@@ -10,11 +10,11 @@ import TestableLine from './TestableLine'
 import Loading from './Loading'
 import {
     getTestableLine,
-    ensureTestableLineLoaded,
+    ensureTestableLinesLoaded,
     updateTestableLine,
     createTestableLine,
     deleteTestableLine,
-    is_testable_invalidated
+    is_testable_line_invalidated
 } from '../actions/TestableLines'
 
 class EditableTestableLine extends Component {
@@ -27,13 +27,13 @@ class EditableTestableLine extends Component {
 
     componentWillMount() {
         const { dispatch, testable_line_id } = this.props
-        dispatch(ensureTestableLineLoaded([testable_line_id]))
+        dispatch(ensureTestableLinesLoaded([testable_line_id]))
     }
 
     componentWillReceiveProps(new_props) {
         const { dispatch } = this.props
         const { testable_line_id } = new_props
-        dispatch(ensureTestableLineLoaded([testable_line_id]))
+        dispatch(ensureTestableLinesLoaded([testable_line_id]))
     }
 
     onChange(new_value) {
@@ -89,7 +89,7 @@ class EditableTestableLine extends Component {
                                       onChange={this.onChange}
                                       can_edit={can_edit}
                       >
-                      <TestableLineForm form={'issue_testable_line_form_'+issue_id+'_'+testable.id} />
+                      <TestableLineForm form={'testable_line_form_'+testable_line.id} />
                       <div className="text-component--readonly"></div>
                       <div className="text-component--empty">
                         <div className="text-component--testable">
@@ -116,7 +116,7 @@ function mapStateToProps(state, props) {
         testable_line_id,
         testable_line,
         can_edit,
-        is_invalidated: is_testable_invalidated(state, testable_line_id),
+        is_invalidated: is_testable_line_invalidated(state, testable_line_id),
     }
 }
 

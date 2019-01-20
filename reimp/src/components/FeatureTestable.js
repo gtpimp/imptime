@@ -27,36 +27,28 @@ class FeatureTestable extends Component {
         dispatch(ensureFeaturesLoaded([feature_id]))
     }
 
-    onPromoteToFeature = (event) => {
-        const { dispatch, feature_id, testable_id } = this.props
-        event.stopPropagation()
-        if ( ! window.confirm( "Convert this testable to a new feature?" ) ) {
-            return
-        }
-        dispatch(promoteFeatureTestableToFeature(feature_id, testable_id))
-    }
-
     render() {
         const {testable, can_edit, project_id} = this.props
 
-        const extra_actions = { label: "Promote to feature",
-                                onClick: this.onPromoteToFeature }
+        const extra_actions = []
         
         return (
-            { testable.id && 
-              <Testable testable={testable}
-                        project_id={project_id}
-                        can_edit={can_edit}
-                        onDelete={this.onDelete}
-                        extra_actions={extra_actions}
-              />
-            }
-            { ! testable.id && 
-              <div className="text-component--testable">
-                <SidebarAddButton label="Add testable"
-                                  onButtonClick={alert("not yet")} />
-              </div>
-            }
+            <div>
+              { testable.id && 
+                <Testable testable={testable}
+                          project_id={project_id}
+                          can_edit={can_edit}
+                          onDelete={this.onDelete}
+                          extra_actions={extra_actions}
+                />
+              }
+                { ! testable.id && 
+                  <div className="text-component--testable">
+                    <SidebarAddButton label="Add testable"
+                                      onButtonClick={alert("not yet")} />
+                  </div>
+                }
+            </div>
         )
     }
 }
@@ -68,7 +60,7 @@ function mapStateToProps(state, props) {
     const can_edit = has_permission(state, feature.project_id, 'has_edit_description')
 
     let testable = { id: null}
-    if { testable_id } {
+    if ( testable_id ) {
         map(feature.testables || [], function(feature_testable, index) {
             if ( feature_testable.id === testable_id ) {
                 testable = feature_testable
