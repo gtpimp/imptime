@@ -243,6 +243,24 @@ class FeatureViewSet(BaseViewSet):
 
         return HttpResponse(JSONRenderer().render(data))
 
+    @list_route(methods=['POST'])
+    def auto_create_issues_from_features(self, request):
+        try:
+            params = request.data
+            project_id = params['project_id']
+            feature_id = params['feature_id']
+
+            project = self.allowed_project(project_id)
+            feature = self.allowed_feature(feature_id)
+            
+            BulkTextParser(request.user).auto_create_issues_for_leaf_features(project, feature)
+            data = {'status': 'success'}
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+            
     @detail_route(methods=['PUT'])
     def addIssueToFeatureTestable(self, request, pk):
         try:
