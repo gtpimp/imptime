@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import {
-    /*createFeatureTestable,*/
+    createFeatureTestable,
     ensureFeaturesLoaded,
     getFeature,
     is_feature_invalidated,
@@ -36,6 +36,12 @@ class FeatureTestable extends Component {
 
     onCancelCreateIssueForTestable = () => {
         this.setState({creatingIssueForTestable: false})
+    }
+
+    createTestable = (evt) => {
+        const { dispatch, feature_id } = this.props
+        evt.stopPropagation()
+        dispatch(createFeatureTestable(feature_id, [], null))
     }
 
     createIssueForTestable = (evt) => {
@@ -108,12 +114,12 @@ class FeatureTestable extends Component {
                           extra_actions={extra_actions}
                 />
               }
-                { ! testable.id && 
-                  <div className="text-component--testable">
-                    <SidebarAddButton label="Add testable"
-                                      onButtonClick={alert("not yet")} />
-                  </div>
-                }
+              { ! testable.id && 
+                <div className="text-component--testable">
+                  <SidebarAddButton label="Add testable"
+                                    onButtonClick={that.createTestable} />
+                </div>
+              }
             </div>
         )
     }

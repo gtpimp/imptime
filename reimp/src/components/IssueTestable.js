@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import map from 'lodash/map'
 import {
-    /*createIssueTestable,*/
+    createIssueTestable,
     ensureIssuesLoaded,
     getIssue,
     is_issue_invalidated,
@@ -34,6 +34,12 @@ class IssueTestable extends Component {
         dispatch(promoteIssueTestableToIssue(issue_id, testable_id))
     }
 
+    createTestable = (evt) => {
+        const { dispatch, feature_id } = this.props
+        evt.stopPropagation()
+        dispatch(createIssueTestable(feature_id, [], null))
+    }
+
     render() {
         const {testable, can_edit, project_id} = this.props
 
@@ -50,12 +56,12 @@ class IssueTestable extends Component {
                           extra_actions={extra_actions}
                 />
               }
-                { ! testable.id && 
-                  <div className="text-component--testable">
-                    <SidebarAddButton label="Add testable"
-                                      onButtonClick={alert("not yet")} />
-                  </div>
-                }
+              { ! testable.id && 
+                <div className="text-component--testable">
+                  <SidebarAddButton label="Add testable"
+                                    onButtonClick={this.createTestable} />
+                </div>
+              }
             </div>
         )
     }
