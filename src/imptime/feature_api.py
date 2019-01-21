@@ -250,7 +250,7 @@ class FeatureViewSet(BaseViewSet):
             project_id = params['project_id']
             project = self.allowed_project(project_id)
             features = project.features.all()
-            BulkTextParser(request.user).auto_create_issues_for_leaf_features(project, features)
+            BulkTextParser(request.user).auto_create_issues_for(project, features)
             data = {'status': 'success'}
             
         except Exception, ex:

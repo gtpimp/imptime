@@ -303,26 +303,10 @@ export function removeIssueToFeatureTestable(feature_id, testable_id, issue_id) 
 }
 
 export function autoCreateIssuesFromFeatures(project_id) {
-    return (dispatch, getState) => {
-        const state = getState()
-        let data = { project_id: project_id
-        }
-        return impfetch( state, "imp/feature/auto_create_issues_from_features/", dispatch,
-                         {method: "POST",
-                          credentials: 'same-origin',
-                          data: data,
-                          headers: {"Content-type": "application/json; charset=UTF-8"},
-                          body: JSON.stringify(data)}
-        ).then(response => response.json())
-         .then(json => {
-             if ( json.status !== 'success' ) {
-                 console.log('Request failed with JSON response', json);
-             } else {
-                 console.log('Request succeeded with JSON response', json);
-             }
-         })
-         .catch(function (error) {
-             console.log('Request failed', error);
-         })
-    }
+    const url = `imp/feature/auto_create_issues_from_features/`
+    const field_name = "project_id"
+    const field_value = project_id
+    const method = "POST"
+    const data = { project_id: project_id }
+    return itemPost(ENTITY_KEY__FEATURE, [project_id], url, field_name, field_value, method, data)
 }
