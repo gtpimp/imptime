@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { startCandidateFeature, autoCreateIssuesFromFeatures, fetchFeaturesIfNeeded } from '../../actions/Features'
+import { startCandidateFeature, autoCreateIssuesFromFeatures } from '../../actions/Features'
 import { getGloballySelectedProjectId, get_selected_feature_ids } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
-import { PAGE_KEY__FEATURES_PAGE, LIST_KEY__FEATURE_LIST } from '../../actions/ItemListKeyRegistry'
+import { PAGE_KEY__FEATURES_PAGE } from '../../actions/ItemListKeyRegistry'
 
 class FeaturesToolbarPanel extends Component {
 
