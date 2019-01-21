@@ -82,7 +82,6 @@ class FeatureViewSet(BaseViewSet):
                            .prefetch_related('testables__implementing_issues__entries')\
                            .prefetch_related('testables__implementing_issues__issue_points')\
                            .prefetch_related('testables__implementing_issues__project__rate')\
-                           .prefetch_related('testables__testable_steps')\
                            .prefetch_related('visual_spec_features')
         return features
 
