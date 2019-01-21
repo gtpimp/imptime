@@ -21,7 +21,6 @@ from imptime.models import Feature, FeatureHistory, ProjectFeatureOrder, VisualS
 from timepiece.models import IssueHistory
 from timepiece.models import Business as Project
 from timepiece.models import BusinessPermissions as ProjectPermissions
-from timepiece.models import Tag, TagCategory
 
 logger = logging.getLogger(__name__)
 
