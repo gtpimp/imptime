@@ -50,7 +50,7 @@ class BulkTextParser(object):
         running_parents = [Feature.get_root_feature(project.id)]
         previous_feature = None
         running_level = None
-        leaf_features = []
+        testable_features = []
         for orgnode in orgnodes:
             level = orgnode.Level()
             if running_level is None:
@@ -60,13 +60,9 @@ class BulkTextParser(object):
             description = orgnode.CleanBody()
             meta_info = self.parse_meta_info(description)
 
-            if previous_feature:
-                previous_feature.is_leaf = True
             if level > running_level:
                 running_parents.append(previous_feature)
                 running_level += 1
-                if previous_feature:
-                    previous_feature.is_leaf = False
             elif level < running_level:
                 running_parents = running_parents[:-1]
                 running_level -= 1
@@ -74,27 +70,23 @@ class BulkTextParser(object):
             feature = self.create_feature(project, name, meta_info, parent)
             features.append(feature)
 
-            for testable in meta_info['testables']:
-                testable.project = project
-                testable.save()
-                testable.features.add(feature)
-                testable.save()
-
-            if previous_feature and previous_feature.is_leaf:
-                leaf_features.append(previous_feature)
+            has_testable = len(meta_info['testables'])>0
+            if has_testable:
+                for testable in meta_info['testables']:
+                    testable.project = project
+                    testable.save()
+                    testable.features.add(feature)
+                    testable.save()
+                testable_features.append(previous_feature)
 
             previous_feature = feature
 
-                
-        # last feature inserted is always a leaf
-        leaf_features.append(feature)
-
         if auto_create_issues_for_leaf_nodes:
-            self.auto_create_issues_for_leaf_features(project, leaf_features)
+            self.auto_create_issues_features(project, testable_features)
 
         return features
             
-    def auto_create_issues_for_leaf_features(self, project, features):
+    def auto_create_issues_features(self, project, features):
         name="bulk_import_issues_%s" % datetime.now().strftime("%d%b%Y_%H%M")
         sprint = Sprint.objects.create(name=name,
                                        business=project, #sic,
