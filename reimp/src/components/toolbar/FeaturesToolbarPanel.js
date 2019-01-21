@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { startCandidateFeature } from '../../actions/Features'
+import { startCandidateFeature, autoCreateIssuesFromFeatures, fetchFeaturesIfNeeded } from '../../actions/Features'
 import { getGloballySelectedProjectId, get_selected_feature_ids } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
-import { PAGE_KEY__FEATURES_PAGE } from '../../actions/ItemListKeyRegistry'
+import { PAGE_KEY__FEATURES_PAGE, LIST_KEY__FEATURE_LIST } from '../../actions/ItemListKeyRegistry'
 
 class FeaturesToolbarPanel extends Component {
 
@@ -13,6 +13,11 @@ class FeaturesToolbarPanel extends Component {
         dispatch(startCandidateFeature(project_id, last_selected_feature_id))
     }
 
+    onCreateIssuesFromFeatures = () => {
+        const { dispatch, project_id } = this.props
+        dispatch(autoCreateIssuesFromFeatures(project_id))
+    }
+    
     onToggleFlat = (tree_view) => {
         const { project_id, history } = this.props
         history.push('/projects/' + project_id + '/features/flat')
@@ -22,6 +27,10 @@ class FeaturesToolbarPanel extends Component {
         const { is_tree_view } = this.props
         return (
             <div className="toolbar-panel">
+              <div className="button toolbar-button--small button--large button--primary"
+                   onClick={this.onCreateIssuesFromFeatures}>
+                Auto Create Issues
+              </div>
               <div className="button toolbar-button--small button--large button--primary"
                    onClick={this.onNewFeatureClick}>
                 + New Feature

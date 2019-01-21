@@ -290,3 +290,11 @@ export function removeIssueToFeatureTestable(feature_id, testable_id, issue_id) 
     return itemPost(ENTITY_KEY__FEATURE, [feature_id], url, field_name, field_value, method, data)
 }
 
+export function autoCreateIssuesFromFeatures(project_id) {
+    const url = `imp/feature/auto_create_issues_from_features/`
+    const field_name = "project_id"
+    const field_value = project_id
+    const method = "POST"
+    const data = { project_id: project_id }
+    return itemPost(ENTITY_KEY__FEATURE, [project_id], url, field_name, field_value, method, data)
+}
