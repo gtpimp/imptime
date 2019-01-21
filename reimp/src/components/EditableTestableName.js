@@ -25,7 +25,9 @@ class EditableTestableName extends Component {
                 >
                   <TestableNameForm form={'testable_name_form_'+testable.id}
                                     testable={testable}/>
-                  { testable.name }
+                  <div>
+                    { testable.name }
+                  </div>
                   <div className="text-component--empty"></div>
                 </EditableProperty>
               }
