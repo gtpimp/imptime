@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { startCandidateFeature } from '../../actions/Features'
+import { startCandidateFeature, autoCreateIssuesFromFeatures, fetchFeaturesIfNeeded } from '../../actions/Features'
 import { getGloballySelectedProjectId, get_selected_feature_ids } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
-import { PAGE_KEY__FEATURES_PAGE } from '../../actions/ItemListKeyRegistry'
+import { PAGE_KEY__FEATURES_PAGE, LIST_KEY__FEATURE_LIST } from '../../actions/ItemListKeyRegistry'
 
 class FeaturesToolbarPanel extends Component {
 
@@ -14,8 +14,8 @@ class FeaturesToolbarPanel extends Component {
     }
 
     onCreateIssuesFromFeatures = () => {
-        const { dispatch, last_selected_feature_id, project_id } = this.props
-        dispatch(startCandidateFeature(project_id, last_selected_feature_id))
+        const { dispatch, project_id } = this.props
+        dispatch(autoCreateIssuesFromFeatures(project_id))
     }
     
     onToggleFlat = (tree_view) => {
