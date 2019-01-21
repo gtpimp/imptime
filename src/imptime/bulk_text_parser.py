@@ -9,6 +9,8 @@ from testable.models import Testable
 from imptime.models import ProjectFeatureOrder, Feature, VisualSpecFeature, VisualSpecDocument, VisualSpecIssue, AnnotatedVisualSpecDocument
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
+from timepiece.models import Tag, TagCategory
+
 import logging
 import re
 logger = logging.getLogger(__name__)
@@ -103,6 +105,16 @@ class BulkTextParser(object):
                                              subject="%s %s" % (feature.name, testable_name),
                                              created_by=self.logged_in_user)
 
+                tag_category = TagCategory.objects.get_or_create(business_id=feature.project_id, name="feature")[0]
+                tag = Tag.objects.get_or_create(category=tag_category, name=feature.name)[0]
+                issue.tags.add(tag)
+
+                parent = feature.parent
+                while parent:
+                    tag = Tag.objects.get_or_create(category=tag_category, name=parent.name)[0]
+                    issue.tags.add(tag)
+                    parent = parent.parent
+                
                 feature.link_issue_to_testable(self.logged_in_user, issue.id, testable.id)
                 SprintIssueOrder.insert_at_the_beginning(issue)
     
