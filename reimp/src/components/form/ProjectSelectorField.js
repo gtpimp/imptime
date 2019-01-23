@@ -80,7 +80,7 @@ class ProjectSelectorField extends Component {
     renderSingleValueSelector(field) {
         const { auto_focus, project_id, default_project, default_project_id } = this.props
         const {input, data, ...rest} = field
-        const initial_filter_term = (!project_id && default_project_id && default_project.name) || null
+        const initial_filter_term = (!project_id && default_project_id && default_project && default_project.name) || null
         
         return (
             <SingleValueSelector
