@@ -125,20 +125,26 @@ class TestableViewSet(BaseViewSet):
     def update(self, request, pk):
         try:
             params = request.data
-            issue_pk = params.get('issue_id')
-            feature_pk = params.get('feature_id')
-            testable_id = params['testable_id']
-            testable_value = params['testable']
-            name = params.get('name', None)
+            testable_ids = params.get('item_ids', [pk])
+            name = params.get('value', None)
 
-            issue = self.allowed_issue(issue_pk) if issue_pk else None
-            feature = self.allowed_feature(feature_pk) if feature_pk else None
-            project = issue.project.business if issue else feature.project
+            for testable_id in testable_ids:
+                testable = self.allowed_testables().get(pk=testable_id)
+                issue = None
+                features = None
+                project = None
+                
+                if testable.issue is not None:
+                    issue = testable.issue
+                    project = issue.project.business
+                    if not self.logged_in_permissions(project).has_edit_description:
+                        raise Exception("Can't edit testable for issues")
 
-            if issue and not self.logged_in_permissions(project).has_edit_description:
-                raise Exception("Can't edit testables for issues")
-            if feature and not self.logged_in_permissions(project).has_edit_feature:
-                raise Exception("Can't edit testables for features")
+                if testable.features.count() > 0:
+                    features = testable.features.all()
+                    project = features[0].project
+                    if not self.logged_in_permissions(project).has_edit_feature:
+                        raise Exception("Can't edit testable for features")
 
             if issue:
                 testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
@@ -147,33 +153,19 @@ class TestableViewSet(BaseViewSet):
                 testable = Testable.objects.filter(features=feature).get(pk=testable_id)
                 issue = testable.issue
                 
-            old_testable_value = testable.steps
             old_name = testable.name
-            testable.steps = testable_value
-            if name:
-                testable.name = name
-            testable.enriched_steps = MarkdownEnrichment(request.user)\
-                                                .enrich(testable.steps,
-                                                        project_id=project.id) #sic
-
+            testable.name = name
+            
             if issue:
-                if old_testable_value != testable.steps:
-                    IssueHistory.add_history(request.user, issue, "edited testable steps",
-                                            old_testable_value, testable.steps)
-                if old_name != testable.name:
-                    IssueHistory.add_history(request.user, issue, "edited testable name",
-                                             old_name, testable.name)
+                IssueHistory.add_history(request.user, issue, "edited testable name",
+                                         old_name, testable.name)
                 issue.save()
             if feature:
-                if old_testable_value != testable.steps:
-                    FeatureHistory.add_history(request.user, feature, "edited testable steps",
-                                            old_testable_value, testable.steps)
-                if old_name != testable.name:
-                    FeatureHistory.add_history(request.user, feature, "edited testable name",
-                                             old_name, testable.name)
+                FeatureHistory.add_history(request.user, feature, "edited testable name",
+                                           old_name, testable.name)
                 feature.save()
             testable.save()
-            data = {'status': 'success'}
+            data = {'status': 'success', 'payload': testable_ids}
 
         except Exception, ex:
             logger.exception(ex)

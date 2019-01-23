@@ -33,23 +33,25 @@ class IssueFeature extends Component {
         return (
             <div className="issue-feature">
 
-              <Floater key={`feature_testable_${feature_id}`}
-                       title={<div>This issue implements part of feature <FeatureName feature_id={feature_id} /></div>}
-                       disableHoverToClick
-                       event="hover"
-                       eventDelay={0}
-                       placement="bottom"
-                       content={
-                           <Testable key={`feature_testable_${feature_testable.id}`}
-                                                   testable={feature_testable}
-                                                   feature_id={feature_id}
-                                                              />
-                               }
-              >
-                           <div className={css`display: flex`} onClick={this.onFeatureClicked}>
-                             <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{feature_testable.name}
-                           </div>
-              </Floater>
+              { feature_testable && 
+                <Floater key={`feature_testable_${feature_id}`}
+                         title={<div>This issue implements part of feature <FeatureName feature_id={feature_id} /></div>}
+                         disableHoverToClick
+                         event="hover"
+                         eventDelay={0}
+                         placement="bottom"
+                         content={
+                             <Testable key={`feature_testable_${feature_testable.id}`}
+                                                       testable={feature_testable}
+                                                       feature_id={feature_id}
+                                                                  />
+                                 }
+                >
+                             <div className={css`display: flex`} onClick={this.onFeatureClicked}>
+                               <FeatureName feature_id={feature_id} />&nbsp;-&nbsp;{feature_testable.name}
+                             </div>
+                </Floater>
+              }
               <div className="issue-feature__info">
                 <div className="issue_sidebar__options">
                   { onDelete &&

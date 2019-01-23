@@ -17,12 +17,6 @@ import {
 
 class EditableTestableLine extends Component {
 
-    constructor(props) {
-        super(props)
-        this.onChange = this.onChange.bind(this)
-        this.onDelete = this.onDelete.bind(this)
-    }
-
     componentWillMount() {
         const { dispatch, testable_line_id } = this.props
         dispatch(ensureTestableLinesLoaded([testable_line_id]))
@@ -34,7 +28,7 @@ class EditableTestableLine extends Component {
         dispatch(ensureTestableLinesLoaded([testable_line_id]))
     }
 
-    onChange(new_value) {
+    onChange = (new_value) => {
         const { dispatch, testable_id, testable_line_id } = this.props
         if ( testable_line_id ) {
             dispatch(updateTestableLine(testable_line_id, new_value.testable_line))
@@ -43,7 +37,7 @@ class EditableTestableLine extends Component {
         }
     }
 
-    onDelete(event) {
+    onDelete = (event) => {
         const { dispatch, testable_line_id } = this.props
         event.stopPropagation()
         if (! window.confirm("Are you sure you want to delete this testable line?" ) ) {

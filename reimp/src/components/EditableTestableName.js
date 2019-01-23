@@ -8,9 +8,9 @@ import TestableNameForm from './form/TestableNameForm'
 
 class EditableTestableName extends Component {
 
-    onChange(new_value) {
+    onChange = (new_value) => {
         const { dispatch, testable } = this.props
-        dispatch(updateTestableName(testable.id, new_value.name))
+        dispatch(updateTestableName([testable.id], new_value.name))
     }
 
     render() {

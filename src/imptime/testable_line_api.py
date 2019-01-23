@@ -101,45 +101,48 @@ class TestableLineViewSet(BaseViewSet):
     def update(self, request, pk):
         try:
             params = request.data
-            testable_line_id = params['testable_line_id']
+            testable_line_ids = params.get('item_ids', [pk])
             instruction = params['instruction']
+
+            for testable_line_id in testable_line_ids:
             
-            testable_line = self.allowed_testable_lines().get(pk=testable_line_id)
-            testable = testable_line.testable
+                testable_line = self.allowed_testable_lines().get(pk=testable_line_id)
+                testable = testable_line.testable
 
-            issue = None
-            features = None
-            project = None
+                issue = None
+                features = None
+                project = None
 
-            if testable.issue is not None:
-                issue = testable.issue
-                project = issue.project.business
-                if not self.logged_in_permissions(project).has_edit_description:
-                    raise Exception("Can't edit testable_lines for issues")
+                if testable.issue is not None:
+                    issue = testable.issue
+                    project = issue.project.business
+                    if not self.logged_in_permissions(project).has_edit_description:
+                        raise Exception("Can't edit testable_lines for issues")
 
-            if testable.features.count() > 0:
-                features = testable.features.all()
-                project = features[0].project
-                if not self.logged_in_permissions(project).has_edit_feature:
-                    raise Exception("Can't edit testable_lines for features")
+                if testable.features.count() > 0:
+                    features = testable.features.all()
+                    project = features[0].project
+                    if not self.logged_in_permissions(project).has_edit_feature:
+                        raise Exception("Can't edit testable_lines for features")
 
-            old_value = testable_line.instruction
-            testable_line.instruction = instruction
-            testable_line.save()
-            
-            if issue:
-                if old_value != testable.steps:
-                    IssueHistory.add_history(request.user, issue, "edited testable step",
-                                            old_value, testable.steps)
-                issue.save()
-            if features:
-                for feature in features:
+                old_value = testable_line.instruction
+                testable_line.instruction = instruction
+                testable_line.save()
+
+                if issue:
                     if old_value != testable.steps:
-                        FeatureHistory.add_history(request.user, feature, "edited testable steps",
+                        IssueHistory.add_history(request.user, issue, "edited testable step",
                                                 old_value, testable.steps)
-                    feature.save()
-            testable.save()
-            data = {'status': 'success'}
+                    issue.save()
+                if features:
+                    for feature in features:
+                        if old_value != testable.steps:
+                            FeatureHistory.add_history(request.user, feature, "edited testable steps",
+                                                    old_value, testable.steps)
+                        feature.save()
+                testable.save()
+                
+            data = {'status': 'success', 'payload': testable_line_ids}
 
         except Exception, ex:
             logger.exception(ex)
@@ -169,13 +172,13 @@ class TestableLineViewSet(BaseViewSet):
                     issue = testable.issue
                     project = issue.project.business
                     if not self.logged_in_permissions(project).has_edit_description:
-                        raise Exception("Can't edit testable_lines for issues")
+                        raise Exception("Can't edit testable lines for issues")
 
                 if testable.features.count() > 0:
                     features = testable.features.all()
                     project = features[0].project
                     if not self.logged_in_permissions(project).has_edit_feature:
-                        raise Exception("Can't edit testable_lines for features")
+                        raise Exception("Can't edit testable lines for features")
 
                 if issue:
                     IssueHistory.add_history(request.user, issue, "deleted testable line", testable_line.instruction, "")
