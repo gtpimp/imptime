@@ -31,9 +31,9 @@ class EditableTestableLine extends Component {
     onChange = (new_value) => {
         const { dispatch, testable_id, testable_line_id } = this.props
         if ( testable_line_id ) {
-            dispatch(updateTestableLine(testable_line_id, new_value.testable_line))
+            dispatch(updateTestableLine(testable_line_id, new_value.instruction))
         } else {
-            dispatch(createTestableLine(testable_id, new_value.testable_line))
+            dispatch(createTestableLine(testable_id, new_value.instruction))
         }
     }
 
@@ -65,7 +65,7 @@ class EditableTestableLine extends Component {
                                   can_edit={can_edit}
                 >
                   <TestableLineForm form={'testable_line_form_'+testable_line_id}
-                                testable_line={testable_line}/>
+                                    testable_line={testable_line}/>
                   <TestableLine testable_line={testable_line}
                                 onDelete={this.onDelete}
                   />

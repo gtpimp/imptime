@@ -85,9 +85,9 @@ class Testable(models.Model):
 
             
 class TestableLine(models.Model):
-    instruction = models.TextField(null=False)
+    instruction = models.TextField(null=True)
     testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_lines')
-    refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='referred_by_testable_lines')
+    refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=True, related_name='referred_by_testable_lines') # links this line to another line, in which case instruction can be null
     order = models.IntegerField(null=False, default=0)
 
 

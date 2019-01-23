@@ -52,11 +52,11 @@ class TestableLineViewSet(BaseViewSet):
     def create(self, request):
         try:
             context = {}
-            params = request.data
-            testable_pk = params.get('testable_id')
+            params = request.data['item']
+            testable_pk = params['testable_id']
             instruction = params['instruction']
             testable = self.allowed_testables().get(pk=testable_pk)
-            new_order = (max(testable.testable_lines.all().values_list("order", flat=True)) or 0)+1
+            new_order = (max(testable.testable_lines.all().values_list("order", flat=True) or [0]) or 0)+1
 
             issue = None
             features = None

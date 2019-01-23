@@ -58,8 +58,8 @@ export function getTestableLinesById(state, testable_line_ids) {
 
 export function createTestableLine(testable_id, instruction) {
     return (dispatch, getState) => {
-        dispatch(startCandidateItem(ENTITY_KEY__TESTABLE_LINE, instruction))
-        dispatch(updateCandidateDetails(ENTITY_KEY__TESTABLE_LINE, {testable_id: testable_id}))
+        dispatch(startCandidateItem(ENTITY_KEY__TESTABLE_LINE, {instruction:instruction,
+                                                                testable_id: testable_id}))
         dispatch(saveCandidateItem(ENTITY_KEY__TESTABLE_LINE))
     }
 }

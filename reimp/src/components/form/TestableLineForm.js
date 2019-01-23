@@ -5,33 +5,25 @@ import TextAreaField from './TextAreaField'
 
 class TestableLineForm extends Component {
 
-    constructor(props) {
-        super(props)
-        this.renderTextarea = this.renderTextarea.bind(this)
-        this.renderName = this.renderName.bind(this)
-        this.onChangeAndSubmit = this.onChangeAndSubmit.bind(this)
-        this.keyDown = this.keyDown.bind(this)
-    }
-
-    onChangeAndSubmit(e, fieldOnChange) {
+    onChangeAndSubmit = (e, fieldOnChange) => {
         fieldOnChange(e)
         // setTimeout(() => handleSubmit(), 0)
     }
 
-    keyDown(event) {
+    keyDown = (event) => {
         const { onKeyDown } = this.props
         if (onKeyDown) {
             onKeyDown(event)
         }
     }
 
-    renderTextarea(field) {
+    renderTextarea = (field) => {
         const {input} = field
         return (
             <TextAreaField
                 rows="1"
                 className="textarea textarea--text-component textarea--testable"
-                placeholder="Test step"
+                placeholder="Click... or Verify..."
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
                 onKeyDown={this.keyDown}
@@ -52,7 +44,7 @@ class TestableLineForm extends Component {
               <form onSubmit={handleSubmit}>
                 <div>
                   <div className="issue_sidebar--textarea">
-                    <Field name="testable"
+                    <Field name="instruction"
                            component={this.renderTextarea} />
                   </div>
                 </div>
@@ -71,7 +63,7 @@ function mapStateToProps(state, props) {
 
     return {
         testable_line: testable_line,
-        initialValues: {testable:props.initial_value.steps, name:props.initial_value.name},
+        initialValues: {testable:props.initial_value.steps},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel
