@@ -10,6 +10,11 @@ class TestableLine extends Component {
         return (
             <div className="issue-testable">
 
+              <div>
+                {testable_line.order}&nbsp;
+                {testable_line.instruction}
+              </div>
+              
               <div className="issue-testable__info" >
                 { testable_line.quality_error &&
                   <div className={classNames("issue_sidebar--textarea--readonly",

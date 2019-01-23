@@ -89,7 +89,7 @@ class TestableLine(models.Model):
     testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_lines')
     refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=True, related_name='referred_by_testable_lines') # links this line to another line, in which case instruction can be null
     order = models.IntegerField(null=False, default=0)
-
+    
 
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
