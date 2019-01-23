@@ -30,7 +30,7 @@ export function invalidateTestableLines(testable_line_ids_to_invalidate) {
     }
 }
 
-export function updateTestableLine(testable_line_ids, instruction, on_done) {
+export function updateTestableLines(testable_line_ids, instruction, on_done) {
     return updateItem(ENTITY_KEY__TESTABLE_LINE, testable_line_ids, "instruction", instruction, on_done)
 }
 

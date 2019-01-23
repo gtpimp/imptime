@@ -63,7 +63,7 @@ function mapStateToProps(state, props) {
 
     return {
         testable_line: testable_line,
-        initialValues: {testable:props.initial_value.steps},
+        initialValues: {instruction:props.initial_value.instruction},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel

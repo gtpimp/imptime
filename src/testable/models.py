@@ -89,8 +89,17 @@ class TestableLine(models.Model):
     testable = ProtectedForeignKey(Testable, blank=False, null=False, related_name='testable_lines')
     refers_to_testable = ProtectedForeignKey(Testable, blank=False, null=True, related_name='referred_by_testable_lines') # links this line to another line, in which case instruction can be null
     order = models.IntegerField(null=False, default=0)
-    
 
+    @classmethod
+    def renumber_for_testable(self, testable_id):
+        c = 1
+        for t in TestableLine.objects.filter(testable=testable_id).order_by("order"):
+            if t.order != c:
+                t.order = c
+                t.save()
+            c += 1
+    
+    
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)

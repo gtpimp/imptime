@@ -74,7 +74,11 @@ class TestableLineViewSet(BaseViewSet):
                 if not self.logged_in_permissions(project).has_edit_feature:
                     raise Exception("Can't edit testable_lines for features")
 
-
+            testable_line = TestableLine.objects.create(testable=testable,
+                                                        instruction=instruction,
+                                                        order=new_order)
+            TestableLine.renumber_for_testable(testable_pk)
+                
             if issue:
                 IssueHistory.add_history(request.user, issue, "created testable step",
                                          "", instruction)
@@ -85,9 +89,6 @@ class TestableLineViewSet(BaseViewSet):
                                                "", instruction)
                     feature.save()
                 
-            testable_line = TestableLine.objects.create(testable=testable,
-                                                        instruction=instruction,
-                                                        order=new_order)
 
             context['item'] = TestableLineSerializer(testable_line).data
             data = {'status': 'success', 'payload': context}
@@ -97,12 +98,13 @@ class TestableLineViewSet(BaseViewSet):
             return self.error_response(ex)
 
         return HttpResponse(JSONRenderer().render(data))
-
+ 
     def update(self, request, pk):
         try:
             params = request.data
             testable_line_ids = params.get('item_ids', [pk])
-            instruction = params['instruction']
+            field_name = params['field_name']
+            value = params['value']
 
             for testable_line_id in testable_line_ids:
             
@@ -125,22 +127,29 @@ class TestableLineViewSet(BaseViewSet):
                     if not self.logged_in_permissions(project).has_edit_feature:
                         raise Exception("Can't edit testable_lines for features")
 
-                old_value = testable_line.instruction
-                testable_line.instruction = instruction
-                testable_line.save()
+                if field_name == 'instruction':
+                    old_value = testable_line.instruction
+                    testable_line.instruction = value
+                    testable_line.save()
+                    testable.save()
+                    TestableLine.renumber_for_testable(testable.id)
 
-                if issue:
-                    if old_value != testable.steps:
-                        IssueHistory.add_history(request.user, issue, "edited testable step",
-                                                old_value, testable.steps)
-                    issue.save()
-                if features:
-                    for feature in features:
-                        if old_value != testable.steps:
-                            FeatureHistory.add_history(request.user, feature, "edited testable steps",
-                                                    old_value, testable.steps)
-                        feature.save()
-                testable.save()
+                    if issue:
+                        if old_value != testable_line.instruction:
+                            IssueHistory.add_history(request.user, issue, "edited testable step",
+                                                     old_value, testable_line.instruction)
+                        issue.save()
+                    if features:
+                        for feature in features:
+                            if old_value != testable_line.instruction:
+                                FeatureHistory.add_history(request.user, feature, "edited testable steps",
+                                                           old_value, testable_line.instruction)
+                            feature.save()
+                    
+                else:
+                    raise Exception("Unsupported field name: %s" % field_name)
+                    
+
                 
             data = {'status': 'success', 'payload': testable_line_ids}
 
@@ -180,13 +189,20 @@ class TestableLineViewSet(BaseViewSet):
                     if not self.logged_in_permissions(project).has_edit_feature:
                         raise Exception("Can't edit testable lines for features")
 
+                testable_line.delete()
+                TestableLine.renumber_for_testable(testable_line.testable_id)
+
                 if issue:
                     IssueHistory.add_history(request.user, issue, "deleted testable line", testable_line.instruction, "")
                 if features:
                     for feature in features:
                         FeatureHistory.add_history(request.user, feature, "deleted testable line", testable_line.instruction, "")
 
-                testable_line.delete()
+                if issue:
+                    issue.save()
+                if features:
+                    for feature in features:
+                        feature.save()
 
             data = {'status': 'success'}
 

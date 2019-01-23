@@ -9,7 +9,7 @@ import Loading from './Loading'
 import {
     getTestableLine,
     ensureTestableLinesLoaded,
-    updateTestableLine,
+    updateTestableLines,
     createTestableLine,
     deleteTestableLine,
     is_testable_line_invalidated
@@ -31,7 +31,7 @@ class EditableTestableLine extends Component {
     onChange = (new_value) => {
         const { dispatch, testable_id, testable_line_id } = this.props
         if ( testable_line_id ) {
-            dispatch(updateTestableLine(testable_line_id, new_value.instruction))
+            dispatch(updateTestableLines([testable_line_id], new_value.instruction))
         } else {
             dispatch(createTestableLine(testable_id, new_value.instruction))
         }
