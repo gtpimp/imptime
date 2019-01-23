@@ -3279,11 +3279,6 @@ def delete_issue(request, project_id, template="", context=None):
 
 def _augment_issue_data(issue, current_user, users_allowed_to_estimate_on_business, rates_by_user=None):
 
-    # always show logged in user first
-    if current_user in users_allowed_to_estimate_on_business:
-        users_allowed_to_estimate_on_business.remove(current_user)
-        users_allowed_to_estimate_on_business.insert(0, current_user)
-
     issue_points_by_user = issue.get_issue_points_by_user()
     issue_hours_by_user = issue.get_issue_hours_by_user()
 
