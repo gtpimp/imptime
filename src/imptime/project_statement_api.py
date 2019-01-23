@@ -136,11 +136,11 @@ class ProjectStatementViewSet(BaseViewSet):
         filter = self._get_download_filter(request)
 
         calculator = ProjectStatementCalculator()
-        data = calculator(user=request.user,
-                          project_id=project_id,
-                          date_from_inclusive=filter['date_from_inclusive'],
-                          date_to_inclusive=filter['date_to_inclusive'],
-                          sprint_ids=filter.setdefault('sprint_ids', None))
+        data = calculator.get_data(user=request.user,
+                                   project_id=project_id,
+                                   date_from_inclusive=filter['date_from_inclusive'],
+                                   date_to_inclusive=filter['date_to_inclusive'],
+                                   sprint_ids=filter.setdefault('sprint_ids', None))
 
         filename_prefix = "{prefix}_for_{project_name}_from_{date_from}_to_{date_to}".format(
             prefix=filename_prefix,

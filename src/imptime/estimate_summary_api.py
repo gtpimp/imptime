@@ -75,7 +75,7 @@ class EstimateSummaryViewSet(BaseViewSet):
         sprint_id = pk
         sprint = Sprint.objects.get(pk=sprint_id)
         calculator = EstimateSummaryCalculator()
-        data = calculator.get_data(user=request.user, sprint=sprint)
+        data = calculator.get_data(user=request.user, sprint_id=sprint.id)
 
         response = HttpResponse(content_type='text/csv')
         filename = "{prefix}_for_{project_name}_{sprint_name}_at_{now}.csv".format(
