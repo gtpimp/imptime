@@ -48,9 +48,9 @@ class EditableTestableLine extends Component {
 
     render()
     {
-        const {testable_line, can_edit, project_id} = this.props
+        const {testable_line_id, testable_line, can_edit, project_id} = this.props
 
-        if ( ! testable_line || ! testable_line.id ) {
+        if ( testable_line_id && (! testable_line || ! testable_line.id) ) {
             return <Loading/>
         }
         
@@ -58,13 +58,13 @@ class EditableTestableLine extends Component {
 
             <PermissionInspectorHighlighter project_id={project_id}
                                             permission_name='has_edit_description'>
-              { testable_line.id &&
-                <EditableProperty property_key={'issue_testable_line_'+testable_line.id}
+              { testable_line_id &&
+                <EditableProperty property_key={'issue_testable_line_'+testable_line_id}
                                   initial_value={testable_line}
                                   onChange={this.onChange}
                                   can_edit={can_edit}
                 >
-                  <TestableLineForm form={'testable_line_form_'+testable_line.id}
+                  <TestableLineForm form={'testable_line_form_'+testable_line_id}
                                 testable_line={testable_line}/>
                   <TestableLine testable_line={testable_line}
                                 onDelete={this.onDelete}
@@ -74,14 +74,14 @@ class EditableTestableLine extends Component {
               }
 
               <div className="issue-testable__button-bar">
-                { ! testable_line.id &&
+                { ! testable_line_id &&
                   <div className="issue-testable__button-bar__container">
-                    <EditableProperty property_key={'testable_line'+testable_line.id}
+                    <EditableProperty property_key={'testable_line_create'}
                                       initial_value=''
                                       onChange={this.onChange}
                                       can_edit={can_edit}
                       >
-                      <TestableLineForm form={'testable_line_form_'+testable_line.id} />
+                      <TestableLineForm form={'testable_line_form_create'} />
                       <div className="text-component--readonly"></div>
                       <div className="text-component--empty">
                         <div className="text-component--testable">

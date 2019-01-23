@@ -39,7 +39,7 @@ class TestableLineViewSet(BaseViewSet):
                 context['ids'] = [str(x) for x in testable_lines.values_list(
                     'id', flat=True)]
             else:
-                s = TestableLineSerializer(testable_lines, logged_in_user=request.user, many=True)
+                s = TestableLineSerializer(testable_lines, many=True)
                 testable_lines_data = s.data
                 context['testable_lines'] = testable_lines_data
             context['pagination'] = pagination

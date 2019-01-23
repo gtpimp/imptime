@@ -39,6 +39,11 @@ class Testable extends Component {
                                             can_edit={can_edit}
                                             testable_line_id={testable_line_id} />
                 )}
+                { can_edit && 
+                  <EditableTestableLine testable_id={testable.id}
+                                        can_edit={can_edit}
+                                        testable_line_id={null} />
+                }
 
                 !!old!!
                 <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
