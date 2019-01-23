@@ -90,7 +90,7 @@ class SprintViewSet(BaseViewSet):
                 if field_name == 'name':
                     if self.logged_in_permissions(sprint.business).has_edit_sprint:
                         sprint.name = new_value
-                if field_name == 'description':
+                elif field_name == 'description':
                     if self.logged_in_permissions(sprint.business).has_edit_sprint:
                         sprint.description = new_value
                 elif field_name == "status_name":
