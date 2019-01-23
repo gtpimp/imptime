@@ -3,7 +3,7 @@ from timepiece.models import Project as Sprint
 import json
 from django.core.mail import EmailMessage
 from timepiece.models import Business as Project
-from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment, IssueAttachment
+from timepiece.models import Activity, Entry, Location, Attribute, Issue, IssueStatus, IssueComment
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import ProjectStatus as SprintStatus
 from imptime.models import VisualSpecDocument
