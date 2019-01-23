@@ -75,6 +75,11 @@ class Extractor(object):
         bp = BusinessPermissions.for_user(user=timesheet_user,
                                               business=business,
                                               auto_create=False)
+
+        if bp is None:
+            raise Exception("User %s doesn't have permission to project for filename %s" % (self.username, filename))
+            
+        
         if bp.has_edit_old_clock_entries:
             self.oldest_clockable_day = timezone.now()-relativedelta(months=12)
         
