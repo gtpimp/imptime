@@ -16,8 +16,8 @@ class Testable(models.Model):
     project = ProtectedForeignKey(Project, blank=True, null=False, related_name='testables')
     features = models.ManyToManyField("imptime.Feature", related_name="testables")
     name = models.TextField(null=True)
-    steps = models.TextField(null=False)
-    enriched_steps = models.TextField(null=True)
+    steps = models.TextField(null=True) # deprecated as of 24Jan2019
+    enriched_steps = models.TextField(null=True) #deprecated as of 24Jan2019
     order = models.IntegerField(null=False, default=0)
     quality_error = models.CharField(max_length=255, null=True)
     implementing_issues = models.ManyToManyField(Issue, related_name="implements_testables")

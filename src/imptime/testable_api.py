@@ -76,7 +76,6 @@ class TestableViewSet(BaseViewSet):
             params = request.data
             issue_pk = params.get('issue_id')
             feature_pk = params.get('feature_id')
-            testable_value = params['testable']
             name = params.get('name', None)
             issue = self.allowed_issue(issue_pk) if issue_pk else None
             feature = self.allowed_feature(feature_pk) if feature_pk else None
@@ -97,11 +96,7 @@ class TestableViewSet(BaseViewSet):
                 
             testable = Testable.objects.get_or_create(issue=issue,
                                                       name=name,
-                                                      steps=testable_value,
                                                       project=project,
-                                                      enriched_steps=MarkdownEnrichment(request.user)\
-                                                                       .enrich(testable_value,
-                                                                               project_id=project.id), #sic
                                                       order=max_order+1)[0]
             if issue:
                 issue.save()

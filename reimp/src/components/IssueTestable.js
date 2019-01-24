@@ -35,9 +35,9 @@ class IssueTestable extends Component {
     }
 
     createTestable = (evt) => {
-        const { dispatch, feature_id } = this.props
+        const { dispatch, issue_id } = this.props
         evt.stopPropagation()
-        dispatch(createIssueTestable(feature_id, [], null))
+        dispatch(createIssueTestable(issue_id, null, null))
     }
 
     render() {
