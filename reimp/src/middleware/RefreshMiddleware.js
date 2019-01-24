@@ -5,6 +5,7 @@ import {
 import { invalidateProjects } from '../actions/Projects'
 import { invalidateSprints } from '../actions/Sprints'
 import { invalidateFeatures } from '../actions/Features'
+import { invalidateTestableLines } from '../actions/TestableLines'
 import { invalidateDecisionJournals } from '../actions/DecisionJournals'
 import { invalidateCompanies } from '../actions/Companies'
 import { invalidateIssues } from '../actions/Issues'
@@ -94,6 +95,9 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateCostSummary(d.params.sprint_id))
         if ( d.params.feature_ids ) {
             dispatch(invalidateFeatures(d.params.feature_ids))
+        }
+        if ( d.params.testable_line_ids ) {
+            dispatch(invalidateTestableLines(d.params.testable_line_ids))
         }
 
     } else if ( d.entity_name === 'issuetag' || d.entity_name === 'tag' || d.entity_name === 'tagcategory' ) {

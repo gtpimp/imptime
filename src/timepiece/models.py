@@ -4294,10 +4294,12 @@ class Issue(BaseModel):
         self.check_quality()
 
         from imptime.models import Feature
+        from testable.models import TestableLine
         
         params = { 'project_id': self.project_id,  #sic
                    'sprint_id': self.project_id,
-                   'feature_ids': [x.id for x in Feature.objects.filter(testables__implementing_issues=self.id)]
+                   'feature_ids': [x.id for x in Feature.objects.filter(testables__implementing_issues=self.id)],
+                   'testable_line_ids': [x.id for x in TestableLine.objects.filter(testable__issue=self.id)]
         }
 
         if was_created:
