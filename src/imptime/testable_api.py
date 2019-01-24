@@ -19,6 +19,7 @@ from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueStatus
 from imptime.models import FeatureHistory
 from testable.models import Testable
+from testable_serializer import TestableSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -51,16 +52,7 @@ class TestableViewSet(BaseViewSet):
                     'id', flat=True)]
             else:
 
-                detail_levels = format_args.get('detail_level', '').split(",")
-                if len(detail_levels) == 0:
-                    s = TestableSerializer(testables, logged_in_user=request.user, many=True)
-                elif 'estimates' in detail_levels:
-                    s = TestableWithEstimatesSerializer(testables, many=True)
-                elif 'general' in detail_levels:
-                    s = TestableGeneralDetailsSerializer(testables, many=True)
-                else:
-                    testables = self._enrich_testables_qs(testables)
-                    s = TestableSerializer(testables, logged_in_user=request.user, many=True)
+                s = TestableSerializer(testables, logged_in_user=request.user, many=True)
 
                 testables_data = s.data
                 context['testables'] = testables_data

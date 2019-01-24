@@ -6,7 +6,8 @@ import classNames from 'classnames'
 import EditableTestableLine from './EditableTestableLine'
 import EditableTestableName from './EditableTestableName'
 import { ensureTestableLinesLoaded } from '../actions/TestableLines'
-
+import { cx, css } from 'emotion'
+ 
 class Testable extends Component {
 
     componentWillMount() {
@@ -35,19 +36,19 @@ class Testable extends Component {
                                         can_edit={can_edit} />
                 </div>
                 { map(testable.testable_line_ids, (testable_line_id) =>
+                    <EditableTestableLine testable_id={testable.id}
+                                          can_edit={can_edit}
+                                          testable_line_id={testable_line_id} />
+                  )}
+                    { can_edit && 
                       <EditableTestableLine testable_id={testable.id}
                                             can_edit={can_edit}
-                                            testable_line_id={testable_line_id} />
-                )}
-                { can_edit && 
-                  <EditableTestableLine testable_id={testable.id}
-                                        can_edit={can_edit}
-                                        testable_line_id={null} />
-                }
+                                            testable_line_id={null} />
+                    }
 
-                !!old!!
-                <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
-                !! old!!
+                      !!old!!
+                      <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
+                      !! old!!
               </div>
 
               <div className="issue-testable__info" >
@@ -62,9 +63,9 @@ class Testable extends Component {
                     }
                   </div>      
                 }
-                <div className="issue_sidebar__options">
-                  { onDelete &&
-                    <div onClick={onDelete} className="issue_sidebar__options__left">
+                  <div className="issue_sidebar__options">
+                    { onDelete &&
+                    <div onClick={onDelete} className={cx("issue_sidebar__options__left", css`cursor:pointer`)}>
                       <span className="issue_sidebar__options__spacer">|</span>
                       Remove
                     </div>

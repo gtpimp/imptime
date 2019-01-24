@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import map from 'lodash/map'
 import {
     createIssueTestable,
+    deleteIssueTestable,
     ensureIssuesLoaded,
     getIssue,
     is_issue_invalidated,
@@ -38,6 +39,15 @@ class IssueTestable extends Component {
         const { dispatch, issue_id } = this.props
         evt.stopPropagation()
         dispatch(createIssueTestable(issue_id, null, null))
+    }
+
+    onDelete = (evt) => {
+        const { dispatch, issue_id, testable } = this.props
+        evt.stopPropagation()
+        if ( ! window.confirm( "Delete this testable?" ) ) {
+            return
+        }
+        dispatch(deleteIssueTestable(issue_id, testable.id))
     }
 
     render() {
