@@ -93,11 +93,11 @@ class TestableViewSet(BaseViewSet):
                 raise Exception("Can't edit testables for issues")
             if feature and not self.logged_in_permissions(project).has_edit_feature:
                 raise Exception("Can't edit testables for features")
-                
-            testable = Testable.objects.get_or_create(issue=issue,
-                                                      name=name,
-                                                      project=project,
-                                                      order=max_order+1)[0]
+            
+            testable = Testable.objects.create(issue=issue,
+                                               name=name or "Unnamed testable",
+                                               project=project,
+                                               order=max_order+1)
             if issue:
                 issue.save()
                 IssueHistory.add_history(request.user, issue,

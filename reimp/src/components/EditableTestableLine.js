@@ -48,7 +48,7 @@ class EditableTestableLine extends Component {
 
     render()
     {
-        const {testable_line_id, testable_line, can_edit, project_id} = this.props
+        const {testable_line_id, testable_line, testable_id, can_edit, project_id} = this.props
 
         if ( testable_line_id && (! testable_line || ! testable_line.id) ) {
             return <Loading/>
@@ -76,7 +76,7 @@ class EditableTestableLine extends Component {
               <div className="issue-testable__button-bar">
                 { ! testable_line_id &&
                   <div className="issue-testable__button-bar__container">
-                    <EditableProperty property_key={'testable_line_create'}
+                    <EditableProperty property_key={'testable_line_create_'+testable_id}
                                       initial_value=''
                                       onChange={this.onChange}
                                       can_edit={can_edit}
