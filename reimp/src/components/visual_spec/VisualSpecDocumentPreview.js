@@ -5,15 +5,13 @@ import loading_gif from "../../images/loading.gif"
 
 const preview_container = css`display:flex;
                               justify-content:center;
+                              overflow: auto;
                               width:100%;
                               height:95%;`
 
 const preview_image = css`width:100%;
                           height:100%;
-                          background-repeat: no-repeat;
-                          background-size: contain, auto;
-                          padding-top:15px;
-                          background-position: center;`
+                          padding-top:15px;`
 
 class VisualSpecDocumentPreview extends Component {
     render() {
@@ -24,6 +22,11 @@ class VisualSpecDocumentPreview extends Component {
                 <p>{visual_spec_document.name}</p>
               }
               { is_image &&
+                <div id={img_id} >
+                  <img src={document} alt="attachment" />
+                </div>
+              }
+              { false && is_image &&
                 <div id={img_id}
                      onClick={show}
                      className={preview_image}
