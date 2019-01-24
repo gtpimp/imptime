@@ -120,8 +120,16 @@ class VisualSpecDocumentGalleryImage extends Component {
         )
     }
     
+    getFullScreenLink = () => {
+        const { project_id, annotated_visual_spec_document_id } = this.props
+        const fullscreen_url = `/fullscreen/projects/${project_id}/image/${annotated_visual_spec_document_id}`
+        return fullscreen_url
+    }
+    
     showPreviewModal() {
-        this.setState({ show_preview_modal: true })
+        // this.setState({ show_preview_modal: true })
+        window.open(this.getFullScreenLink(), "_blank")
+        return 
     }
 
     hidePreviewModal() {
