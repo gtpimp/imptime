@@ -260,7 +260,7 @@ class IssueSidebar extends Component {
             <div key="testablestack">
               <SidebarSectionTitle title="Testables" />
               { map(testables, function (testable, index) {
-                    return <IssueTestable issue_id={issue_id} testable_id={testable.id} />
+                    return <IssueTestable key={testable.id} issue_id={issue_id} testable_id={testable.id} />
                 })
               }
               <IssueTestable issue_id={issue_id} testable_id={null} />
@@ -300,9 +300,12 @@ class IssueSidebar extends Component {
               </Floater>
               { map(feature_testables, function (feature_testable, index) {
                     const feature_id = feature_testable.feature_ids[0]
+                    if ( ! feature_testable.id ) {
+                        return null
+                    }
                     return (
-                        <div key={`issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}>
-                          <EditableIssueFeature key={`editable_issue_feature_${issue_id}_${feature_id}_${feature_testable.id}`}
+                        <div key={`issue_feature_${issue_id}_${feature_id}_${index}_${feature_testable.id}`}>
+                          <EditableIssueFeature key={`editable_issue_feature_${issue_id}_${feature_id}_${index}_${feature_testable.id}`}
                                                 issue_id={issue_id}
                                                 feature_id={feature_id}
                                                 feature_testable_id={feature_testable.id} />

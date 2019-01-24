@@ -36,19 +36,20 @@ class Testable extends Component {
                                         can_edit={can_edit} />
                 </div>
                 { map(testable.testable_line_ids, (testable_line_id) =>
-                    <EditableTestableLine testable_id={testable.id}
+                    <EditableTestableLine key={testable_line_id}
+                                          testable_id={testable.id}
                                           can_edit={can_edit}
                                           testable_line_id={testable_line_id} />
-                  )}
-                    { can_edit && 
-                      <EditableTestableLine testable_id={testable.id}
-                                            can_edit={can_edit}
-                                            testable_line_id={null} />
-                    }
+                )}
+                { can_edit && 
+                  <EditableTestableLine testable_id={testable.id}
+                                        can_edit={can_edit}
+                                        testable_line_id={null} />
+                }
 
-                      !!old!!
-                      <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
-                      !! old!!
+                !!old!!
+                <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
+                !! old!!
               </div>
 
               <div className="issue-testable__info" >
