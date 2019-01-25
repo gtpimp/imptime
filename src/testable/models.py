@@ -29,12 +29,13 @@ class Testable(models.Model):
         self._step_groups = None
 
     def save(self, *args, **kwargs):
+        super(Testable, self).save(*args, **kwargs)
 
         # This code only required until the steps field is removed through deprecation
-        if not self.steps and not self.steps.startswith(CONVERTED_TOKEN):
-            self.convert_to_testable_lines()
+        if self.steps and not self.steps.startswith(CONVERTED_TOKEN):
+            if self.convert_to_testable_lines():
+                super(Testable, self).save(*args, **kwargs)
             
-        super(Testable, self).save(*args, **kwargs)
         self.quality_error = self.check_quality()
         if self.issue_id:
             self.issue.save()
@@ -55,6 +56,7 @@ class Testable(models.Model):
                                         order=order)
             order+=1
         self.steps = CONVERTED_TOKEN + self.steps
+        return order > 1
             
     def copy(self):
         clone = Testable.objects.create(include_in_regression_test=self.include_in_regression_test,
