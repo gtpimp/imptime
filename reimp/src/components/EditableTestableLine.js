@@ -33,8 +33,13 @@ class EditableTestableLine extends Component {
         if ( testable_line_id ) {
             dispatch(updateTestableLines([testable_line_id], new_value.instruction))
         } else {
-            dispatch(createTestableLine(testable_id, new_value.instruction))
+            dispatch(createTestableLine(testable_id, new_value.instruction, null))
         }
+    }
+
+    onCreateLine = (position) => {
+        const { dispatch, testable_id, testable_line_id } = this.props
+        dispatch(createTestableLine(testable_id, null, position))
     }
 
     onDelete = (event) => {
@@ -68,6 +73,7 @@ class EditableTestableLine extends Component {
                                     testable_line={testable_line}/>
                   <TestableLine testable_line={testable_line}
                                 onDelete={this.onDelete}
+                                onCreateLine={this.onCreateLine}
                   />
                   <div className="text-component--empty"></div>
                 </EditableProperty>

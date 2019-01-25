@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
 import { cx, css } from 'emotion'
+import {default_theme as theme} from '../theme/default'
 
 class TestableLine extends Component {
 
@@ -18,16 +19,46 @@ class TestableLine extends Component {
         this.setState({ is_hovered: false })
     }
 
+    onCreateLineAbove = (evt) => {
+        const { onCreateLine, testable_line } = this.props
+        evt.stopPropagation()
+        onCreateLine(testable_line.order)
+    }
+
+    onCreateLineBelow = (evt) => {
+        const { onCreateLine, testable_line } = this.props
+        evt.stopPropagation()
+        onCreateLine(testable_line.order+1)
+    }
+
     render_hover_menu() {
-        const { onDelete } = this.props
+        const { onDelete, onCreateLine } = this.props
         return (
-            <div className="issue_sidebar__options">
-              { onDelete &&
-                <div onClick={onDelete} className="issue_sidebar__options__left">
-                  <span className="issue_sidebar__options__spacer">|</span>
-                  Remove
-                </div>
-              }
+            <div className={cx("issue_sidebar__options", hover_menu)}>
+              <div className={hover_menu_item}>
+                { onDelete &&
+                  <div onClick={onDelete} className="issue_sidebar__options__left">
+                    <span className="issue_sidebar__options__spacer">|</span>
+                    Remove
+                  </div>
+                }
+              </div>
+              <div className={hover_menu_item}>
+                { onCreateLine &&
+                  <div onClick={this.onCreateLineAbove} className="issue_sidebar__options__left">
+                    <span className="issue_sidebar__options__spacer">|</span>
+                    Add above
+                  </div>
+                }
+              </div>
+              <div className={hover_menu_item}>
+                { onCreateLine &&
+                  <div onClick={this.onCreateLineBelow} className="issue_sidebar__options__left">
+                    <span className="issue_sidebar__options__spacer">|</span>
+                    Add below
+                  </div>
+                }
+              </div>
             </div>
         )
     }
@@ -69,20 +100,30 @@ class TestableLine extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { testable_line, onDelete } = props
+    const { testable_line, onDelete, onCreateLine } = props
     
     return {
         testable_line,
-        onDelete
+        onDelete,
+        onCreateLine
     }
 }
 
 export default connect(mapStateToProps)(TestableLine)
 
 const div_is_hovered = css`
-  text-decoration: underline;
+text-decoration: underline;
 `
 
 const issue_testable_line = css`
+display: flex;
+justify-content: space-between;
 `
 
+const hover_menu = css`
+display: flex;
+`
+
+const hover_menu_item = css`
+padding-left: ${theme.spacing.horizontal_row_space_tight}
+`

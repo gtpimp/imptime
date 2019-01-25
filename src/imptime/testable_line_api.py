@@ -55,8 +55,9 @@ class TestableLineViewSet(BaseViewSet):
             params = request.data['item']
             testable_pk = params['testable_id']
             instruction = params['instruction']
+            position = params.get('position')
             testable = self.allowed_testables().get(pk=testable_pk)
-            new_order = (max(testable.testable_lines.all().values_list("order", flat=True) or [0]) or 0)+1
+            new_order = position or (max(testable.testable_lines.all().values_list("order", flat=True) or [0]) or 0)+1
 
             issue = None
             features = None
@@ -74,6 +75,10 @@ class TestableLineViewSet(BaseViewSet):
                 if not self.logged_in_permissions(project).has_edit_feature:
                     raise Exception("Can't edit testable_lines for features")
 
+            for tl in testable.testable_lines.order_by("order").filter(order__gte=position):
+                tl.order += 1
+                tl.save()
+                
             testable_line = TestableLine.objects.create(testable=testable,
                                                         instruction=instruction,
                                                         order=new_order)
