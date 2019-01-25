@@ -35,14 +35,22 @@ class Testable(models.Model):
             feature.save()
 
     def copy(self):
-        return Testable.objects.create(include_in_regression_test=self.include_in_regression_test,
-                                       issue=self.issue,
-                                       steps=self.steps,
-                                       enriched_steps=self.enriched_steps,
-                                       project=self.project,
-                                       name=self.name,
-                                       order=self.order,
-                                       quality_error=self.quality_error)
+        clone = Testable.objects.create(include_in_regression_test=self.include_in_regression_test,
+                                        issue=self.issue,
+                                        steps=self.steps,
+                                        enriched_steps=self.enriched_steps,
+                                        project=self.project,
+                                        name=self.name,
+                                        order=self.order,
+                                        quality_error=self.quality_error)
+
+        for line in self.testable_lines.all():
+            line_clone = line.copy()
+            line_clone.testable = clone
+            line_clone.save()
+            clone.testable_lines.add(line_clone)
+        
+        return clone
         
     def check_quality(self):
         quality_error = Quality().check_sequence_of_short_steps(self.steps)
@@ -98,7 +106,12 @@ class TestableLine(models.Model):
                 t.order = c
                 t.save()
             c += 1
-    
+
+    def copy(self):
+        return TestableLine.objects.create(instruction=self.instruction,
+                                           testable=self.testable,
+                                           refers_to_testable=self.refers_to_testable,
+                                           order=self.order)
     
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)

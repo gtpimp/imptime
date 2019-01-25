@@ -997,13 +997,11 @@ class Feature(BaseModel):
             raise Exception("Can't edit issues")
         issue = Issue.objects.get(pk=issue_id, project__business=self.project) #sic
 
-        testable_name = testable.name or "Testable %d" % testable.order
-        Testable.objects.create(issue=issue,
-                                project=self.project, #sic
-                                name=testable_name,
-                                steps=testable.steps,
-                                enriched_steps=testable.enriched_steps,
-                                order=99)
+        issue_testable = testable.copy()
+        issue_testable.issue = issue
+        issue_testable.order = 99
+        issue_testable.project = self.project
+        issue_testable.save()
         Testable.renumber_for_issue(issue.id)
         
         testable.implementing_issues.add(issue)
