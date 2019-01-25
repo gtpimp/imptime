@@ -18,7 +18,7 @@ from timepiece.models import Issue, IssueHistory
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueStatus
 from imptime.models import FeatureHistory
-from testable.models import Testable
+from testable.models import Testable, TestableLine
 from testable_serializer import TestableSerializer
 
 logger = logging.getLogger(__name__)
@@ -90,6 +90,11 @@ class TestableViewSet(BaseViewSet):
                                                name=name or "Unnamed testable",
                                                project=project,
                                                order=max_order+1)
+
+            TestableLine.objects.create(instruction=None,
+                                        testable=testable,
+                                        order=1)
+            
             if issue:
                 issue.save()
                 IssueHistory.add_history(request.user, issue,

@@ -75,7 +75,7 @@ class TestableLine extends Component {
 
               <div className={cx({[div_is_hovered]: is_hovered})}>
                 {testable_line.order}&nbsp;
-                {testable_line.instruction}
+                {testable_line.instruction || "..."}
               </div>
               
               <div className="issue-testable__info" >

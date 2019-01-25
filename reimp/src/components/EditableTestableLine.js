@@ -89,11 +89,7 @@ class EditableTestableLine extends Component {
                       >
                       <TestableLineForm form={'testable_line_form_create'} />
                       <div className="text-component--readonly"></div>
-                      <div className="text-component--empty">
-                        <div className="text-component--testable">
-                          <SidebarAddButton label="Add testable line" />
-                        </div>
-                      </div>
+                      <div className="text-component--empty"/>
                     </EditableProperty>
                   </div>
                 }
