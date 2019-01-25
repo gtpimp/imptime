@@ -448,10 +448,15 @@ class FeatureViewSet(BaseViewSet):
                     for entry in issue.entries.all():
                         stats['hours_clocked'] += float(entry.hours)
 
+                ## ###
+                ## TODO: Restore this logic, removed when converting testables to testable lines,
+                ## and not restored immediately because the sync from features to issues isn't
+                ## fully refined yet.
                 issue_testables = issue.testables.all()
                 for issue_testable in issue_testables:
                     if issue_testable.steps == feature_testable.steps:
                         fully_implemented_testable = True
+                ## ###
                     
             if fully_implemented_testable:
                 stats['num_fully_implemented_testables'] += 1

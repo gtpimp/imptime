@@ -47,10 +47,6 @@ class Testable extends Component {
                                         can_edit={can_edit}
                                         testable_line_id={null} />
                 }
-
-                !!old!!
-                <RenderedMarkdown content={testable.enriched_steps || testable.steps} />
-                !! old!!
               </div>
 
               <div className="issue-testable__info" >
