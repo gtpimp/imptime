@@ -15,7 +15,7 @@ from timepiece.models import ProjectIssueOrder as SprintIssueOrder
 from timepiece.models import IssueHistory
 from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions as ProjectPermissions
-from testable.models import Testable
+from testable.models import Testable, TestableLine
 from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from project_statement_calculator import ProjectStatementCalculator
 from time_summary_calculator import TimeSummaryCalculator
@@ -976,10 +976,13 @@ class Feature(BaseModel):
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(Feature, self).save(*args, **kwargs)
+
+        params = { 'testable_line_ids': [x.id for x in TestableLine.objects.filter(testable__features=self.id)] }
+        
         if was_created:
-            RefreshNotifier().notify_model_create(self)
+            RefreshNotifier().notify_model_create(self, params)
         else:
-            RefreshNotifier().notify_model_update(self)
+            RefreshNotifier().notify_model_update(self, params)
         if self.parent_id:
             self.parent.save()
 

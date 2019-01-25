@@ -149,6 +149,11 @@ function triggerInvalidateEntity(d, dispatch) {
         dispatch(invalidateCostSummary(d.params.sprint_id))
     } else if ( d.entity_name === 'feature' ) {
         dispatch(invalidateFeatures([d.entity_ref]))
+
+        if ( d.params.testable_line_ids ) {
+            dispatch(invalidateTestableLines(d.params.testable_line_ids))
+        }
+        
     } else if ( d.entity_name === 'projectfeatureorder' ) {
         dispatch(invalidateFeatures([d.params.feature_id]))
     } else if ( d.entity_name === 'wikipage' ) {

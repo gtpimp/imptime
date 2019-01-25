@@ -136,9 +136,10 @@ class TestableViewSet(BaseViewSet):
             if issue:
                 testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
                 feature = testable.features.all().first()
-            elif feature:
-                testable = Testable.objects.filter(features=feature).get(pk=testable_id)
-                issue = testable.issue
+            elif features:
+                for feature in features:
+                    testable = Testable.objects.filter(features=feature).get(pk=testable_id)
+                    issue = testable.issue
                 
             old_name = testable.name
             testable.name = name
@@ -147,10 +148,11 @@ class TestableViewSet(BaseViewSet):
                 IssueHistory.add_history(request.user, issue, "edited testable name",
                                          old_name, testable.name)
                 issue.save()
-            if feature:
-                FeatureHistory.add_history(request.user, feature, "edited testable name",
-                                           old_name, testable.name)
-                feature.save()
+            if features:
+                for feature in features:
+                    FeatureHistory.add_history(request.user, feature, "edited testable name",
+                                            old_name, testable.name)
+                    feature.save()
             testable.save()
             data = {'status': 'success', 'payload': testable_ids}
 

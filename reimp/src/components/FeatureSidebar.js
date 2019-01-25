@@ -59,7 +59,9 @@ class FeatureSidebar extends Component {
         return (
             <PropertyStackComponent title="Testables">
               { map(testables, function (testable, index) {
-                    return <FeatureTestable feature_id={feature.id} testable_id={testable.id}/>
+                    return <FeatureTestable key={`feature_testable_${feature.id}_${testable.id}`}
+                                            feature_id={feature.id}
+                                            testable_id={testable.id}/>
                 })
               }
               <FeatureTestable feature_id={feature.id} testable_id={null}/>
