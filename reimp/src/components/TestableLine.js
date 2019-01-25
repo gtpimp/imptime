@@ -17,13 +17,27 @@ class TestableLine extends Component {
     onUnhover = () => {
         this.setState({ is_hovered: false })
     }
+
+    render_hover_menu() {
+        const { onDelete } = this.props
+        return (
+            <div className="issue_sidebar__options">
+              { onDelete &&
+                <div onClick={onDelete} className="issue_sidebar__options__left">
+                  <span className="issue_sidebar__options__spacer">|</span>
+                  Remove
+                </div>
+              }
+            </div>
+        )
+    }
     
     render() {
-        const { testable_line, onDelete } = this.props
+        const { testable_line } = this.props
         const { is_hovered } = this.state
 
         return (
-            <div className="issue-testable"
+            <div className={issue_testable_line}
                  onMouseEnter={this.onHover}
                  onMouseLeave={this.onUnhover}
             >
@@ -44,14 +58,9 @@ class TestableLine extends Component {
                     }
                   </div>      
                 }
-                <div className="issue_sidebar__options">
-                  { onDelete &&
-                    <div onClick={onDelete} className="issue_sidebar__options__left">
-                      <span className="issue_sidebar__options__spacer">|</span>
-                      Remove
-                    </div>
-                  }
-                </div>
+
+                { is_hovered && this.render_hover_menu() }
+                  
               </div>
             </div>
         )
@@ -73,3 +82,7 @@ export default connect(mapStateToProps)(TestableLine)
 const div_is_hovered = css`
   text-decoration: underline;
 `
+
+const issue_testable_line = css`
+`
+
