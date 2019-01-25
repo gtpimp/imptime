@@ -1,16 +1,34 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import classNames from 'classnames'
+import { cx, css } from 'emotion'
 
 class TestableLine extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = { is_hovered: false }
+    }
+
+    onHover = () => {
+        this.setState({ is_hovered: true })
+    }
+
+    onUnhover = () => {
+        this.setState({ is_hovered: false })
+    }
+    
     render() {
         const { testable_line, onDelete } = this.props
+        const { is_hovered } = this.state
 
         return (
-            <div className="issue-testable">
+            <div className="issue-testable"
+                 onMouseEnter={this.onHover}
+                 onMouseLeave={this.onUnhover}
+            >
 
-              <div>
+              <div className={cx({[div_is_hovered]: is_hovered})}>
                 {testable_line.order}&nbsp;
                 {testable_line.instruction}
               </div>
@@ -51,3 +69,7 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(TestableLine)
+
+const div_is_hovered = css`
+  text-decoration: underline;
+`
