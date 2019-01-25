@@ -25,7 +25,7 @@ class Testable extends Component {
     }
     
     render() {
-        const { testable, onDelete, extraActions, can_edit } = this.props
+        const { testable, onDelete, extra_actions, can_edit } = this.props
 
         return (
             <div className="issue-testable">
@@ -71,11 +71,11 @@ class Testable extends Component {
                       Remove
                     </div>
                   }
-                  { extraActions && map(extraActions, (extraAction, index) => {
+                  { extra_actions && map(extra_actions, (extraAction, index) => {
                       return (
                           <div key={`testable_extra_actions_${testable.id}_${index}`}
                                onClick={extraAction.onClick}
-                               className="issue_sidebar__options__left">
+                               className={cx("issue_sidebar__options__left", css`cursor:pointer`)}>
                             <span className="issue_sidebar__options__spacer">|</span>
                             {extraAction.label}
                           </div>
@@ -91,14 +91,14 @@ class Testable extends Component {
 
 function mapStateToProps(state, props) {
     
-    const { project_id, testable, can_edit, onDelete, extraActions } = props
+    const { project_id, testable, can_edit, onDelete, extra_actions } = props
     
     return {
         project_id,
         testable,
         can_edit, 
         onDelete,
-        extraActions
+        extra_actions
     }
 }
 

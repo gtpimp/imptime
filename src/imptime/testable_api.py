@@ -200,8 +200,11 @@ class TestableViewSet(BaseViewSet):
             issue = self.allowed_issue(testable.issue_id)
             if not self.logged_in_permissions(issue.project.business).has_add_issue:
                 raise Exception("Can't add issues")
+
+            subject = "%s %s" % (issue.subject, (testable.name or "(Testable%s" % testable.order))
+            
             new_issue = Issue.objects.create(project=issue.project,
-                                             subject="%s (Testable %s)" % (issue.subject, testable.order),
+                                             subject=subject,
                                              issue_type='issue',
                                              status2=IssueStatus.objects.get_or_create(name='new', business=issue.project.business)[0],
                                              assigned_to=issue.assigned_to,
@@ -216,7 +219,7 @@ class TestableViewSet(BaseViewSet):
             testable.save()
             new_issue.save()
             SprintIssueOrder.insert_after(new_issue, issue)
-            Testable.renumber(issue.id)
+            Testable.renumber_for_issue(issue.id)
             issue.save()
             
             new_issue_id = new_issue.id
