@@ -10,6 +10,8 @@ from timepiece.models import Business as Project
 from lib.fields import ProtectedForeignKey
 import re
 
+CONVERTED_TOKEN="__CONVERTED__"
+
 class Testable(models.Model):
     include_in_regression_test = models.BooleanField(default=True, blank=True)
     issue = models.ForeignKey(Issue, blank=True, null=True, related_name='testables')
@@ -27,6 +29,11 @@ class Testable(models.Model):
         self._step_groups = None
 
     def save(self, *args, **kwargs):
+
+        # This code only required until the steps field is removed through deprecation
+        if not self.steps and not self.steps.startswith(CONVERTED_TOKEN):
+            self.convert_to_testable_lines()
+            
         super(Testable, self).save(*args, **kwargs)
         self.quality_error = self.check_quality()
         if self.issue_id:
@@ -34,6 +41,21 @@ class Testable(models.Model):
         for feature in self.features.all():
             feature.save()
 
+    def convert_to_testable_lines(self):
+        self.testable_lines.all().delete()
+        order = 1
+        for line in self.steps.split("\n"):
+            if line.startswith("- "):
+                line = line[2:]
+            if re.match(r'^[^ ]*\. ', line):
+                line = line[3:]
+        
+            TestableLine.objects.create(instruction=line,
+                                        testable=self,
+                                        order=order)
+            order+=1
+        self.steps = CONVERTED_TOKEN + self.steps
+            
     def copy(self):
         clone = Testable.objects.create(include_in_regression_test=self.include_in_regression_test,
                                         issue=self.issue,
