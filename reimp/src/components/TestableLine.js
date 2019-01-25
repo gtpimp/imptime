@@ -36,14 +36,6 @@ class TestableLine extends Component {
         return (
             <div className={cx("issue_sidebar__options", hover_menu)}>
               <div className={hover_menu_item}>
-                { onDelete &&
-                  <div onClick={onDelete} className="issue_sidebar__options__left">
-                    <span className="issue_sidebar__options__spacer">|</span>
-                    Remove
-                  </div>
-                }
-              </div>
-              <div className={hover_menu_item}>
                 { onCreateLine &&
                   <div onClick={this.onCreateLineAbove} className="issue_sidebar__options__left">
                     <span className="issue_sidebar__options__spacer">|</span>
@@ -56,6 +48,14 @@ class TestableLine extends Component {
                   <div onClick={this.onCreateLineBelow} className="issue_sidebar__options__left">
                     <span className="issue_sidebar__options__spacer">|</span>
                     Add below
+                  </div>
+                }
+              </div>
+              <div className={hover_menu_item}>
+                { onDelete &&
+                  <div onClick={onDelete} className="issue_sidebar__options__left">
+                    <span className="issue_sidebar__options__spacer">|</span>
+                    Remove
                   </div>
                 }
               </div>

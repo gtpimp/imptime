@@ -7,6 +7,7 @@ import EditableTestableLine from './EditableTestableLine'
 import EditableTestableName from './EditableTestableName'
 import { ensureTestableLinesLoaded } from '../actions/TestableLines'
 import { cx, css } from 'emotion'
+import {default_theme as theme} from '../theme/default'
  
 class Testable extends Component {
 
@@ -31,7 +32,7 @@ class Testable extends Component {
             <div className="issue-testable">
 
               <div className="issue-testable__text" >
-                <div>
+                <div className={div_testable_name}>
                   <EditableTestableName testable={testable}
                                         can_edit={can_edit} />
                 </div>
@@ -103,3 +104,7 @@ function mapStateToProps(state, props) {
 }
 
 export default connect(mapStateToProps)(Testable)
+
+const div_testable_name = css`
+font: ${theme.fonts.bold_large};
+`
