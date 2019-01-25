@@ -33,7 +33,7 @@ class Testable(models.Model):
 
         # This code only required until the steps field is removed through deprecation
         if self.steps and not self.steps.startswith(CONVERTED_TOKEN):
-            if self.convert_to_testable_lines():
+            if self.convert_to_testable_lines(self.steps):
                 super(Testable, self).save(*args, **kwargs)
             
         self.quality_error = self.check_quality()
@@ -42,19 +42,20 @@ class Testable(models.Model):
         for feature in self.features.all():
             feature.save()
 
-    def convert_to_testable_lines(self):
+    def convert_to_testable_lines(self, steps):
         self.testable_lines.all().delete()
         order = 1
-        for line in self.steps.split("\n"):
+        for line in steps.split("\n"):
             if line.startswith("- "):
                 line = line[2:]
             if re.match(r'^[^ ]*\. ', line):
                 line = line[3:]
-        
-            TestableLine.objects.create(instruction=line,
-                                        testable=self,
-                                        order=order)
-            order+=1
+
+            if len(line.strip()) > 0:
+                TestableLine.objects.create(instruction=line,
+                                            testable=self,
+                                            order=order)
+                order+=1
         self.steps = CONVERTED_TOKEN + self.steps
         return order > 1
             

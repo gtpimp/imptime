@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import TextAreaField from './TextAreaField'
 
-class TestableForm extends Component {
+class BulkTestableForm extends Component {
 
     constructor(props) {
         super(props)
@@ -29,7 +29,7 @@ class TestableForm extends Component {
         const {input} = field
         return (
             <TextAreaField
-                rows="1"
+                rows="10"
                 className="textarea textarea--text-component textarea--testable"
                 placeholder="Testable steps"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
@@ -49,7 +49,6 @@ class TestableForm extends Component {
                 placeholder="Testable name (optional)"
                 onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
                 value={input.value}
-                ref={(ref)=> this.title_el=ref}
             />
         )
     }
@@ -71,7 +70,7 @@ class TestableForm extends Component {
                            component={this.renderName} />
                   </div>
                   <div className="issue_sidebar--textarea">
-                    <Field name="testable"
+                    <Field name="steps"
                            component={this.renderTextarea} />
                   </div>
                 </div>
@@ -90,11 +89,11 @@ function mapStateToProps(state, props) {
 
     return {
         testable: testable,
-        initialValues: {testable:props.initial_value.steps, name:props.initial_value.name},
+        initialValues: {steps:props.initial_value.steps, name:props.initial_value.name},
         enableReinitialize: true,
         onSubmit: onSubmitted,
         onCancel
     }
 }
 
-export default connect(mapStateToProps)(reduxForm({form:'testable_form'})(TestableForm))
+export default connect(mapStateToProps)(reduxForm({form:'bulk_testable_form'})(BulkTestableForm))

@@ -10,6 +10,7 @@ import {
     getItemsById,
     updateItem,
     is_item_invalidated,
+    itemPost,
     deleteItems,
 } from '../actions/Item'
 
@@ -63,4 +64,13 @@ export function deleteTestable(testable_id) {
 
 export function is_testable_invalidated(state, testable_id) {
     return is_item_invalidated(ENTITY_KEY__TESTABLE, state, testable_id)
+}
+
+export function bulkUpdateTestable(testable_id, name, steps) {
+    const url = "imp/testable/" + testable_id + "/bulk_update_testable/"
+    const field_name = "testable"
+    const field_value = testable_id
+    const method = "PUT"
+    const data = { name: name, steps: steps }
+    return itemPost(ENTITY_KEY__TESTABLE, [testable_id], url, field_name, field_value, method, data)
 }

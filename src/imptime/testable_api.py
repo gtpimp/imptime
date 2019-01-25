@@ -236,4 +236,62 @@ class TestableViewSet(BaseViewSet):
         return HttpResponse(JSONRenderer().render(data))
         
 
-    
+    @detail_route(methods=['PUT'])
+    def bulk_update_testable(self, request, pk):
+        try:
+            testable_id = pk
+
+            params = request.data
+            name = params.get("name")
+            steps = params.get("steps")
+
+            testable = self.allowed_testables().get(pk=testable_id)
+            issue = None
+            features = None
+            project = None
+
+            if testable.issue is not None:
+                issue = testable.issue
+                project = issue.project.business
+                if not self.logged_in_permissions(project).has_edit_description:
+                    raise Exception("Can't edit testable for issues")
+
+            if testable.features.count() > 0:
+                features = testable.features.all()
+                project = features[0].project
+                if not self.logged_in_permissions(project).has_edit_feature:
+                    raise Exception("Can't edit testable for features")
+
+            if issue:
+                testable = Testable.objects.filter(issue=issue).get(pk=testable_id)
+                feature = testable.features.all().first()
+            elif features:
+                for feature in features:
+                    testable = Testable.objects.filter(features=feature).get(pk=testable_id)
+                    issue = testable.issue
+                
+            old_name = testable.name
+            testable.name = name
+            
+            if issue:
+                IssueHistory.add_history(request.user, issue, "bulk edited testable",
+                                         old_name, testable.name)
+                issue.save()
+            if features:
+                for feature in features:
+                    FeatureHistory.add_history(request.user, feature, "bulk edited testable",
+                                            old_name, testable.name)
+                    feature.save()
+                    
+            testable.convert_to_testable_lines(steps)
+            testable.save()
+            
+            data = {'status': 'success', 'payload': testable_id}
+            
+        except Exception, ex:
+            logger.exception(ex)
+            return self.error_response(ex)
+
+        return HttpResponse(JSONRenderer().render(data))
+
+            
