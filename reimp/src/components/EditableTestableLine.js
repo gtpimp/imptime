@@ -38,7 +38,7 @@ class EditableTestableLine extends Component {
     }
 
     onCreateLine = (position) => {
-        const { dispatch, testable_id, testable_line_id } = this.props
+        const { dispatch, testable_id } = this.props
         dispatch(createTestableLine(testable_id, null, position))
     }
 

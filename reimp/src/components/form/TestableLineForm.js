@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
-import TextAreaField from './TextAreaField'
+import InputField from './InputField'
 
 class TestableLineForm extends Component {
 
@@ -15,20 +15,6 @@ class TestableLineForm extends Component {
         if (onKeyDown) {
             onKeyDown(event)
         }
-    }
-
-    renderTextarea = (field) => {
-        const {input} = field
-        return (
-            <TextAreaField
-                rows="1"
-                className="textarea textarea--text-component textarea--testable"
-                placeholder="Click... or Verify..."
-                onChange={(e) => this.onChangeAndSubmit(e, input.onChange)}
-                value={input.value}
-                onKeyDown={this.keyDown}
-            />
-        )
     }
 
     render() {
@@ -45,7 +31,11 @@ class TestableLineForm extends Component {
                 <div>
                   <div className="issue_sidebar--textarea">
                     <Field name="instruction"
-                           component={this.renderTextarea} />
+                           placeholder="Click... or Verify..."
+                           maxLength="500"
+                           autoFocus
+                           onKeyDown={this.keyDown}
+                           component={InputField} />
                   </div>
                 </div>
                 <div className="issue_sidebar__button_row">

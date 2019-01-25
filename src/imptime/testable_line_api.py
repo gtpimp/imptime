@@ -75,9 +75,10 @@ class TestableLineViewSet(BaseViewSet):
                 if not self.logged_in_permissions(project).has_edit_feature:
                     raise Exception("Can't edit testable_lines for features")
 
-            for tl in testable.testable_lines.order_by("order").filter(order__gte=position):
-                tl.order += 1
-                tl.save()
+            if position is not None:
+                for tl in testable.testable_lines.order_by("order").filter(order__gte=position):
+                    tl.order += 1
+                    tl.save()
                 
             testable_line = TestableLine.objects.create(testable=testable,
                                                         instruction=instruction,
