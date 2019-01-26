@@ -17,10 +17,11 @@ def convert_to_testable_lines(testable, apps):
             line = line[2:]
         if re.match(r'^[^ ]*\. ', line):
             line = line[3:]
-        TestableLine.objects.create(instruction=line,
-                                    testable_id=testable.id,
-                                    order=order)
-        order+=1
+        if len(line.strip()) > 0:
+            TestableLine.objects.create(instruction=line,
+                                        testable_id=testable.id,
+                                        order=order)
+            order+=1
     testable.steps = CONVERTED_TOKEN + testable.steps
     testable.save()
 
