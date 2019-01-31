@@ -56,7 +56,9 @@ class Testable(models.Model):
                                             testable=self,
                                             order=order)
                 order+=1
-        self.steps = CONVERTED_TOKEN + self.steps
+
+        if steps is not None:
+            self.steps = CONVERTED_TOKEN + steps
         return order > 1
             
     def copy(self):
