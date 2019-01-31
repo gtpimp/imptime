@@ -178,6 +178,8 @@ register.tag('is_same_user', is_same_user)
 
 @register.filter
 def asmarkdown(content):
+    if content is None:
+        return ""
     return markdown.markdown(content)
 
 @register.filter
