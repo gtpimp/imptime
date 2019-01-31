@@ -232,7 +232,7 @@ this is the colour of yukc
         project_name = message['to'].split("@")[0]
         subject = message['subject'].strip()
         
-        project_name = project_name.strip().lower()
+        project_name = project_name.strip().lower().replace('"', '').replace("'", "")
 
         all_matching_projects = Project.objects.filter(name__iexact=Project.convert_to_email_name(project_name))
 
