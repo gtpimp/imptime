@@ -92,7 +92,11 @@ class SprintUserRateViewSet(BaseViewSet):
                 
                 for user_pk in user_pks:
                     user = self.allowed_user(user_pk)
-                    rate = Rate.objects.get_or_create(user=user, project=sprint)[0] #sic
+                    try:
+                        rate = Rate.objects.get_or_create(user=user, project=sprint)[0] #sic
+                    except Rate.MultipleObjectsReturned:
+                        Rate.objects.filter(user=user, project=sprint).delete()
+                        rate = Rate.objects.create(user=user, project=sprint)[0] #sic
 
                     if 'billable_amount' in rate_values and can_edit_billable_amount:
                         try:
