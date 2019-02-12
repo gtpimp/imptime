@@ -192,8 +192,11 @@ class ProjectViewSet(BaseViewSet):
 
         auto_login_token = UserAutoLoginToken.get_auto_login_token(invite_user)
 
-        email_context = { 'project_name': project.name,
-                          'login_link': settings.WEB_URL_BASE + "projects/%d" % project.id + "?autologin="+auto_login_token }
+        email_context = { 
+            'project_name': project.name,
+            'login_link': settings.WEB_URL_BASE + "projects/%d" % project.id + "?autologin="+auto_login_token,
+            'username': invite_user.email.split('@')[0].capitalize
+        }
         html_content = html_template.render(email_context)
         plain_content = plain_template.render(email_context)
 

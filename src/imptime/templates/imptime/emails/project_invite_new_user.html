@@ -1,13 +1,8 @@
 {% extends "imptime/emails/base.html" %}
 
 {% block content %}
-
-You have been invited to join ImpTime, on the project {{project_name}}
-<br/>
-Click the link to set a password and join the team.
-<br/>
-
-<a href="{{login_link}}">{{login_link}}</a>
-
+  <p>Dear {{ username }},</p>
+  <h3>You have been invited to join ImpTime, on the project: {{ project_name }}!</h3>
+  <p>Click the link to set a password and join the team:</p>
+  <a href="{{ login_link }}">{{ login_link }}</a>
 {% endblock %}
-

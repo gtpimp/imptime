@@ -1,8 +1,5 @@
-ImpTime email
-
 {% block content %}
 {% endblock %}
-
-
-
-
+Thank you,
+ImpTime Team
+info@imptime.com

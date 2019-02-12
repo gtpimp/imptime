@@ -62,7 +62,8 @@ class OtpEmailViewSet(rest_views.ObtainAuthToken):
         if user:
             otp = UserOtpToken.get_otp_token(user)
             email_context = {
-                'otp': otp
+                'otp': otp,
+                'username': username.split('@')[0].capitalize()
             }
             html_template = template.loader.get_template("imptime/emails/email_otp.html")
             plain_template = template.loader.get_template("imptime/emails/email_otp.txt")
@@ -220,7 +221,10 @@ class AutoLoginViewSet(BaseViewSet):
             user.save()
 
             otp = UserOtpToken.get_otp_token(user)
-            email_context = {'otp': otp}
+            email_context = {
+                'otp': otp,
+                'username': email.split('@')[0].capitalize()
+            }
 
             plain_template = template.loader.get_template("imptime/emails/new_account.txt")
             html_template = template.loader.get_template("imptime/emails/new_account.html")

@@ -1,6 +1,8 @@
 {% extends "imptime/emails/base.html" %}
 
 {% block content %}
-  Your one time password  is <strong>{{ otp }}</strong>
+  <p>Dear {{ username }},</p>
+  <h3>Your One Time Password  is: <strong>{{ otp }}</strong></h3>
+  <p>If you did not make this request, please don't hesitate to contact us on the email address below.</p>
 {% endblock %}
 

@@ -10,8 +10,9 @@ class NavTabPopup extends Component {
                                 left: ${position || "auto"};
                                 top: 33px;
                                 display: flex;
+                                width: 1000px;
                                 z-index:9;`} >
-                 {this.props.children}
+              {this.props.children}
             </div>
         )
     }

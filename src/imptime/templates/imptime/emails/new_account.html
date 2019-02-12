@@ -1,10 +1,9 @@
 {% extends "imptime/emails/base.html" %}
 
 {% block content %}
-Your account has been created.
-<br/>
-Please enter the OTP {{otp}} to finalise registration
-<br/>
-
+  <p>Dear {{ username }},</p> 
+  <h3>Your account has been created!</h3>
+  <p>Please enter the One Time Password: <strong>{{otp}}</strong> to finalise the registration process.</p>
+  <p>If you did not make this request, please don't hesitate to contact us on the email address below.</p>
 {% endblock %}
 

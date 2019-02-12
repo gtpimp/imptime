@@ -1,1 +1,8 @@
-Your one time password is {{ otp }}
+{% extends "imptime/emails/base.txt" %}
+{% block content %}
+Dear {{ username }},
+
+Your one time password is: {{ otp }}
+
+If you did not make this request, please don't hesitate to contact us on the email below.
+{% endblock %}

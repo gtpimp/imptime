@@ -1,12 +1,10 @@
-{% extends "imptime/emails/base.html" %}
-
+{% extends "imptime/emails/base.txt" %}
 {% block content %}
+Dear {{ username }},
 
-You have been invited to join ImpTime, on the project {{project_name}}
+You have been invited to join ImpTime, on the project {{ project_name }}!
 
 Follow the link to set a password and join the team:
 
-  {{login_link}}
-
+{{ login_link }}
 {% endblock %}
-
