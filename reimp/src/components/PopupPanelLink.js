@@ -13,7 +13,8 @@ class PopupPanelLink extends Component {
                                 font-weight: ${active ? "bold" : "normal"};
                                 text-transform: none;
                                 padding: 6px;
-                                text-align: center;
+                                padding-bottom: 8px;
+                                text-align: left;
                                 justify-content: center;
                                 cursor: pointer;
                                 &:hover {
