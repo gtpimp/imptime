@@ -12,8 +12,8 @@ class PopupPanelLink extends Component {
                                 font: ${theme.fonts.link};
                                 font-weight: ${active ? "bold" : "normal"};
                                 text-transform: none;
-                                padding-bottom: 12px;
-                                text-align: left;
+                                padding: 6px;
+                                text-align: center;
                                 justify-content: center;
                                 cursor: pointer;
                                 &:hover {
@@ -22,7 +22,7 @@ class PopupPanelLink extends Component {
                                 }`}
                  onClick={action}
             >
-                 {children}
+              {children}
             </div>
         )
     }
