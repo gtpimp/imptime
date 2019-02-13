@@ -16,7 +16,7 @@ class Bookmark extends Component {
                          className={css`display: flex; align-items: center;`}>
                       { index > 0 && <span> &gt; </span> }
                       <PopupPanelLink>
-                        <div className={css`width:${index % 2 == 0 ? "50px" : "120px"};
+                        <div className={css`width:${index % 2 == 0 || index == 5 ? "50px" : "120px"};
                                             white-space: nowrap;
                                             overflow: hidden;
                                             text-overflow: ellipsis;`}>
