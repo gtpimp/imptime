@@ -32,9 +32,7 @@ class IssueProgress extends Component {
         const { dispatch, issue_id, enable_live_timer } = new_props
         dispatch(ensureIssuesLoaded([issue_id]))
 
-        if ( enable_live_timer &&
-             (this.props.issue_id !== new_props.issue_id ||
-              this.props.optional_actual !== new_props.optional_actual) ) {
+        if ( enable_live_timer ) {
             
             this.setState({live_timer_start: moment(),
                            live_timer_offset: 0})

@@ -5,8 +5,8 @@ from django.db import migrations
 
 def forwards(apps, schema_editor):
     ReleaseNote = apps.get_model('imptime', 'ReleaseNote')
-    ReleaseNote(header="Description field formatting",
-                content="Added empty line after each paragragh in the description field").save()
+    ReleaseNote(header="Clock fix",
+                content="Fixed issue where time would update incorrectly").save()
 
 class Migration(migrations.Migration):
 
