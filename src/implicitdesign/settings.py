@@ -483,7 +483,7 @@ EMAIL_HOST_USER = 'imptime@impd.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
 EMAIL_PORT = 587
 
-FROM_EMAIL="imptime@impd.co.za"
+FROM_EMAIL="info@imptime.com"
 WEEKLY_HOURS_MAIL_RECIPIENT = ""
 
 # the number of days before share refs expire
