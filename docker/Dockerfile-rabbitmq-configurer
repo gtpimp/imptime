@@ -5,13 +5,17 @@ RUN mkdir -p logs
 COPY * /opt/imptime/api/
 COPY version.txt /opt/imptime/api/version.txt
 
-WORKDIR /opt/imptime/api/
+# install erlang for rabbitmq-server
+RUN wget http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.1-1~ubuntu~xenial_amd64.deb
+RUN dpkg -i esl-erlang_20.1-1\~ubuntu\~xenial_amd64.deb
 
+# rabbitmq-server
 RUN echo 'deb https://dl.bintray.com/rabbitmq/debian xenial main' | tee /etc/apt/sources.list.d/bintray.rabbitmq.list
 RUN wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
 RUN apt-get update && apt-get install -y rabbitmq-server
 RUN apt-get install -y curl vim telnet
 
+WORKDIR /opt/imptime/api/
 COPY docker/start-rabbitmq-configurer.sh start-rabbitmq-configurer.sh
 
 ENTRYPOINT ["./start-rabbitmq-configurer.sh"]
