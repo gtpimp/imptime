@@ -7,9 +7,8 @@ COPY version.txt /opt/imptime/api/version.txt
 
 WORKDIR /opt/imptime/api/
 
-RUN echo 'deb http://www.rabbitmq.com/debian/ testing main' | tee /etc/apt/sources.list.d/rabbitmq.list
+RUN echo 'deb https://dl.bintray.com/rabbitmq/debian xenial main' | tee /etc/apt/sources.list.d/bintray.rabbitmq.list
 RUN wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | apt-key add -
-
 RUN apt-get update && apt-get install -y rabbitmq-server
 RUN apt-get install -y curl vim telnet
 
