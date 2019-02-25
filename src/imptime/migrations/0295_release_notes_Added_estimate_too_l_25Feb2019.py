@@ -5,13 +5,13 @@ from django.db import migrations
 
 def forwards(apps, schema_editor):
     ReleaseNote = apps.get_model('imptime', 'ReleaseNote')
-    ReleaseNote(header="Added warning for excessive estimate",
-                content="A warning has been added to the existing warnings that popup on the issue page, this is triggered when an estimate is set to anything larger than 8 hours").save()
+    ReleaseNote(header="Added estimate too large warning",
+                content="Estimate warning logic moved to backend and will now show on estimates larger than 4 hours").save()
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('imptime', '0293_release_notes_Description_field_fo_13Feb2019'),
+        ('imptime', '0294_release_notes_Added_warning_for_ex_15Feb2019'),
     ]
 
     operations = [

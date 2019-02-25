@@ -560,7 +560,7 @@ class IssueList extends Component {
                 const issue_has_problems = (issue.needs_testables && (size(issue.testables) === 0 ||
                                                                       issue.needs_estimate ||
                                                                       issue.assigned_to_id === null ||
-                                                                     ((issue.my_estimate[0] && issue.my_estimate[0].estimate_hours) || null) > 8))
+                                                                      issue.estimate_too_large))
                 content = (
                     <DivTableCell className="div-table__cell" key={key}
                     >
@@ -594,7 +594,7 @@ class IssueList extends Component {
                                           </div>
                                         </div>
                                       }
-                                      { ((issue.my_estimate[0] && issue.my_estimate[0].estimate_hours) || null) > 8 &&
+                                      { issue.estimate_too_large &&
                                         <div className="floater__section">
                                           <div>
                                             Your estimate too large and should be reduced.
