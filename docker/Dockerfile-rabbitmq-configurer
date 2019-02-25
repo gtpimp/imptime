@@ -1,5 +1,8 @@
 FROM imptime/base:latest
 
+RUN apt-get update && apt-get install -y --force-yes \
+  libwxbase3.0-0v5
+
 WORKDIR /opt/imptime/
 RUN mkdir -p logs
 COPY * /opt/imptime/api/
