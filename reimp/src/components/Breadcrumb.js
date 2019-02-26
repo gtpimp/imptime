@@ -178,7 +178,12 @@ const menu_buttons = {
           perms: (objs) => ['has_view_ctc_billable_rates'],
           generic_action: function(objs, props) {
               props.dispatch(startSprintSnapshotSelector())
-        }}
+          }
+        },
+        { label: (objs) => 'Cards',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/cards',
+          perms: (objs) => ['has_view_ctc_billable_rates']
+        }
     ],
     'issues': [
         { label: (objs) => 'Bulk Create Issues',
