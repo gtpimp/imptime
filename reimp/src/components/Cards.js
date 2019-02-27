@@ -18,9 +18,6 @@ class Cards extends Component {
                   <div className={ content_row }>
                     <Link to="./cards/budget">Budget</Link>
                   </div>
-                  <div className={ content_row }>
-                    <Link to="./cards">Other</Link>
-                  </div>
                 </div>
               </div>
             </div>
