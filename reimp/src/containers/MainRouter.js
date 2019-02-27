@@ -43,6 +43,8 @@ import FeaturesPage from './FeaturesPage'
 import FlatFeaturesPage from './FlatFeaturesPage'
 import ExecutiveSummaryPage from './ExecutiveSummaryPage'
 import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
+import TinyCardMenu from '../components/TinyCardMenu'
+import TinyBudgetCard from '../components/TinyBudgetCard'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
 import OnboardingRouter from '../components/onboarding/OnboardingRouter'
@@ -113,6 +115,9 @@ class MainRouter extends Component {
 
               <Route exact path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage}/>
 
+              <Route exact path="/projects/:projectId/sprints/:sprintId/cards" component={TinyCardMenu}/>
+              <Route exact path="/projects/:projectId/sprints/:sprintId/cards/budget" component={TinyBudgetCard}/>
+              
               <Route exact path="/fullscreen/projects/:projectId/image/:annotatedVisualSpecDocumentId" component={VisualSpecDocumentGalleryFullScreenPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
               <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
