@@ -1,54 +1,33 @@
 import React, {Component} from 'react'
-import { connect } from 'react-redux'
-import { Link, withRouter } from 'react-router-dom'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
-import {ensureProjectsLoaded, getProject} from '../actions/Projects'
-import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 
-class Cards extends Component {
-
-    constructor(props) {
-        super(props)
-    }
-
-    componentDidMount() {
-        const {sprint_id, sprint, project_id, project, dispatch} = this.props
-        dispatch(ensureProjectsLoaded([project_id]))
-        dispatch(ensureSprintsLoaded([sprint_id]))
-        this.refresh(sprint, project)
-    }
-
-    componentWillReceiveProps(new_props) {
-        const { sprint_id, project_id, dispatch } = this.props
-        dispatch(ensureProjectsLoaded([project_id]))
-        dispatch(ensureSprintsLoaded([sprint_id]))
-
-        if ( new_props.sprint.id !== this.props.sprint.id ||
-             new_props.sprint.name !== this.props.sprint.name ||
-             new_props.project.name !== this.props.project.name) {
-            this.refresh(new_props.sprint, new_props.project)
-        }
-    }
+class TinyCard extends Component {
 
     refresh(sprint, project) {
         const { dispatch } = this.props
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
     }
-
+    
     render() {
+        const { children, title, project_name, sprint_name } = this.props
         return (
             <div className={ main }>
               <div className={ box }>
                 <div className={ header }>
                   <div className={ title_row }>
-                    <span className={ card_title }>Cards</span>
+                    <span className={ card_title }>{title}</span>
+                  </div>
+                  <div className={ details_row }>
+                    <span className={ card_details }>{project_name}</span>
+                    <span className={ card_details }>&nbsp;-&nbsp;</span>
+                    <span className={ card_details }>{sprint_name}</span>
                   </div>
                 </div>
                 <div className={ content }>
                   <div className={ content_row }>
-                    <Link to="./cards/budget">Budget</Link>
+                    {children}
                   </div>
                 </div>
               </div>
@@ -57,21 +36,7 @@ class Cards extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
-    const project_id = props.match.params.projectId
-    const sprint_id = props.match.params.sprintId
-    const sprint = getSprint(state, sprint_id) || {}
-    const project = getProject(state, project_id) || {}
-
-    return {
-        project_id,
-        sprint_id,
-        sprint,
-        project
-    }
-}
-
-export default withRouter(connect(mapStateToProps)(Cards))
+export default TinyCard
 
 const main = css`
 display: flex;
@@ -110,9 +75,20 @@ flex: 1;
 align-items: center;
 justify-content: flex-start;
 `
+const details_row = css`
+display: flex;
+flex: 1;
+align-items: center;
+justify-content: flex-start;
+`
+
 
 const card_title = css`
 font: ${theme.fonts.semibold_massive};
+`
+
+const card_details = css`
+font: ${theme.fonts.semibold_big};
 `
 
 const content = css`
