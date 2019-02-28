@@ -26,9 +26,7 @@ class TinyCard extends Component {
                   </div>
                 </div>
                 <div className={ content }>
-                  <div className={ content_row }>
                     {children}
-                  </div>
                 </div>
               </div>
             </div>
@@ -82,7 +80,6 @@ align-items: center;
 justify-content: flex-start;
 `
 
-
 const card_title = css`
 font: ${theme.fonts.semibold_massive};
 `
@@ -95,13 +92,4 @@ const content = css`
 display: flex;
 flex: 1;
 flex-direction: column;
-`
-
-const content_row = css`
-display: flex;
-flex: 1;
-flex-direction: column;
-padding: 24px;
-border-bottom: 1px solid #E6E6E6;
-font: ${theme.fonts.regular_huge};
 `

@@ -3,11 +3,12 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import EditableSprintBudget from './EditableSprintBudget'
 import TinyCard from './TinyCard'
+import TinyCardRow from './TinyCardRow'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 
-class BudgetCard extends Component {
+class TinyBudgetCard extends Component {
 
     constructor(props) {
         super(props)
@@ -41,7 +42,9 @@ class BudgetCard extends Component {
         const { budget, sprint_name, project_name, sprint_id } = this.props
         return (
             <TinyCard title="Budget" project_name={project_name} sprint_name={sprint_name}>
+              <TinyCardRow>
               <EditableSprintBudget sprint_id={sprint_id} />
+              </TinyCardRow>
             </TinyCard>
         )
     }
@@ -67,4 +70,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(BudgetCard))
+export default withRouter(connect(mapStateToProps)(TinyBudgetCard))
