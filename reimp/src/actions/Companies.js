@@ -1,4 +1,3 @@
-import { impfetch } from './lib.js'
 import {
     ENTITY_KEY__COMPANY
 } from './ItemListKeyRegistry'
@@ -8,6 +7,7 @@ import {
     invalidateItems,
     fetchItemsIfNeeded,
     ensureItemsLoaded,
+    itemPost,
     getItem,
     getItems,
     getItemsById,
@@ -25,11 +25,6 @@ import {
     getLoadingItemIds,
     isLoadingItems
 } from '../actions/Item'
-import {
-    ANNOUNCE_SAVED_INVITE,
-    ANNOUNCE_SAVE_INVITE_FAILED,
-    ANNOUNCE_SAVING_INVITE
-} from './Projects'
 
 export const SET_COMPANY_STORE_VALUE = 'SET_COMPANY_STORE_VALUE'
 
@@ -130,59 +125,11 @@ export function isLoadingCompanies(state, item_ids) {
     return isLoadingItems(state, ENTITY_KEY__COMPANY, item_ids)
 }
 
-function announceSavingInvite(user_email, company_id) {
-    return {
-        type: ANNOUNCE_SAVING_INVITE,
-        user_email: user_email,
-        company_id: company_id
-    }
-}
-
-function announceInviteSaved(user_email, company_id, payload) {
-    return {
-        type: ANNOUNCE_SAVED_INVITE,
-        user_email: user_email,
-        company_id: company_id,
-        payload: payload
-    }
-}
-
-function announceInviteSaveFailed(user_email, company_id, error) {
-    return {
-        type: ANNOUNCE_SAVE_INVITE_FAILED,
-        user_email: user_email,
-        company_id: company_id,
-        error: error
-    }
-}
-
 export function saveInviteUser(company_id, user_email) {
-
-    return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceSavingInvite())
-	let data = {user_email: user_email}
-
-	return impfetch(state, "imp/company/"+company_id+"/invite/", dispatch,
-			{method: "POST",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"},
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceInviteSaveFailed(user_email, company_id, json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceInviteSaved(user_email, company_id, json.payload))
-             }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-	     dispatch(announceInviteSaveFailed(user_email, company_id, error))
-	 })
-    }
-
+    const url = `imp/company/${company_id}/invite/`
+    const field_name = "company_id"
+    const field_value = company_id
+    const method = "POST"
+    const data = { company_id: company_id }
+    return itemPost(ENTITY_KEY__COMPANY, [company_id], url, field_name, field_value, method, data)
 }

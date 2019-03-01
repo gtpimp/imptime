@@ -111,7 +111,7 @@ class ProjectViewSet(BaseViewSet):
                     raise Exception("Unsupported field name: %s" % field_name)
                 project.save()
             
-            data = {'status': 'success'}
+            data = {'status': 'success', 'payload': project_pks}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)

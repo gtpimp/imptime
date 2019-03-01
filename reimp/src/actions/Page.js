@@ -155,7 +155,6 @@ export function setBrowserTitle(title) {
     } else {
         document.title = "ImpTime"
     }
-    
 }
 
 export function getPageName(state) {
