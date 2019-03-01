@@ -47,9 +47,12 @@ class ProjectsPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.selected_project_ids.length !== this.props.selected_project_ids.length ||
-             (new_props.selected_project_ids.length > 0 &&
-              new_props.selected_project_ids[0] !== this.props.selected_project_ids[0] )) {
+        const { selected_project_ids } = new_props
+        if ( selected_project_ids !== this.props.selected_project_ids ||
+             (selected_project_ids && this.props.selected_project_ids && 
+              (selected_project_ids.length !== this.props.selected_project_ids.length ||
+               (selected_project_ids.length > 0 &&
+                selected_project_ids[0] !== this.props.selected_project_ids[0])) )) {
             this.refresh(new_props)
         }
     }

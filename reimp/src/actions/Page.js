@@ -53,14 +53,14 @@ export function getToolbarParams(state) {
     return get(state, ["page", "params"], [])
 }
 
-export function setPageSelectedEntities(page_key, {issue_ids, sprint_ids, project_id, user_ids, wiki_ids, feature_ids, decision_journal_ids, company_ids}) {
+export function setPageSelectedEntities(page_key, {issue_ids, sprint_ids, project_ids, user_ids, wiki_ids, feature_ids, decision_journal_ids, company_ids}) {
     return (dispatch, getState) => {
         dispatch({
             type: UPDATE_PAGE_SELECTION,
             page_key,
             entities: {issue_ids,
                        sprint_ids,
-                       project_id,
+                       project_ids,
                        user_ids,
                        wiki_ids,
                        feature_ids,
