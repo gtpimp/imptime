@@ -1,4 +1,5 @@
 import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
+import { get } from 'lodash'
 
 import {
     invalidateAllItems,
@@ -122,4 +123,8 @@ export function setLastSelectedProjectId(project_id) {
         type: SET_LAST_SELECTED_PROJECT,
         project_id: project_id
     }
+}
+
+export function getLastSelectedProjectId(state) {
+    return get(state, ["project", "last_selected_project_id"], null)
 }

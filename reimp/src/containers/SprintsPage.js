@@ -11,13 +11,15 @@ import Splitter from '../components/Splitter'
 import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__SPRINT_LIST,
-    PAGE_KEY__SPRINTS_PAGE
+    PAGE_KEY__SPRINTS_PAGE,
+    ENTITY_KEY__SPRINT
 } from '../actions/ItemListKeyRegistry'
 import {
+    invalidateList,
+    getListFilter,
+    getSelectedItems,
     selectItems,
     update_list_filter,
-    invalidateList,
-    getListFilter
 } from '../actions/ItemList'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
@@ -189,21 +191,18 @@ class SprintsPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {sprint} = state
-    const default_filter = props.default_filter || {}
-    let list_key = props.list_key || LIST_KEY__SPRINT_LIST
-    let page_key = props.page_key || PAGE_KEY__SPRINTS_PAGE
+    const default_sprint_id = props.match.params.sprintId
+    
+    const list_key = LIST_KEY__SPRINT_LIST
+    const page_key = PAGE_KEY__SPRINTS_PAGE
+    
+    const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__SPRINT)
     const filter = getListFilter(state, list_key)
-    const items_by_id = (sprint && sprint.items_by_id) || {}
+    const project_id = filter.project_id || props.match.params.projectId
+
+    const default_filter = { project_id: project_id }
     const selected_sprint_ids = getPageSelectedEntities(state, page_key).sprint_ids
     
-    const selected_items = items_by_id && selected_sprint_ids && selected_sprint_ids.map(function (selected_id, index) {
-        return items_by_id[selected_id] || {'id': selected_id,
-                                            'loaded': false }
-    })
-
-    const project_id = props.match.params.projectId
-    const default_sprint_id = props.match.params.sprintId
     const project = getProject(state, project_id) || {}
     const project_name = project.name
     const candidate_sprint = getCandidateSprint(state) || null

@@ -16,13 +16,13 @@ import {
     getLastUpdated,
     getLoadingItemIds,
     getSelectedItemIds,
-    getSelectedItems,
-    getDisplayMode
+    getSelectedItems
 } from '../actions/ItemList'
 import {
     invalidateAllProjects,
     fetchProjectsIfNeeded,
-    setLastSelectedProjectId
+    setLastSelectedProjectId,
+    getLastSelectedProjectId
 } from '../actions/Projects'
 import { setGloballySelectedProjectId } from '../actions/Page'
 import Pagination from './Pagination'
@@ -168,37 +168,7 @@ class ProjectList extends Component {
         )
     }
     
-    renderCollapsedProject(project) {
-	const { list_key, loading_item_ids } = this.props
-        const is_loading=loading_item_ids.indexOf(project.id) !== -1
-        
-	return (
-	    <div key={"collapsed_project_"+project.id+"_"+list_key}>
-              { is_loading && "Loading..." }
-              { ! is_loading &&
-                <div>
-                  Project: {project.name}
-                </div>
-              }
-	    </div>
-	)
-    }
-
-    render_collapsed() {
-	const { selected_items } = this.props
-
-	return (
-	    <div className="panel panel--collapsed">
-	      <div className="panel-heading" onClick={this.onExpand}>
-		<div className="panel__title">
-		  { selected_items.map((project, index) => this.renderCollapsedProject(project)) }
-		</div>
-	      </div>
-	    </div>
-	)
-    }
-
-    renderExpandedProject(project, index) {
+    renderProject(project, index) {
         const { list_key, loading_item_ids, selected_ids, header_list } = this.props
         const that = this
 
@@ -218,23 +188,13 @@ class ProjectList extends Component {
         )
     }
 
-    render_expanded() {
-
-        const { projects} = this.props
-
-        return (
-            <DivTable renderHeader={this.renderHeader}>
-              {projects.map((project, index) => this.renderExpandedProject(project, index))}
-            </DivTable>
-        )
-
-    }
-
     render() {
-        const { list_key } = this.props
+        const { list_key, projects } = this.props
 	return (
 	    <div>
-              { this.render_expanded() }
+              <DivTable renderHeader={this.renderHeader}>
+                {projects.map((project, index) => this.renderProject(project, index))}
+              </DivTable>
               <Pagination list_key={list_key}
                           on_changed={this.onChangePage} />
 	    </div>
@@ -243,17 +203,15 @@ class ProjectList extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project } = state
     const { list_key, header_list } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__PROJECT)
     const selected_item_ids = getSelectedItemIds(state, list_key)
     const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__PROJECT)
-    const display_mode = getDisplayMode(state, list_key) || "expanded"
     const loading_item_ids = getLoadingItemIds(state, list_key)
     const is_loading = isLoading(state, list_key)
     const last_updated = getLastUpdated(state, list_key)
-    const last_selected_project_id = project.last_selected_project_id || null
+    const last_selected_project_id = getLastSelectedProjectId(state)
 
     return {
         list_key: list_key,
@@ -265,8 +223,6 @@ function mapStateToProps(state, props) {
         selected_items,
         has_items: visible_items && visible_items.length > 0,
         is_loading,
-        is_collapsed: display_mode === "collapsed",
-        is_expanded: display_mode === "expanded" || display_mode,
         last_updated,
         header_list,
         last_selected_project_id: last_selected_project_id

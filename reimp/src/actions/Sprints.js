@@ -1,29 +1,33 @@
 import { impfetch } from './lib.js'
-import { keyBy } from 'lodash'
-import { fetchListIfNeeded, getMissingItemIds, updateVisibleItemIdAbove } from './ItemList'
+import { updateVisibleItemIdAbove } from './ItemList'
+import { get } from 'lodash'
+
+import {
+    invalidateAllItems,
+    invalidateItems,
+    fetchItemsIfNeeded,
+    ensureItemsLoaded,
+    getItem,
+    getItems,
+    updateItem,
+    startCandidateItem,
+    saveCandidateItem,
+    updateCandidateDetails,
+    cancelCandidateItem,
+    getCandidateItem,
+    deleteItems,
+    is_item_invalidated,
+    getInvalidatedItemIds,
+    getSavingItemIds,
+    getLoadingItemIds
+} from '../actions/Item'
+
 import {
     ENTITY_KEY__SPRINT,
     small_col_width,
     medium_col_width,
     large_col_width
 } from './ItemListKeyRegistry'
-
-export const ANNOUNCE_SPRINTS_SAVING = 'ANNOUNCE_SPRINTS_SAVING'
-export const ANNOUNCE_SPRINTS_SAVED = 'ANNOUNCE_SPRINTS_SAVED'
-export const ANNOUNCE_SPRINT_SAVE_FAILED = 'ANNOUNCE_SPRINT_SAVE_FAILED'
-
-export const ANNOUNCE_SPRINTS_LOADED = 'ANNOUNCE_SPRINTS_LOADED'
-export const ANNOUNCE_SPRINTS_LOAD_FAILED = 'ANNOUNCE_SPRINTS_LOAD_FAILED'
-export const ANNOUNCE_LOADING_SPRINTS = 'ANNOUNCE_LOADING_SPRINTS'
-export const INVALIDATE_SPRINTS = 'INVALIDATE_SPRINTS'
-export const INVALIDATE_ALL_SPRINTS = 'INVALIDATE_ALL_SPRINTS'
-
-export const ANNOUNCE_CAPTURING_NEW_SPRINT = 'ANNOUNCE_CAPTURING_NEW_SPRINT'
-export const UPDATE_NEW_SPRINT_DETAILS = 'UPDATE_NEW_SPRINT_DETAILS'
-export const CANCEL_CREATING_NEW_SPRINT = 'CANCEL_CREATING_NEW_SPRINT'
-export const ANNOUNCE_SAVING_NEW_SPRINT = 'ANNOUNCE_SAVING_NEW_SPRINT'
-export const ANNOUNCE_SAVED_NEW_SPRINT = 'ANNOUNCE_SAVED_NEW_SPRINT'
-export const ANNOUNCE_SAVING_NEW_SPRINT_FAILED = 'ANNOUNCE_SAVING_NEW_SPRINT_FAILED'
 
 export const ANNOUNCE_CLONING_SPRINT = 'ANNOUNCE_CLONING_SPRINT'
 export const ANNOUNCE_CLONED_SPRINT = 'ANNOUNCE_CLONED_SPRINT'
@@ -56,145 +60,111 @@ export const ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS = [
 ]
 
 export function invalidateAllSprints() {
-    return {
-        type: INVALIDATE_ALL_SPRINTS
+    return (dispatch, getState) => {
+        dispatch(invalidateAllItems(ENTITY_KEY__SPRINT))
     }
 }
 
 export function invalidateSprints(sprint_ids) {
-    return {
-        type: INVALIDATE_SPRINTS,
-	      sprint_ids_to_invalidate: sprint_ids
+    return (dispatch, getState) => {
+        dispatch(invalidateItems(ENTITY_KEY__SPRINT, sprint_ids
+        ))
     }
-}
-
-function announceLoadingSprints(sprint_ids) {
-    return {
-        type: ANNOUNCE_LOADING_SPRINTS,
-	      sprint_ids_to_load: sprint_ids
-    }
-}
-
-function announceSprintsLoaded(payload) {
-    return {
-        type: ANNOUNCE_SPRINTS_LOADED,
-        items_by_id: keyBy(payload.sprints, 'id'),
-	      received_at: Date.now()
-    }
-}
-
-function announceSprintsLoadFailed(error) {
-    return {
-        type: ANNOUNCE_SPRINTS_LOAD_FAILED,
-        error: error,
-        received_at: Date.now()
-    }
-}
-
-function announceCandidateSprintSaving() {
-    return {
-        type: ANNOUNCE_SAVING_NEW_SPRINT
-    }
-}
-
-function announceCandidateSprintSaved(new_sprint) {
-    return {
-        type: ANNOUNCE_SAVED_NEW_SPRINT,
-	sprint: new_sprint
-    }
-}
-
-function announceCandidateSprintSaveFailed(error) {
-    return {
-	type: ANNOUNCE_SAVING_NEW_SPRINT_FAILED,
-	error: error
-    }
-}
-
-function fetchSprintsPromise(dispatch, state, sprint_ids) {
-    return new Promise(function(resolve, reject) {
-	dispatch(announceLoadingSprints(sprint_ids))
-
-	const params = { filter: { ids: sprint_ids },
-			 pagination: {'enabled': false} }
-        return impfetch(state, 'imp/sprint/', dispatch, {params:params})
-	    .then(response => response.json())
-	    .then(json => {
-                if (json.status !== 'success') {
-		    dispatch(announceSprintsLoadFailed())
-		    reject(json.error)
-                } else {
-		    dispatch(announceSprintsLoaded(json.payload))
-		    resolve(json.payload)
-                }
-	    }).catch(function (error) {
-		dispatch(announceSprintsLoadFailed("Failed to load sprints: " + error))
-		reject("Failed to load sprints: " + error)
-	    })
-    })
 }
 
 export function fetchSprintsIfNeeded(list_key) {
-    const matching_items_key = ENTITY_KEY__SPRINT
-    const matching_items_promise_func = fetchSprintsPromise
-    return fetchListIfNeeded(list_key, matching_items_key, matching_items_promise_func)
+    return (dispatch, getState) => {
+        dispatch(fetchItemsIfNeeded(ENTITY_KEY__SPRINT, list_key))
+    }
 }
 
-export function startCandidateSprint(project_id, sprint_id_before, default_sprint_args) {
+export function ensureSprintsLoaded(sprint_ids) {
+    return ensureItemsLoaded(ENTITY_KEY__SPRINT, sprint_ids)
+}
+
+export function getSprint(state, sprint_id) {
+    return getItem(state, ENTITY_KEY__SPRINT, sprint_id)
+}
+
+export function getSprints(state, sprint_ids) {
+    return getItems(state, ENTITY_KEY__SPRINT, sprint_ids)
+}
+
+export function updateSprintName(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "name", value)
+}
+
+export function updateSprintDescription(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "description", value)
+}
+
+export function updateSprintStatus(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "status_name", value)
+}
+
+export function updateSprintType(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "sprint_type", value)
+}
+
+export function updateSprintReviewCycle(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "review_cycle_days", value)
+}
+
+export function updateSprintCommission(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "commission_percentage", value)
+}
+
+export function updateSprintRatios(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "ratios", value)
+}
+
+export function updateSprintBudget(sprint_id, value) {
+    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "budget", value)
+}
+
+
+export function startCandidateSprint() {
     return (dispatch, getState) => {
-	dispatch({
-	    type: ANNOUNCE_CAPTURING_NEW_SPRINT,
-	    project_id: project_id,
-            sprint_id_before: sprint_id_before,
-            default_sprint_args: default_sprint_args
-	})
+        dispatch(startCandidateItem(ENTITY_KEY__SPRINT, {}))
     }
 }
 
 export function updateCandidateName(name) {
-    return {
-	type: UPDATE_NEW_SPRINT_DETAILS,
-	candidate_sprint: { "name": name }
-    }
+    return updateCandidateDetails(ENTITY_KEY__SPRINT, {name:name})
 }
 
 export function cancelCandidateSprint() {
-    return {
-	type: CANCEL_CREATING_NEW_SPRINT
-    }
+    return cancelCandidateItem(ENTITY_KEY__SPRINT)
 }
 
-export function updateSprintName(sprint_id, value) {
-    return updateSprint([sprint_id], "name", value)
+export function saveCandidateSprint(on_done) {
+    return saveCandidateItem(ENTITY_KEY__SPRINT, on_done)
 }
 
-export function updateSprintStatus(sprint_ids, value) {
-    return updateSprint(sprint_ids, "status_name", value)
+export function getCandidateSprint(state) {
+    return getCandidateItem(ENTITY_KEY__SPRINT, state)
 }
 
-export function updateSprintDescription(sprint_id, value) {
-    return updateSprint([sprint_id], "description", value)
+export function getInvalidatedSprintIds(state, sprint_ids) {
+    return getInvalidatedItemIds(ENTITY_KEY__SPRINT, state, sprint_ids)
 }
 
-export function updateSprintType(sprint_ids, value) {
-    return updateSprint(sprint_ids, "sprint_type", value)
+export function getLoadingSprintIds(state, sprint_ids) {
+    return getLoadingItemIds(state, ENTITY_KEY__SPRINT, sprint_ids)
 }
 
-export function updateSprintReviewCycle(sprint_ids, value) {
-    return updateSprint(sprint_ids, "review_cycle_days", value)
+export function getSavingSprintIds(state, sprint_ids) {
+    return getSavingItemIds(ENTITY_KEY__SPRINT, state, sprint_ids)
 }
 
-export function updateSprintCommission(sprint_ids, value) {
-    return updateSprint(sprint_ids, "commission_percentage", value)
+export function is_sprint_invalidated(state, sprint_id) {
+    return is_item_invalidated(ENTITY_KEY__SPRINT, state, sprint_id)
 }
 
-export function updateSprintRatios(sprint_ids, value) {
-    return updateSprint(sprint_ids, "ratios", value)
+export function deleteSprints(sprint_ids) {
+    return deleteItems(ENTITY_KEY__SPRINT, sprint_ids)
 }
 
-export function updateSprintBudget(sprint_ids, value) {
-    return updateSprint(sprint_ids, "budget", value)
-}
 
 export function reorderSprints(sprints, index_of_row_being_moved, original_index_of_destination, list_key ) {
     return (dispatch, getState) => {
@@ -209,126 +179,7 @@ export function reorderSprints(sprints, index_of_row_being_moved, original_index
         const sprint_id_after = (index_of_destination>=0 && sprints[index_of_destination].id) || null
         
         dispatch(updateVisibleItemIdAbove(list_key, [sprint_id_before], sprint_id_after, original_index_of_destination))
-        dispatch(updateSprint([sprint_id_before], "sprint_id_after", sprint_id_after))
-    }
-}
-
-export function saveCandidateSprint() {
-
-    return (dispatch, getState) => {
-	const state = getState()
-	dispatch(announceCandidateSprintSaving())
-	let data = {sprint: state.sprint.candidate_sprint}
-
-	return impfetch(state, "imp/sprint/", dispatch,
-			{method: "POST",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"},
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceCandidateSprintSaveFailed(json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-		 dispatch(announceCandidateSprintSaved(json.payload.sprint))
-             }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-	     dispatch(announceCandidateSprintSaveFailed(error))
-	 })
-    }
-}
-
-export function ensureSprintsLoaded(sprint_ids) {
-    return (dispatch, getState) => {
-        const state = getState()
-
-        const sprint_ids_to_load = getMissingItemIds(state, sprint_ids, 'sprint')
-        if ( sprint_ids_to_load.length > 0 ) {
-            return fetchSprintsPromise(dispatch, state, sprint_ids_to_load)
-        }
-    }
-}
-
-export function getSprint(state, sprint_id) {
-    return ((state.sprint || {}).items_by_id || {})[sprint_id] || null
-}
-
-export function getSprints(state, sprint_ids) {
-    const sprint_objs = state.sprint
-    const items_by_id = (sprint_objs && sprint_objs.items_by_id) || {}
-    return items_by_id && sprint_ids && sprint_ids.map(function (sprint_id, index) {
-        return items_by_id[sprint_id] || {
-            'id': sprint_id,
-            'loaded': false
-        }
-    })
-}
-
-export function getCandidateSprint(state) {
-    const sprint_objs = state.sprint || {}
-    return sprint_objs.candidate_sprint
-}
-
-function announceSprintSaveFailed(error) {
-    return {
-        type: ANNOUNCE_SPRINT_SAVE_FAILED,
-        error: error,
-        received_at: Date.now()
-    }
-}
-
-function announceSprintsSaved(sprint_ids) {
-    return {
-        type: ANNOUNCE_SPRINTS_SAVED,
-        sprint_ids: sprint_ids,
-        saved_at: Date.now()
-    }
-}
-
-function announceSprintsSaving(sprint_ids, field_name, new_value) {
-    return {
-        type: ANNOUNCE_SPRINTS_SAVING,
-        sprint_ids: sprint_ids,
-	field_name: field_name,
-	new_value: new_value
-    }
-}
-
-function updateSprint(sprint_ids, field_name, new_value, on_done) {
-    return (dispatch, getState) => {
-        const state = getState()
-	dispatch(announceSprintsSaving(sprint_ids, field_name, new_value))
-	let data = {sprint_ids: sprint_ids,
-                    field_name: field_name,
-		    value: new_value }
-	return impfetch(state, "imp/sprint/"+sprint_ids[0]+"/", dispatch,
-			{method: "PUT",
-			 credentials: 'same-origin',
-			 data: data,
-			 headers: {"Content-type": "application/json; charset=UTF-8"},
-			 body: JSON.stringify(data)}
-	).then(response => response.json())
-	 .then(json => {
-             if ( json.status !== 'success' ) {
-		 console.log('Request failed with JSON response', json);
-		 dispatch(announceSprintSaveFailed(json.error))
-             } else {
-		 console.log('Request succeeded with JSON response', json);
-                 dispatch(announceSprintsSaved(sprint_ids))
-             }
-	     if ( on_done ) {
-		 on_done()
-	     }
-	 })
-	 .catch(function (error) {
-             console.log('Request failed', error);
-	     dispatch(announceSprintSaveFailed(error))
-	 })
+        dispatch(updateItem(ENTITY_KEY__SPRINT, [sprint_id_before], "sprint_id_after", sprint_id_after))
     }
 }
 
@@ -388,10 +239,6 @@ export function cloneTemplateSprint(sprint_id, onDone) {
     }
 }
 
-export function is_sprint_invalidated(state, sprint_id) {
-    return (((state.sprint || {}).invalidated_item_ids) || []).indexOf(sprint_id) !== -1
-}
-
 export function getExecutiveSummaryUrl(project_id, sprint_id) {
     return window.location.origin + `/wd/projects/${project_id}/sprints/${sprint_id}/executive_summary`
 }
@@ -401,4 +248,8 @@ export function setLastSelectedSprintId(sprint_id) {
         type: SET_LAST_SELECTED_SPRINT,
         sprint_id: sprint_id
     }
+}
+
+export function getLastSelectedSprintId(state) {
+    return get(state, ["sprint", "last_selected_sprint_id"], null)
 }

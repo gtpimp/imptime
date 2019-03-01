@@ -78,6 +78,7 @@ export const ENTITY_KEY__TESTABLE_LINE = 'testable_line'
 // mechanism and therefore are in a different place in the state.
 export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__ISSUE,
+                                  ENTITY_KEY__SPRINT,
                                   ENTITY_KEY__PROJECT,
                                   ENTITY_KEY__INVOICE,
                                   ENTITY_KEY__ISSUE_HISTORY,

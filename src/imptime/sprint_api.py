@@ -120,7 +120,7 @@ class SprintViewSet(BaseViewSet):
                 sprint.save()
                 sprint.recalc_secondary_estimates()
 
-            data = {'status': 'success'}
+            data = {'status': 'success', 'payload': sprint_pks}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
