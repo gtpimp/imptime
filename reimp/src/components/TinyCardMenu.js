@@ -4,12 +4,13 @@ import { Link, withRouter } from 'react-router-dom'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import TinyCard from './TinyCard'
+import TinyCardRow from './TinyCardRow'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 
-class Cards extends Component {
+class TinyCardMenu extends Component {
 
     constructor(props) {
         super(props)
@@ -48,6 +49,9 @@ class Cards extends Component {
                   <Link to="./cards/budget">Budget</Link>
                 </PermissionInspectorHighlighter>
               </PermissionInspectorHighlighter>
+              <TinyCardRow>
+                <Link to="./cards/issues_per_status">Issues By Status</Link>
+              </TinyCardRow>
             </TinyCard>
         )
     }
@@ -71,5 +75,5 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(Cards))
+export default withRouter(connect(mapStateToProps)(TinyCardMenu))
 

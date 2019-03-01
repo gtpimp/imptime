@@ -3,15 +3,12 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 import EditableSprintBudget from './EditableSprintBudget'
 import TinyCard from './TinyCard'
+import TinyCardRow from './TinyCardRow'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
-class BudgetCard extends Component {
-
-    constructor(props) {
-        super(props)
-    }
+class TinyBudgetCard extends Component {
 
     componentDidMount() {
         const {sprint_id, sprint, project_id, project, dispatch} = this.props
@@ -25,25 +22,27 @@ class BudgetCard extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
 
-        if ( new_props.sprint.id !== this.props.sprint.id ||
-             new_props.sprint.name !== this.props.sprint.name ||
-             new_props.project.name !== this.props.project.name) {
+        if (new_props.sprint.id !== this.props.sprint.id ||
+            new_props.sprint.name !== this.props.sprint.name ||
+            new_props.project.name !== this.props.project.name) {
             this.refresh(new_props.sprint, new_props.project)
         }
     }
-    
+
     refresh(sprint, project) {
         const { dispatch } = this.props
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
     }
-    
+
     render() {
-        const { budget, sprint_name, project_name, sprint_id, project_id } = this.props
+        const { sprint_name, project_name, sprint_id, project_id } = this.props
         return (
             <TinyCard title="Budget" project_name={project_name} sprint_name={sprint_name}>
               <PermissionInspectorHighlighter project_id={project_id} permission_name="has_edit_budget">
                 <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
-                  <EditableSprintBudget sprint_id={sprint_id} />
+                  <TinyCardRow>
+                    <EditableSprintBudget sprint_id={sprint_id} />
+                  </TinyCardRow>
                 </PermissionInspectorHighlighter>
               </PermissionInspectorHighlighter>
             </TinyCard>
@@ -71,4 +70,4 @@ function mapStateToProps(state, props) {
     }
 }
 
-export default withRouter(connect(mapStateToProps)(BudgetCard))
+export default withRouter(connect(mapStateToProps)(TinyBudgetCard))
