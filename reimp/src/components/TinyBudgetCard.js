@@ -6,7 +6,7 @@ import TinyCard from './TinyCard'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
-
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 class BudgetCard extends Component {
 
     constructor(props) {
@@ -38,11 +38,15 @@ class BudgetCard extends Component {
     }
     
     render() {
-        const { budget, sprint_name, project_name, sprint_id } = this.props
+        const { budget, sprint_name, project_name, sprint_id, project_id } = this.props
         return (
-            <TinyCard title="Budget" project_name={project_name} sprint_name={sprint_name}>
-              <EditableSprintBudget sprint_id={sprint_id} />
-            </TinyCard>
+            <PermissionInspectorHighlighter project_id={project_id} permission_name="has_edit_budget">
+              <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
+                <TinyCard title="Budget" project_name={project_name} sprint_name={sprint_name}>
+                  <EditableSprintBudget sprint_id={sprint_id} />
+                </TinyCard>
+              </PermissionInspectorHighlighter>
+            </PermissionInspectorHighlighter>
         )
     }
 }
