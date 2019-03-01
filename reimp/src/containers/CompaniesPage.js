@@ -159,8 +159,8 @@ function mapStateToProps(state, props) {
     return {
         selected_companies: selected_items,
         selected_company_ids: selected_company_ids,
-        is_single_selection: selected_items.length === 1,
-        is_multiple_selection: selected_items.length > 1,
+        is_single_selection: selected_items && selected_items.length === 1,
+        is_multiple_selection: selected_items && selected_items.length > 1,
         is_creating_company: is_creating_company,
         default_company_id,
         selected_company,

@@ -127,7 +127,7 @@ class IssueToolbarPanel extends Component {
 
         const { issue_ids, issue, show_sidebar } = this.props
 
-        if (issue_ids.length === 0 ) {
+        if (!issue_ids || issue_ids.length === 0 ) {
             return null
         }
         if ( ! issue ) {

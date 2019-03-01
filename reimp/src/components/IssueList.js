@@ -904,11 +904,6 @@ class IssueList extends Component {
             return (<div></div>)
         }
 
-        if ( window.shortcuts_warning === undefined ) {
-            console.log("The next warning about <shortcuts> will be fixed once react-shortcuts makes a new release. See https://github.com/avocode/react-shortcuts/pull/41")
-            window.shortcuts_warning = true
-        }
-
         return this.render_grid()
         
         /* return (

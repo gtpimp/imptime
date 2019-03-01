@@ -240,7 +240,7 @@ function mapStateToProps(state, props) {
         default_issue_id,
         selected_issue: selected_issue || {},
         selected_issue_ids: selected_issue_ids,
-        is_single_selection: selected_items.length === 1,
+        is_single_selection: selected_items && selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,

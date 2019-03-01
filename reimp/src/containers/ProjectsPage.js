@@ -170,8 +170,8 @@ function mapStateToProps(state, props) {
     return {
         selected_projects: selected_items,
         selected_project_ids: selected_project_ids,
-        is_single_selection: selected_items.length === 1,
-        is_multiple_selection: selected_items.length > 1,
+        is_single_selection: selected_items && selected_items.length === 1,
+        is_multiple_selection: selected_items && selected_items.length > 1,
         is_creating_project: is_creating_project,
         default_project_id,
         project_header_list,

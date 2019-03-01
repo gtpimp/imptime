@@ -195,8 +195,8 @@ function mapStateToProps(state, props) {
         selected_features: selected_items,
         selected_feature: selected_feature || {},
         selected_feature_ids: selected_feature_ids,
-        is_single_selection: selected_items.length === 1,
-        is_multiple_selection: selected_items.length > 1,
+        is_single_selection: selected_items && selected_items.length === 1,
+        is_multiple_selection: selected_items && selected_items.length > 1,
         is_creating_feature: is_creating_feature,
         show_sidebar,
         project_name

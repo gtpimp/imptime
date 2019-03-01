@@ -219,11 +219,10 @@ function mapStateToProps(state, props) {
         default_sprint_id,
         project_id: project_id,
         project: project || {},
-        selected_sprints: selected_items,
         selected_sprint: selected_sprint || {},
         selected_sprint_ids: selected_sprint_ids,
-        is_single_selection: selected_items.length === 1,
-        is_multiple_selection: selected_items.length > 1,
+        is_single_selection: selected_items && selected_items.length === 1,
+        is_multiple_selection: selected_items && selected_items.length > 1,
         is_creating_sprint: is_creating_sprint,
         show_sidebar,
         project_name
