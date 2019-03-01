@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { includes } from 'lodash'
+import { includes, compact } from 'lodash'
 import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureWikisLoaded, getWiki} from '../actions/Wikis'
@@ -14,10 +14,9 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_projects,
-    select_wikis,
-    getPageFlag,
-    get_selected_wiki_ids,
+    setPageSelectedEntities,
+    getPageSelectedEntities,
+    getPageFlag
 } from '../actions/Page'
 import { selectItems } from '../actions/ItemList'
 import { getCandidateWiki } from '../actions/Wikis'
@@ -52,23 +51,27 @@ class ProjectWikiPage extends Component {
         const { project_id, project, wiki_id, default_wiki_id, dispatch } = these_props || this.props
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
-            dispatch(select_projects(PAGE_KEY__PROJECT_WIKI_PAGE, [project_id]))
             if ( project.id ) {
                 dispatch(setProjectBreadcrumbsHelper(project))
             }
             if ( wiki_id ) {
                 dispatch(ensureWikisLoaded([wiki_id]))
-                dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+wiki_id]))
             }
+            dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_WIKI_PAGE,
+                                     {project_ids: compact([project_id]),
+                                      wiki_ids: compact([""+wiki_id])}))
         }
         this.setState({'noticed_default_wiki_id': default_wiki_id})
     }
 
     selectDefaultWiki(these_props) {
-        const {dispatch, selected_wiki_ids, default_wiki_id} = these_props || this.props
+        const {dispatch, project_id, selected_wiki_ids, default_wiki_id} = these_props || this.props
         if ( default_wiki_id !== undefined && !includes(selected_wiki_ids, default_wiki_id) ) {
             dispatch(selectItems(LIST_KEY__WIKI_LIST, [default_wiki_id]))
-            dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+default_wiki_id]))
+            
+            dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_WIKI_PAGE,
+                                     {project_ids: [project_id],
+                                      wiki_ids: [""+default_wiki_id]}))
         }
         this.setState({'noticed_default_wiki_id': default_wiki_id})
     }
@@ -76,7 +79,9 @@ class ProjectWikiPage extends Component {
     onSelectWiki(wiki_id) {
         const { dispatch, history, project_id } = this.props
         dispatch(selectItems(LIST_KEY__WIKI_LIST, wiki_id))
-        dispatch(select_wikis(PAGE_KEY__PROJECT_WIKI_PAGE, [""+wiki_id]))
+        dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_WIKI_PAGE,
+                                 {project_id: [project_id],
+                                  wiki_ids: [""+wiki_id]}))
         history.push('/projects/'+project_id+'/wiki/'+wiki_id);
     }
 
@@ -153,7 +158,7 @@ function mapStateToProps(state, props) {
     const candidate_wiki = getCandidateWiki(state) || null
     const is_creating_wiki = candidate_wiki || false
     const show_sidebar = getPageFlag(state, PAGE_KEY__PROJECT_WIKI_PAGE, "show_sidebar", true)
-    const selected_wiki_ids = get_selected_wiki_ids(state, PAGE_KEY__PROJECT_WIKI_PAGE)
+    const selected_wiki_ids = getPageSelectedEntities(state, PAGE_KEY__PROJECT_WIKI_PAGE).wiki_ids
     const selected_wiki_id = ( selected_wiki_ids && selected_wiki_ids.length > 0 && selected_wiki_ids[0] ) || default_wiki_id || null
     const selected_wiki = getWiki(state, selected_wiki_id)
         

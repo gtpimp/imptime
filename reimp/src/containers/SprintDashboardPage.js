@@ -9,7 +9,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_sprints
+    setPageSelectedEntities
 } from '../actions/Page'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded,
@@ -40,9 +40,11 @@ class ProjectDashboardPage extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch } = this.props
+        const { dispatch, project_id } = this.props
         dispatch(setSprintBreadcrumbsHelper(project, sprint))
-        dispatch(select_sprints(PAGE_KEY__SPRINT_DASHBOARD_PAGE, [sprint.id]))
+        dispatch(setPageSelectedEntities(PAGE_KEY__SPRINT_DASHBOARD_PAGE,
+                                 {project_ids: [project_id],
+                                  sprint_ids: [sprint.id]}))
     }
 
     render() {

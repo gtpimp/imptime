@@ -16,8 +16,7 @@ import BulkIssueCreatorForm from '../components/form/BulkIssueCreatorForm.js'
 import { bulkCreateIssues } from '../actions/Issues'
 import {
     set_toolbars,
-    select_sprints,
-    select_issues
+    setPageSelectedEntities
 } from '../actions/Page'
 
 class BulkIssueCreatorPage extends Component {
@@ -56,7 +55,12 @@ class BulkIssueCreatorPage extends Component {
 
     onIssuesCreated(new_issue_ids) {
         const { dispatch, history, project_id, sprint_id } = this.props
-        dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, new_issue_ids))
+
+        dispatch(setPageSelectedEntities(PAGE_KEY__ISSUES_PAGE,
+                                 {issue_ids: new_issue_ids,
+                                  sprint_ids: [sprint_id],
+                                  project_ids: [project_id]}
+        ))
         dispatch(selectItems(LIST_KEY__ISSUE_LIST, new_issue_ids))
         history.push('/projects/' + project_id + '/sprints/' + sprint_id + "/issues/")
     }
@@ -67,9 +71,10 @@ class BulkIssueCreatorPage extends Component {
     }
 
     refresh(sprint, project) {
-        const {dispatch} = this.props
+        const {dispatch, project_id} = this.props
         if ( sprint.id ) {
-            dispatch(select_sprints(PAGE_KEY__BULK_CREATE_ISSUES_PAGE, [sprint.id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__BULK_CREATE_ISSUES_PAGE, {project_ids: [project_id],
+                                                                         sprint_ids: [sprint.id]}))
             dispatch(setSprintBreadcrumbsHelper(project, sprint))
         }
     }

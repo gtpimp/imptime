@@ -24,9 +24,8 @@ import {
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
-    select_decision_journals,
-    select_projects,
-    get_selected_decision_journal_ids,
+    setPageSelectedEntities,
+    getPageSelectedEntities,
     setBrowserTitle,
     setGloballySelectedProjectId
 } from '../actions/Page'
@@ -80,13 +79,16 @@ class DecisionJournalsPage extends Component {
             dispatch(ensureProjectsLoaded([project_id]))
         }
         if (project && project.id) {
-            dispatch(select_projects(page_key, [project.id]))
+            dispatch(setPageSelectedEntities(page_key,
+                                     {project_ids:[project.id]}))
             dispatch(invalidateList(list_key))
             dispatch(setDecisionJournalBreadcrumbsHelper(project, selected_decision_journal))
         }
         if ( default_decision_journal_id !== undefined && !includes(selected_decision_journal_ids, default_decision_journal_id) ) {
             dispatch(selectItems(LIST_KEY__DECISION_JOURNAL_LIST, [default_decision_journal_id]))
-            dispatch(select_decision_journals(page_key, [default_decision_journal_id]))
+            dispatch(setPageSelectedEntities(page_key,
+                                     {project_ids:[project.id],
+                                      decision_journal_ids:[default_decision_journal_id]}))
         }
     }
 
@@ -94,7 +96,9 @@ class DecisionJournalsPage extends Component {
         const {dispatch, history, project_id,
                list_key, page_key} = this.props
         dispatch(selectItems(list_key, decision_journal_ids))
-        dispatch(select_decision_journals(page_key, decision_journal_ids))
+        dispatch(setPageSelectedEntities(page_key,
+                                 {project_ids: [project_id],
+                                  decision_journal_ids: decision_journal_ids}))
         
         if ( decision_journal_ids && decision_journal_ids.length === 1 ) {
             history.push('/projects/'+project_id+'/journals/'+decision_journal_ids[0]);
@@ -170,7 +174,7 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const items_by_id = getDecisionJournalsById(state, visible_item_ids)
-    const selected_decision_journal_ids = get_selected_decision_journal_ids(state, page_key)
+    const selected_decision_journal_ids = getPageSelectedEntities(state, page_key).decision_journal_ids
     
     const selected_items = items_by_id && selected_decision_journal_ids && selected_decision_journal_ids.map(function (selected_id, index) {
         return items_by_id[selected_id] || {'id': selected_id,

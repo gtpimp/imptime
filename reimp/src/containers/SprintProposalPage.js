@@ -9,8 +9,8 @@ import { PAGE_KEY__SPRINT_PROPOSAL_PAGE, LIST_KEY__ISSUES_FOR_PROPOSAL } from '.
 import Toolbar from '../components/toolbar/Toolbar'
 import {
     set_toolbars,
-    setBrowserTitle,
-    select_sprints
+    setPageSelectedEntities,
+    setBrowserTitle
 } from '../actions/Page'
 import SprintProposal from '../components/SprintProposal'
 
@@ -21,7 +21,10 @@ class SprintProposalPage extends Component {
         dispatch(set_toolbars(PAGE_KEY__SPRINT_PROPOSAL_PAGE, ['sprint-proposal']))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
-        dispatch(select_sprints(PAGE_KEY__SPRINT_PROPOSAL_PAGE, [sprint_id]))
+
+        dispatch(setPageSelectedEntities(PAGE_KEY__SPRINT_PROPOSAL_PAGE,
+                                 {project_ids: [project_id],
+                                  sprint_ids: [sprint_id]}))
         this.refresh()
     }
 
@@ -32,8 +35,9 @@ class SprintProposalPage extends Component {
         
         if ( (new_props.project && (!this.props.project || new_props.project.id !== this.props.project.id)) ||
              (new_props.sprint && (!this.props.sprint || new_props.sprint.id !== this.props.sprint.id)) ) {
-
-            dispatch(select_sprints(PAGE_KEY__SPRINT_PROPOSAL_PAGE, [sprint_id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__SPRINT_PROPOSAL_PAGE,
+                                     {project_ids: [project_id],
+                                      sprint_ids: [sprint_id]}))
             this.refresh(new_props)
         }
     }

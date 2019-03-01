@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { map, join } from 'lodash'
-import RenderedMarkdown from './RenderedMarkdown'
 import classNames from 'classnames'
 import EditableTestableLine from './EditableTestableLine'
 import EditableTestableName from './EditableTestableName'
@@ -11,7 +10,6 @@ import { cx, css } from 'emotion'
 import {default_theme as theme} from '../theme/default'
 import ModalDialog from './ModalDialog'
 import BulkTestableForm from './form/BulkTestableForm'
-import PopupPanelHeading from './PopupPanelHeading'
  
 class Testable extends Component {
 

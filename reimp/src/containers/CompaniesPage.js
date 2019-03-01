@@ -13,8 +13,8 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_companies,
-    get_selected_company_ids
+    setPageSelectedEntities,
+    getPageSelectedEntities
 } from '../actions/Page'
 import {
     initList,
@@ -40,7 +40,8 @@ class CompaniesPage extends Component {
         dispatch(update_list_pagination(list_key, {page_size:20}))
         if ( default_company_id !== undefined ) {
             dispatch(selectItems(list_key, [default_company_id]))
-            dispatch(select_companies(PAGE_KEY__COMPANIES_PAGE, [default_company_id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__COMPANIES_PAGE,
+                                     {company_ids: [default_company_id]}))
         }
         this.refresh()
     }
@@ -68,7 +69,8 @@ class CompaniesPage extends Component {
     onSelectCompanies(company_ids) {
         const { dispatch, history, list_key } = this.props
         dispatch(selectItems(list_key, company_ids))
-        dispatch(select_companies(PAGE_KEY__COMPANIES_PAGE, company_ids))
+        dispatch(setPageSelectedEntities(PAGE_KEY__COMPANIES_PAGE,
+                                 {company_ids: company_ids}))
         if ( company_ids && company_ids.length === 1 ) {
             history.push('/companies/' + company_ids[0]);
         }
@@ -141,7 +143,7 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const items_by_id = getCompaniesById(state, visible_item_ids)
-    const selected_company_ids = get_selected_company_ids(state, PAGE_KEY__COMPANIES_PAGE)
+    const selected_company_ids = getPageSelectedEntities(state, PAGE_KEY__COMPANIES_PAGE).company_ids
     const default_company_id = props.match.params.companyId
 
     const selected_items = items_by_id && selected_company_ids && selected_company_ids.map(function (selected_id, index) {

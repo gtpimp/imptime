@@ -21,9 +21,8 @@ import {
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
-    select_features,
-    select_projects,
-    get_selected_feature_ids,
+    setPageSelectedEntities,
+    getPageSelectedEntities,
     setBrowserTitle,
     setGloballySelectedProjectId
 } from '../actions/Page'
@@ -76,7 +75,8 @@ class FeaturesPage extends Component {
             dispatch(ensureProjectsLoaded([project_id]))
         }
         if (project && project.id) {
-            dispatch(select_projects(page_key, [project.id]))
+            dispatch(setPageSelectedEntities(page_key,
+                                     {project_ids:[project.id]}))
             dispatch(invalidateList(list_key))
 
             dispatch(setFeatureBreadcrumbsHelper(project, selected_feature))
@@ -84,7 +84,9 @@ class FeaturesPage extends Component {
         }
         if ( default_feature_id !== undefined && !includes(selected_feature_ids, default_feature_id) ) {
             dispatch(selectItems(LIST_KEY__FEATURE_LIST, [default_feature_id]))
-            dispatch(select_features(page_key, [default_feature_id]))
+            dispatch(setPageSelectedEntities(page_key,
+                                     {project_ids: [project_id],
+                                      feature_ids: [default_feature_id]}))
         }
     }
 
@@ -94,7 +96,9 @@ class FeaturesPage extends Component {
 
         const feature_ids = map(feature_nodes, (feature_node) => feature_node.id)
         dispatch(selectItems(list_key, feature_ids))
-        dispatch(select_features(page_key, feature_ids))
+        dispatch(setPageSelectedEntities(page_key,
+                                 {project_ids: [project_id],
+                                  feature_ids: feature_ids}))
         
         if ( feature_ids && feature_ids.length === 1 ) {
             history.push('/projects/'+project_id+'/features/'+feature_ids[0]);
@@ -164,7 +168,7 @@ function mapStateToProps(state, props) {
     let page_key = props.page_key || PAGE_KEY__FEATURES_PAGE
     const filter = getListFilter(state, list_key)
     const items_by_id = (feature && feature.items_by_id) || {}
-    const selected_feature_ids = get_selected_feature_ids(state, page_key)
+    const selected_feature_ids = getPageSelectedEntities(state, page_key).feature_ids
     
     const selected_items = items_by_id && selected_feature_ids && selected_feature_ids.map(function (selected_id, index) {
         return items_by_id[selected_id] || {'id': selected_id,

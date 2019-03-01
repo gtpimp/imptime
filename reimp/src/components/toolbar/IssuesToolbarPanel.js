@@ -17,8 +17,7 @@ import {
     LIST_KEY__ISSUE_LIST
 } from '../../actions/ItemListKeyRegistry'
 import {
-    get_selected_issue_ids,
-    get_selected_sprint_ids,
+    getPageSelectedEntities
 } from '../../actions/Page'
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import ModalDialog from '../ModalDialog'
@@ -138,9 +137,9 @@ class IssuesToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
+    const selected_issue_ids = getPageSelectedEntities(state, PAGE_KEY__ISSUES_PAGE).issue_ids
     const issue = (selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[selected_issue_ids.length-1])) || {}
-    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__ISSUES_PAGE)
+    const selected_sprint_ids = getPageSelectedEntities(state, PAGE_KEY__ISSUES_PAGE).sprint_ids
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[selected_sprint_ids.length-1])) || {}
 
     return {

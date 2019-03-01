@@ -8,7 +8,7 @@ import {
     PAGE_KEY__PROJECT_USER_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    select_projects,
+    setPageSelectedEntities
 } from '../actions/Page'
 
 class ProjectStatementPage extends Component {
@@ -30,7 +30,8 @@ class ProjectStatementPage extends Component {
         project = project || {}
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
-            dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_USER_PAGE,
+                                     {project_ids:[project_id]}))
             if ( project.id ) {
                 dispatch(setProjectBreadcrumbsHelper(project))
             }
