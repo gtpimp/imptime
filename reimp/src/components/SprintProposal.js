@@ -153,16 +153,13 @@ class SprintProposal extends Component {
                 The following costing is based on the list of issues given later in this document.
               </p>
               <p>
-                The final cost will be invoiced as the actual billable time taken, which may be
+                If this is not a quote, then the final cost will be invoiced as the actual billable time taken, which may be
                 less than the minimum estimate or more than the maximum estimate.
               </p>
               <p>
                 To manage the budget expectations and overruns, the client can request to be
                 notified at certain budget milestones, for example half-way through the sprint
                 budget.
-              </p>
-              <p>
-                The total estimated cost is a formula including testing, uncertainty and management.
               </p>
             </div>
         )
@@ -178,7 +175,7 @@ class SprintProposal extends Component {
               { this.renderCostMethodology() }
               { cost_summary.breakdown &&
 
-                <div className={css`font: ${theme.fonts.bold_large}`}>
+                <div>
                   <p>
                     These costs do NOT include South African VAT. If VAT is applicable, then it will be added during invoicing.
                   </p>
@@ -202,7 +199,7 @@ class SprintProposal extends Component {
                       <DivTableCell>Contingency</DivTableCell>
                       <DivTableCell>
                         <CurrencyValue value={cost_summary.breakdown.totals.scope_creep} float_direction="none" />
-                        &nbsp;&nbsp;(using {cost_summary.breakdown.totals.scope_creep_percentage}%)
+                        &nbsp;&nbsp;(@ {cost_summary.breakdown.totals.scope_creep_percentage}%)
                       </DivTableCell>
                     </DivTableRow>
                     <DivTableRow key={'total'}>
@@ -266,6 +263,10 @@ class SprintProposal extends Component {
                 tweaks or adjustments that are identified during testing. In general these
                 estimates are a realistic reflection of the cost to deliver the requirements,
                 rather than optimistic or pessimistic.
+              </p>
+              <p>
+                Contingency is calculated as a percentage of the estimated cost. A high contingency indicates a high level of
+                risk, uncertainty and/or fluidity in the project requirements. 
               </p>
             </div>
         )
