@@ -36,7 +36,7 @@ class MultipleIssueSummaryCalculator(object):
                                                                                velocities_by_user=res['velocities_by_user'])
 
         res['totals'] = self._get_totals(qs, res['estimates_by_issue'])
-
+ 
         return res
     
     def _set_permissions(self, issues_qs):

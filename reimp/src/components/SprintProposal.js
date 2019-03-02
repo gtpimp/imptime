@@ -119,19 +119,23 @@ class SprintProposal extends Component {
     renderDevelopmentMethodology() {
         return (
             <div className="print__page">
-              <PrintTitle>Development methodology</PrintTitle>
+              <PrintTitle>Development principles</PrintTitle>
               <p>
-                ImplicitDesign uses the agile software development methodology, which
-                allows for a flexible specification and on-going client-liason.
+                ImplicitDesign uses agile software development methodology, which
+                allows for a flexible specification while building an on-going client relationship.
+              </p>
+              <p>
+                This proposal represents our best knowledge of the requirements, being as granular as
+                possible without requiring specific technical knowldge.
               </p>
               <p>
                 We assist the client in managing the project budget, by identifying where
                 costs can be reduced or functionality can be streamlined.
               </p>
               <p>
-                We bill by the hour, for a number of reasons:
+                Final invoices are based on actual time taken, not on these estimates. This means that:
                 <ul>
-                  <li>it allows the final cost of the project to match exactly the effort involved,
+                  <li>the final cost of the project will match exactly the effort involved,
                     ie no quote padding is required</li>
                   <li>
                     scope changes to the project are easily managed as a normal part of the
@@ -139,8 +143,11 @@ class SprintProposal extends Component {
                 </ul>
               </p>
               <p>
-                Therefore the project is not open-ended, but rather managed in an ongoing
-                manner.
+                The time and cost estimates in this document are based
+                on developer's opinions of the implementation
+                time. Testing and management time is captured as
+                issues as well, based on our experience with similar
+                projects.
               </p>
             </div>
         )
@@ -157,9 +164,21 @@ class SprintProposal extends Component {
                 less than the minimum estimate or more than the maximum estimate.
               </p>
               <p>
-                To manage the budget expectations and overruns, the client can request to be
-                notified at certain budget milestones, for example half-way through the sprint
-                budget.
+              
+                We try to make our estimates reasonable, neither
+                pessimistic nor optimistic.  We separately account for
+                a contingency amount, which is calculated as a
+                percentage of the estimated cost. A high contingency
+                indicates one of:
+                <ul>
+                  <li>a high level of risk</li>
+                  <li>a high degree of technical difficulty</li>
+                  <li>uncertainty and/or fluidity in the project deliverables</li>
+                </ul>
+                
+              </p>
+              <p>
+                The client will be notified at all critical points in the sprint.
               </p>
             </div>
         )
@@ -167,7 +186,8 @@ class SprintProposal extends Component {
 
     renderCostTotals() {
         const { cost_summary } = this.props
-        return (
+        const totals = get(cost_summary, ["breakdown", "totals"], {}) || {}
+        return ( 
             <div className="print__page">
               <PrintTitle>
                 Costing
@@ -177,7 +197,7 @@ class SprintProposal extends Component {
 
                 <div>
                   <p>
-                    These costs do NOT include South African VAT. If VAT is applicable, then it will be added during invoicing.
+                    These costs do not include South African VAT. If VAT is applicable, then it will be added during invoicing.
                   </p>
 
                   <DivTable renderHeader={this.renderCostTotalsHeader}>
@@ -192,14 +212,14 @@ class SprintProposal extends Component {
                     <DivTableRow key={`budget`}>
                       <DivTableCell>Estimated cost</DivTableCell>
                       <DivTableCell>
-                        <CurrencyValue value={cost_summary.breakdown.totals.estimated_cost} float_direction="none" />
+                        <CurrencyValue value={totals.estimated_cost} float_direction="none" />
                       </DivTableCell>
                     </DivTableRow>
                     <DivTableRow key={`contingency`}>
                       <DivTableCell>Contingency</DivTableCell>
                       <DivTableCell>
-                        <CurrencyValue value={cost_summary.breakdown.totals.scope_creep} float_direction="none" />
-                        &nbsp;&nbsp;(@ {cost_summary.breakdown.totals.scope_creep_percentage}%)
+                        <CurrencyValue value={totals.scope_creep} float_direction="none" />
+                        &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
                       </DivTableCell>
                     </DivTableRow>
                     <DivTableRow key={'total'}>
@@ -210,7 +230,7 @@ class SprintProposal extends Component {
                         </DivTableCell>
                       <DivTableCell>
                         <div className={css`font: ${theme.fonts.bold_large}`}>
-                          <CurrencyValue value={cost_summary.breakdown.totals.grand_total} float_direction="none" />
+                          <CurrencyValue value={totals.grand_total} float_direction="none" />
                         </div>
                       </DivTableCell>
                     </DivTableRow>
@@ -248,25 +268,30 @@ class SprintProposal extends Component {
         return (
             <div>
               <p>
-                The following list of issues represents the work agreed to be done within the
-                cost given above. This list is flexible to on-going change as determined
-                through feedback with the client.
+              
+                The following list of issues represents the work
+                agreed to be done within the costs given above. This
+                list is flexible to change as determined through
+                feedback with the client.
+                
               </p>
               <p>
-                Each issue is assigned an expected duration to complete, typically in the
-                range of a few hours. By estimating at such a granular resolution we find that
-                complexities inherent in the project are identified in the specification phase
-                which greatly reduces risk.
+              
+                Each issue is assigned an expected duration to
+                complete, typically in the range of a few hours. By
+                estimating at such a granular resolution, complexities
+                inherent in the project are identified early, greatly
+                reducing risk and increasing estimate accuracy.
+                
               </p>
               <p>
-                Our estimates are usually slightly high. Usually this is balanced out by smaller
-                tweaks or adjustments that are identified during testing. In general these
-                estimates are a realistic reflection of the cost to deliver the requirements,
-                rather than optimistic or pessimistic.
+                If you don't see a feature in this document, then it
+                will probably not be worked on as part of this proposal.
               </p>
               <p>
-                Contingency is calculated as a percentage of the estimated cost. A high contingency indicates a high level of
-                risk, uncertainty and/or fluidity in the project requirements. 
+
+              
+                
               </p>
             </div>
         )
@@ -283,6 +308,10 @@ class SprintProposal extends Component {
               <DivTable renderHeader={() => this.renderIssueContentsHeader(header_list)}>
                 {map(issues, (issue) => {
                      const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
+                     if ( ! issue_costs.velocity_adjusted_estimate ) {
+                         return null
+                     }
+                
                      return (
                          <DivTableRow key={`sprint_proposal__div_table__${issue.id}`}>
 
@@ -355,7 +384,7 @@ class SprintProposal extends Component {
         return (
             <div className={css`display: flex; flex-wrap: wrap;`}>
               { map(issue.testables, (testable) =>
-                  <div key={`issue_testable_${testable.id}`} className={css`max-width:25%; margin-left: 30px; margin-right: 30px;`}>
+                  <div key={`issue_testable_${testable.id}`} className={css`margin-left: 30px; margin-right: 30px;`}>
                     <Testable key={`testable_${testable.id}`} testable={testable} can_edit={false} />
                   </div>
                 ) }

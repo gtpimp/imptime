@@ -70,7 +70,7 @@ export function setPageSelectedEntities(page_key, {issue_ids, sprint_ids, projec
     }
 }
 
-export function getPageSelectedEntities(state, page_key, entity_name) {
+export function getPageSelectedEntities(state, page_key) {
     return get(state, ["page", page_key, "selected_entities"], {}) || {}
 }
 
