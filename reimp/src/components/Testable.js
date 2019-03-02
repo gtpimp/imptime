@@ -130,10 +130,12 @@ class Testable extends Component {
                           )
                       }
                       )}
-                      <div onClick={this.startBulkEdit} className={cx("issue_sidebar__options__left", css`cursor:pointer`)}>
-                        <span className="issue_sidebar__options__spacer">|</span>
-                        Bulk edit
-                      </div>
+                    { can_edit && 
+                     <div onClick={this.startBulkEdit} className={cx("issue_sidebar__options__left", css`cursor:pointer`)}>
+                       <span className="issue_sidebar__options__spacer">|</span>
+                       Bulk edit
+                     </div>
+                   }
                 </div>
               </div>
             </div>

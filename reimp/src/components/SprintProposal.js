@@ -317,7 +317,7 @@ class SprintProposal extends Component {
             <div className={css`display: flex; flex-wrap: wrap;`}>
               { map(issue.testables, (testable) =>
                   <div key={`issue_testable_${testable.id}`} className={css`max-width:25%; margin-left: 30px; margin-right: 30px;`}>
-                    <Testable key={`testable_${testable.id}`} testable={testable} />
+                    <Testable key={`testable_${testable.id}`} testable={testable} can_edit={false} />
                   </div>
                 ) }
             </div>
