@@ -2194,8 +2194,11 @@ class Project(BaseModel):
 
         json_stats['per_user'] = dict( [(user.id, d) for user, d in stats['per_user'].items()] )
         for u in json_stats['per_user'].values():
-            u['time_tracking_mode'] = u['rate'].time_tracking_mode
-            del u['rate']
+            if 'rate' in u:
+                u['time_tracking_mode'] = u['rate'].time_tracking_mode
+                del u['rate']
+            else:
+                u['time_tracking_mode'] = 'default'
         
         return json_stats
 

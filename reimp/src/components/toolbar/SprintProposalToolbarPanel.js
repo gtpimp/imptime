@@ -9,6 +9,7 @@ import {
 import { getPageSelectedEntities } from '../../actions/Page'
 import { printCurrentPage } from '../../actions/Print'
 import { getSprint } from '../../actions/Sprints'
+import { downloadSprintCostSummary } from '../../actions/CostSummary'
 
 class SprintProposalToolbarPanel extends Component {
 
@@ -17,12 +18,21 @@ class SprintProposalToolbarPanel extends Component {
         evt.preventDefault()
         dispatch(printCurrentPage(`Proposal_${sprint.name}`))
     }
+
+    onDownloadAsCsv = (evt) => {
+        const { dispatch, sprint } = this.props
+        evt.preventDefault()
+        dispatch(downloadSprintCostSummary(sprint.id))
+    }
     
     render() {
         return (
             <div className="toolbar-panel">
               <div className={cx("icon--print", css`cursor:pointer`)}
                    onClick={this.onPrint} 
+              />
+              <div className={cx("icon--download_as_csv", css`cursor:pointer`)}
+                   onClick={this.onDownloadAsCsv} 
               />
             </div>
         )

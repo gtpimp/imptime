@@ -59,11 +59,13 @@ class MultipleIssueSummaryCalculator(object):
         if not self.has_view_ctc_billable_rates:
             return {}
 
+        estimated_hours = sum([ (x.get('velocity_adjusted_estimate', 0) or 0) for x in estimates_by_issue.values() ])
         estimated_cost = sum([ (x.get('velocity_adjusted_cost', 0) or 0) for x in estimates_by_issue.values() ])
         grand_total_cost = sum([ (x.get('velocity_adjusted_cost',0) or 0)*(x.get('project__ratio_scope_creep',0) or 0) for x in estimates_by_issue.values() ])
         scope_creep_cost = grand_total_cost - estimated_cost
         
         return {
+            'estimated_hours': estimated_hours,
             'estimated_cost': estimated_cost,
             'scope_creep': scope_creep_cost,
             'scope_creep_percentage': (100*scope_creep_cost)/(estimated_cost or 1),

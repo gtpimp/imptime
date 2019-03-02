@@ -101,6 +101,18 @@ export function doesMienHaveFeature(state, feature_name) {
     return includes(features, feature_name)
 }
 
+export function doesMienHaveHeader(state, header_list_name, name) {
+    const mien = getCurrentMien(state)
+    if ( !mien ) {
+        return true
+    }
+    let headers = mien.headers[header_list_name]
+    if ( headers === undefined ) {
+        return true
+    }
+    return includes(headers, name)
+}
+
 export function invalidateAllMiens() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__MIEN))

@@ -20,7 +20,7 @@ import {
 import {ensureEstimateSummaryLoaded,
         getEstimateSummary
 } from '../actions/EstimateSummary'
-import { showMoney } from '../actions/Mien'
+import { showMoney, doesMienHaveHeader } from '../actions/Mien'
 import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
@@ -119,9 +119,12 @@ class SprintProposal extends Component {
     renderDevelopmentMethodology() {
         return (
             <div className="print__page">
-              <PrintTitle>Development principles</PrintTitle>
+              <PrintTitle>Introduction</PrintTitle>
               <p>
-                ImplicitDesign uses agile software development methodology, which
+                This proposal is for development work offered by ImplicitDesign, based on requirements received from the client.
+              </p>
+              <p>
+                ImplicitDesign uses an agile software development methodology, which
                 allows for a flexible specification while building an on-going client relationship.
               </p>
               <p>
@@ -184,9 +187,10 @@ class SprintProposal extends Component {
         )
     }
 
-    renderCostTotals() {
-        const { cost_summary } = this.props
+    renderCostTotals(active_headers) {
+        const { show_money, cost_summary, show_hours_in_total } = this.props
         const totals = get(cost_summary, ["breakdown", "totals"], {}) || {}
+
         return ( 
             <div className="print__page">
               <PrintTitle>
@@ -209,31 +213,44 @@ class SprintProposal extends Component {
                         </DivTableCell>
                       </DivTableRow>
                     }
-                    <DivTableRow key={`budget`}>
-                      <DivTableCell>Estimated cost</DivTableCell>
-                      <DivTableCell>
-                        <CurrencyValue value={totals.estimated_cost} float_direction="none" />
-                      </DivTableCell>
-                    </DivTableRow>
-                    <DivTableRow key={`contingency`}>
-                      <DivTableCell>Contingency</DivTableCell>
-                      <DivTableCell>
-                        <CurrencyValue value={totals.scope_creep} float_direction="none" />
-                        &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
-                      </DivTableCell>
-                    </DivTableRow>
-                    <DivTableRow key={'total'}>
+                    { show_hours_in_total &&
+                      <DivTableRow key={`budget`}>
+                        <DivTableCell>Estimated hours</DivTableCell>
                         <DivTableCell>
-                          <div className={css`font: ${theme.fonts.bold_large}`}>
-                            Total cost
-                          </div>
+                          <div>{totals.estimated_hours}</div>
+                          &nbsp;(approximately {Math.ceil(totals.estimated_hours/8)} man days)
                         </DivTableCell>
-                      <DivTableCell>
-                        <div className={css`font: ${theme.fonts.bold_large}`}>
-                          <CurrencyValue value={totals.grand_total} float_direction="none" />
-                        </div>
-                      </DivTableCell>
-                    </DivTableRow>
+                      </DivTableRow>
+                    }
+                    { show_money &&
+                      <div>
+                        <DivTableRow key={`budget`}>
+                          <DivTableCell>Estimated cost</DivTableCell>
+                          <DivTableCell>
+                            <CurrencyValue value={totals.estimated_cost} float_direction="none" />
+                          </DivTableCell>
+                        </DivTableRow>
+                        <DivTableRow key={`contingency`}>
+                          <DivTableCell>Contingency</DivTableCell>
+                          <DivTableCell>
+                            <CurrencyValue value={totals.scope_creep} float_direction="none" />
+                            &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
+                          </DivTableCell>
+                        </DivTableRow>
+                        <DivTableRow key={'total'}>
+                          <DivTableCell>
+                            <div className={css`font: ${theme.fonts.bold_large}`}>
+                              Total cost
+                            </div>
+                          </DivTableCell>
+                          <DivTableCell>
+                            <div className={css`font: ${theme.fonts.bold_large}`}>
+                              <CurrencyValue value={totals.grand_total} float_direction="none" />
+                            </div>
+                          </DivTableCell>
+                        </DivTableRow>
+                      </div>
+                    }
                   </DivTable>
                 </div>
               }
@@ -461,7 +478,7 @@ class SprintProposal extends Component {
                      <div className={css`margin-left: 20px; margin-right: 20px`}>
                        { this.renderHeader() }
                        { this.renderDevelopmentMethodology() }
-                       { show_money && this.renderCostTotals() }
+                       { show_money && this.renderCostTotals(active_headers) }
                        { this.renderIssueContents(active_headers) }
                        { this.renderIssues() }
                      </div>
@@ -494,6 +511,7 @@ function makeMapStateToProps(state, props) {
         const estimate_summary = getEstimateSummary(state, sprint_id) || {}
         const cost_summary = getCostSummary(state, sprint_id) || {}
         const show_money = sprint && showMoney(state, sprint.project_id)
+        const show_hours_in_total = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_PROPOSAL, 'estimates_by_assignee')
         
         return {
             sprint_id,
@@ -509,7 +527,8 @@ function makeMapStateToProps(state, props) {
             loading_issue_ids,
             estimate_summary,
             cost_summary,
-            show_money
+            show_money,
+            show_hours_in_total
         }
     }
     return mapStateToProps

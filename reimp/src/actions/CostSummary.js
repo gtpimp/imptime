@@ -1,4 +1,5 @@
 import { ENTITY_KEY__SPRINT_COST_SUMMARY } from './ItemListKeyRegistry'
+import { download } from './lib'
 
 import {
     invalidateItems,
@@ -35,4 +36,13 @@ export function getCostSummariesById(state, cost_summary_ids) {
     return getItemsById(state, ENTITY_KEY__SPRINT_COST_SUMMARY, cost_summary_ids)
 }
 
+export function downloadSprintCostSummary(sprint_id) {
+    return (dispatch, getState) => {
+        const state = getState()
+        const url = `imp/sprint_cost_summary/download/`
+        const params = { sprint_id: sprint_id,
+                         format: 'csv' }
+        return download(state, url, params)
+    }
+}
  

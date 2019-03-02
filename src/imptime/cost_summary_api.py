@@ -1,15 +1,19 @@
 import logging
 from sprint_serializer import SprintSerializer # change to new serializer once created
 from rest_framework.renderers import JSONRenderer
+from lib import file_helper
+from django.utils import timezone
 from django.http import HttpResponse
 from base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
+from rest_framework.decorators import list_route
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
-from timepiece.models import BusinessPermissions
+from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Issue
+from django.contrib.auth.models import User
 from imptime.models import SprintSnapshot
 
 logger = logging.getLogger(__name__)
@@ -65,3 +69,60 @@ class CostSummaryViewSet(BaseViewSet):
             qs = qs.filter(project_type__in=sprint_types)
             
         return super(CostSummaryViewSet, self).apply_filter(qs, raw_filter_args)
+
+    @list_route(methods=['POST'])
+    def download(self, request):
+        params = self.get_params_for_js_itempost()
+        sprint_id = params['sprint_id']
+        sprint = self.allowed_sprints().get(pk=sprint_id)
+        cost_summary = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
+
+        bp = ProjectPermissions.for_user(self.request.user, sprint.business)  # sic
+        if not bp.has_view_ctc_billable_rates:
+            return HttpResponse("No permissions")
+        
+        download_format = params.get('format', 'csv')
+        if download_format != 'csv':
+            raise Exception("Only csv supported")
+
+        cs = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
+        response, writer, data = self._prepare_csv(request, cost_summary, "cost_summary_of_"+sprint.name)
+
+        cs_totals = cs['breakdown']['totals']
+        writer.writerow([sprint.name])
+        writer.writerow([])
+        writer.writerow(["Totals based on estimates"])
+        writer.writerow(["Estimated hours", cs_totals["estimated_hours"]])
+        writer.writerow(["Estimated cost", "R%.2f"%cs_totals["estimated_cost"]])
+        writer.writerow(["Contingency percentage", cs_totals["scope_creep_percentage"]])
+        writer.writerow(["Contingency amount", "R%.2f"%cs_totals["scope_creep"]])
+        writer.writerow(["Total cost", "R%.2f"%cs_totals["grand_total"]])
+        writer.writerow([])
+
+        writer.writerow(["Issues"])
+        writer.writerow(["Number", "Name", "Assigned user", "Estimate by assigned user (with velocity)", "Cost by assigned user"])
+        for issue_estimate in cs['breakdown']['estimates_by_issue'].values():
+            issue = data['issues_by_id'][issue_estimate['id']]
+            assigned_user_id = issue_estimate['assigned_to_id']
+            if assigned_user_id:
+                assigned_user = data['users_by_id'][assigned_user_id]
+                assigned_username = "%s %s" % (assigned_user['first_name'], assigned_user['last_name'])
+            else:
+                assigned_username = 'Unassigned'
+
+            writer.writerow([issue['number'],
+                             issue['subject'],
+                             assigned_username,
+                             issue_estimate['velocity_adjusted_estimate'],
+                             issue_estimate['velocity_adjusted_cost']
+            ])
+        
+        return response
+
+    def _prepare_csv(self, request, cost_summary, filename_prefix):
+        data = {}
+        data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=cost_summary['breakdown']['all_user_ids']).values('id', "first_name", "last_name")] )
+        data['issues_by_id'] = dict( [(x['id'], x) for x in Issue.objects.filter(pk__in=cost_summary['breakdown']['all_issue_ids']).values('id', "number", "subject")] )
+                             
+        response, writer = file_helper.prepare_csv(request, filename_prefix)
+        return response, writer, data
