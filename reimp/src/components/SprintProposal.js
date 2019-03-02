@@ -176,33 +176,60 @@ class SprintProposal extends Component {
                 Costing
               </PrintTitle>
               { this.renderCostMethodology() }
-              { cost_summary.breakdown && 
+              { cost_summary.breakdown &&
+
                 <div className={css`font: ${theme.fonts.bold_large}`}>
                   <p>
                     These costs do NOT include South African VAT. If VAT is applicable, then it will be added during invoicing.
                   </p>
-                  { cost_summary.spendable_budget &&
-                    <div className={css`display: flex`}>
-                      Sprint budget: 
-                      <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
-                    </div>
-                  }
-                  <div className={css`display: flex`}>
-                    Estimated cost
-                    <CurrencyValue value={cost_summary.breakdown.totals.estimated_cost} float_direction="none" />
-                  </div>
-                  <div className={css`display: flex`}>
-                    Contingency
-                    <CurrencyValue value={cost_summary.breakdown.totals.scope_creep} float_direction="none" />
-                    (using {cost_summary.breakdown.totals.scope_creep_percentage}%)
-                  </div>
-                  <div className={css`display: flex`}>
-                    Total cost
-                    <CurrencyValue value={cost_summary.breakdown.totals.grand_total} float_direction="none" />
-                  </div>
+
+                  <DivTable renderHeader={this.renderCostTotalsHeader}>
+                    { cost_summary.spendable_budget &&
+                      <DivTableRow key={`budget`}>
+                        <DivTableCell>Sprint budget</DivTableCell>
+                        <DivTableCell>
+                          <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
+                        </DivTableCell>
+                      </DivTableRow>
+                    }
+                    <DivTableRow key={`budget`}>
+                      <DivTableCell>Estimated cost</DivTableCell>
+                      <DivTableCell>
+                        <CurrencyValue value={cost_summary.breakdown.totals.estimated_cost} float_direction="none" />
+                      </DivTableCell>
+                    </DivTableRow>
+                    <DivTableRow key={`contingency`}>
+                      <DivTableCell>Contingency</DivTableCell>
+                      <DivTableCell>
+                        <CurrencyValue value={cost_summary.breakdown.totals.scope_creep} float_direction="none" />
+                        &nbsp;&nbsp;(using {cost_summary.breakdown.totals.scope_creep_percentage}%)
+                      </DivTableCell>
+                    </DivTableRow>
+                    <DivTableRow key={'total'}>
+                        <DivTableCell>
+                          <div className={css`font: ${theme.fonts.bold_large}`}>
+                            Total cost
+                          </div>
+                        </DivTableCell>
+                      <DivTableCell>
+                        <div className={css`font: ${theme.fonts.bold_large}`}>
+                          <CurrencyValue value={cost_summary.breakdown.totals.grand_total} float_direction="none" />
+                        </div>
+                      </DivTableCell>
+                    </DivTableRow>
+                  </DivTable>
                 </div>
               }
             </div>
+        )
+    }
+
+    renderCostTotalsHeader = (header_list) => {
+        return (
+            <DivTableHeaderRow>
+              <DivTableHeaderCell key="item" />
+              <DivTableHeaderCell key="amount" />
+            </DivTableHeaderRow>
         )
     }
 
