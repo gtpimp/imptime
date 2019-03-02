@@ -181,7 +181,7 @@ class SprintProposal extends Component {
                   </p>
 
                   <DivTable renderHeader={this.renderCostTotalsHeader}>
-                    { cost_summary.spendable_budget &&
+                    { false && cost_summary.spendable_budget &&
                       <DivTableRow key={`budget`}>
                         <DivTableCell>Sprint budget</DivTableCell>
                         <DivTableCell>
