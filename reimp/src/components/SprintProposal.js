@@ -268,14 +268,14 @@ class SprintProposal extends Component {
                                      case "estimates_by_assignee":
                                          content = (
                                              <DivTableCell extra_style={getCellStyle(header)}>
-                                               <Hours hours={issue_costs.velocity_adjusted_estimate} />
+                                               <Hours hours={issue_costs.scope_creep_adjusted_estimate} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "cost_by_assignee":
                                          content = (
                                              <DivTableCell extra_style={getCellStyle(header)}>
-                                               <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
+                                               <CurrencyValue value={issue_costs.scope_creep_adjusted_cost} />
                                              </DivTableCell>
                                          )
                                          break
