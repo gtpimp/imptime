@@ -176,21 +176,32 @@ class SprintProposal extends Component {
                 Costing
               </PrintTitle>
               { this.renderCostMethodology() }
-              <div className={css`font: ${theme.fonts.bold_large}`}>
-                <p>
-                  These costs do NOT include South African VAT. If VAT is applicable, then it will be added during invoicing.
-                </p>
-                { cost_summary.spendable_budget &&
+              { cost_summary.breakdown && 
+                <div className={css`font: ${theme.fonts.bold_large}`}>
+                  <p>
+                    These costs do NOT include South African VAT. If VAT is applicable, then it will be added during invoicing.
+                  </p>
+                  { cost_summary.spendable_budget &&
+                    <div className={css`display: flex`}>
+                      Sprint budget: 
+                      <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
+                    </div>
+                  }
                   <div className={css`display: flex`}>
-                    Sprint budget: 
-                    <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
+                    Estimated cost
+                    <CurrencyValue value={cost_summary.breakdown.totals.estimated_cost} float_direction="none" />
                   </div>
-                }
-                <div className={css`display: flex`}>
-                  Total estimated cost
-                  <CurrencyValue value={cost_summary.estimated_cost} float_direction="none" />
+                  <div className={css`display: flex`}>
+                    Contingency
+                    <CurrencyValue value={cost_summary.breakdown.totals.scope_creep} float_direction="none" />
+                    (using {cost_summary.breakdown.totals.scope_creep_percentage}%)
+                  </div>
+                  <div className={css`display: flex`}>
+                    Total cost
+                    <CurrencyValue value={cost_summary.breakdown.totals.grand_total} float_direction="none" />
+                  </div>
                 </div>
-              </div>
+              }
             </div>
         )
     }
@@ -253,35 +264,35 @@ class SprintProposal extends Component {
                                  switch(header_key) {
                                      case "number":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="number" extra_style={getCellStyle(header)}>
                                                {issue.number}
                                              </DivTableCell>
                                          )
                                          break
                                      case "name":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="name" extra_style={getCellStyle(header)}>
                                                <IssueName issue_id={issue.id} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "estimates_by_assignee":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="estimates_by_assignee" extra_style={getCellStyle(header)}>
                                                <Hours hours={issue_costs.velocity_adjusted_estimate} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "cost_by_assignee":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="cost_by_assignee" extra_style={getCellStyle(header)}>
                                                <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "assignee":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="assignee" extra_style={getCellStyle(header)}>
                                                <OtherUser user_id={issue.assigned_to_id}/>
                                              </DivTableCell>
                                          )

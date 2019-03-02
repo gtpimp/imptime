@@ -34,6 +34,9 @@ class MultipleIssueSummaryCalculator(object):
         res['velocities_by_user'] = self._get_velocities_by_user(qs, res['all_user_ids'])
         res['revised_estimates_by_user'] = self._get_revised_estimates_by_user(qs, estimates_by_user=res['estimates_by_user'],
                                                                                velocities_by_user=res['velocities_by_user'])
+
+        res['totals'] = self._get_totals(qs, res['estimates_by_issue'])
+
         return res
     
     def _set_permissions(self, issues_qs):
@@ -51,7 +54,23 @@ class MultipleIssueSummaryCalculator(object):
                 self.has_view_ctc_billable_rates = False
             if not bp.has_see_other_user_points:
                 self.has_see_other_user_points = False
-    
+
+    def _get_totals(self, issues_qs, estimates_by_issue):
+        if not self.has_view_ctc_billable_rates:
+            return {}
+
+        estimated_cost = sum([ (x.get('velocity_adjusted_cost', 0) or 0) for x in estimates_by_issue.values() ])
+        grand_total_cost = sum([ (x.get('velocity_adjusted_cost',0) or 0)*(x.get('project__ratio_scope_creep',0) or 0) for x in estimates_by_issue.values() ])
+        scope_creep_cost = grand_total_cost - estimated_cost
+        
+        return {
+            'estimated_cost': estimated_cost,
+            'scope_creep': scope_creep_cost,
+            'scope_creep_percentage': (100*scope_creep_cost)/(estimated_cost or 1),
+            'grand_total': grand_total_cost
+        }
+        
+                
     def _get_estimates_by_user(self, issues_qs):
         estimates = {}
         points = IssuePoints.objects.filter(issue__in=issues_qs, points__gt=0)
@@ -94,6 +113,7 @@ class MultipleIssueSummaryCalculator(object):
                   'assigned_to__user_points__points',
                   'assigned_to__rates__velocity',
                   'velocity_adjusted_estimate',
+                  'project__ratio_scope_creep'
         ]
         issues_qs = issues_qs.filter(assigned_to__rates__project=F('project'),
                                      assigned_to__user_points__issue_id=F('id'))\
