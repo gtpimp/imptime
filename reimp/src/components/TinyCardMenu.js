@@ -9,6 +9,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
+import TinyProblemsCard from './TinyProblemsCard'
 
 class TinyCardMenu extends Component {
 
@@ -56,6 +57,9 @@ class TinyCardMenu extends Component {
               </TinyCardRow>
               <TinyCardRow>
                 <Link to="./cards/estimates_by_user">Estimates By User</Link>
+              </TinyCardRow>
+              <TinyCardRow>
+                <Link to="./cards/problems">Problems</Link>
               </TinyCardRow>
             </TinyCard>
         )
