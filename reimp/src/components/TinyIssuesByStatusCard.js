@@ -8,7 +8,6 @@ import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { fetchIssuesIfNeeded } from '../actions/Issues'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
-import { LIST_KEY__TINY_CARD } from '../actions/ItemListKeyRegistry'
 import { makeSelIssues } from '../selectors/IssueListSelectors'
 import { update_list_filter } from '../actions/ItemList'
 

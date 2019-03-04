@@ -46,11 +46,12 @@ import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import TinyCardMenu from '../components/TinyCardMenu'
 import TinyBudgetCard from '../components/TinyBudgetCard'
 import TinyIssuesByStatusCard from '../components/TinyIssuesByStatusCard'
+import TinyEstimatesByUserCard from '../components/TinyEstimatesByUserCard'
 import VisualSpecDocumentGalleryFullScreenPage from '../components/visual_spec/VisualSpecDocumentGalleryFullScreenPage'
 import WelcomePage from './WelcomePage'
 import OnboardingRouter from '../components/onboarding/OnboardingRouter'
 import { setBrowserTitle } from '../actions/Page'
-import { LIST_KEY__TINY_CARD } from '../actions/ItemListKeyRegistry'
+import { LIST_KEY__TINY_ISSUES_CARD } from '../actions/ItemListKeyRegistry'
 
 class MainRouter extends Component {
 
@@ -119,8 +120,8 @@ class MainRouter extends Component {
 
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards" component={TinyCardMenu}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards/budget" component={TinyBudgetCard} />
-              <Route exact path="/projects/:projectId/sprints/:sprintId/cards/issues_per_status" component={(props) => <TinyIssuesByStatusCard list_key={LIST_KEY__TINY_CARD} {...props} />} />
-              
+              <Route exact path="/projects/:projectId/sprints/:sprintId/cards/issues_by_status" component={(props) => <TinyIssuesByStatusCard list_key={LIST_KEY__TINY_ISSUES_CARD} {...props} />} />
+              <Route exact path="/projects/:projectId/sprints/:sprintId/cards/estimates_by_user" component={(props) => <TinyEstimatesByUserCard {...props} />} />
               <Route exact path="/fullscreen/projects/:projectId/image/:annotatedVisualSpecDocumentId" component={VisualSpecDocumentGalleryFullScreenPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
               <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>

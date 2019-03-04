@@ -44,13 +44,18 @@ class TinyCardMenu extends Component {
         const { project_name, sprint_name, project_id } = this.props
         return (
             <TinyCard title="Cards" project_name={project_name} sprint_name={sprint_name} >
-              <PermissionInspectorHighlighter project_id={project_id} permission_name="has_edit_budget">
-                <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
-                  <Link to="./cards/budget">Budget</Link>
-                </PermissionInspectorHighlighter>
-              </PermissionInspectorHighlighter>
               <TinyCardRow>
-                <Link to="./cards/issues_per_status">Issues By Status</Link>
+                <PermissionInspectorHighlighter project_id={project_id} permission_name="has_edit_budget">
+                  <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
+                    <Link to="./cards/budget">Budget</Link>
+                  </PermissionInspectorHighlighter>
+                </PermissionInspectorHighlighter>
+              </TinyCardRow>
+              <TinyCardRow>
+                <Link to="./cards/issues_by_status">Issues By Status</Link>
+              </TinyCardRow>
+              <TinyCardRow>
+                <Link to="./cards/estimates_by_user">Estimates By User</Link>
               </TinyCardRow>
             </TinyCard>
         )
