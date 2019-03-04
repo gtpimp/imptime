@@ -123,9 +123,9 @@ export function updateSprintBudget(sprint_id, value) {
 }
 
 
-export function startCandidateSprint() {
+export function startCandidateSprint(project_id) {
     return (dispatch, getState) => {
-        dispatch(startCandidateItem(ENTITY_KEY__SPRINT, {}))
+        dispatch(startCandidateItem(ENTITY_KEY__SPRINT, {project_id}))
     }
 }
 

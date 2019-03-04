@@ -134,9 +134,9 @@ class SprintList extends Component {
     }
 
     onStartCandidateSprint(event) {
-        const {dispatch, list_key} = this.props
+        const {dispatch, list_key, project_id} = this.props
         event.stopPropagation()
-        dispatch(startCandidateSprint(list_key))
+        dispatch(startCandidateSprint(project_id))
     }
 
     onCancelCandidateSprint() {
