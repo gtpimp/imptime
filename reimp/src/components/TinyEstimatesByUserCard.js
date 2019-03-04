@@ -45,7 +45,7 @@ class TinyEstimatesByUserCard extends Component {
     render() {
         const { sprint_name, project_name, estimates_by_user_id } = this.props
         return (
-            <TinyCard title="Issues By Status" project_name={project_name} sprint_name={sprint_name}>
+            <TinyCard title="Estimates By User" project_name={project_name} sprint_name={sprint_name}>
               {map (estimates_by_user_id, function(value, key) {
                   return (
                       <TinyCardRow>
@@ -61,21 +61,17 @@ class TinyEstimatesByUserCard extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { list_key } = props
     const project_id = props.match.params.projectId
     const sprint_id = props.match.params.sprintId
     const sprint = getSprint(state, sprint_id) || {}
     const project = getProject(state, project_id) || {}
     const sprint_name = sprint.name
     const project_name = project.name
-    const cost_summary = getCostSummary(state, sprint_id)
-    let estimates_by_user_id
-    if (cost_summary) {
-        estimates_by_user_id = cost_summary.breakdown.revised_estimates_by_user
-    }
+    const cost_summary = getCostSummary(state, sprint_id) || {}
+    const breakdown = cost_summary.breakdown || {}
+    const estimates_by_user_id = breakdown.revised_estimates_by_user || {}
 
     return {
-        list_key,
         project_id,
         sprint_id,
         sprint,
