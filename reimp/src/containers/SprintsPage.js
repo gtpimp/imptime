@@ -192,13 +192,15 @@ class SprintsPage extends Component {
 
 function mapStateToProps(state, props) {
     const default_sprint_id = props.match.params.sprintId
+    const default_project_id = props.match.params.projectId
     
     const list_key = LIST_KEY__SPRINT_LIST
     const page_key = PAGE_KEY__SPRINTS_PAGE
     
     const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__SPRINT)
     const filter = getListFilter(state, list_key)
-    const project_id = filter.project_id || props.match.params.projectId
+    const project_id = default_project_id
+    // const project_id = filter.project_id || props.match.params.projectId
 
     const default_filter = { project_id: project_id }
     const selected_sprint_ids = getPageSelectedEntities(state, page_key).sprint_ids
