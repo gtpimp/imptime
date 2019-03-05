@@ -24,6 +24,7 @@ import { showMoney, doesMienHaveHeader } from '../actions/Mien'
 import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
+import IssueStatus from './IssueStatus'
 import CurrencyValue from './CurrencyValue'
 import {
     makeSelIssues,
@@ -153,16 +154,16 @@ class SprintRecon extends Component {
                   </p>
 
                   <DivTable renderHeader={this.renderCostTotalsHeader}>
-                    { false && cost_summary.spendable_budget &&
-                      <DivTableRow key={`budget`}>
+                    {show_money && cost_summary.spendable_budget &&
+                      <DivTableRow key={`spendable_budget`}>
                         <DivTableCell>Sprint budget</DivTableCell>
                         <DivTableCell>
-                          <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
+                          <CurrencyValue value={cost_summary.budget} float_direction="none" />
                         </DivTableCell>
                       </DivTableRow>
                     }
                     { show_hours_in_total &&
-                      <DivTableRow key={`budget`}>
+                      <DivTableRow key={`estimated_hours`}>
                         <DivTableCell>Estimated hours</DivTableCell>
                         <DivTableCell>
                           <div>{totals.estimated_hours}</div>
@@ -170,30 +171,56 @@ class SprintRecon extends Component {
                         </DivTableCell>
                       </DivTableRow>
                     }
+                      
                     { show_money &&
                       <div>
-                        <DivTableRow key={`budget`}>
+                        <DivTableRow key={`estimated_cost`}>
                           <DivTableCell>Estimated cost</DivTableCell>
                           <DivTableCell>
                             <CurrencyValue value={totals.estimated_cost} float_direction="none" />
                           </DivTableCell>
                         </DivTableRow>
+                        
                         <DivTableRow key={`contingency`}>
-                          <DivTableCell>Contingency</DivTableCell>
+                          <DivTableCell>Estimated Contingency</DivTableCell>
                           <DivTableCell>
                             <CurrencyValue value={totals.scope_creep} float_direction="none" />
                             &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
                           </DivTableCell>
                         </DivTableRow>
+                        
                         <DivTableRow key={'total'}>
                           <DivTableCell>
                             <div className={css`font: ${theme.fonts.bold_large}`}>
-                              Total cost
+                              Estimated total cost
                             </div>
                           </DivTableCell>
                           <DivTableCell>
                             <div className={css`font: ${theme.fonts.bold_large}`}>
                               <CurrencyValue value={totals.grand_total} float_direction="none" />
+                            </div>
+                          </DivTableCell>
+                        </DivTableRow>
+                        
+                        { show_hours_in_total &&
+                          <DivTableRow key={'actual_hours'}>
+                            <DivTableCell>Actual hours</DivTableCell>
+                            <DivTableCell>
+                              <div><Hours hours={cost_summary.hours_used} /></div>
+                              &nbsp;(approximately {Math.ceil(cost_summary.hours_used/8)} man days)
+                            </DivTableCell>
+                          </DivTableRow>
+                        }
+                          
+                        <DivTableRow key={'actual_total_cost'}>
+                          <DivTableCell>
+                            <div className={css`font: ${theme.fonts.bold_large}`}>
+                              Actual total cost
+                            </div>
+                          </DivTableCell>
+                          <DivTableCell>
+                            <div className={css`font: ${theme.fonts.bold_large}`}>
+                              <CurrencyValue value={cost_summary.spent} float_direction="none" />
                             </div>
                           </DivTableCell>
                         </DivTableRow>
@@ -260,6 +287,13 @@ class SprintRecon extends Component {
                                          content = (
                                              <DivTableCell key="name" extra_style={getCellStyle(header)}>
                                                <IssueName issue_id={issue.id} />
+                                             </DivTableCell>
+                                         )
+                                         break
+                                     case "status":
+                                         content = (
+                                             <DivTableCell key="status" extra_style={getCellStyle(header)}>
+                                               <IssueStatus issue_id={issue.id} />
                                              </DivTableCell>
                                          )
                                          break

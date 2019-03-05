@@ -2160,7 +2160,8 @@ class Project(BaseModel):
         else:
             json_stats['spendable_budget_msg'] = 'This is more than the spendable budget'
 
-        json_stats['spent'] = int(round(total['hours_billable_core_rate'] or 0))
+        json_stats['spent'] = total['hours_billable_core_rate'] or 0
+        json_stats['hours_used'] = total['hours'] or 0
         json_stats['progress_against_budget'] = (float(total['hours_billable_core_rate'] or 0) / float(self.budget)) if self.budget else 0
 
         if self.has_budget and self.stats['amount_under_budget'] > 0:
