@@ -1,16 +1,16 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import moment from 'moment'
-import { map, size, get } from 'lodash'
+import { map, size, get, keys } from 'lodash'
 import { cx, css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import {
     ensureSprintsLoaded,
     getSprint,
-    ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS
+    ALL_AVAILABLE_SPRINT_RECON_HEADERS
 } from '../actions/Sprints'
-import { HEADER_LIST_NAME__SPRINT_PROPOSAL } from '../actions/ItemListKeyRegistry'
+import { HEADER_LIST_NAME__SPRINT_RECON } from '../actions/ItemListKeyRegistry'
 import {
     initList,
     getVisibleItemIds,
@@ -54,7 +54,7 @@ import MienListColumnConfigurable from './MienListColumnConfigurable'
 import Loading from './Loading'
 import Timestamp from './Timestamp'
 
-class SprintProposal extends Component {
+class SprintRecon extends Component {
 
     componentDidMount() {
         const { dispatch, list_key } = this.props
@@ -95,14 +95,13 @@ class SprintProposal extends Component {
             <div>
               <PrintTitle>
                 <div>
-                  Proposal for
+                  Recon for
                   <h2>
                     <SprintName sprint_id={sprint_id}/>
                   </h2>
                 </div>
                 { sprint.description && 
                   <div>
-                    <h2>Sprint description</h2>
                     <p>
                       {sprint.description}
                     </p>
@@ -119,71 +118,19 @@ class SprintProposal extends Component {
     renderDevelopmentMethodology() {
         return (
             <div className="print__page">
-              <PrintTitle>Introduction</PrintTitle>
+              <PrintTitle>Recon parameters</PrintTitle>
               <p>
-                This proposal is for development work offered by ImplicitDesign, based on requirements received from the client.
+                This recon is for comparing estimates and actuals for a sprint.
               </p>
               <p>
-                ImplicitDesign uses an agile software development methodology, which
-                allows for a flexible specification while building an on-going client relationship.
+                All estimated costs arise from developer estimates with adjustments. (For details on how estimates are calculated, refer to the
+                proposal for this sprint.)
               </p>
               <p>
-                This proposal represents our best knowledge of the requirements, being as granular as
-                possible without requiring specific technical knowldge.
+                All actual costs arise from clocked entries by people involved in the project.
               </p>
               <p>
-                We assist the client in managing the project budget, by identifying where
-                costs can be reduced or functionality can be streamlined.
-              </p>
-              <p>
-                Final invoices are based on actual time taken, not on these estimates. This means that:
-                <ul>
-                  <li>the final cost of the project will match exactly the effort involved,
-                    ie no quote padding is required</li>
-                  <li>
-                    scope changes to the project are easily managed as a normal part of the
-                    development process</li>
-                </ul>
-              </p>
-              <p>
-                The time and cost estimates in this document are based
-                on developer's opinions of the implementation
-                time. Testing and management time is captured as
-                issues as well, based on our experience with similar
-                projects.
-              </p>
-            </div>
-        )
-    }
-
-    renderCostMethodology() {
-        return (
-            <div>
-              <p>
-                The following costing is based on the list of issues given later in this document.
-              </p>
-              <p>
-                If this is not a quote, then the final cost will be invoiced as the actual billable time taken, which may be
-                less than the minimum estimate or more than the maximum estimate.
-              </p>
-              <p>
-              
-                We try to make our estimates reasonable, neither
-                pessimistic nor optimistic.
-              </p>
-              <p>
-                Since there will be surprises that are not planned for, an additional uncertainty amount is added to the estimates. This is shown as a separate cost for clarity.
-              </p>
-              <p>
-                We assume this amount will be used in the sprint for unplanned difficulties and small tweaks to the requirements.
-                In those cases where it is not used and this sprint is not a quote, then the money is unspent and can be reallocated.
-                
-                A high uncertainty amount indicates any of:
-                <ul>
-                  <li>uncertainty and/or fluidity in the project deliverables</li>
-                  <li>a high level of risk, typically with integrations or new technologies</li>
-                  <li>a high degree of technical difficulty</li>
-                </ul>
+                If this is a quote, then the final cost will be the budget including uncertainty, not the actual cost.
               </p>
             </div>
         )
@@ -198,7 +145,6 @@ class SprintProposal extends Component {
               <PrintTitle>
                 Costing
               </PrintTitle>
-              { this.renderCostMethodology() }
               { cost_summary.breakdown &&
 
                 <div>
@@ -233,7 +179,7 @@ class SprintProposal extends Component {
                           </DivTableCell>
                         </DivTableRow>
                         <DivTableRow key={`contingency`}>
-                          <DivTableCell>Uncertainty</DivTableCell>
+                          <DivTableCell>Contingency</DivTableCell>
                           <DivTableCell>
                             <CurrencyValue value={totals.scope_creep} float_direction="none" />
                             &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
@@ -283,56 +229,21 @@ class SprintProposal extends Component {
         )
     }
 
-    renderIssueMethodology() {
-        return (
-            <div>
-              <p>
-              
-                The following list of issues represents the work
-                agreed to be done within the costs given above. This
-                list is flexible to change as determined through
-                feedback with the client.
-                
-              </p>
-              <p>
-              
-                Each issue is assigned an expected duration to
-                complete, typically in the range of a few hours. By
-                estimating at such a granular resolution, complexities
-                inherent in the project are identified early, greatly
-                reducing risk and increasing estimate accuracy.
-                
-              </p>
-              <p>
-                If you don't see a feature in this document, then it
-                will probably not be worked on as part of this proposal.
-              </p>
-              <p>
-
-              
-                
-              </p>
-            </div>
-        )
-    }
-
     renderIssueContents(header_list) {
-        const { cost_summary, issues } = this.props
+        const { cost_summary, issues, show_money } = this.props
+
         return (
             <div className="print__page">
               <PrintTitle>
                 Issues
               </PrintTitle>
-              { this.renderIssueMethodology() }
               <DivTable renderHeader={() => this.renderIssueContentsHeader(header_list)}>
                 {map(issues, (issue) => {
-                     const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
-                     if ( ! issue_costs.velocity_adjusted_estimate ) {
-                         return null
-                     }
-                
-                     return (
-                         <DivTableRow key={`sprint_proposal__div_table__${issue.id}`}>
+                    const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
+                    const actuals_for_user = get(cost_summary, ["breakdown", "actuals_by_issue_and_user", issue.id], {})
+                    const actuals_for_issue = get(cost_summary, ["breakdown", "actuals_by_issue", issue.id], {})
+                    return (
+                         <DivTableRow key={`sprint_recon__div_table__${issue.id}`}>
 
                            { map(header_list, (header) => {
                                  const header_key = header.key
@@ -360,9 +271,58 @@ class SprintProposal extends Component {
                                          )
                                          break
                                      case "estimated_cost_by_assignee":
+                                         if ( show_money ) {
+                                             content = (
+                                                 <DivTableCell key="estimated_cost_by_assignee" extra_style={getCellStyle(header)}>
+                                                   <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
+                                                 </DivTableCell>
+                                             )
+                                         }
+                                         break
+                                     case "actual_cost":
+                                         if ( show_money ) {
+                                             content = (
+                                                 <DivTableCell key="actual_cost" extra_style={getCellStyle(header)}>
+                                                   <CurrencyValue value={actuals_for_issue.cost_with_commission} />
+                                                 </DivTableCell>
+                                             )
+                                         }
+                                         break
+                                     case "actual_cost_by_user":
+                                         if ( show_money ) {
+                                             content = (
+                                                 <DivTableCell key="actual_cost_by_user" extra_style={getCellStyle(header)}>
+                                                   {map(keys(actuals_for_user), function(user_id) {
+                                                        const actual_for_user = actuals_for_user[user_id]
+                                                        return (
+                                                            <div>
+                                                              <OtherUser user_id={user_id}/>
+                                                              <CurrencyValue value={actual_for_user.cost_with_commission} />
+                                                            </div>
+                                                        )
+                                                    })}
+                                                            { size(actuals_for_user) === 0 &&
+                                                              <CurrencyValue value="0.0" />
+                                                            }
+                                                 </DivTableCell>
+                                             )
+                                         }
+                                         break
+                                     case "actual_hours_by_user":
                                          content = (
-                                             <DivTableCell key="estimated_cost_by_assignee" extra_style={getCellStyle(header)}>
-                                               <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
+                                             <DivTableCell key="actual_cost_by_user" extra_style={getCellStyle(header)}>
+                                               {map(keys(actuals_for_user), function(user_id) {
+                                                    const actual_for_user = actuals_for_user[user_id]
+                                                    return (
+                                                        <div>
+                                                          <OtherUser user_id={user_id}/>
+                                                          <Hours hours={actual_for_user.hours} />
+                                                        </div>
+                                                    )
+                                                })}
+                                                { size(actuals_for_user) === 0 &&
+                                                  <Hours hours="0.0" />
+                                                }
                                              </DivTableCell>
                                          )
                                          break
@@ -436,7 +396,7 @@ class SprintProposal extends Component {
                 including images (if available) and the steps taken to verify the issue is complete.
               </p>
               <p>
-                This is the definition of what this proposal actually delivers.
+                This is the definition of what this recon actually delivers.
               </p>
             </div>
         )
@@ -473,8 +433,8 @@ class SprintProposal extends Component {
         return (
             <div>
 
-              <MienListColumnConfigurable all_headers={ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS}
-                                          header_list_name={HEADER_LIST_NAME__SPRINT_PROPOSAL}
+              <MienListColumnConfigurable all_headers={ALL_AVAILABLE_SPRINT_RECON_HEADERS}
+                                          header_list_name={HEADER_LIST_NAME__SPRINT_RECON}
               >
                 {({active_headers}) => (
                      <div className={css`margin-left: 20px; margin-right: 20px`}>
@@ -513,7 +473,7 @@ function makeMapStateToProps(state, props) {
         const estimate_summary = getEstimateSummary(state, sprint_id) || {}
         const cost_summary = getCostSummary(state, sprint_id) || {}
         const show_money = sprint && showMoney(state, sprint.project_id)
-        const show_hours_in_total = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_PROPOSAL, 'estimates_by_assignee')
+        const show_hours_in_total = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_RECON, 'estimates_by_assignee')
         
         return {
             sprint_id,
@@ -536,4 +496,4 @@ function makeMapStateToProps(state, props) {
     return mapStateToProps
 }
 
-export default connect(makeMapStateToProps)(SprintProposal)
+export default connect(makeMapStateToProps)(SprintRecon)

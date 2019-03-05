@@ -55,7 +55,18 @@ export const ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS = [
     {key:'number', label:'Number', description:'Number', width:small_col_width, is_default:true},
     {key:'name', label:'Name', description:'Name', width:"auto", flex:1, is_default:true},
     {key:'estimates_by_assignee', label:"Hours", description:"Total estimated hours by the assigned user", width:small_col_width, is_default:true},
-    {key:'cost_by_assignee', label:"Cost", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
+    {key:'estimated_cost_by_assignee', label:"Cost", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
+    {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
+]
+
+export const ALL_AVAILABLE_SPRINT_RECON_HEADERS = [
+    {key:'number', label:'Number', description:'Number', width:small_col_width, is_default:true},
+    {key:'name', label:'Name', description:'Name', width:"auto", flex:1, is_default:true},
+    {key:'estimates_by_assignee', label:"Estimated hours", description:"Total estimated hours by the assigned user", width:small_col_width, is_default:true},
+    {key:'estimated_cost_by_assignee', label:"Estimated cost", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
+    {key:'actual_hours_by_user', label:"Actual hours by user", description:"Total actual hours by each users clocked against this issue", width:small_col_width, is_default:true},
+    {key:'actual_cost', label:"Actual cost", description:"Total actual cost by all users clocked against this issue", width:small_col_width, is_default:true},
+    {key:'actual_cost_by_user', label:"Actual cost by user", description:"Total actual cost by each users clocked against this issue", width:small_col_width, is_default:true},
     {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
 ]
 
