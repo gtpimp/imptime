@@ -94,13 +94,13 @@ class CostSummaryViewSet(BaseViewSet):
         writer.writerow(["Totals based on estimates"])
         writer.writerow(["Estimated hours", cs_totals["estimated_hours"]])
         writer.writerow(["Estimated cost", "R%.2f"%cs_totals["estimated_cost"]])
-        writer.writerow(["Contingency percentage", cs_totals["scope_creep_percentage"]])
-        writer.writerow(["Contingency amount", "R%.2f"%cs_totals["scope_creep"]])
-        writer.writerow(["Total cost", "R%.2f"%cs_totals["grand_total"]])
+        writer.writerow(["Uncertainty percentage", cs_totals["scope_creep_percentage"]])
+        writer.writerow(["Uncertainty amount", "R%.2f"%cs_totals["scope_creep"]])
+        writer.writerow(["Total estimated cost", "R%.2f"%cs_totals["grand_total"]])
         writer.writerow([])
 
         writer.writerow(["Issues"])
-        writer.writerow(["Number", "Name", "Assigned user", "Estimate by assigned user (with velocity)", "Cost by assigned user"])
+        writer.writerow(["Number", "Name", "Assigned user", "Estimate by assigned user (with velocity)", "Estimated cost by assigned user"])
         for issue_estimate in cs['breakdown']['estimates_by_issue'].values():
             issue = data['issues_by_id'][issue_estimate['id']]
             assigned_user_id = issue_estimate['assigned_to_id']
