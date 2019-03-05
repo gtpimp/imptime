@@ -47,10 +47,12 @@ class CompaniesPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        if ( new_props.selected_company_ids.length !== this.props.selected_company_ids.length ||
-             (new_props.selected_company_ids.length > 0 &&
-              new_props.selected_company_ids[0] !== this.props.selected_company_ids[0]) ||
-              get(new_props, ["selected_company", "name"], false) !== get(this.props, ["selected_company", "name"], false) ) {
+        const a = this.props.selected_company_ids || []
+        const b = new_props.selected_company_ids || []
+        
+        if ( a.length !== b.length ||
+             (a.length > 0 && b[0] !== a[0]) ||
+             get(new_props, ["selected_company", "name"], false) !== get(this.props, ["selected_company", "name"], false) ) {
             this.refresh(new_props)
         }
     }
