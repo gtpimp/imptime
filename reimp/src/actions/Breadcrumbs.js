@@ -67,7 +67,10 @@ export function setProjectUserBreadcrumbsHelper(project, optional_user) {
     return setBreadcrumbs(breadcrumbs)
 }
 
-export function setProjectBreadcrumbsHelper(optional_project) {
+export function setProjectBreadcrumbsHelper(optional_project, auto_set) {
+    if ( auto_set !== false ) {
+        auto_set = true
+    }
     const project = optional_project || {}
     const breadcrumbs = [{to: '/projects',
                           type: 'projects',
@@ -78,7 +81,10 @@ export function setProjectBreadcrumbsHelper(optional_project) {
                           label: project.name,
                           selected_entities: {project: project}})
     }
-    return setBreadcrumbs(breadcrumbs)
+    if ( auto_set ) {
+        return setBreadcrumbs(breadcrumbs)
+    }
+    return breadcrumbs
 }
 
 export function setSprintBreadcrumbsHelper(project, optional_sprint, auto_set) {

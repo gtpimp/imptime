@@ -73,7 +73,10 @@ class CostSummaryViewSet(BaseViewSet):
     @list_route(methods=['POST'])
     def download(self, request):
         params = self.get_params_for_js_itempost()
-        sprint_id = params['sprint_id']
+        sprint_id = params.get('sprint_id')
+        if sprint_id is None:
+            project_id = params['project_id']
+            # TODO: complete
         sprint = self.allowed_sprints().get(pk=sprint_id)
         cost_summary = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
 

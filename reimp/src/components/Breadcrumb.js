@@ -69,7 +69,9 @@ const menu_buttons = {
         { label: (objs) => 'Gallery and attachments',
           nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
         },
-        
+        { label: (objs) => 'Recon',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/recon/'
+        },
         { label: (objs) => "Summaries",
           type: "heading"
         },

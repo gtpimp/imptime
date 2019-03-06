@@ -23,6 +23,7 @@ import InvoicesPage from './InvoicesPage'
 import PasswordReminderSentPage from './PasswordReminderSentPage'
 import ProjectDashboardPage from './ProjectDashboardPage'
 import ProjectStatementPage from './ProjectStatementPage'
+import MultipleSprintReconPage from './MultipleSprintReconPage'
 import ProjectUserPage from './ProjectUserPage'
 import ProjectsPage from './ProjectsPage'
 import SprintCostSummaryPage from './SprintCostSummaryPage'
@@ -90,6 +91,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/journals" component={DecisionJournalPage}/>
               <Route exact path="/projects/:projectId/journals/:decisionJournalId" component={DecisionJournalPage}/>
               <Route exact path="/projects/:projectId/projectStatement" component={ProjectStatementPage}/>
+              <Route exact path="/projects/:projectId/recon" component={MultipleSprintReconPage}/>
               <Route exact path="/projects/:projectId/sprints" component={SprintsPage}/>
               <Route exact path="/projects/:projectId/features/flat" component={FlatFeaturesPage}/>
               <Route exact path="/projects/:projectId/features" component={FeaturesPage}/>

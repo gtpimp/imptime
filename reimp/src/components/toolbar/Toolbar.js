@@ -16,6 +16,7 @@ import SprintRateToolbarPanel from './SprintRateToolbarPanel'
 import SprintsToolbarPanel from './SprintsToolbarPanel'
 import SprintProposalToolbarPanel from './SprintProposalToolbarPanel'
 import SprintReconToolbarPanel from './SprintReconToolbarPanel'
+import ProjectReconToolbarPanel from './ProjectReconToolbarPanel'
 import FeaturesToolbarPanel from './FeaturesToolbarPanel'
 import FlatFeaturesToolbarPanel from './FlatFeaturesToolbarPanel'
 import NudgeToolbarPanel from './NudgeToolbarPanel'
@@ -100,7 +101,9 @@ class Toolbar extends Component {
             case 'sprint-proposal':
                 return <SprintProposalToolbarPanel key="sprints-panel" {...this.props} />
             case 'sprint-recon':
-                return <SprintReconToolbarPanel key="sprints-panel" {...this.props} />
+                return <SprintReconToolbarPanel key="sprint-recon-panel" {...this.props} />
+            case 'project-recon':
+                return <ProjectReconToolbarPanel key="project-recon-panel" {...this.props} />
             case 'cost-summary':
                 return <CostSummaryToolbarPanel key="cost-summary-panel" {...this.props}/>
             case 'project-statement':
