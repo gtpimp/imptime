@@ -41,7 +41,19 @@ class TinyProblemsCard extends Component {
     }
 
     render() {
-        const { sprint_name, project_name, budget, spent, revised_dev_commission_cost, original_dev_commission_cost, num_missing_testable_issues, num_issues_unassigned, num_issues_missing_estimates } = this.props
+        const { sprint_name,
+                project_name,
+                budget,
+                spent,
+                revised_dev_commission_cost,
+                original_dev_commission_cost,
+                num_missing_testable_issues,
+                num_issues_unassigned,
+                num_issues_missing_estimates,
+                num_adhoc_issues,
+                num_management_alert_issues,
+                num_open_risky_issues,
+                num_open_issues_needed } = this.props
         return (
             <TinyCard title="Problems" project_name={project_name} sprint_name={sprint_name}>
             <TinyCardRow>
@@ -65,48 +77,108 @@ class TinyProblemsCard extends Component {
                 <span>Slow development</span>
               </TinyCardRow>
             }
-            { budget != 0 && spent <= budget && revised_dev_commission_cost <= original_dev_commission_cost &&
-                      <TinyCardRow>
-                        <span></span>
-                        <span>None</span>
-                      </TinyCardRow>
-            }
-            <TinyCardRow>
-            <span>Issue problems:</span>
-            </TinyCardRow>
-            { num_missing_testable_issues > 0 &&
-              <TinyCardRow>
-                <span></span>
-                <span>
-                  <Pluralize singular="issue" count={num_missing_testable_issues} />
-             &nbsp;without testables
-                </span>
-              </TinyCardRow>
-            }
-            { num_issues_unassigned > 0 &&
-              <TinyCardRow>
-                <span></span>
-                <span>
-                  <Pluralize singular="issue" count={num_issues_unassigned} />
-             &nbsp;unassigned
-                </span>
-              </TinyCardRow>
-            }
-            { num_issues_missing_estimates > 0 &&
-              <TinyCardRow>
-                <span></span>
-                <span>
-                  <Pluralize singular="issue" count={num_issues_missing_estimates} />
-             &nbsp;without estimates
-                </span>
-              </TinyCardRow>
-            }
-            { num_missing_testable_issues == 0 && num_issues_unassigned == 0 && num_issues_missing_estimates == 0 &&
+            { budget != 0 &&
+              spent <= budget &&
+              revised_dev_commission_cost <= original_dev_commission_cost &&
               <TinyCardRow>
                 <span></span>
                 <span>None</span>
               </TinyCardRow>
             }
+            <TinyCardRow>
+              <span>Sprint warnings:</span>
+            </TinyCardRow>
+            { num_adhoc_issues > 0 &&
+            <TinyCardRow>
+              <span></span>
+              <span>
+                <Pluralize singular="issue" count={num_adhoc_issues} />
+            &nbsp;
+                <Pluralize singular="is" plural="are" showCount={false} count={num_adhoc_issues} />
+            &nbsp;ad hoc
+              </span>
+            </TinyCardRow>
+            }
+            { num_management_alert_issues > 0 &&
+              <TinyCardRow>
+                <span></span>
+                <span>
+                  <Pluralize singular="issue" count={num_management_alert_issues}/>
+             &nbsp;
+                <Pluralize singular="is" plural="are" showCount={false} count={num_management_alert_issues}/>
+             &nbsp;blocked
+                </span>
+              </TinyCardRow>
+            }
+            { num_open_risky_issues > 0 &&
+              <TinyCardRow>
+                <span></span>
+                <span>
+                  <Pluralize singular="issue" count={num_open_risky_issues}/>
+             &nbsp;
+                <Pluralize singular="is" plural="are" showCount={false} count={num_open_risky_issues}/>
+             &nbsp;risky
+                </span>
+              </TinyCardRow>
+            }
+            { num_open_issues_needed > 0 &&
+              <TinyCardRow>
+                <span></span>
+                <span>
+                  <Pluralize singular="issue" count={num_open_issues_needed}/>
+             &nbsp;
+                <Pluralize singular="is" plural="are" showCount={false} count={num_open_issues_needed}/>
+             &nbsp;still open
+                </span>
+              </TinyCardRow>
+            }
+            { num_adhoc_issues == 0 &&
+              num_management_alert_issues == 0 &&
+              num_open_risky_issues == 0 &&
+              num_open_issues_needed == 0 &&
+              <TinyCardRow>
+                <span></span>
+                <span>None</span>
+              </TinyCardRow>
+            }
+              <TinyCardRow>
+                <span>Issue problems:</span>
+              </TinyCardRow>
+              { num_missing_testable_issues > 0 &&
+                <TinyCardRow>
+                  <span></span>
+                  <span>
+                    <Pluralize singular="issue" count={num_missing_testable_issues} />
+                &nbsp;without testables
+                  </span>
+                </TinyCardRow>
+              }
+              { num_issues_unassigned > 0 &&
+                <TinyCardRow>
+                  <span></span>
+                  <span>
+                    <Pluralize singular="issue" count={num_issues_unassigned} />
+                &nbsp;unassigned
+                  </span>
+                </TinyCardRow>
+              }
+              { num_issues_missing_estimates > 0 &&
+                <TinyCardRow>
+                  <span></span>
+                  <span>
+                    <Pluralize singular="issue" count={num_issues_missing_estimates} />
+                &nbsp;without estimates
+                  </span>
+                </TinyCardRow>
+              }
+              { num_missing_testable_issues == 0 &&
+                num_issues_unassigned == 0 &&
+                num_issues_missing_estimates == 0 &&
+                <TinyCardRow>
+                  <span></span>
+                  <span>None</span>
+                </TinyCardRow>
+              }
             </TinyCard>
         )
     }
@@ -128,6 +200,9 @@ function mapStateToProps(state, props) {
     const num_missing_testable_issues = sprint.num_missing_testable_issues
     const num_issues_unassigned = sprint.num_issues_unassigned
     const num_issues_missing_estimates = sprint.num_issues_missing_estimates
+    const num_adhoc_issues = sprint.num_adhoc_issues
+    const num_management_alert_issues = sprint.num_management_alert_issues
+    const num_open_issues_needed = sprint.num_open_issues_needed
 
     return {
         project_id,
@@ -142,7 +217,10 @@ function mapStateToProps(state, props) {
         original_dev_commission_cost,
         num_missing_testable_issues,
         num_issues_unassigned,
-        num_issues_missing_estimates
+        num_issues_missing_estimates,
+        num_adhoc_issues,
+        num_management_alert_issues,
+        num_open_issues_needed
     }
 }
 
