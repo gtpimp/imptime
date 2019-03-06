@@ -72,7 +72,7 @@ export const ALL_AVAILABLE_SPRINT_RECON_HEADERS = [
 ]
 
 export const ALL_AVAILABLE_MULTIPLE_SPRINT_RECON_HEADERS = [
-    {key:'sprint_name', label:"Sprint name", description:"Sprint name", width:medium_col_width, is_default:true},
+    {key:'sprint_name', label:"Sprint name", description:"Sprint name", width:large_col_width, is_default:true},
     {key:'budget', label:"Budget", description:"Sprint budget", width:small_col_width, is_default:true},
     {key:'estimated_hours', label:"Estimated hours", description:"Total estimated hours by assigned users", width:small_col_width, is_default:true},
     {key:'estimated_cost', label:"Estimated cost", description:"Total estimated cost by assigned users", width:small_col_width, is_default:true},

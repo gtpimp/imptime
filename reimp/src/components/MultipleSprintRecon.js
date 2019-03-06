@@ -169,9 +169,9 @@ class MultipleSprintRecon extends Component {
     }
 
     render() {
-        const { project, cost_summaries } = this.props
+        const { is_loading, cost_summaries } = this.props
 
-        if ( ! project ) {
+        if ( is_loading ) {
             return (<Loading/>)
         }
         
@@ -212,7 +212,8 @@ const mapStateToProps = (state, props) => {
         filter,
         cost_summaries,
         show_money,
-        sprints
+        sprints,
+        is_loading: !project || (size(visible_sprint_ids) > 0 && size(cost_summaries) === 0)
     }
 }
 
