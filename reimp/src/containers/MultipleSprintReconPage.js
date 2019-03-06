@@ -14,7 +14,7 @@ import {
     setPageSelectedEntities,
     setBrowserTitle
 } from '../actions/Page'
-import { update_list_filter, initList } from '../actions/ItemList'
+import { update_list_filter, initList, invalidateList } from '../actions/ItemList'
 import MultipleSprintRecon from '../components/MultipleSprintRecon'
 
 class MultipleSprintReconPage extends Component {
@@ -32,12 +32,13 @@ class MultipleSprintReconPage extends Component {
     }
 
     componentWillReceiveProps(new_props) {
-        const { project_id, dispatch } = new_props
+        const { project_id, dispatch, list_key } = new_props
         dispatch(ensureProjectsLoaded([project_id]))
         
         if ( (new_props.project && (!this.props.project || new_props.project.id !== this.props.project.id)) ) {
             dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_RECON_PAGE,
-                                     {project_ids: [project_id]}))
+                                             {project_ids: [project_id]}))
+            dispatch(invalidateList(list_key))
             this.refresh(new_props)
         }
     }

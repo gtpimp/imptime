@@ -1,4 +1,4 @@
-import { ENTITY_KEY__PROJECT, small_col_width } from '../actions/ItemListKeyRegistry'
+import { ENTITY_KEY__PROJECT } from '../actions/ItemListKeyRegistry'
 import { get } from 'lodash'
 
 import {
@@ -24,14 +24,6 @@ import {
 
 
 export const SET_LAST_SELECTED_PROJECT = 'SET_LAST_SELECTED_PROJECT'
-
-export const ALL_AVAILABLE_PROJECT_RECON_HEADERS = [
-    {key:'estimates_by_assignee', label:"Estimated hours", description:"Total estimated hours by the assigned user", width:small_col_width, is_default:true},
-    {key:'estimated_cost_by_assignee', label:"Estimated cost", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
-    {key:'actual_hours_by_user', label:"Actual hours by user", description:"Total actual hours by each users clocked against this issue", width:small_col_width, is_default:true},
-    {key:'actual_cost', label:"Actual cost", description:"Total actual cost by all users clocked against this issue", width:small_col_width, is_default:true},
-    {key:'actual_cost_by_user', label:"Actual cost by user", description:"Total actual cost by each user clocked against this issue", width:small_col_width, is_default:true},
-]
 
 export function invalidateAllProjects() {
     return (dispatch, getState) => {

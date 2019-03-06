@@ -71,6 +71,16 @@ export const ALL_AVAILABLE_SPRINT_RECON_HEADERS = [
     {key:'status', label:"Status", description:"Issue status", width:medium_col_width},
 ]
 
+export const ALL_AVAILABLE_MULTIPLE_SPRINT_RECON_HEADERS = [
+    {key:'sprint_name', label:"Sprint name", description:"Sprint name", width:medium_col_width, is_default:true},
+    {key:'budget', label:"Budget", description:"Sprint budget", width:small_col_width, is_default:true},
+    {key:'estimated_hours', label:"Estimated hours", description:"Total estimated hours by assigned users", width:small_col_width, is_default:true},
+    {key:'estimated_cost', label:"Estimated cost", description:"Total estimated cost by assigned users", width:small_col_width, is_default:true},
+    {key:'estimated_cost_with_contingency', label:"Estimated total budget", description:"Total estimated cost, including contingency", width:small_col_width, is_default:true},
+    {key:'actual_hours', label:"Actual hours", description:"Total actual hours by all users", width:small_col_width, is_default:true},
+    {key:'actual_cost', label:"Actual cost", description:"Total actual cost by all users", width:small_col_width, is_default:true},
+]
+
 export function invalidateAllSprints() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__SPRINT))

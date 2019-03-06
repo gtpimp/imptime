@@ -843,6 +843,7 @@ class SprintSnapshot(BaseModel):
         issue_qs = Issue.objects.filter(project_id=sprint.id) #sic
         cost_summary['breakdown'] = MultipleIssueSummaryCalculator(user=user, issue_qs=issue_qs, summary_id=sprint.id).get_data()
         cost_summary['id'] = sprint.id
+        cost_summary['sprint_id'] = sprint.id
         cost_summary['projections'] = self._calculate_projections(cost_summary, sprint=sprint, user=user)
         cost_summary = self.clean_cost_summary(cost_summary, sprint.id, user)
         return cost_summary

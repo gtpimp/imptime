@@ -144,7 +144,8 @@ class SprintRecon extends Component {
         return ( 
             <div className="print__page">
               <PrintTitle>
-                Costing
+                { show_money && <span>Costing</span> }
+                { !show_money && <span>Summary</span> }
               </PrintTitle>
               { cost_summary.breakdown &&
 
@@ -458,7 +459,7 @@ class SprintRecon extends Component {
     }
 
     render() {
-        const { show_money, sprint } = this.props
+        const { sprint } = this.props
 
         if ( ! sprint ) {
             return (<Loading/>)
@@ -474,7 +475,7 @@ class SprintRecon extends Component {
                      <div className={css`margin-left: 20px; margin-right: 20px`}>
                        { this.renderHeader() }
                        { this.renderDevelopmentMethodology() }
-                       { show_money && this.renderCostTotals(active_headers) }
+                       { this.renderCostTotals(active_headers) }
                        { this.renderIssueContents(active_headers) }
                        { this.renderIssues() }
                      </div>
