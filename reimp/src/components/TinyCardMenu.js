@@ -1,15 +1,12 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { Link, withRouter } from 'react-router-dom'
-import { css } from 'emotion'
-import { default_theme as theme } from '../theme/default'
 import TinyCard from './TinyCard'
 import TinyCardRow from './TinyCardRow'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
 import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
-import TinyProblemsCard from './TinyProblemsCard'
 
 class TinyCardMenu extends Component {
 
@@ -45,13 +42,18 @@ class TinyCardMenu extends Component {
         const { project_name, sprint_name, project_id } = this.props
         return (
             <TinyCard title="Cards" project_name={project_name} sprint_name={sprint_name} >
-              <TinyCardRow>
-                <PermissionInspectorHighlighter project_id={project_id} permission_name="has_edit_budget">
-                  <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
+              <PermissionInspectorHighlighter project_id={project_id} permission_name="has_edit_budget">
+                <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
+                  <TinyCardRow>
                     <Link to="./cards/budget">Budget</Link>
-                  </PermissionInspectorHighlighter>
+                  </TinyCardRow>
                 </PermissionInspectorHighlighter>
-              </TinyCardRow>
+              </PermissionInspectorHighlighter>
+              <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
+                <TinyCardRow>
+                  <Link to="./cards/estimated_budget">Estimated Budget</Link>
+                </TinyCardRow>
+              </PermissionInspectorHighlighter>
               <TinyCardRow>
                 <Link to="./cards/issues_by_status">Issues By Status</Link>
               </TinyCardRow>

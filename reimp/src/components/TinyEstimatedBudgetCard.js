@@ -1,0 +1,100 @@
+import React, {Component} from 'react'
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
+import { values, sumBy } from 'lodash'
+import TinyCard from './TinyCard'
+import TinyCardRow from './TinyCardRow'
+import { ensureProjectsLoaded, getProject } from '../actions/Projects'
+import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
+import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
+import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
+import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
+import CurrencyValue from './CurrencyValue'
+
+class TinyEstimatedBudgetCard extends Component {
+
+    constructor(props) {
+        super(props)
+    }
+
+    componentDidMount() {
+        const {sprint_id, sprint, project_id, project, dispatch} = this.props
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureSprintsLoaded([sprint_id]))
+        dispatch(ensureCostSummaryLoaded(sprint_id))
+        this.refresh(sprint, project)
+    }
+
+    componentWillReceiveProps(new_props) {
+        const { sprint_id, project_id, dispatch } = this.props
+        dispatch(ensureProjectsLoaded([project_id]))
+        dispatch(ensureSprintsLoaded([sprint_id]))
+        dispatch(ensureCostSummaryLoaded(sprint_id))
+        if (new_props.sprint.id !== this.props.sprint.id ||
+            new_props.sprint.name !== this.props.sprint.name ||
+            new_props.project.name !== this.props.project.name) {
+            this.refresh(new_props.sprint, new_props.project)
+        }
+    }
+
+    refresh(sprint, project) {
+        const { dispatch } = this.props
+        dispatch(setSprintBreadcrumbsHelper(project, sprint))
+    }
+
+    render() {
+        const { sprint_name, project_name, project_id, estimated_budget, contingency, total } = this.props
+        return (
+            <TinyCard title="Estimated Budget" project_name={project_name} sprint_name={sprint_name}>
+              <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
+                <TinyCardRow>
+                  <span>Estimated Budget</span>
+                  <CurrencyValue value={estimated_budget} />
+                </TinyCardRow>
+              </PermissionInspectorHighlighter>
+              <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
+                <TinyCardRow>
+                  <span>Contingency</span>
+                  <CurrencyValue value={contingency} />
+                </TinyCardRow>
+              </PermissionInspectorHighlighter>
+              <PermissionInspectorHighlighter>
+                <TinyCardRow>
+                  <span>Total</span>
+                  <CurrencyValue value={total} />
+                </TinyCardRow>
+              </PermissionInspectorHighlighter>
+            </TinyCard>
+        )
+    }
+}
+
+function mapStateToProps(state, props) {
+    const project_id = props.match.params.projectId
+    const sprint_id = props.match.params.sprintId
+    const sprint = getSprint(state, sprint_id) || {}
+    const project = getProject(state, project_id) || {}
+    const sprint_name = sprint.name
+    const project_name = project.name
+    const cost_summary = getCostSummary(state, sprint_id) || {}
+    const breakdown = cost_summary.breakdown || {}
+    const estimates_by_user_id = breakdown.estimates_by_user || {}
+    const estimates_by_user = values(estimates_by_user_id)
+    const estimated_budget = sumBy(estimates_by_user, 'velocity_cost')
+    const total = sumBy(estimates_by_user, 'velocity_commission_cost')
+    const contingency = total - estimated_budget
+    
+    return {
+        project_id,
+        sprint_id,
+        sprint,
+        project,
+        sprint_name,
+        project_name,
+        estimated_budget,
+        contingency,
+        total
+    }
+}
+
+export default withRouter(connect(mapStateToProps)(TinyEstimatedBudgetCard))
