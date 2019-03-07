@@ -43,7 +43,7 @@ class TinyEstimatedBudgetCard extends Component {
     }
 
     render() {
-        const { sprint_name, project_name, project_id, estimated_budget, contingency, total } = this.props
+        const { sprint_name, project_name, project_id, estimated_budget, uncertainty, total } = this.props
         return (
             <TinyCard title="Estimated Budget" project_name={project_name} sprint_name={sprint_name}>
               <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
@@ -54,8 +54,8 @@ class TinyEstimatedBudgetCard extends Component {
               </PermissionInspectorHighlighter>
               <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
                 <TinyCardRow>
-                  <span>Contingency</span>
-                  <CurrencyValue value={contingency} />
+                  <span>Uncertainty</span>
+                  <CurrencyValue value={uncertainty} />
                 </TinyCardRow>
               </PermissionInspectorHighlighter>
               <PermissionInspectorHighlighter>
@@ -78,11 +78,12 @@ function mapStateToProps(state, props) {
     const project_name = project.name
     const cost_summary = getCostSummary(state, sprint_id) || {}
     const breakdown = cost_summary.breakdown || {}
-    const estimates_by_user_id = breakdown.estimates_by_user || {}
-    const estimates_by_user = values(estimates_by_user_id)
-    const estimated_budget = sumBy(estimates_by_user, 'velocity_cost')
-    const total = sumBy(estimates_by_user, 'velocity_commission_cost')
-    const contingency = total - estimated_budget
+    const totals = breakdown.totals || {}
+    const estimated_budget = totals.estimated_cost
+    const uncertainty = totals.scope_creep
+    const total = totals.grand_total
+
+
     
     return {
         project_id,
@@ -92,7 +93,7 @@ function mapStateToProps(state, props) {
         sprint_name,
         project_name,
         estimated_budget,
-        contingency,
+        uncertainty,
         total
     }
 }

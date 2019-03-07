@@ -11,7 +11,7 @@ def forwards(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('imptime', '0293_release_notes_Clock_fix_19Feb2019'),
+        ('imptime', '0291_release_notes_testable_steps_25Jan2019'),
     ]
 
     operations = [
