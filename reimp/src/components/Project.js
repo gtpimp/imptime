@@ -4,7 +4,7 @@ import {get, includes, keys} from 'lodash'
 import { connect } from 'react-redux'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
 import '../sass/project.css'
-import { deleteProjects, canShowProjectDelete } from '../actions/Projects'
+import { deleteProjects, canShowProjectDelete, getProject } from '../actions/Projects'
 import DeleteProject from '../components/DeleteProject'
 import { has_permission } from '../actions/Users'
 import Timestamp from './Timestamp'
@@ -181,9 +181,8 @@ class Project extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { project } = state
     const { project_id, is_selected, is_collapsed, is_loading, header_list, onDelete } = props
-    const this_project = (project && project.items_by_id && project.items_by_id[project_id]) || {}
+    const this_project = getProject(state, project_id)
     const can_show_project_delete = canShowProjectDelete(this_project) &&
                                     has_permission(state, project_id, 'has_delete_project')
     

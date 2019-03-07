@@ -1,6 +1,4 @@
 alabaster==0.7.6
-amqp==1.4.9
-amqplib==1.0.2
 anyjson==0.3.3
 asgi-redis==1.0.0
 asgiref==1.0.0
@@ -104,7 +102,7 @@ requests-oauthlib==0.5.0
 scipy==0.17.1
 selenium==2.48.0
 simplegeneric==0.8.1
-six==1.10.0
+six==1.12.0
 smmap==0.9.0
 snowballstemmer==1.2.0
 sorl-thumbnail==12.3
@@ -113,7 +111,7 @@ Sphinx==1.3.1
 sphinx-rtd-theme==0.1.9
 sqlparse==0.1.16
 ssh==1.8.0
-tendo==0.2.8
+tendo==0.2.12
 tlslite==0.4.9
 traitlets==4.0.0
 Twisted==16.6.0

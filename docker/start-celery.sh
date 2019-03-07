@@ -3,7 +3,6 @@
 echo "configuring celery..."
 
 python manage.py wait_for_flag db_migrate_complete
-python manage.py wait_for_flag rabbitmq_ready
 
 python manage.py set_flag celery_ready
 

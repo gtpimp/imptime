@@ -20,10 +20,8 @@ import {
 } from '../actions/ItemList'
 import {
     set_toolbars,
-    select_issues,
-    get_selected_issue_ids,
-    select_sprints,
-    select_projects,
+    setPageSelectedEntities,
+    getPageSelectedEntities,
     getPageFlag,
     setPageFlag,
     setBrowserTitle
@@ -47,8 +45,10 @@ class IssuesPage extends Component {
         dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id || -1}))
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
-        dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
-        dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
+
+        dispatch(setPageSelectedEntities(PAGE_KEY__ISSUES_PAGE,
+                                 {project_ids: [project_id],
+                                  sprint_ids: [sprint_id]}))
         this.refresh()
     }
 
@@ -62,9 +62,9 @@ class IssuesPage extends Component {
              new_props.project.name !== this.props.project.name ) {
 
             if ( new_props.sprint_id !== this.props.sprint_id ) {
-                dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, []))
-                dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [new_props.sprint_id]))
-                dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [new_props.project_id]))
+                dispatch(setPageSelectedEntities(PAGE_KEY__ISSUES_PAGE, {issue_ids:[],
+                                                                 sprint_ids: [new_props.sprint_id],
+                                                                 project_ids: [new_props.project_id]}))
                 dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
             }
             this.refresh(new_props)
@@ -89,7 +89,10 @@ class IssuesPage extends Component {
 
         if ( sprint.id !== filter_sprint_id ) {
             dispatch(update_list_filter(LIST_KEY__ISSUE_LIST, {sprint_id:sprint.id}))
-            dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint.id]))
+
+            dispatch(setPageSelectedEntities(PAGE_KEY__ISSUES_PAGE,
+                                     {project_ids: [project.id],
+                                      sprint_ids: [sprint.id]}))
             dispatch(invalidateList(LIST_KEY__ISSUE_LIST))
         }
         
@@ -105,10 +108,14 @@ class IssuesPage extends Component {
 
     selectDefaultIssue(these_props) {
         const {dispatch, selected_issue_ids,
-               default_issue_id} = these_props || this.props
+               default_issue_id, sprint_id, project_id} = these_props || this.props
         if ( default_issue_id !== undefined && !includes(selected_issue_ids, default_issue_id) ) {
             dispatch(selectItems(LIST_KEY__ISSUE_LIST, [default_issue_id]))
-            dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, [default_issue_id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__ISSUES_PAGE,
+                                     {issue_ids: [default_issue_id],
+                                      sprint_ids: [sprint_id],
+                                      project_ids: [project_id]}
+                                     ))
         }
         this.setState({'noticed_default_issue_id': default_issue_id})
     }
@@ -116,10 +123,13 @@ class IssuesPage extends Component {
     onSelectIssues(issue_ids) {
         const { dispatch, history, project_id, sprint_id } = this.props
         dispatch(selectItems(LIST_KEY__ISSUE_LIST, issue_ids))
-        dispatch(select_projects(PAGE_KEY__ISSUES_PAGE, [project_id]))
-        dispatch(select_sprints(PAGE_KEY__ISSUES_PAGE, [sprint_id]))
-        dispatch(select_issues(PAGE_KEY__ISSUES_PAGE, issue_ids))
 
+        dispatch(setPageSelectedEntities(PAGE_KEY__ISSUES_PAGE,
+                                 {issue_ids: issue_ids,
+                                  sprint_ids: [sprint_id],
+                                  project_ids: [project_id]}
+        ))
+        
         if ( issue_ids && issue_ids.length === 1 ) {
             history.push('/projects/'+project_id+'/sprints/'+sprint_id+'/issues/'+issue_ids[0]);
         }
@@ -205,7 +215,7 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
+    const selected_issue_ids = getPageSelectedEntities(state, PAGE_KEY__ISSUES_PAGE).issue_ids
     const selected_items = getIssues(state, selected_issue_ids)
 
     const filter_sprint_id = (getListFilter(state, LIST_KEY__ISSUE_LIST) || {}).sprint_id
@@ -230,7 +240,7 @@ function mapStateToProps(state, props) {
         default_issue_id,
         selected_issue: selected_issue || {},
         selected_issue_ids: selected_issue_ids,
-        is_single_selection: selected_items.length === 1,
+        is_single_selection: selected_items && selected_items.length === 1,
         is_multiple_selection: compact(selected_items).length > 1,
         is_creating_issue,
         show_sidebar: (selected_issue && show_sidebar) || is_creating_issue,

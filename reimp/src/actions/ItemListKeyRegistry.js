@@ -14,6 +14,8 @@ export const LIST_KEY__ISSUE_HISTORY_LIST = 'issue_history'
 export const LIST_KEY__CLOCK_HISTORY_LIST = 'clock_history'
 export const LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details'
 export const LIST_KEY__ISSUES_FOR_PROPOSAL = 'issues_for_proposal'
+export const LIST_KEY__ISSUES_FOR_RECON = 'issues_for_recon'
+export const LIST_KEY__ISSUES_FOR_PROJECT_RECON = 'issues_for_project_recon'
 export const LIST_KEY__USER_LIST = 'users'
 export const LIST_KEY__PROJECT_USER_LIST = 'project_users'
 export const LIST_KEY__PROJECT_DASHBOARD_LIST = 'project_dashboards'
@@ -80,6 +82,8 @@ export const ENTITY_KEY__TESTABLE_LINE = 'testable_line'
 // mechanism and therefore are in a different place in the state.
 export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__ISSUE,
+                                  ENTITY_KEY__SPRINT,
+                                  ENTITY_KEY__PROJECT,
                                   ENTITY_KEY__INVOICE,
                                   ENTITY_KEY__ISSUE_HISTORY,
                                   ENTITY_KEY__DECISION_JOURNAL,
@@ -115,6 +119,7 @@ export const PAGE_KEY__SPRINTS_TOOLBAR = 'sprints_toolbar'
 export const PAGE_KEY__SPRINT_TEMPLATES_TOOLBAR = 'sprint_templates_toolbar'
 export const PAGE_KEY__SPRINT_DASHBOARD_PAGE = 'sprint_dashboard_page'
 export const PAGE_KEY__SPRINT_PROPOSAL_PAGE = 'sprint_proposal_page'
+export const PAGE_KEY__SPRINT_RECON_PAGE = 'sprint_recon_page'
 export const PAGE_KEY__SPRINT_RATE_PAGE = 'sprint_rate_page'
 export const PAGE_KEY__ISSUES_PAGE = 'issues_page'
 export const PAGE_KEY__ISSUE_DASHBOARD_PAGE = 'issue_dashboard_page'
@@ -128,6 +133,7 @@ export const PAGE_KEY__COMPANY_PROBLEM_PAGE = 'company_problem_page'
 export const PAGE_KEY__SCHEDULE_PAGE = 'schedules_page'
 export const PAGE_KEY__SCHEDULE_ITEM_PAGE = 'schedule_item_page'
 export const PAGE_KEY__PROJECT_WIKI_PAGE = 'project_wiki_page'
+export const PAGE_KEY__PROJECT_RECON_PAGE = 'project_recon_page'
 export const PAGE_KEY__AUTH_PAGE = 'auth_page'
 export const PAGE_KEY__BILLABLE_HOURS_STATEMENT_PAGE = 'billable_hours_statement_page'
 export const PAGE_KEY__SPRINT_SNAPSHOT_PAGE = 'sprint_snapshot_page'
@@ -142,7 +148,9 @@ export const HEADER_LIST_NAME__DECISION_JOURNAL = "decision_journal"
 export const HEADER_LIST_NAME__NUDGE = "nudge"
 export const HEADER_LIST_NAME__INVOICE = "invoice"
 export const HEADER_LIST_NAME__SPRINT_PROPOSAL = "sprint_proposal"
+export const HEADER_LIST_NAME__SPRINT_RECON = "sprint_recon"
 export const HEADER_LIST_NAME__SPRINT_ROADMAP = "sprint_roadmap"
+export const HEADER_LIST_NAME__PROJECT_RECON = "project_recon"
 
 export const CONTEXT_KEY__AUTO_CLOCK = 'auto_clock_context'
 export const PAGE_KEY__WORK_SUMMARY_PAGE = 'work_summary_page'

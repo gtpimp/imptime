@@ -31,7 +31,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_projects,
+    setPageSelectedEntities
 } from '../actions/Page'
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
@@ -110,7 +110,8 @@ class ProjectStatement extends Component {
 
     refresh(project, project_statement) {
         const { dispatch } = this.props
-        dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project.id]))
+        dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_DASHBOARD_PAGE,
+                                 {project_ids:[project.id]}))
         dispatch(ensureUsersLoaded(project.allowed_user_ids))
     }
 

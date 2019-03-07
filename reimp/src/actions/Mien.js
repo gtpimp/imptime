@@ -1,5 +1,5 @@
 import cookie from 'react-cookies';
-import { get, keys, includes } from 'lodash'
+import { size, get, keys, includes, map } from 'lodash'
 import {
     invalidateAllItems,
     invalidateItems,
@@ -99,6 +99,18 @@ export function doesMienHaveFeature(state, feature_name) {
         features = DEFAULT_MIEN_FEATURES
     }
     return includes(features, feature_name)
+}
+
+export function doesMienHaveHeader(state, header_list_name, name) {
+    const mien = getCurrentMien(state)
+    if ( !mien ) {
+        return true
+    }
+    let headers = mien.headers[header_list_name]
+    if ( size(headers) === 0 ) {
+        return true
+    }
+    return includes(map(headers, (header) => header.key), name)
 }
 
 export function invalidateAllMiens() {

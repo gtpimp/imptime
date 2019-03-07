@@ -16,7 +16,7 @@ import {
     selectItems
 } from '../actions/ItemList'
 import {
-    select_users,
+    setPageSelectedEntities,
     setPageFlag,
     clearPageFlag,
     getPageFlag
@@ -58,7 +58,9 @@ class ProjectUsersPage extends Component {
     onSelectUsers(user_ids) {
         const {dispatch, history, project_id} = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_USER_LIST, user_ids))
-        dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, user_ids))
+        dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_USER_PAGE,
+                                 {project_ids:[project_id],
+                                  user_ids:user_ids}))
         if (user_ids && user_ids.length === 1) {
             history.push('/projects/' + project_id + '/users/' + user_ids[0]);
         }

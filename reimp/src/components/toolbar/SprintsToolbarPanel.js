@@ -16,8 +16,7 @@ import {
 import { ensureSprintsLoaded, getSprint } from '../../actions/Sprints'
 import { ensureProjectsLoaded, getProject } from '../../actions/Projects'
 import {
-    get_selected_project_ids,
-    get_selected_sprint_ids
+    getPageSelectedEntities
 } from '../../actions/Page'
 import ToggleButton from './ToggleButton'
 
@@ -95,9 +94,9 @@ class SprintsToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const selected_sprint_ids = getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE).sprint_ids
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
-    const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const selected_project_ids = getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE).project_ids
     const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
     const selected_sprint_type_filter = (getListFilter(state, LIST_KEY__SPRINT_LIST) || {}).sprint_type || "_all_"
     const sprint_type_filter_options = concat( [{value:'_all_', label: 'all'}], map(project.allowed_sprint_type_names, (name) => ( {value: name, label: name })))

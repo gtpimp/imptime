@@ -20,7 +20,7 @@ import {
 import {ensureEstimateSummaryLoaded,
         getEstimateSummary
 } from '../actions/EstimateSummary'
-import { showMoney } from '../actions/Mien'
+import { showMoney, doesMienHaveHeader } from '../actions/Mien'
 import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
@@ -119,19 +119,26 @@ class SprintProposal extends Component {
     renderDevelopmentMethodology() {
         return (
             <div className="print__page">
-              <PrintTitle>Development methodology</PrintTitle>
+              <PrintTitle>Introduction</PrintTitle>
               <p>
-                ImplicitDesign uses the agile software development methodology, which
-                allows for a flexible specification and on-going client-liason.
+                This proposal is for development work offered by ImplicitDesign, based on requirements received from the client.
+              </p>
+              <p>
+                ImplicitDesign uses an agile software development methodology, which
+                allows for a flexible specification while building an on-going client relationship.
+              </p>
+              <p>
+                This proposal represents our best knowledge of the requirements, being as granular as
+                possible without requiring specific technical knowldge.
               </p>
               <p>
                 We assist the client in managing the project budget, by identifying where
                 costs can be reduced or functionality can be streamlined.
               </p>
               <p>
-                We bill by the hour, for a number of reasons:
+                Final invoices are based on actual time taken, not on these estimates. This means that:
                 <ul>
-                  <li>it allows the final cost of the project to match exactly the effort involved,
+                  <li>the final cost of the project will match exactly the effort involved,
                     ie no quote padding is required</li>
                   <li>
                     scope changes to the project are easily managed as a normal part of the
@@ -139,8 +146,11 @@ class SprintProposal extends Component {
                 </ul>
               </p>
               <p>
-                Therefore the project is not open-ended, but rather managed in an ongoing
-                manner.
+                The time and cost estimates in this document are based
+                on developer's opinions of the implementation
+                time. Testing and management time is captured as
+                issues as well, based on our experience with similar
+                projects.
               </p>
             </div>
         )
@@ -153,45 +163,109 @@ class SprintProposal extends Component {
                 The following costing is based on the list of issues given later in this document.
               </p>
               <p>
-                The final cost will be invoiced as the actual billable time taken, which may be
+                If this is not a quote, then the final cost will be invoiced as the actual billable time taken, which may be
                 less than the minimum estimate or more than the maximum estimate.
               </p>
               <p>
-                To manage the budget expectations and overruns, the client can request to be
-                notified at certain budget milestones, for example half-way through the sprint
-                budget.
+              
+                We try to make our estimates reasonable, neither
+                pessimistic nor optimistic.
               </p>
               <p>
-                The total estimated cost is a formula including testing, uncertainty and management.
+                Since there will be surprises that are not planned for, an additional uncertainty amount is added to the estimates. This is shown as a separate cost for clarity.
+              </p>
+              <p>
+                We assume this amount will be used in the sprint for unplanned difficulties and small tweaks to the requirements.
+                In those cases where it is not used and this sprint is not a quote, then the money is unspent and can be reallocated.
+                
+                A high uncertainty amount indicates any of:
+                <ul>
+                  <li>uncertainty and/or fluidity in the project deliverables</li>
+                  <li>a high level of risk, typically with integrations or new technologies</li>
+                  <li>a high degree of technical difficulty</li>
+                </ul>
               </p>
             </div>
         )
     }
 
-    renderCostTotals() {
-        const { cost_summary } = this.props
-        return (
+    renderCostTotals(active_headers) {
+        const { show_money, cost_summary, show_hours_in_total } = this.props
+        const totals = get(cost_summary, ["breakdown", "totals"], {}) || {}
+
+        return ( 
             <div className="print__page">
               <PrintTitle>
                 Costing
               </PrintTitle>
               { this.renderCostMethodology() }
-              <div className={css`font: ${theme.fonts.bold_large}`}>
-                <p>
-                  These costs do NOT include South African VAT. If VAT is applicable, then it will be added during invoicing.
-                </p>
-                { cost_summary.spendable_budget &&
-                  <div className={css`display: flex`}>
-                    Sprint budget: 
-                    <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
-                  </div>
-                }
-                <div className={css`display: flex`}>
-                  Total estimated cost
-                  <CurrencyValue value={cost_summary.estimated_cost} float_direction="none" />
+              { cost_summary.breakdown &&
+
+                <div>
+                  <p>
+                    These costs do not include South African VAT. If VAT is applicable, then it will be added during invoicing.
+                  </p>
+
+                  <DivTable renderHeader={this.renderCostTotalsHeader}>
+                    { false && cost_summary.spendable_budget &&
+                      <DivTableRow key={`budget`}>
+                        <DivTableCell>Sprint budget</DivTableCell>
+                        <DivTableCell>
+                          <CurrencyValue value={cost_summary.spendable_budget} float_direction="none" />
+                        </DivTableCell>
+                      </DivTableRow>
+                    }
+                    { show_hours_in_total &&
+                      <DivTableRow key={`budget`}>
+                        <DivTableCell>Estimated hours</DivTableCell>
+                        <DivTableCell>
+                          <div>{totals.estimated_hours}</div>
+                          &nbsp;(approximately {Math.ceil(totals.estimated_hours/8)} man days)
+                        </DivTableCell>
+                      </DivTableRow>
+                    }
+                    { show_money &&
+                      <div>
+                        <DivTableRow key={`budget`}>
+                          <DivTableCell>Estimated cost</DivTableCell>
+                          <DivTableCell>
+                            <CurrencyValue value={totals.estimated_cost} float_direction="none" />
+                          </DivTableCell>
+                        </DivTableRow>
+                        <DivTableRow key={`contingency`}>
+                          <DivTableCell>Uncertainty</DivTableCell>
+                          <DivTableCell>
+                            <CurrencyValue value={totals.scope_creep} float_direction="none" />
+                            &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
+                          </DivTableCell>
+                        </DivTableRow>
+                        <DivTableRow key={'total'}>
+                          <DivTableCell>
+                            <div className={css`font: ${theme.fonts.bold_large}`}>
+                              Total cost
+                            </div>
+                          </DivTableCell>
+                          <DivTableCell>
+                            <div className={css`font: ${theme.fonts.bold_large}`}>
+                              <CurrencyValue value={totals.grand_total} float_direction="none" />
+                            </div>
+                          </DivTableCell>
+                        </DivTableRow>
+                      </div>
+                    }
+                  </DivTable>
                 </div>
-              </div>
+              }
             </div>
+        )
+    }
+
+    renderCostTotalsHeader = (header_list) => {
+        return (
+            <DivTableHeaderRow>
+              <DivTableHeaderCell key="item" />
+              <DivTableHeaderCell key="amount" />
+            </DivTableHeaderRow>
         )
     }
 
@@ -213,21 +287,30 @@ class SprintProposal extends Component {
         return (
             <div>
               <p>
-                The following list of issues represents the work agreed to be done within the
-                cost given above. This list is flexible to on-going change as determined
-                through feedback with the client.
+              
+                The following list of issues represents the work
+                agreed to be done within the costs given above. This
+                list is flexible to change as determined through
+                feedback with the client.
+                
               </p>
               <p>
-                Each issue is assigned an expected duration to complete, typically in the
-                range of a few hours. By estimating at such a granular resolution we find that
-                complexities inherent in the project are identified in the specification phase
-                which greatly reduces risk.
+              
+                Each issue is assigned an expected duration to
+                complete, typically in the range of a few hours. By
+                estimating at such a granular resolution, complexities
+                inherent in the project are identified early, greatly
+                reducing risk and increasing estimate accuracy.
+                
               </p>
               <p>
-                Our estimates are usually slightly high. Usually this is balanced out by smaller
-                tweaks or adjustments that are identified during testing. In general these
-                estimates are a realistic reflection of the cost to deliver the requirements,
-                rather than optimistic or pessimistic.
+                If you don't see a feature in this document, then it
+                will probably not be worked on as part of this proposal.
+              </p>
+              <p>
+
+              
+                
               </p>
             </div>
         )
@@ -244,6 +327,10 @@ class SprintProposal extends Component {
               <DivTable renderHeader={() => this.renderIssueContentsHeader(header_list)}>
                 {map(issues, (issue) => {
                      const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
+                     if ( ! issue_costs.velocity_adjusted_estimate ) {
+                         return null
+                     }
+                
                      return (
                          <DivTableRow key={`sprint_proposal__div_table__${issue.id}`}>
 
@@ -253,35 +340,35 @@ class SprintProposal extends Component {
                                  switch(header_key) {
                                      case "number":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="number" extra_style={getCellStyle(header)}>
                                                {issue.number}
                                              </DivTableCell>
                                          )
                                          break
                                      case "name":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="name" extra_style={getCellStyle(header)}>
                                                <IssueName issue_id={issue.id} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "estimates_by_assignee":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="estimates_by_assignee" extra_style={getCellStyle(header)}>
                                                <Hours hours={issue_costs.velocity_adjusted_estimate} />
                                              </DivTableCell>
                                          )
                                          break
-                                     case "cost_by_assignee":
+                                     case "estimated_cost_by_assignee":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="estimated_cost_by_assignee" extra_style={getCellStyle(header)}>
                                                <CurrencyValue value={issue_costs.velocity_adjusted_cost} />
                                              </DivTableCell>
                                          )
                                          break
                                      case "assignee":
                                          content = (
-                                             <DivTableCell extra_style={getCellStyle(header)}>
+                                             <DivTableCell key="assignee" extra_style={getCellStyle(header)}>
                                                <OtherUser user_id={issue.assigned_to_id}/>
                                              </DivTableCell>
                                          )
@@ -316,8 +403,8 @@ class SprintProposal extends Component {
         return (
             <div className={css`display: flex; flex-wrap: wrap;`}>
               { map(issue.testables, (testable) =>
-                  <div key={`issue_testable_${testable.id}`} className={css`max-width:25%; margin-left: 30px; margin-right: 30px;`}>
-                    <Testable key={`testable_${testable.id}`} testable={testable} />
+                  <div key={`issue_testable_${testable.id}`} className={css`margin-left: 30px; margin-right: 30px;`}>
+                    <Testable key={`testable_${testable.id}`} testable={testable} can_edit={false} />
                   </div>
                 ) }
             </div>
@@ -393,7 +480,7 @@ class SprintProposal extends Component {
                      <div className={css`margin-left: 20px; margin-right: 20px`}>
                        { this.renderHeader() }
                        { this.renderDevelopmentMethodology() }
-                       { show_money && this.renderCostTotals() }
+                       { show_money && this.renderCostTotals(active_headers) }
                        { this.renderIssueContents(active_headers) }
                        { this.renderIssues() }
                      </div>
@@ -426,6 +513,7 @@ function makeMapStateToProps(state, props) {
         const estimate_summary = getEstimateSummary(state, sprint_id) || {}
         const cost_summary = getCostSummary(state, sprint_id) || {}
         const show_money = sprint && showMoney(state, sprint.project_id)
+        const show_hours_in_total = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_PROPOSAL, 'estimates_by_assignee')
         
         return {
             sprint_id,
@@ -441,7 +529,8 @@ function makeMapStateToProps(state, props) {
             loading_issue_ids,
             estimate_summary,
             cost_summary,
-            show_money
+            show_money,
+            show_hours_in_total
         }
     }
     return mapStateToProps

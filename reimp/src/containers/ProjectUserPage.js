@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { compact } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import { setProjectUserBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
@@ -10,8 +11,7 @@ import {
     PAGE_KEY__PROJECT_USER_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    select_projects,
-    select_users,
+    setPageSelectedEntities
 } from '../actions/Page'
 
 class ProjectUserPage extends Component {
@@ -42,9 +42,10 @@ class ProjectUserPage extends Component {
             dispatch(ensureProjectsLoaded([project_id]))
             if ( user_id ) {
                 dispatch(ensureUsersLoaded([user_id]))
-                dispatch(select_users(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
             }
-            dispatch(select_projects(PAGE_KEY__PROJECT_USER_PAGE, [project_id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_USER_PAGE,
+                                     {project_ids:[project_id],
+                                      user_ids: compact([user_id])}))
         }
         if ( project && project.id ) {
             dispatch(setProjectUserBreadcrumbsHelper(project, user))

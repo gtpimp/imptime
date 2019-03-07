@@ -3,7 +3,7 @@ import { map } from 'lodash'
 import {connect} from 'react-redux'
 import '../../sass/toolbar-panel.css'
 import ToolbarButton from './ToolbarButton'
-import { get_selected_issue_ids } from '../../actions/Page'
+import { getPageSelectedEntities } from '../../actions/Page'
 import { LIST_KEY__ISSUE_LIST, PAGE_KEY__ISSUES_PAGE } from '../../actions/ItemListKeyRegistry'
 import {
     ensureIssuesLoaded,
@@ -127,7 +127,7 @@ class IssueToolbarPanel extends Component {
 
         const { issue_ids, issue, show_sidebar } = this.props
 
-        if (issue_ids.length === 0 ) {
+        if (!issue_ids || issue_ids.length === 0 ) {
             return null
         }
         if ( ! issue ) {
@@ -192,7 +192,7 @@ class IssueToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_issue_ids = get_selected_issue_ids(state, PAGE_KEY__ISSUES_PAGE)
+    const selected_issue_ids = getPageSelectedEntities(state, PAGE_KEY__ISSUES_PAGE).issue_ids
     const issue = selected_issue_ids && selected_issue_ids.length > 0 && getIssue(state, selected_issue_ids[0])
     const show_sidebar = getPageFlag(state, PAGE_KEY__ISSUES_PAGE, "show_sidebar", true)
 

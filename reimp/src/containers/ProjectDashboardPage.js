@@ -8,7 +8,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_projects,
+    setPageSelectedEntities
 } from '../actions/Page'
 import ProjectDashboard from '../components/ProjectDashboard'
 
@@ -35,7 +35,8 @@ class ProjectDashboardPage extends Component {
         if ( project.id ) {
             dispatch(setProjectBreadcrumbsHelper(project))
         }
-        dispatch(select_projects(PAGE_KEY__PROJECT_DASHBOARD_PAGE, [project_id]))
+        dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_DASHBOARD_PAGE,
+                                 {project_ids:[project_id]}))
         dispatch(ensureProjectsLoaded([project_id]))
     }
 

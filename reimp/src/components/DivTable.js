@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 import { has_permission } from '../actions/Users'
 import classNames from 'classnames'
-import { map } from 'lodash'
+import { map, compact } from 'lodash'
 import '../sass/div-table.css'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
@@ -85,7 +85,7 @@ class DivTable extends Component {
                         <div ref={provided.innerRef}
                              className={classNames({"div-table-wrapper--dragging":snapshot.isDragging})}
                             >
-                          {map(this.props.children, (child, index) => (
+                          {map(compact(this.props.children), (child, index) => (
                               <Draggable key={child.key}
                                          index={index}
                                          draggableId={child.key}

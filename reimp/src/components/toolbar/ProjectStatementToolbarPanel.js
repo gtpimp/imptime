@@ -4,7 +4,7 @@ import ToolbarButton from './ToolbarButton'
 import { PAGE_KEY__PROJECTS_PAGE } from '../../actions/ItemListKeyRegistry'
 import { connect } from 'react-redux'
 import { getProject } from '../../actions/Projects'
-import { get_selected_project_ids } from '../../actions/Page'
+import { getPageSelectedEntities } from '../../actions/Page'
 import { invalidateProjectStatement } from '../../actions/ProjectStatement'
 import { invalidateTimeChart } from '../../actions/TimeChart'
 
@@ -44,7 +44,7 @@ class ProjectStatementToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_project_ids = get_selected_project_ids(state, PAGE_KEY__PROJECTS_PAGE)
+    const selected_project_ids = getPageSelectedEntities(state, PAGE_KEY__PROJECTS_PAGE).project_ids
     const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
     const project_id = project.id || null
 

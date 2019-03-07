@@ -1451,46 +1451,51 @@ class Project(BaseModel):
         del d['users']
         return d
 
+    # Deprecated as of 3 March 2019
     def recalc_secondary_estimates(self):
         """ these are estimates based on the developer estimates, for management and testing """
+        #
+        # This function used to calculate manager and tester costs automatically for each issue.
+        # It is deprecated because instead we have separate issues for management and testing.
+        return
+        
+        # project_users = BusinessPermissions._by_user(self.business)
+        # manager_users = []
+        # tester_users = []
+        # user_velocities = {}
+        # for user_id, bp in project_users.items():
+        #     try:
+        #         rate = Rate.objects.get_or_create(project=self, user_id=user_id)[0]
+        #         time_tracking_mode = rate.time_tracking_mode
+        #         user_velocities[user_id] = rate.velocity
+        #     except Rate.MultipleObjectsReturned:
+        #         time_tracking_mode = 'developer'
+        #         user_velocities[user_id] = 1
+        #     if time_tracking_mode == 'manager':
+        #         manager_users.append([user_id, bp, User.objects.get(pk=user_id)])
+        #     elif time_tracking_mode == 'tester':
+        #         tester_users.append([user_id, bp, User.objects.get(pk=user_id)])
 
-        project_users = BusinessPermissions._by_user(self.business)
-        manager_users = []
-        tester_users = []
-        user_velocities = {}
-        for user_id, bp in project_users.items():
-            try:
-                rate = Rate.objects.get_or_create(project=self, user_id=user_id)[0]
-                time_tracking_mode = rate.time_tracking_mode
-                user_velocities[user_id] = rate.velocity
-            except Rate.MultipleObjectsReturned:
-                time_tracking_mode = 'developer'
-                user_velocities[user_id] = 1
-            if time_tracking_mode == 'manager':
-                manager_users.append([user_id, bp, User.objects.get(pk=user_id)])
-            elif time_tracking_mode == 'tester':
-                tester_users.append([user_id, bp, User.objects.get(pk=user_id)])
-
-        if manager_users:
-            for issue in self.issues.all():
-                estimate, assigned_to = issue.get_assigned_hours_estimate()
-                estimate *= (user_velocities[assigned_to.id] if assigned_to else 1) * self.ratio_management
-                if estimate < 0.1:
-                    estimate = 0.1
-                else:
-                    estimate = round(estimate, 2)
-                for user_id, bp, user in manager_users:
-                    issue.set_points(user=user, points=estimate)
-        if tester_users:
-            for issue in self.issues.all():
-                estimate, assigned_to = issue.get_assigned_hours_estimate()
-                estimate *= (user_velocities[assigned_to.id] if assigned_to else 1) * self.ratio_testing
-                if estimate < 0.1:
-                    estimate = 0.0
-                else:
-                    estimate = round(estimate, 2)
-                for user_id, bp, user in tester_users:
-                    issue.set_points(user=user, points=estimate)
+        # if manager_users:
+        #     for issue in self.issues.all():
+        #         estimate, assigned_to = issue.get_assigned_hours_estimate()
+        #         estimate *= (user_velocities[assigned_to.id] if assigned_to else 1) * self.ratio_management
+        #         if estimate < 0.1:
+        #             estimate = 0.1
+        #         else:
+        #             estimate = round(estimate, 2)
+        #         for user_id, bp, user in manager_users:
+        #             issue.set_points(user=user, points=estimate)
+        # if tester_users:
+        #     for issue in self.issues.all():
+        #         estimate, assigned_to = issue.get_assigned_hours_estimate()
+        #         estimate *= (user_velocities[assigned_to.id] if assigned_to else 1) * self.ratio_testing
+        #         if estimate < 0.1:
+        #             estimate = 0.0
+        #         else:
+        #             estimate = round(estimate, 2)
+        #         for user_id, bp, user in tester_users:
+        #             issue.set_points(user=user, points=estimate)
 
     def min_estimate_hours(self):
         return self.estimate_stats()['total_estimate_hours_min']
@@ -2155,7 +2160,8 @@ class Project(BaseModel):
         else:
             json_stats['spendable_budget_msg'] = 'This is more than the spendable budget'
 
-        json_stats['spent'] = int(round(total['hours_billable_core_rate'] or 0))
+        json_stats['spent'] = total['hours_billable_core_rate'] or 0
+        json_stats['hours_used'] = total['hours'] or 0
         json_stats['progress_against_budget'] = (float(total['hours_billable_core_rate'] or 0) / float(self.budget)) if self.budget else 0
 
         if self.has_budget and self.stats['amount_under_budget'] > 0:
@@ -2194,8 +2200,11 @@ class Project(BaseModel):
 
         json_stats['per_user'] = dict( [(user.id, d) for user, d in stats['per_user'].items()] )
         for u in json_stats['per_user'].values():
-            u['time_tracking_mode'] = u['rate'].time_tracking_mode
-            del u['rate']
+            if 'rate' in u:
+                u['time_tracking_mode'] = u['rate'].time_tracking_mode
+                del u['rate']
+            else:
+                u['time_tracking_mode'] = 'default'
         
         return json_stats
 

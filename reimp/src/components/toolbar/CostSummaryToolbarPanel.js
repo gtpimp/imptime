@@ -4,7 +4,7 @@ import ToolbarButton from './ToolbarButton'
 import { PAGE_KEY__SPRINTS_PAGE } from '../../actions/ItemListKeyRegistry'
 import { connect } from 'react-redux'
 import { getSprint } from '../../actions/Sprints'
-import { get_selected_sprint_ids } from '../../actions/Page'
+import { getPageSelectedEntities } from '../../actions/Page'
 import { invalidateCostSummary } from '../../actions/CostSummary'
 import { invalidateTimeSummary } from '../../actions/TimeSummary'
 import { invalidateEstimateSummary } from '../../actions/EstimateSummary'
@@ -55,7 +55,7 @@ class CostSummaryToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_sprint_ids = get_selected_sprint_ids(state, PAGE_KEY__SPRINTS_PAGE)
+    const selected_sprint_ids = getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE).sprint_ids
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
     const sprint_id = sprint.id || null
 

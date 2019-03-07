@@ -11,20 +11,21 @@ import Splitter from '../components/Splitter'
 import {setSprintBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {
     LIST_KEY__SPRINT_LIST,
-    PAGE_KEY__SPRINTS_PAGE
+    PAGE_KEY__SPRINTS_PAGE,
+    ENTITY_KEY__SPRINT
 } from '../actions/ItemListKeyRegistry'
 import {
+    invalidateList,
+    getListFilter,
+    getSelectedItems,
     selectItems,
     update_list_filter,
-    invalidateList,
-    getListFilter
 } from '../actions/ItemList'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
-    select_sprints,
-    select_projects,
-    get_selected_sprint_ids,
+    setPageSelectedEntities,
+    getPageSelectedEntities,
     setBrowserTitle
 } from '../actions/Page'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
@@ -80,7 +81,7 @@ class SprintsPage extends Component {
             dispatch(ensureProjectsLoaded([project_id]))
         }
         if (project && project.id) {
-            dispatch(select_projects(page_key, [project.id]))
+            dispatch(setPageSelectedEntities(page_key, {project_ids:[project.id]}))
             dispatch(setActivelyAvailableAutoClockEntity(project.id,
                                                          selected_sprint_ids && selected_sprint_ids.length > 0 && selected_sprint_ids[0]))
             dispatch(invalidateList(list_key))
@@ -90,7 +91,9 @@ class SprintsPage extends Component {
         }
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
             dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
-            dispatch(select_sprints(page_key, [default_sprint_id]))
+            dispatch(setPageSelectedEntities(page_key,
+                                     {project_ids: [project_id],
+                                      sprint_ids:[default_sprint_id]}))
             dispatch(setActivelyAvailableAutoClockEntity(project.id, default_sprint_id))
         }
     }
@@ -99,7 +102,10 @@ class SprintsPage extends Component {
         const {dispatch, history, project_id,
                list_key, page_key} = this.props
         dispatch(selectItems(list_key, sprint_ids))
-        dispatch(select_sprints(page_key, sprint_ids))
+
+        dispatch(setPageSelectedEntities(page_key,
+                                 {project_ids: [project_id],
+                                  sprint_ids:sprint_ids}))
         
     dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_ids && sprint_ids.length > 0 && sprint_ids[0]))
         
@@ -185,21 +191,20 @@ class SprintsPage extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const {sprint} = state
-    const default_filter = props.default_filter || {}
-    let list_key = props.list_key || LIST_KEY__SPRINT_LIST
-    let page_key = props.page_key || PAGE_KEY__SPRINTS_PAGE
-    const filter = getListFilter(state, list_key)
-    const items_by_id = (sprint && sprint.items_by_id) || {}
-    const selected_sprint_ids = get_selected_sprint_ids(state, page_key)
-    
-    const selected_items = items_by_id && selected_sprint_ids && selected_sprint_ids.map(function (selected_id, index) {
-        return items_by_id[selected_id] || {'id': selected_id,
-                                            'loaded': false }
-    })
-
-    const project_id = props.match.params.projectId
     const default_sprint_id = props.match.params.sprintId
+    const default_project_id = props.match.params.projectId
+    
+    const list_key = LIST_KEY__SPRINT_LIST
+    const page_key = PAGE_KEY__SPRINTS_PAGE
+    
+    const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__SPRINT)
+    const filter = getListFilter(state, list_key)
+    const project_id = default_project_id
+    // const project_id = filter.project_id || props.match.params.projectId
+
+    const default_filter = { project_id: project_id }
+    const selected_sprint_ids = getPageSelectedEntities(state, page_key).sprint_ids
+    
     const project = getProject(state, project_id) || {}
     const project_name = project.name
     const candidate_sprint = getCandidateSprint(state) || null
@@ -215,11 +220,10 @@ function mapStateToProps(state, props) {
         default_sprint_id,
         project_id: project_id,
         project: project || {},
-        selected_sprints: selected_items,
         selected_sprint: selected_sprint || {},
         selected_sprint_ids: selected_sprint_ids,
-        is_single_selection: selected_items.length === 1,
-        is_multiple_selection: selected_items.length > 1,
+        is_single_selection: selected_items && selected_items.length === 1,
+        is_multiple_selection: selected_items && selected_items.length > 1,
         is_creating_sprint: is_creating_sprint,
         show_sidebar,
         project_name

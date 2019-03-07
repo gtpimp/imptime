@@ -7,6 +7,7 @@ import Hours from './Hours'
 import EditableSprintStatus from '../components/EditableSprintStatus'
 import EditableSprintType  from '../components/EditableSprintType'
 import { getCellStyle } from '../actions/ItemListKeyRegistry'
+import { getSprint } from '../actions/Sprints'
 import SprintStateSummary from './SprintStateSummary'
 import moment from 'moment'
 import DivTableRow from './DivTableRow'
@@ -200,9 +201,8 @@ class Sprint extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const { sprint } = state
     const { sprint_id, is_selected, is_loading, header_list } = props
-    const this_sprint = (sprint && sprint.items_by_id && sprint.items_by_id[sprint_id]) || {}
+    const this_sprint = getSprint(state, sprint_id)
 
     return {
 	sprint: this_sprint,

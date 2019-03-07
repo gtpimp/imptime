@@ -6,7 +6,10 @@ import '../../sass/toolbar-panel.css'
 import {
     PAGE_KEY__SPRINT_PROPOSAL_PAGE
 } from '../../actions/ItemListKeyRegistry'
+import { getPageSelectedEntities } from '../../actions/Page'
 import { printCurrentPage } from '../../actions/Print'
+import { getSprint } from '../../actions/Sprints'
+import { downloadSprintCostSummary } from '../../actions/CostSummary'
 
 class SprintProposalToolbarPanel extends Component {
 
@@ -15,6 +18,12 @@ class SprintProposalToolbarPanel extends Component {
         evt.preventDefault()
         dispatch(printCurrentPage(`Proposal_${sprint.name}`))
     }
+
+    onDownloadAsCsv = (evt) => {
+        const { dispatch, sprint } = this.props
+        evt.preventDefault()
+        dispatch(downloadSprintCostSummary(sprint.id))
+    }
     
     render() {
         return (
@@ -22,20 +31,23 @@ class SprintProposalToolbarPanel extends Component {
               <div className={cx("icon--print", css`cursor:pointer`)}
                    onClick={this.onPrint} 
               />
+              <div className={cx("icon--download_as_csv", css`cursor:pointer`)}
+                   onClick={this.onDownloadAsCsv} 
+              />
             </div>
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const sprint_objs = (state.sprint || {}).items_by_id || {}
-    const page = state.page || {}
-    const selected_sprint_ids = (page[PAGE_KEY__SPRINT_PROPOSAL_PAGE] || {}).sprint_ids || []
-    const sprint = (selected_sprint_ids.length > 0 && sprint_objs[selected_sprint_ids[0]]) || {}
-    const sprint_id = sprint.id || null
-    const project_id = sprint.project_id || null
-
+    const page_key = PAGE_KEY__SPRINT_PROPOSAL_PAGE
+    const selected_sprint_ids = getPageSelectedEntities(state, page_key).sprint_ids
+    const sprint_id = selected_sprint_ids && selected_sprint_ids[0]
+    const sprint = getSprint(state, sprint_id)
+    const project_id = sprint && sprint.project_id
+    
     return {
+        page_key,
         sprint,
         sprint_id,
         project_id

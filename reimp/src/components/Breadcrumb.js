@@ -69,7 +69,9 @@ const menu_buttons = {
         { label: (objs) => 'Gallery and attachments',
           nav_url: (objs) => '/projects/' + objs.project.id + '/gallery/'
         },
-        
+        { label: (objs) => 'Recon',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/recon/'
+        },
         { label: (objs) => "Summaries",
           type: "heading"
         },
@@ -173,6 +175,9 @@ const menu_buttons = {
         },
         { label: (objs) => 'Proposal',
           nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/proposal'
+        },
+        { label: (objs) => 'Recon',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/sprints/' + objs.sprint.id + '/recon'
         },
         { label: (objs) => 'Snapshots',
           perms: (objs) => ['has_view_ctc_billable_rates'],

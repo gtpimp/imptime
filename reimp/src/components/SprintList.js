@@ -4,6 +4,7 @@ import { each, map, union, includes, difference, keys } from 'lodash'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 import {
+    ENTITY_KEY__SPRINT,
     SPRINT_TYPE_ORDER,
     HEADER_LIST_NAME__SPRINT,
     getCellStyle
@@ -11,8 +12,14 @@ import {
 import {
     initList,
     invalidateList,
-    collapse_list,
-    expand_list,
+    getVisibleItemIds,
+    getVisibleItems,
+    getListFilter,
+    isLoading,
+    getLastUpdated,
+    getLoadingItemIds,
+    getSelectedItemIds,
+    getSelectedItems
 } from '../actions/ItemList'
 import {
     invalidateAllSprints,
@@ -21,7 +28,8 @@ import {
     startCandidateSprint,
     cancelCandidateSprint,
     ALL_AVAILABLE_SPRINT_HEADERS,
-    setLastSelectedSprintId
+    setLastSelectedSprintId,
+    getLastSelectedSprintId
 } from '../actions/Sprints'
 import {
     setGloballySelectedSprintId,
@@ -38,8 +46,6 @@ class SprintList extends Component {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
         this.onChangePage = this.onChangePage.bind(this)
-        this.onCollapse = this.onCollapse.bind(this)
-        this.onExpand = this.onExpand.bind(this)
         this.onClickedSprint = this.onClickedSprint.bind(this)
         this.reorderSprints = this.reorderSprints.bind(this)
         this.onStartCandidateSprint = this.onStartCandidateSprint.bind(this)
@@ -92,16 +98,6 @@ class SprintList extends Component {
         }
     }
 
-    onCollapse() {
-        const {dispatch, list_key} = this.props
-        dispatch(collapse_list(list_key))
-    }
-
-    onExpand() {
-        const {dispatch, list_key} = this.props
-        dispatch(expand_list(list_key))
-    }
-
     onClickedSprint(event, sprint_id) {
         const {dispatch, onSelectSprints, selected_ids, project_id} = this.props
         event.stopPropagation()
@@ -138,9 +134,9 @@ class SprintList extends Component {
     }
 
     onStartCandidateSprint(event) {
-        const {dispatch, list_key} = this.props
+        const {dispatch, project_id} = this.props
         event.stopPropagation()
-        dispatch(startCandidateSprint(list_key))
+        dispatch(startCandidateSprint(project_id))
     }
 
     onCancelCandidateSprint() {
@@ -268,52 +264,35 @@ function collect_sprints_by_type(sprints) {
 }
 
 function mapStateToProps(state, props) {
-    const {sprint, item_list} = state
     const {list_key} = props
-    const items_by_id = (sprint && sprint.items_by_id) || {}
-    const l = (item_list && item_list[list_key]) || {}
-    const filter = l.filter || {}
+
+    const visible_item_ids = getVisibleItemIds(state, list_key)
+    const visible_items = getVisibleItems(state, list_key, ENTITY_KEY__SPRINT)
+    const selected_item_ids = getSelectedItemIds(state, list_key)
+    const selected_items = getSelectedItems(state, list_key, ENTITY_KEY__SPRINT)
+    const loading_item_ids = getLoadingItemIds(state, list_key)
+    const is_loading = isLoading(state, list_key)
+    const last_updated = getLastUpdated(state, list_key)
+    const last_selected_sprint_id = getLastSelectedSprintId(state)
+    const filter = getListFilter(state, list_key)
     const project_id = filter.project_id || null
-    const visible_item_ids = l.visible_item_ids || []
-
-    const selected_items = items_by_id && l.selected_ids && l.selected_ids.map(function (selected_id, index) {
-        return items_by_id[selected_id] || {
-            'id': selected_id,
-            'loaded': false
-        }
-    })
-
-    const items = (items_by_id && visible_item_ids.map(function (visible_item_id, index) {
-        return items_by_id[visible_item_id] || {
-            'id': visible_item_id,
-            'loaded': false
-        }
-    })) || []
-
-    const candidate_sprint = (sprint && sprint.candidate_sprint) || null
-    const is_creating_sprint = candidate_sprint || false
-    const sprints_by_type = collect_sprints_by_type(items)
-    const last_selected_sprint_id = sprint.last_selected_sprint_id || null
+    const sprints_by_type = collect_sprints_by_type(visible_items)
     
     return {
         list_key: list_key,
         project_id: project_id,
-        sprints: items,
+        sprints: visible_items,
         sprints_by_type,
         visible_item_ids,
-        sprint_ids: map(items, 'id'),
-        selected_ids: l.selected_ids || [],
+        sprint_ids: visible_item_ids,
+        selected_ids: selected_item_ids,
         selected_items: selected_items || [],
-        loading_item_ids: l.loading_item_ids || [],
-        has_items: items && items.length > 0,
+        loading_item_ids,
+        has_items: visible_items && visible_items.length > 0,
         is_visible: project_id || false,
-        is_loading: l.is_loading,
-        is_collapsed: l.display_mode === "collapsed",
-        is_expanded: l.display_mode === "expanded" || !l.display_mode,
-        last_updated: l.last_updated,
-        candidate_sprint: candidate_sprint,
-        is_creating_sprint: is_creating_sprint,
-        last_selected_sprint_id: last_selected_sprint_id
+        is_loading,
+        last_updated,
+        last_selected_sprint_id,
     }
 }
 
