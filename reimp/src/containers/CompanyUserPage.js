@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { compact } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import { setCompanyUserBreadcrumbsHelper } from '../actions/Breadcrumbs'
 import {ensureCompaniesLoaded, getCompany} from '../actions/Companies'
@@ -10,8 +11,7 @@ import {
     PAGE_KEY__COMPANY_USER_PAGE
 } from '../actions/ItemListKeyRegistry'
 import {
-    select_companies,
-    select_users,
+    setPageSelectedEntities
 } from '../actions/Page'
 
 class CompanyUserPage extends Component {
@@ -42,9 +42,10 @@ class CompanyUserPage extends Component {
             dispatch(ensureCompaniesLoaded([company_id]))
             if ( user_id ) {
                 dispatch(ensureUsersLoaded([user_id]))
-                dispatch(select_users(PAGE_KEY__COMPANY_USER_PAGE, [company_id]))
             }
-            dispatch(select_companies(PAGE_KEY__COMPANY_USER_PAGE, [company_id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__COMPANY_USER_PAGE,
+                                     {company_ids:[company_id],
+                                     user_ids:compact([user_id])}))
         }
         if ( company && company.id ) {
             dispatch(setCompanyUserBreadcrumbsHelper(company, user))

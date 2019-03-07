@@ -53,112 +53,29 @@ export function getToolbarParams(state) {
     return get(state, ["page", "params"], [])
 }
 
-export function select_issues(page_key, issue_ids) {
+export function setPageSelectedEntities(page_key, {issue_ids, sprint_ids, project_ids, user_ids, wiki_ids, feature_ids, decision_journal_ids, company_ids}) {
     return (dispatch, getState) => {
         dispatch({
             type: UPDATE_PAGE_SELECTION,
-            page_key: page_key,
-            issue_ids: issue_ids,
+            page_key,
+            entities: {issue_ids,
+                       sprint_ids,
+                       project_ids,
+                       user_ids,
+                       wiki_ids,
+                       feature_ids,
+                       decision_journal_ids,
+                       company_ids}
         })
     }
 }
 
-export function select_sprints(page_key, sprint_ids) {
-    return (dispatch, getState) => {
-        dispatch({
-            type: UPDATE_PAGE_SELECTION,
-            page_key: page_key,
-            sprint_ids: sprint_ids
-        })
-    }
-}
-
-export function select_projects(page_key, project_ids) {
-    return (dispatch, getState) => {
-        dispatch({
-            type: UPDATE_PAGE_SELECTION,
-            page_key: page_key,
-            project_ids: project_ids
-        })
-    }
-}
-
-export function select_users(page_key, user_ids) {
-    return {
-        type: UPDATE_PAGE_SELECTION,
-        page_key: page_key,
-        user_ids: user_ids
-    }
-}
-
-export function select_wikis(page_key, wiki_ids) {
-    return {
-        type: UPDATE_PAGE_SELECTION,
-        page_key: page_key,
-        wiki_ids: wiki_ids
-    }
-}
-
-export function select_features(page_key, feature_ids) {
-    return {
-        type: UPDATE_PAGE_SELECTION,
-        page_key: page_key,
-        feature_ids: feature_ids
-    }
-}
-
-export function select_decision_journals(page_key, decision_journal_ids) {
-    return {
-        type: UPDATE_PAGE_SELECTION,
-        page_key: page_key,
-        decision_journal_ids: decision_journal_ids
-    }
-}
-
-export function select_companies(page_key, company_ids) {
-    return (dispatch, getState) => {
-        dispatch({
-            type: UPDATE_PAGE_SELECTION,
-            page_key: page_key,
-            company_ids: company_ids
-        })
-    }
+export function getPageSelectedEntities(state, page_key) {
+    return get(state, ["page", page_key, "selected_entities"], {}) || {}
 }
 
 export function get_header_list(state, page_key) {
     return (state.page[page_key] || {}).header_list || [];
-}
-
-export function get_selected_project_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).project_ids || []
-}
-
-export function get_selected_sprint_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).sprint_ids || []
-}
-
-export function get_selected_issue_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).issue_ids || []
-}
-
-export function get_selected_user_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).user_ids || []
-}
-
-export function get_selected_wiki_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).wiki_ids || []
-}
-
-export function get_selected_feature_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).feature_ids || []
-}
-
-export function get_selected_decision_journal_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).decision_journal_ids || []
-}
-
-export function get_selected_company_ids(state, page_key) {
-    return (((state ||{}).page || {})[page_key] || {}).company_ids || []
 }
 
 export function setPageFlag(page_key, flag_name, value) {
@@ -238,7 +155,6 @@ export function setBrowserTitle(title) {
     } else {
         document.title = "ImpTime"
     }
-    
 }
 
 export function getPageName(state) {

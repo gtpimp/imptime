@@ -12,12 +12,6 @@ import {
     INVALIDATE_USERS
 } from '../actions/Users.js'
 
-import {
-    ANNOUNCE_SAVING_INVITE,
-    ANNOUNCE_SAVED_INVITE,
-    ANNOUNCE_SAVE_INVITE_FAILED
-} from '../actions/Projects.js'
-
 const initialState = {
     items_by_id: {},
     loading_item_ids: [],
@@ -61,21 +55,6 @@ export default function user(state = initialState, action) {
             
         case ANNOUNCE_USERS_LOAD_FAILED:
             setErrorMessage("Failed to load users: " + action.error_message)
-            return state;
-        case ANNOUNCE_SAVING_INVITE:
-            return Object.assign({}, state, {
-                inviting_user_email: action.user_email,
-                inviting_project_id: action.project_id,
-                inviting_company_id: action.company_id
-            })
-        case ANNOUNCE_SAVED_INVITE:
-            return Object.assign({}, state, {
-                inviting_user_email: action.user_email,
-                inviting_project_id: action.project_id,
-                inviting_company_id: action.company_id
-            })
-        case ANNOUNCE_SAVE_INVITE_FAILED:
-            setErrorMessage("Failed to save user invite: " + action.error_message)
             return state;
         default:
             return state

@@ -14,7 +14,7 @@ const page_template = {
     // Don't put any objects in here, only primitives
     toolbars: null,
     settings: null,
-    selection: null,
+    selected_entities: null,
     sidebars: null,
     header_list: null
 }
@@ -58,16 +58,8 @@ export default function page(state = initialState, action) {
         case UPDATE_PAGE_SELECTION:
             state_copy = Object.assign({}, state)
             l = Object.assign({}, page_template, state_copy[action.page_key] || {})
-            state_copy[action.page_key] = Object.assign({}, l, {
-                sprint_ids: action.sprint_ids || l.sprint_ids || null,
-                project_ids: action.project_ids || l.project_ids || null,
-                issue_ids: action.issue_ids || l.issue_ids || null,
-                wiki_ids: action.wiki_ids || l.wiki_ids || null,
-                feature_ids: action.feature_ids || l.feature_ids || null,
-                decision_journal_ids: action.decision_journal_ids || l.decision_journal_ids || null,
-                company_ids: action.company_ids || l.company_ids || null
-            })
-            
+            l.selected_entities = Object.assign({}, action.entities)
+            state_copy[action.page_key] = l
             return state_copy;
 
         case SET_PAGE_FLAG:

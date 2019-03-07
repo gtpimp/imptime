@@ -15,8 +15,7 @@ import BulkFeatureCreatorForm from '../components/form/BulkFeatureCreatorForm.js
 import { bulkCreateFeatures } from '../actions/Features'
 import {
     set_toolbars,
-    select_projects,
-    select_features
+    setPageSelectedEntities
 } from '../actions/Page'
 
 class BulkFeatureCreatorPage extends Component {
@@ -50,7 +49,9 @@ class BulkFeatureCreatorPage extends Component {
 
     onFeaturesCreated(new_feature_ids) {
         const { dispatch, history, project_id } = this.props
-        dispatch(select_features(PAGE_KEY__FEATURES_PAGE, new_feature_ids))
+        dispatch(setPageSelectedEntities(PAGE_KEY__FEATURES_PAGE,
+                                 {project_ids: [project_id],
+                                  feature_ids: new_feature_ids}))
         dispatch(selectItems(LIST_KEY__FEATURE_LIST, new_feature_ids))
         history.push('/projects/' + project_id + "/features/")
     }
@@ -65,7 +66,8 @@ class BulkFeatureCreatorPage extends Component {
     refresh(project) {
         const {dispatch} = this.props
         if ( project.id ) {
-            dispatch(select_projects(PAGE_KEY__BULK_CREATE_FEATURES_PAGE, [project.id]))
+            dispatch(setPageSelectedEntities(PAGE_KEY__BULK_CREATE_FEATURES_PAGE,
+                                     {project_ids: [project.id]}))
             dispatch(setFeatureBreadcrumbsHelper(project))
         }
     }

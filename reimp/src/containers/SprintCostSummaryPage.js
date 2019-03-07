@@ -12,7 +12,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import {
     set_toolbars,
-    select_sprints,
+    setPageSelectedEntities
 } from '../actions/Page'
 import SprintCostSummary from '../components/SprintCostSummary'
 import SprintTimeSummary from '../components/SprintTimeSummary'
@@ -57,8 +57,11 @@ class SprintCostSummaryPage extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch } = this.props
-        dispatch(select_sprints(PAGE_KEY__SPRINTS_PAGE, [sprint.id]))
+        const { dispatch, project_id } = this.props
+
+        dispatch(setPageSelectedEntities(PAGE_KEY__SPRINTS_PAGE,
+                                 {project_ids: [project_id],
+                                  sprint_ids: [sprint.id]}))
         if ( sprint.id ) {
             dispatch(setSprintBreadcrumbsHelper(project, sprint))
             dispatch(update_project_statement_filter(null, null, [sprint.id]))

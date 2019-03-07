@@ -126,7 +126,7 @@ class ProjectStatementViewSet(BaseViewSet):
 
 
     def _get_download_filter(self, request):
-        raw_filter = json.loads(request.GET.keys()[0])
+        raw_filter = self.get_params_for_js_itempost()
         s = ProjectStatementFilterSerializer(data=raw_filter)
         s.is_valid(raise_exception=True)
         return s.validated_data

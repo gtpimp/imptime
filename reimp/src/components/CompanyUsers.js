@@ -16,7 +16,7 @@ import {
     selectItems
 } from '../actions/ItemList'
 import {
-    select_users,
+    setPageSelectedEntities,
     setPageFlag,
     clearPageFlag,
     getPageFlag
@@ -58,7 +58,9 @@ class CompanyUsersPage extends Component {
     onSelectUsers(user_ids) {
         const {dispatch, history, company_id} = this.props
         dispatch(selectItems(LIST_KEY__COMPANY_USER_LIST, user_ids))
-        dispatch(select_users(PAGE_KEY__COMPANY_USER_PAGE, user_ids))
+        dispatch(setPageSelectedEntities(PAGE_KEY__COMPANY_USER_PAGE,
+                                 {company_ids: [company_id],
+                                  user_ids: user_ids}))
         if (user_ids && user_ids.length === 1) {
             history.push('/companies/' + company_id + '/users/' + user_ids[0]);
         }

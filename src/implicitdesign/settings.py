@@ -69,6 +69,8 @@ REDIS = {
     'PORT': 6379,
     'DB': 0
 }
+BROKER_URL='redis://redis:6379/0'
+
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -486,8 +488,9 @@ EMAIL_HOST_USER = 'imptime@impd.co.za'
 EMAIL_HOST_PASSWORD = 'WRONG'
 EMAIL_PORT = 587
 
-FROM_EMAIL="imptime@impd.co.za"
+FROM_EMAIL="info@imptime.com"
 WEEKLY_HOURS_MAIL_RECIPIENT = ""
+
 
 # the number of days before share refs expire
 SHARE_REF_EXPIRY_DAYS = 30

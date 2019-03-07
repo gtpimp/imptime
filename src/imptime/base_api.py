@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.utils import timezone
+import json
 import uuid
 from django.db.models import Q
 import math
@@ -65,6 +66,10 @@ class BaseViewSet(viewsets.ViewSet):
     def error_response(self, ex):
         data = {'status': 'failed', 'error': str(ex)}
         return HttpResponse(JSONRenderer().render(data), status=500)
+
+    def get_params_for_js_itempost(self):
+        # isolating crap code
+        return json.loads(self.request.GET.keys()[0])
     
     def apply_filter(self, qs, raw_filter_args):
         raw_filter_args = self._apply_business_project_switch(raw_filter_args)

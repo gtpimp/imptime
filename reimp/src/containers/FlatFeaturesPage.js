@@ -16,7 +16,7 @@ import {
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
-    select_projects,
+    setPageSelectedEntities,
     setBrowserTitle,
     setGloballySelectedProjectId
 } from '../actions/Page'
@@ -67,7 +67,8 @@ class FlatFeaturesPage extends Component {
             dispatch(ensureProjectsLoaded([project_id]))
         }
         if (project && project.id) {
-            dispatch(select_projects(page_key, [project.id]))
+            dispatch(setPageSelectedEntities(page_key,
+                                     {project_ids:[project.id]}))
             dispatch(invalidateList(list_key))
             dispatch(setFeatureBreadcrumbsHelper(project))
         }

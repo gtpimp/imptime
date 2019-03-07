@@ -22,7 +22,7 @@ class Hours extends Component {
     
     render() {
 
-        const {formatted_hours, hours, minutes, seconds, decimal_hours} = this.props
+        const {formatted_hours, hours, minutes, decimal_hours} = this.props
         const {show_hint} = this.state
 
         return (
@@ -35,7 +35,7 @@ class Hours extends Component {
 
               { show_hint &&
                 <div className="hours__hint">
-                  <div>{hours} hours : {minutes} minutes : {seconds} seconds</div>
+                  <div>{hours} hours : {minutes} minutes</div>
                   <div>As decimal: {decimal_hours} hours</div>
                 </div>
               }

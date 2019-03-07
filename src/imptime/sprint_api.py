@@ -120,7 +120,7 @@ class SprintViewSet(BaseViewSet):
                 sprint.save()
                 sprint.recalc_secondary_estimates()
 
-            data = {'status': 'success'}
+            data = {'status': 'success', 'payload': sprint_pks}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
@@ -130,7 +130,7 @@ class SprintViewSet(BaseViewSet):
     def create(self, request):
         try:
             context = {}
-            params = request.data['sprint']
+            params = request.data['item']
             project_id = params['project_id']
             default_sprint_args = params.get('default_sprint_args', {})
             fixed_default_sprint_args = self._apply_business_project_switch(default_sprint_args)
@@ -156,8 +156,12 @@ class SprintViewSet(BaseViewSet):
                 if default_sprint_args.get('sprint_type', None) == 'template':
                     sprint_template = SprintTemplate.objects.create(sprint=sprint)
                     context['sprint_template_id'] = sprint_template.id
-                
-                context['sprint'] = {'number': sprint.number}
+
+                sprint.num_issues = 0
+                context['item'] = SprintSerializer(sprint,
+                                                   estimates_by_sprint_id={},
+                                                   hours_per_sprint_by_assignee={},
+                                                   logged_in_user=self.request.user).data
                 data = {'status': 'success', 'payload': context}
             else:
                 data = {'status': 'failed', 'error_message': 'Permission denied to create sprint'}
