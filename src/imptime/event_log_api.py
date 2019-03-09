@@ -37,9 +37,9 @@ class EventLogViewSet(BaseViewSet):
 
             project = self.allowed_project(pk=filter['project_id'])
             issues = Issue.objects.filter(project__business_id=project.id) #sic
-            issue_histories = IssueHistory.objects.filter(issue_id__in=issues,
+            issue_histories = IssueHistory.objects.filter(original_issue_id__in=issues,
                                                           created_at__gte=filter['date_from_inclusive'],
-                                                          created_at__lte=filter['date_from_inclusive'])
+                                                          created_at__lte=filter['date_to_inclusive'])
             clock_entries = Entry.objects.filter(issue_id__in=issues,
                                                  end_time__gte=filter['date_from_inclusive'],
                                                  start_time__lte=filter['date_to_inclusive'])

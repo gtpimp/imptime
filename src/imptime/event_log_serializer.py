@@ -12,5 +12,6 @@ class EventLogFilterSerializer(BaseSerializer):
 
 class EventLogSerializer(BaseSerializer):
     id = serializers.IntegerField(required=True, allow_null=False)
-    issues_histories = serializers.ListField(IssueHistorySerializer())
-    clock_entries = serializers.ListField(ClockEntrySerializer())
+    issue_histories = IssueHistorySerializer(many=True)
+    clock_entries = ClockEntrySerializer(many=True)
+    

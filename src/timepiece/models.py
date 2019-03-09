@@ -4788,6 +4788,7 @@ class IssueHistory(BaseModel):
     def for_issue(self, issue):
         return IssueHistory.objects.filter(issue_id=issue.id).order_by("-created_at")
 
+
 class BusinessHistory(BaseModel):
 
     business_id = models.IntegerField(blank=False, null=False, db_index=True)
