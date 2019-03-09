@@ -6,6 +6,8 @@ import BigCalendar from 'react-big-calendar'
 import "react-big-calendar/lib/css/react-big-calendar.css"
 import OtherUser from './OtherUser'
 import IssueName from './IssueName'
+import SprintName from './SprintName'
+import {default_theme as theme} from '../theme/default'
 import {
     ensureEventLogLoaded,
     getEventLog,
@@ -13,6 +15,8 @@ import {
     invalidateEventLog
 } from '../actions/EventLogs'
 import { makeSelGetEventsForCalendar } from '../selectors/EventLogSelectors'
+import { ensureIssuesLoaded } from '../actions/Issues'
+import { ensureUsersLoaded } from '../actions/Users'
 import {
     update_list_filter,
     getListFilter,
@@ -25,6 +29,8 @@ import 'react-datepicker/dist/react-datepicker.css'
 import PopupPanelHeading from './PopupPanelHeading'
 import PopupPanelText from './PopupPanelText'
 import Timestamp from './Timestamp'
+import TimestampRange from './TimestampRange'
+import Hours from './Hours'
 
 BigCalendar.momentLocalizer(moment)
 
@@ -49,10 +55,14 @@ class EventLog extends Component {
     }
 
     componentDidUpdate(prev_props) {
-        const { dispatch, filter, project_id } = this.props
+        const { dispatch, filter, project_id, event_log } = this.props
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
             dispatch(ensureEventLogLoaded(filter))
+        }
+        if ( event_log ) {
+            dispatch(ensureUsersLoaded(event_log.all_user_ids))
+            dispatch(ensureIssuesLoaded(event_log.all_issue_ids))
         }
     }
 
@@ -143,6 +153,7 @@ class EventLog extends Component {
                             Issue history
                           </div>
                           <div>
+                            <SprintName sprint_id={calendar_event.obj.current_issue_sprint_id} />
                             <IssueName issue_id={calendar_event.obj.issue_id} />
                           </div>
                         </PopupPanelHeading>
@@ -160,12 +171,36 @@ class EventLog extends Component {
                           <div>
                             to {calendar_event.obj.after}
                           </div>
-                          
-                          
                         </PopupPanelText>
                       </div>
                   )
                 }
+                { calendar_event.type === "clock_entry" && 
+                  (
+                      <div>
+                        <PopupPanelHeading>
+                          <div>
+                            Clock entry
+                          </div>
+                          <div>
+                            <SprintName sprint_id={calendar_event.obj.sprint_id} />
+                            <IssueName issue_id={calendar_event.obj.issue_id} />
+                          </div>
+                          <OtherUser user_id={calendar_event.obj.user_id} />
+                        </PopupPanelHeading>
+                        <PopupPanelText>
+                          <TimestampRange start={calendar_event.obj.start_time}
+                                          end={calendar_event.obj.end_time}
+                                          time_format="time" />
+                                                      
+                          <div>
+                            <Hours hours={calendar_event.obj.hours}/>
+                          </div>                          
+                        </PopupPanelText>
+                      </div>
+                  )
+                }
+                      
             </ModalDialog>
         )
     }    
@@ -175,7 +210,7 @@ class EventLog extends Component {
         switch(event_log.type) {
             case "issue_history":
                 res = (
-                    <div>
+                    <div className={css`background-color: ${theme.colours.calendar_issue_history}`}>
                       <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} /> : 
                       {event_log.obj.description} -> 
                       {event_log.obj.after}
@@ -184,9 +219,9 @@ class EventLog extends Component {
                 break
             case "clock_entry":
                 res = (
-                    <div>
+                    <div className={css`background-color: ${theme.colours.calendar_clock_event}`}>
                       <OtherUser user_id={event_log.obj.user_id} />
-                      <IssueName issue_id={event_log.obj.issue_id} />
+                      <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} />
                     </div>
                 )
                 break
@@ -226,7 +261,6 @@ class EventLog extends Component {
                     onNavigate={this.onNavigate}
                     onView={this.onView}
                     onSelectEvent={this.onSelectEvent}
-                    
                 />
               </div>
               { selected_event && this.renderSelectedEvent(selected_event) }

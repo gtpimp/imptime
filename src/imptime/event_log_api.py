@@ -48,6 +48,11 @@ class EventLogViewSet(BaseViewSet):
                                                     'issue_histories': issue_histories,
                                                     'clock_entries': clock_entries}],
                                                   many=True).data
+
+            context['items'][0]['all_issue_ids'] = set([x.original_issue_id for x in issue_histories] + \
+                                                       [x.issue_id for x in clock_entries])
+            context['items'][0]['all_user_ids'] = set([x.created_by_id for x in issue_histories] + \
+                                                      [x.user_id for x in clock_entries])
             
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
