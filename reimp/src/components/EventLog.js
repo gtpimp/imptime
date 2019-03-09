@@ -47,20 +47,22 @@ class EventLog extends Component {
         }
     }
 
-    componentWillReceiveProps(new_props) {
-        const { dispatch, filter } = this.props
-        if ( new_props.project_id ) {
-            dispatch(ensureProjectsLoaded([new_props.project_id]))
+    componentDidUpdate(prev_props) {
+        const { dispatch, filter, project_id } = this.props
+        if ( project_id ) {
+            dispatch(ensureProjectsLoaded([project_id]))
             dispatch(ensureEventLogLoaded(filter))
         }
     }
 
-    setCurrentDate = (new_date) => {
+    setCurrentDate(new_date) {
         this.setState({'current_date': moment(new_date)})
     }
     
-    setCurrentView = (new_view) => {
+    setCurrentView(new_view) {
+        const { current_date } = this.state
         this.setState({'current_view': new_view})
+        this.onNavigate(current_date, new_view, 'view')
     }
 
     refreshEventLog = () => {
@@ -69,23 +71,23 @@ class EventLog extends Component {
     }
 
     onNavigate = (new_date, view, action) => {
-        const { current_date } = this.state
+        const { current_date, current_view } = this.state
         new_date = moment(new_date)
         switch( view ) {
             case "month":
-                if ( current_date.month() !== new_date.month()) {
+                if ( current_view !== view || current_date.month() !== new_date.month()) {
                     this.onDateRangeChanged(moment(new_date).subtract(1, 'months'),
                                             moment(new_date).add(1, 'months'))
                 }
                 break
             case "week":
-                if ( current_date.day() !== new_date.day()) {
+                if ( current_view !== view || current_date.day() !== new_date.day()) {
                     this.onDateRangeChanged(moment(new_date).subtract(7, 'day'),
                                             moment(new_date).add(7, 'day'))
                 }
                 break
             case "day":
-                if ( current_date.day() !== new_date.day()) {
+                if ( current_view !== view || current_date.day() !== new_date.day()) {
                     this.onDateRangeChanged(moment(new_date).subtract(1, 'day'),
                                             moment(new_date).add(1, 'day'))
                 }
@@ -256,6 +258,7 @@ const makeMapStateToProps = () => {
         const is_loading = !event_log || isLoadingEventLog(state, filter)
         
         return {
+            list_key,
             project_id,
             project,
             event_log,

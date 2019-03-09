@@ -42,13 +42,13 @@ class EventLogPage extends Component {
     }
 
     render() {
-        const { project } = this.props
+        const { project, list_key } = this.props
         return (
             <div className="project-user__event_log  main-layout__scroll-panel">
               <h2>
                 Event log for {project.name}
               </h2>
-              <EventLog project_id={project.id} />
+              <EventLog project_id={project.id} list_key={list_key} />
             </div>
         )
     }
