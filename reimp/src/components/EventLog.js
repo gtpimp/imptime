@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { css } from 'emotion'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import BigCalendar from 'react-big-calendar'
 import "react-big-calendar/lib/css/react-big-calendar.css"
@@ -212,7 +213,7 @@ class EventLog extends Component {
                 </div>
               }
 
-              <div>
+              <div className={css`height: 500px;`}>
                 <BigCalendar
                     events={event_logs_for_calendar}
                     defaultView={current_view}
