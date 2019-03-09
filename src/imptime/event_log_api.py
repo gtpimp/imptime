@@ -14,7 +14,8 @@ from base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from timepiece.models import Issue, IssueHistory, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
+from timepiece.models import Issue, IssueHistory, Entry, ProjectRole, Tag, IssuePoints
+from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
 from imptime.event_log_serializer import EventLogFilterSerializer, EventLogSerializer
@@ -37,12 +38,22 @@ class EventLogViewSet(BaseViewSet):
 
             project = self.allowed_project(pk=filter['project_id'])
             issues = Issue.objects.filter(project__business_id=project.id) #sic
-            issue_histories = IssueHistory.objects.filter(original_issue_id__in=issues,
-                                                          created_at__gte=filter['date_from_inclusive'],
-                                                          created_at__lte=filter['date_to_inclusive'])
+
+            bp = ProjectPermissions.for_user(user=self.request.user, business=project, auto_create=False) #sic
+            
+            if bp.has_view_issue_history:
+                issue_histories = IssueHistory.objects.filter(original_issue_id__in=issues,
+                                                            created_at__gte=filter['date_from_inclusive'],
+                                                            created_at__lte=filter['date_to_inclusive'])
+            else:
+                issue_histories = []
+                
             clock_entries = Entry.objects.filter(issue_id__in=issues,
                                                  end_time__gte=filter['date_from_inclusive'],
                                                  start_time__lte=filter['date_to_inclusive'])
+
+            if not bp.has_view_actual_hours:
+                clock_entries = clock_entries.filter(user_id=self.request.id)
 
             context['items'] = EventLogSerializer([{'id': summary_id,
                                                     'issue_histories': issue_histories,
