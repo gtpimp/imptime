@@ -203,14 +203,35 @@ class EventLog extends Component {
                       
             </ModalDialog>
         )
-    }    
+    }
+
+    getEventStyle = (event_log, start, end, is_selected ) => {
+        let background_colour
+        if ( event_log.type === 'issue_history' ) {
+            background_colour = theme.colours.calendar_issue_history
+        } else if ( event_log.type === 'clock_entry' ) {
+            background_colour = theme.colours.calendar_clock_event
+        }
+
+        const style = {
+            backgroundColor: background_colour,
+            borderRadius: '1px',
+            opacity: 0.8,
+            color: 'black',
+            border: '1px',
+            display: 'block'
+        }
+        return {
+            style: style
+        }
+    }
 
     renderTitle = (event_log) => {
         var res = null
         switch(event_log.type) {
             case "issue_history":
                 res = (
-                    <div className={css`background-color: ${theme.colours.calendar_issue_history}`}>
+                    <div>
                       <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} /> : 
                       {event_log.obj.description} -> 
                       {event_log.obj.after}
@@ -219,7 +240,7 @@ class EventLog extends Component {
                 break
             case "clock_entry":
                 res = (
-                    <div className={css`background-color: ${theme.colours.calendar_clock_event}`}>
+                    <div>
                       <OtherUser user_id={event_log.obj.user_id} />
                       <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} />
                     </div>
@@ -261,6 +282,7 @@ class EventLog extends Component {
                     onNavigate={this.onNavigate}
                     onView={this.onView}
                     onSelectEvent={this.onSelectEvent}
+                    eventPropGetter={this.getEventStyle}
                 />
               </div>
               { selected_event && this.renderSelectedEvent(selected_event) }
