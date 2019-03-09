@@ -14,6 +14,7 @@ export const LIST_KEY__ISSUE_DEVELOPER_DETAILS = 'issue_developer_details'
 export const LIST_KEY__ISSUES_FOR_PROPOSAL = 'issues_for_proposal'
 export const LIST_KEY__ISSUES_FOR_RECON = 'issues_for_recon'
 export const LIST_KEY__ISSUES_FOR_PROJECT_RECON = 'issues_for_project_recon'
+export const LIST_KEY__EVENT_LOG = 'event_log'
 export const LIST_KEY__USER_LIST = 'users'
 export const LIST_KEY__PROJECT_USER_LIST = 'project_users'
 export const LIST_KEY__PROJECT_DASHBOARD_LIST = 'project_dashboards'
@@ -62,6 +63,7 @@ export const ENTITY_KEY__SPRINT_DEADLINE = 'sprint_deadline'
 export const ENTITY_KEY__SPRINT_REVIEW = 'sprint_review'
 export const ENTITY_KEY__SPRINT_ROADMAP = 'sprint_roadmap'
 export const ENTITY_KEY__TAG = 'tag'
+export const ENTITY_KEY__EVENT_LOG = 'event_log'
 export const ENTITY_KEY__NUDGE = 'nudge'
 export const ENTITY_KEY__COMPANY_PROBLEM = 'company_problem'
 export const ENTITY_KEY__SCHEDULE = 'schedule'
@@ -95,6 +97,7 @@ export const GENERIC_ENTITIES = [ ENTITY_KEY__RELEASE_NOTE,
                                   ENTITY_KEY__ANNOTATED_VISUAL_SPEC_DOCUMENT,
                                   ENTITY_KEY__SPRINT_COST_SUMMARY,
                                   ENTITY_KEY__SPRINT_SNAPSHOT,
+                                  ENTITY_KEY__EVENT_LOG,
                                   ENTITY_KEY__TESTABLE,
                                   ENTITY_KEY__TESTABLE_LINE ]
 
@@ -118,6 +121,7 @@ export const PAGE_KEY__SPRINT_TEMPLATES_TOOLBAR = 'sprint_templates_toolbar'
 export const PAGE_KEY__SPRINT_DASHBOARD_PAGE = 'sprint_dashboard_page'
 export const PAGE_KEY__SPRINT_PROPOSAL_PAGE = 'sprint_proposal_page'
 export const PAGE_KEY__SPRINT_RECON_PAGE = 'sprint_recon_page'
+export const PAGE_KEY__EVENT_LOG_PAGE = 'event_log_page'
 export const PAGE_KEY__SPRINT_RATE_PAGE = 'sprint_rate_page'
 export const PAGE_KEY__ISSUES_PAGE = 'issues_page'
 export const PAGE_KEY__ISSUE_DASHBOARD_PAGE = 'issue_dashboard_page'
