@@ -103,6 +103,11 @@ class EventLog extends Component {
                                             moment(new_date).add(1, 'day'))
                 }
                 break
+            case "agenda":
+                if ( current_view !== view || current_date.day() !== new_date.day()) {
+                    this.onDateRangeChanged(moment(new_date).subtract(1, 'day'),
+                                            moment(new_date).add(1, 'day'))
+                }
             default:
                 console.error("Unknown view " + view)
         }
@@ -139,68 +144,75 @@ class EventLog extends Component {
         this.setState({selected_event:null})
     }
 
+    renderFullEventDetails(calendar_event) {
+        return (
+            <div>
+              { calendar_event.type === "issue_history" && 
+              (
+                <div>
+                  <PopupPanelHeading>
+                    <div>
+                      Issue history
+                    </div>
+                    <div>
+                      <SprintName sprint_id={calendar_event.obj.current_issue_sprint_id} />
+                      <IssueName issue_id={calendar_event.obj.issue_id} />
+                    </div>
+                  </PopupPanelHeading>
+                  <PopupPanelText>
+                    <Timestamp value={calendar_event.obj.created_at} />
+                  </PopupPanelText>
+                  <PopupPanelText>
+                    <OtherUser user_id={calendar_event.obj.created_by_user_id} />
+                    <div>
+                      {calendar_event.obj.description}
+                    </div>
+                    <div>
+                      from {calendar_event.obj.before}
+                    </div>
+                    <div>
+                      to {calendar_event.obj.after}
+                    </div>
+                  </PopupPanelText>
+                </div>
+              )
+            }
+            { calendar_event.type === "clock_entry" && 
+              (
+                <div>
+                  <PopupPanelHeading>
+                    <div>
+                      Clock entry
+                    </div>
+                    <div>
+                      <SprintName sprint_id={calendar_event.obj.sprint_id} />
+                      <IssueName issue_id={calendar_event.obj.issue_id} />
+                    </div>
+                    <OtherUser user_id={calendar_event.obj.user_id} />
+                  </PopupPanelHeading>
+                  <PopupPanelText>
+                    <TimestampRange start={calendar_event.obj.start_time}
+                                    end={calendar_event.obj.end_time}
+                                    time_format="time" />
+
+                    <div>
+                      <Hours hours={calendar_event.obj.hours}/>
+                    </div>                          
+                  </PopupPanelText>
+                </div>
+              )
+            }
+          </div>
+        )
+    }
+    
     renderSelectedEvent(calendar_event) {
         return (
             <ModalDialog isOpen={true}
                          onClose={this.closeSelectedEventPopup}
                          title=""
                          variant="large">
-                { calendar_event.type === "issue_history" && 
-                  (
-                      <div>
-                        <PopupPanelHeading>
-                          <div>
-                            Issue history
-                          </div>
-                          <div>
-                            <SprintName sprint_id={calendar_event.obj.current_issue_sprint_id} />
-                            <IssueName issue_id={calendar_event.obj.issue_id} />
-                          </div>
-                        </PopupPanelHeading>
-                        <PopupPanelText>
-                          <Timestamp value={calendar_event.obj.created_at} />
-                        </PopupPanelText>
-                        <PopupPanelText>
-                          <OtherUser user_id={calendar_event.obj.created_by_user_id} />
-                          <div>
-                            {calendar_event.obj.description}
-                          </div>
-                          <div>
-                            from {calendar_event.obj.before}
-                          </div>
-                          <div>
-                            to {calendar_event.obj.after}
-                          </div>
-                        </PopupPanelText>
-                      </div>
-                  )
-                }
-                { calendar_event.type === "clock_entry" && 
-                  (
-                      <div>
-                        <PopupPanelHeading>
-                          <div>
-                            Clock entry
-                          </div>
-                          <div>
-                            <SprintName sprint_id={calendar_event.obj.sprint_id} />
-                            <IssueName issue_id={calendar_event.obj.issue_id} />
-                          </div>
-                          <OtherUser user_id={calendar_event.obj.user_id} />
-                        </PopupPanelHeading>
-                        <PopupPanelText>
-                          <TimestampRange start={calendar_event.obj.start_time}
-                                          end={calendar_event.obj.end_time}
-                                          time_format="time" />
-                                                      
-                          <div>
-                            <Hours hours={calendar_event.obj.hours}/>
-                          </div>                          
-                        </PopupPanelText>
-                      </div>
-                  )
-                }
-                      
+              { this.renderFullEventDetails(calendar_event) }
             </ModalDialog>
         )
     }
@@ -227,32 +239,37 @@ class EventLog extends Component {
     }
 
     renderTitle = (event_log) => {
-        var res = null
-        switch(event_log.type) {
-            case "issue_history":
-                res = (
-                    <div>
-                      <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} /> : 
-                      {event_log.obj.description} -> 
-                      {event_log.obj.after}
-                    </div>
-                )
-                break
-            case "clock_entry":
-                res = (
-                    <div>
-                      <OtherUser user_id={event_log.obj.user_id} />
-                      <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} />
-                    </div>
-                )
-                break
-            default:
-                res = (
-                    <span>Unknown entry type: {event_log.type}</span>
-                )
-                break
+        const { current_view } = this.state
+        if ( current_view === 'agenda' ) {
+            return this.renderFullEventDetails(event_log)
+        } else {
+            var res = null
+            switch(event_log.type) {
+                case "issue_history":
+                    res = (
+                        <div>
+                          <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} /> : 
+                        {event_log.obj.description} -> 
+                        {event_log.obj.after}
+                        </div>
+                    )
+                    break
+                case "clock_entry":
+                    res = (
+                        <div>
+                          <OtherUser user_id={event_log.obj.user_id} />
+                          <IssueName issue_id={event_log.obj.issue_id} open_on_click={false} />
+                        </div>
+                    )
+                    break
+                default:
+                    res = (
+                        <span>Unknown entry type: {event_log.type}</span>
+                    )
+                    break
+            }
+            return res
         }
-        return res
     }
 
     render() {
