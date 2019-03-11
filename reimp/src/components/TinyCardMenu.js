@@ -5,14 +5,10 @@ import TinyCard from './TinyCard'
 import TinyCardRow from './TinyCardRow'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureSprintsLoaded, getSprint} from '../actions/Sprints'
-import { setSprintBreadcrumbsHelper, setBreadcrumbs } from '../actions/Breadcrumbs'
+import { setCardBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
 
 class TinyCardMenu extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         const {sprint_id, sprint, project_id, project, dispatch} = this.props
@@ -26,24 +22,17 @@ class TinyCardMenu extends Component {
         dispatch(ensureProjectsLoaded([project_id]))
         dispatch(ensureSprintsLoaded([sprint_id]))
 
-        if ( new_props.sprint.id !== this.props.sprint.id ||
-             new_props.sprint.name !== this.props.sprint.name ||
-             new_props.project.name !== this.props.project.name) {
+        if (new_props.sprint.id !== this.props.sprint.id ||
+            new_props.sprint.name !== this.props.sprint.name ||
+            new_props.project.name !== this.props.project.name) {
             this.refresh(new_props.sprint, new_props.project)
         }
     }
 
     refresh(sprint, project) {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch } = this.props
         if (project && sprint) {
-            const auto_set = false
-            const breadcrumbs = setSprintBreadcrumbsHelper(project, sprint, auto_set)
-            breadcrumbs.push({to: '/projects/' + project_id + '/sprints/' + sprint_id + '/cards',
-                              label: 'Menu Card',
-                              type: 'menu_card',
-                              selected_entities: {project: project, sprint: sprint}
-            })
-            dispatch(setBreadcrumbs(breadcrumbs))
+            dispatch(setCardBreadcrumbsHelper(project, sprint))
         }
     }
 
@@ -53,25 +42,25 @@ class TinyCardMenu extends Component {
             <TinyCard title="Cards" project_name={project_name} sprint_name={sprint_name} >
               <PermissionInspectorHighlighter project_id={project_id} permission_name="has_edit_budget">
                 <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
-                  <TinyCardRow>
-                    <Link to="./cards/budget">Budget</Link>
-                  </TinyCardRow>
+                  <Link to="./cards/budget">
+                    <TinyCardRow>Budget</TinyCardRow>
+                  </Link>
                 </PermissionInspectorHighlighter>
               </PermissionInspectorHighlighter>
               <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
-                <TinyCardRow>
-                  <Link to="./cards/estimated_budget">Estimated Budget</Link>
-                </TinyCardRow>
+                <Link to="./cards/estimated_budget">
+                  <TinyCardRow>Estimated Budget</TinyCardRow>
+                </Link>
               </PermissionInspectorHighlighter>
-              <TinyCardRow>
-                <Link to="./cards/issues_by_status">Issues By Status</Link>
-              </TinyCardRow>
-              <TinyCardRow>
-                <Link to="./cards/estimates_by_user">Estimates By User</Link>
-              </TinyCardRow>
-              <TinyCardRow>
-                <Link to="./cards/problems">Problems</Link>
-              </TinyCardRow>
+              <Link to="./cards/issues_by_status">
+                <TinyCardRow>Issues By Status</TinyCardRow>
+              </Link>
+              <Link to="./cards/estimates_by_user">
+                <TinyCardRow>Estimates By User</TinyCardRow>
+              </Link>
+              <Link to="./cards/problems">
+                <TinyCardRow>Problems</TinyCardRow>
+              </Link>
             </TinyCard>
         )
     }
