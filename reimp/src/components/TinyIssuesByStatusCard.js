@@ -7,7 +7,7 @@ import TinyCardRow from './TinyCardRow'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { fetchIssuesIfNeeded } from '../actions/Issues'
-import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
+import { setSprintBreadcrumbsHelper, setBreadcrumbs } from '../actions/Breadcrumbs'
 import { makeSelIssues } from '../selectors/IssueListSelectors'
 import { update_list_filter } from '../actions/ItemList'
 
@@ -38,9 +38,17 @@ class TinyIssuesByStatusCard extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch, list_key } = this.props
-        dispatch(fetchIssuesIfNeeded(list_key))
-        dispatch(setSprintBreadcrumbsHelper(project, sprint))
+        const { dispatch, project_id, sprint_id } = this.props
+        if (project && sprint) {
+            const auto_set = false
+            const breadcrumbs = setSprintBreadcrumbsHelper(project, sprint, auto_set)
+            breadcrumbs.push({to: '/projects/' + project_id + '/sprints/' + sprint_id + '/cards/issues_by_status',
+                              label: 'Issues By Status Card',
+                              type: 'issues_by_status_card',
+                              selected_entities: {project: project, sprint: sprint}
+            })
+            dispatch(setBreadcrumbs(breadcrumbs))
+        }
     }
 
     render() {

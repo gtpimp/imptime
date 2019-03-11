@@ -6,7 +6,7 @@ import TinyCard from './TinyCard'
 import TinyCardRow from './TinyCardRow'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
 import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
-import { setSprintBreadcrumbsHelper } from '../actions/Breadcrumbs'
+import { setSprintBreadcrumbsHelper, setBreadcrumbs } from '../actions/Breadcrumbs'
 import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import OtherUser from './OtherUser'
 import Hours from './Hours'
@@ -38,8 +38,17 @@ class TinyEstimatesByUserCard extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch } = this.props
-        dispatch(setSprintBreadcrumbsHelper(project, sprint))
+        const { dispatch, project_id, sprint_id } = this.props
+        if (project && sprint) {
+            const auto_set = false
+            const breadcrumbs = setSprintBreadcrumbsHelper(project, sprint, auto_set)
+            breadcrumbs.push({to: '/projects/' + project_id + '/sprints/' + sprint_id + '/cards/estimates_by_user/',
+                              label: 'Estimates By User Card',
+                              type: 'estimates_by_user_card',
+                              selected_entities: {project: project, sprint: sprint}
+            })
+            dispatch(setBreadcrumbs(breadcrumbs))
+        }
     }
 
     render() {

@@ -129,7 +129,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards/estimated_budget" component={TinyEstimatedBudgetCard} />
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards/issues_by_status" component={(props) => <TinyIssuesByStatusCard list_key={LIST_KEY__TINY_ISSUES_CARD} {...props} />} />
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards/estimates_by_user" component={TinyEstimatesByUserCard} />
-              <Route exact path="/projects/:projectId/sprints/:sprintId/cards/problems" component={TinyProblemsCard} />
+              <Route exact path="/projects/:projectId/sprints/:sprintId/cards/problems" component={(props) => <TinyProblemsCard list_key={LIST_KEY__TINY_ISSUES_CARD} {...props} />} />
               
               <Route exact path="/fullscreen/projects/:projectId/image/:annotatedVisualSpecDocumentId" component={VisualSpecDocumentGalleryFullScreenPage}/>
               <Route exact path="/share/:type/:obj_ref" component={ReadOnlyPage}/>
