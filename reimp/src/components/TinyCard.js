@@ -86,6 +86,10 @@ font: ${theme.fonts.semibold_massive};
 
 const card_details = css`
 font: ${theme.fonts.semibold_big};
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+max-width: 280px;
 `
 
 const content = css`
