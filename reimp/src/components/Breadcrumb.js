@@ -75,6 +75,9 @@ const menu_buttons = {
         { label: (objs) => "Summaries",
           type: "heading"
         },
+        { label: (objs) => 'Event Log',
+          nav_url: (objs) => '/projects/' + objs.project.id + '/eventLog'
+        },
         { label: (objs) => 'Roadmap',
           nav_url: (objs) => '/projects/' + objs.project.id + '/roadmap'
         },

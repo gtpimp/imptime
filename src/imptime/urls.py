@@ -10,6 +10,7 @@ import estimate_summary_api
 import filter_api
 import issue_api
 import clock_api
+import event_log_api
 import invoice_api
 import issue_comment_api
 import issue_estimate_api
@@ -135,6 +136,8 @@ router.register(r'company', company_api.CompanyViewSet,
                 base_name='company')
 router.register(r'sprint_cost_summary', cost_summary_api.CostSummaryViewSet,
                 base_name='sprint_cost_summary')
+router.register(r'event_log', event_log_api.EventLogViewSet,
+                base_name='event_log')
 router.register(r'time_summary', time_summary_api.TimeSummaryViewSet,
                 base_name='time_summary')
 router.register(r'estimate_summary', estimate_summary_api.EstimateSummaryViewSet,

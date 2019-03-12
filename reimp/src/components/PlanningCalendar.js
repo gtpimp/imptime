@@ -46,7 +46,7 @@ import PopupPanelButton from './PopupPanelButton'
 import PopupPanelMiniButton from './PopupPanelMiniButton'
 import PopupPanelHeading from './PopupPanelHeading'
 
-BigCalendar.momentLocalizer(moment);
+BigCalendar.momentLocalizer(moment)
 
 const DragAndDropCalendar = withDragAndDrop(BigCalendar)
 

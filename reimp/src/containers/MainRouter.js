@@ -24,6 +24,7 @@ import PasswordReminderSentPage from './PasswordReminderSentPage'
 import ProjectDashboardPage from './ProjectDashboardPage'
 import ProjectStatementPage from './ProjectStatementPage'
 import MultipleSprintReconPage from './MultipleSprintReconPage'
+import EventLogPage from './EventLogPage'
 import ProjectUserPage from './ProjectUserPage'
 import ProjectsPage from './ProjectsPage'
 import SprintCostSummaryPage from './SprintCostSummaryPage'
@@ -107,6 +108,7 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/roadmap" component={ProjectRoadmapPage}/>
               <Route exact path="/projects/:projectId/wiki/" component={ProjectWikiPage}/>
               <Route exact path="/projects/:projectId/wiki/:wikiId" component={ProjectWikiPage}/>
+              <Route exact path="/projects/:projectId/eventLog" component={EventLogPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId" component={SprintsPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/dashboard" component={SprintDashboardPage}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/proposal" component={SprintProposalPage}/>

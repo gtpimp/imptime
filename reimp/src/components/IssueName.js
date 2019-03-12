@@ -22,8 +22,8 @@ class IssueName extends Component {
 
     on_clicked(event) {
         const { issue, onClick } = this.props
-        event.stopPropagation()
         if ( onClick ) {
+            event.stopPropagation()
             onClick(issue.id)
         }
     }
@@ -58,7 +58,7 @@ function mapStateToProps(state, props) {
         issue,
         is_loading: !issue || !issue.id,
         onClick: props.onClick,
-        open_on_click: (!props.onClick && props.open_on_click) || true
+        open_on_click: !props.onClick && props.open_on_click !== false
     }
 }
 

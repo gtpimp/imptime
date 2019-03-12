@@ -65,7 +65,7 @@ class ExecutiveSummary extends Component {
     }
 
     componentDidUpdate(prev_props) {
-        this.refresh(prev_props)
+        this.refresh(this.props)
     }
 
     refresh(props) {
