@@ -121,7 +121,7 @@ class ProjectViewSet(BaseViewSet):
     def create(self, request):
         try:
             context = {}
-            params = request.data['project']
+            params = request.data['item']
 
             project = Project.objects.create(
                 created_by=request.user,
@@ -133,7 +133,7 @@ class ProjectViewSet(BaseViewSet):
                                                                business=project) #sic
             ProjectPermissions.give_all_permissions_to_user(user=request.user, business=project) #sic
 
-            context['project'] = {'name': project.name}
+            context['item'] = {'name': project.name}
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:
