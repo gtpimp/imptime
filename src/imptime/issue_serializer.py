@@ -9,6 +9,7 @@ from imptime.models import AnnotatedVisualSpecDocument
 from timepiece.models import BusinessPermissions, Issue
 from testable_serializer import TestableSerializer
 from testable.models import Testable
+from django.conf import settings
 logger = logging.getLogger(__name__)
 
 class IssueSerializer(BaseSerializer):
@@ -54,6 +55,7 @@ class IssueSerializer(BaseSerializer):
     has_attachment = serializers.SerializerMethodField()
     risky = serializers.BooleanField()
     due_date = serializers.DateTimeField()
+    estimate_too_large = serializers.BooleanField()
 
     def get_has_attachment(self, issue):
         if len(issue.annotated_visual_spec_document_ids) > 0:
@@ -77,7 +79,6 @@ class IssueSerializer(BaseSerializer):
         issue.group_children_ids = issue.group_children.all().values_list('id', flat=True)
         issue.my_actual_hours = sum([float(x.hours or ((timezone.now()-x.start_time).seconds/3600.0)) for x in issue.my_entries])
         issue.am_i_clocked_in = len(issue.my_clocked_in_entries) > 0
-
         issue.needs_testables = issue.issue_type in issue.TESTABLE_ISSUE_TYPES
         issue.currently_clocked_in_by_user_ids = [x.id for x in issue.currently_clocked_in_by()]
         issue.annotated_visual_spec_document_ids = AnnotatedVisualSpecDocument.objects.filter(visual_spec_issues__issue=issue)\
@@ -99,6 +100,8 @@ class IssueSerializer(BaseSerializer):
         issue.all_actuals = all_actuals.values()
 
         issue_has_estimate_by_assigned_user = len([x for x in (issue.all_estimates or []) if x.user_id==issue.assigned_to_id and x.points > 0])
+        issue.estimate_too_large = len([x for x in (issue.all_estimates or []) if x.user_id == issue.assigned_to_id and x.points > settings.MAX_ISSUE_ESTIMATE])
+
         if bp.can_see_other_user_points:
             issue.needs_estimate = not issue_has_estimate_by_assigned_user
         

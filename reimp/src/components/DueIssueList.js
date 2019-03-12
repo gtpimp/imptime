@@ -100,7 +100,8 @@ class DueIssueList extends Component {
     }
 
     renderPopup() {
-        const { show_popup, list_key, header_list } = this.props
+        const { list_key, header_list } = this.props
+        const { show_popup } = this.state
         return (
             <ModalDialog isOpen={show_popup}
                          onClose={this.onHidePopup}

@@ -5,13 +5,13 @@ from django.db import migrations
 
 def forwards(apps, schema_editor):
     ReleaseNote = apps.get_model('imptime', 'ReleaseNote')
-    ReleaseNote(header="bug fix for breadcrumbs",
-                content="breadcrumbs don't show the incorect issue anymore when switvching between projects").save()
+    ReleaseNote(header="add budget card",
+                content="add a sprint card that displays the editable budget and the amount spent so far").save()
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('imptime', '0291_release_notes_testable_steps_25Jan2019'),
+        ('imptime', '0302_release_notes_add_warning_for_exce_11Mar2019'),
     ]
 
     operations = [

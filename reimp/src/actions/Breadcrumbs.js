@@ -153,6 +153,41 @@ export function setIssueBreadcrumbsHelper(project, sprint, optional_issue) {
     return setBreadcrumbs(breadcrumbs)
 }
 
+export function setCardBreadcrumbsHelper(project, sprint, optional_card) {
+    const card = optional_card
+    const breadcrumbs = [ {to: '/projects',
+                           label: 'Projects',
+                           type: 'projects'},
+                          {to: '/projects/' + project.id,
+                           label: project.name,
+                           type: 'project',
+                           selected_entities: {project: project}},
+                          {to: '/projects/' + project.id + '/sprints',
+                           label: 'Sprints',
+                           type: 'sprints',
+                           selected_entities: {project: project}},
+                          {to: '/projects/' + project.id + '/sprints/' + sprint.id,
+                           label: sprint.name,
+                           type: 'sprint',
+                           selected_entities: {project: project,
+                                               sprint: sprint}},
+                          {to: '/projects/' + project.id + '/sprints/' + sprint.id + '/cards',
+                           label: 'Cards',
+                           type: 'cards',
+                           selected_entities: {project: project,
+                                               sprint: sprint,
+                                               card: card}}]
+    if ( card ) {
+        breadcrumbs.push({to: '/projects/' + project.id + '/sprints/' + sprint.id + '/cards/' + card.id,
+                          label: card.name,
+                          type: 'card',
+                          selected_entities: {project: project,
+                                              sprint: sprint,
+                                              card: card}})
+    }
+    return setBreadcrumbs(breadcrumbs)
+}
+
 export function setFeatureBreadcrumbsHelper(project, optional_feature) {
     const feature = optional_feature || {}
     const breadcrumbs = [{to: '/projects',

@@ -105,6 +105,9 @@ NUM_BUSINESS_HOURS_PER_DAY = 8
 # are allowed to edit their own timesheets.
 NUM_BUSINESS_DAYS_FOR_ALLOWED_CLOCKING = 2
 
+# the max length of hours that should be estimated per issue
+MAX_ISSUE_ESTIMATE = 4
+
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"

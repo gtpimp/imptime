@@ -5,13 +5,13 @@ from django.db import migrations
 
 def forwards(apps, schema_editor):
     ReleaseNote = apps.get_model('imptime', 'ReleaseNote')
-    ReleaseNote(header="Clock fix",
-                content="Fixed issue where time would update incorrectly").save()
+    ReleaseNote(header="fix due issues popup",
+                content="fixes the link to display a popup of all issues that are due when selecting the due issues icon").save()
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('imptime', '0292_release_notes_comment_opacity_13Feb2019'),
+        ('imptime', '0306_release_notes_add_problems_card_11Mar2019'),
     ]
 
     operations = [
