@@ -108,6 +108,7 @@ class EventLog extends Component {
                     this.onDateRangeChanged(moment(new_date).subtract(1, 'day'),
                                             moment(new_date).add(1, 'day'))
                 }
+                break
             default:
                 console.error("Unknown view " + view)
         }

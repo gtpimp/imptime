@@ -13,10 +13,6 @@ import { update_list_filter } from '../actions/ItemList'
 
 class TinyIssuesByStatusCard extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
         const {sprint_id, sprint, project_id, project, dispatch, list_key} = this.props
         dispatch(ensureProjectsLoaded([project_id]))
@@ -38,7 +34,7 @@ class TinyIssuesByStatusCard extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch } = this.props
         if (project && sprint) {
             const card = {id: 'issues_by_status',
                           name: 'Issues By Status'}

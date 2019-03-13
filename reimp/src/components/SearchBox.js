@@ -183,13 +183,14 @@ class SearchBox extends Component {
     renderResults(results) {
         return (
             <div className="search-box__results_by_category" onKeyDown={this.keyDown}>
+
+              { results.sprints_within_selected_projects.length > 0 && this.renderSprintResults("Sprint results within active projects", results.sprints_within_selected_projects) }
+              { results.issues_within_selected_sprints.length > 0 && this.renderIssueResults("Issue results within active sprints", results.issues_within_selected_sprints) }
+              { results.issues_within_selected_issues.length > 0 && this.renderIssueResults("Issue results within active issues", results.issues_within_selected_issues) }
+              
               { results.all_projects.length > 0 && this.renderProjectResults("Projects", results.all_projects) }
               { results.all_sprints.length > 0 && this.renderSprintResults("Sprints", results.all_sprints) }
               { results.all_issues.length > 0 && this.renderIssueResults("Issues", results.all_issues) }
-              
-              { false && results.sprints_within_active_projects.length > 0 && this.renderSprintResults("Sprint results within active projects", results.sprints_within_active_projects) }
-              { false && results.issues_within_active_sprints.length > 0 && this.renderIssueResults("Issue results within active sprints", results.issues_within_active_sprints) }
-              { false && results.issues_within_active_issues.length > 0 && this.renderIssueResults("Issue results within active issues", results.issues_within_active_issues) }
               
 
               { results.sprints_within_active_projects.length === 0 &&

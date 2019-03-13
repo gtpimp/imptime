@@ -1,11 +1,6 @@
 import { impfetch } from '../actions/lib'
 import {
-    PAGE_KEY__PROJECTS_PAGE,
-    PAGE_KEY__SPRINTS_PAGE,
-    PAGE_KEY__ISSUES_PAGE
-} from './ItemListKeyRegistry'
-import {
-    getPageSelectedEntities
+    getGloballySelectedEntityIds
 } from './Page'
 
 export const UPDATE_GLOBAL_FILTER = 'UPDATE_GLOBAL_FILTER'
@@ -88,11 +83,12 @@ export function runFilter(filter_key, term) {
         const filter = getFilter(state, filter_key)
 	      dispatch(announceFilterLoading(filter_key, term))
 
-        const selected_project_ids = getPageSelectedEntities(state, PAGE_KEY__PROJECTS_PAGE).project_ids
-        const selected_sprint_ids = getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE).sprint_ids
-        const selected_issue_ids = getPageSelectedEntities(state, PAGE_KEY__ISSUES_PAGE).issue_ids
+        const selected_entity_ids = getGloballySelectedEntityIds(state)
+        const selected_project_ids = [selected_entity_ids.project_id]
+        const selected_sprint_ids = [selected_entity_ids.sprint_id]
+        const selected_issue_ids = [selected_entity_ids.issue_id]
 
-	      const params = { filter: { term: term,
+	const params = { filter: { term: term,
                                    selected_project_ids: selected_project_ids,
                                    selected_sprint_ids: selected_sprint_ids,
                                    selected_issue_ids: selected_issue_ids } }

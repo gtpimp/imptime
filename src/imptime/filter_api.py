@@ -27,9 +27,9 @@ class FilterViewSet(BaseViewSet):
             params = json.loads(request.GET['params'])
             filter_args = params['filter'] or {}
             search_term = filter_args.get('term', None)
-            active_project_ids = filter_args.get('active_project_ids', None)
-            active_sprint_ids = filter_args.get('active_sprint_ids', None)
-            active_issue_ids = filter_args.get('active_issue_ids', None)
+            selected_project_ids = filter_args.get('selected_project_ids', None)
+            selected_sprint_ids = filter_args.get('selected_sprint_ids', None)
+            selected_issue_ids = filter_args.get('selected_issue_ids', None)
             
             allowed_projects = self.allowed_projects()
             allowed_sprints = self.allowed_sprints()
@@ -58,31 +58,31 @@ class FilterViewSet(BaseViewSet):
                                                            Q(description__icontains=search_term))\
                                                    .order_by("name")
 
-            issues_within_active_sprints = []
-            sprints_within_active_projects = []
-            issues_within_active_issues = []
+            issues_within_selected_sprints = []
+            sprints_within_selected_projects = []
+            issues_within_selected_issues = []
 
-            if active_sprint_ids:
-                issues_within_active_sprints = allowed_issues.filter(project__id__in=active_sprint_ids)
-                issues_within_active_sprints = issues_within_active_sprints.order_by("project__business__name",
+            if selected_sprint_ids:
+                issues_within_selected_sprints = allowed_issues.filter(project__id__in=selected_sprint_ids) # sic
+                issues_within_selected_sprints = issues_within_selected_sprints.order_by("project__business__name",
                                                          "project__name",
                                                          "subject")
-                issues_within_active_sprints = [x for x in issues_within_active_sprints[0:500]
+                issues_within_selected_sprints = [x for x in issues_within_selected_sprints[0:500]
                                   if x.project.can_view_by_user(request.user)]
 
-            if active_project_ids:
-                issues_within_active_projects = allowed_issues.filter(project__business__id__in=active_project_ids)
-                issues_within_active_projects = issues_within_active_projects.order_by("project__business__name",
+            if selected_project_ids:
+                issues_within_selected_projects = allowed_issues.filter(project__business__id__in=selected_project_ids) # sic
+                issues_within_selected_projects = issues_within_selected_projects.order_by("project__business__name",
                                                          "project__name",
                                                          "subject")
-                issues_within_active_projects = [x for x in issues_within_active_projects[0:500]
+                issues_within_selected_projects = [x for x in issues_within_selected_projects[0:500]
                                   if x.project.can_view_by_user(request.user)]
 
-                sprints_within_active_projects = allowed_sprints.filter(business__id__in=active_project_ids)
-                sprints_within_active_projects = sprints_within_active_projects.filter_by_logged_in_user(request.user)
+                sprints_within_selected_projects = allowed_sprints.filter(business__id__in=selected_project_ids)
+                sprints_within_selected_projects = sprints_within_selected_projects.filter_by_logged_in_user(request.user)
 
-            if active_issue_ids:
-                issues_within_active_issues = allowed_issues.filter(id__in=active_issue_ids)
+            if selected_issue_ids:
+                issues_within_selected_issues = allowed_issues.filter(id__in=selected_issue_ids)
                 
             issues = allowed_issues
             sprints = allowed_sprints
@@ -93,9 +93,9 @@ class FilterViewSet(BaseViewSet):
             context['all_projects'] = ProjectResultSerializer(projects[0:max_results], many=True, result_category='all_projects').data
             context['all_sprints'] = SprintResultSerializer(sprints[0:max_results], many=True, result_category='all_sprints').data
             context['all_issues'] = IssueResultSerializer(issues[0:max_results], many=True, result_category='all_issues').data
-            context['issues_within_active_issues'] = IssueResultSerializer(issues_within_active_issues[0:max_results], many=True, result_category='issues_within_active_issues').data
-            context['issues_within_active_sprints'] = IssueResultSerializer(issues_within_active_sprints[0:max_results], many=True, result_category='issues_within_active_sprints').data
-            context['sprints_within_active_projects'] = SprintResultSerializer(sprints_within_active_projects[0:max_results], many=True, result_category='sprints_within_active_projects').data
+            context['issues_within_selected_issues'] = IssueResultSerializer(issues_within_selected_issues[0:max_results], many=True, result_category='issues_within_selected_issues').data
+            context['issues_within_selected_sprints'] = IssueResultSerializer(issues_within_selected_sprints[0:max_results], many=True, result_category='issues_within_selected_sprints').data
+            context['sprints_within_selected_projects'] = SprintResultSerializer(sprints_within_selected_projects[0:max_results], many=True, result_category='sprints_within_selected_projects').data
 
             data = {'status': 'success', 'payload': context}
 

@@ -38,7 +38,7 @@ class TinyProblemsCard extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch } = this.props
         if (project && sprint) {
             const card = {id: 'problems',
                           name: 'Problems'}
@@ -232,6 +232,7 @@ const makeMapStateToProps = () => {
         const num_estimate_too_large = issue_estimate_too_large.true
 
         return {
+            list_key,
             project_id,
             sprint_id,
             sprint,

@@ -13,10 +13,6 @@ import Hours from './Hours'
 
 class TinyEstimatesByUserCard extends Component {
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
         const {sprint_id, sprint, project_id, project, dispatch } = this.props
         dispatch(ensureProjectsLoaded([project_id]))
@@ -38,7 +34,7 @@ class TinyEstimatesByUserCard extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch } = this.props
         if (project && sprint) {
             const card = {id: 'estimates_by_user',
                           name: 'Estimates By User'}

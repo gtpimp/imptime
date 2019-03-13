@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
-import { values, sumBy } from 'lodash'
 import TinyCard from './TinyCard'
 import TinyCardRow from './TinyCardRow'
 import { ensureProjectsLoaded, getProject } from '../actions/Projects'
@@ -12,10 +11,6 @@ import { getCostSummary, ensureCostSummaryLoaded } from '../actions/CostSummary'
 import CurrencyValue from './CurrencyValue'
 
 class TinyEstimatedBudgetCard extends Component {
-
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         const {sprint_id, sprint, project_id, project, dispatch} = this.props
@@ -38,7 +33,7 @@ class TinyEstimatedBudgetCard extends Component {
     }
 
     refresh(sprint, project) {
-        const { dispatch, project_id, sprint_id } = this.props
+        const { dispatch } = this.props
         if (project && sprint) {
             const card = {id: 'estimated_budget',
                           name: 'Estimated Budget'}
@@ -55,14 +50,10 @@ class TinyEstimatedBudgetCard extends Component {
                   <span>Estimated Budget</span>
                   <CurrencyValue value={estimated_budget} />
                 </TinyCardRow>
-              </PermissionInspectorHighlighter>
-              <PermissionInspectorHighlighter project_id={project_id} permission_name="has_view_budget">
                 <TinyCardRow>
                   <span>Uncertainty</span>
                   <CurrencyValue value={uncertainty} />
                 </TinyCardRow>
-              </PermissionInspectorHighlighter>
-              <PermissionInspectorHighlighter>
                 <TinyCardRow>
                   <span>Total</span>
                   <CurrencyValue value={total} />
