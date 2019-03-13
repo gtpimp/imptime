@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { get } from 'lodash'
 import '../../sass/toolbar-panel.css'
 import { startCandidateWiki } from '../../actions/Wikis'
-import { PAGE_KEY__PROJECT_WIKI_PAGE } from '../../actions/ItemListKeyRegistry'
 import {
-    getPageSelectedEntities
+    getGloballySelectedEntityIds
 } from '../../actions/Page'
 
 class ProjectWikiToolbarPanel extends Component {
@@ -42,7 +42,7 @@ class ProjectWikiToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = getPageSelectedEntities(state, PAGE_KEY__PROJECT_WIKI_PAGE).project_ids[0]
+    const project_id = get(getGloballySelectedEntityIds(state), ["project_ids"], 0)
 
     return {
         project_id
