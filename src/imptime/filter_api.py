@@ -98,6 +98,10 @@ class FilterViewSet(BaseViewSet):
             context['issues_within_selected_projects'] = IssueResultSerializer(issues_within_selected_projects[0:max_results], many=True, result_category='issues_within_selected_projects').data
             context['sprints_within_selected_projects'] = SprintResultSerializer(sprints_within_selected_projects[0:max_results], many=True, result_category='sprints_within_selected_projects').data
 
+            context['selected_project_ids'] = selected_project_ids
+            context['selected_sprint_ids'] = selected_sprint_ids
+            context['selected_issue_ids'] = selected_issue_ids
+            
             data = {'status': 'success', 'payload': context}
 
         except Exception, ex:

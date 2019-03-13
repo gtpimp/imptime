@@ -11,6 +11,8 @@ import styled from 'react-emotion'
 import ModalDialog from './ModalDialog'
 import PopupPanelHeading from './PopupPanelHeading'
 import PopupPanelLink from './PopupPanelLink'
+import ProjectName from './ProjectName'
+import SprintName from './SprintName'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
 
@@ -115,7 +117,7 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__issue_results">
-              <PopupPanelHeading>{name}</PopupPanelHeading>
+              <PopupPanelHeading><div className={css`display:flex`}>{name}</div></PopupPanelHeading>
               {map(issue_results, function (issue_result, index) {
                    return (
                        <PopupPanelLink key={index}
@@ -139,7 +141,7 @@ class SearchBox extends Component {
         const that = this
         return (
             <div className="search-box__sprint_results">
-              <PopupPanelHeading>{name}</PopupPanelHeading>
+              <PopupPanelHeading><div className={css`display:flex`}>{name}</div></PopupPanelHeading>
               {map(sprint_results, function (sprint_result, index) {
                    return (
                        <PopupPanelLink key={index}
@@ -184,14 +186,26 @@ class SearchBox extends Component {
         return (
             <div className="search-box__results_by_category" onKeyDown={this.keyDown}>
 
-              { results.issues_within_selected_projects.length > 0 && this.renderIssueResults("Issues in active projects", results.issues_within_selected_projects) }
-              { results.sprints_within_selected_projects.length > 0 && this.renderSprintResults("Sprints in active projects", results.sprints_within_selected_projects) }
-              { results.issues_within_selected_sprints.length > 0 && this.renderIssueResults("Issues in sprints", results.issues_within_selected_sprints) }
+              { results.issues_within_selected_projects.length > 0 &&
+                this.renderIssueResults( <div>Issues in {map(results.selected_project_ids, (project_id) => <ProjectName project_id={project_id} />)}</div>,
+                                         results.issues_within_selected_projects)
+              }
+              
+              { results.sprints_within_selected_projects.length > 0 &&
+                
+                this.renderSprintResults(<div>Sprints in {map(results.selected_project_ids, (project_id) => <ProjectName project_id={project_id} />)}</div>,
+                                         results.sprints_within_selected_projects)
+              }
+              
+              { results.issues_within_selected_sprints.length > 0 &&
+                this.renderIssueResults(<div>Issues in {map(results.selected_sprint_ids, (sprint_id) => <SprintName sprint_id={sprint_id} />)}</div>,
+                                        results.issues_within_selected_sprints)
+              }
               { results.issues_within_selected_issues.length > 0 && this.renderIssueResults("Issues in selected issues", results.issues_within_selected_issues) }
               
-              { results.all_projects.length > 0 && this.renderProjectResults("Projects", results.all_projects) }
-              { results.all_sprints.length > 0 && this.renderSprintResults("Sprints", results.all_sprints) }
-              { results.all_issues.length > 0 && this.renderIssueResults("Issues", results.all_issues) }
+              { results.all_projects.length > 0 && this.renderProjectResults("Projects globally", results.all_projects) }
+              { results.all_sprints.length > 0 && this.renderSprintResults("Sprints globally", results.all_sprints) }
+              { results.all_issues.length > 0 && this.renderIssueResults("Issues globally", results.all_issues) }
 
               { results.sprints_within_selected_projects.length === 0 &&
                 results.issues_within_selected_sprints.length === 0 &&
