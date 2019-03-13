@@ -53,7 +53,8 @@ export function getToolbarParams(state) {
     return get(state, ["page", "params"], [])
 }
 
-export function setPageSelectedEntities(page_key, {issue_ids, sprint_ids, project_ids, user_ids, wiki_ids, feature_ids, decision_journal_ids, company_ids}) {
+export function setPageSelectedEntities(page_key, entity_ids) {
+    const {issue_ids, sprint_ids, project_ids, user_ids, wiki_ids, feature_ids, decision_journal_ids, company_ids} = entity_ids
     return (dispatch, getState) => {
         dispatch({
             type: UPDATE_PAGE_SELECTION,
@@ -67,6 +68,10 @@ export function setPageSelectedEntities(page_key, {issue_ids, sprint_ids, projec
                        decision_journal_ids,
                        company_ids}
         })
+
+        if ( page_key !== "__GLOBAL_PAGE__" ) {
+            dispatch(setGloballySelectedEntityIds(entity_ids))
+        }
     }
 }
 

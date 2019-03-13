@@ -80,7 +80,7 @@ class ProjectsPage extends Component {
         const { dispatch, history } = this.props
         dispatch(selectItems(LIST_KEY__PROJECT_LIST, project_ids))
         dispatch(setPageSelectedEntities(PAGE_KEY__PROJECTS_PAGE,
-                                 {project_ids:project_ids}))
+                                         {project_ids:project_ids}))
         dispatch(setActivelyAvailableAutoClockEntity(project_ids && project_ids.length > 0 && project_ids[0]))
         if ( project_ids && project_ids.length === 1 ) {
             history.push('/projects/' + project_ids[0]);

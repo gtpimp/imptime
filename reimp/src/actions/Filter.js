@@ -81,30 +81,26 @@ export function runFilter(filter_key, term) {
     return (dispatch, getState) => {
         const state = getState()
         const filter = getFilter(state, filter_key)
-	      dispatch(announceFilterLoading(filter_key, term))
+	dispatch(announceFilterLoading(filter_key, term))
 
-        const selected_entity_ids = getGloballySelectedEntityIds(state)
-        const selected_project_ids = [selected_entity_ids.project_id]
-        const selected_sprint_ids = [selected_entity_ids.sprint_id]
-        const selected_issue_ids = [selected_entity_ids.issue_id]
-
+        const selected_entity_ids = getGloballySelectedEntityIds(state) || {}
 	const params = { filter: { term: term,
-                                   selected_project_ids: selected_project_ids,
-                                   selected_sprint_ids: selected_sprint_ids,
-                                   selected_issue_ids: selected_issue_ids } }
+                                   selected_project_ids: selected_entity_ids.project_ids,
+                                   selected_sprint_ids: selected_entity_ids.sprint_ids,
+                                   selected_issue_ids: selected_entity_ids.issue_ids } }
 
         return impfetch(state, filter.url, dispatch, {params:params})
-	          .then(response => response.json())
-	          .then(json => {
+	    .then(response => response.json())
+	    .then(json => {
                 if (json.status !== 'success') {
-		                dispatch(announceFilterLoadFailed(filter_key, term, json.error))
+		    dispatch(announceFilterLoadFailed(filter_key, term, json.error))
                 } else {
-		                dispatch(announceFilterLoaded(filter_key, term, json.payload))
+		    dispatch(announceFilterLoaded(filter_key, term, json.payload))
                 }
-	          }).catch(function (error) {
-		            dispatch(announceFilterLoadFailed(filter_key, term, "Failed to run filter: " + (error || {}).message))
+	    }).catch(function (error) {
+		dispatch(announceFilterLoadFailed(filter_key, term, "Failed to run filter: " + (error || {}).message))
                 throw(error)
-	          })
+	    })
     }
 }
 

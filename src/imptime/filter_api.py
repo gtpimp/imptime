@@ -95,6 +95,7 @@ class FilterViewSet(BaseViewSet):
             context['all_issues'] = IssueResultSerializer(issues[0:max_results], many=True, result_category='all_issues').data
             context['issues_within_selected_issues'] = IssueResultSerializer(issues_within_selected_issues[0:max_results], many=True, result_category='issues_within_selected_issues').data
             context['issues_within_selected_sprints'] = IssueResultSerializer(issues_within_selected_sprints[0:max_results], many=True, result_category='issues_within_selected_sprints').data
+            context['issues_within_selected_projects'] = IssueResultSerializer(issues_within_selected_projects[0:max_results], many=True, result_category='issues_within_selected_projects').data
             context['sprints_within_selected_projects'] = SprintResultSerializer(sprints_within_selected_projects[0:max_results], many=True, result_category='sprints_within_selected_projects').data
 
             data = {'status': 'success', 'payload': context}
