@@ -60,6 +60,7 @@ class FilterViewSet(BaseViewSet):
 
             issues_within_selected_sprints = []
             sprints_within_selected_projects = []
+            issues_within_selected_projects = []
             issues_within_selected_issues = []
 
             if selected_sprint_ids:
