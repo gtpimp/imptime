@@ -48,7 +48,7 @@ class FilterViewSet(BaseViewSet):
                                                .select_related('project')\
                                                .select_related('project__business')
                 allowed_sprints = allowed_sprints.filter(Q(name__icontains=search_term) |
-                                                         Q(id__icontains=search_term) |
+                                                         Q(code__icontains=search_term) |
                                                          Q(description__icontains=search_term) |
                                                          Q(short_description__icontains=search_term))\
                                                  .order_by("business__name", "name")\
