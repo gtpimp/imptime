@@ -2391,7 +2391,7 @@ class Project(BaseModel):
         return self.total_hours_for_user(user=None)
 
     def can_view_by_user(self, user):
-        return user in self.users.all()
+        return BusinessPermissions.active_users_for_business(self.business_id).filter(id=user.id).first() is not None
 
     def total_hours_for_user(self, user=None):
         entries_qs = Entry.objects.filter(issue__project=self)

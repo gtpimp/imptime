@@ -89,7 +89,7 @@ class FilterViewSet(BaseViewSet):
             sprints = allowed_sprints
             projects = allowed_projects
 
-            max_results = 7
+            max_results = 20
             
             context['all_projects'] = ProjectResultSerializer(projects[0:max_results], many=True, result_category='all_projects').data
             context['all_sprints'] = SprintResultSerializer(sprints[0:max_results], many=True, result_category='all_sprints').data
