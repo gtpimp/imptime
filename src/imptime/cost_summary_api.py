@@ -90,7 +90,7 @@ class CostSummaryViewSet(BaseViewSet):
 
         cs = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
         response, writer, data = self._prepare_csv(request, cost_summary, "cost_summary_of_"+sprint.name)
-
+        # return HttpResponse(json.dumps(cs['breakdown']['all_user_ids']), content_type='application/json')
         cs_totals = cs['breakdown']['totals']
         writer.writerow([sprint.name])
         writer.writerow([])
@@ -101,7 +101,7 @@ class CostSummaryViewSet(BaseViewSet):
         writer.writerow(["Uncertainty amount", "R%.2f"%cs_totals["scope_creep"]])
         writer.writerow(["Total estimated cost", "R%.2f"%cs_totals["grand_total"]])
         writer.writerow([])
-
+    
         writer.writerow(["Issues"])
         writer.writerow(["Number", "Name", "Assigned user", "Estimate by assigned user (with velocity)", "Estimated cost by assigned user"])
         for issue_estimate in cs['breakdown']['estimates_by_issue'].values():
@@ -124,7 +124,7 @@ class CostSummaryViewSet(BaseViewSet):
 
     def _prepare_csv(self, request, cost_summary, filename_prefix):
         data = {}
-        data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=cost_summary['breakdown']['all_user_ids']).values('id', "first_name", "last_name")] )
+        data['users_by_id'] = dict( [(x['id'], x) for x in User.objects.filter(pk__in=cost_summary['breakdown']['estimates_by_user'].keys()).values('id', "first_name", "last_name")] )
         data['issues_by_id'] = dict( [(x['id'], x) for x in Issue.objects.filter(pk__in=cost_summary['breakdown']['all_issue_ids']).values('id', "number", "subject")] )
                              
         response, writer = file_helper.prepare_csv(request, filename_prefix)
