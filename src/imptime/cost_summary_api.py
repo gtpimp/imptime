@@ -90,7 +90,7 @@ class CostSummaryViewSet(BaseViewSet):
 
         cs = SprintSnapshot.calculate_cost_summary(sprint=sprint, user=self.request.user)
         response, writer, data = self._prepare_csv(request, cost_summary, "cost_summary_of_"+sprint.name)
-        # return HttpResponse(json.dumps(cs['breakdown']['all_user_ids']), content_type='application/json')
+
         cs_totals = cs['breakdown']['totals']
         writer.writerow([sprint.name])
         writer.writerow([])
