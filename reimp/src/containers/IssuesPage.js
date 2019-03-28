@@ -181,7 +181,7 @@ class IssuesPage extends Component {
     }
 
     render() {
-
+        console.log("rendering...")
         const { show_sidebar, sidebar_view_mode, project, selected_issue_in_current_sprint } = this.props
 
         setBrowserTitle(project.name)
