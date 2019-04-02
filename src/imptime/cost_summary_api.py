@@ -62,7 +62,7 @@ class CostSummaryViewSet(BaseViewSet):
             
         sprint_status = raw_filter_args.pop('sprint_status', None)
         if sprint_status == 'open':
-            qs = qs.filter(status3__name__in=Sprint.open_states())
+            qs = qs.filter(status3__is_closed=False)
             
         sprint_types = raw_filter_args.pop('sprint_types', None)
         if sprint_types is not None:

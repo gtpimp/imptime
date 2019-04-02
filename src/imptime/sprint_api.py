@@ -234,7 +234,7 @@ class SprintViewSet(BaseViewSet):
     def _set_default_filter(self, filter_args):
         sprint_status = filter_args.pop('sprint_status', None)
         if sprint_status == 'open':
-            filter_args['status3__name__in'] = Sprint.open_states()
+            filter_args['status3__is_closed'] = False
 
         return filter_args
 

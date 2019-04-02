@@ -254,25 +254,31 @@ class BusinessQuerySet(QuerySet):
         return self.filter(pk__in=BusinessPermissions.active_businesses_for_user(user))
 
     def filter_has_any_active_projects(self):
-        return self.filter(new_business_projects__status3__name__in=Project.active_states())
+        return self.filter(new_business_projects__status3__is_closed=False)
 
     def filter_has_only_pending_projects(self):
-        return self.filter(new_business_projects__status3__name__in=Project.pending_states()).exclude(new_business_projects__status3__name__in=Project.active_states())
+        # Deprecated, remove
+        return self.filter_has_any_active_projects()
 
     def filter_has_only_closed_projects(self):
-        return self.exclude(new_business_projects__status3__name__in= Project.pending_states()+Project.active_states()+Project.hopeful_states() )
+        # Deprecated, remove
+        return self.exclude(new_business_projects__status3__is_closed=False)
 
     def filter_has_at_least_one_open_project(self):
-        return self.filter( new_business_projects__status3__name__in=Project.pending_states()+Project.active_states()+Project.hopeful_states() )
+        # Deprecated, remove
+        return self.filter_open()
 
     def filter_has_hopeful_projects(self):
-        return self.filter(new_business_projects__status3__name__in=Project.hopeful_states())
+        # Deprecated, remove
+        return self.filter_open()
 
     def exclude_has_closed_projects(self):
-        return self.filter(new_business_projects__status3__name__in=Project.pending_states()+Project.active_states() )
+        # Deprecated, remove
+        return self.filter_open()
 
     def filter_has_can_add_dev_time_projects(self):
-        return self.filter(new_business_projects__status3__name__in=Project.can_add_dev_time_states())
+        # Deprecated, remove
+        return self.filter_open()
 
     def get_checklist_summary(self):
 
@@ -392,7 +398,7 @@ class Business(BaseModel):
         for code, name in Issue.ISSUE_STATUS_CHOICES:
             IssueStatus.objects.get_or_create(name=name, business=self)
         for code, name in Project.PROJECT_STATUSES:
-            ProjectStatus.objects.get_or_create(name=name, business=self)
+            ProjectStatus.objects.get_or_create(name=name, business=self, is_closed=(code=='closed'))
         for code, name in ProjectDeadlineType.DEFAULT_PROJECT_DEADLINE_TYPES:
             ProjectDeadlineType.objects.get_or_create(name=name, business=self)
         for code, name in ProjectRole.DEFAULT_PROJECT_ROLES:
@@ -777,7 +783,7 @@ class BusinessPermissions(BaseModel):
     def get_users_who_can_capture_time(self, business_id=None):
         if business_id is None:
             users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
-                                        business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+                                        business_permissions__business__new_business_projects__status3__is_closed=False).distinct()
         else:
             users = User.objects.filter(is_active=True,
                                         business_permissions__business_id=business_id,
@@ -789,7 +795,7 @@ class BusinessPermissions(BaseModel):
     def get_users_who_can_estimate_time(self, business_id=None):
         if business_id is None:
             users = User.objects.filter(is_active=True, business_permissions__is_active_member_of_business=True,
-                                        business_permissions__business__new_business_projects__status3__name='in dev').distinct()
+                                        business_permissions__business__new_business_projects__status3__is_closed=False).distinct()
         else:
             users = User.objects.filter(is_active=True,
                                         business_permissions__business_id=business_id,
@@ -1047,6 +1053,7 @@ class BusinessPermissions(BaseModel):
 class ProjectStatus(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
     business = models.ForeignKey(Business, related_name='project_statuses')
+    is_closed = models.BooleanField(default=False)
 
     class Meta:
         unique_together = (('name', 'business'), )
@@ -1236,38 +1243,38 @@ class ProjectQuerySet(QuerySet):
         
         
     def filter_assigned_tasks_are_active(self):
-        return self.filter(status3__name__in=['in dev', 'pending'],
+        return self.filter(status3__is_closed=False,
                            project_type__in=['sprint', 'checklist', 'sprinkle', 'spec'])
 
-    def filter_active(self):
-        return self.filter(status3__name__in=Project.active_states())
-
-    def filter_pending(self):
-        return self.filter(status3__name__in=Project.pending_states())
+    def filter_open(self):
+        return self.filter(status3__is_closed=False)
 
     def filter_closed(self):
-        return self.filter(status3__name__in=Project.closed_states())
+        return self.filter(status3__is_closed=True)
 
     def filter_hopeful(self):
-        return self.filter(status3__name__in=Project.hopeful_states())
-
-    def filter_open(self):
-        return self.exclude(status3__name__in=Project.closed_states())
+        # Deprecated, remove
+        return self.filter_open()
 
     def filter_has_time(self):
-        return self.exclude(status3__name__in=Project.closed_states())
+        # Deprecated, remove
+        return self.filter_open()
 
     def filter_in_dev(self):
-        return self.filter(status3__name='in dev')
+        # Deprecated, remove
+        return self.filter_open()
 
     def filter_in_client_qa(self):
-        return self.filter(status3__name='in client_qa')
+        # Deprecated, remove
+        return self.filter_open()
 
     def filter_in_dev_or_pending(self):
-        return self.filter(Q(status3__name='in dev')|Q(status3__name='pending'))
+        # Deprecated, remove
+        return self.filter_open()
 
     def filter_can_add_dev_time_states(self):
-        return self.filter(status3__name__in=Project.can_add_dev_time_states())
+        # Deprecated, remove
+        return self.filter_open()
 
 class ProjectRole(BaseModel):
 
@@ -1284,13 +1291,56 @@ class ProjectRole(BaseModel):
     
 class Project(BaseModel):
 
-    PROJECT_STATUSES = ( ('gathering specs', 'gathering specs'),
-                         ('quote sent', 'quote sent'),
-                         ('pending', 'pending'),
-                         ('spec', 'spec'),
-                         ('hopeful', 'hopeful'),
-                         ('in dev', 'in development'),
-                         ('in client qa', 'in client qa'),
+    PROJECT_STATUSES = ( ('step1', 'step1 - gather requirements - needed'),
+                         ('step1', 'step1 - gather requirements - in progress'),
+                         ('step1', 'step1 - gather requirements - done'),
+                         ('step1', 'step1 - gather requirements - approved'),
+
+                         ('step2', 'step2 - wireframes - needed'),
+                         ('step2', 'step2 - wireframes - in progress'),
+                         ('step2', 'step2 - wireframes - done'),
+                         ('step2', 'step2 - wireframes - approved'),
+
+                         ('step3', 'step3 - pretty pictures - needed'),
+                         ('step3', 'step3 - pretty pictures - in progress'),
+                         ('step3', 'step3 - pretty pictures - done'),
+                         ('step3', 'step3 - pretty pictures - approved'),
+
+                         ('step4', 'step4 - create issues and testables - needed'),
+                         ('step4', 'step4 - create issues and testables - in progress'),
+                         ('step4', 'step4 - create issues and testables - done'),
+                         ('step4', 'step4 - create issues and testables - approved'),
+
+                         ('step5', 'step5 - estimate - needed'),
+                         ('step5', 'step5 - estimate - in progress'),
+                         ('step5', 'step5 - estimate - done'),
+                         ('step5', 'step5 - estimate - approved'),
+
+                         ('step6', 'step6 - client go ahead - needed'),
+                         ('step6', 'step6 - client go ahead - in progress'),
+                         ('step6', 'step6 - client go ahead - done'),
+                         ('step6', 'step6 - client go ahead - approved'),
+
+                         ('step7', 'step7 - development - needed'),
+                         ('step7', 'step7 - development - in progress'),
+                         ('step7', 'step7 - development - done'),
+                         ('step7', 'step7 - development - approved'),
+
+                         ('step8', 'step8 - testing - needed'),
+                         ('step8', 'step8 - testing - in progress'),
+                         ('step8', 'step8 - testing - done'),
+                         ('step8', 'step8 - testing - approved'),
+
+                         ('step9', 'step9 - handover - needed'),
+                         ('step9', 'step9 - handover - in progress'),
+                         ('step9', 'step9 - handover - done'),
+                         ('step9', 'step9 - handover - approved'),
+
+                         ('step10', 'step10 - release - needed'),
+                         ('step10', 'step10 - release - in progress'),
+                         ('step10', 'step10 - release - done'),
+                         ('step10', 'step10 - release - approved'),
+
                          ('waiting to invoice', 'waiting to invoice'),
                          ('invoiced', 'invoiced'),
                          ('waiting to close', 'waiting to close'),
@@ -1667,7 +1717,7 @@ class Project(BaseModel):
     @property
     def previous_project(self):
         qs = self.business.get_ordered_projects().exclude(id=self.id)
-        project = qs.exclude(status3__name='closed').first()
+        project = qs.exclude(status3__is_closed=True).first()
         if not project:
             project = qs.first()
         return project

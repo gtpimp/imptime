@@ -25,7 +25,7 @@ class CompanyProblemCalculator(object):
 
     def _create_missing_rates(self, projects):
         entries = Entry.objects.filter(issue__project__business_id__in=projects)
-        entries = entries.exclude(issue__project__status3__name__in=Sprint.closed_states()) #sic
+        entries = entries.exclude(issue__project__status3__is_closed=True) #sic
         
         enriched = entries.order_by("issue__project__business_id", "issue__project_id", "user_id")\
                           .values("issue__project__business_id", "issue__project_id", "user_id")\
@@ -52,7 +52,7 @@ class CompanyProblemCalculator(object):
 
     def _create_missing_budgets(self, projects):
         entries = Entry.objects.filter(issue__project__business_id__in=projects)
-        entries = entries.exclude(issue__project__status3__name__in=Sprint.closed_states()) #sic
+        entries = entries.exclude(issue__project__status3__is_closed=True) #sic
         entries = entries.exclude(issue__project__budget__lt=0) #sic
         enriched = entries.order_by('issue__project__business_id', 'issue__project_id')
         enriched = entries.values('issue__project__business_id', 'issue__project_id').distinct()
