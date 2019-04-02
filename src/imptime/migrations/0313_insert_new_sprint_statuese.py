@@ -56,13 +56,15 @@ def forwards(apps, schema_editor):
 
     for project in Project.objects.all():
         for code, name in STATUSES:
-            SprintStatus.objects.get_or_create(name=name, business=project, is_closed=(code=='closed')) #sic
+            SprintStatus.objects.get_or_create(name=name, business=project,  #sic
+                                               defaults={'is_closed':(code=='closed')})
     
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('timepiece', '0147_set_closed_sprint_Status'),
+        ('imptime', '0312_merge_20190327_0013'),
+        ('timepiece', '0146_projectstatus_is_closed'),
     ]
 
     operations = [
