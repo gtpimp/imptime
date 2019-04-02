@@ -257,7 +257,7 @@ class ProjectViewSet(BaseViewSet):
             project.create_default_statuses()
             sprint = Sprint.objects.get_or_create(name='Sprint1 - ' + timezone.now().strftime("%b %Y"),
                                                   business=project, #sic
-                                                  status3=SprintStatus.objects.get(business=project, name='pending'),
+                                                  status3=SprintStatus.objects.get(business=project, name=Sprint.INITIAL_PROJECT_STATUS_NAME),
                                                   description="Things to do this month")[0]
             issue = Issue.objects.get_or_create(project=sprint,
                                                 subject="Offload all the things that worry me",
@@ -281,7 +281,7 @@ You can add issues here normally, or by emailing %s@%s""" % (project.inbox_email
         return Sprint.objects.get_or_create(name=settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME,
                                             business=project, #sic
                                             project_type="inbox", #sic
-                                            defaults={'status3':SprintStatus.objects.get(business=project, name='pending'),
+                                            defaults={'status3':SprintStatus.objects.get(business=project, name=Sprint.INITIAL_PROJECT_STATUS_NAME),
                                                       'description':inbox_description})[0]
     def apply_filter(self, qs, raw_filter_args):
         any_field = raw_filter_args.pop('any_field', None)

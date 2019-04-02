@@ -1291,6 +1291,9 @@ class ProjectRole(BaseModel):
     
 class Project(BaseModel):
 
+    # TODO: Will be moved to a field on the sprint status object
+    INITIAL_PROJECT_STATUS_NAME = 'step1 - gather requirements - needed'
+    
     PROJECT_STATUSES = ( ('step1', 'step1 - gather requirements - needed'),
                          ('step1', 'step1 - gather requirements - in progress'),
                          ('step1', 'step1 - gather requirements - done'),
