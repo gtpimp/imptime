@@ -253,12 +253,15 @@ class BusinessQuerySet(QuerySet):
         user (typically the logged in user) is assigned to """
         return self.filter(pk__in=BusinessPermissions.active_businesses_for_user(user))
 
-    def filter_has_any_active_projects(self):
+    def filter_open(self):
         return self.filter(new_business_projects__status3__is_closed=False)
+    
+    def filter_has_any_active_projects(self):
+        return self.filter_open()
 
     def filter_has_only_pending_projects(self):
         # Deprecated, remove
-        return self.filter_has_any_active_projects()
+        return self.filter_open()
 
     def filter_has_only_closed_projects(self):
         # Deprecated, remove
