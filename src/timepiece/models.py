@@ -1068,6 +1068,9 @@ class ProjectStatus(BaseModel):
     def for_business(self, name, business):
         return ProjectStatus.objects.get_or_create(name=name, business=business)[0]
 
+    def can_add_dev_time(self):
+        return not self.is_closed
+
     def save(self, *args, **kwargs):
         was_created = not self.id
         super(ProjectStatus, self).save(*args, **kwargs)
@@ -1817,12 +1820,8 @@ class Project(BaseModel):
     def open_states(self):
         return self.hopeful_states() + self.pending_states() + self.active_states()
 
-    @classmethod
-    def can_add_dev_time_states(self):
-        return ( 'open', 'hopeful', 'pending', 'in dev', 'in client qa', 'gathering specs', 'quote sent' )
-
     def can_add_dev_time(self):
-        return self.status3.name in self.can_add_dev_time_states()
+        return self.status3.can_add_dev_time()
 
     @property
     def is_open(self):

@@ -5865,7 +5865,7 @@ def quick_clocker(request, template="timepiece/time-sheet/quick_clocker.html", c
     users = timepiece.BusinessPermissions.get_users_who_can_capture_time().order_by("username")
     users = users.filter(pk=request.user.id)
     allowed_projects = timepiece.Project.objects.all().filter_by_logged_in_user(request.user)
-    projects = allowed_projects.filter_can_add_dev_time_states().filter_open().order_by("business__name", "name")
+    projects = allowed_projects.filter_open().order_by("business__name", "name")
     context['users'] = users
     context['projects'] = projects
 
