@@ -1,6 +1,6 @@
 import cookie from 'react-cookies';
 import { ENTITY_KEY__AUTO_CLOCK, CONTEXT_KEY__AUTO_CLOCK } from '../actions/ItemListKeyRegistry'
-import { compact } from 'lodash'
+import { get } from 'lodash'
 
 import {
     invalidateAllItems,
@@ -17,7 +17,6 @@ import {
     saveCandidateItem
 } from '../actions/Item'
 import {
-    setPageSelectedEntities,
     getPageSelectedEntities
 } from '../actions/Page'
 
@@ -110,48 +109,6 @@ export function getNumUnallocatedEntries(state) {
 export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue_id) {
     return (dispatch, getState) => {
         const state = getState()
-        let selected_project_ids = getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK).project_ids || []
-        let selected_sprint_ids = getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK).sprint_ids || []
-        let selected_issue_ids = getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK).issue_ids || []
-        let project_ids = []
-        let sprint_ids = []
-        let issue_ids = []
-        if ( project_id ) {
-            if ( !selected_project_ids || selected_project_ids.length === 0 || selected_project_ids[0] !== project_id ) {
-                project_ids = compact([project_id])
-            }
-        } else {
-            if ( selected_project_ids && selected_project_ids.length > 0 ) {
-                project_ids = []
-            }
-        }
-
-        if ( sprint_id ) {
-            if ( !selected_sprint_ids || selected_sprint_ids.length === 0 || selected_sprint_ids[0] !== sprint_id ) {
-                sprint_ids = compact([sprint_id])
-            }
-        } else {
-            if ( selected_sprint_ids && selected_sprint_ids.length > 0 ) {
-                sprint_ids = []
-            }
-        }
-
-        if ( issue_id ) {
-            if ( !selected_issue_ids || selected_issue_ids.length === 0 || selected_issue_ids[0] !== issue_id ) {
-                issue_ids = compact([issue_id])
-            }
-        } else {
-            if ( selected_issue_ids && selected_issue_ids.length > 0 ) {
-                issue_ids = []
-            }
-        }
-
-        dispatch(setPageSelectedEntities(CONTEXT_KEY__AUTO_CLOCK,
-                                         {issue_ids: issue_ids,
-                                          sprint_ids: sprint_ids,
-                                          project_ids: project_ids}
-        ))
-
         if ( isAutoClockingEnabled(state) && project_id ) {
             dispatch(clockIn({project_id:project_id,
                               sprint_id: sprint_id,
@@ -161,12 +118,12 @@ export function setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue
 }
 
 export function getAvailableAutoClockEntity(state) {
-    const selected_project_ids = getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK).project_ids || [undefined]
-    const selected_sprint_ids = getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK).sprint_ids || [undefined]
-    const selected_issue_ids = getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK).issue_ids || [undefined]
-    return { available_project_id: selected_project_ids[0],
-             available_sprint_id: selected_sprint_ids[0],
-             available_issue_id: selected_issue_ids[0] }
+    const selected_project_ids = get(getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK), ["project_ids"], [undefined])
+    const selected_sprint_ids = get(getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK), ["sprint_ids"], [undefined])
+    const selected_issue_ids = get(getPageSelectedEntities(state, CONTEXT_KEY__AUTO_CLOCK), ["issue_ids"], [undefined])
+    return { available_project_id: get(selected_project_ids, [0]),
+             available_sprint_id: get(selected_sprint_ids, [0]),
+             available_issue_id: get(selected_issue_ids, [0]) }
 }
 
 export function clockIn(data) {

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes} from 'lodash'
+import {includes, get} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import SprintList from '../components/SprintList'
 import SprintSidebar from '../components/SprintSidebar'
@@ -25,7 +25,7 @@ import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {
     set_toolbars,
     setPageSelectedEntities,
-    getPageSelectedEntities,
+    getGloballySelectedEntityIds,
     setBrowserTitle
 } from '../actions/Page'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
@@ -81,7 +81,8 @@ class SprintsPage extends Component {
             dispatch(ensureProjectsLoaded([project_id]))
         }
         if (project && project.id) {
-            dispatch(setPageSelectedEntities(page_key, {project_ids:[project.id]}))
+            dispatch(setPageSelectedEntities(page_key, {project_ids:[project.id],
+                                                        sprint_ids: selected_sprint_ids}))
             dispatch(setActivelyAvailableAutoClockEntity(project.id,
                                                          selected_sprint_ids && selected_sprint_ids.length > 0 && selected_sprint_ids[0]))
             dispatch(invalidateList(list_key))
@@ -92,8 +93,8 @@ class SprintsPage extends Component {
         if ( default_sprint_id !== undefined && !includes(selected_sprint_ids, default_sprint_id) ) {
             dispatch(selectItems(LIST_KEY__SPRINT_LIST, [default_sprint_id]))
             dispatch(setPageSelectedEntities(page_key,
-                                     {project_ids: [project_id],
-                                      sprint_ids:[default_sprint_id]}))
+                                             {project_ids: [project_id],
+                                              sprint_ids:[default_sprint_id]}))
             dispatch(setActivelyAvailableAutoClockEntity(project.id, default_sprint_id))
         }
     }
@@ -104,8 +105,8 @@ class SprintsPage extends Component {
         dispatch(selectItems(list_key, sprint_ids))
 
         dispatch(setPageSelectedEntities(page_key,
-                                 {project_ids: [project_id],
-                                  sprint_ids:sprint_ids}))
+                                         {project_ids: [project_id],
+                                          sprint_ids: sprint_ids}))
         
     dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_ids && sprint_ids.length > 0 && sprint_ids[0]))
         
@@ -203,7 +204,7 @@ function mapStateToProps(state, props) {
     // const project_id = filter.project_id || props.match.params.projectId
 
     const default_filter = { project_id: project_id }
-    const selected_sprint_ids = getPageSelectedEntities(state, page_key).sprint_ids
+    const selected_sprint_ids = get(getGloballySelectedEntityIds(state), ["sprint_ids"], [])
     
     const project = getProject(state, project_id) || {}
     const project_name = project.name

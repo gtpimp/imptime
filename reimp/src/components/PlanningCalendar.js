@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { filter } from 'lodash'
+import { filter, size } from 'lodash'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'
 import BigCalendar from 'react-big-calendar'
@@ -158,20 +158,20 @@ class PlanningCalendar extends Component {
 
     addProjectToSchedule(evt) {
         const { entityIdsAvailableForEventCreation } = this.props
-        const { project_id } = entityIdsAvailableForEventCreation || {}
-        this.addToSchedule(evt, {project_id: project_id})
+        const { project_ids } = entityIdsAvailableForEventCreation || {}
+        this.addToSchedule(evt, {project_ids: project_ids})
     }
     
     addSprintToSchedule(evt) {
         const { entityIdsAvailableForEventCreation } = this.props
-        const { project_id, sprint_id } = entityIdsAvailableForEventCreation || {}
-        this.addToSchedule(evt, {project_id: project_id, sprint_id: sprint_id})
+        const { project_ids, sprint_ids } = entityIdsAvailableForEventCreation || {}
+        this.addToSchedule(evt, {project_ids: project_ids, sprint_ids: sprint_ids})
     }
     
     addIssueToSchedule(evt) {
         const { entityIdsAvailableForEventCreation } = this.props
-        const { project_id, sprint_id, issue_id } = entityIdsAvailableForEventCreation || {}
-        this.addToSchedule(evt, {project_id: project_id, sprint_id: sprint_id, issue_id: issue_id})
+        const { project_ids, sprint_ids, issue_ids } = entityIdsAvailableForEventCreation || {}
+        this.addToSchedule(evt, {project_ids: project_ids, sprint_ids: sprint_ids, issue_ids: issue_ids})
     }
 
     addToSchedule(evt, entity_ids) {
@@ -276,9 +276,9 @@ class PlanningCalendar extends Component {
     
     renderAddingItem() {
         const { entityIdsAvailableForEventCreation } = this.props
-        const { project_id, sprint_id, issue_id } = entityIdsAvailableForEventCreation || {}
+        const { project_ids, sprint_ids, issue_ids } = entityIdsAvailableForEventCreation || {}
         const { start, end } = this.state.slot_info
-        const something_selected = project_id || sprint_id || issue_id
+        const something_selected = size(project_ids)>0 || size(sprint_ids)>0 || size(issue_ids)>0
         return (
             <ModalDialog isOpen={true}
                          onClose={this.stopAddingItem}
@@ -299,25 +299,25 @@ class PlanningCalendar extends Component {
                     <div>Schedule most recently selected issue:</div>
                   }
                 </div>
-                { project_id && 
+                { size(project_ids)>0 && 
                   <div className="editable-property-modal__row"
-                       onClick={(event) => this.addProjectToSchedule(event, project_id)}>
+                       onClick={(event) => this.addProjectToSchedule(event, project_ids[0])}>
                     <PopupPanelMiniButton>Schedule project</PopupPanelMiniButton>
-                    <ProjectName project_id={project_id} />
+                    <ProjectName project_id={project_ids[0]} />
                   </div>
                 }
-                { sprint_id && 
+                { size(sprint_ids)>0 && 
                   <div className="editable-property-modal__row"
-                       onClick={(event) => this.addSprintToSchedule(event, sprint_id)}>
+                       onClick={(event) => this.addSprintToSchedule(event, sprint_ids[0])}>
                     <PopupPanelMiniButton>Schedule sprint</PopupPanelMiniButton>
-                    <SprintName sprint_id={sprint_id} />
+                    <SprintName sprint_id={sprint_ids[0]} />
                   </div>
                 }
-                { issue_id && 
+                { size(issue_ids) && 
                   <div className="editable-property-modal__row"
-                       onClick={(event) => this.addIssueToSchedule(event, issue_id)}>
+                       onClick={(event) => this.addIssueToSchedule(event, issue_ids[0])}>
                     <PopupPanelMiniButton>Schedule issue</PopupPanelMiniButton>
-                    <IssueName issue_id={issue_id} />
+                    <IssueName issue_id={issue_ids[0]} />
                   </div>
                 }
 

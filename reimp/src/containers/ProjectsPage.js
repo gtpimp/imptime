@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { get } from 'lodash'
 import {withRouter} from 'react-router-dom'
 import ProjectList from '../components/ProjectList'
 import ProjectSidebar from '../components/ProjectSidebar'
@@ -14,7 +15,7 @@ import {
 import {
     set_toolbars,
     setPageSelectedEntities,
-    getPageSelectedEntities
+    getGloballySelectedEntityIds
 } from '../actions/Page'
 import {
     initList,
@@ -40,8 +41,15 @@ class ProjectsPage extends Component {
         if ( default_project_id !== undefined ) {
             dispatch(selectItems(LIST_KEY__PROJECT_LIST, [default_project_id]))
             dispatch(setPageSelectedEntities(PAGE_KEY__PROJECTS_PAGE,
-                                     {project_ids:[default_project_id]}))
+                                             {project_ids:[default_project_id],
+                                              sprint_ids: [],
+                                              issue_ids: []}))
             dispatch(setActivelyAvailableAutoClockEntity(default_project_id))
+        } else {
+            dispatch(setPageSelectedEntities(PAGE_KEY__PROJECTS_PAGE,
+                                             {project_ids:null,
+                                              sprint_ids: [],
+                                              issue_ids: []}))            
         }
         this.refresh()
     }
@@ -156,7 +164,7 @@ class ProjectsPage extends Component {
 function mapStateToProps(state, props) {
     const {project} = state
     const items_by_id = (project && project.items_by_id) || {}
-    const selected_project_ids = getPageSelectedEntities(state, PAGE_KEY__PROJECTS_PAGE).project_ids
+    const selected_project_ids = get(getGloballySelectedEntityIds(state, PAGE_KEY__PROJECTS_PAGE), ["project_ids"], null)
     const default_project_id = props.match.params.projectId
 
     const selected_items = items_by_id && selected_project_ids && selected_project_ids.map(function (selected_id, index) {

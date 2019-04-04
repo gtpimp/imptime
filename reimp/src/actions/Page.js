@@ -56,27 +56,30 @@ export function getToolbarParams(state) {
 export function setPageSelectedEntities(page_key, entity_ids) {
     const {issue_ids, sprint_ids, project_ids, user_ids, wiki_ids, feature_ids, decision_journal_ids, company_ids} = entity_ids
     return (dispatch, getState) => {
-        dispatch({
-            type: UPDATE_PAGE_SELECTION,
-            page_key,
-            entities: {issue_ids,
-                       sprint_ids,
-                       project_ids,
-                       user_ids,
-                       wiki_ids,
-                       feature_ids,
-                       decision_journal_ids,
-                       company_ids}
-        })
-
+        
         if ( page_key !== "__GLOBAL_PAGE__" ) {
             dispatch(setGloballySelectedEntityIds(entity_ids))
+        } else {
+            dispatch({
+                type: UPDATE_PAGE_SELECTION,
+                page_key,
+                entities: {issue_ids,
+                           sprint_ids,
+                           project_ids,
+                           user_ids,
+                           wiki_ids,
+                           feature_ids,
+                           decision_journal_ids,
+                           company_ids}
+            })
         }
     }
 }
 
+// Deprecated, we're switching to global pages instead.
 export function getPageSelectedEntities(state, page_key) {
-    return get(state, ["page", page_key, "selected_entities"], {}) || {}
+    return getGloballySelectedEntityIds(state)
+    // return get(state, ["page", page_key, "selected_entities"], {}) || {}
 }
 
 export function get_header_list(state, page_key) {
@@ -113,19 +116,25 @@ export function getPageFlag(state, page_key, flag_name, default_value) {
 }
 
 export function setGloballySelectedIssueId(project_id, sprint_id, issue_id) {
-    return setGloballySelectedEntityIds({project_id: project_id, sprint_id: sprint_id, issue_id: issue_id})
+    return setGloballySelectedEntityIds({project_ids: [project_id],
+                                         sprint_ids: [sprint_id],
+                                         issue_ids: [issue_id]})
 }
 
 export function setGloballySelectedSprintId(project_id, sprint_id) {
-    return setGloballySelectedEntityIds({project_id: project_id, sprint_id: sprint_id})
+    return setGloballySelectedEntityIds({project_ids: [project_id],
+                                         sprint_ids: [sprint_id],
+                                         issue_ids: []})
 }
 
 export function setGloballySelectedProjectId(project_id) {
-    return setGloballySelectedEntityIds({project_id: project_id})
+    return setGloballySelectedEntityIds({project_ids: [project_id],
+                                         sprint_ids: [],
+                                         issue_ids: []})
 }
 
 export function getGloballySelectedProjectId(state) {
-    return getGloballySelectedEntityIds(state).project_id
+    return get(getGloballySelectedEntityIds(state), ['project_ids', 0], 0)
 }
 
 export function setGloballySelectedEntityIds(entity_ids) {

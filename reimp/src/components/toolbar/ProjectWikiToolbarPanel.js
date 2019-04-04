@@ -42,7 +42,7 @@ class ProjectWikiToolbarPanel extends Component {
 }
 
 function mapStateToProps(state, props) {
-    const project_id = get(getGloballySelectedEntityIds(state), ["project_ids"], [0])[0]
+    const project_id = get(getGloballySelectedEntityIds(state), ["project_ids", 0], null)
 
     return {
         project_id

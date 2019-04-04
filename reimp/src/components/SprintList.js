@@ -27,9 +27,7 @@ import {
     reorderSprints,
     startCandidateSprint,
     cancelCandidateSprint,
-    ALL_AVAILABLE_SPRINT_HEADERS,
-    setLastSelectedSprintId,
-    getLastSelectedSprintId
+    ALL_AVAILABLE_SPRINT_HEADERS
 } from '../actions/Sprints'
 import {
     setGloballySelectedSprintId,
@@ -54,15 +52,10 @@ class SprintList extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, list_key, project_id, last_selected_sprint_id, onSelectSprints} = this.props
+        const {dispatch, list_key, project_id} = this.props
         if (project_id) {
             dispatch(initList(list_key))
             dispatch(fetchSprintsIfNeeded(list_key))
-        }
-
-        if (last_selected_sprint_id) {
-            dispatch(setGloballySelectedSprintId(project_id, last_selected_sprint_id))
-            onSelectSprints([last_selected_sprint_id])
         }
 
     }
@@ -113,7 +106,6 @@ class SprintList extends Component {
             selected_sprint_ids = [sprint_id]
         }
         dispatch(setGloballySelectedSprintId(project_id, sprint_id))
-        dispatch(setLastSelectedSprintId(sprint_id))
         onSelectSprints(selected_sprint_ids)
     }
 
@@ -273,7 +265,6 @@ function mapStateToProps(state, props) {
     const loading_item_ids = getLoadingItemIds(state, list_key)
     const is_loading = isLoading(state, list_key)
     const last_updated = getLastUpdated(state, list_key)
-    const last_selected_sprint_id = getLastSelectedSprintId(state)
     const filter = getListFilter(state, list_key)
     const project_id = filter.project_id || null
     const sprints_by_type = collect_sprints_by_type(visible_items)
@@ -292,7 +283,6 @@ function mapStateToProps(state, props) {
         is_visible: project_id || false,
         is_loading,
         last_updated,
-        last_selected_sprint_id,
     }
 }
 
