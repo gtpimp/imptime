@@ -6,7 +6,7 @@ import NewIssueSidebar from '../components/NewIssueSidebar'
 import MultipleIssueSidebar from '../components/MultipleIssueSidebar'
 import IssueList from '../components/IssueList'
 import {setIssueBreadcrumbsHelper} from '../actions/Breadcrumbs'
-import { includes, compact } from 'lodash'
+import { includes, compact, get } from 'lodash'
 import Splitter from '../components/Splitter'
 import {
     LIST_KEY__ISSUE_LIST,
@@ -21,7 +21,7 @@ import {
 import {
     set_toolbars,
     setPageSelectedEntities,
-    getPageSelectedEntities,
+    getGloballySelectedEntityIds,
     getPageFlag,
     setPageFlag,
     setBrowserTitle
@@ -215,7 +215,7 @@ class IssuesPage extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_issue_ids = getPageSelectedEntities(state, PAGE_KEY__ISSUES_PAGE).issue_ids
+    const selected_issue_ids = get(getGloballySelectedEntityIds(state), ["issue_ids"], [])
     const selected_items = getIssues(state, selected_issue_ids)
 
     const filter_sprint_id = (getListFilter(state, LIST_KEY__ISSUE_LIST) || {}).sprint_id
