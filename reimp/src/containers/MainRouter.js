@@ -45,7 +45,6 @@ import SprintsPage from './SprintsPage'
 import FeaturesPage from './FeaturesPage'
 import FlatFeaturesPage from './FlatFeaturesPage'
 import ExecutiveSummaryPage from './ExecutiveSummaryPage'
-import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import TinyCardMenu from '../components/TinyCardMenu'
 import TinyBudgetCard from '../components/TinyBudgetCard'
 import TinyIssuesByStatusCard from '../components/TinyIssuesByStatusCard'
@@ -123,8 +122,6 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
               <Route exact path="/projects/:projectId/users" component={ProjectUserPage}/>
               <Route exact path="/projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
-
-              <Route exact path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage}/>
 
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards" component={TinyCardMenu}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards/budget" component={TinyBudgetCard} />

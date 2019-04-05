@@ -1,12 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import ExecutiveSummary from '../components/ExecutiveSummary'
+import ExecutiveSummary from '../mobile/components/ExecutiveSummary'
 import ExecutiveSummaryShareButton from '../components/ExecutiveSummaryShareButton'
 import { css } from 'emotion'
-import { ensureSprintDeadlinesLoaded,
-         getSprintDeadlines
-} from '../actions/SprintDeadlines'
 import {
     ensureProjectsLoaded,
     getProject
@@ -33,10 +30,9 @@ class ExecutiveSummaryPage extends Component {
     }
 
     async refresh(props) {
-        const { dispatch, sprint_id, project_id, sprint_deadline_ids } = props
+        const { dispatch, sprint_id, project_id } = props
         await dispatch(ensureProjectsLoaded([project_id]))
         await dispatch(ensureSprintsLoaded([sprint_id]))
-        return await dispatch(ensureSprintDeadlinesLoaded(sprint_deadline_ids))
     }
 
     render() {
@@ -65,17 +61,11 @@ function mapStateToProps(state, props) {
     const project = getProject(state, project_id) || {}
     const sprint = getSprint(state, sprint_id) || {}
 
-    const sprint_deadline_ids = sprint.deadline_ids
-    
-    const sprint_deadlines = getSprintDeadlines(state, sprint_deadline_ids)
-    
     return {
         sprint_id: sprint_id,
         project_id: project_id,
         project: project,
-        sprint: sprint,
-        sprint_deadline_ids: sprint_deadline_ids,
-        sprint_deadlines: sprint_deadlines
+        sprint: sprint
     }
 }
 export default withRouter(connect(mapStateToProps)(ExecutiveSummaryPage))

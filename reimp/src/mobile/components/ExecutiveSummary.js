@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import { sortBy, isEmpty, forEachRight } from 'lodash'
 import { css, cx } from 'emotion'
-import { default_theme as theme } from '../theme/default'
+import { default_theme as theme } from '../../theme/default'
 import {
     ResponsiveContainer,
     BarChart,
@@ -15,19 +15,19 @@ import {
 import {
     ensureProjectsLoaded,
     getProject
-} from '../actions/Projects'
+} from '../../actions/Projects'
 import {
     ensureSprintsLoaded,
     getSprint
-} from '../actions/Sprints'
+} from '../../actions/Sprints'
 import {
     getCostSummary,
     ensureCostSummaryLoaded
-} from '../actions/CostSummary'
-import placeholder from '../images/executive_summary_placeholder.jpg'
-import TimeStamp from './Timestamp'
-import { ensureSprintDeadlinesLoaded, getSprintDeadlines } from '../actions/SprintDeadlines'
-
+} from '../../actions/CostSummary'
+import placeholder from '../../images/executive_summary_placeholder.jpg'
+import TimeStamp from '../../components/Timestamp'
+import { ensureSprintDeadlinesLoaded, getSprintDeadlines } from '../../actions/SprintDeadlines'
+ 
 const resource_data = [
     {name: 'resources', spent: 7500, remaining: 2500}
 ];
