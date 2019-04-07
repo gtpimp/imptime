@@ -11,6 +11,14 @@ from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import BusinessPermissions as ProjectPermissions
 logger = logging.getLogger(__name__)
 
+class IssueByStatusSerializer(BaseSerializer):
+    name = serializers.CharField()
+    num_issues = serializers.IntegerField()
+    estimated_hours = serializers.FloatField()
+    estimated_cost = serializers.FloatField()
+    actual_hours = serializers.FloatField()
+    actual_cost = serializers.FloatField()
+
 class SprintSerializer(BaseSerializer):
 
     id = serializers.CharField()
@@ -51,11 +59,13 @@ class SprintSerializer(BaseSerializer):
     commission_percentage = serializers.FloatField()
     budget = serializers.FloatField()
     hours_by_assignee = serializers.FloatField()
+    issues_by_status = serializers.ListField(child=IssueByStatusSerializer())
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
         self.estimates_by_sprint_id = kwargs.pop('estimates_by_sprint_id')
         self.hours_per_sprint_by_assignee = kwargs.pop('hours_per_sprint_by_assignee')
+        self.issues_by_status = kwargs.pop('issues_by_status', {})
         return super(SprintSerializer, self).__init__(*args, **kwargs)
     
     def to_representation(self, sprint, *args, **kwargs):
@@ -114,7 +124,15 @@ class SprintSerializer(BaseSerializer):
 
         if bp.can_view_actual_hours:
             sprint.hours_by_assignee = self.hours_per_sprint_by_assignee.get(sprint.id, 0)
+            sprint.issues_by_status = self.issues_by_status.values()
+
+            if not bp.has_view_ctc_billable_rates:
+                for x in sprint.issues_by_status:
+                    x['actual_cost'] = None
+                    x['estimated_cost'] = None
+            
         else:
             sprint.hours_by_assignee = None
+            sprint.issues_by_status = None
 
         return super(SprintSerializer, self).to_representation(sprint, *args, **kwargs)

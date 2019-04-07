@@ -55,11 +55,12 @@ class SprintViewSet(BaseViewSet):
                 sprints = sprints.select_related("status3")
 
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee = self._enrich_sprint_qs(sprints)
+                sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee, issues_by_status = self._enrich_sprint_qs(sprints)
 
                 s = SprintSerializer(sprints, many=True,
                                      estimates_by_sprint_id=estimates_by_sprint_id,
                                      hours_per_sprint_by_assignee=hours_per_sprint_by_assignee,
+                                     issues_by_status=issues_by_status,
                                      logged_in_user=self.request.user)
                 sprints_data = s.data
                 context['sprints'] = sprints_data
@@ -161,6 +162,7 @@ class SprintViewSet(BaseViewSet):
                 context['item'] = SprintSerializer(sprint,
                                                    estimates_by_sprint_id={},
                                                    hours_per_sprint_by_assignee={},
+                                                   issues_by_status={},
                                                    logged_in_user=self.request.user).data
                 data = {'status': 'success', 'payload': context}
             else:

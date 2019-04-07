@@ -69,7 +69,7 @@ class CompanyProblemCalculator(object):
     def _create_missing_meta_info(self, projects):
         sprints = Sprint.objects.filter(project_type__in=Sprint.CLOCKABLE_PROJECT_TYPES)\
                                 .filter_open()
-        sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee = sprints.get_meta_info()
+        sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee, issues_by_status = sprints.get_meta_info()
         for sprint in sprints:
             if sprint.id not in estimates_by_sprint_id:
                 continue

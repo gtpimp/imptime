@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
+import { map } from 'lodash'
 import { css } from 'emotion'
+import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'
 import { has_permission } from '../../actions/Users'
 import {
@@ -25,6 +27,7 @@ import SimplifiedParagraph from './SimplifiedParagraph'
 import SimplifiedSubTitle from './SimplifiedSubTitle'
 import ProgressBar from '../../components/ProgressBar'
 import CurrencyValue from '../../components/CurrencyValue'
+import Hours from '../../components/Hours'
 
 class SimplifiedSprint extends Component {
 
@@ -55,6 +58,9 @@ class SimplifiedSprint extends Component {
     }
 
     renderProgressStat(name, max, current) {
+        if ( max === 0 && current === 0 ) {
+            return null
+        }
         return (
             <div className={progress_stat}>
               <div className={progress_stat_name}>
@@ -64,6 +70,45 @@ class SimplifiedSprint extends Component {
                 <ProgressBar max={max} current={current} />
               </div>
             </div>
+        )
+    }
+
+    renderIssueStatuses() {
+        const { sprint, can_view_money, cost_summary } = this.props
+        return (
+            <SimplifiedParagraph>
+              { map(sprint.issues_by_status, (issue_status) =>
+                  <div className={mini_section}>
+                    <SimplifiedSubTitle>{issue_status.name}</SimplifiedSubTitle>
+                    {this.renderProgressStat('number of issues', sprint.num_issues, issue_status.num_issues)}
+                    {this.renderProgressStat('hours', issue_status.estimated_hours, issue_status.actual_hours)}
+
+                    { can_view_money &&
+                      <SimplifiedParagraph>
+                        <div className={value_row}>
+                          spent <CurrencyValue value={issue_status.actual_cost} />
+                        </div>
+                        <div className={value_row}>
+                          <div>
+                            actual hours
+                          </div>
+                          <div>
+                            <Hours hours={issue_status.actual_hours} />
+                          </div>
+                        </div>
+                        <div className={value_row}>
+                          <div>
+                            estimated hours
+                          </div>
+                          <div>
+                            <Hours hours={issue_status.estimated_hours} />
+                          </div>
+                        </div>
+                      </SimplifiedParagraph>
+                    }
+                  </div>
+                )}
+            </SimplifiedParagraph>
         )
     }
     
@@ -82,21 +127,60 @@ class SimplifiedSprint extends Component {
                 <SimplifiedSubTitle>Status: {sprint.status_name}</SimplifiedSubTitle>
                 {sprint.description}
               </SimplifiedParagraph>
-              
-              <SimplifiedParagraph>
-                { this.renderProgressStat('dev closed', sprint.num_issues, sprint.num_dev_closed_issues) }
-                { this.renderProgressStat('fully closed', sprint.num_issues, sprint.num_completely_closed_issues) }
-              </SimplifiedParagraph>
-              
-              { can_view_budget && sprint.budget && cost_summary && 
-                <SimplifiedParagraph>
-                  budget <CurrencyValue value={sprint.budget} />
-                  { can_view_money && 
-                    this.renderProgressStat('spent', cost_summary.budget, cost_summary.spent)
+
+              <div className={section}>
+                <SimplifiedSubTitle>Estimates</SimplifiedSubTitle>
+                { can_view_money && cost_summary &&
+                  <SimplifiedParagraph>
+                    estimated total cost <CurrencyValue value={cost_summary.breakdown.totals.grand_total} />
+                  </SimplifiedParagraph>
+                }
+                  { cost_summary &&
+                    <SimplifiedParagraph>
+                      <div className={value_row}>
+                        <div>
+                          estimated total hours
+                        </div>
+                        <div className={css`text-align: right; width: 100%;`}>
+                          <Hours hours={cost_summary.breakdown.totals.estimated_hours} />
+                        </div>
+                      </div>
+                    </SimplifiedParagraph>
                   }
-                </SimplifiedParagraph>
+              </div>
+              
+              { (can_view_money || can_view_budget) &&
+                <div className={section}>
+                  <SimplifiedSubTitle>Actuals</SimplifiedSubTitle>
+                  { can_view_budget && sprint.budget && cost_summary && 
+                    <SimplifiedParagraph>
+                      budget <CurrencyValue value={cost_summary.budget} />
+                      { can_view_money &&
+                        <div>
+                          spent <CurrencyValue value={cost_summary.spent} />
+                        </div>
+                      }
+                        { can_view_money &&
+                          <div>
+                            {this.renderProgressStat('', cost_summary.budget, cost_summary.spent)}
+                          </div>
+                        }
+                    </SimplifiedParagraph>
+                  }
+                    { can_view_money && ! sprint.budget && cost_summary &&
+                      <SimplifiedParagraph>
+                        spent <CurrencyValue value={cost_summary.spent} />
+                      </SimplifiedParagraph>
+                    }
+                </div>
               }
-                
+
+              { cost_summary && 
+                <div className={section}>
+                  <SimplifiedSubTitle>Status breakdown</SimplifiedSubTitle>
+                  { this.renderIssueStatuses() }
+                </div>
+              }
             </div>
         )
     }
@@ -137,11 +221,30 @@ width: 100%;
 `
 
 const progress_stat_name = css`
-max-width: 25%;
-min-width: 25%;
+max-width: 40%;
+min-width: 40%;
 `
 
 const progress_stat_bar = css`
 width: 100%;
+
+`
+
+const value_row = css`
+display: flex;
+justify-content: space-between;
+`
+
+const section = css`
+padding-top: ${theme.spacing.two};
+padding-bottom: ${theme.spacing.two};
+border-bottom: 1px solid ${theme.colours.border_strong};
+
+`
+
+const mini_section = css`
+padding-top: ${theme.spacing.two};
+padding-bottom: ${theme.spacing.two};
+border-bottom: 1px solid ${theme.colours.border_faint};
 
 `

@@ -25,7 +25,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
-from django.db.models import Q, Avg, Sum, Max, Min, F
+from django.db.models import Q, Avg, Sum, Max, Min, F, FloatField
 from django.utils.datastructures import OrderedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
@@ -1109,6 +1109,8 @@ class ProjectQuerySet(QuerySet):
     def get_meta_info(self):
         sprints = self.prefetch_related("reviews")\
                       .prefetch_related("issues__entries")
+
+        issues_by_status = {}
         
         entries = Entry.objects.filter(issue__project__in=sprints,
                                        issue__issue_type__in=Issue.TESTABLE_ISSUE_TYPES)\
@@ -1244,8 +1246,43 @@ class ProjectQuerySet(QuerySet):
         for open_issue_needed in open_issues_needed:
             estimates_by_sprint_id.setdefault(open_issue_needed['project_id'], {})['num_open_issues_needed'] = open_issue_needed.get('num_issues', 0)
 
+        issue_status_qs = Issue.objects.filter(project__in=sprints)\
+                                       .order_by("status2")\
+                                       .values("status2__name")\
+                                       .annotate(num_issues=Count('id'))
+                                       
+        for issue_status in issue_status_qs:
+            issue_status['name'] = issue_status.pop('status2__name')
+            issue_status['actual_hours'] = 0
+            issue_status['actual_cost'] = 0
+            issue_status['estimated_hours'] = 0
+            issue_status['estimated_cost'] = 0
+            issues_by_status[issue_status['name']] = issue_status
+
+        commission_clause = 100/(100-F('user__rates__project__commission_percentage'))
+        issue_status_points_qs = IssuePoints.objects.filter(issue__project__in=sprints,
+                                                            issue__assigned_to_id=F('user_id'))\
+                                                    .filter(issue__assigned_to_id=F('issue__project__rate__user_id'))\
+                                                    .values("issue__status2__name")\
+                                                    .annotate(estimated_hours=Sum(F('points')*F('issue__project__rate__velocity')))
+                                                    #          estimated_cost=Sum(F('points')*F('issue__project__rate__velocity')*F('user__rates__billable_amount')*commission_clause))
+
+        for issue_status_points in issue_status_points_qs:
+            issue_status_points['name'] = issue_status_points['issue__status2__name']
+            issues_by_status[issue_status_points['name']]['estimated_hours'] = issue_status_points['estimated_hours']
+            #issues_by_status[issue_status_points['name']]['estimated_cost'] = issue_status_points['estimated_cost']
+
+        issue_status_actuals_qs = Entry.objects.filter(issue__project__in=sprints)\
+                                               .values('issue__status2__name')\
+                                               .annotate(actual_hours=Sum(F('hours')),
+                                                         cost_with_commission=Sum(F('hours')*F('user__rates__billable_amount')*commission_clause,
+                                                                                  output_field=FloatField()))
+        for issue_status_actual in issue_status_actuals_qs:
+            issue_status_actual['name'] = issue_status_actual['issue__status2__name']
+            issues_by_status[issue_status_actual['name']]['actual_hours'] = issue_status_actual['actual_hours']
+            issues_by_status[issue_status_actual['name']]['actual_cost'] = issue_status_actual['cost_with_commission']
             
-        return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee
+        return sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee, issues_by_status
         
         
     def filter_assigned_tasks_are_active(self):
