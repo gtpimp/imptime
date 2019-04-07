@@ -23,7 +23,7 @@ class SimplifiedPage extends Component {
     onHome = (evt) => {
         const { history } = this.props
         evt.preventDefault()
-        history.push('/')
+        history.push('/wd/')
     }
     
     render() {

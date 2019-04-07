@@ -1,6 +1,4 @@
 import React, {Component} from 'react'
-import {connect} from 'react-redux'
-import {withRouter} from 'react-router-dom'
 import SimplifiedProjectList from '../components/SimplifiedProjectList'
 import SimplifiedPage from './SimplifiedPage'
 import {
@@ -18,7 +16,5 @@ class SimplifiedProjectsPage extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
-}
+export default SimplifiedProjectsPage
 
-export default withRouter(connect(mapStateToProps)(SimplifiedProjectsPage))

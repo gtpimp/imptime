@@ -6,6 +6,9 @@ import {
     getProject,
     isLoadingProjects
 } from '../../actions/Projects'
+import SimplifiedParagraph from './SimplifiedParagraph'
+import SimplifiedSprintList from './SimplifiedSprintList'
+import { LIST_KEY__SPRINT_LIST } from '../../actions/ItemListKeyRegistry'
 
 class SimplifiedProject extends Component {
 
@@ -30,8 +33,11 @@ class SimplifiedProject extends Component {
         
         return (
             <div>
-              Your project details go here.
-              {project.name}
+              <SimplifiedParagraph>
+                {project.description}
+                <SimplifiedSprintList project_id={project.id}
+                                      list_key={LIST_KEY__SPRINT_LIST} />
+              </SimplifiedParagraph>
             </div>
         )
     }

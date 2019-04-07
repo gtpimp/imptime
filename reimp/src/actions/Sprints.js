@@ -19,7 +19,8 @@ import {
     is_item_invalidated,
     getInvalidatedItemIds,
     getSavingItemIds,
-    getLoadingItemIds
+    getLoadingItemIds,
+    isLoadingItems
 } from '../actions/Item'
 
 import {
@@ -276,4 +277,6 @@ export function getLastSelectedSprintId(state) {
     return get(state, ["sprint", "last_selected_sprint_id"], null)
 }
 
-
+export function isLoadingSprints(state, item_ids) {
+    return isLoadingItems(state, ENTITY_KEY__SPRINT, item_ids)
+}

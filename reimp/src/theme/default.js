@@ -51,6 +51,7 @@ export const default_theme = {
                black: '#000000',
                red: '#E25A50',
                border_strong: '#888888',
+               border_faint: '#bbbbbb',
                input_border: '#BDBDBD',
 
                calendar_issue_history: '#DEAB2C',
