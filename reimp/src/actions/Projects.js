@@ -19,7 +19,8 @@ import {
     is_item_invalidated,
     getInvalidatedItemIds,
     getSavingItemIds,
-    getLoadingItemIds
+    getLoadingItemIds,
+    isLoadingItems
 } from '../actions/Item'
 
 
@@ -128,4 +129,8 @@ export function setLastSelectedProjectId(project_id) {
 
 export function getLastSelectedProjectId(state) {
     return get(state, ["project", "last_selected_project_id"], null)
+}
+
+export function isLoadingProjects(state, item_ids) {
+    return isLoadingItems(state, ENTITY_KEY__PROJECT, item_ids)
 }

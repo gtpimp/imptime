@@ -5,6 +5,7 @@ import { setBrowserTitle } from '../../actions/Page'
 import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import SimplifiedWelcomePage from './SimplifiedWelcomePage'
 import SimplifiedProjectsPage from './SimplifiedProjectsPage'
+import SimplifiedProjectPage from './SimplifiedProjectPage'
 
 class MobileRouter extends Component {
 
@@ -16,6 +17,7 @@ class MobileRouter extends Component {
             <Switch>
               <Route exact path="/wd/" component={SimplifiedWelcomePage} />
               <Route exact path="/wd/projects/" component={SimplifiedProjectsPage} />
+              <Route exact path="/wd/projects/:projectId/" component={SimplifiedProjectPage} />
               <Route exact path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage} />
             </Switch>
         )
