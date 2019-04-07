@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Route, Switch, withRouter } from 'react-router-dom'
+import { setBrowserTitle } from '../../actions/Page'
 import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
+import SimplifiedWelcomePage from './SimplifiedWelcomePage'
 
 class MobileRouter extends Component {
 
@@ -11,7 +13,8 @@ class MobileRouter extends Component {
         
         return (
             <Switch>
-              <Route exact path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage}/>
+              <Route path="/wd/" component={SimplifiedWelcomePage} />
+              <Route path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage} />
             </Switch>
         )
     }

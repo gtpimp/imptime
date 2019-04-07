@@ -1,35 +1,29 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { isMobile } from '../actions/Settings'
+import { isMobile } from '../../actions/Settings'
 
-class WelcomePage extends Component {
+class SimplifiedWelcomePage extends Component {
 
     componentDidMount() {
         const { is_mobile, history } = this.props
-        if ( is_mobile ) {
-            history.push('/wd/')
+        if ( !is_mobile ) {
+            history.push('/')
         }
     }
     
     render() {
         return (
-
-            <div className="welcome-page">
-              <div className="welcome-page-content">
-                Welcome to ImpTime.
-              </div>
+            <div>
+              Welcome to mobile mode
             </div>
         )
     }
 }
-
 function mapStateToProps(state, props) {
-
     return {
         is_mobile: isMobile()
     }
 }
 
-export default withRouter(connect(mapStateToProps)(WelcomePage))
-
+export default withRouter(connect(mapStateToProps)(SimplifiedWelcomePage))

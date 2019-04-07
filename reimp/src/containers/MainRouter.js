@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Route, Switch, withRouter } from 'react-router-dom'
 /* import {withRouter} from 'react-router' */
+import MobileRouter from '../mobile/containers/MobileRouter'
 import AccountCreatePage from './AccountCreatePage'
 import AccountCreatedPage from './AccountCreatedPage'
 import BillableHoursStatementPage from './BillableHoursStatementPage'
@@ -66,6 +67,7 @@ class MainRouter extends Component {
         return (
             <Switch>
               <Route exact path="/" component={WelcomePage}/>
+              <Route path="/wd" component={MobileRouter} />
               <Route exact path="/account/create" component={AccountCreatePage}/>
               <Route exact path="/account/created" component={AccountCreatedPage}/>
               <Route path="/onboarding" component={OnboardingRouter}/>

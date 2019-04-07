@@ -48,7 +48,7 @@ class MainLayout extends Component {
         if ( current_mien_id && !current_mien ) {
             dispatch(ensureMiensLoaded([current_mien_id]))
         }
-        
+
         this.refresh()
     }
 
@@ -98,7 +98,7 @@ class MainLayout extends Component {
 
         // hack, better to abstract the router up one level
         const self_contained_simplified_page = this.props.location.pathname.indexOf("wd/") !== -1
-
+ 
         if ( ! are_settings_loaded ) {
             return (
                 <AppDiv id="app"></AppDiv>
