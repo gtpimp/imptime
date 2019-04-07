@@ -2,24 +2,28 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { isMobile } from '../../actions/Settings'
+import SimplifiedPage from './SimplifiedPage'
 
 class SimplifiedWelcomePage extends Component {
 
-    componentDidMount() {
-        const { is_mobile, history } = this.props
-        if ( !is_mobile ) {
-            history.push('/')
-        }
+    onShowProjects = (evt) => {
+        const { history } = this.props
+        evt.preventDefault()
+        history.push('/wd/projects')
     }
     
     render() {
         return (
-            <div>
+            <SimplifiedPage>
               Welcome to mobile mode
-            </div>
+              <button onClick={this.onShowProjects}>
+                Projects
+              </button>
+            </SimplifiedPage>
         )
     }
 }
+
 function mapStateToProps(state, props) {
     return {
         is_mobile: isMobile()

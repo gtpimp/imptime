@@ -4,6 +4,7 @@ import { Route, Switch, withRouter } from 'react-router-dom'
 import { setBrowserTitle } from '../../actions/Page'
 import SimplifiedExecutiveSummaryPage from './SimplifiedExecutiveSummaryPage'
 import SimplifiedWelcomePage from './SimplifiedWelcomePage'
+import SimplifiedProjectsPage from './SimplifiedProjectsPage'
 
 class MobileRouter extends Component {
 
@@ -13,8 +14,9 @@ class MobileRouter extends Component {
         
         return (
             <Switch>
-              <Route path="/wd/" component={SimplifiedWelcomePage} />
-              <Route path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage} />
+              <Route exact path="/wd/" component={SimplifiedWelcomePage} />
+              <Route exact path="/wd/projects/" component={SimplifiedProjectsPage} />
+              <Route exact path="/wd/projects/:projectId/sprints/:sprintId/executive_summary" component={SimplifiedExecutiveSummaryPage} />
             </Switch>
         )
     }

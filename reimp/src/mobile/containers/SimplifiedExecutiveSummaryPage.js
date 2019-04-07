@@ -2,12 +2,15 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import ExecutiveSummary from '../components/ExecutiveSummary'
+import SimplifiedPage from './SimplifiedPage'
 
 class SimplifiedExecutiveSummaryPage extends Component {
     render() {
         const { project_id, sprint_id } = this.props
         return (
-            <ExecutiveSummary project_id={ project_id } sprint_id={ sprint_id } />
+            <SimplifiedPage>
+              <ExecutiveSummary project_id={ project_id } sprint_id={ sprint_id } />
+            </SimplifiedPage>
         )
     }
 }
