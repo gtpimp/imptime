@@ -9,8 +9,7 @@ class SimplifiedProjectsPage extends Component {
 
     render() {
         return (
-            <SimplifiedPage>
-              <SimplifiedTitle>Projects</SimplifiedTitle>
+            <SimplifiedPage title="Projects">
               <SimplifiedProjectList />
             </SimplifiedPage>
         )

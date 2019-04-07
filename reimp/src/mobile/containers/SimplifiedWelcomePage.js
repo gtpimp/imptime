@@ -3,7 +3,6 @@ import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
 import { isMobile } from '../../actions/Settings'
 import SimplifiedPage from './SimplifiedPage'
-import SimplifiedTitle from '../components/SimplifiedTitle'
 import SimplifiedButton from '../components/SimplifiedButton'
 
 class SimplifiedWelcomePage extends Component {
@@ -16,15 +15,10 @@ class SimplifiedWelcomePage extends Component {
     
     render() {
         return (
-            <SimplifiedPage>
-              <SimplifiedTitle>
-                ImpTime
-              </SimplifiedTitle>
-
+            <SimplifiedPage title="ImpTime">
               <SimplifiedButton onClick={this.onShowProjects}>
                 Projects
               </SimplifiedButton>
-              
             </SimplifiedPage>
         )
     }
