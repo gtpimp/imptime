@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map, concat } from 'lodash'
+import { get, map, concat } from 'lodash'
 import Select from 'react-select';
 import '../../sass/toolbar-panel.css'
 import {
@@ -94,9 +94,9 @@ class SprintsToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
 
-    const selected_sprint_ids = getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE).sprint_ids
+    const selected_sprint_ids = get(getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE), ["sprint_ids"], null)
     const sprint = (selected_sprint_ids && selected_sprint_ids.length > 0 && getSprint(state, selected_sprint_ids[0])) || {}
-    const selected_project_ids = getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE).project_ids
+    const selected_project_ids = get(getPageSelectedEntities(state, PAGE_KEY__SPRINTS_PAGE), ["project_ids"], null)
     const project = (selected_project_ids && selected_project_ids.length > 0 && getProject(state, selected_project_ids[0])) || {}
     const selected_sprint_type_filter = (getListFilter(state, LIST_KEY__SPRINT_LIST) || {}).sprint_type || "_all_"
     const sprint_type_filter_options = concat( [{value:'_all_', label: 'all'}], map(project.allowed_sprint_type_names, (name) => ( {value: name, label: name })))
