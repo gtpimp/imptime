@@ -74,7 +74,7 @@ class SimplifiedSprint extends Component {
     }
 
     renderIssueStatuses() {
-        const { sprint, can_view_money, cost_summary } = this.props
+        const { sprint, can_view_money } = this.props
         return (
             <SimplifiedParagraph>
               { map(sprint.issues_by_status, (issue_status) =>

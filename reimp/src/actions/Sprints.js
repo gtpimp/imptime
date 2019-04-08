@@ -45,7 +45,7 @@ export const ALL_AVAILABLE_SPRINT_HEADERS =
       {key:'num_issues', label:"Issues", description:"Number of issues", width: small_col_width, is_default:true},
       {key:'num_testable_issues', label:"Testable issues", description:"Number of testable issues", width: small_col_width},
       {key:'has_dev_started', label:"Has dev started", description:"Has time been clocked by the assigned user on any testable issue", width:small_col_width},
-      {key:'status', label:"Status", description:"Sprint status", width:small_col_width, is_default:true},
+      {key:'status', label:"Status", description:"Sprint status", width:large_col_width, is_default:true},
       {key:'type', label:"Type", description:"Sprint type", width:small_col_width},
       {key:'hours_by_assignee', label:"Total clocked hours by assignee", description:"Total actual hours by the assigned user across all testable issues", width:small_col_width},
       {key:'estimates_by_assignee', label:"Total estimated hours by assignee", description:"Total estimated hours by the assigned user across all testable issues", width:small_col_width},
