@@ -91,7 +91,13 @@ class CommonTable extends Component {
     render() {
         const { all_headers, header_list_name, items, table_params } = this.props
 
-        const { table_height, table_width } = this.state
+        let { table_height, table_width } = this.state
+        if ( table_params && table_params.height ) {
+            table_height = table_params.height
+        }
+        if ( table_params && table_params.width ) {
+            table_width = table_params.width
+        }
         
         return (
 
