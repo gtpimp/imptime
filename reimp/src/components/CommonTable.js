@@ -1,10 +1,12 @@
 import React, {Component} from 'react'
 import { includes, size, map } from 'lodash'
 import {connect} from 'react-redux'
+import { isEmpty } from 'lodash'
 import { findDOMNode } from 'react-dom'
 import { AutoSizer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
 import MienListColumnConfigurable from './MienListColumnConfigurable'
+import { getTableSizes } from '../actions/commontable'
 import 'react-virtualized/styles.css';
 
 const SortableTable = SortableContainer(Table, {
@@ -18,6 +20,14 @@ const DragHandle = SortableHandle(({ label }) => (
 const MIN_COLUMN_WIDTH = 30
 
 class CommonTable extends Component {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            table_width: 0,
+            table_height: 0 
+        }
+    }
 
     onRowSorted = (args) => {
         const {newIndex, oldIndex} = args
@@ -67,9 +77,21 @@ class CommonTable extends Component {
             return content
         }
     }
+
+    tableResize = (updated_measurements) => {
+        const { table_height, table_width } = this.state
+
+        const new_state = getTableSizes(table_height, table_width, updated_measurements)
+
+        if (!isEmpty(new_state)) {
+            this.setState(new_state)
+        }        
+    }
     
     render() {
         const { all_headers, header_list_name, items, table_params } = this.props
+
+        const { table_height, table_width } = this.state
         
         return (
 
@@ -78,37 +100,37 @@ class CommonTable extends Component {
             >
               {({active_headers}) => (
 
-                   <div className="common-table">
-                     <AutoSizer>
-                       {({width, height}) => (
-                            <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
-                                           height={table_params.height || height} 
-                                           headerHeight={40}
-                                           rowCount={size(items)}
-                                           onRowClick={this.onRowClicked}
-                                           onSortEnd={this.onRowSorted}
-                                           distance={5}
-                                           rowHeight={30}
-                                           width={width}
-                                           useDragHandle
-                                           rowRenderer={this.rowRenderer}
-                                           rowGetter={({ index }) => items[index]}
-                            >
-                              { map(active_headers, (header) =>
-                                  <Column key={header.key}
-                                          headerClassName="common-table__header__column"
-                                          label={header.label}
-                                          dataKey={header.key}
-                                          cellRenderer={(args) => this.renderDraggableColumn(active_headers, args)}
-                                          flexGrow={parseInt(header.flex || 0, 10)}
-                                          flexShrink={parseInt(header.flex || 0, 10)}
-                                          width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
-                                )}
-                            </SortableTable>
-                        )}
-                     </AutoSizer>
-                   </div>
-               )}
+                  <div className="common-table">
+                    <AutoSizer onResize={ this.tableResize }>
+                      {({width, height}) => (
+                          <SortableTable getContainer={(wrappedInstance) => findDOMNode(wrappedInstance.Grid)}
+                                         height={ table_height } 
+                                         headerHeight={40}
+                                         rowCount={size(items)}
+                                         onRowClick={this.onRowClicked}
+                                         onSortEnd={this.onRowSorted}
+                                         distance={5}
+                                         rowHeight={30}
+                                         width={table_width}
+                                         useDragHandle
+                                         rowRenderer={this.rowRenderer}
+                                         rowGetter={({ index }) => items[index]}
+                          >
+                            { map(active_headers, (header) =>
+                                <Column key={header.key}
+                                        headerClassName="common-table__header__column"
+                                        label={header.label}
+                                        dataKey={header.key}
+                                        cellRenderer={(args) => this.renderDraggableColumn(active_headers, args)}
+                                        flexGrow={parseInt(header.flex || 0, 10)}
+                                        flexShrink={parseInt(header.flex || 0, 10)}
+                                        width={Math.max((header.width && parseInt(header.width.replace("px",""), 10)) || 200, MIN_COLUMN_WIDTH)} />
+                            )}
+                          </SortableTable>
+                      )}
+                    </AutoSizer>
+                  </div>
+              )}
               
             </MienListColumnConfigurable>
         )        
