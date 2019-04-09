@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { flatMap, keys, groupBy, filter, keyBy, size, uniq, concat, indexOf, map, union, difference, includes } from 'lodash'
+import { flatMap, keys, groupBy, filter, keyBy, size, uniq, concat, indexOf, map, difference, includes } from 'lodash'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
@@ -10,7 +10,6 @@ import { ensureSprintsLoaded, getSprint } from '../actions/Sprints'
 import { logged_in_user } from '../actions/Auth'
 import { setActivelyAvailableAutoClockEntity } from '../actions/AutoClock'
 import CommonTable from './CommonTable'
-import IssueEstimatesSummary from './IssueEstimatesSummary'
 import 'react-virtualized/styles.css';
 import {
     makeSelTagCategoryNamesForIssues,
@@ -30,8 +29,6 @@ import { selGetAllTagsById } from '../selectors/IssueSelectors'
 import {
     initList,
     invalidateList,
-    collapse_list,
-    expand_list,
     setItemFlag,
     setCursorItem,
     getCursorItemId,
@@ -103,8 +100,6 @@ class IssueList extends Component {
         super(props)
         this.onRefresh = this.onRefresh.bind(this)
         this.onChangePage = this.onChangePage.bind(this)
-        this.onCollapse = this.onCollapse.bind(this)
-        this.onExpand = this.onExpand.bind(this)
         this.onClickedIssue = this.onClickedIssue.bind(this)
         this.reorderIssue = this.reorderIssue.bind(this)
         this.toggleAsFeature = this.toggleAsFeature.bind(this)
@@ -235,100 +230,18 @@ class IssueList extends Component {
         onSelectIssues([visible_item_ids[next_index]])
     }
 
-    onCollapse() {
-        const {dispatch, list_key} = this.props
-        dispatch(collapse_list(list_key))
+    onSelectedIssues = (issue_ids) => {
+        const { onSelectIssues } = this.props
+        if ( onSelectIssues ) {
+            onSelectIssues(issue_ids)
+        }
     }
 
-    onExpand() {
-        const {dispatch, list_key} = this.props
-        dispatch(expand_list(list_key))
-    }
-
-    onClickedIssue(event, issue_id) {
-        const {dispatch, onSelectIssues, selected_ids, sprint_id, project_id} = this.props
-        if ( event ) {
-            event.stopPropagation()
-        }
-
-        let selected_issue_ids = []
-        if (event.ctrlKey || event.metaKey) {
-            if (includes(selected_ids, issue_id)) {
-                selected_issue_ids = difference(selected_ids, [issue_id])
-            } else {
-                selected_issue_ids = union(selected_ids, [issue_id])
-            }
-        } else if (event.shiftKey) {
-            selected_issue_ids = concat(selected_ids, this.findIssuesFromHereToAlreadySelected(issue_id))
-        } else {
-            selected_issue_ids = this.findHiddenIssuesRelatingToTargetIssueId(issue_id)
-        }
+    onClickedIssue(issue_id) {
+        const { dispatch, sprint_id, project_id } = this.props
         dispatch(setGloballySelectedIssueId(project_id, sprint_id, issue_id))
         dispatch(setActivelyAvailableAutoClockEntity(project_id, sprint_id, issue_id))
-        if ( onSelectIssues ) {
-            onSelectIssues(selected_issue_ids)
-        }
         dispatch(cancelCandidateIssue())
-    }
-
-    findHiddenIssuesRelatingToTargetIssueId(target_issue_id) {
-        const {visible_item_ids, issues, expanded_issues, issues_by_id } = this.props
-        let issue_ids_to_select = [target_issue_id]
-        let running_issue_index = indexOf(visible_item_ids, target_issue_id)
-        let issue = issues_by_id[target_issue_id] || {}
-        if (issue.can_group_issues !== true) {
-            return issue_ids_to_select
-        }
-        if ( includes(expanded_issues, issue.id) ) {
-            return issue_ids_to_select
-        }
-
-        let parent_group_id = issue.id
-        running_issue_index += 1
-        while( running_issue_index < visible_item_ids.length ) {
-            issue = issues[running_issue_index]
-            if ( issue.parent_group_id === parent_group_id ) {
-                issue_ids_to_select.push(issue.id)
-            } else {
-                break
-            }
-            running_issue_index += 1
-        }
-        return issue_ids_to_select
-    }
-
-    findIssuesFromHereToAlreadySelected(target_issue_id) {
-        const {selected_ids, visible_item_ids} = this.props
-
-        let issue_ids_to_select = []
-        let possible_issue_ids_to_select = []
-        let running_issue_index = indexOf(visible_item_ids, target_issue_id)
-        while(running_issue_index>0 && !includes(selected_ids, visible_item_ids[running_issue_index])) {
-            possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
-            running_issue_index -= 1
-            if ( includes(selected_ids, visible_item_ids[running_issue_index]) ) {
-                possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
-                issue_ids_to_select = possible_issue_ids_to_select
-            }
-        }
-
-        if ( issue_ids_to_select.length === 0 ) {
-            possible_issue_ids_to_select = []
-            running_issue_index = indexOf(visible_item_ids, target_issue_id)
-            while(running_issue_index<visible_item_ids.length && !includes(selected_ids, visible_item_ids[running_issue_index])) {
-                possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
-                running_issue_index += 1
-                if ( includes(selected_ids, visible_item_ids[running_issue_index]) ) {
-                    possible_issue_ids_to_select.push(visible_item_ids[running_issue_index])
-                    issue_ids_to_select = possible_issue_ids_to_select
-                }
-            }
-        }
-
-        let issue_and_feature_ids_to_select = []
-        map(issue_ids_to_select, (issue_id) =>
-            issue_and_feature_ids_to_select = concat(issue_and_feature_ids_to_select, this.findHiddenIssuesRelatingToTargetIssueId(issue_id)))
-        return issue_and_feature_ids_to_select
     }
 
     onChangePage() {
@@ -415,7 +328,7 @@ class IssueList extends Component {
         if ( ! includes(selected_ids, moving_issue_id) ) {
             selected_ids = [moving_issue_id]
         }
-        selected_ids = uniq(concat(selected_ids, this.findHiddenIssuesRelatingToTargetIssueId(moving_issue_id)))
+        selected_ids = uniq(concat(selected_ids, [moving_issue_id]))
 
         // get place to move it
         let move_after_issue_id
@@ -425,7 +338,7 @@ class IssueList extends Component {
             move_after_issue_id = issue_items[index_of_destination].id || null
         }
 
-        const target_hidden_child_issue_ids = (move_after_issue_id && this.findHiddenIssuesRelatingToTargetIssueId(move_after_issue_id)) || [null]
+        const target_hidden_child_issue_ids = (move_after_issue_id && [move_after_issue_id]) || [null]
         const target_issue_id = target_hidden_child_issue_ids[target_hidden_child_issue_ids.length-1]
 
 
@@ -726,22 +639,14 @@ class IssueList extends Component {
                 content = (
                     <DivTableCell key={user_id} secondary={true} >
 
-                      <Floater title={"Comparative estimates"}
-                               disableHoverToClick
-                               event="hover"
-                               eventDelay={0}
-                               placement="left"
-                               content={<div><IssueEstimatesSummary issue_id={issue.id} /></div>}
-                      >
-                        <EditableIssueEstimate issue_id={issue.id}
-                                               actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
-                                               class_name="issue-cell__my-estimate"
-                                               renderReadOnly={() => <Progress issue={issue}
+                      <EditableIssueEstimate issue_id={issue.id}
+                                             actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
+                                             class_name="issue-cell__my-estimate"
+                                             renderReadOnly={() => <Progress issue={issue}
                                                                                force_show={true}
                                                                                actual={(all_actuals_by_user_id[user_id] && all_actuals_by_user_id[user_id].hours) || null}
                                                                                estimate={(all_estimates_by_user_id[user_id] && all_estimates_by_user_id[user_id].estimate_hours) || null} />}
-                        />
-                      </Floater>
+                      />
                     </DivTableCell>
                 )
                 break
@@ -895,6 +800,7 @@ class IssueList extends Component {
               <CommonTable all_headers={all_headers}
                            header_list_name={header_list_name}
                            onRowSelected={this.onClickedIssue}
+                           onRowSelectionUpdated={this.onSelectedIssues}
                            onRowReordered={this.reorderIssue}
                            items={issue_items}
                            selected_item_ids={selected_ids}

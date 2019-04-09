@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
-import { includes, size, map } from 'lodash'
+import { includes, size, map, isEmpty, keys, keyBy, union, difference, concat, indexOf } from 'lodash'
 import {connect} from 'react-redux'
-import { isEmpty } from 'lodash'
 import { findDOMNode } from 'react-dom'
 import { AutoSizer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc'
@@ -43,8 +42,64 @@ class CommonTable extends Component {
     }
 
     onRowClicked = ({event, rowData}) => {
-        const { onRowSelected } = this.props
-        onRowSelected(event, rowData.id)
+        const { onRowSelected, onRowSelectionUpdated } = this.props
+        if ( event ) {
+            event.stopPropagation()
+        }
+        if ( onRowSelected ) {
+            onRowSelected(rowData.id)
+        }
+        const new_selected_ids = this.updateSelection(event, rowData.id)
+        if ( onRowSelectionUpdated ) {
+            onRowSelectionUpdated(new_selected_ids)
+        }
+    }
+
+    updateSelection(event, id) {
+        const {selected_item_ids} = this.props
+        let new_selected_ids = []
+        if (event.ctrlKey || event.metaKey) {
+            if (includes(selected_item_ids, id)) {
+                new_selected_ids = difference(selected_item_ids, [id])
+            } else {
+                new_selected_ids = union(selected_item_ids, [id])
+            }
+        } else if (event.shiftKey) {
+            new_selected_ids = concat(selected_item_ids, this.findItemsFromHereToAlreadySelected(id))
+        } else {
+            new_selected_ids = [id]
+        }
+        return new_selected_ids
+    }
+
+    findItemsFromHereToAlreadySelected(target_id) {
+        const {selected_item_ids, item_ids} = this.props
+
+        let ids_to_select = []
+        let possible_ids_to_select = []
+        let running_index = indexOf(item_ids, target_id)
+        while(running_index>0 && !includes(selected_item_ids, item_ids[running_index])) {
+            possible_ids_to_select.push(item_ids[running_index])
+            running_index -= 1
+            if ( includes(selected_item_ids, item_ids[running_index]) ) {
+                possible_ids_to_select.push(item_ids[running_index])
+                ids_to_select = possible_ids_to_select
+            }
+        }
+
+        if ( ids_to_select.length === 0 ) {
+            possible_ids_to_select = []
+            running_index = indexOf(item_ids, target_id)
+            while(running_index<item_ids.length && !includes(selected_item_ids, item_ids[running_index])) {
+                possible_ids_to_select.push(item_ids[running_index])
+                running_index += 1
+                if ( includes(selected_item_ids, item_ids[running_index]) ) {
+                    possible_ids_to_select.push(item_ids[running_index])
+                    ids_to_select = possible_ids_to_select
+                }
+            }
+        }
+        return ids_to_select
     }
 
     rowRenderer = (args) => {
@@ -147,16 +202,20 @@ class CommonTable extends Component {
 function mapStateToProps(state, props) {
     
     const { header_list_name, renderCell, all_headers, 
-            selected_item_ids, onRowSelected, onRowReordered, items,
-            table_params } = props
+            selected_item_ids, onRowSelected, onRowReordered, onRowSelectionUpdated,
+            items, table_params } = props
 
+    const item_ids = keys(keyBy(items, 'id'))
+    
     return {
         onRowSelected,
+        onRowSelectionUpdated,
         onRowReordered,
         renderCell,
         all_headers,
         header_list_name,
         items,
+        item_ids,
         selected_item_ids,
         table_params: table_params || {}
     }
