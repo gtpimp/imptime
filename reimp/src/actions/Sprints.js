@@ -121,12 +121,12 @@ export function updateSprintDescription(sprint_id, value) {
     return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "description", value)
 }
 
-export function updateSprintStatus(sprint_id, value) {
-    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "status_name", value)
+export function updateSprintStatus(sprint_ids, value) {
+    return updateItem(ENTITY_KEY__SPRINT, sprint_ids, "status_name", value)
 }
 
-export function updateSprintType(sprint_id, value) {
-    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "sprint_type", value)
+export function updateSprintType(sprint_ids, value) {
+    return updateItem(ENTITY_KEY__SPRINT, sprint_ids, "sprint_type", value)
 }
 
 export function updateSprintReviewCycle(sprint_id, value) {

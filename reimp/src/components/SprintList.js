@@ -96,7 +96,7 @@ class SprintList extends Component {
         event.stopPropagation()
 
         let selected_sprint_ids = []
-        if (event.ctrlKey) {
+        if (event.ctrlKey || event.metaKey) {
             if (includes(selected_ids, sprint_id)) {
                 selected_sprint_ids = difference(selected_ids, [sprint_id])
             } else {

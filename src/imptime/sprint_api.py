@@ -81,8 +81,8 @@ class SprintViewSet(BaseViewSet):
             field_name = params['field_name']
             new_value = params['value']
 
-            if 'sprint_ids' in params:
-                sprint_pks = params['sprint_ids']
+            if 'item_ids' in params:
+                sprint_pks = params['item_ids']
             else:
                 sprint_pks = [pk]
 

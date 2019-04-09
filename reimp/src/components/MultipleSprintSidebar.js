@@ -1,11 +1,13 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {ensureSprintsLoaded, getSprints} from '../actions/Sprints'
-import PropertyStack from '../components/PropertyStack'
 import MienFeature from './MienFeature'
-import PropertyStackComponent from '../components/PropertyStackComponent'
 import EditableSprintStatus from './EditableSprintStatus'
+import EditableSprintType from '../components/EditableSprintType'
 import MultipleIssueSummary from './MultipleIssueSummary'
+import SidebarProperty from './SidebarProperty'
+import SidebarDetail from './SidebarDetail'
+import SidebarSectionTitle from './SidebarSectionTitle'
 
 class MultipleSprintSidebar extends Component {
 
@@ -25,33 +27,26 @@ class MultipleSprintSidebar extends Component {
 
         return (
 
-            <div className="sidebar sprint-sidebar">
-              <PropertyStack>
-                <PropertyStackComponent>
-                  <div className="property-row">
-                    <div className="property-value">
-                      { sprints.length } sprints selected
-                    </div>
-                  </div>
-                  
-                  <div className="property-row">
-                    <div className="property-label">
-                      Sprint
-                    </div>
-                    <div className="property-value">
-                      <EditableSprintStatus sprint_ids={sprint_ids}/>
-                    </div>
-                  </div>
-                </PropertyStackComponent>
 
-                <MienFeature feature_name="multiple_issue_summary">
-                  <PropertyStackComponent>
-                    <MultipleIssueSummary filter={{sprint_ids:sprint_ids}} project_id={project_id} />
-                  </PropertyStackComponent>
-                </MienFeature>
-              </PropertyStack>
+            <SidebarProperty key="infostack">
+              <SidebarDetail label="Last Activity">
+                { sprints.length } sprints selected
+              </SidebarDetail>
               
-            </div>
+              <SidebarDetail label="Status">
+                <EditableSprintStatus sprint_ids={sprint_ids} project_id={project_id} />
+              </SidebarDetail>
+
+              <SidebarDetail label="Type">
+                <EditableSprintType sprint_ids={sprint_ids} project_id={project_id} />
+              </SidebarDetail>
+
+              <MienFeature feature_name="multiple_issue_summary">
+                <SidebarSectionTitle title="Multiple Issue Summary" />
+                <MultipleIssueSummary filter={{sprint_ids:sprint_ids}} project_id={project_id} auto_load={false} />
+              </MienFeature>
+                
+            </SidebarProperty>
         )
     }
 }
