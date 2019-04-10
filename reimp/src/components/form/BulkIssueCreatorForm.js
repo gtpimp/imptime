@@ -72,6 +72,7 @@ class BulkIssueCreatorForm extends Component {
                   status: dev done
                   estimate: 1.5
                   attachment: name_of_an_existing_project_attachment
+                  tags: some_tag_category:some_tag_name, some_other_tag_category:some_other_tag_name
 
                   Doing admin type things
                   
