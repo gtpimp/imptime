@@ -61,7 +61,7 @@ class BulkTextParser(object):
                         category = TagCategory.objects.get_or_create(business=sprint.business,
                                                                      name=category_name)[0]
                         tag = Tag.objects.get_or_create(category=category,
-                                                        name=tag_name)
+                                                        name=tag_name)[0]
                         issue_tags.append(tag)
                     issue.tags = issue_tags
                     issue.save()
