@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { map, values } from 'lodash'
 import { has_permission } from '../actions/Users'
 import CommonTree from './CommonTree'
+import Loading from './Loading'
 import {
     initList,
     shouldFetchList,
@@ -123,12 +124,12 @@ class WikiList extends Component {
 
         if ( (is_loading && !wikis_by_id && wikis_by_id.length) === 0 ) {
             return (
-                <div>Loading...</div>
+                <Loading/>
             )
         }
 
         return (
-            <div className="wiki-list">
+            <div>
 
               <CommonTree items={wikis_as_structured_tree}
                           items_by_id={wikis_by_id}

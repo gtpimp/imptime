@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes, map} from 'lodash'
+import {includes, map, get} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import FeatureList from '../components/FeatureList'
 import FeatureSidebar from '../components/FeatureSidebar'
@@ -168,7 +168,7 @@ function mapStateToProps(state, props) {
     let page_key = props.page_key || PAGE_KEY__FEATURES_PAGE
     const filter = getListFilter(state, list_key)
     const items_by_id = (feature && feature.items_by_id) || {}
-    const selected_feature_ids = getPageSelectedEntities(state, page_key).feature_ids
+    const selected_feature_ids = get(getPageSelectedEntities(state, page_key), ["feature_ids"])
     
     const selected_items = items_by_id && selected_feature_ids && selected_feature_ids.map(function (selected_id, index) {
         return items_by_id[selected_id] || {'id': selected_id,
