@@ -385,6 +385,7 @@ class WikiPage(BaseModel):
     content = models.TextField(null=True)
     enriched_content = models.TextField(null=True)
     store_encrypted = models.BooleanField(default=False) #true if refers to project commercials
+    parent = ProtectedForeignKey('imptime.WikiPage', related_name='children', null=True)
 
     ENCRYPTED_TOKEN = "__ENCRYPTED__"
 
@@ -407,6 +408,142 @@ class WikiPage(BaseModel):
         super(WikiPage, self).delete()
         RefreshNotifier().notify_model_delete(self)
 
+class ProjectWikiOrder(BaseModel):
+    order = models.FloatField()
+    wiki = models.ForeignKey(WikiPage, related_name='project_wiki_orders')
+    project = models.ForeignKey(Project)
+
+    class Meta:
+        unique_together = ('project', 'wiki')
+
+    INCREMENT=10
+    MAX_ORDER=999999
+
+    def save(self, *args, **kwargs):
+        was_created = not self.id
+        super(ProjectWikiOrder, self).save(*args, **kwargs)
+        if was_created:
+            RefreshNotifier().notify_model_create(self, params={'wiki_id':str(self.wiki_id)})
+        else:
+            RefreshNotifier().notify_model_update(self, params={'wiki_id':str(self.wiki_id)})
+
+    @classmethod
+    def renumber(self, project_id, parent_wiki_id):
+        wiki_ids = WikiPage.objects.filter(project_id=project_id)\
+                                   .order_by_project_id(project_id, parent_wiki_id)\
+                                   .values_list('pk', flat=True)
+                                     
+        if parent_wiki_id is None:
+            wiki_ids = wiki_ids.filter(parent_id__isnull=True)
+        else:
+            wiki_ids = wiki_ids.filter(parent_id=parent_wiki_id)
+                                             
+        order = 0
+        for wiki_id in wiki_ids:
+            pio = ProjectWikiOrder.objects.get_or_create(project_id=project_id, wiki_id=wiki_id,
+                                                            defaults={'order':order})[0]
+            if pio.order != order:
+                pio.order = order
+                pio.save()
+            order += self.INCREMENT
+        ProjectWikiOrder.objects.filter(project_id=project_id).exclude(wiki__project_id=project_id).delete()
+
+    @classmethod
+    def insert_before(self, wiki, set_before_this_wiki):
+        if wiki.project_id != set_before_this_wiki.project_id:
+            raise Exception("Cannot reorder, must be in the same project")
+        wiki.parent = set_before_this_wiki.parent
+        wiki.save()
+        self.renumber(wiki.project_id, wiki.parent_id)
+        pio = self.objects.get_or_create(project_id=set_before_this_wiki.project_id,
+                                         wiki_id=set_before_this_wiki.id,
+                                         defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio.order-1
+        pio, is_new = self.objects.get_or_create(project_id=wiki.project_id, wiki_id=wiki.id)
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(wiki.project_id, wiki.parent_id)
+
+    @classmethod
+    def insert_after(self, wiki, set_after_this_wiki):
+        if wiki.project_id != set_after_this_wiki.project_id:
+            raise Exception("Cannot reorder, must be in the same project")
+        wiki.parent = set_after_this_wiki.parent
+        wiki.save()
+        self.renumber(wiki.project_id, wiki.parent_id)
+        pio_target = self.objects.get_or_create(project_id=set_after_this_wiki.project_id,
+                                                wiki_id=set_after_this_wiki.id,
+                                                defaults={'order':self.MAX_ORDER})[0]
+        new_order = pio_target.order+1
+        pio, is_new = self.objects.get_or_create(project_id=wiki.project_id,
+                                                 wiki_id=wiki.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(wiki.project_id, wiki.parent_id)
+
+    @classmethod
+    def insert_at_the_beginning(self, wiki):
+        new_order = -1
+        pio, is_new = self.objects.get_or_create(project_id=wiki.project_id,
+                                                 wiki_id=wiki.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(wiki.project_id, wiki.parent_id)
+
+    @classmethod
+    def insert_at_the_end(self, wiki):
+        new_order = self.get_next_order(wiki.project_id, wiki.parent_id)
+        pio, is_new = self.objects.get_or_create(project_id=wiki.project_id,
+                                                 wiki_id=wiki.id,
+                                                 defaults={'order':new_order})
+        if not is_new:
+            pio.order = new_order
+            pio.save()
+        self.renumber(wiki.project_id, wiki.parent_id)
+
+    @classmethod
+    def sort_these_wiki_ids(self, project_id, unordered_wiki_ids):
+        return ProjectWikiOrder.objects.filter(project=project_id)\
+                                          .filter(wiki_id__in=unordered_wiki_ids)\
+                                          .order_by("order")\
+                                          .values_list("wiki_id", flat=True)
+
+    @classmethod
+    def get_next_order(self, project_id, parent_wiki_id, wiki_qs=None):
+        self.renumber(project_id, parent_wiki_id)
+        if wiki_qs is None:
+            wiki_qs = WikiPage.objects.filter(project_id=project_id)
+        if parent_wiki_id is None:
+            wiki_qs = wiki_qs.filter(parent_id__isnull=True)
+        else:
+            wiki_qs = wiki_qs.filter(parent_id=parent_wiki_id)
+        max_order = self.objects.filter(project_id=project_id, wiki__in=wiki_qs)\
+                                .aggregate(max_order=Max('order'))['max_order'] or 0
+        return max_order + self.INCREMENT
+
+    @classmethod
+    def get_previous_wiki(self, wiki):
+        wiki_order = ProjectWikiOrder.objects.filter(wiki=wiki,
+                                                           parent_id=wiki.parent_id)\
+                                                   .values("order").first()
+        if wiki_order is None:
+            return None
+        previous = ProjectWikiOrder.objects.filter(project=wiki.project_id,
+                                                      parent_id=wiki.parent_id,
+                                                      order__lt=wiki_order['order'])\
+                                              .values("wiki")\
+                                              .order_by("-order").first()
+        if previous is None:
+            return None
+        return previous['wiki']
+        
+
+        
 class WikiPageHistory(BaseModel):
     wiki_page_id = models.IntegerField(blank=False, null=False, db_index=True)
     original_wiki_page = models.ForeignKey(WikiPage, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")

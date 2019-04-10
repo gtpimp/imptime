@@ -1,6 +1,7 @@
 import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
 import aes from 'crypto-js/aes'
 import enc from 'crypto-js/enc-utf8'
+import { updateVisibleItemIdAbove } from './ItemList'
 import {
     invalidateAllItems,
     invalidateItems,
@@ -15,6 +16,8 @@ import {
     updateCandidateDetails,
     saveCandidateItem,
     deleteItems,
+    getTransientItemValue,
+    setTransientItemValue
 } from '../actions/Item'
 
 const ENCRYPTED_TOKEN = "__ENCRYPTED__"
@@ -53,6 +56,11 @@ export function updateWikiStoreEncrypted(wiki_id, new_bool, on_done) {
     return updateItem(ENTITY_KEY__WIKI, [wiki_id], "store_encrypted", new_bool, on_done)
 }
 
+export function updateWikiPosition(wiki_id, parent_wiki_id, sibling_node_before_id) {
+    return updateItem(ENTITY_KEY__WIKI, [wiki_id], "position",
+                      {parent_id:parent_wiki_id, sibling_node_before_id})
+}
+
 export function fetchWikisIfNeeded(list_key) {
     return (dispatch, getState) => {
         dispatch(fetchItemsIfNeeded(ENTITY_KEY__WIKI, list_key))
@@ -71,9 +79,10 @@ export function getWikis(state, wiki_ids) {
     return getItems(state, ENTITY_KEY__WIKI, wiki_ids)
 }
 
-export function startCandidateWiki(project_id) {
+export function startCandidateWiki(project_id, parent_wiki_id) {
     return (dispatch, getState) => {
-        dispatch(startCandidateItem(ENTITY_KEY__WIKI, { project_id: project_id }))
+        dispatch(startCandidateItem(ENTITY_KEY__WIKI, { parent_wiki_id: parent_wiki_id,
+                                                        project_id: project_id }))
     }
 }
 
@@ -103,6 +112,21 @@ export function createWiki(name, project_id) {
 export function deleteWiki(wiki_id) {
     return (dispatch, getState) => {
         dispatch(deleteItems(ENTITY_KEY__WIKI, [wiki_id]))
+    }
+}
+
+export function expandWikiInTree(wiki_id, expanded) {
+    return setTransientItemValue(ENTITY_KEY__WIKI, [wiki_id], "expanded", expanded)
+}
+
+export function isWikiExpanded(state, wiki_id) {
+    return getTransientItemValue(state, ENTITY_KEY__WIKI, wiki_id, "expanded") || false
+}
+
+export function reorderWiki(moving_wiki_ids, wiki_id_after, list_key, index_of_destination, on_done) {
+    return (dispatch, getState) => {
+        dispatch(updateVisibleItemIdAbove(list_key, moving_wiki_ids, wiki_id_after, index_of_destination))
+        dispatch(updateItem(ENTITY_KEY__WIKI, moving_wiki_ids, "wiki_id_after", wiki_id_after, on_done))
     }
 }
 

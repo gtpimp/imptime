@@ -20,6 +20,9 @@ import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
 import {
     fetchWikisIfNeeded, getWikis, deleteWiki
 } from '../actions/Wikis'
+import {
+    makeSelWikisAsStructuredTree
+} from '../selectors/WikiListSelectors'
 import DivTable from './DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 
@@ -122,31 +125,38 @@ class WikiList extends Component {
     }
 }
 
-function mapStateToProps(state, props) {
-    const { list_key, selected_wiki_ids, project_id } = props
-    const visible_item_ids = getVisibleItemIds(state, list_key)
-    const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__WIKI, visible_item_ids)
-    const last_updated = getLastUpdated(state, list_key)
-    const nested_objects = getNestedObjects(state, list_key)
-    const should_fetch_list = shouldFetchList(state, list_key)
-    const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__WIKI, visible_item_ids)
-    const items_by_id = getWikis(state, visible_item_ids)
-    const filter = getListFilter(state, list_key)
-    const can_delete = has_permission(state, project_id, 'has_edit_business_comments')
+const makeMapStateToProps = () => {
+    const selWikisAsStructuredTree = makeSelWikisAsStructuredTree()
+    
+    const mapStateToProps = (state, props) => {
+        const { list_key, selected_wiki_ids, project_id } = props
+        const visible_item_ids = getVisibleItemIds(state, list_key)
+        const is_loading = isLoading(state, list_key) || isLoadingItems(state, ENTITY_KEY__WIKI, visible_item_ids)
+        const last_updated = getLastUpdated(state, list_key)
+        const nested_objects = getNestedObjects(state, list_key)
+        const should_fetch_list = shouldFetchList(state, list_key)
+        const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__WIKI, visible_item_ids)
+        const items_by_id = getWikis(state, visible_item_ids)
+        const filter = getListFilter(state, list_key)
+        const can_delete = has_permission(state, project_id, 'has_edit_business_comments')
+        const wikis_as_structured_tree = selWikisAsStructuredTree(state, props)
 
-    return {
-        wiki_ids: visible_item_ids,
-        wikis_by_id: items_by_id,
-        is_loading,
-        is_invalidated,
-        should_fetch_list,
-        last_updated,
-        nested_objects,
-        selected_wiki_ids,
-        project_id,
-        filter,
-        can_delete
+        return {
+            wiki_ids: visible_item_ids,
+            wikis_by_id: items_by_id,
+            wikis_as_structured_tree,
+            is_loading,
+            is_invalidated,
+            should_fetch_list,
+            last_updated,
+            nested_objects,
+            selected_wiki_ids,
+            project_id,
+            filter,
+            can_delete
+        }
     }
+    return mapStateToProps
 }
 
-export default connect(mapStateToProps)(WikiList)
+export default connect(makeMapStateToProps)(WikiList)

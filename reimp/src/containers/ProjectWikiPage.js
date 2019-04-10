@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import { includes, compact } from 'lodash'
+import { get, includes, compact } from 'lodash'
 import {setProjectBreadcrumbsHelper} from '../actions/Breadcrumbs'
 import {ensureProjectsLoaded, getProject} from '../actions/Projects'
 import {ensureWikisLoaded, getWiki} from '../actions/Wikis'
@@ -158,7 +158,7 @@ function mapStateToProps(state, props) {
     const candidate_wiki = getCandidateWiki(state) || null
     const is_creating_wiki = candidate_wiki || false
     const show_sidebar = getPageFlag(state, PAGE_KEY__PROJECT_WIKI_PAGE, "show_sidebar", true)
-    const selected_wiki_ids = getPageSelectedEntities(state, PAGE_KEY__PROJECT_WIKI_PAGE).wiki_ids
+    const selected_wiki_ids = get(getPageSelectedEntities(state, PAGE_KEY__PROJECT_WIKI_PAGE), ["wiki_ids"])
     const selected_wiki_id = ( selected_wiki_ids && selected_wiki_ids.length > 0 && selected_wiki_ids[0] ) || default_wiki_id || null
     const selected_wiki = getWiki(state, selected_wiki_id)
         
