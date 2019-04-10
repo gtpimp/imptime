@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import PermissionInspectorHighlighter from './PermissionInspectorHighlighter'
-import { map, values, includes } from 'lodash'
-import classNames from 'classnames'
+import { map, values } from 'lodash'
 import { has_permission } from '../actions/Users'
+import CommonTree from './CommonTree'
 import {
     initList,
     shouldFetchList,
@@ -16,9 +15,17 @@ import {
     update_list_filter,
     getListFilter
 } from '../actions/ItemList'
-import { ENTITY_KEY__WIKI } from '../actions/ItemListKeyRegistry'
 import {
-    fetchWikisIfNeeded, getWikis, deleteWiki
+    ENTITY_KEY__WIKI,
+    HEADER_LIST_NAME__WIKI
+} from '../actions/ItemListKeyRegistry'
+import {
+    fetchWikisIfNeeded,
+    getWikis,
+    deleteWiki,
+    expandWikiInTree,
+    updateWikiPosition,
+    ALL_AVAILABLE_WIKI_HEADERS
 } from '../actions/Wikis'
 import {
     makeSelWikisAsStructuredTree
@@ -28,11 +35,6 @@ import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 
 class WikiList extends Component {
 
-    constructor(props) {
-        super(props)
-        this.onSelectWiki = this.onSelectWiki.bind(this)
-    }
-    
     componentDidMount() {
 	const { dispatch, list_key } = this.props
 	dispatch(initList(list_key))
@@ -54,10 +56,20 @@ class WikiList extends Component {
         dispatch(ensureNestedObjectsLoaded(nested_objects))
     }
 
-    onSelectWiki(event, wiki_id) {
+    renderWikiIcons = () => {
+        return []
+    }
+
+    onReorder = ({node, new_parent, sibling_node_before}) => {
+        const { dispatch } = this.props
+        dispatch(updateWikiPosition(node.id,
+                                       (new_parent && new_parent.id) || null,
+                                       (sibling_node_before && sibling_node_before.id) || null))
+    }
+
+    onSelectWiki = (node) => {
         const { onSelectWiki } = this.props
-        onSelectWiki(wiki_id)
-        event.stopPropagation()
+        onSelectWiki(node.id)
     }
 
     onDeleteWiki(event, wiki_id) {
@@ -68,38 +80,46 @@ class WikiList extends Component {
         dispatch(deleteWiki(wiki_id))
     }
 
-    render_row(wiki) {
-        const { selected_wiki_ids, can_delete } = this.props
-        const is_selected = includes(selected_wiki_ids, ""+wiki.id)
-        return (
-            <div className={classNames("wiki-list__row",
-                           {"div-table__row--selected":is_selected})}
-                 key={wiki.id}>
-              <div className="wiki-list__wiki_name"
-                   onClick={(event) => this.onSelectWiki(event, wiki.id)}>
-                {wiki.name}
-                { wiki.money_sensitive &&
-                  <PermissionInspectorHighlighter project_id={wiki.project_id}
-                                                  permission_name='has_view_ctc_billable_rates'>
-                    <div className="icon--commercially-sensitive"/>
-                  </PermissionInspectorHighlighter>
-                }
-                { wiki.store_encrypted &&
-                  <div className="icon--secure"/>
-                }
-              </div>
-              <div className="wiki-list__row_buttons">
-                { can_delete &&
-                  <div onClick={(event) => this.onDeleteWiki(event, wiki.id)} className="icon--small-delete"/>
-                }
-              </div>
-            </div>
-        )
+    onExpandCollapse = ({node, expanded}) => {
+        const { dispatch } = this.props
+        if ( node ) {
+            dispatch(expandWikiInTree(node.id, expanded))
+        }
     }
+
+    /* render_row(wiki) {
+     *     const { selected_wiki_ids, can_delete } = this.props
+     *     const is_selected = includes(selected_wiki_ids, ""+wiki.id)
+     *     return (
+     *         <div className={classNames("wiki-list__row",
+     *                        {"div-table__row--selected":is_selected})}
+     *              key={wiki.id}>
+     *           <div className="wiki-list__wiki_name"
+     *                onClick={(event) => this.onSelectWiki(event, wiki.id)}>
+     *             {wiki.name}
+     *             { wiki.money_sensitive &&
+     *               <PermissionInspectorHighlighter project_id={wiki.project_id}
+     *                                               permission_name='has_view_ctc_billable_rates'>
+     *                 <div className="icon--commercially-sensitive"/>
+     *               </PermissionInspectorHighlighter>
+     *             }
+     *             { wiki.store_encrypted &&
+     *               <div className="icon--secure"/>
+     *             }
+     *           </div>
+     *           <div className="wiki-list__row_buttons">
+     *             { can_delete &&
+     *               <div onClick={(event) => this.onDeleteWiki(event, wiki.id)} className="icon--small-delete"/>
+     *             }
+     *           </div>
+     *         </div>
+     *     )
+     * }*/
 
     render() {
 
-        const { wikis_by_id, is_loading, project_id } = this.props
+        const { wikis_by_id, is_loading, project_id,
+                selected_wiki_ids, all_headers, wikis_as_structured_tree } = this.props
 
         if ( (is_loading && !wikis_by_id && wikis_by_id.length) === 0 ) {
             return (
@@ -109,9 +129,24 @@ class WikiList extends Component {
 
         return (
             <div className="wiki-list">
+
+              <CommonTree items={wikis_as_structured_tree}
+                          items_by_id={wikis_by_id}
+                          onReorder={this.onReorder}
+                          renderIcons={this.renderWikiIcons}
+                          onNodeSelected={this.onSelectWiki}
+                          onExpandCollapse={this.onExpandCollapse}
+                          all_headers={all_headers}
+                          header_list_name={HEADER_LIST_NAME__WIKI}
+                          selected_item_ids={selected_wiki_ids}
+              />
+
+              { false && 
               <DivTable project_id={project_id} permission_name_for_dragging={'xxx'}>
                 { map(values(wikis_by_id), (wiki) => this.render_row(wiki) ) }
               </DivTable>
+              }
+              
               { (!wikis_by_id || wikis_by_id.length) === 0 &&
                 (
                     <div className="wiki-list__empty">
@@ -153,7 +188,9 @@ const makeMapStateToProps = () => {
             selected_wiki_ids,
             project_id,
             filter,
-            can_delete
+            can_delete,
+            all_headers: ALL_AVAILABLE_WIKI_HEADERS,
+
         }
     }
     return mapStateToProps

@@ -22,6 +22,10 @@ import {
 
 const ENCRYPTED_TOKEN = "__ENCRYPTED__"
 
+export const ALL_AVAILABLE_WIKI_HEADERS = [ {key:'name', label:"Name", description:"Wiki name", width:"auto", flex:1} 
+]
+
+
 export function invalidateAllWikis() {
     return (dispatch, getState) => {
         dispatch(invalidateAllItems(ENTITY_KEY__WIKI))
