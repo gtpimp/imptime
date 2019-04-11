@@ -145,7 +145,7 @@ function mapStateToProps(state, props) {
     const filter = getListFilter(state, list_key)
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const items_by_id = getCompaniesById(state, visible_item_ids)
-    const selected_company_ids = getPageSelectedEntities(state, PAGE_KEY__COMPANIES_PAGE).company_ids
+    const selected_company_ids = get(getPageSelectedEntities(state, PAGE_KEY__COMPANIES_PAGE), ["company_ids"])
     const default_company_id = props.match.params.companyId
 
     const selected_items = items_by_id && selected_company_ids && selected_company_ids.map(function (selected_id, index) {

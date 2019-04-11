@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { size, includes, difference, union, concat } from 'lodash'
+import { size, includes } from 'lodash'
 import { connect } from 'react-redux'
 import { css } from 'emotion'
 import { default_theme as theme } from '../theme/default'
@@ -62,28 +62,14 @@ class InvoiceList extends Component {
 	}
     }
 
-    onClickedInvoice(event, invoice_id) {
-        const {onSelectInvoices, selected_ids} = this.props
-        if ( event ) {
-            event.stopPropagation()
-        }
+    onClickedInvoice(invoice_id) {
+    }
 
-        let selected_invoice_ids = []
-        if (event.ctrlKey || event.metaKey) {
-            if (includes(selected_ids, invoice_id)) {
-                selected_invoice_ids = difference(selected_ids, [invoice_id])
-            } else {
-                selected_invoice_ids = union(selected_ids, [invoice_id])
-            }
-        } else if (event.shiftKey) {
-            selected_invoice_ids = concat(selected_ids, [invoice_id])
-        } else {
-            selected_invoice_ids = [invoice_id]
-        }
+    onSelectedInvoices = (invoice_ids) => {
+        const {onSelectInvoices} = this.props
         if ( onSelectInvoices ) {
-            onSelectInvoices(selected_invoice_ids)
+            onSelectInvoices(invoice_ids)
         }
-        // dispatch(cancelCandidateInvoice())
     }
 
     renderCell = ({cellData, columnData, columnIndex, dataKey, isScrolling, rowData, rowIndex, activeHeaders}) => {
@@ -282,6 +268,7 @@ class InvoiceList extends Component {
             <CommonTable all_headers={all_headers}
                          header_list_name={HEADER_LIST_NAME__INVOICE}
                          onRowSelected={this.onClickedInvoice}
+                         onRowSelectionUpdated={this.onSelectedInvoices}
                          items={invoices}
                          selected_item_ids={selected_item_ids}
                          renderCell={this.renderCell}

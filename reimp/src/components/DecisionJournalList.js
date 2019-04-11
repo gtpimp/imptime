@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { concat, union, difference, includes } from 'lodash'
+import { includes } from 'lodash'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
@@ -63,28 +63,16 @@ class DecisionJournalList extends Component {
         }
     }
 
-    onClickedDecisionJournal(event, decision_journal_id) {
-        const {dispatch, onSelectDecisionJournals, selected_ids} = this.props
-        if ( event ) {
-            event.stopPropagation()
-        }
-
-        let selected_decision_journal_ids = []
-        if (event.ctrlKey || event.metaKey) {
-            if (includes(selected_ids, decision_journal_id)) {
-                selected_decision_journal_ids = difference(selected_ids, [decision_journal_id])
-            } else {
-                selected_decision_journal_ids = union(selected_ids, [decision_journal_id])
-            }
-        } else if (event.shiftKey) {
-            selected_decision_journal_ids = concat(selected_ids, [decision_journal_id])
-        } else {
-            selected_decision_journal_ids = [decision_journal_id]
-        }
-        if ( onSelectDecisionJournals ) {
-            onSelectDecisionJournals(selected_decision_journal_ids)
-        }
+    onClickedDecisionJournal(decision_journal_id) {
+        const {dispatch} = this.props
         dispatch(cancelCandidateDecisionJournal())
+    }
+
+    onSelectedDecisionJournals(decision_journal_ids) {
+        const {onSelectDecisionJournals} = this.props
+        if ( onSelectDecisionJournals ) {
+            onSelectDecisionJournals(decision_journal_ids)
+        }
     }
 
     onRefresh(event) {
@@ -210,6 +198,7 @@ class DecisionJournalList extends Component {
             <CommonTable all_headers={all_headers}
                          header_list_name={HEADER_LIST_NAME__DECISION_JOURNAL}
                          onRowSelected={this.onClickedDecisionJournal}
+                         onRowSelectionUpdated={this.onSelectedDecisionJournals}
                          onRowReordered={this.reorderDecisionJournal}
                          items={decision_journals}
                          selected_item_ids={selected_ids}

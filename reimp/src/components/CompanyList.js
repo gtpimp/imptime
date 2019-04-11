@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { concat, union, difference, includes } from 'lodash'
+import { includes } from 'lodash'
 import { css } from 'emotion'
 import {withRouter} from 'react-router-dom'
 import { default_theme as theme } from '../theme/default'
@@ -33,13 +33,6 @@ import DivTableCell from './DivTableCell'
 
 class CompanyList extends Component {
 
-    constructor(props) {
-        super(props)
-        this.onRefresh = this.onRefresh.bind(this)
-        this.onClickedCompany = this.onClickedCompany.bind(this)
-        this.onDeleteCompany = this.onDeleteCompany.bind(this)
-    }
-
     componentDidMount() {
         const {dispatch, list_key} = this.props
         dispatch(initList(list_key))
@@ -51,31 +44,19 @@ class CompanyList extends Component {
         dispatch(fetchCompaniesIfNeeded(list_key))
     }
 
-    onClickedCompany(event, company_id) {
-        const {dispatch, onSelectCompanies, selected_ids} = this.props
-        if ( event ) {
-            event.stopPropagation()
-        }
-
-        let selected_company_ids = []
-        if (event.ctrlKey || event.metaKey) {
-            if (includes(selected_ids, company_id)) {
-                selected_company_ids = difference(selected_ids, [company_id])
-            } else {
-                selected_company_ids = union(selected_ids, [company_id])
-            }
-        } else if (event.shiftKey) {
-            selected_company_ids = concat(selected_ids, [company_id])
-        } else {
-            selected_company_ids = [company_id]
-        }
-        if ( onSelectCompanies ) {
-            onSelectCompanies(selected_company_ids)
-        }
+    onClickedCompany = (company_id) => {
+        const {dispatch} = this.props
         dispatch(cancelCandidateCompany())
     }
 
-    onRefresh(event) {
+    onSelectedCompanies = (company_ids) => {
+        const {onSelectCompanies} = this.props
+        if ( onSelectCompanies ) {
+            onSelectCompanies(company_ids)
+        }
+    }
+
+    onRefresh = (event) => {
         const {dispatch, company_ids, list_key} = this.props
         dispatch(invalidateList(list_key))
         dispatch(invalidateAllCompanies(company_ids))
@@ -188,6 +169,7 @@ class CompanyList extends Component {
             <CommonTable all_headers={all_headers}
                          header_list_name={HEADER_LIST_NAME__COMPANY}
                          onRowSelected={this.onClickedCompany}
+                         onRowSelectionUpdated={this.onSelectedCompanies}
                          onRowReordered={this.reorderCompany}
                          items={companies}
                          selected_item_ids={selected_ids}
