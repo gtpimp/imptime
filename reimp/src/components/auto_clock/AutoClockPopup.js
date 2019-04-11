@@ -93,7 +93,7 @@ class AutoClockPopup extends Component {
         dispatch(update_list_ordering(list_key_by_issue, { 'end_time': 'desc' }))
         dispatch(update_list_format(list_key_by_issue, { 'distinct_by_issue': true }))
         dispatch(update_list_filter(list_key_by_issue, { 'is_active': false }))
-        dispatch(update_list_pagination(list_key_by_issue, { page_size: 6 }))
+        dispatch(update_list_pagination(list_key_by_issue, { page_size: 10 }))
 
         dispatch(initList(list_key_unallocated))
         dispatch(update_list_ordering(list_key_unallocated, { 'end_time': 'desc' }))

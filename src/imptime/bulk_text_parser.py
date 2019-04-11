@@ -43,6 +43,28 @@ class BulkTextParser(object):
                     IssuePoints.objects.get_or_create(user=self.logged_in_user,
                                                       issue=issue,
                                                       defaults={'points':estimate})
+
+                tags = meta_info['attributes'].get('tags', None)
+                if tags:
+                    issue_tags = []
+                    for raw_tag in tags.split(","):
+                        raw_tag = raw_tag.strip()
+                        if ":" in raw_tag:
+                            category_name, tag_name = raw_tag.split(":")
+                        else:
+                            category_name = "category"
+                            tag_name = raw_tag
+
+                        category_name = category_name.strip().lower()
+                        tag_name = tag_name.strip().lower()
+                            
+                        category = TagCategory.objects.get_or_create(business=sprint.business,
+                                                                     name=category_name)[0]
+                        tag = Tag.objects.get_or_create(category=category,
+                                                        name=tag_name)[0]
+                        issue_tags.append(tag)
+                    issue.tags = issue_tags
+                    issue.save()
                     
         return issues
 
@@ -144,7 +166,7 @@ class BulkTextParser(object):
         return description, testables
 
     def _parse_attributes(self, description):
-        attribute_names = [ "type", "status", "estimate", "name", "attachment" ]
+        attribute_names = [ "type", "status", "estimate", "name", "attachment", "tags" ]
         attributes = {}
         for i in range(len(attribute_names)):
             for attribute_name in attribute_names:
