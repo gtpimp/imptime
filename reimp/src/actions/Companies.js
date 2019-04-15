@@ -130,6 +130,9 @@ export function saveInviteUser(company_id, user_email) {
     const field_name = "company_id"
     const field_value = company_id
     const method = "POST"
-    const data = { company_id: company_id }
+    const data = {
+        company_id: company_id,
+        user_email: user_email
+    }
     return itemPost(ENTITY_KEY__COMPANY, [company_id], url, field_name, field_value, method, data)
 }
