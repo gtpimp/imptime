@@ -47,7 +47,7 @@ class CompanyUserPermissionForm extends Component {
         user_id = user_id || this.props.user_id
         dispatch(ensureCompaniesLoaded([company_id]))
         dispatch(ensureUsersLoaded([user_id]))
-        dispatch(ensureCompanyUserPermissionsLoaded(company_id, user_id))
+        dispatch(ensureCompanyUserPermissionsLoaded(company_id))
     }
 
     onChangeAndSubmit(e, fieldOnChange, permission_name) {

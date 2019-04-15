@@ -107,10 +107,10 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'projectinvite' ) {
         dispatch(invalidateUsers(d.params.users))
         dispatch(invalidateProjects(d.params.projects))
-        
+
     } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidatePups([d.entity_ref]))
-        dispatch(invalidateProjects(d.params.projects))
+        dispatch(invalidateProjects(d.params.sprints))
     } else if ( d.entity_name === 'companypermissions' ) {
         dispatch(invalidateCups([d.entity_ref]))
         dispatch(invalidateCompanies([d.params.company]))
@@ -120,7 +120,7 @@ function triggerInvalidateEntity(d, dispatch) {
     } else if ( d.entity_name === 'visualspecannotation' ) {
         dispatch(invalidateVisualSpecAnnotations([d.entity_ref]))
         dispatch(invalidateAnnotatedVisualSpecDocuments([d.params.annotated_visual_spec_document_id]))
-        
+
     } else if ( d.entity_name === 'issuereview' ) {
         dispatch(invalidateIssueReviews([d.entity_ref]))
     } else if ( d.entity_name === 'projectdeadline' ) {

@@ -74,7 +74,7 @@ class ProjectUserPermissionViewSet(BaseViewSet):
                 for user_pk in user_pks:
                     user = self.allowed_user(user_pk)
                     pup = ProjectPermissions.for_user(user, project)
-                    
+
                     for permission_name, value in permission_values.items():
                         pup.update_permission(permission_name, value, save=False)
                     pup.save()
@@ -83,5 +83,5 @@ class ProjectUserPermissionViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))
