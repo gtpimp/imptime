@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {includes, map, get} from 'lodash'
+import {includes, map, get, compact} from 'lodash'
 import {withRouter} from 'react-router-dom'
 import FeatureList from '../components/FeatureList'
 import FeatureSidebar from '../components/FeatureSidebar'
@@ -74,19 +74,20 @@ class FeaturesPage extends Component {
         if ( project_id ) {
             dispatch(ensureProjectsLoaded([project_id]))
         }
+
+        const feature_ids = compact([default_feature_id])
+         
         if (project && project.id) {
             dispatch(setPageSelectedEntities(page_key,
-                                     {project_ids:[project.id]}))
+                                             {project_ids:[project.id],
+                                              feature_ids: feature_ids}))
             dispatch(invalidateList(list_key))
 
             dispatch(setFeatureBreadcrumbsHelper(project, selected_feature))
 
         }
         if ( default_feature_id !== undefined && !includes(selected_feature_ids, default_feature_id) ) {
-            dispatch(selectItems(LIST_KEY__FEATURE_LIST, [default_feature_id]))
-            dispatch(setPageSelectedEntities(page_key,
-                                     {project_ids: [project_id],
-                                      feature_ids: [default_feature_id]}))
+            dispatch(selectItems(LIST_KEY__FEATURE_LIST, feature_ids))
         }
     }
 
