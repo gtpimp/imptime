@@ -377,6 +377,25 @@ class SprintTemplate(BaseModel):
     sprint = ProtectedForeignKey(Sprint, related_name='templates', null=False)
     clones = models.ManyToManyField(Sprint, related_name='parent_sprint_templates')
 
+class WikiPageQuerySet(QuerySet):
+
+    def order_by_project_id(self, project_id, parent_wiki_page_id=None, descending=False):
+        if project_id:
+            direction = ("-" if descending else "") + "order"
+            wiki_page_ids_in_order = ProjectWikiOrder.objects.filter(project_id=project_id)\
+                                                             .order_by(direction)\
+                                                             .values_list("wiki_id", flat=True)
+            if parent_wiki_page_id is not None:
+                wiki_page_ids_in_order = wiki_page_ids_in_order.filter(wiki__parent_id=parent_wiki_page_id)
+                
+            if wiki_page_ids_in_order.count() == 0:
+                return self
+            preserved = Case(*[When(pk=pk, then=pos) for pos, pk in enumerate(wiki_page_ids_in_order)])
+
+            return self.order_by(preserved)
+        else:
+            return self
+
     
 class WikiPage(BaseModel):
     money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
@@ -386,6 +405,8 @@ class WikiPage(BaseModel):
     enriched_content = models.TextField(null=True)
     store_encrypted = models.BooleanField(default=False) #true if refers to project commercials
     parent = ProtectedForeignKey('imptime.WikiPage', related_name='children', null=True)
+
+    objects = WikiPageQuerySet.as_manager()
 
     ENCRYPTED_TOKEN = "__ENCRYPTED__"
 

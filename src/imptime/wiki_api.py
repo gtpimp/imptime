@@ -10,7 +10,7 @@ from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Business as Project
-from imptime.models import WikiPage, WikiPageHistory
+from imptime.models import WikiPage, WikiPageHistory, ProjectWikiOrder
 from rest_framework.decorators import detail_route
 
 logger = logging.getLogger(__name__)
@@ -87,6 +87,24 @@ class WikiViewSet(BaseViewSet):
                     wiki_page.enriched_content = MarkdownEnrichment(request.user).enrich(wiki_page.content,
                                                                                          project_id=wiki_page.project_id)
                     WikiPageHistory.add_history(request.user, wiki_page, "update content", old_value, new_value)
+                elif field_name == "position":
+                    new_parent_id = new_value['parent_id']
+                    new_sibling_node_before_id = new_value['sibling_node_before_id']
+                    if new_parent_id != wiki_page.parent_id:
+                        new_parent = self.allowed_wiki_pages().get(pk=new_parent_id) if new_parent_id else None
+                        new_parent_name = new_parent.name if new_parent else "root"
+                        wiki_page.parent = new_parent
+                        WikiPageHistory.add_history(request.user, wiki_page, "update parent",
+                                                    wiki_page.parent.name if wiki_page.parent else "root",
+                                                    new_parent_name)
+                    if new_sibling_node_before_id is None:
+                        WikiPageHistory.add_history(request.user, wiki_page, "moved", None, "to top")
+                        ProjectWikiOrder.insert_at_the_beginning(wiki_page)
+                    else:
+                        new_sibling_node_before = self.allowed_wiki_pages().get(pk=new_sibling_node_before_id)
+                        WikiPageHistory.add_history(request.user, wiki_page, "moved", None, "after %s" % new_sibling_node_before.name)
+                        ProjectWikiOrder.insert_after(wiki_page, new_sibling_node_before)
+                    
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 wiki_page.save()
