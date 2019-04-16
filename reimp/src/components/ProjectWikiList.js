@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { keyBy } from 'lodash'
 import { has_permission } from '../actions/Users'
 import CommonTree from './CommonTree'
 import Loading from './Loading'
@@ -152,7 +153,7 @@ const makeMapStateToProps = () => {
         const nested_objects = getNestedObjects(state, list_key)
         const should_fetch_list = shouldFetchList(state, list_key)
         const is_invalidated = areAnyItemsInvalidated(state, ENTITY_KEY__WIKI, visible_item_ids)
-        const items_by_id = getWikis(state, visible_item_ids)
+        const items_by_id = keyBy(getWikis(state, visible_item_ids), (x) => ""+x.id)
         const filter = getListFilter(state, list_key)
         const can_delete = has_permission(state, project_id, 'has_edit_business_comments')
         const wikis_as_structured_tree = selWikisAsStructuredTree(state, props)

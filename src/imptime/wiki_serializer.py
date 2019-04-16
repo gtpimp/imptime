@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 class WikiPageSerializer(BaseModelSerializer):
 
+    id = serializers.CharField()
     annotated_visual_spec_document_ids = serializers.ListField()
     is_root_node = serializers.BooleanField()
     order = serializers.FloatField()
