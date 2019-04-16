@@ -110,7 +110,7 @@ function triggerInvalidateEntity(d, dispatch) {
 
     } else if ( d.entity_name === 'projectpermissions' ) {
         dispatch(invalidatePups([d.entity_ref]))
-        dispatch(invalidateProjects(d.params.sprints))
+        dispatch(invalidateProjects(d.params.projects))
     } else if ( d.entity_name === 'companypermissions' ) {
         dispatch(invalidateCups([d.entity_ref]))
         dispatch(invalidateCompanies([d.params.company]))

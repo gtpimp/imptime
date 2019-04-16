@@ -646,12 +646,12 @@ class BusinessPermissions(BaseModel):
         super(BusinessPermissions, self).save(*args, **kwargs)
         if was_created:
             RefreshNotifier().notify_model_create(
-                self, params={'projects': [self.business_id],
+                self, params={'businesses': [self.business_id],
                               'users': [self.user_id]},
                 name='projectpermissions')
         else:
             RefreshNotifier().notify_model_update(
-                self, params={'projects': [self.business_id],
+                self, params={'businesses': [self.business_id],
                               'users': [self.user_id]},
                 name='projectpermissions')
 
@@ -4418,7 +4418,7 @@ class Issue(BaseModel):
     def copy(self, logged_in_user, add_suffix=True):
         issue_to_clone = self
         new_issue = Issue.objects.create(
-            project_id=issue_to_clone.project_id,   # sic
+            project_id=issue_to_clone.project_id, 
             description=issue_to_clone.description,
             status2=issue_to_clone.status2,
             number=Issue.get_next_issue_number(issue_to_clone.project.business),
