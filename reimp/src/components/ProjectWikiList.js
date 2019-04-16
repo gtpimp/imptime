@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { map, values } from 'lodash'
 import { has_permission } from '../actions/Users'
 import CommonTree from './CommonTree'
 import Loading from './Loading'
@@ -31,7 +30,6 @@ import {
 import {
     makeSelWikisAsStructuredTree
 } from '../selectors/WikiListSelectors'
-import DivTable from './DivTable'
 import { isLoadingItems, areAnyItemsInvalidated } from '../actions/Item'
 
 class WikiList extends Component {
@@ -119,7 +117,7 @@ class WikiList extends Component {
 
     render() {
 
-        const { wikis_by_id, is_loading, project_id,
+        const { wikis_by_id, is_loading,
                 selected_wiki_ids, all_headers, wikis_as_structured_tree } = this.props
 
         if ( (is_loading && !wikis_by_id && wikis_by_id.length) === 0 ) {
@@ -129,34 +127,16 @@ class WikiList extends Component {
         }
 
         return (
-            <div>
-
-              <CommonTree items={wikis_as_structured_tree}
-                          items_by_id={wikis_by_id}
-                          onReorder={this.onReorder}
-                          renderIcons={this.renderWikiIcons}
-                          onNodeSelected={this.onSelectWiki}
-                          onExpandCollapse={this.onExpandCollapse}
-                          all_headers={all_headers}
-                          header_list_name={HEADER_LIST_NAME__WIKI}
-                          selected_item_ids={selected_wiki_ids}
-              />
-
-              { false && 
-              <DivTable project_id={project_id} permission_name_for_dragging={'xxx'}>
-                { map(values(wikis_by_id), (wiki) => this.render_row(wiki) ) }
-              </DivTable>
-              }
-              
-              { (!wikis_by_id || wikis_by_id.length) === 0 &&
-                (
-                    <div className="wiki-list__empty">
-                      { ! is_loading && "No pages." }
-                      { is_loading && "Loading..." }
-                    </div>
-                )
-              }
-            </div>
+            <CommonTree items={wikis_as_structured_tree}
+                        items_by_id={wikis_by_id}
+                        onReorder={this.onReorder}
+                        renderIcons={this.renderWikiIcons}
+                        onNodeSelected={this.onSelectWiki}
+                        onExpandCollapse={this.onExpandCollapse}
+                        all_headers={all_headers}
+                        header_list_name={HEADER_LIST_NAME__WIKI}
+                        selected_item_ids={selected_wiki_ids}
+            />
         )
     }
 }

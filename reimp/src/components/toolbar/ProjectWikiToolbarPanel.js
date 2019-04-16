@@ -26,8 +26,8 @@ class ProjectWikiToolbarPanel extends Component {
     }
 
     onNewWikiPageClick() {
-        const { dispatch, project_id } = this.props
-        dispatch(startCandidateWiki(project_id))
+        const { dispatch, project_id, parent_wiki_id } = this.props
+        dispatch(startCandidateWiki(project_id, parent_wiki_id))
     }
     
     render() {
@@ -43,9 +43,11 @@ class ProjectWikiToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
     const project_id = get(getGloballySelectedEntityIds(state), ["project_ids", 0], null)
+    const parent_wiki_id = get(getGloballySelectedEntityIds(state), ["wiki_ids", 0], null)
 
     return {
-        project_id
+        project_id,
+        parent_wiki_id
     }
 }
 

@@ -103,6 +103,7 @@ class WikiViewSet(BaseViewSet):
             context = {}
             params = request.data['item']
             project_id = params['project_id']
+            parent_wiki_id = params.get('parent_wiki_id')
             default_wiki_page_args = params.get('default_wiki_page_args', {})
             fixed_default_wiki_page_args = self._apply_business_project_switch(default_wiki_page_args)
             project = self.allowed_project(project_id)
@@ -111,6 +112,7 @@ class WikiViewSet(BaseViewSet):
                 wiki_page = WikiPage.objects.create(
                     name=params['name'],
                     project_id=project.id,
+                    parent_id=parent_wiki_id,
                     **fixed_default_wiki_page_args)
 
                 context['item'] = WikiPageSerializer(wiki_page).data

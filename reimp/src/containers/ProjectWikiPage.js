@@ -80,7 +80,7 @@ class ProjectWikiPage extends Component {
         const { dispatch, history, project_id } = this.props
         dispatch(selectItems(LIST_KEY__WIKI_LIST, wiki_id))
         dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_WIKI_PAGE,
-                                 {project_id: [project_id],
+                                 {project_ids: [project_id],
                                   wiki_ids: [""+wiki_id]}))
         history.push('/projects/'+project_id+'/wiki/'+wiki_id);
     }
@@ -101,16 +101,10 @@ class ProjectWikiPage extends Component {
             )
         } else {
             return (
-                <div>
-                  <div>
-                    <div className="project-wiki__project_wikis">
-                      <ProjectWikiList list_key={LIST_KEY__WIKI_LIST}
-                                       selected_wiki_ids={selected_wiki_ids}
-                                       project_id={project_id}
-                                       onSelectWiki={this.onSelectWiki}/>
-                    </div>
-                  </div>
-                </div>
+                <ProjectWikiList list_key={LIST_KEY__WIKI_LIST}
+                                 selected_wiki_ids={selected_wiki_ids}
+                                 project_id={project_id}
+                                 onSelectWiki={this.onSelectWiki}/>
             )
         }
     }
