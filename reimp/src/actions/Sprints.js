@@ -129,20 +129,20 @@ export function updateSprintType(sprint_ids, value) {
     return updateItem(ENTITY_KEY__SPRINT, sprint_ids, "sprint_type", value)
 }
 
-export function updateSprintReviewCycle(sprint_id, value) {
-    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "review_cycle_days", value)
+export function updateSprintReviewCycle(sprint_ids, value) {
+    return updateItem(ENTITY_KEY__SPRINT, sprint_ids, "review_cycle_days", value)
 }
 
-export function updateSprintCommission(sprint_id, value) {
-    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "commission_percentage", value)
+export function updateSprintCommission(sprint_ids, value) {
+    return updateItem(ENTITY_KEY__SPRINT, sprint_ids, "commission_percentage", value)
 }
 
-export function updateSprintRatios(sprint_id, value) {
-    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "ratios", value)
+export function updateSprintRatios(sprint_ids, value) {
+    return updateItem(ENTITY_KEY__SPRINT, sprint_ids, "ratios", value)
 }
 
-export function updateSprintBudget(sprint_id, value) {
-    return updateItem(ENTITY_KEY__SPRINT, [sprint_id], "budget", value)
+export function updateSprintBudget(sprint_ids, value) {
+    return updateItem(ENTITY_KEY__SPRINT, sprint_ids, "budget", value)
 }
 
 

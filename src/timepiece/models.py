@@ -1420,8 +1420,8 @@ class Project(BaseModel):
     modified = models.DateTimeField(auto_now=True)
     billable = models.BooleanField(default=False)
     point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
-    quote_uncertainty = models.FloatField(null=True, blank=True, default=0.25,
-                                          verbose_name="Uncertainty overhead as a decimal between 0 and 1")
+    quote_uncertainty = models.FloatField(null=True, blank=True, default=1.25,
+                                          verbose_name="Uncertainty overhead as a ratio value. 1 means no uncertainty.")
     project_type = models.CharField(max_length=20, null=False, choices=PROJECT_TYPES, default='sprint', db_index=True)
     number = models.IntegerField(null=False)
     users = models.ManyToManyField(
