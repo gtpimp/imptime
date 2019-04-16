@@ -31,8 +31,11 @@ class RefreshNotifier(object):
             for k, v in params.items():
                 if 'project' in k:
                     params[k.replace("project", "sprint")] = params.pop(k)
-                if 'business' in k:
+                if 'businesses' in k:
+                    params[k.replace("businesses", "projects")] = params.pop(k)
+                elif 'business' in k:
                     params[k.replace("business", "project")] = params.pop(k)
+
 
         try:
             created_at = convert_datetime_to_iso_string(obj.created) if hasattr(obj, 'created') else None

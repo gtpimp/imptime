@@ -16,12 +16,6 @@ import {
 
 class CompanyUserPage extends Component {
 
-    constructor(props) {
-        super(props)
-        this.navigateToCompanyUserPermissions = this.navigateToCompanyUserPermissions.bind(this)
-        this.closeCompanyUserPermissions = this.closeCompanyUserPermissions.bind(this)
-    }
-
     componentDidMount() {
         // dispatch(set_toolbars(PAGE_KEY__COMPANY_USER_PAGE, ['company-user']))
         this.refresh()
@@ -32,9 +26,11 @@ class CompanyUserPage extends Component {
         if ( new_props.company_id !== company_id || new_props.company.id !== this.props.company.id ||
              new_props.user_id !== user_id || new_props.user.id !== this.props.user.id) {
             this.refresh(new_props)
+        } else {
+            this.ensureCompanyLoaded(new_props)
         }
     }
-    
+
     refresh(these_props) {
         const props = these_props || this.props
         const { dispatch, company_id, user_id, company, user } = props
@@ -44,22 +40,30 @@ class CompanyUserPage extends Component {
                 dispatch(ensureUsersLoaded([user_id]))
             }
             dispatch(setPageSelectedEntities(PAGE_KEY__COMPANY_USER_PAGE,
-                                     {company_ids:[company_id],
-                                     user_ids:compact([user_id])}))
+                                             {company_ids:[company_id],
+                                              user_ids:compact([user_id])}))
         }
         if ( company && company.id ) {
             dispatch(setCompanyUserBreadcrumbsHelper(company, user))
         }
     }
 
-    navigateToCompanyUserPermissions(user, event) {
+    ensureCompanyLoaded = (these_props) => {
+        const props = these_props || this.props
+        const { dispatch, company_id } = props
+        if ( company_id ) {
+            dispatch(ensureCompaniesLoaded([company_id]))
+        }
+    }
+
+    navigateToCompanyUserPermissions = (user, event) => {
         const { company_id, history } = this.props
         event.stopPropagation()
         event.preventDefault()
         history.push('/companies/'+company_id+'/users/'+user.id + '/permissions')
     }
 
-    closeCompanyUserPermissions() {
+    closeCompanyUserPermissions = () => {
         const { company_id, history } = this.props
         history.push('/companies/'+company_id+'/users/')
     }
@@ -104,7 +108,7 @@ function mapStateToProps(state, props) {
     const view_mode = props.match.params.viewMode || 'list'
     const company = getCompany(state, company_id)
     const user = getUser(state, user_id)
-        
+    
     return {
         company_id,
         company: company || {},

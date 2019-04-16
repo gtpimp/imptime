@@ -16,12 +16,6 @@ import {
 
 class ProjectUserPage extends Component {
 
-    constructor(props) {
-        super(props)
-        this.navigateToProjectUserPermissions = this.navigateToProjectUserPermissions.bind(this)
-        this.closeProjectUserPermissions = this.closeProjectUserPermissions.bind(this)
-    }
-
     componentDidMount() {
         // dispatch(set_toolbars(PAGE_KEY__PROJECT_USER_PAGE, ['project-user']))
         this.refresh()
@@ -32,6 +26,8 @@ class ProjectUserPage extends Component {
         if ( new_props.project_id !== project_id || new_props.project.id !== this.props.project.id ||
              new_props.user_id !== user_id || new_props.user.id !== this.props.user.id) {
             this.refresh(new_props)
+        } else {
+            this.ensureProjectLoaded(new_props)
         }
     }
     
@@ -44,22 +40,30 @@ class ProjectUserPage extends Component {
                 dispatch(ensureUsersLoaded([user_id]))
             }
             dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_USER_PAGE,
-                                     {project_ids:[project_id],
-                                      user_ids: compact([user_id])}))
+                                             {project_ids:[project_id],
+                                              user_ids: compact([user_id])}))
         }
         if ( project && project.id ) {
             dispatch(setProjectUserBreadcrumbsHelper(project, user))
         }
     }
 
-    navigateToProjectUserPermissions(user, event) {
+    ensureProjectLoaded = (these_props) => {
+        const props = these_props || this.props
+        const { dispatch, project_id } = props
+        if ( project_id ) {
+            dispatch(ensureProjectsLoaded([project_id]))
+        }
+    }
+
+    navigateToProjectUserPermissions = (user, event) => {
         const { project_id, history } = this.props
         event.stopPropagation()
         event.preventDefault()
         history.push('/projects/'+project_id+'/users/'+user.id + '/permissions')
     }
 
-    closeProjectUserPermissions() {
+    closeProjectUserPermissions = () => {
         const { project_id, history } = this.props
         history.push('/projects/'+project_id+'/users/')
     }
@@ -104,7 +108,7 @@ function mapStateToProps(state, props) {
     const view_mode = props.match.params.viewMode || 'list'
     const project = getProject(state, project_id)
     const user = getUser(state, user_id)
-        
+    
     return {
         project_id,
         project: project || {},
