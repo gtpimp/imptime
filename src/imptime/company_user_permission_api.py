@@ -29,7 +29,7 @@ class CompanyUserPermissionViewSet(BaseViewSet):
                 # this is because of a limitation in the implementation
                 # of allowed_company_permissions, could be fixed.
                 raise Exception("Must filter by company")
-            
+
             if cups.count() > 0:
                 company = cups[0].company #sic
                 if self.logged_in_company_permissions(company) is None or not self.logged_in_company_permissions(company).has_set_user_permissions:
@@ -54,7 +54,7 @@ class CompanyUserPermissionViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
@@ -72,7 +72,7 @@ class CompanyUserPermissionViewSet(BaseViewSet):
                 for user_pk in user_pks:
                     user = self.allowed_user(user_pk)
                     cup = CompanyPermissions.for_user(user, company)
-                    
+
                     for permission_name, value in permission_values.items():
                         cup.update_permission(permission_name, value, save=False)
                     cup.save()
@@ -81,5 +81,5 @@ class CompanyUserPermissionViewSet(BaseViewSet):
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))

@@ -110,12 +110,12 @@ class ProjectViewSet(BaseViewSet):
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 project.save()
-            
+
             data = {'status': 'success', 'payload': project_pks}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
-        
+
         return HttpResponse(JSONRenderer().render(data))
 
     def create(self, request):
@@ -164,8 +164,7 @@ class ProjectViewSet(BaseViewSet):
                 project_invite, created_invite = ProjectInvite.objects.get_or_create(business=project, #sic
                                                                                      user=invited_user,
                                                                                      defaults={'invited_by':request.user})
-
-
+                project.save()
                 if created_invite or project_invite.invite_sent_at is None:
                     self._send_invite(project, invited_user, created_user)
                     project_invite.invite_sent_at = timezone.now()
