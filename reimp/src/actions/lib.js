@@ -94,9 +94,10 @@ export function impfetch(state, url, dispatch, args) {
 
         if (response.status === 503) {
             dispatch(enableMaintenanceMode())
+            window.location.reload()
             return Promise.reject(MAINTENANCE_MODE)
         }
-        
+
         if ( ( (""+response.status)[0] === "4" ) || ( (""+response.status)[0] === "5" ) ) {
             throttles[absolute_url].last_failure_at = moment()
             if ( (response.status === 301 || response.status === 401) && dispatch ) {

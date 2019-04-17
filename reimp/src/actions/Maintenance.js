@@ -7,6 +7,12 @@ export function enableMaintenanceMode() {
     }
 }
 
+export function disableMaintenanceMode() {
+    return {
+        type: MAINTENANCE_MODE_INACTIVE
+    }
+}
+
 export function isMaintenanceModeActive(state) {
     return state.maintenance.is_active || false
 }
