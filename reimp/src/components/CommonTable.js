@@ -205,7 +205,8 @@ function mapStateToProps(state, props) {
             selected_item_ids, onRowSelected, onRowReordered, onRowSelectionUpdated,
             items, table_params } = props
 
-    const item_ids = keys(keyBy(items, 'id'))
+    let item_ids = []
+    map(items, (item) => {item_ids.push(item['id'])})
     
     return {
         onRowSelected,
