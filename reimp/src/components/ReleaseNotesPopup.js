@@ -38,10 +38,12 @@ class ReleaseNotesPopup extends Component {
         const { dispatch, release_note_ids } = this.props
         dispatch(markReleaseNotesAsSeen(release_note_ids))
         this.setState({userClosedModal: true})
+        window.location.reload()
     }
 
     willReadLater() {
         this.setState({userClosedModal: true})
+        window.location.reload()
     }
 
     render() {
