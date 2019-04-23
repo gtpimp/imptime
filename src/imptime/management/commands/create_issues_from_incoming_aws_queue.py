@@ -251,13 +251,21 @@ this is the colour of yukc
                 raise Exception("No project found with name %s which you have access to" % project_name)
 
         sprint_name = settings.ISSUE_INBOX_DEFAULT_SPRINT_NAME
-        sprint = Sprint.objects.get_or_create(business=project,
-                                              name=sprint_name,
-                                              defaults={'status3': SprintStatus.objects.get_or_create(name='pending',
-                                                                                                      business=project)[0],
-                                                        'project_type': 'inbox',
-                                                        'description': "For incoming unprocessed issues"})[0]
-        return user, project, sprint, subject
+
+        inbox_sprints = Sprint.objects.filter(business=project, name=sprint_name).filter_open()
+        if len(inbox_sprints) > 1:
+            raise Exception("There is more than one open sprint with name %s in project %s" % (sprint_name, project_name))
+        elif len(inbox_sprints) == 0:
+            inbox_sprint = Sprint.objects.create(business=project,
+                                                 name=sprint_name,
+                                                 defaults={'status3': SprintStatus.objects.get_or_create(name='pending',
+                                                                                                         business=project)[0],
+                                                           'project_type': 'inbox',
+                                                           'description': "For incoming unprocessed issues"})
+        else:
+            inbox_sprint = inbox_sprints[0]
+        
+        return user, project, inbox_sprint, subject
     
         
     def resolve_issue_content(self, message, default_subject, project):
