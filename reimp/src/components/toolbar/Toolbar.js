@@ -44,6 +44,8 @@ background-color: ${theme.colours.left_panel_background};
 font-size: 15px;
 width: 100%;
 border-bottom: 1px solid #dcdcdc;
+padding-top: 20px;
+padding-bottom: 20px;
 `
 
 const left_toolbar = css`

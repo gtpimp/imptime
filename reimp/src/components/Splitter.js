@@ -7,15 +7,20 @@ import { setGlobalPageFlag, getGlobalPageFlag } from '../actions/Page'
 import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 
-const pane_css = { overflow: "auto",
-                   display:"flex",
+const pane_css = { display:"flex",
                    flexDirection:"column",
-                   width: "100%" }
+                   width: "100%"}
 
-const SplitPaneLeft = styled('div')(props => Object.assign(pane_css,
-                                    {backgroundColor: theme.colours.left_panel_background}))
-const SplitPaneRight = styled('div')(props => Object.assign(pane_css,
-                                     {backgroundColor: theme.colours.right_panel_background}))
+const SplitPaneLeft = styled('div')(props => Object.assign(
+    {}, pane_css,
+    {backgroundColor: theme.colours.left_panel_background,
+     overflow: "hidden"}
+))
+const SplitPaneRight = styled('div')(props => Object.assign(
+    {}, pane_css,
+    {backgroundColor: theme.colours.right_panel_background,
+     overflow: "auto"}
+))
 
 class Splitter extends Component {
 
