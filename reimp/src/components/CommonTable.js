@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import { includes, size, map, isEmpty, keys, keyBy, union, difference, concat, indexOf } from 'lodash'
+import { includes, size, map, isEmpty, union, difference, concat, indexOf } from 'lodash'
 import {connect} from 'react-redux'
 import { findDOMNode } from 'react-dom'
 import { AutoSizer, defaultTableRowRenderer, Column, Table } from 'react-virtualized'
