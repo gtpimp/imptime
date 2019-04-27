@@ -65,6 +65,8 @@ import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueEstimate from './EditableIssueEstimate'
 import Timestamp from './Timestamp'
+import ProjectName from './ProjectName'
+import SprintName from './SprintName'
 import Hours from './Hours'
 import Progress from './Progress'
 import TagListFlat from './TagListFlat'
@@ -579,6 +581,33 @@ class IssueList extends Component {
                       <EditableIssueAssignedUser class_name="issue-cell__assignee"
                                                  issue_ids={[issue.id]}
                                                  project_id={issue.project_id}/>
+                    </DivTableCell>
+                )
+                break
+            case "project":
+                content = (
+                    <DivTableCell key={key}
+                                  secondary={true}
+                    >
+                      <ProjectName project_id={issue.project_id} />
+                    </DivTableCell>
+                )
+                break
+            case "sprint":
+                content = (
+                    <DivTableCell key={key}
+                                  secondary={true}
+                    >
+                      <SprintName sprint_id={issue.sprint_id} />
+                    </DivTableCell>
+                )
+                break
+            case "due_date":
+                content = (
+                    <DivTableCell key={key}
+                                  secondary={true}
+                    >
+                      <Timestamp value={issue.due_date} format="from_now" />
                     </DivTableCell>
                 )
                 break
