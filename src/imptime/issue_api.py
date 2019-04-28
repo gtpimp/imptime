@@ -427,11 +427,13 @@ class IssueViewSet(BaseViewSet):
         due_now = raw_filter_args.pop('due_now', None)
         if due_now == True:
             qs = qs.filter(due_date__date__lte=timezone.now().date(),
-                           project__status3__is_closed=False)\
+                           project__status3__is_closed=False,
+                           project__business__archived=False)\
                    .order_by("-project__business_id", "-project_id")
         elif due_now == False:
             qs = qs.filter(Q(due_date__isnull=True) | ~Q(due_date__date=timezone.now().date()),
-                           project__status3__is_closed=False)\
+                           project__status3__is_closed=False,
+                           project__business__archived=False)\
                    .order_by("-project__business_id", "-project_id")
             
 

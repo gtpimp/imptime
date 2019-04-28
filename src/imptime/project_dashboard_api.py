@@ -211,6 +211,10 @@ def get_recent_activity(project):
     is_inactive = not project.archived and not is_active and sort_date + relativedelta(days=NUM_DAYS_FOR_EXPIRED) >= timezone.now()
     is_expired = not project.archived and not is_active and not is_inactive
     is_closed = project.archived or num_open_sprints == 0
+
+    if project.archived:
+        sort_date = sort_date - relativedelta(year=2)
+        sort_reason = 'archived'
     
     d = {
         'most_recent_clock_entry': entry,

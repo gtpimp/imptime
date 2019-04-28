@@ -179,6 +179,12 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
     if ( d.entity_name === 'project' ) {
         list_keys_to_invalidate[LIST_KEY__PROJECT_LIST] = true
 
+        // these two lists contain only issues for unarchived projects, so
+        // editing the project means invalidating these lists.
+        list_keys_to_invalidate[LIST_KEY__MY_ISSUE_LIST_DUE_NOW] = true
+        list_keys_to_invalidate[LIST_KEY__MY_ASSIGNED_ISSUE_LIST] = true
+        
+
     } else if ( d.entity_name === 'sprint' ) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_LIST] = true
         list_keys_to_invalidate[SELECTOR__SPRINTS] = true
