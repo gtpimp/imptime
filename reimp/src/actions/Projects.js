@@ -65,6 +65,10 @@ export function updateProjectDescription(project_id, value) {
     return updateItem(ENTITY_KEY__PROJECT, [project_id], "description", value)
 }
 
+export function updateProjectArchived(project_id, value) {
+    return updateItem(ENTITY_KEY__PROJECT, [project_id], "archived", value)
+}
+
 export function startCandidateProject() {
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__PROJECT, {}))

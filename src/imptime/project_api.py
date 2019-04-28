@@ -107,6 +107,9 @@ class ProjectViewSet(BaseViewSet):
                 elif field_name == 'description':
                     if self.logged_in_permissions(project).has_edit_project_detail:
                         project.description = new_value
+                elif field_name == 'archived':
+                    if self.logged_in_permissions(project).has_edit_project_detail:
+                        project.archived = new_value
                 else:
                     raise Exception("Unsupported field name: %s" % field_name)
                 project.save()
