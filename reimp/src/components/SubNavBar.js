@@ -9,7 +9,7 @@ import styled from 'react-emotion'
 import { default_theme as theme } from '../theme/default'
 import { cx, css } from 'emotion'
 import AutoClockPopup from './auto_clock/AutoClockPopup'
-import DueIssueList from './DueIssueList'
+import DueIssueListIndicator from './DueIssueListIndicator'
 
 const navbar_submenu_item = css`color: theme.colours.link;
                                 font: theme.fonts.link;
@@ -63,7 +63,7 @@ class SubNavBar extends Component {
               <ToolbarDiv side="right">
 
                 <AutoClockPopup />
-                <DueIssueList />
+                <DueIssueListIndicator />
                 <NavTab variant="dashboard-toggle" label={username} colourName="normal_text">
 
                   { false && 

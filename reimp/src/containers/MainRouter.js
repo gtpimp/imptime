@@ -18,6 +18,7 @@ import DecisionJournalPage from './DecisionJournalPage'
 import PasswordChangedPage from './PasswordChangedPage'
 import DashboardPage from './DashboardPage'
 import ForgotPasswordPage from './ForgotPasswordPage'
+import UserIssuesPage from './UserIssuesPage'
 import IssuesPage from './IssuesPage'
 import IssueHistoryPage from './IssueHistoryPage'
 import InvoicesPage from './InvoicesPage'
@@ -124,6 +125,8 @@ class MainRouter extends Component {
               <Route exact path="/projects/:projectId/sprints/:sprintId/bulkCreate" component={BulkIssueCreatorPage}/>
               <Route exact path="/projects/:projectId/users" component={ProjectUserPage}/>
               <Route exact path="/projects/:projectId/users/:userId/:viewMode" component={ProjectUserPage}/>
+
+              <Route exact path="/projects/issues/:filterMode" component={UserIssuesPage}/>
 
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards" component={TinyCardMenu}/>
               <Route exact path="/projects/:projectId/sprints/:sprintId/cards/budget" component={TinyBudgetCard} />

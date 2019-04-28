@@ -31,6 +31,7 @@ export const default_theme = {
                new_item_background: '#E9EEF2',
                notok: '#E25A50',
                ok: '#85C087',
+               neutral: '#bbbbbb',
                page_background: '#E6EEF0',
                nav_bar_gradient1: '#0b8bb2',
                nav_bar_gradient2: '#056a86',
