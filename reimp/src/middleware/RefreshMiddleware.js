@@ -184,6 +184,12 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[SELECTOR__SPRINTS] = true
         list_keys_to_invalidate[LIST_KEY__SPRINT_ROADMAP] = true
 
+        // these two lists contain only issues for open sprints, so
+        // editing the sprint means invalidating these lists.
+        list_keys_to_invalidate[LIST_KEY__MY_ISSUE_LIST_DUE_NOW] = true
+        list_keys_to_invalidate[LIST_KEY__MY_ASSIGNED_ISSUE_LIST] = true
+        
+
     } else if ( d.entity_name === 'issue' ) {
         list_keys_to_invalidate[LIST_KEY__ISSUE_LIST] = true
         list_keys_to_invalidate[LIST_KEY__VISUAL_SPEC_DOCUMENT_ISSUE_LIST] = true

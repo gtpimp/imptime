@@ -793,7 +793,7 @@ class IssueList extends Component {
 
     render_grid() {
 
-        const { is_mien_configurer_active, all_headers, header_list_name, is_visible,
+        const { is_mien_configurer_active, all_headers, header_list_name,
                 issue_items, selected_ids, table_params } = this.props
 
         if ( is_mien_configurer_active ) {
