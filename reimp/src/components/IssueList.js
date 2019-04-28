@@ -796,10 +796,6 @@ class IssueList extends Component {
         const { is_mien_configurer_active, all_headers, header_list_name, is_visible,
                 issue_items, selected_ids, table_params } = this.props
 
-        if (!is_visible) {
-            return (<div></div>)
-        }
-
         if ( is_mien_configurer_active ) {
             return this.renderListColumnConfigurer()
         }
@@ -840,12 +836,6 @@ class IssueList extends Component {
     }
 
     render() {
-
-        const {is_visible} = this.props
-
-        if (!is_visible) {
-            return (<div></div>)
-        }
 
         return this.render_grid()
         
@@ -925,7 +915,6 @@ const makeMapStateToProps = () => {
             has_items: items && items.length > 0,
             is_loading: isLoading(state, list_key),
             last_updated: getLastUpdated(state, list_key),
-            is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
             candidate_issue: candidate_issue,
             is_creating_issue: is_creating_issue,
             expanded_issues: expanded_issues,

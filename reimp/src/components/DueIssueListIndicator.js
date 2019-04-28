@@ -11,7 +11,6 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { logged_in_user } from '../actions/Auth'
 import {
-    initList,
     getVisibleItemIds,
     update_list_filter,
     update_list_pagination,
@@ -32,22 +31,28 @@ class DueIssueListIndicator extends Component {
 
     componentDidMount() {
         const { dispatch, list_key, assigned_list_key, logged_in_user_id } = this.props
-        dispatch(initList(list_key))
         dispatch(update_list_filter(list_key, { 'is_open': true,
                                                 'due_now': true,
                                                 'assigned_to_ids': [logged_in_user_id] }))
+        dispatch(update_list_pagination(list_key, { page_size: 200 }))
 
-        dispatch(initList(assigned_list_key))
         dispatch(update_list_filter(assigned_list_key, { 'is_open': true,
                                                          'due_now': false,
                                                          'assigned_to_ids': [logged_in_user_id] }))
-        dispatch(update_list_pagination(assigned_list_key, { page_size: 50 }))
+        dispatch(update_list_pagination(assigned_list_key, { page_size: 200 }))
         
         this.refresh()
     }
 
     componentWillReceiveProps(props) {
         this.refresh(props)
+    }
+
+    refresh(these_props) {
+        const props = these_props || this.props
+        const { dispatch, list_key, assigned_list_key } = props
+        dispatch(fetchIssuesIfNeeded(list_key))
+        dispatch(fetchIssuesIfNeeded(assigned_list_key))
     }
 
     onShowDueIssues = (evt) => {
@@ -62,13 +67,6 @@ class DueIssueListIndicator extends Component {
         history.push('/projects/issues/assigned')
     }
 
-    refresh(these_props) {
-        const props = these_props || this.props
-        const { dispatch, list_key, assigned_list_key } = props
-        dispatch(fetchIssuesIfNeeded(list_key))
-        dispatch(fetchIssuesIfNeeded(assigned_list_key))
-    }
-
     renderDueAlert() {
         const { num_issues } = this.props
 
@@ -77,7 +75,9 @@ class DueIssueListIndicator extends Component {
         return (
             <div className={css`color:${notification_colour};
                                 cursor: pointer;
+                                padding: ${theme.spacing.horizontal_row_space_tight};
                                 margin-right: ${theme.spacing.horizontal_space_inline};
+                                margin-left: ${theme.spacing.horizontal_space_inline};
                                 font-size:${theme.colours.superscript}`}
                  onClick={this.onShowDueIssues}
             >
@@ -116,6 +116,7 @@ class DueIssueListIndicator extends Component {
         return (
             <div className={css`color:${notification_colour};
                                 cursor: pointer;
+                                padding: ${theme.spacing.horizontal_row_space_tight};
                                 margin-right: ${theme.spacing.horizontal_space_inline};
                                 font-size:${theme.colours.superscript}`}
                  onClick={this.onShowAssignedIssues}

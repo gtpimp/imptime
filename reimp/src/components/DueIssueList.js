@@ -6,9 +6,7 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { logged_in_user } from '../actions/Auth'
 import {
-    initList,
     getVisibleItemIds,
-    update_list_filter,
     getListFilter,
     getListPagination
 } from '../actions/ItemList'
@@ -19,23 +17,8 @@ import {
 } from '../actions/Issues'
 
 class DueIssueList extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {show_popup: false}
-    }
 
     componentDidMount() {
-        const { dispatch, list_key, assigned_list_key, logged_in_user_id } = this.props
-        dispatch(initList(list_key))
-        dispatch(update_list_filter(list_key, { 'is_open': true,
-                                                'due_now': true,
-                                                'assigned_to_ids': [logged_in_user_id] }))
-
-        dispatch(initList(assigned_list_key))
-        dispatch(update_list_filter(assigned_list_key, { 'is_open': true,
-                                                         'due_now': false,
-                                                         'assigned_to_ids': [logged_in_user_id] }))
-        
         this.refresh()
     }
 
@@ -52,18 +35,16 @@ class DueIssueList extends Component {
     render() {
         const { list_key, header_list } = this.props
         return (
-            <div>
-              <IssueList list_key={list_key}
-                         custom_issue_header_list={header_list}
-                         custom_issue_header_list_name={HEADER_LIST_NAME__DUE_ISSUE}
-              />
-            </div>
+            <IssueList list_key={list_key}
+                       custom_issue_header_list={header_list}
+                       custom_issue_header_list_name={HEADER_LIST_NAME__DUE_ISSUE}
+            />
         )
     }
 }
 
 function mapStateToProps(state, props) {
-    const list_key = { props }
+    const { list_key } = props
     const visible_item_ids = getVisibleItemIds(state, list_key)
     const items_by_id = getIssuesById(state, visible_item_ids)
     const filter = getListFilter(state, list_key)

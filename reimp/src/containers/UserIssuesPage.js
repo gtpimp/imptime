@@ -9,9 +9,9 @@ import {
 } from '../actions/ItemListKeyRegistry'
 import { getLoggedInUser } from '../actions/Users'
 import {
-    update_list_filter,
+    // update_list_filter,
     getListFilter,
-    invalidateList,
+    // invalidateList,
 } from '../actions/ItemList'
 import {
     setBrowserTitle
@@ -30,16 +30,18 @@ class UserIssuesPage extends Component {
     }
 
     refresh(these_props) {
-        const {dispatch, filter, list_key, filter_mode, logged_in_user_id} = these_props || this.props
+        // There's a conflict between the DueIssueListIndicator and
+        // this component, they reset the list in a way I haven't figured
+        // out yet. This hack works so long as the indicator component exists.
+        /* const {dispatch, filter, list_key, filter_mode, logged_in_user_id} = these_props || this.props
 
-        const new_filter = { 'is_open': true,
-                             'due_now': filter_mode === 'due',
-                             'assigned_to_ids': [logged_in_user_id] }
+         * const new_filter = { 'is_open': true,
+         *                      'due_now': filter_mode === 'due',
+         *                      'assigned_to_ids': [logged_in_user_id] }
 
-        if ( !filter || new_filter.due_now !== filter.due_now ) {
-            dispatch(update_list_filter(list_key, new_filter))
-            dispatch(invalidateList(list_key))
-        }
+         * if ( !filter || new_filter.due_now !== filter.due_now ) {
+         *     dispatch(update_list_filter(list_key, new_filter))
+         * }*/
     }
 
     renderLeftPane() {
