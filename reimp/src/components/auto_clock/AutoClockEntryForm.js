@@ -237,7 +237,7 @@ function mapStateToProps(state, props) {
                         end_time: moment(entry.end_time),
                         description: entry.comments,
                         role_name: entry.role_name},
-        enableReinitialize: true,
+        enableReinitialize: false,
         onSubmit: onSubmitted,
         onDelete,
         onClose,
