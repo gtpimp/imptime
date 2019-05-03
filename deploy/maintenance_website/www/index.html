@@ -1,0 +1,115 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="refresh" content="500" >
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,500|Roboto+Mono:400,500' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <meta http-equiv="expires" content="0">
+    <title>Imptime - Maintenance</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            align-items: center;
+            background-color: darkorange;
+            display: flex;
+            height: 72px;
+            justify-content: center;
+            width: 100%;
+            box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.12);
+        }
+
+       .footer {
+           align-items: center;
+           position:fixed;
+           bottom: 0px;
+           background-color: darkorange;
+           display: flex;
+           height: 72px;
+           justify-content: center;
+           width: 100%;
+           box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.12);
+       }
+     
+        .block {
+            text-align: center;
+            width: 100%;
+        }
+
+        .block--message {
+            padding-top: 64px;
+        }
+
+        .block--image {
+            padding-top: 40px;
+         
+        }
+
+        .block--link {
+            padding-top: 54px;
+
+        }
+
+        .block__content {
+            display: inline-block;
+            color: rgba(0, 0, 0, 0.87);
+            font-family: Roboto, sans-serif;
+            font-size: 32px;
+            line-height: 40px;
+            max-width: 500px;
+        }
+
+        @media (min-width: 720px) {
+            .block__content {
+                font-size: 40px;
+                line-height: 47px;
+                max-width: 600px;
+            }
+        }
+
+        .block__link {
+            display: inline-block;
+            color: #555500;
+            font-family: Roboto, sans-serif;
+            font-size: 16px;
+            line-height: 19px;
+            max-width: 484px;
+            text-align: center;
+        }
+
+        a.block__link, a.block__link:visited, a.block__link:active, a.block__link:focus {
+            background-position: center right;
+            background-repeat: no-repeat;
+            background-size: 8px 12px;
+            padding-right: 18px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+</div>
+<div class="block block--message">
+  <div class="block__content">
+    Imps at work
+    <br/><br/>
+    ImpTime will resume shortly
+  </div>
+</div>
+<div class="block block--image">
+  <img src="/images/imp_maintenance.png" />
+</div>
+<div class="block block--link">
+    <div class="block__content">
+        <a class="block__link" href="https://app.imptime.com">Check now</a>
+    </div>
+</div>
+<div class="footer">
+</div>
+</body>
+</html>

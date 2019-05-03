@@ -1,0 +1,33 @@
+version: '2'
+ 
+services:
+
+  nginx:
+    image: imptime/nginx-proxy:__TOKEN_IMPTIME_PROXY_API_SHORT_GIT_HASH__
+    ports:
+     - "80:80"
+     - "443:443"
+    volumes:
+     - /opt/imptime/logs:/opt/imptime/logs
+     - /opt/imptime/logs:/var/log/nginx
+     - ./external_config/sites-enabled/:/etc/nginx/conf.d/
+     - ./external_config/ssl/certs:/etc/nginx/certs:ro
+     - ./external_config/ssl/certs_wellknown:/usr/share/nginx/certs_wellknown
+     - /opt/imptime/docker_compose/maintenance_conf/:/opt/imptime/maintenance_conf/:ro
+     
+  letsencrypt:
+    image: imptime/letsencrypt:__TOKEN_IMPTIME_PROXY_API_SHORT_GIT_HASH__
+    volumes:
+     - /var/log/letsencrypt/:/var/log/letsencrypt
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /etc/letsencrypt:/etc/letsencrypt
+     - ./external_config/ssl/certs_wellknown:/tmp/letsencrypt/www
+     - ./external_config/ssl/certs:/certs/letsencrypt
+     - ./external_config/ssl/domains:/opt/imptime/domains
+    environment:
+     - EMAIL=gtp@impd.co.za
+     - CERTS_PATH=/certs/letsencrypt
+     - NGINX_DOCKER_COMPOSE_NAME=nginx
+     - WEBROOT_PATH=/tmp/letsencrypt/www
+    links:
+    - nginx

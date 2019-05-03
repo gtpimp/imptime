@@ -52,3 +52,4 @@ devops/secret
 docs/doc/_book/
 /reimp/src/actions/Issues.js
 tadd.
+deploy/deployer_temp
