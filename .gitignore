@@ -50,6 +50,5 @@ devops/secret
 .tern-project
 .tern-port
 docs/doc/_book/
-/reimp/src/actions/Issues.js
 tadd.
 deploy/deployer_temp
