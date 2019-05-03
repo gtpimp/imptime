@@ -101,4 +101,4 @@ echo " ... then follow onscreen instructions  "
 echo " "
 
 
-docker run -i -t --env GUESSED_DEV_CODE_ROOT_FOLDER=$ROOT/../  --env SSH_AUTH_SOCK=/ssh-agent --env MAPPED_TEMP_FOLDER_ON_HOST=${MAPPED_TEMP_FOLDER} --env AWS_PROFILE=${AWS_PROFILE} --volume $SSH_AUTH_SOCK:/ssh-agent --volume ${DOCKER_SOCK}:/var/run/docker.sock --volume ${ROOT}/deployer_temp:/opt/imptime/deployer/mapped_temp --volume ${AWS_CONFIG}:/root/.aws  --volume ~/.ssh:/opt/imptime/local_ssh_keys deployer bash
+docker run -i -t --env GUESSED_DEV_CODE_ROOT_FOLDER=$ROOT/  --env SSH_AUTH_SOCK=/ssh-agent --env MAPPED_TEMP_FOLDER_ON_HOST=${MAPPED_TEMP_FOLDER} --env AWS_PROFILE=${AWS_PROFILE} --volume $SSH_AUTH_SOCK:/ssh-agent --volume ${DOCKER_SOCK}:/var/run/docker.sock --volume ${ROOT}/deployer_temp:/opt/imptime/deployer/mapped_temp --volume ${AWS_CONFIG}:/root/.aws  --volume ~/.ssh:/opt/imptime/local_ssh_keys deployer bash

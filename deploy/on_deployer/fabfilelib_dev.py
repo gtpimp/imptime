@@ -54,7 +54,7 @@ def dev_on(host_api_folder=None):
         everything required to auto-compile your code where required (eg javascript). """
 
     if host_api_folder is None:
-        host_api_folder = os.path.abspath(os.path.join(env.guessed_dev_code_root_folder, "imptime"))
+        host_api_folder = os.path.abspath(os.path.join(env.guessed_dev_code_root_folder))
 
         print("""You haven't specified where your local copy of imptime is.""")
         print("""Our guess is they are here:\n
@@ -71,18 +71,12 @@ def dev_on(host_api_folder=None):
     output_folder = get_temp_build_dir("dev_on")
     git_repo = "imptime"
     checked_out_code_folder = git_checkout(git_repo)
-    original_docker_compose_file = os.path.join(checked_out_code_folder, "docker", "docker-compose.yml")
-    original_docker_compose_db_file = os.path.join(checked_out_code_folder, "docker", "docker-compose-dev.transient-db.yml")
-    original_docker_compose_dev_file = os.path.join(checked_out_code_folder, "docker", "docker-compose-dev.yml")
-    #original_docker_compose_elasticsearch_file = os.path.join(checked_out_code_folder, "docker", "docker-compose-elasticsearch.yml")
-    #original_docker_compose_logstash_file = os.path.join(checked_out_code_folder, "docker", "docker-compose-logstash.yml")
-    #original_docker_compose_kibana_file = os.path.join(checked_out_code_folder, "docker", "docker-compose-kibana.yml")
+    original_docker_compose_file = os.path.join(checked_out_code_folder, "deploy", "docker", "docker-compose.yml")
+    original_docker_compose_db_file = os.path.join(checked_out_code_folder, "deploy", "docker", "docker-compose-dev.transient-db.yml")
+    original_docker_compose_dev_file = os.path.join(checked_out_code_folder, "deploy", "docker", "docker-compose-dev.yml")
 
     dev_docker_compose_file = os.path.join(output_folder, "docker-compose.yml")
     dev_docker_compose_dev_file = os.path.join(output_folder, "docker-compose-dev.yml")
-    #dev_docker_compose_elasticsearch_file = original_docker_compose_elasticsearch_file
-    #dev_docker_compose_logstash_file = original_docker_compose_logstash_file
-    #dev_docker_compose_kibana_file = original_docker_compose_kibana_file
     dev_docker_compose_db_file = original_docker_compose_db_file
 
     yaml_dc = yaml.load(open(original_docker_compose_file))
