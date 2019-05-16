@@ -73,7 +73,8 @@ def render_url_to_pdf(request, url, basename, additional_pdf_kwargs):
     puppeteer = PuppeteerHelper()
     url = settings.PUPPETEER_BASE_URL + url
     additional_pdf_kwargs['user-id'] = request.user.id
-    additional_pdf_kwargs['auth-token'] = request.COOKIES['token']
+    additional_pdf_kwargs['auth-token'] = request.GET['token']
+    #additional_pdf_kwargs['auth-token'] = request.COOKIES['token']
     additional_pdf_kwargs['headerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "header.html")).read() + "'"
     additional_pdf_kwargs['footerTemplate'] = "'" + open(os.path.join(os.path.realpath(os.path.dirname(__file__)), "footer.html")).read() + "'"
 
