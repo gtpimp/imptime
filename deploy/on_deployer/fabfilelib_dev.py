@@ -85,24 +85,24 @@ def dev_on(host_api_folder=None):
     src_folders_to_mount = [ "./temp:/opt/imptime/temp",
                              "./imptime-media:/opt/imptime/media/",
                              "./logs:/opt/imptime/logs/",
-                             "%s:%s" % (os.path.join(host_api_folder, "src/api"), "/opt/imptime/api/api"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/devops"), "/opt/imptime/api/devops"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/django_remote_forms"), "/opt/imptime/api/django_remote_forms"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/imptime"), "/opt/imptime/api/imptime"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/impasync"), "/opt/imptime/api/impasync"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/lib"), "/opt/imptime/api/lib"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/django_traffic"), "/opt/imptime/api/django_traffic"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/invoicing"), "/opt/imptime/api/invoicing"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/timepiece"), "/opt/imptime/api/timepiece"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/implicitdesign"), "/opt/imptime/api/implicitdesign"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/mailqueue"), "/opt/imptime/api/mailqueue"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/paranoidsessions"), "/opt/imptime/api/paranoidsessions"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/test_helper"), "/opt/imptime/api/test_helper"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/testable"), "/opt/imptime/api/testable"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/user_management"), "/opt/imptime/api/user_management"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/imp_wiki"), "/opt/imptime/api/imp_wiki"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/emacs_importer"), "/opt/imptime/api/emacs_importer"),
-                             "%s:%s" % (os.path.join(host_api_folder, "src/puppeteer"), "/opt/imptime/api/puppeteer")
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/api"), "/opt/imptime/api/api"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/devops"), "/opt/imptime/api/devops"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/django_remote_forms"), "/opt/imptime/api/django_remote_forms"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/imptime"), "/opt/imptime/api/imptime"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/impasync"), "/opt/imptime/api/impasync"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/lib"), "/opt/imptime/api/lib"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/django_traffic"), "/opt/imptime/api/django_traffic"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/invoicing"), "/opt/imptime/api/invoicing"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/timepiece"), "/opt/imptime/api/timepiece"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/implicitdesign"), "/opt/imptime/api/implicitdesign"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/mailqueue"), "/opt/imptime/api/mailqueue"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/paranoidsessions"), "/opt/imptime/api/paranoidsessions"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/test_helper"), "/opt/imptime/api/test_helper"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/testable"), "/opt/imptime/api/testable"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/user_management"), "/opt/imptime/api/user_management"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/imp_wiki"), "/opt/imptime/api/imp_wiki"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/emacs_importer"), "/opt/imptime/api/emacs_importer"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/puppeteer"), "/opt/imptime/api/puppeteer")
     ]
 
     if host_api_folder:
@@ -160,7 +160,7 @@ def dev_on(host_api_folder=None):
                                               git_hashes=git_hashes)
 
     with lcd(checked_out_code_folder):
-        local("cp -R docker/scripts/dev/* {output_folder}".format(output_folder=output_folder))
+        local("cp -R deploy/docker/scripts/dev/* {output_folder}".format(output_folder=output_folder))
 
     local("chmod -R 777 " + output_folder) # for convenience of editing
 
