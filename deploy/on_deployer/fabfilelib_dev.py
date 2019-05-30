@@ -102,7 +102,8 @@ def dev_on(host_api_folder=None):
                              "%s:%s" % (os.path.join(host_api_folder, "../src/user_management"), "/opt/imptime/api/user_management"),
                              "%s:%s" % (os.path.join(host_api_folder, "../src/imp_wiki"), "/opt/imptime/api/imp_wiki"),
                              "%s:%s" % (os.path.join(host_api_folder, "../src/emacs_importer"), "/opt/imptime/api/emacs_importer"),
-                             "%s:%s" % (os.path.join(host_api_folder, "../src/puppeteer"), "/opt/imptime/api/puppeteer")
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/puppeteer"), "/opt/imptime/api/puppeteer"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/jira_interface"), "/opt/imptime/api/jira_interface")
     ]
 
     if host_api_folder:
@@ -138,8 +139,8 @@ def dev_on(host_api_folder=None):
 
         dev_yaml_dc['services']['dev-ui-react-and-css-builder']['volumes'] = \
                                                                              ui_volumes + \
-                                                                             [ "%s:%s" % (os.path.join(host_api_folder, "mobile"), "/opt/imptime/ui/mobile"),
-                                                                               "%s:%s" % (os.path.join(host_api_folder, "reimp"), "/opt/imptime/ui/reimp"),
+                                                                             [ "%s:%s" % (os.path.join(host_api_folder, "../mobile"), "/opt/imptime/ui/mobile"),
+                                                                               "%s:%s" % (os.path.join(host_api_folder, "../reimp"), "/opt/imptime/ui/reimp"),
                                                                                "%s:/opt/imptime/ui/static_collected" % (os.path.join(host_api_folder, "static_collected")) ]
 
         codes_mounted.append("dev-ui-react-and-css-builder")
