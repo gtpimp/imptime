@@ -103,7 +103,8 @@ def dev_on(host_api_folder=None):
                              "%s:%s" % (os.path.join(host_api_folder, "../src/imp_wiki"), "/opt/imptime/api/imp_wiki"),
                              "%s:%s" % (os.path.join(host_api_folder, "../src/emacs_importer"), "/opt/imptime/api/emacs_importer"),
                              "%s:%s" % (os.path.join(host_api_folder, "../src/puppeteer"), "/opt/imptime/api/puppeteer"),
-                             "%s:%s" % (os.path.join(host_api_folder, "../src/jira_interface"), "/opt/imptime/api/jira_interface")
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/jira_interface"), "/opt/imptime/api/jira_interface"),
+                             "%s:%s" % (os.path.join(host_api_folder, "../src/noui"), "/opt/imptime/api/noui")
     ]
 
     if host_api_folder:
