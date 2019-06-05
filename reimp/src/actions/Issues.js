@@ -55,10 +55,18 @@ export const ALL_AVAILABLE_ISSUE_HEADERS = [ {key:'number', label:"#", descripti
                                              {key:'estimate_columns', label:"Estimates", description:"Columns for each user", width:medium_col_width},
                                              {key:'small_delete', label:"", description:"Delete issue", width:tiny_col_width},
                                              {key:'view_in_sprint', label:"", description:"View in sprint", width:tiny_col_width},
+                                             {key:'project', label:"Project", description:"Project", width:medium_col_width},
+                                             {key:'sprint', label:"Sprint", description:"Sprint", width:medium_col_width},
+                                             {key:'due_date', label:"Due", description:"Due date", width:medium_col_width},
 ]
 
 
-const DEFAULT_POPUP_ISSUE_HEADER_KEYS = ["name", "view_in_sprint", "status"]
+const DEFAULT_POPUP_ISSUE_HEADER_KEYS = ["name",
+                                         "view_in_sprint",
+                                         "project",
+                                         "sprint",
+                                         "due_date",
+                                         "status"]
 export const ALL_AVAILABLE_POPUP_ISSUE_HEADERS = filter(ALL_AVAILABLE_ISSUE_HEADERS, (header) => includes(DEFAULT_POPUP_ISSUE_HEADER_KEYS, header.key))
 
 export function invalidateAllIssues() {

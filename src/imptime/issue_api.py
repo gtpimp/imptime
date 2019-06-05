@@ -421,11 +421,21 @@ class IssueViewSet(BaseViewSet):
 
         only_open = raw_filter_args.pop('is_open', None)
         if only_open:
-            qs = qs.filter_open(self.request.user)
+            qs = qs.filter_open(self.request.user)\
+                   .filter(project__status3__is_closed=False)
 
         due_now = raw_filter_args.pop('due_now', None)
-        if due_now:
-            qs = qs.filter(due_date__date__lte=timezone.now().date())
+        if due_now == True:
+            qs = qs.filter(due_date__date__lte=timezone.now().date(),
+                           project__status3__is_closed=False,
+                           project__business__archived=False)\
+                   .order_by("-project__business_id", "-project_id")
+        elif due_now == False:
+            qs = qs.filter(Q(due_date__isnull=True) | ~Q(due_date__date=timezone.now().date()),
+                           project__status3__is_closed=False,
+                           project__business__archived=False)\
+                   .order_by("-project__business_id", "-project_id")
+            
 
         assigned_to_ids = raw_filter_args.pop('assigned_to_ids', None)
         if assigned_to_ids:

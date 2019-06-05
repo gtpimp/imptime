@@ -6,6 +6,7 @@ import SidebarProperty from './SidebarProperty'
 import SidebarSectionTitle from './SidebarSectionTitle'
 import EditableProjectName from '../components/EditableProjectName'
 import EditableProjectDescription from '../components/EditableProjectDescription'
+import EditableProjectArchived from '../components/EditableProjectArchived'
 
 class ProjectSidebar extends Component {
 
@@ -39,6 +40,7 @@ class ProjectSidebar extends Component {
               <div key="descriptionstack">
                 <SidebarSectionTitle title="Description" />
                 <EditableProjectDescription project_id={project_id}/>
+                <EditableProjectArchived project_id={project_id}/>
               </div>
             </SidebarContainer>
         )

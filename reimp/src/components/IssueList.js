@@ -65,6 +65,8 @@ import EditableIssueAssignedUser from './EditableIssueAssignedUser'
 import EditableIssueStatus from './EditableIssueStatus'
 import EditableIssueEstimate from './EditableIssueEstimate'
 import Timestamp from './Timestamp'
+import ProjectName from './ProjectName'
+import SprintName from './SprintName'
 import Hours from './Hours'
 import Progress from './Progress'
 import TagListFlat from './TagListFlat'
@@ -582,6 +584,33 @@ class IssueList extends Component {
                     </DivTableCell>
                 )
                 break
+            case "project":
+                content = (
+                    <DivTableCell key={key}
+                                  secondary={true}
+                    >
+                      <ProjectName project_id={issue.project_id} />
+                    </DivTableCell>
+                )
+                break
+            case "sprint":
+                content = (
+                    <DivTableCell key={key}
+                                  secondary={true}
+                    >
+                      <SprintName sprint_id={issue.sprint_id} />
+                    </DivTableCell>
+                )
+                break
+            case "due_date":
+                content = (
+                    <DivTableCell key={key}
+                                  secondary={true}
+                    >
+                      <Timestamp value={issue.due_date} format="from_now" />
+                    </DivTableCell>
+                )
+                break
             case "created_at":
                 content = (
                     <DivTableCell key={key}
@@ -764,12 +793,8 @@ class IssueList extends Component {
 
     render_grid() {
 
-        const { is_mien_configurer_active, all_headers, header_list_name, is_visible,
+        const { is_mien_configurer_active, all_headers, header_list_name,
                 issue_items, selected_ids, table_params } = this.props
-
-        if (!is_visible) {
-            return (<div></div>)
-        }
 
         if ( is_mien_configurer_active ) {
             return this.renderListColumnConfigurer()
@@ -811,12 +836,6 @@ class IssueList extends Component {
     }
 
     render() {
-
-        const {is_visible} = this.props
-
-        if (!is_visible) {
-            return (<div></div>)
-        }
 
         return this.render_grid()
         
@@ -896,7 +915,6 @@ const makeMapStateToProps = () => {
             has_items: items && items.length > 0,
             is_loading: isLoading(state, list_key),
             last_updated: getLastUpdated(state, list_key),
-            is_visible: sprint_id || (visible_item_ids && visible_item_ids.length > 0) || false,
             candidate_issue: candidate_issue,
             is_creating_issue: is_creating_issue,
             expanded_issues: expanded_issues,

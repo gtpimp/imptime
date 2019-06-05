@@ -53,6 +53,7 @@ class ProjectSerializer(BaseSerializer):
     visual_spec_document_ids = serializers.ListField()
     can_delete_project = serializers.SerializerMethodField('is_project_deletable')
     recent_activity = ProjectRecentActivity()
+    archived = serializers.BooleanField()
 
     def is_project_deletable(self, project):
 
