@@ -57,9 +57,10 @@ class ProjectWikiPage extends Component {
             if ( wiki_id ) {
                 dispatch(ensureWikisLoaded([wiki_id]))
             }
+            let check_wiki_id = wiki_id != null ? "" + wiki_id : wiki_id
             dispatch(setPageSelectedEntities(PAGE_KEY__PROJECT_WIKI_PAGE,
                                      {project_ids: compact([project_id]),
-                                      wiki_ids: compact([""+wiki_id])}))
+                                      wiki_ids: compact([check_wiki_id])}))
         }
         this.setState({'noticed_default_wiki_id': default_wiki_id})
     }
