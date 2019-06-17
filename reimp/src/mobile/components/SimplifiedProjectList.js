@@ -13,8 +13,7 @@ import {
 } from '../../actions/Projects'
 import SimplifiedLoading from './SimplifiedLoading'
 import { ENTITY_KEY__PROJECT } from '../../actions/ItemListKeyRegistry'
-import { css } from 'emotion'
-import { default_theme as theme } from '../../theme/default'
+import { mobile_styles } from '../css/style.js';
 
 
 class SimplifiedProjectList extends Component {
@@ -37,10 +36,15 @@ class SimplifiedProjectList extends Component {
     
     renderProject(project) {
         return (
-            <div key={project.id}
-                 className={project_row}
-                 onClick={(evt) => this.onSelectProject(evt, project)}>
-              {project.name}
+            <div 
+                key={project.id}
+                className={mobile_styles.content_row}
+                onClick={(evt) => this.onSelectProject(evt, project)}>
+                <div className={mobile_styles.left_content}>
+                    <span className={mobile_styles.content_title}>
+                        {project.name}
+                    </span>
+                </div>
             </div>
         )
     }
@@ -80,7 +84,3 @@ function mapStateToProps(state, props) {
 }
 
 export default withRouter(connect(mapStateToProps)(SimplifiedProjectList))
-
-const project_row = css`
-    margin-bottom: ${theme.spacing.two}
-`

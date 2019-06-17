@@ -30,6 +30,7 @@ class SimplifiedPage extends Component {
         const { title } = this.props
         
         return (
+          <div>
             <div className={box}>
               <div className={header}>
                 <button onClick={ this.onBack }>
@@ -46,6 +47,7 @@ class SimplifiedPage extends Component {
               </div>
               {this.props.children}
             </div>
+          </div>
         )
     }
 }
@@ -66,6 +68,7 @@ left: 0;
 top: 0;
 margin-top: 0;
 padding: ${theme.spacing.horizontal_space_inline};
+overflow: auto
 `
 
 const header = css`

@@ -1,9 +1,16 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import { map } from 'lodash'
-import { css } from 'emotion'
+import { map, hasIn } from 'lodash'
+import { css, cx } from 'emotion'
 import { default_theme as theme } from '../../theme/default'
 import {withRouter} from 'react-router-dom'
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { has_permission } from '../../actions/Users'
 import {
     ensureSprintsLoaded,
@@ -28,6 +35,7 @@ import SimplifiedSubTitle from './SimplifiedSubTitle'
 import ProgressBar from '../../components/ProgressBar'
 import CurrencyValue from '../../components/CurrencyValue'
 import Hours from '../../components/Hours'
+import { mobile_styles } from '../css/style.js';
 
 class SimplifiedSprint extends Component {
 
@@ -57,6 +65,52 @@ class SimplifiedSprint extends Component {
         }
     }
 
+    renderResourceChart(resource_data) {
+      return (
+          <ResponsiveContainer>
+            <BarChart data={resource_data}
+                      margin={{top: 0, right: 0, left: 0, bottom: 0}}
+                      layout="vertical">
+              <XAxis type="number" hide={ true } />
+              <YAxis dataKey="name" type="category" hide={ true } />
+              <Bar
+                  isAnimationActive={ false }
+                  dataKey="spent"
+                  stackId="a"
+                  fill="#1e3f75" />
+              <Bar
+                  isAnimationActive={ false }
+                  dataKey="remaining"
+                  stackId="a"
+                  fill="#e6e6e6" />
+            </BarChart>
+          </ResponsiveContainer>
+      );
+    }
+
+    renderProgressChart(resource_data) {
+      return (
+          <ResponsiveContainer>
+            <BarChart data={ resource_data }
+                      margin={{top: 0, right: 0, left: 0, bottom: 0}}
+                      layout="vertical">
+              <XAxis type="number" hide={ true } />
+              <YAxis dataKey="name" type="category" hide={ true } />
+              <Bar
+                  isAnimationActive={ false }
+                  dataKey="current"
+                  stackId="a"
+                  fill="#1e3f75" />
+              <Bar
+                  isAnimationActive={ false }
+                  dataKey="max"
+                  stackId="a"
+                  fill="#e6e6e6" />
+            </BarChart>
+          </ResponsiveContainer>
+      );
+    }
+
     renderProgressStat(name, max, current) {
         if ( max === 0 && current === 0 ) {
             return null
@@ -75,6 +129,7 @@ class SimplifiedSprint extends Component {
 
     renderIssueStatuses() {
         const { sprint, can_view_money } = this.props
+
         return (
             <SimplifiedParagraph>
               { map(sprint.issues_by_status, (issue_status) =>
@@ -114,73 +169,103 @@ class SimplifiedSprint extends Component {
     
     render() {
         const { sprint, project, is_loading, cost_summary, can_view_budget, can_view_money } = this.props
-
         if ( is_loading ) {
             return null
         }
-        
+        let resource_data
+        if ( cost_summary ) {
+          resource_data = [
+            {name: 'budget', max: cost_summary.budget, current: cost_summary.spent}
+          ];
+        }
+
         return (
             <div>
+            {/* <div className={ mobile_styles.main}> */}
+            {/* <div className={ mobile_styles.box}> */}
               
-              <SimplifiedParagraph>
+              {/* <SimplifiedParagraph>
                 <SimplifiedSubTitle>Project: {project.name}</SimplifiedSubTitle>
                 <SimplifiedSubTitle>Status: {sprint.status_name}</SimplifiedSubTitle>
                 {sprint.description}
-              </SimplifiedParagraph>
+              </SimplifiedParagraph> */}
 
-              <div className={section}>
-                <SimplifiedSubTitle>Estimates</SimplifiedSubTitle>
+              <div className={ mobile_styles.section }>
+                <div className={ mobile_styles.title_row }>
+                  <span className={ mobile_styles.content_title }>{sprint.name}</span>
+                </div>
+                <div className={ mobile_styles.status_row }>
+                  <span className={ mobile_styles.status_text }>{sprint.status_name}</span>
+                </div>
+                <div >
+                  <span className={ mobile_styles.description_text }>{ sprint.description || ''}</span>
+                </div>
+              </div>
+
+              <div className={ mobile_styles.section }>
+              <SimplifiedSubTitle>Estimates</SimplifiedSubTitle>
                 { can_view_money && cost_summary &&
-                  <SimplifiedParagraph>
-                    estimated total cost <CurrencyValue value={cost_summary.breakdown.totals.grand_total} />
-                  </SimplifiedParagraph>
+                  <div className={ mobile_styles.sub_content_row }>
+                    <div className={ mobile_styles.left_content }>
+                      <span>Estimated total cost</span>
+                      <span><CurrencyValue value={cost_summary.breakdown.totals.grand_total} /></span>
+                    </div>
+                  </div>
                 }
-                  { cost_summary &&
-                    <SimplifiedParagraph>
-                      <div className={value_row}>
-                        <div>
-                          estimated total hours
-                        </div>
-                        <div className={css`text-align: right; width: 100%;`}>
-                          <Hours hours={cost_summary.breakdown.totals.estimated_hours} />
-                        </div>
-                      </div>
-                    </SimplifiedParagraph>
-                  }
+                { cost_summary && hasIn(cost_summary, 'breakdown.totals.estimated_hours') &&
+                  <div className={ mobile_styles.sub_content_row }>
+                    <div className={ mobile_styles.left_content }>
+                      <span>Estimated total hours</span>
+                      <span><Hours hours={cost_summary.breakdown.totals.estimated_hours} /></span>
+                    </div>
+                  </div>
+                }
               </div>
               
               { (can_view_money || can_view_budget) &&
-                <div className={section}>
+                <div className={ mobile_styles.section }>
                   <SimplifiedSubTitle>Actuals</SimplifiedSubTitle>
-                  { can_view_budget && sprint.budget && cost_summary && 
-                    <SimplifiedParagraph>
-                      budget <CurrencyValue value={cost_summary.budget} />
+                  { can_view_budget && sprint.budget && cost_summary &&
+                    <div>
+                    <div className={ mobile_styles.sub_content_row }>
+                      <div className={ mobile_styles.left_content }>
+                        <span>Budget</span>
+                        <span><CurrencyValue value={cost_summary.budget} /></span>
+                      </div>
+                      </div>
                       { can_view_money &&
-                        <div>
-                          spent <CurrencyValue value={cost_summary.spent} />
+                      <div className={ mobile_styles.sub_content_row }>
+                        <div className={ mobile_styles.left_content }>
+                          <span>Spent</span>
+                          <span><CurrencyValue value={cost_summary.spent} /></span>
                         </div>
+                        <div className={ mobile_styles.bar_container }>
+                          { this.renderProgressChart(resource_data) }
+                        </div>
+                      </div>
                       }
-                        { can_view_money &&
-                          <div>
-                            {this.renderProgressStat('', cost_summary.budget, cost_summary.spent)}
-                          </div>
-                        }
-                    </SimplifiedParagraph>
+                    </div>
                   }
-                    { can_view_money && ! sprint.budget && cost_summary &&
-                      <SimplifiedParagraph>
-                        spent <CurrencyValue value={cost_summary.spent} />
-                      </SimplifiedParagraph>
-                    }
+                  { can_view_money && ! sprint.budget && cost_summary &&
+                  <div className={ mobile_styles.sub_content_row }>
+                    <div className={ mobile_styles.left_content }>
+                      <span>Spent</span>
+                      <span><CurrencyValue value={cost_summary.spent} /></span>
+                    </div>
+                  </div>
+                  }
                 </div>
               }
-
-              { cost_summary && 
-                <div className={section}>
+                { cost_summary &&
+                <div>
                   <SimplifiedSubTitle>Status breakdown</SimplifiedSubTitle>
-                  { this.renderIssueStatuses() }
+                  <div className={ mobile_styles.bar_container }>
+                    { this.renderIssueStatuses(resource_data) }
+                  </div>
                 </div>
-              }
+                }
+              
+            {/* </div> */}
             </div>
         )
     }
