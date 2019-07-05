@@ -14,6 +14,7 @@ import CompaniesPage from './CompaniesPage'
 import CompanyUserPage from './CompanyUserPage'
 import ClockHistoryPage from './ClockHistoryPage'
 import CompanyProblemPage from './CompanyProblemPage'
+import DataHistoryPage from './DataHistoryPage';
 import DecisionJournalPage from './DecisionJournalPage'
 import PasswordChangedPage from './PasswordChangedPage'
 import DashboardPage from './DashboardPage'
@@ -140,6 +141,7 @@ class MainRouter extends Component {
               <Route exact path="/share/:type/:obj_ref/:subref" component={ReadOnlyPage}/>
               <Route exact path="/dashboard" component={DashboardPage}/>
               <Route exact path="/usertimesheets" component={UserTimesheetPage}/>
+              <Route exact path="/data_history" component={DataHistoryPage}/>
             </Switch>
         )
     }
