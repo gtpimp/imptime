@@ -246,6 +246,8 @@ function triggerInvalidateItemLists(d, dispatch, list_keys_to_invalidate) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_ROADMAP] = true
     } else if ( d.entity_name === "wikipage" ) {
         list_keys_to_invalidate[LIST_KEY__WIKI_LIST] = true
+        /* not sure why I have to do it this way when none of the others work this way, but it is not invalidating the list on create */
+        dispatch(invalidateWikis([d.entity_ref]))
     } else if ( d.entity_name === "projectdeadline" ) {
         list_keys_to_invalidate[LIST_KEY__SPRINT_DEADLINE] = true
     } else if ( d.entity_name === "entry" ) {

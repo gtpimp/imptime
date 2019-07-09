@@ -43,8 +43,10 @@ class ProjectWikiToolbarPanel extends Component {
 
 function mapStateToProps(state, props) {
     const project_id = get(getGloballySelectedEntityIds(state), ["project_ids", 0], null)
-    const parent_wiki_id = get(getGloballySelectedEntityIds(state), ["wiki_ids", 0], null)
-
+    let parent_wiki_id = get(getGloballySelectedEntityIds(state), ["wiki_ids", 0], '')
+    if (parent_wiki_id === 'null') {
+        parent_wiki_id = ''
+    }
     return {
         project_id,
         parent_wiki_id
