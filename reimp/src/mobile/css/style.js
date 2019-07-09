@@ -134,6 +134,10 @@ export const mobile_styles = {
     align-items: space-between;
     `,
 
+    bar_content : css`
+    padding: 0px 24px 0px 24px;
+    `,
+
     bar_container : css`
     display: flex;
     width: 100%;

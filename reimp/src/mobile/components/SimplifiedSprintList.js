@@ -92,31 +92,31 @@ class SimplifiedSprintList extends Component {
         return (
             
             <div key={sprint.id}
-                //  className={content_row}
+                 className={ mobile_styles.mini_section }
                  onClick={(evt) => this.onSelectSprint(evt, sprint)}>
 
                 <div className={ mobile_styles.summary_header }>
                   <div className={ mobile_styles.title_row }>
-                    <span className={ mobile_styles.circle }></span>
-                    <span className={ mobile_styles.card_title }>{sprint.name}</span>
+                    <span className={ mobile_styles.card_title }>{sprint.number} {sprint.name}</span>
                   </div>
                   <div className={ mobile_styles.status_row }>
-                    <span className={ mobile_styles.status_text }>Under budget</span>
-                    <span className={ mobile_styles.spacer }>|</span>
-                    <span className={ cx(mobile_styles.status_text, mobile_styles.red_text) }>Likely to miss deadline</span>
+                    <span className={ mobile_styles.status_text}>{ sprint.status_name }</span>
                   </div>
+
+                  { sprint.description && 
+                    <span>{sprint.description}</span>
+                  }
                 </div>
-              <SimplifiedParagraph>
-                <div className={ mobile_styles.content_row }>
-                <div className={ mobile_styles.left_content }>
-                      <span className={ mobile_styles.content_title }>How are we doing</span>
-                      <span>+5,000 (150%)</span>
+
+              { sprint.num_dev_closed_issues > 0 && sprint.num_completely_closed_issues > 0 && 
+                <SimplifiedParagraph>
+                  <div className={ mobile_styles.bar_content }>
+                    <div className={ mobile_styles.bar_container }>
+                      { this.renderSprintProgressBar(sprint) }
                     </div>
-                  <div className={ mobile_styles.bar_container }>
-                    { this.renderSprintProgressBar(sprint) }
                   </div>
-                </div>
-              </SimplifiedParagraph>
+                </SimplifiedParagraph>
+              }
             </div>
         )
     }
