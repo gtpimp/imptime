@@ -103,6 +103,10 @@
     padding-bottom: 5px;
   }
 
+  .description {
+	  width: 50%;
+  }
+
 </style>
 </head>
 <body>
@@ -204,18 +208,18 @@
 
     <table class="invoice_items stripe">
 	<tr>
-	    <th>Work Description</th>
+	    <th class="description">Work Description</th>
 	    <th>Quantity</th>
 	    <th>Unit Price</th>
 	    <th>Amount</th>
 	</tr>
 	<tr>
-	    <td><div class="invoice_note">{{invoice.invoice_note}}</div></td>
+	    <td><div class="invoice_note description">{{invoice.invoice_note}}</div></td>
 	</tr>
 	
 	{% for item in invoice.items_in_order %}
 	<tr valign="top">
-	    <td>{{item.description}}</td>
+	    <td class="description">{{item.description}}</td>
 	    <td><p>{{item.num_units}}</p></td>
 	    <td><p>{{invoice.currency_symbol}} {{item.unit_cost|currency}}</p></td>
 	    <td><p>{{invoice.currency_symbol}} {{item.total_cost|currency}}</p></td>
