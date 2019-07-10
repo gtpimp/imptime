@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create a single Imptime application server within an existing environment
+
+Parameters:
+    IAMInstanceProfileNameParameter:
+      Type: String
+      Description: IAM Profile for the Imptime application server
+    ImageIdParameter:
+      Type: AWS::EC2::Image::Id
+      Default: ami-785db401 # Ubuntu 16.04
+      Description: Image ID for the Imptime application server
+    InstanceTypeParameter:
+      Type: String
+      Default: t2.medium
+      AllowedValues:
+        - t2.small
+        - t2.medium
+      Description: Instance type for the Imptime application server. Enter t2.small or t2.medium. Default is t2.small.
+    ImptimeReleaseZipUrlParameter:
+        Type: String
+        Description: S3 URL for release zip
+    ImptimeConfZipUrlParameter:
+        Type: String
+        Description: S3 URL for conf zip
+    KeyNameParameter:
+        Type: AWS::EC2::KeyPair::KeyName
+        Description: KeyPair for accessing the Imptime application server
+    ReleasesBucketNameParameter:
+        Type: String
+        Description: Name of the bucket where the releas is stored. Relates to ImptimeReleaseZipUrlParameter
+    ExternalConfigBucketNameParameter:
+        Type: String
+        Description: Name of the bucket where the external config is stored. Relates to ImptimeConfZipUrlParameter
+    NameParameter:
+      Type: String
+      Description: Tag name for the Imptime application server
+    PublicSubnetParameter:
+      Type: AWS::EC2::Subnet::Id
+      Description: Subnet Id for the Imptime application server
+    SecurityGroupParameter:
+      Type: AWS::EC2::SecurityGroup::Id
+      Description: Security Group Id for Imptime application server
+
+Resources:
+  ImptimeApplicationServer:
+    Type: "AWS::EC2::Instance"
+    Metadata:
+        AWS::CloudFormation::Init:
+          config:
+            commands:
+              00_upgrade_docker:
+                command: !Sub |
+                  #!/bin/bash
+                  sudo apt install curl
+                  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+                  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+                  sudo apt-get update
+                  sudo apt-get install -y docker-ce
+                  sudo echo "{  \"metrics-addr\" : \"0.0.0.0:9323\",  \"experimental\" : true}" | sudo tee /etc/docker/daemon.json
+                  sudo service docker restart
+              01_add_ubuntu_user_to_docker_group:
+                command: !Sub |
+                  #!/bin/bash
+                  mkdir /var/log/imptime
+              02_add_ubuntu_user_to_docker_group:
+                command: !Sub |
+                  #!/bin/bash
+                  sudo usermod -aG docker ubuntu
+              03_install_docker_images:
+                cwd: /opt/imptime/docker_compose
+                command: !Sub |
+                  #!/bin/bash
+                  ./install_and_upgrade.sh
+                  mkdir ../imptime-media
+              04_start_application_docker:
+                cwd: /opt/imptime/docker_compose
+                command: !Sub |
+                  #!/bin/bash
+                  ./up.sh
+            packages:
+              apt:
+                docker.io: []
+            sources:
+              /opt/imptime: !Ref ImptimeReleaseZipUrlParameter
+              /opt/imptime/docker_compose: !Ref ImptimeConfZipUrlParameter
+        AWS::CloudFormation::Authentication:
+          rolebased:
+            type: "S3"
+            roleName: !Ref IAMInstanceProfileNameParameter
+            buckets:
+              - !Ref ReleasesBucketNameParameter
+              - !Ref ExternalConfigBucketNameParameter
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeSize: 50
+      DisableApiTermination: "false"
+      IamInstanceProfile: !Ref IAMInstanceProfileNameParameter
+      ImageId: !Ref ImageIdParameter
+      InstanceInitiatedShutdownBehavior: "stop"
+      InstanceType: !Ref InstanceTypeParameter
+      KeyName: !Ref KeyNameParameter
+      Monitoring: "false"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeleteOnTermination: "true"
+          Description: "Primary network interface"
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroupParameter
+          SubnetId: !Ref PublicSubnetParameter
+      Tags:
+        -
+          Key: Name
+          Value: !Ref NameParameter
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update && apt-get upgrade -y
+          apt-get install language-pack-en
+          apt-get update
+          apt-get upgrade
+          apt-get dist-upgrade
+          apt-get -y install python-pip
+          pip install --upgrade --force-reinstall pip==9.0.3
+          pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+          /usr/local/bin/cfn-init --stack ${AWS::StackName} --resource ImptimeApplicationServer --region ${AWS::Region}

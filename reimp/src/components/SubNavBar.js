@@ -73,6 +73,10 @@ class SubNavBar extends Component {
                   }
 
                   <div className={`${navbar_submenu_item}`}>
+                    <Link to='/data_history'>Data History</Link>
+                  </div>
+
+                  <div className={`${navbar_submenu_item}`}>
                     <Link to='/onboarding'>Onboarding</Link>
                   </div>
                   

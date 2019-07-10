@@ -84,6 +84,7 @@ export function getWikis(state, wiki_ids) {
 }
 
 export function startCandidateWiki(project_id, parent_wiki_id) {
+    parent_wiki_id = parent_wiki_id === "null" || parent_wiki_id === null ? null : parent_wiki_id
     return (dispatch, getState) => {
         dispatch(startCandidateItem(ENTITY_KEY__WIKI, { parent_wiki_id: parent_wiki_id,
                                                         project_id: project_id }))

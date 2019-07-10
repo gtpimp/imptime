@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+
+  node_exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /etc/hostname:/etc/host_hostname
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)'
+      - '--collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+    ports:
+      - "9100:9100"
+
+  cadvisor:
+    image: sha1/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    expose:
+      - "8080"
+    ports:
+      - "9110:8080"
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:5.2.2
+    volumes:
+      - ./external_config/filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/log/imptime:/opt/imptime/logs
+      # - ./external_config/filebeat/certs:/certs

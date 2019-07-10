@@ -26,8 +26,9 @@ import SimplifiedTitle from './SimplifiedTitle'
 import SimplifiedSubTitle from './SimplifiedSubTitle'
 import SimplifiedParagraph from './SimplifiedParagraph'
 import { ENTITY_KEY__SPRINT } from '../../actions/ItemListKeyRegistry'
-import { css } from 'emotion'
+import { css, cx } from 'emotion'
 import { default_theme as theme } from '../../theme/default'
+import { mobile_styles } from '../css/style.js';
 
 class SimplifiedSprintList extends Component {
 
@@ -58,9 +59,12 @@ class SimplifiedSprintList extends Component {
 
     renderSprintProgressBar = (sprint) => {
 
-        const graph_data = [ { name: 'progress',
-                               num_dev_closed_issues: sprint.num_dev_closed_issues,
-                               num_completely_closed_issues: sprint.num_completely_closed_issues } ]
+        const graph_data = [ {
+              // num_dev_closed_issues: 10,
+              // num_completely_closed_issues: 20
+              name: 'progress',
+              num_dev_closed_issues: sprint.num_dev_closed_issues,
+              num_completely_closed_issues: sprint.num_completely_closed_issues } ]
 
         return (
             <ResponsiveContainer>
@@ -83,24 +87,36 @@ class SimplifiedSprintList extends Component {
             </ResponsiveContainer>
         )
     }
-    
+
     renderSprint(sprint) {
         return (
+            
             <div key={sprint.id}
-                 className={sprint_row}
+                 className={ mobile_styles.mini_section }
                  onClick={(evt) => this.onSelectSprint(evt, sprint)}>
 
-              <div className={css`display:flex`}>
-                <SimplifiedSubTitle>{sprint.number}</SimplifiedSubTitle>
-                <SimplifiedTitle>{sprint.name}</SimplifiedTitle>
-              </div>
-              <SimplifiedSubTitle>{sprint.status_name}</SimplifiedSubTitle>
-              { sprint.description && 
-                <SimplifiedParagraph>{sprint.description}</SimplifiedParagraph>
+                <div className={ mobile_styles.summary_header }>
+                  <div className={ mobile_styles.title_row }>
+                    <span className={ mobile_styles.card_title }>{sprint.number} {sprint.name}</span>
+                  </div>
+                  <div className={ mobile_styles.status_row }>
+                    <span className={ mobile_styles.status_text}>{ sprint.status_name }</span>
+                  </div>
+
+                  { sprint.description && 
+                    <span>{sprint.description}</span>
+                  }
+                </div>
+
+              { sprint.num_dev_closed_issues > 0 && sprint.num_completely_closed_issues > 0 && 
+                <SimplifiedParagraph>
+                  <div className={ mobile_styles.bar_content }>
+                    <div className={ mobile_styles.bar_container }>
+                      { this.renderSprintProgressBar(sprint) }
+                    </div>
+                  </div>
+                </SimplifiedParagraph>
               }
-              <SimplifiedParagraph>
-                { this.renderSprintProgressBar(sprint) }
-              </SimplifiedParagraph>
             </div>
         )
     }
@@ -141,9 +157,3 @@ function mapStateToProps(state, props) {
 }
 
 export default withRouter(connect(mapStateToProps)(SimplifiedSprintList))
-
-const sprint_row = css`
-    padding-top: ${theme.spacing.two};
-    padding-bottom: ${theme.spacing.two};
-    border-bottom: 1px solid ${theme.colours.border_faint};
-`

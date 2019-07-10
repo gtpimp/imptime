@@ -1,0 +1,50 @@
+version: '2'
+
+volumes:
+  static-assets:
+
+services:
+
+  dev-ui-react-and-css-builder:
+    image: imptime/dev-ui-react-and-css-builder:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/api/temp
+     - /var/log/imptime:/opt/imptime/logs
+    depends_on:
+     - api
+    ports:
+     - "3000:3000"
+  api:
+    environment: [RUN_MODE=development]
+
+  ui-worker1:
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/api/temp
+     - /var/log/imptime:/opt/imptime/logs
+  ui-worker2:
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/api/temp
+     - /var/log/imptime:/opt/imptime/logs
+  ui-worker3:
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/api/temp
+     - /var/log/imptime:/opt/imptime/logs
+  ui-worker4:
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/api/temp
+     - /var/log/imptime:/opt/imptime/logs
+
+     
+  mailhog:
+    image: diyan/mailhog
+    volumes:
+     - /var/log/imptime:/opt/imptime/logs
+    ports:
+     - "1025:1025"
+     - "8025:8025"
+     

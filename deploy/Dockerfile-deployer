@@ -1,0 +1,32 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  python \
+  python2.7-dev \
+  python-pip \
+  git \
+  docker.io
+RUN apt-get install -y awscli jq
+RUN apt-get install -y vim
+RUN apt-get install -y zip
+
+RUN mkdir -p /opt/imptime/deployer
+WORKDIR /opt/imptime/deployer
+
+# Disable asking for confirmation when checking out the code
+RUN echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+
+# Prevent warning about missing ssh config file
+RUN mkdir -p /root/.ssh
+RUN touch /root/.ssh/config
+
+# Install requirements.txt first so it doesn't refresh the docker cache
+COPY on_deployer/requirements.txt /opt/imptime/deployer/
+COPY on_deployer/templates/ /opt/imptime/deployer/templates/
+RUN pip install --upgrade --force-reinstall pip==9.0.3
+RUN pip install -r requirements.txt
+
+COPY deployer_temp/config /opt/imptime/config/
+
+COPY on_deployer/* /opt/imptime/deployer/
+

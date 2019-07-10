@@ -25,7 +25,7 @@ justify-content: flex-start;
 `
 
 const title = css`
-font: ${theme.fonts.semibold_large};
+font: ${theme.fonts.semibold_big};
 `
 
 export default SimplifiedSubTitle

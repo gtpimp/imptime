@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Create a single Imptime SSL proxy server within an existing environment
+
+Parameters:
+    IAMInstanceProfileNameParameter:
+      Type: String
+      Description: IAM Profile for the Imptime ssl proxy server
+    ImageIdParameter:
+      Type: AWS::EC2::Image::Id
+      Default: ami-785db401 # Ubuntu 16.04
+      Description: Image ID for the Imptime ssl proxy server
+    InstanceTypeParameter:
+      Type: String
+      Default: t2.small
+      AllowedValues:
+        - t2.small
+        - t2.medium
+      Description: Instance type for the Imptime ssl proxy server. Enter t2.small or t2.medium. Default is t2.small.
+    ImptimeReleaseZipUrlParameter:
+        Type: String
+        Description: S3 URL for release zip
+    ReleasesBucketNameParameter:
+        Type: String
+        Description: Name of the bucket where the releas is stored. Relates to ImptimeReleaseZipUrlParameter
+    KeyNameParameter:
+      Type: AWS::EC2::KeyPair::KeyName
+      Description: KeyPair for accessing the Imptime ssl proxy server
+    NameParameter:
+      Type: String
+      Description: Tag name for the Imptime ssl proxy server
+    PublicSubnetParameter:
+      Type: AWS::EC2::Subnet::Id
+      Description: Subnet Id for the Imptime ssl proxy server
+    SecurityGroupParameter:
+      Type: AWS::EC2::SecurityGroup::Id
+      Description: Security Group Id for Imptime ssl proxy server
+
+Resources:
+  ImptimeSSLProxyServer:
+    Type: "AWS::EC2::Instance"
+    Metadata:
+        AWS::CloudFormation::Init:
+          config:
+            commands:
+              00_upgrade_docker:
+                command: !Sub |
+                  #!/bin/bash
+                  sudo apt install curl
+                  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+                  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+                  sudo apt-get update
+                  sudo apt-get install -y docker-ce
+                  sudo service docker restart
+              01_add_ubuntu_user_to_docker_group:
+                command: !Sub |
+                  #!/bin/bash
+                  mkdir /var/log/imptime
+              02_add_ubuntu_user_to_docker_group:
+                command: !Sub |
+                  #!/bin/bash
+                  sudo usermod -aG docker ubuntu
+              03_install_docker_images:
+                cwd: /opt/imptime/docker_compose
+                command: !Sub |
+                  #!/bin/bash
+                  ./install_and_upgrade.sh
+              04_fix_permissions_for_ubuntu:
+                cwd: /opt/imptime/docker_compose
+                command: !Sub |
+                  #!/bin/bash
+                  chown -R ubuntu sites-enabled
+                  mkdir -p ssl/domains
+                  chown -R ubuntu ssl/domains
+              05_start_application_docker:
+                cwd: /opt/imptime/docker_compose
+                command: !Sub |
+                  #!/bin/bash
+                  ./up.sh
+            packages:
+              apt:
+                docker.io: []
+            sources:
+              /opt/imptime: !Ref ImptimeReleaseZipUrlParameter
+        AWS::CloudFormation::Authentication:
+          rolebased:
+            type: "S3"
+            roleName: !Ref IAMInstanceProfileNameParameter
+            buckets:
+              - !Ref ReleasesBucketNameParameter
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs:
+            VolumeSize: 10
+      DisableApiTermination: "false"
+      IamInstanceProfile: !Ref IAMInstanceProfileNameParameter
+      ImageId: !Ref ImageIdParameter
+      InstanceInitiatedShutdownBehavior: "stop"
+      InstanceType: !Ref InstanceTypeParameter
+      KeyName: !Ref KeyNameParameter
+      Monitoring: "false"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeleteOnTermination: "true"
+          Description: "Primary network interface"
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroupParameter
+          SubnetId: !Ref PublicSubnetParameter
+      Tags:
+        -
+          Key: Name
+          Value: !Ref NameParameter
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update && apt-get upgrade -y
+          apt-get install language-pack-en
+          apt-get update
+          apt-get upgrade
+          apt-get dist-upgrade
+          apt-get -y install python-pip
+          pip install --upgrade --force-reinstall pip==9.0.3
+          pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+          /usr/local/bin/cfn-init --stack ${AWS::StackName} --resource ImptimeSSLProxyServer --region ${AWS::Region}

@@ -1,0 +1,202 @@
+version: '2'
+
+services:
+
+  logstash:
+    image: imptime/logstash:__TOKEN_IMPTIME_MONITORING_SHORT_GIT_HASH__
+    volumes:
+      - ./external_config/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./external_config/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./external_config/ssl/certs/monitoring.qa-careerimptime.com:/etc/logstash/certs:ro
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+
+  kibana:
+    image: imptime/kibana:__TOKEN_IMPTIME_MONITORING_SHORT_GIT_HASH__
+    volumes:
+      - ./external_config/kibana/config/:/usr/share/kibana/config
+    ports:
+      - "5601:5601"
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - ./external_config/grafana/config/:/etc/grafana
+      - /opt/imptime/logs:/opt/imptime/logs
+      - /opt/imptime/grafana_data:/var/lib/grafana
+    expose:
+      - "3000"
+    links:
+      - prometheus
+    ports:
+      - "3000:3000"
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    volumes: 
+      - ./external_config/alertmanager/config:/etc/alertmanager/
+      - /opt/imptime/alertmanager_data:/alertmanager
+    env_file: ./external_config/alertmanager/env.sh
+    command:
+      - '-config.file=/etc/alertmanager/config.yml'
+      - '-storage.path=/alertmanager'
+    depends_on:
+      - smtp
+    expose:
+      - 9093
+    ports:
+      - 9093:9093
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./external_config/prometheus/config/:/etc/prometheus
+      - /opt/imptime/prometheus_data:/prometheus
+    command:
+      - '-storage.local.path=/prometheus'
+      - '-config.file=/etc/prometheus/prometheus.yml'
+      - '-alertmanager.url=http://alertmanager:9093'
+      - '-storage.local.memory-chunks=100000'
+    ports:
+      - "9090:9090"
+
+  sentry-web:
+    image: sentry
+    env_file: ./external_config/sentry/env.sh
+    volumes:
+      - ./external_config/sentry/config/:/usr/share/sentry/config
+    ports:
+      - "9000:9000"
+
+  sentry-cron:
+      image: sentry
+      hostname: sentry
+      command: "sentry run cron"
+      env_file: ./external_config/sentry/env.sh
+      depends_on:
+        - redis
+        - memcached
+      links:
+        - redis
+        - memcached
+
+  sentry-worker:
+      image: sentry
+      hostname: sentry
+      command: "sentry run worker"
+      env_file: ./external_config/sentry/env.sh
+      depends_on:
+        - redis
+        - memcached
+      links:
+        - redis
+        - memcached
+
+  sentry-upgrade:
+      image: sentry
+      command: "sentry upgrade --noinput"
+      env_file: ./external_config/sentry/env.sh
+      depends_on:
+        - redis
+        - memcached
+      links:
+        - redis
+        - memcached
+
+  nginx:
+    image: imptime/nginx-monitoring:__TOKEN_IMPTIME_MONITORING_SHORT_GIT_HASH__
+    ports:
+     - "80:80"
+     - "443:443"
+    depends_on:
+     - grafana
+     - sentry-web
+     - kibana
+     - logstash
+     - prometheus
+     - unsee
+    volumes:
+     - /opt/imptime/logs:/opt/imptime/logs
+     - /opt/imptime/logs:/var/log/nginx
+     - ./external_config/sites-enabled/:/etc/nginx/conf.d/
+     - ./external_config/http_auth:/etc/nginx/http_auth:ro
+     - ./external_config/public_html:/etc/nginx/public_html:ro
+     - ./external_config/nginx.conf:/etc/nginx/nginx.conf
+     - ./external_config/ssl/certs:/etc/nginx/certs:ro
+     - ./external_config/ssl/certs_wellknown:/usr/share/nginx/certs_wellknown
+
+  letsencrypt:
+    image: imptime/letsencrypt-monitoring:__TOKEN_IMPTIME_MONITORING_SHORT_GIT_HASH__
+    volumes:
+     - /var/log/letsencrypt/:/var/log/letsencrypt
+     - /var/run/docker.sock:/var/run/docker.sock
+     - /etc/letsencrypt:/etc/letsencrypt
+     - ./external_config/ssl/certs_wellknown:/tmp/letsencrypt/www
+     - ./external_config/ssl/certs:/certs/letsencrypt
+     - ./external_config/ssl/domains:/opt/imptime/domains
+    environment:
+     - EMAIL=gtp@impd.co.za
+     - CERTS_PATH=/certs/letsencrypt
+     - NGINX_DOCKER_COMPOSE_NAME=nginx
+     - WEBROOT_PATH=/tmp/letsencrypt/www
+    depends_on:
+     - nginx
+    links:
+     - nginx
+
+  redis:
+      image: redis:alpine
+      hostname: redis
+      expose:
+        - "6379"
+      volumes:
+        - "./data/redis:/data"
+
+  memcached:
+      image: memcached:alpine
+      hostname: memcached
+      expose:
+        - "11211"
+
+  node_exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /etc/hostname:/etc/host_hostname
+    command:
+      '-collector.procfs=/host/proc -collector.sysfs=/host/sys -collector.filesystem.ignored-mount-points="^(/rootfs|/host|)/(sys|proc|dev|host|etc)($$|/)" collector.filesystem.ignored-fs-types="^(sys|proc|auto|cgroup|devpts|ns|au|fuse\.lxc|mqueue)(fs|)$$"'
+    ports:
+      - "9100:9100"
+
+  cadvisor:
+    image: sha1/cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    expose:
+      - "8080"
+    ports:
+      - "9110:8080"
+
+  unsee:
+    image: cloudflare/unsee
+    env_file: ./external_config/unsee/env.sh
+    depends_on:
+      - alertmanager
+    expose:
+      - 8080
+
+  smtp:
+    image: namshi/smtp
+    env_file: ./external_config/smtp/env.sh
+    expose:
+      - "25"

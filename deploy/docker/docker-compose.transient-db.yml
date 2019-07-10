@@ -1,0 +1,39 @@
+version: '2'
+volumes:
+  static-assets:
+
+services:
+
+  postgresql:
+    image: imptime/postgresql:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+     - /opt/imptime/data/pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+     - "5432:5432"
+    environment:
+     - POSTGRES_USER=root
+
+  migrate-api-database:
+    links:
+     - postgresql
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+
+  api:
+    links:
+     - postgresql
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+
+  deploy-ui-static-assets:
+    links:
+     - postgresql
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs

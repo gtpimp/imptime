@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 import TextAreaField from './TextAreaField'
+import { saveToLocalStorage } from '../../actions/LocalStorage';
 
 class BulkIssueCreatorForm extends Component {
 
@@ -21,6 +22,8 @@ class BulkIssueCreatorForm extends Component {
     }
 
     onChange(e, fieldOnChange) {
+        const { form } = this.props
+        saveToLocalStorage(form, e.target.value)
         fieldOnChange(e)
     }
     

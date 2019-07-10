@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import classNames from 'classnames'
 import ModalDialog from '../ModalDialog';
 import '../../sass/editable-property.scss'
+import { saveToLocalStorage } from '../../actions/LocalStorage';
 import { isEditing, isReadonly, setEditing, setReadonly, setMode, getMode } from '../../actions/EditableProperty'
 
 const MOUSE_MOVE_THRESHOLD = 5
@@ -92,6 +93,11 @@ class EditableProperty extends Component {
     }
 
     keyDown(event) {
+        
+        const { property_key } = this.props
+
+        saveToLocalStorage(property_key, event.target.value)
+
         const {is_editing} = this.props
 
         if (!is_editing) {

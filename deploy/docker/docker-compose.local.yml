@@ -1,0 +1,69 @@
+version: '2'
+volumes:
+  static-assets:
+
+services:
+
+  postgresql:
+    build:
+      context: ../imptime_api
+      dockerfile: docker/Dockerfile-postgresql
+    image: imptime/postgresql
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+     
+  migrate-api-database:
+    build:
+      context: ../imptime_api
+      dockerfile: docker/Dockerfile-imptime-api
+    image: imptime/api
+    volumes:
+    - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+
+  api:
+    build:
+      context: ../imptime_api
+      dockerfile: docker/Dockerfile-imptime-api
+    image: imptime/imptime-api
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+
+  deploy-ui-static-assets:
+    build:
+      context: ../imptime_ui
+      dockerfile: docker/Dockerfile-deploy-ui-static-assets
+    image: imptime/deploy-ui-static-assets
+    volumes:
+     - static-assets:/opt/imptime/static_collected
+     - /var/log/imptime:/opt/imptime/logs
+
+  ui-worker:
+    build:
+      context: ../imptime_ui
+      dockerfile: docker/Dockerfile-api
+    image: imptime/ui
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+
+  ui-refresh-listener:
+    build:
+      context: ../imptime_ui
+      dockerfile: docker/Dockerfile-api
+    image: imptime/ui
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+
+  nginx:
+    build:
+      context: ../imptime_api
+      dockerfile: docker/Dockerfile-nginx
+    image: imptime/nginx
+    volumes:
+     - static-assets:/opt/imptime/static_collected
+     - /var/log/imptime:/opt/imptime/logs
+

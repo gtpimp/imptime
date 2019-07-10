@@ -1,0 +1,27 @@
+FROM ubuntu:16.04
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  nginx \
+  openssl \
+  vim \
+  emacs
+
+RUN rm /etc/nginx/sites-enabled/*
+COPY docker/imptime_nginx_proxy.conf /etc/nginx/sites-available/imptime_proxy.conf
+
+RUN ln -s /etc/nginx/sites-available/imptime_nginx_proxy.conf /etc/nginx/sites-enabled/imptime_nginx_proxy.conf
+
+WORKDIR /opt/imptime
+COPY docker/reload_proxy_nginx.sh /opt/imptime
+
+RUN mkdir /etc/nginx/ssl
+
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
+
+COPY maintenance_website/www /var/www/maintenance_website/
+
+EXPOSE 80 443
+
+CMD ["nginx", "-g", "daemon off;"]

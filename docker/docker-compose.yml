@@ -1,0 +1,190 @@
+version: '2'
+
+volumes:
+  static-assets:
+
+services:
+
+  migrate-api-database:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+    entrypoint:
+     - ./migrate-api-database.sh
+
+  api:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    ports:
+     - "8002:8002"
+     - "8009:8009"  # for localhost only
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+     - /opt/imptime/imptime-media:/imptime-media:rw
+    depends_on:
+     - migrate-api-database
+    environment:
+     - __TOKEN_BUILD_NUMBER__
+    entrypoint:
+     - ./start-api.sh
+
+  impbox:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+     - /opt/imptime/imptime-media:/imptime-media:rw
+    depends_on:
+     - migrate-api-database
+    environment:
+     - __TOKEN_BUILD_NUMBER__
+    entrypoint:
+     - ./create_issues_from_incoming_email.sh
+
+  aws_sqs_listener:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+     - /opt/imptime/imptime-media:/imptime-media:rw
+    depends_on:
+     - migrate-api-database
+    environment:
+     - __TOKEN_BUILD_NUMBER__
+    entrypoint:
+     - ./create_issues_from_incoming_aws_queue.sh
+     
+  deploy-ui-static-assets:
+    image: imptime/ui-static-assets:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+     - static-assets:/opt/imptime/global/static_collected
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+    environment:
+      - __TOKEN_STATIC_ASSETS_HASH__
+
+  ui:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    ports:
+     - "8004:8004"
+    environment:
+     - __TOKEN_STATIC_ASSETS_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+    depends_on:
+     - api
+#    entrypoint:
+#     - ./start-ui.sh
+
+  ui-worker1:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    environment:
+     - __TOKEN_STATIC_ASSETS_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+    links:
+     - redis
+    entrypoint:
+     - ./start-ui-worker.sh
+
+  ui-worker2:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    environment:
+     - __TOKEN_STATIC_ASSETS_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+    links:
+     - redis
+    entrypoint:
+     - ./start-ui-worker.sh
+
+  ui-worker3:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    environment:
+     - __TOKEN_STATIC_ASSETS_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+    links:
+     - redis
+    entrypoint:
+     - ./start-ui-worker.sh
+
+  ui-worker4:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    environment:
+     - __TOKEN_STATIC_ASSETS_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+    links:
+     - redis
+    entrypoint:
+     - ./start-ui-worker.sh
+
+  ui-refresh-listener:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    environment:
+     - __TOKEN_STATIC_ASSETS_HASH__
+    volumes:
+     - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+     - ./temp:/opt/imptime/temp
+     - /var/log/imptime:/opt/imptime/logs
+    links:
+     - redis
+    entrypoint:
+     - ./start-ui-refresh-listener.sh
+
+  nginx:
+    image: imptime/nginx:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    ports:
+     - "80:80"
+     - "443:443"
+     - "8012:8012" #localhost only
+     - "8014:8014" #localhost only
+     - "8015:8015" #localhost only
+     - "8019:8019" #localhost only
+    links:
+     - api
+    volumes:
+     - static-assets:/opt/imptime/static_collected
+     - ./external_config/:/opt/imptime/external_config/
+     - /var/log/imptime:/opt/imptime/logs
+     - /opt/imptime/imptime-media:/opt/imptime/media
+
+  redis:
+    image: redis:3.2.0
+    ports:
+      - "6379:6379"
+    volumes:
+      - /var/log/imptime:/opt/imptime/logs
+
+  celery:
+    image: imptime/api:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
+      - ./temp:/opt/imptime/temp
+    entrypoint:
+     - ./start-celery.sh
+     - /var/log/imptime:/opt/imptime/logs
+
+  backup:
+    image: imptime/backup:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
+    volumes:
+      - ./external_config/:/opt/imptime/external_config
+      - /opt/imptime/logs:/opt/imptime/logs
+      - /opt/imptime/data/media:/opt/imptime/media/
+      - /opt/imptime/data/backup:/opt/imptime/backups
