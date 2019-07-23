@@ -483,7 +483,7 @@ def deploy_application(zip_filename):
         server_type=env.server_type,
         stack_number=stack_number)
     
-    with lcd(os.path.join(checked_out_code_folder, "aws_scripts")):
+    with lcd(os.path.join(checked_out_code_folder, "deploy", "aws_scripts")):
         print("Validating template")
         local(("aws cloudformation validate-template " +
                "--profile {aws_profile_name} " +

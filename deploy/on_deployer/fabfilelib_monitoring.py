@@ -141,13 +141,13 @@ def package_monitoring_docker_compose(output_folder=None):
     new_docker_compose_file = replace_tokens_in_file(original_docker_compose_file, tokens=tokens)
 
     output_file_path = os.path.join(output_folder, "docker-compose-monitoring-server.yml")
-    with lcd(checked_out_code_folder):
+    with lcd(checked_out_code_folder, "deploy"):
         local("mv {new_docker} {output_file_path}".format(new_docker=new_docker_compose_file,
                                                           output_file_path=output_file_path))
 
     with lcd(checked_out_code_folder):
-        local("cp -R docker/monitoring_scripts/* {output_folder}".format(output_folder=output_folder))
-        local("cp docker/docker-compose-elasticsearch.yml {output_folder}".format(output_folder=output_folder))
+        local("cp -R deploy/docker/monitoring_scripts/* {output_folder}".format(output_folder=output_folder))
+        local("cp deploy/docker/docker-compose-elasticsearch.yml {output_folder}".format(output_folder=output_folder))
 
     local("cp -R /opt/imptime/config/monitoring_sample/* {output_folder}"\
           .format(branch=env.branch, output_folder=output_folder))
@@ -181,7 +181,7 @@ def deploy_monitoring(zip_filename):
         aws_bucket_name=env.s3_bucket_name_releases,
         zip_filename=zip_filename)
     
-    with lcd(os.path.join(checked_out_code_folder, "aws_scripts")):
+    with lcd(os.path.join(checked_out_code_folder, "deploy", "aws_scripts")):
         print("Validating template")
         local(("aws cloudformation validate-template " +
                "--profile {aws_profile_name} " +

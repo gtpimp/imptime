@@ -108,11 +108,11 @@ def package_proxy_docker_compose(output_folder=None):
     new_docker_compose_file = replace_tokens_in_file(original_docker_compose_file, tokens=tokens)
 
     output_file_path = os.path.join(output_folder, "docker-compose-proxy.yml")
-    with lcd(checked_out_code_folder):
+    with lcd(os.path.join(checked_out_code_folder, "deploy")):
         local("mv {new_docker} {output_file_path}".format(new_docker=new_docker_compose_file,
                                                           output_file_path=output_file_path))
 
-    with lcd(checked_out_code_folder):
+    with lcd(os.path.join(checked_out_code_folder, "deploy")):
         local("cp -R docker/proxy_scripts/* {output_folder}".format(output_folder=output_folder))
 
     local("cp -R /opt/imptime/config/proxy_sample/* {output_folder}"\
@@ -142,7 +142,7 @@ def deploy_proxy(zip_filename):
         aws_bucket_name=env.s3_bucket_name_releases,
         zip_filename=zip_filename)
     
-    with lcd(os.path.join(checked_out_code_folder, "aws_scripts")):
+    with lcd(os.path.join(checked_out_code_folder, "deploy", "aws_scripts")):
         print("Validating template")
         local(("aws cloudformation validate-template " +
                "--profile {aws_profile_name} " +
@@ -302,7 +302,7 @@ def _set_maintenance_mode(maintenance_on=True, aws_proxy_instance_name=None, ip_
 
     with settings(warn_only=True):
         with lcd(temp_folder):
-            put("maintenance_mode.conf", "/opt/imptime/docker_compose/maintenance_conf/maintenance_mode.conf")
+            put("maintenance_mode.conf", "/opt/imptime/deploy/docker_compose/maintenance_conf/maintenance_mode.conf")
             run("docker kill -s HUP `docker ps | grep nginx | head -n 1 | awk '{ print $1 }'`")
 
                 
