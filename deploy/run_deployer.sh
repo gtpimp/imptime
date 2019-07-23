@@ -8,6 +8,8 @@ ROOT=`pwd`
 AWS_CONFIG=$1
 AWS_PROFILE=$2
 
+DUMMY="y"
+
 if [ -z "${AWS_CONFIG}" ]; then
    AWS_CONFIG=~/.aws
    echo "Auto setting AWS_CONFIG variable to ${AWS_CONFIG}. Pass in as first variable to over-ride"
