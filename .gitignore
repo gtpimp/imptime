@@ -15,7 +15,7 @@ src/phantompdf/phantomjs
 .pydevproject
 *.pyc
 data.db
-dev.db
+\dev.db
 .settings
 app/.sass-cache
 .sass-cache/
@@ -43,7 +43,7 @@ npm-debug.log
 .sass-cache
 src/imptime/static/css/imptime.css
 src/imptime/static/js/imptime.js
-external_config
+src/implicitdesign/external_config
 src/django-colorful
 src/unicodecsv
 devops/secret

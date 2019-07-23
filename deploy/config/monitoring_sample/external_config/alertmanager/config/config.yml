@@ -1,0 +1,36 @@
+global:
+    smtp_smarthost: 'mail.impd.co.za:587'
+    smtp_from: 'Alertmanager <imptime@impd.co.za>'
+
+route:
+    receiver: 'team-staging-emails'
+    group_by: ['alertname', 'cluster']
+    group_wait: 30s
+    group_interval: 5m
+    repeat_interval: 1h
+
+inhibit_rules:
+- source_match:
+    severity: 'critical'
+  target_match:
+    severity: 'warning'
+  equal: ['alertname']
+
+receivers:
+- name: 'team-staging-emails'
+  email_configs:
+  - to: 'gtp@impd.co.za'
+    require_tls: false
+
+# route:
+#     receiver: 'slack'
+
+# receivers:
+#     - name: 'slack'
+#       slack_configs:
+#           - send_resolved: true
+#             text: "{{ .CommonAnnotations.description }}"
+#             username: 'Prometheus'
+#             channel: '#<channel-name>'
+#             api_url: 'https://hooks.slack.com/services/<webhook-id>'
+

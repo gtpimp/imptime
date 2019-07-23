@@ -1,0 +1,35 @@
+<html>
+
+  <head>
+  </head>
+  
+  <body>
+
+    <script>
+
+      function link(subsubdomain) {
+        var url_paths = window.location.hostname.split(".");
+        var url = subsubdomain + "." + window.location.hostname;
+        window.location = "https://"+url;
+        return false;
+      }
+      
+    </script>
+    
+    <h1>Monitoring</h1>
+
+    <h2>Error logging</h2>
+    <a href="" onclick="return link('sentry');">Sentry</a><br/>
+
+    <h2>Server load</h2>
+    <a href="" onclick="return link('grafana');">Grafana (pretty graphs)</a><br/>
+    <a href="" onclick="return link('unsee');">Unsee (pretty alert manager console)</a><br/>
+    <a href="" onclick="return link('alertmanager');">AlertManager (internal alertmanager console)</a><br/>
+    <a href="" onclick="return link('prometheus');">Prometheus (stats under the hood)</a><br/>
+
+    <h2>General logging and reports</h2>
+    <a href="" onclick="return link('kibana');">Kibana (elastic search frontend)</a><br/>
+    
+  </body>
+
+</html>
