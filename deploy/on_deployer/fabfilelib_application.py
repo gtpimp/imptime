@@ -366,7 +366,7 @@ def package_application_docker_compose(output_folder=None):
                                                ])
     
     with lcd(checked_out_code_folder):
-        local("cp -R docker/scripts/client/* {output_folder}".format(output_folder=output_folder))
+        local("cp -R deploy/docker/scripts/client/* {output_folder}".format(output_folder=output_folder))
         
     print("\nSuccess. \nDocker compose file created for branch {branch} at: {output_file_path}"\
           .format(branch=env.branch, output_file_path=output_file_path))
