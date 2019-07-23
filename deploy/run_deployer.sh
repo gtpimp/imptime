@@ -2,8 +2,6 @@
 
 set -e
 
-HI='1'
-
 cd "`dirname \"$0\"`/"
 ROOT=`pwd`
 
