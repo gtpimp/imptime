@@ -82,7 +82,7 @@ class TestableLine extends Component {
                 { testable_line.quality_error &&
                   <div className={classNames("issue_sidebar--textarea--readonly",
                                              {"issue-testable__quality_error":testable_line.quality_error})}>
-                    { testable_line.quality_error &&
+                    { false && testable_line.quality_error &&
                       <div className="issue_testable__quality_error_reason">
                         Low quality testable line: {testable_line.quality_error}
                       </div>

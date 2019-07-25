@@ -105,7 +105,7 @@ class Testable extends Component {
                   <div className={classNames("issue_sidebar--textarea--readonly",
                                              {"issue-testable__quality_error":testable.quality_error})}>
                     <h1 className="issue-testable__testable-name">{testable.name}</h1>
-                    { testable.quality_error &&
+                    { false && testable.quality_error &&
                       <div className="issue_testable__quality_error_reason">
                         Low quality testable: {testable.quality_error}
                       </div>
