@@ -4,7 +4,8 @@ import { reduxForm, Field } from 'redux-form'
 import ReactTimeout from 'react-timeout'
 import MarkdownEditor from '../MarkdownEditor'
 
-const AUTOSAVE_TIMEOUT_MILLISECONDS = 5000
+// Don't need this anymore, now that auto-remembering keyboard data is implemented, but it's still kind of nice to eventually auto-save, so leaving in with a big timer.
+const AUTOSAVE_TIMEOUT_MILLISECONDS = 5000000
 
 class WikiForm extends Component {
 
