@@ -177,9 +177,9 @@ services:
     volumes:
       - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
       - ./temp:/opt/imptime/temp
+      - /var/log/imptime:/opt/imptime/logs
     entrypoint:
      - ./start-celery.sh
-     - /var/log/imptime:/opt/imptime/logs
 
   backup:
     image: imptime/backup:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__

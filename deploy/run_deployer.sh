@@ -3,7 +3,12 @@
 set -e
 
 cd "`dirname \"$0\"`/"
-ROOT=`pwd`
+DEPLOY_ROOT=`pwd`
+
+cd ${DEPLOY_ROOT}/../
+DEV_ROOT=`pwd`
+
+cd ${DEPLOY_ROOT}
 
 AWS_CONFIG=$1
 AWS_PROFILE=$2
@@ -31,7 +36,7 @@ fi
 # the host docker. But note that dockers launched inside this
 # container will use volumes mapped to the host. So create a single
 # big volume that the deployer can give to any created dockers.
-MAPPED_TEMP_FOLDER=${ROOT}/deployer_temp
+MAPPED_TEMP_FOLDER=${DEPLOY_ROOT}/deployer_temp
 
 if [ -e ${MAPPED_TEMP_FOLDER} ]; then
     echo "Clean the temp folder at ${MAPPED_TEMP_FOLDER}?"
@@ -103,4 +108,4 @@ echo " ... then follow onscreen instructions  "
 echo " "
 
 
-docker run -i -t --env GUESSED_DEV_CODE_ROOT_FOLDER=$ROOT/  --env SSH_AUTH_SOCK=/ssh-agent --env MAPPED_TEMP_FOLDER_ON_HOST=${MAPPED_TEMP_FOLDER} --env AWS_PROFILE=${AWS_PROFILE} --volume $SSH_AUTH_SOCK:/ssh-agent --volume ${DOCKER_SOCK}:/var/run/docker.sock --volume ${ROOT}/deployer_temp:/opt/imptime/deployer/mapped_temp --volume ${AWS_CONFIG}:/root/.aws  --volume ~/.ssh:/opt/imptime/local_ssh_keys deployer bash
+docker run -i -t --env GUESSED_DEV_CODE_ROOT_FOLDER=${DEV_ROOT}  --env SSH_AUTH_SOCK=/ssh-agent --env MAPPED_TEMP_FOLDER_ON_HOST=${MAPPED_TEMP_FOLDER} --env AWS_PROFILE=${AWS_PROFILE} --volume $SSH_AUTH_SOCK:/ssh-agent --volume ${DOCKER_SOCK}:/var/run/docker.sock --volume ${DEPLOY_ROOT}/deployer_temp:/opt/imptime/deployer/mapped_temp --volume ${AWS_CONFIG}:/root/.aws  --volume ~/.ssh:/opt/imptime/local_ssh_keys deployer bash

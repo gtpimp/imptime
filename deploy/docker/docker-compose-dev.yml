@@ -22,23 +22,18 @@ services:
     volumes:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/api/temp
-     - /var/log/imptime:/opt/imptime/logs
   ui-worker2:
     volumes:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/api/temp
-     - /var/log/imptime:/opt/imptime/logs
   ui-worker3:
     volumes:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/api/temp
-     - /var/log/imptime:/opt/imptime/logs
   ui-worker4:
     volumes:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/api/temp
-     - /var/log/imptime:/opt/imptime/logs
-
      
   mailhog:
     image: diyan/mailhog
