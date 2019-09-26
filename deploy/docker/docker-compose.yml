@@ -91,6 +91,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
+     - /home/imptime/prod/media:/imptime-media:rw     
     links:
      - redis
     entrypoint:
@@ -104,6 +105,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
+     - /home/imptime/prod/media:/imptime-media:rw     
     links:
      - redis
     entrypoint:
@@ -117,6 +119,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
+     - /home/imptime/prod/media:/imptime-media:rw     
     links:
      - redis
     entrypoint:
@@ -130,6 +133,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
+     - /home/imptime/prod/media:/imptime-media:rw     
     links:
      - redis
     entrypoint:
@@ -143,6 +147,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
+     - /home/imptime/prod/media:/imptime-media:rw     
     links:
      - redis
     entrypoint:
