@@ -37,7 +37,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
-     - /opt/imptime/imptime-media:/imptime-media:rw
+     - /home/imptime/prod/media:/imptime-media:rw
     depends_on:
      - migrate-api-database
     environment:
@@ -51,7 +51,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
-     - /opt/imptime/imptime-media:/imptime-media:rw
+     - /home/imptime/prod/media:/imptime-media:rw
     depends_on:
      - migrate-api-database
     environment:
@@ -162,7 +162,7 @@ services:
      - static-assets:/opt/imptime/static_collected
      - ./external_config/:/opt/imptime/external_config/
      - /var/log/imptime:/opt/imptime/logs
-     - /opt/imptime/imptime-media:/opt/imptime/media
+     - /home/imptime/prod/media:/imptime-media:rw
 
   redis:
     image: redis:3.2.0
@@ -183,5 +183,5 @@ services:
     volumes:
       - ./external_config/:/opt/imptime/external_config
       - /opt/imptime/logs:/opt/imptime/logs
-      - /opt/imptime/data/media:/opt/imptime/media/
+      - /home/imptime/prod/media:/imptime-media:rw
       - /opt/imptime/data/backup:/opt/imptime/backups
