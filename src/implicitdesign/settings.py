@@ -393,7 +393,8 @@ INVOICE_DETAILS={'name':'ImplicitDesign',
                  'bank_swift_code':'SBZAZAJJ'}
 
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+#DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 AWS_DEFAULT_ACL = 'private'
 
 # This setting allows bucket names with dots
