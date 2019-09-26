@@ -417,7 +417,7 @@ def package_docker_compose(output_folder,
     with lcd(checked_out_code_folder):
         local("cp -R deploy/docker/scripts/{scripts_foldername}/* {output_folder}"\
               .format(output_folder=output_folder,
-                      scripts_foldername=scripts_foldername))
+                      scripts_foldername=env.scripts_foldername))
 
     with lcd(output_folder):
         local("mkdir -p imptime-media")
