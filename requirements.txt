@@ -122,9 +122,6 @@ Werkzeug==0.10.4
 Whoosh==2.7.0
 xhtml2pdf==0.0.6
 zope.interface==4.3.3
-boto==2.47.0
-boto3==1.4.6
-botocore==1.6.7
 django-storages==1.6.5
 imaplib2==2.45.0
 html2text==2017.10.4
