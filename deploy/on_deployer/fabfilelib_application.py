@@ -365,9 +365,6 @@ def package_application_docker_compose(output_folder=None):
                                                                                   #original_docker_compose_kibana_file
                                                ])
     
-    with lcd(checked_out_code_folder):
-        local("cp -R deploy/docker/scripts/client/* {output_folder}".format(output_folder=output_folder))
-        
     print("\nSuccess. \nDocker compose file created for branch {branch} at: {output_file_path}"\
           .format(branch=env.branch, output_file_path=output_file_path))
     print("""To confirm deployment, open a new regular terminal in the docker host, then test with:
@@ -414,7 +411,9 @@ def package_docker_compose(output_folder,
                    'static_assets': git_hashes.get('static_assets' or None) or git_hashes.get('api' or None) or git_remote_short_hash('imptime') }
     
     with lcd(checked_out_code_folder):
-        local("cp -R deploy/docker/scripts/client/* {output_folder}".format(output_folder=output_folder))
+        local("cp -R deploy/docker/scripts/{scripts_foldername}/* {output_folder}"\
+              .format(output_folder=output_folder,
+                      scripts_foldername=scripts_foldername))
 
     with lcd(output_folder):
         local("mkdir -p imptime-media")

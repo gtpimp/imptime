@@ -120,3 +120,9 @@ def ssh_key(key_filename):
 
 def dns_subdomain(dns_subdomain):
     env.dns_subdomain = dns_subdomain
+
+def sample_config_foldername(foldername):
+    env.sample_config_foldername = foldername
+
+def scripts_foldername(foldername):
+    env.scripts_foldername = foldername    
