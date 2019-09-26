@@ -23,7 +23,7 @@ services:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
      - ./temp:/opt/imptime/temp
      - /var/log/imptime:/opt/imptime/logs
-     - /opt/imptime/imptime-media:/imptime-media:rw
+     - /home/imptime/prod/media:/imptime-media:rw
     depends_on:
      - migrate-api-database
     environment:
