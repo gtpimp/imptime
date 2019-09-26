@@ -26,6 +26,10 @@ from fabfilelib_monitoring import *
 from fabfilelib_docker import *
 from fabfilelib_git import *
 
+def build():
+    build_all_images()
+    package_application_docker_compose()
+
 def release_and_deploy(aws_proxy_instance_name=None, zip_filename=None, force_backup=True, stop_old_instance=True):
     """This is the all singing all dancing version. Takes a lot of trust
        to run this one, but at the end of it a new ImpTime has arisen.
