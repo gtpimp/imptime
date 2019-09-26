@@ -109,7 +109,7 @@ def host_local():
     env.server_type="application"
     env.key_filename=os.path.join("/", "opt", "imptime", "local_ssh_keys", "imptime-ec2-access.pem")
     env.subsubdomains = ["", "www", "api"]
-
+    env.scripts_foldername = "dev"
     
 def branch(branch):
     env.branch = branch
