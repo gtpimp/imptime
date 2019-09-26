@@ -151,8 +151,7 @@ services:
   nginx:
     image: imptime/nginx:__TOKEN_IMPTIME_API_SHORT_GIT_HASH__
     ports:
-     - "80:80"
-     - "443:443"
+     - "89:80"
      - "8012:8012" #localhost only
      - "8014:8014" #localhost only
      - "8015:8015" #localhost only
@@ -167,8 +166,6 @@ services:
 
   redis:
     image: redis:3.2.0
-    ports:
-      - "6379:6379"
     volumes:
       - /var/log/imptime:/opt/imptime/logs
 
