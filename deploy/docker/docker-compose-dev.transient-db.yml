@@ -28,8 +28,6 @@ services:
   api:
     links:
      - postgresql
-    volumes:
-     - /var/log/imptime:/opt/imptime/logs
 
   deploy-ui-static-assets:
     links:
