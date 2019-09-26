@@ -8,6 +8,6 @@ ROOT=`pwd`
 echo "Starting docker compose"
 cd ${COMPOSE_FOLDER}
 
-docker-compose -f docker-compose.yml -f docker-compose-prod.yml -f docker-compose-monitoring-client.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose-prod.yml -f docker-compose-monitoring-client.yml -f docker-compose.transient-db.yml up -d
 
 echo "Started"

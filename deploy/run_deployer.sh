@@ -5,6 +5,29 @@ set -e
 cd "`dirname \"$0\"`/"
 DEPLOY_ROOT=`pwd`
 
+CLEAN="?"
+CMD="bash"
+
+while [[ $# -gt 1 ]]
+do
+key="$1"
+
+case $key in
+    -c|--clean)
+    CLEAN="$2"
+    shift
+    ;;
+    -f|--cmd)
+    CMD="$2"
+    shift
+    ;;
+    *)
+    ;;
+esac
+shift
+done
+
+
 cd ${DEPLOY_ROOT}/../
 DEV_ROOT=`pwd`
 
@@ -12,6 +35,8 @@ cd ${DEPLOY_ROOT}
 
 AWS_CONFIG=$1
 AWS_PROFILE=$2
+
+
 
 DUMMY="y"
 
@@ -25,11 +50,11 @@ if [ -z "${AWS_PROFILE}" ]; then
    echo "Auto setting AWS_PROFILE variable to ${AWS_PROFILE}. Pass in as second variable to over-ride"
 fi
 
-if [ ! -e ${AWS_CONFIG} ] || [ ! -e ${AWS_CONFIG}/credentials ]; then
-    echo "You must have valid amazon configuration at ${AWS_CONFIG}, with a section for '${AWS_PROFILE}'"
-    echo "You won't be able to deploy releases to amazon, press enter to continue"
-    read -p " (press enter)" DUMMY
-fi
+# if [ ! -e ${AWS_CONFIG} ] || [ ! -e ${AWS_CONFIG}/credentials ]; then
+#     echo "You must have valid amazon configuration at ${AWS_CONFIG}, with a section for '${AWS_PROFILE}'"
+#     echo "You won't be able to deploy releases to amazon, press enter to continue"
+#     read -p " (press enter)" DUMMY
+# fi
 
 
 # Note we bind the docker.sock so docker in the container can talk to
@@ -39,15 +64,18 @@ fi
 MAPPED_TEMP_FOLDER=${DEPLOY_ROOT}/deployer_temp
 
 if [ -e ${MAPPED_TEMP_FOLDER} ]; then
-    echo "Clean the temp folder at ${MAPPED_TEMP_FOLDER}?"
-    echo "Select yes for a 'pure' build, select no for a quicker build"
-    read -p "(y/n) " DUMMY
-    if [ $DUMMY == "y" ]; then
-        echo "About to clean the temp folder at ${MAPPED_TEMP_FOLDER}. Because the deployer runs as a docker root, this delete requires root permissions"
-        sudo rm -Rf ${MAPPED_TEMP_FOLDER}
+    if [ ${CLEAN} == "?" ]; then
+        echo "Clean the temp folder at ${MAPPED_TEMP_FOLDER}?"
+        echo "Select yes for a 'pure' build, select no for a quicker build"
+        read -p "(y/n) " CLEAN
+    fi
+    if [ $CLEAN == "y" ]; then
+            echo "About to clean the temp folder at ${MAPPED_TEMP_FOLDER}. Because the deployer runs as a docker root, this delete requires root permissions"
+            sudo rm -Rf ${MAPPED_TEMP_FOLDER}
     fi
 fi
 mkdir -p ${MAPPED_TEMP_FOLDER}
+
 
 # Because we're a level deep, the docker can't see the config folder,
 # but it needs it, so just copy it in.
@@ -108,4 +136,4 @@ echo " ... then follow onscreen instructions  "
 echo " "
 
 
-docker run -i -t --env GUESSED_DEV_CODE_ROOT_FOLDER=${DEV_ROOT}  --env SSH_AUTH_SOCK=/ssh-agent --env MAPPED_TEMP_FOLDER_ON_HOST=${MAPPED_TEMP_FOLDER} --env AWS_PROFILE=${AWS_PROFILE} --volume $SSH_AUTH_SOCK:/ssh-agent --volume ${DOCKER_SOCK}:/var/run/docker.sock --volume ${DEPLOY_ROOT}/deployer_temp:/opt/imptime/deployer/mapped_temp --volume ${AWS_CONFIG}:/root/.aws  --volume ~/.ssh:/opt/imptime/local_ssh_keys deployer bash
+docker run -i -t --env GUESSED_DEV_CODE_ROOT_FOLDER=${DEV_ROOT}  --env SSH_AUTH_SOCK=/ssh-agent --env MAPPED_TEMP_FOLDER_ON_HOST=${MAPPED_TEMP_FOLDER} --env AWS_PROFILE=${AWS_PROFILE} --volume $SSH_AUTH_SOCK:/ssh-agent --volume ${DOCKER_SOCK}:/var/run/docker.sock --volume ${DEPLOY_ROOT}/deployer_temp:/opt/imptime/deployer/mapped_temp --volume ${AWS_CONFIG}:/root/.aws  --volume ~/.ssh:/opt/imptime/local_ssh_keys deployer ${CMD}
