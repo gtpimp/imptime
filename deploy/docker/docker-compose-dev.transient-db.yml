@@ -23,7 +23,6 @@ services:
      - postgresql
     volumes:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
-     - /var/log/imptime:/opt/imptime/logs
 
   api:
     links:
@@ -34,4 +33,3 @@ services:
      - postgresql
     volumes:
      - ./external_config/:/opt/imptime/api/implicitdesign/external_config/
-     - /var/log/imptime:/opt/imptime/logs
