@@ -9,10 +9,6 @@ RUN apt-get update && apt-get install -y --force-yes \
   libcups2 \
   libxss1
 
-COPY version.txt /opt/imptime/api/version.txt
-COPY * /opt/imptime/api/
-
-WORKDIR /opt/imptime/api/
 
 # phantomjs
 RUN wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
@@ -21,9 +17,16 @@ RUN ln -s /usr/local/share/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/bin/
 
 RUN npm install lodash commander puppeteer
 
+COPY * /opt/imptime/api/
+
+WORKDIR /opt/imptime/api/
+
+
 COPY docker/start-api.sh start-api.sh
 COPY docker/migrate-api-database.sh migrate-api-database.sh
 COPY docker/start-dev-api.sh start-dev-api.sh
 COPY docker/start-ui-refresh-listener.sh start-ui-refresh-listener.sh
 COPY docker/start-ui-worker.sh start-ui-worker.sh
 COPY docker/create_issues_from_incoming_email.sh create_issues_from_incoming_email.sh
+
+COPY version.txt /opt/imptime/api/version.txt
