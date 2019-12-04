@@ -116,46 +116,6 @@ class SprintProposal extends Component {
         )
     }
 
-    renderDevelopmentMethodology() {
-        return (
-            <div className="print__page">
-              <PrintTitle>Introduction</PrintTitle>
-              <p>
-                This proposal is for development work offered by ImplicitDesign, based on requirements received from the client.
-              </p>
-              <p>
-                ImplicitDesign uses an agile software development methodology, which
-                allows for a flexible specification while building an on-going client relationship.
-              </p>
-              <p>
-                This proposal represents our best knowledge of the requirements, being as granular as
-                possible without requiring specific technical knowldge.
-              </p>
-              <p>
-                We assist the client in managing the project budget, by identifying where
-                costs can be reduced or functionality can be streamlined.
-              </p>
-              <p>
-                Final invoices are based on actual time taken, not on these estimates. This means that:
-                <ul>
-                  <li>the final cost of the project will match exactly the effort involved,
-                    ie no quote padding is required</li>
-                  <li>
-                    scope changes to the project are easily managed as a normal part of the
-                    development process</li>
-                </ul>
-              </p>
-              <p>
-                The time and cost estimates in this document are based
-                on developer's opinions of the implementation
-                time. Testing and management time is captured as
-                issues as well, based on our experience with similar
-                projects.
-              </p>
-            </div>
-        )
-    }
-
     renderCostMethodology() {
         return (
             <div>
@@ -163,27 +123,10 @@ class SprintProposal extends Component {
                 The following costing is based on the list of issues given later in this document.
               </p>
               <p>
-                If this is not a quote, then the final cost will be invoiced as the actual billable time taken, which may be
-                less than the minimum estimate or more than the maximum estimate.
+                All costs and times are estimates, unless agreed in writing separately with the client.
               </p>
               <p>
-              
-                We try to make our estimates reasonable, neither
-                pessimistic nor optimistic.
-              </p>
-              <p>
-                Since there will be surprises that are not planned for, an additional uncertainty amount is added to the estimates. This is shown as a separate cost for clarity.
-              </p>
-              <p>
-                We assume this amount will be used in the sprint for unplanned difficulties and small tweaks to the requirements.
-                In those cases where it is not used and this sprint is not a quote, then the money is unspent and can be reallocated.
-                
-                A high uncertainty amount indicates any of:
-                <ul>
-                  <li>uncertainty and/or fluidity in the project deliverables</li>
-                  <li>a high level of risk, typically with integrations or new technologies</li>
-                  <li>a high degree of technical difficulty</li>
-                </ul>
+                All costs exclude VAT. VAT will be added on invoices for South African clients.
               </p>
             </div>
         )
@@ -219,25 +162,29 @@ class SprintProposal extends Component {
                       <DivTableRow key={`budget`}>
                         <DivTableCell>Estimated hours</DivTableCell>
                         <DivTableCell>
-                          <div>{totals.estimated_hours}</div>
+                          <div><Hours hours={totals.estimated_hours} /></div>
                         </DivTableCell>
                       </DivTableRow>
                     }
                     { show_money &&
                       <div>
-                        <DivTableRow key={`budget`}>
-                          <DivTableCell>Estimated cost</DivTableCell>
-                          <DivTableCell>
-                            <CurrencyValue value={totals.estimated_cost} float_direction="none" />
-                          </DivTableCell>
-                        </DivTableRow>
-                        <DivTableRow key={`contingency`}>
-                          <DivTableCell>Uncertainty</DivTableCell>
-                          <DivTableCell>
-                            <CurrencyValue value={totals.scope_creep} float_direction="none" />
-                            &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
-                          </DivTableCell>
-                        </DivTableRow>
+                        { false &&
+                          <div>
+                            <DivTableRow key={`budget`}>
+                              <DivTableCell>Estimated cost</DivTableCell>
+                              <DivTableCell>
+                                <CurrencyValue value={totals.estimated_cost} float_direction="none" />
+                              </DivTableCell>
+                            </DivTableRow>
+                            <DivTableRow key={`contingency`}>
+                              <DivTableCell>Uncertainty</DivTableCell>
+                              <DivTableCell>
+                                <CurrencyValue value={totals.scope_creep} float_direction="none" />
+                                &nbsp;&nbsp;(@ {totals.scope_creep_percentage}%)
+                              </DivTableCell>
+                            </DivTableRow>
+                          </div>
+                        }
                         <DivTableRow key={'total'}>
                           <DivTableCell>
                             <div className={css`font: ${theme.fonts.bold_large}`}>
@@ -286,30 +233,8 @@ class SprintProposal extends Component {
         return (
             <div>
               <p>
-              
                 The following list of issues represents the work
-                agreed to be done within the costs given above. This
-                list is flexible to change as determined through
-                feedback with the client.
-                
-              </p>
-              <p>
-              
-                Each issue is assigned an expected duration to
-                complete, typically in the range of a few hours. By
-                estimating at such a granular resolution, complexities
-                inherent in the project are identified early, greatly
-                reducing risk and increasing estimate accuracy.
-                
-              </p>
-              <p>
-                If you don't see a feature in this document, then it
-                will probably not be worked on as part of this proposal.
-              </p>
-              <p>
-
-              
-                
+                agreed to be done within the costs given above. 
               </p>
             </div>
         )
@@ -431,11 +356,7 @@ class SprintProposal extends Component {
         return (
             <div>
               <p>
-                This section contains a detailed breakdown of each issue,
-                including images (if available) and the steps taken to verify the issue is complete.
-              </p>
-              <p>
-                This is the definition of what this proposal actually delivers.
+                This section contains a detailed breakdown of each issue.
               </p>
             </div>
         )
@@ -478,7 +399,6 @@ class SprintProposal extends Component {
                 {({active_headers}) => (
                      <div className={css`margin-left: 20px; margin-right: 20px`}>
                        { this.renderHeader() }
-                       { this.renderDevelopmentMethodology() }
                        { show_money && this.renderCostTotals(active_headers) }
                        { this.renderIssueContents(active_headers) }
                        { this.renderIssues() }
