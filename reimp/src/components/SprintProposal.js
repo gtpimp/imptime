@@ -251,9 +251,9 @@ class SprintProposal extends Component {
               <DivTable renderHeader={() => this.renderIssueContentsHeader(header_list)}>
                 {map(issues, (issue) => {
                      const issue_costs = get(cost_summary, ["breakdown", "estimates_by_issue", issue.id], {})
-                     if ( ! issue_costs.velocity_adjusted_estimate ) {
-                         return null
-                     }
+                    /* if ( ! issue_costs.velocity_adjusted_estimate ) {
+                     *     return null
+                     * }*/
                 
                      return (
                          <DivTableRow key={`sprint_proposal__div_table__${issue.id}`}>
