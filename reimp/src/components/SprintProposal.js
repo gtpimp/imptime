@@ -220,7 +220,6 @@ class SprintProposal extends Component {
                         <DivTableCell>Estimated hours</DivTableCell>
                         <DivTableCell>
                           <div>{totals.estimated_hours}</div>
-                          &nbsp;(approximately {Math.ceil(totals.estimated_hours/8)} man days)
                         </DivTableCell>
                       </DivTableRow>
                     }
