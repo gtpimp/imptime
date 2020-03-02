@@ -11,9 +11,8 @@ from django.db import transaction
 from datetime import datetime
 from django.contrib.auth.models import User
 from timepiece.models import Business, Project, Activity, Entry, Location, Attribute, CalendarEvent
-from timepiece.models import Issue, IssueStatus, ProjectIssueOrder, IssueComment, IssuePoints
+from timepiece.models import Issue, IssueStatus, ProjectIssueOrder, IssueComment, IssuePoints, BusinessPermissions, ProjectStatus
 from imptime.bulk_text_parser import BulkTextParser
-from timepiece.models import BusinessPermissions
 import logging
 logger = logging.getLogger(__name__)
 
@@ -82,6 +81,8 @@ class Extractor(object):
         
         if bp.has_edit_old_clock_entries:
             self.oldest_clockable_day = timezone.now()-relativedelta(months=12)
+        else:
+            self.oldest_clockable_day = timezone.now()-relativedelta(months=2) # hack to fix old clock entries. Remove
         
         self.status['infos'].append("Oldest clockable day is %s" % self.oldest_clockable_day)
         
@@ -111,9 +112,11 @@ class Extractor(object):
             if orgnode.Level() == 3 and sprint_name is not None:
 
                 if business is None:
-                    logger.error("Found a development section for a project which doesn't exist: %s" % business_name)
-                    self.status['infos'].append("Found a development section for a project which doesn't exist: %s" % business_name)
-                    return
+                    business = Business.objects.create(name=business_name)
+                    BusinessPermissions.ensure_user_belongs_to_business(user=timesheet_user, business=business)
+                    BusinessPermissions.give_all_permissions_to_user(user=timesheet_user, business=business)
+                    logger.info("Auto created project for : %s" % business_name)
+                    self.status['infos'].append("Auto created project for : %s" % business_name)
 
                 self._process_orgnode(business, sprint_name, orgnode, issues_processed)
 
@@ -139,7 +142,11 @@ class Extractor(object):
         try:
             project = Project.get_project_from_name(name=sprint_name, business=business)
         except Project.DoesNotExist:
-            raise Exception("No sprint found for [%s] in project %s" % (sprint_name, business.name)) #sic, sprints are called projects
+            new_status = ProjectStatus.objects.get_or_create(business_id=business.id, name='pending')[0]
+            project = Project.objects.create(business=business,
+                                             status3=new_status,
+                                             code=Project.get_code_from_name(sprint_name),
+                                             name=sprint_name)
 
         if not project.can_add_dev_time():
             self.status['infos'].append("Ignoring time for sprint %s in project %s, the sprint is probably closed" % (sprint_name, business.name)) #sic

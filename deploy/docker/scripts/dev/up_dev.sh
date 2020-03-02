@@ -29,26 +29,26 @@ echo "Starting docker compose for transient database"
 cd ${COMPOSE_FOLDER}
 docker-compose -f docker-compose.yml -f docker-compose-dev.transient-db.yml -f docker-compose-dev.yml up -d
 
-if [ ! -e ${API_SETTINGS_DST} ]; then
-    echo "API settings not found"
-    if [! -d ${API_SETTINGS_DST_DIR}]; then
-        mkdir -p ${API_SETTINGS_DST_DIR}
-        touch ${API_SETTINGS_DST_DIR}/__init__.py
-    fi
-    cp ${API_SETTINGS_SRC} ${API_SETTINGS_DST}
-else
-    echo "API settings found"
-fi
+# if [ ! -e ${API_SETTINGS_DST} ]; then
+#     echo "API settings not found"
+#     if [! -d ${API_SETTINGS_DST_DIR}]; then
+#         mkdir -p ${API_SETTINGS_DST_DIR}
+#         touch ${API_SETTINGS_DST_DIR}/__init__.py
+#     fi
+#     cp ${API_SETTINGS_SRC} ${API_SETTINGS_DST}
+# else
+#     echo "API settings found"
+# fi
 
-if [ ! -e ${UI_SETTINGS_DST} ]; then
-    echo "UI settings not found"
-    if [ ! -d ${UI_SETTINGS_DST_DIR} ]; then
-        mkdir -p ${UI_SETTINGS_DST_DIR}
-    fi
-    cp ${UI_SETTINGS_SRC} ${UI_SETTINGS_DST}
-else
-    echo "UI settings found"
-fi
+# if [ ! -e ${UI_SETTINGS_DST} ]; then
+#     echo "UI settings not found"
+#     if [ ! -d ${UI_SETTINGS_DST_DIR} ]; then
+#         mkdir -p ${UI_SETTINGS_DST_DIR}
+#     fi
+#     cp ${UI_SETTINGS_SRC} ${UI_SETTINGS_DST}
+# else
+#     echo "UI settings found"
+# fi
 
 
 cat << EOF
