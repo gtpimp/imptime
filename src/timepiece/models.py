@@ -1699,7 +1699,10 @@ class Project(BaseModel):
             return Project.objects.get(business=business, pk=project_id)
         else:
             code = Project.get_code_from_name(name)
-            return Project.objects.get(business=business, code=code)
+            project = Project.objects.filter(business=business, code=code).first()
+            if project is None:
+                project = Project.objects.filter(business=business, name=name).first()
+            return project
 
     @classmethod
     def get_code_from_name(self, name):

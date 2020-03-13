@@ -141,12 +141,15 @@ class Extractor(object):
 
         try:
             project = Project.get_project_from_name(name=sprint_name, business=business)
+            if project is None:
+                new_status = ProjectStatus.objects.get_or_create(business_id=business.id, name='pending')[0]
+                project = Project.objects.get_or_create(business=business,
+                                                        name=sprint_name,
+                                                        defaults={'status3':new_status,
+                                                                  'code':Project.get_code_from_name(sprint_name)})[0]
         except Project.DoesNotExist:
-            new_status = ProjectStatus.objects.get_or_create(business_id=business.id, name='pending')[0]
-            project = Project.objects.create(business=business,
-                                             status3=new_status,
-                                             code=Project.get_code_from_name(sprint_name),
-                                             name=sprint_name)
+            self.status['errors'].append("Project not found: %s" % sprint_name)
+            return
 
         if not project.can_add_dev_time():
             self.status['infos'].append("Ignoring time for sprint %s in project %s, the sprint is probably closed" % (sprint_name, business.name)) #sic
