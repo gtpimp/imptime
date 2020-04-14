@@ -17,14 +17,18 @@ class Command(BaseCommand):
 
             for year in [ date.today().year-1, date.today().year, date.today().year+1 ]:
             
-                url = "http://kayaposoft.com/enrico/json/v1.0/?action=getPublicHolidaysForYear&year=%s&country=zaf" % year
+                url = "https://kayaposoft.com/enrico/json/v2.0/?action=getHolidaysForYear&year=%s&country=zaf&holidayType=public_holiday" % year
+                
                 holidays = requests.get(url=url).json()
 
                 holiday_ids = []
                 for holiday in holidays:
+                    name = holiday['name'][0]['text']
                     applies_on = date(year=holiday['date']['year'], month=holiday['date']['month'], day=holiday['date']['day'])
                     holiday_ids.append( timepiece.Holiday.objects.get_or_create(applies_on=applies_on,
-                                                                                defaults={'name':holiday['englishName']})[0].id )
+                                                                                defaults={'name':name})[0].id )
+                    print("Updated holiday %s on %s" % (name, applies_on))
+
                 timepiece.Holiday.objects.filter(applies_on__year=year).exclude(pk__in=holiday_ids).delete()
                     
         except Exception, ex:
