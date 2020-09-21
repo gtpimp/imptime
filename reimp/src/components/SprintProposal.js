@@ -405,7 +405,7 @@ class SprintProposal extends Component {
                           <div>{this.renderIssueDescription(issue)}</div>
                           <div>{this.renderIssueImages(issue)}</div>
                           <div>{this.renderIssueTestables(issue)}</div>
-                          { show_comments && <div>{this.renderIssueComments(issue)}</div> }
+                          <div>{this.renderIssueComments(issue)}</div>
                         </div>
                     )
                 }) }
