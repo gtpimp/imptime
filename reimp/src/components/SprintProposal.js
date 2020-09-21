@@ -98,14 +98,13 @@ class SprintProposal extends Component {
                 <MienFeature feature_name="proposal_formal">
                   <div>
                     Proposal for
-                    <h2>
-                      <SprintName sprint_id={sprint_id}/>
-                    </h2>
                   </div>
                 </MienFeature>
+                <h2>
+                  <SprintName sprint_id={sprint_id}/>
+                </h2>
                 { sprint.description && 
                   <div>
-                    <h2>Sprint description</h2>
                     <p>
                       {sprint.description}
                     </p>
@@ -344,15 +343,12 @@ class SprintProposal extends Component {
     }
 
     renderIssueComments(issue) {
-        if ( size(issue.comments) === 0 ) {
-            return null
-        }
         return (
             <MienFeature feature_name="proposal_comments">
               <div className={cx("text-component--readonly text-component--description",
-                                 css`background-color: ${theme.colours.sub_nav_bar}; margin-top: 10px; padding-top: 10px; padding-bottom: 10px;`)}>
+                                 css`background-color: ${theme.colours.sub_nav_bar}; padding-top: 10px; padding-bottom: 10px;`)}>
                 { map(issue.comments, (comment) =>
-                    <div key={`issue_comment_${comment.id}`} className={css`margin-left: 30px; margin-right: 30px;`}>
+                    <div key={`issue_comment_${comment.id}`} className={css`margin-top: 10px; margin-left: 30px; margin-right: 30px;`}>
                       
                       <div key={`comment_${comment.id}`}>
                         <div>

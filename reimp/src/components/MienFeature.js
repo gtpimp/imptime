@@ -33,7 +33,7 @@ class MienFeature extends Component {
     }
 
     renderFeatureSelector() {
-        const { feature_is_active } = this.props
+        const { feature_is_active, feature_name } = this.props
         const { is_hovered } = this.state
 
         if ( this.props.children.length > 1 ) {
@@ -53,6 +53,7 @@ class MienFeature extends Component {
                                           "mien-feature-highlighter--mask-inactive":!feature_is_active})}/>
               { feature_is_active && <div>Visible</div> }
               { !feature_is_active && <div>Hidden</div> }
+              <h3>Mien feature name: {feature_name}</h3>
               {this.props.children}
             </div>
         )        
