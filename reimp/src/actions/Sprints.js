@@ -57,8 +57,7 @@ export const ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS = [
     {key:'name', label:'Name', description:'Name', width:"auto", flex:1, is_default:true},
     {key:'estimates_by_assignee', label:"Hours", description:"Total estimated hours by the assigned user", width:small_col_width, is_default:true},
     {key:'estimated_cost_by_assignee', label:"Cost", description:"Total estimated cost by the assigned user", width:small_col_width, is_default:true},
-    {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width},
-    {key:'comments', label:"Comments", description:"Issue comments", width:medium_col_width},
+    {key:'assignee', label:"Assignee", description:"Issue assignee", width:medium_col_width}
 ]
 
 export const ALL_AVAILABLE_SPRINT_RECON_HEADERS = [

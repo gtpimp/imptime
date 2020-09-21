@@ -20,7 +20,8 @@ import {
 import {ensureEstimateSummaryLoaded,
         getEstimateSummary
 } from '../actions/EstimateSummary'
-import { showMoney, doesMienHaveHeader } from '../actions/Mien'
+import { showMoney, doesMienHaveHeader, doesMienHaveFeature } from '../actions/Mien'
+import MienFeature from './MienFeature'
 import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
@@ -94,12 +95,14 @@ class SprintProposal extends Component {
         return (
             <div>
               <PrintTitle>
-                <div>
-                  Proposal for
-                  <h2>
-                    <SprintName sprint_id={sprint_id}/>
-                  </h2>
-                </div>
+                <MienFeature feature_name="proposal_formal">
+                  <div>
+                    Proposal for
+                    <h2>
+                      <SprintName sprint_id={sprint_id}/>
+                    </h2>
+                  </div>
+                </MienFeature>
                 { sprint.description && 
                   <div>
                     <h2>Sprint description</h2>
@@ -231,12 +234,14 @@ class SprintProposal extends Component {
 
     renderIssueMethodology() {
         return (
-            <div>
-              <p>
-                The following list of issues represents the work
-                agreed to be done within the costs given above. 
-              </p>
-            </div>
+            <MienFeature feature_name="proposal_formal">
+              <div>
+                <p>
+                  The following list of issues represents the work
+                  agreed to be done within the costs given above. 
+                </p>
+              </div>
+            </MienFeature>
         )
     }
 
@@ -313,6 +318,9 @@ class SprintProposal extends Component {
     }
 
     renderIssueImages(issue) {
+        if ( ! issue.annotated_visual_spec_document_ids ) {
+            return null
+        }
         return (
             <div className={css`display: flex; flex-wrap: wrap; margin-bottom: 20px;`}>
               <VisualSpecDocumentGallery annotated_visual_spec_document_ids={issue.annotated_visual_spec_document_ids}
@@ -336,20 +344,27 @@ class SprintProposal extends Component {
     }
 
     renderIssueComments(issue) {
+        if ( size(issue.comments) === 0 ) {
+            return null
+        }
         return (
-            <div className={css`display: flex; flex-wrap: wrap;`}>
-              { map(issue.comments, (comment) =>
-                  <div key={`issue_comment_${comment.id}`} className={css`margin-left: 30px; margin-right: 30px;`}>
-                    
-                    <div key={`comment_${comment.id}`}>
-                      <div>
-                        <Timestamp value={comment.modified} format='datetime' />
+            <MienFeature feature_name="proposal_comments">
+              <div className={cx("text-component--readonly text-component--description",
+                                 css`background-color: ${theme.colours.sub_nav_bar}; margin-top: 10px; padding-top: 10px; padding-bottom: 10px;`)}>
+                { map(issue.comments, (comment) =>
+                    <div key={`issue_comment_${comment.id}`} className={css`margin-left: 30px; margin-right: 30px;`}>
+                      
+                      <div key={`comment_${comment.id}`}>
+                        <div>
+                          <Timestamp value={comment.modified} format='datetime' />
+                        </div>
+                        {comment.comment}
                       </div>
-                      {comment.comment}
+                      <hr/>
                     </div>
-                  </div>
                 ) }
-            </div>
+              </div>
+            </MienFeature>
         )
     }
 
@@ -412,18 +427,22 @@ class SprintProposal extends Component {
         return (
             <div>
 
+              <div className={css`margin-left: 20px; margin-right: 20px`}>
+                { this.renderHeader() }
+              </div>
               <MienListColumnConfigurable all_headers={ALL_AVAILABLE_SPRINT_PROPOSAL_HEADERS}
                                           header_list_name={HEADER_LIST_NAME__SPRINT_PROPOSAL}
               >
                 {({active_headers}) => (
                      <div className={css`margin-left: 20px; margin-right: 20px`}>
-                       { this.renderHeader() }
                        { show_money && this.renderCostTotals(active_headers) }
                        { this.renderIssueContents(active_headers) }
-                       { this.renderIssues() }
                      </div>
                  )}
               </MienListColumnConfigurable>
+              <div className={css`margin-left: 20px; margin-right: 20px`}>
+                { this.renderIssues() }
+              </div>
             </div>
         )
     }    
@@ -452,7 +471,7 @@ function makeMapStateToProps(state, props) {
         const cost_summary = getCostSummary(state, sprint_id) || {}
         const show_money = sprint && showMoney(state, sprint.project_id)
         const show_hours_in_total = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_PROPOSAL, 'estimates_by_assignee')
-        const show_comments = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_PROPOSAL, 'comments')
+        const show_comments = sprint && doesMienHaveFeature(state, 'proposal_comments')
         
         return {
             sprint_id,
