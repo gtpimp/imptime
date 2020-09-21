@@ -335,6 +335,24 @@ class SprintProposal extends Component {
         )
     }
 
+    renderIssueComments(issue) {
+        return (
+            <div className={css`display: flex; flex-wrap: wrap;`}>
+              { map(issue.comments, (comment) =>
+                  <div key={`issue_comment_${comment.id}`} className={css`margin-left: 30px; margin-right: 30px;`}>
+                    
+                    <div key={`comment_${comment.id}`}>
+                      <div>
+                        <Timestamp value={comment.modified} format='datetime' />
+                      </div>
+                      {comment.comment}
+                    </div>
+                  </div>
+                ) }
+            </div>
+        )
+    }
+
     renderIssueDescription(issue) {
         return (
             <div className={cx("text-component--readonly text-component--description",
@@ -363,7 +381,7 @@ class SprintProposal extends Component {
     }
 
     renderIssues() {
-        const { issues } = this.props
+        const { issues, show_comments } = this.props
         return (
             <div className="print__page">
               <PrintTitle>
@@ -376,6 +394,7 @@ class SprintProposal extends Component {
                           <div>{this.renderIssueDescription(issue)}</div>
                           <div>{this.renderIssueImages(issue)}</div>
                           <div>{this.renderIssueTestables(issue)}</div>
+                          { show_comments && <div>{this.renderIssueComments(issue)}</div> }
                         </div>
                     )
                 }) }
@@ -433,6 +452,7 @@ function makeMapStateToProps(state, props) {
         const cost_summary = getCostSummary(state, sprint_id) || {}
         const show_money = sprint && showMoney(state, sprint.project_id)
         const show_hours_in_total = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_PROPOSAL, 'estimates_by_assignee')
+        const show_comments = sprint && doesMienHaveHeader(state, HEADER_LIST_NAME__SPRINT_PROPOSAL, 'comments')
         
         return {
             sprint_id,
@@ -449,7 +469,8 @@ function makeMapStateToProps(state, props) {
             estimate_summary,
             cost_summary,
             show_money,
-            show_hours_in_total
+            show_hours_in_total,
+            show_comments
         }
     }
     return mapStateToProps

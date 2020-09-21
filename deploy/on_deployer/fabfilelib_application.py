@@ -1,5 +1,4 @@
 from fabric.api import local, settings, abort, run, cd, env, sudo, lcd
-from dockerfabric.apiclient import docker_fabric as dfab
 import re
 import time
 import requests
@@ -9,7 +8,6 @@ import sys
 import json
 import yaml
 import os
-from dockermap.api import DockerClientWrapper, DockerFile
 import getpass
 import shutil
 from fabric.contrib.console import confirm, prompt
