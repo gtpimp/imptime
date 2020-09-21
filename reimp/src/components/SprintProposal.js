@@ -26,6 +26,7 @@ import { ensureUsersLoaded } from '../actions/Users'
 import SprintName from './SprintName'
 import IssueName from './IssueName'
 import CurrencyValue from './CurrencyValue'
+import IssueStatus from './IssueStatus'
 import {
     makeSelIssues,
     makeSelTagIdsForIssues,
@@ -277,6 +278,13 @@ class SprintProposal extends Component {
                                          content = (
                                              <DivTableCell key="name" extra_style={getCellStyle(header)}>
                                                <IssueName issue_id={issue.id} />
+                                             </DivTableCell>
+                                         )
+                                         break
+                                     case "status":
+                                         content = (
+                                             <DivTableCell key="name" extra_style={getCellStyle(header)}>
+                                               <IssueStatus issue_id={issue.id} />
                                              </DivTableCell>
                                          )
                                          break
