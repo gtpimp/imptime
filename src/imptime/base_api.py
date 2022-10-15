@@ -267,9 +267,10 @@ class BaseViewSet(viewsets.ViewSet):
         return ProjectRole.objects.filter(business=project) #sic
     
     def allowed_invoices(self):
-        return Invoice.objects.filter(business__in=self.allowed_projects(), #sic
-                                      business__business_permissions__user=self.request.user,
-                                      business__business_permissions__can_view_invoices=True)
+        return Invoice.objects.all()
+        # return Invoice.objects.filter(business__in=self.allowed_projects(), #sic
+        #                               business__business_permissions__user=self.request.user,
+        #                               business__business_permissions__can_view_invoices=True)
 
     def allowed_testables(self):
         return Testable.objects.filter(project__in=self.allowed_projects()) 
