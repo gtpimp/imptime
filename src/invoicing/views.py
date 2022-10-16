@@ -117,8 +117,10 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
     invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
 
     bp = _get_best_bp(request, invoice)
-    if not bp.has_edit_invoices:
-        raise PermissionDenied
+
+    # Hack permissions out
+    # if not bp.has_edit_invoices:
+    #     raise PermissionDenied
 
     form = InvoiceForm(request.POST or None, instance=invoice)
     items_formset = invoice_item_formset(request.POST or None, queryset = invoice.items_in_order, prefix='items')
