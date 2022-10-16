@@ -189,8 +189,10 @@ def preview_invoice(request, invoice_id, template="invoicing/preview_invoice.htm
 
     invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     bp = _get_best_bp(request, invoice)
-    if not bp.has_view_invoices:
-        raise PermissionDenied
+
+    # Hack
+    # if not bp.has_view_invoices:
+    #     raise PermissionDenied
 
     context = context or {}
     context['invoice'] = invoice
@@ -202,8 +204,10 @@ def generate_invoice(request, invoice_id, context=None):
 
     invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     bp = _get_best_bp(request, invoice)
-    if not bp.has_view_invoices:
-        raise PermissionDenied
+
+    # Hack
+    # if not bp.has_view_invoices:
+    #     raise PermissionDenied
 
     url = request.build_absolute_uri(reverse('invoicing:print_invoice_from_phantomjs',
                                              kwargs={'invoice_id':invoice.id,
@@ -248,8 +252,10 @@ def print_invoice_from_phantomjs(request, invoice_id, username, token, template=
 
     invoice = models.Invoice.objects.filter_by_logged_in_user(request.user).get(pk=invoice_id)
     bp = _get_best_bp(request, invoice)
-    if not bp.has_view_invoices:
-        raise PermissionDenied
+
+    # hack
+    # if not bp.has_view_invoices:
+    #    raise PermissionDenied
 
     context['invoice'] = invoice
     context['local_company_details'] = settings.INVOICE_DETAILS
