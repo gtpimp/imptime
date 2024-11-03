@@ -160,7 +160,7 @@ class Extractor(object):
 
         has_at_least_one_valid_clock_entry = False
         for clock in orgnode.getClocks():
-            if clock['to'].date() >= self.oldest_clockable_day.date():
+            if clock['to'].date() > self.oldest_clockable_day.date():
                 has_at_least_one_valid_clock_entry = True
                 break
 
