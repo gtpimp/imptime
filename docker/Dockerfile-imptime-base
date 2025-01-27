@@ -50,8 +50,8 @@ RUN mkdir -p /opt/imptime/api
 WORKDIR /opt/imptime/
 RUN mkdir -p logs
 
-RUN pip install --upgrade pip
 COPY requirements.txt .
+RUN python -m pip uninstall pip && sudo apt install -y python-pip --reinstall
 RUN pip install --no-deps -r requirements.txt
 
 
