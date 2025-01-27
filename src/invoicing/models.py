@@ -44,12 +44,15 @@ class InvoiceQuerySet(QuerySet):
         """ restricts entries to those belonging to projects the given
         user (typically the logged in user) is assigned to """
 
-        invoices_for_my_businesses = (Q(business__in=BusinessPermissions.active_businesses_for_user(user))|\
-                                      Q(project__business__in=BusinessPermissions.active_businesses_for_user(user)))&\
-                                     Q(business__business_permissions__user=user)&\
-                                     Q(business__business_permissions__can_view_invoices=True)
+        # Hack, debugging permission problem
+        return Invoice.objects.all()
 
-        return self.filter(invoices_for_my_businesses)
+        # invoices_for_my_businesses = (Q(business__in=BusinessPermissions.active_businesses_for_user(user))|\
+        #                               Q(project__business__in=BusinessPermissions.active_businesses_for_user(user)))&\
+        #                              Q(business__business_permissions__user=user)&\
+        #                              Q(business__business_permissions__can_view_invoices=True)
+
+        # return self.filter(invoices_for_my_businesses)
     
     def cost_with_vat(self):
         return (self.filter(client__taxable=True).annotate(cost_with_vat=Sum('items__total_cost')*(1+F('vat_rate'))).aggregate(total_cost_with_vat=Sum('cost_with_vat'))['total_cost_with_vat'] or 0) + \
