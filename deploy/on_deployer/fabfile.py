@@ -87,13 +87,13 @@ def host_local():
     env.user = 'ubuntu'
     env.hosts = ['localhost']
     env.use_ssh_config = True
-    env.git_url = "git@gitea.impd.co.za"
-    env.git_repo_prefix = "gtp/"
+    env.git_url = "git@github.com"
+    env.git_repo_prefix = "gtpimp/"
     env.deployer_dir = os.path.join("/", "opt", "imptime", "deployer")
     env.mapped_temp_dir = os.path.join(env.deployer_dir, "mapped_temp")
     env.mapped_temp_dir_on_host = os.environ['MAPPED_TEMP_FOLDER_ON_HOST']
     env.nsenter_path_on_host = "/usr/local/bin/"
-    env.branch = "development"
+    env.branch = "dev"
     env.max_branch_date = datetime.datetime.now()
     env.build_number = datetime.datetime.now().strftime("%d%b%Y_%H%M%S")
     env.guessed_dev_code_root_folder = os.environ['GUESSED_DEV_CODE_ROOT_FOLDER']

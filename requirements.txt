@@ -60,7 +60,6 @@ gitdb==0.6.4
 GitPython==1.0.1
 hadrian==2.0
 html5lib==0.9999999
-incremental==16.10.1
 ipython==4.0.0
 ipython-genutils==0.1.0
 Jinja2==2.8
