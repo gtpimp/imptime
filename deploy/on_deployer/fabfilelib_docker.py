@@ -101,7 +101,7 @@ def package_images(build_folder, name_prefix="latest",
 
 def build_from_dockerfile(working_folder, docker_file, image_name, tag_name):
     with lcd(working_folder):
-        local("docker build -f {docker_file} -t {image_name}:{tag_name} ."\
+        local("DOCKER_BUILDKIT=0 docker build -f {docker_file} -t {image_name}:{tag_name} ."\
               .format(docker_file=docker_file,
                       image_name=image_name,
                       tag_name=tag_name))
