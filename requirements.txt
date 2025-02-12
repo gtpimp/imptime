@@ -81,7 +81,7 @@ pbr==1.8.1
 pexpect==4.0.1
 pickleshare==0.5
 Pillow==3.0.0
-psycopg2==2.6.1
+psycopg2==2.8.6
 ptyprocess==0.5
 PyBrain==0.3
 pycrypto==2.6.1
