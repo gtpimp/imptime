@@ -54,7 +54,7 @@ RUN mkdir -p logs
 
 COPY requirements.txt .
 RUN python -m pip uninstall pip && apt install -y python-pip --reinstall
-RUN 
+
 RUN pip install --no-deps -r requirements.txt
 
 
