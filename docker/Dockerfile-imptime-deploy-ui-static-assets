@@ -21,7 +21,8 @@ WORKDIR /opt/imptime/api
 COPY * /opt/imptime/api/
 WORKDIR /opt/imptime/static_collected/
 
-RUN pip install pilkit
+RUN pip install Pillow==6.2.2
+RUN pip install pilkit==1.1.13
 
 WORKDIR /opt/imptime/api
 RUN python manage.py collectstatic --noinput
