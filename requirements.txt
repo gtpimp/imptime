@@ -5,6 +5,7 @@ asgi-redis==1.0.0
 asgiref==1.0.0
 async==0.6.2
 autobahn==0.17.1
+Automat==0.7.0
 Babel==2.1.1
 billiard==3.3.0.20
 caldav==0.4.0
@@ -81,7 +82,8 @@ path.py==8.1.2
 pbr==1.8.1
 pexpect==4.0.1
 pickleshare==0.5
-Pillow==3.0.0
+pilkit==1.1.13
+Pillow==6.2.2
 psycopg2==2.8.6
 ptyprocess==0.5
 PyBrain==0.3
@@ -113,6 +115,7 @@ ssh==1.8.0
 tendo==0.2.12
 tlslite==0.4.9
 traitlets==4.0.0
+Twisted==20.3.0
 txaio==2.6.0
 unicodecsv==0.14.1
 vine==1.1.3
