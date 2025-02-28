@@ -21,7 +21,7 @@ WORKDIR /opt/imptime/api
 COPY * /opt/imptime/api/
 WORKDIR /opt/imptime/static_collected/
 
-# RUN pip install Pillow==6.2.2 pilkit==1.1.13 Automat==0.7.0 Twisted==20.3.0
+RUN pip install Pillow==6.2.2 pilkit==1.1.13 Automat==0.7.0 Twisted==20.3.0
 
 WORKDIR /opt/imptime/api
 RUN python manage.py collectstatic --noinput
