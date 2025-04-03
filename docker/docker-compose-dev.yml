@@ -41,7 +41,7 @@ services:
 
      
   mailhog:
-    image: diyan/mailhog
+    image: mailhog/mailhog
     volumes:
      - /var/log/imptime:/opt/imptime/logs
     ports:
