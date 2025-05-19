@@ -63,8 +63,8 @@ class SprintSerializer(BaseSerializer):
 
     def __init__(self, *args, **kwargs):
         self.logged_in_user = kwargs.pop('logged_in_user')
-        self.estimates_by_sprint_id = kwargs.pop('estimates_by_sprint_id')
-        self.hours_per_sprint_by_assignee = kwargs.pop('hours_per_sprint_by_assignee')
+        self.estimates_by_sprint_id = kwargs.pop('estimates_by_sprint_id', {})
+        self.hours_per_sprint_by_assignee = kwargs.pop('hours_per_sprint_by_assignee', {})
         self.issues_by_status = kwargs.pop('issues_by_status', {})
         return super(SprintSerializer, self).__init__(*args, **kwargs)
     

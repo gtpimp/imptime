@@ -29,10 +29,6 @@ logger = logging.getLogger(__name__)
 class SprintViewSet(BaseViewSet):
 
     def list(self, request):
-        start_time = time.time()
-        print("")
-        print("Come on ya bastards!!")
-        print("")
         try:
             context = {}
 
@@ -43,74 +39,39 @@ class SprintViewSet(BaseViewSet):
             format_args = params.get('format', {})
             ordering = params.get('ordering', {})
 
-            checkpoint1 = time.time()
-            print("1: %.4f" % (checkpoint1 - start_time))
-            
             sprints = self.allowed_sprints()
             sprints = self.apply_filter(qs=sprints, raw_filter_args=filter_args)
 
-            checkpoint2 = time.time()
-            print("2: %.4f" % (checkpoint2 - start_time))
-            
             if 'project_id' in filter_args:
                 by_type_first = ordering.get('sprint_type', None)
                 sprints = sprints.order_by_business_id(business_id=filter_args['project_id'],  #sic
                                                        by_type_first=by_type_first)
             sprints = self.apply_pagination(qs=sprints, pagination=pagination)
 
-            checkpoint3 = time.time()
-            print("3: %.4f" % (checkpoint3 - start_time))
-            
             if format_args.get('ids_only'):
-                print("if true")
                 context['ids'] = [str(x) for x in sprints.values_list(
                     'id', flat=True)]
             else:
-                print("if false")
                 sprints = sprints.select_related("status3")
-                checkpoint4 = time.time()
-                print("4: %.4f" % (checkpoint4 - start_time))
 
                 sprints = sprints.annotate(num_issues=Count('issues'))
-                checkpoint5 = time.time()
-                print("5: %.4f" % (checkpoint5 - start_time))
-                print("sprints 1", sprints)
-                #import pdb; pdb.set_trace()
-                sprints, estimates_by_sprint_id, hours_per_sprint_by_assignee, issues_by_status = self._enrich_sprint_qs(sprints)
-                print("sprints 2", sprints)
-                checkpoint6 = time.time()
-                print("6: %.4f" % (checkpoint6 - start_time))
-                s = SprintSerializer(sprints, many=True,
-                                     estimates_by_sprint_id=estimates_by_sprint_id,
-                                     hours_per_sprint_by_assignee=hours_per_sprint_by_assignee,
-                                     issues_by_status=issues_by_status,
-                                     logged_in_user=self.request.user)
-                checkpoint7 = time.time()
-                print("7: %.4f" % (checkpoint7 - start_time))
+                
+                s = SprintSerializer(
+                    sprints,
+                    many=True,
+                    logged_in_user=self.request.user
+                )
+                
                 sprints_data = s.data
-                checkpoint8 = time.time()
-                print("8: %.4f" % (checkpoint8 - start_time))
                 context['sprints'] = sprints_data
-                checkpoint9 = time.time()
-                print("9: %.4f" % (checkpoint9 - start_time))
 
-            checkpoint10 = time.time()
-            print("10: %.4f" % (checkpoint10 - start_time))
-            
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
         except Exception, ex:
             logger.exception(ex)
             return self.error_response(ex)
 
-        print("")
-        print("We're done here, innit")
-        print("")
-        checkpoint11 = time.time()
-        print("11: %.4f" % (checkpoint11 - start_time))
         result = JSONRenderer().render(data)
-        checkpoint12 = time.time()
-        print("12: %.4f" % (checkpoint12 - start_time))
         return HttpResponse(result)
 
     def _enrich_sprint_qs(self, sprints):
