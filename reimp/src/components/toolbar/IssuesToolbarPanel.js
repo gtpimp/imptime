@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {withRouter} from 'react-router-dom'
-import '../../sass/toolbar-panel.css'
-import '../../sass/icon.css'
+import '../../sass/toolbar-panel.scss'
+import '../../sass/icon.scss'
 import {
     startCandidateIssue,
     ensureIssuesLoaded,

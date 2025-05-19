@@ -27,7 +27,6 @@ export function populateDefaultRequestHeaders(headers) {
 }
 
 export function impfetch(state, url, dispatch, args) {
-
     if ( state.maintenance.is_active ) {
         setTimeout(function() {
             Promise.reject(MAINTENANCE_MODE)
@@ -36,8 +35,8 @@ export function impfetch(state, url, dispatch, args) {
     }
 
     url = "" + url
-
     let absolute_url = url
+
     if (!(url.startsWith('http://') || url.startsWith('https://'))) {
         absolute_url = state.settings.API_BASE_URL + url
     }
