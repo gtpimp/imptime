@@ -116,7 +116,8 @@ def dev_on(host_api_folder=None):
             yaml_dc['services'][image_name]['entrypoint'] = image_props['entry_point']
             codes_mounted.append("api %s : %s" % (image_name, host_api_folder))
 
-        ui_volumes = [x.replace("src/api", "src/ui") for x in src_folders_to_mount]
+        #ui_volumes = [x.replace("src/api", "src/ui") for x in src_folders_to_mount]
+        ui_volumes = [x for x in src_folders_to_mount]
 
         images = { 'deploy-ui-static-assets' : { 'entry_point': './deploy-static-assets.sh' },
                    'ui-worker1' : { 'entry_point': './start-ui-worker.sh' },
