@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ENV TZ=UTC
 
@@ -15,9 +15,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --force-
   libpq-dev \
   postgresql \
   postgresql-client \
-  python \
-  python2.7-dev \
-  python-pip \
   zlib1g-dev \
   libyaml-dev \
   libxml2-dev \
@@ -40,7 +37,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --force-
   
 # Install node
 RUN echo "bump docker cache"
-RUN curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
+RUN curl -sL https://deb.nodesource.com/setup_10.x -o nodesource_setup.sh && bash nodesource_setup.sh && DEBIAN_FRONTEND=noninteractive apt-get install -y nodejs
 
 # Lock to this version, see https://github.com/npm/npm/issues/19989
 RUN npm install -g npm@5.6.0
@@ -58,7 +55,8 @@ WORKDIR /opt/imptime/
 RUN mkdir -p logs
 
 COPY requirements.txt .
-RUN python -m pip uninstall pip && apt install -y python-pip --reinstall
+#RUN python -m pip uninstall pip && apt install -y python-pip --reinstall
+RUN pip3 install --upgrade pip setuptools
 
 RUN pip3 install --no-deps -r requirements.txt
 
