@@ -4,11 +4,17 @@ FROM imptime/base:latest
 # Note: build artefacts (e.g. .sass-cache and node_modules are excluded by the .dockerignore file)
 # Use empty react_local_settings just so the build will work, the correct version gets mounted at runtime
 WORKDIR /tmp/build/reimp
+
+RUN apt-get update && apt-get install -y python2
+RUN ln -sf /usr/bin/python2 /usr/bin/python
+
 RUN mkdir -p /tmp/build /tmp/build/static_collected
 COPY reimp /tmp/build/reimp/
 RUN mkdir -p /tmp/build/reimp/src/external_config
 RUN touch /tmp/build/reimp/src/external_config/react_local_settings.js
-RUN npm install
+
+RUN npm install --legacy-peer-deps
+
 RUN npm run build
 RUN npm install -g yuglify
 RUN rm /tmp/build/reimp/src/external_config/react_local_settings.js
@@ -21,10 +27,10 @@ WORKDIR /opt/imptime/api
 COPY * /opt/imptime/api/
 WORKDIR /opt/imptime/static_collected/
 
-RUN pip install Pillow==6.2.2 pilkit==1.1.13 Automat==0.7.0 Twisted==20.3.0
+RUN pip3 install Pillow==6.2.2 pilkit==1.1.13 Automat==0.7.0 Twisted==20.3.0 celery==5.2.7
 
 WORKDIR /opt/imptime/api
-RUN python manage.py collectstatic --noinput
+RUN python3 manage.py collectstatic --noinput
 
 COPY docker/deploy-static-assets.sh deploy-static-assets.sh
 

@@ -42,7 +42,7 @@ django-grappelli==2.9.1
 django-haystack==2.4.0
 django-knowledge==0.2.0
 django-kombu==0.9.4
-django-mptt==0.9.1
+django-mptt==0.13.4
 django-notify==1.1.2
 django-nyt==0.9.7.3
 django-pagination==1.0.7
@@ -97,7 +97,7 @@ Pygments==2.0.2
 pyparsing==2.0.3
 pyPdf==1.13
 PyPDF2==1.25.1
-python-dateutil==2.4.2
+python-dateutil==2.5.0
 python-mimeparse==0.1.4
 pytz==2015.6
 Radicale==1.0.1
