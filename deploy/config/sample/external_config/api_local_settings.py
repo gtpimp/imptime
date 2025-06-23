@@ -29,11 +29,11 @@ SESSION_TIMEOUT_MINUTES = 180
 WINAGENT_SENTRY_URL="https://XXX:XXX@sentry.impd.co.za/xxx"
 
 VERSION_NUMBER_FILEPATH = os.path.join(PROJECT_HOME, "..", "version.txt")
-RAVEN_DSN='https://XXX:XXX@sentry.impd.co.za/xxx'
-RAVEN_CONFIG = {
-    'dsn': RAVEN_DSN,
-    'release': open(VERSION_NUMBER_FILEPATH).read() if os.path.exists(VERSION_NUMBER_FILEPATH) else "Unknown"
-}
+# RAVEN_DSN='https://XXX:XXX@sentry.impd.co.za/xxx'
+# RAVEN_CONFIG = {
+#     'dsn': RAVEN_DSN,
+#     'release': open(VERSION_NUMBER_FILEPATH).read() if os.path.exists(VERSION_NUMBER_FILEPATH) else "Unknown"
+# }
 
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_REGEX_WHITELIST = (r'^(https?://candidates\..*\.careerimptime.com.*$)',

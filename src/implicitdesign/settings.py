@@ -299,8 +299,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
 
-    'raven.contrib.django.raven_compat',
-
     'bootstrap_toolkit',
     'bootstrap3',
     'pagination',
@@ -444,10 +442,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'sentry': {
-            'level': 'ERROR',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-        },
         'file':{
             'level':'DEBUG',
             'class':'logging.handlers.RotatingFileHandler',
@@ -467,11 +461,6 @@ LOGGING = {
             'handlers':['sentry'],
             'propagate': True,
             'level':'INFO',
-        },
-        'raven': {
-            'level': 'DEBUG',
-            'handlers': ['file', 'sentry'],
-            'propagate': False,
         },
         '': {
             'handlers': ['file', 'sentry'],
