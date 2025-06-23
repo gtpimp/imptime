@@ -454,7 +454,10 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
-        }
+         },
+         'sentry': {
+             'class': 'logging.NullHandler',
+         }
     },
     'loggers': {
         'django': {
