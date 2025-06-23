@@ -72,7 +72,7 @@ class Company(BaseModel):
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, related_name='companies_created_by', null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name='companies_created_by', null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = CompanyQuerySet.as_manager()
 
@@ -100,7 +100,7 @@ class Company(BaseModel):
 class CompanyHistory(BaseModel):
 
     company_id = models.IntegerField(blank=False, null=False, db_index=True)
-    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_by = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
@@ -122,8 +122,8 @@ class CompanyPermissions(BaseModel):
     class Meta:
         unique_together = (('user','company'),)
 
-    company = models.ForeignKey(Company, related_name='company_permissions', db_index=True)
-    user = models.ForeignKey(User, related_name='company_permissions', db_index=True)
+    company = models.ForeignKey(Company, related_name='company_permissions', db_index=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='company_permissions', db_index=True, on_delete=models.CASCADE)
 
     is_active_member_of_company = models.BooleanField(default=True, verbose_name="Is An Active Member of This Company")
     can_invite_users = models.BooleanField(default=False, verbose_name="Can Invite Users")
@@ -307,7 +307,7 @@ class Business(BaseModel):
     email = models.EmailField(blank=True)
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='businesses_created_by', null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name='businesses_created_by', null=True, blank=True, on_delete=models.SET_NULL)
     modified = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
     external_id = models.CharField(max_length=32, blank=True)
@@ -320,8 +320,8 @@ class Business(BaseModel):
                                                  ("fixed_quote", "Fixed quote"),
                                                  ("free", "Free or Equity or Other") ) )
 
-    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='businesses')
-    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
+    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='businesses', on_delete=models.SET_NULL)
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True, on_delete=models.SET_NULL)
     archived = models.BooleanField(default=False, db_index=True)
 
     def model_to_dict(self):
@@ -551,12 +551,12 @@ class Business(BaseModel):
     
 
 class BusinessComment(BaseModel):
-    business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments')
+    business = models.ForeignKey(Business, null=False, blank=False, related_name='business_comments', on_delete=models.CASCADE)
     comment = models.TextField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_comments_modified_by')
+    modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_comments_modified_by', on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.comment
@@ -573,8 +573,8 @@ class BusinessPermissions(BaseModel):
     class Meta:
         unique_together = (('user','business'),)
 
-    business = models.ForeignKey(Business, related_name='business_permissions', db_index=True)
-    user = models.ForeignKey(User, related_name='business_permissions', db_index=True)
+    business = models.ForeignKey(Business, related_name='business_permissions', db_index=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='business_permissions', db_index=True, on_delete=models.CASCADE)
 
     can_invite_users = models.BooleanField(default=False, verbose_name="Can Invite Users")
     can_set_user_permissions = models.BooleanField(default=False, verbose_name="Can Set User Permissions")
@@ -1055,7 +1055,7 @@ class BusinessPermissions(BaseModel):
 
 class ProjectStatus(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
-    business = models.ForeignKey(Business, related_name='project_statuses')
+    business = models.ForeignKey(Business, related_name='project_statuses', on_delete=models.CASCADE)
     is_closed = models.BooleanField(default=False)
 
     class Meta:
@@ -1325,7 +1325,7 @@ class ProjectRole(BaseModel):
                               ('manager', 'manager'),
                               ('tester', 'tester') )
     
-    business = models.ForeignKey(Business, related_name='roles')
+    business = models.ForeignKey(Business, related_name='roles', on_delete=models.CASCADE)
     name = models.CharField(max_length=20, null=False)
 
     class Meta:
@@ -1415,11 +1415,12 @@ class Project(BaseModel):
     business = models.ForeignKey(
         "Business",
         related_name='new_business_projects',
+        on_delete=models.CASCADE
     )
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     billable = models.BooleanField(default=False)
-    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True)
+    point_person = models.ForeignKey(User, limit_choices_to={'is_staff': True}, null=True, on_delete=models.SET_NULL)
     quote_uncertainty = models.FloatField(null=True, blank=True, default=1.25,
                                           verbose_name="Uncertainty overhead as a ratio value. 1 means no uncertainty.")
     project_type = models.CharField(max_length=20, null=False, choices=PROJECT_TYPES, default='sprint', db_index=True)
@@ -1435,16 +1436,18 @@ class Project(BaseModel):
         null=True,
         blank=True,
         verbose_name="restrict activities to",
+        on_delete=models.SET_NULL,
     )
 
     type = models.ForeignKey(
         Attribute,
         limit_choices_to={'type': 'project-type'},
         related_name='projects_with_type',
-        null=True
+        null=True,
+        on_delete=models.SET_NULL,
     )
 
-    status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=False)
+    status3 = models.ForeignKey(ProjectStatus, related_name='projects', null=False, on_delete=models.CASCADE)
 
     description = models.TextField(blank=True, null=True, db_index=True)
     short_description = models.CharField(max_length=50, blank=True, null=True, db_index=True)
@@ -2633,8 +2636,8 @@ class Project(BaseModel):
 
 class BusinessProjectOrder(BaseModel):
     order = models.FloatField()
-    project = models.ForeignKey(Project)
-    business = models.ForeignKey(Business)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    business = models.ForeignKey(Business, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('business', 'project')
@@ -2742,10 +2745,10 @@ class BusinessProjectOrder(BaseModel):
 
 
 class BusinessInvite(BaseModel):
-    business = models.ForeignKey(Business, related_name='invites', null=False)
-    user = models.ForeignKey(User, related_name='invites_received', null=False)
+    business = models.ForeignKey(Business, related_name='invites', null=False, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='invites_received', null=False, on_delete=models.CASCADE)
     invite_sent_at = models.DateTimeField(null=True)
-    invited_by = models.ForeignKey(User, related_name='invites_sent', null=False)
+    invited_by = models.ForeignKey(User, related_name='invites_sent', null=False, on_delete=models.CASCADE)
     accepted = models.BooleanField(default=False, db_index=True)
     accepted_at = models.DateTimeField(null=True)
 
@@ -2783,10 +2786,12 @@ class ProjectRelationship(BaseModel):
     user = models.ForeignKey(
         User,
         related_name='project_relationships',
+        on_delete=models.CASCADE,
     )
     project = models.ForeignKey(
         Project,
         related_name='project_relationships',
+        on_delete=models.CASCADE,
     )
 
     class Meta:
@@ -3123,12 +3128,14 @@ class Entry(BaseModel):
     activity = models.ForeignKey(
         Activity,
         related_name='entries',
-        null=True
+        null=True,
+        on_delete=models.SET_NULL
     )
     location = models.ForeignKey(
         Location,
         related_name='entries',
-        null=True
+        null=True,
+        on_delete=models.SET_NULL
     )
     entry_group = models.ForeignKey(
        'EntryGroup',
@@ -3165,7 +3172,7 @@ class Entry(BaseModel):
     issue = ProtectedForeignKey('Issue', blank=True, null=True, related_name='entries')
 
     created = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='entries_created_by', null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name='entries_created_by', null=True, blank=True, on_delete=models.SET_NULL)
 
     @classmethod
     def quick_create(self, user, hours, issue, comments="auto created"):
@@ -3568,8 +3575,8 @@ class EntryGroup(BaseModel):
     VALID_STATUS = ('invoiced', 'not-invoiced')
     STATUS_CHOICES = [status for status in ENTRY_STATUS \
                       if status[0] in VALID_STATUS]
-    user = models.ForeignKey(User, related_name='entry_group')
-    project = models.ForeignKey(Project, related_name='entry_group')
+    user = models.ForeignKey(User, related_name='entry_group', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name='entry_group', on_delete=models.CASCADE)
     status = models.CharField(max_length=24, choices=STATUS_CHOICES,
                               default='invoiced')
     number = models.CharField("Reference #", max_length=50, blank=True,
@@ -3608,7 +3615,7 @@ class ProjectContract(BaseModel):
         ('complete', 'Complete'),
     )
 
-    project = models.ForeignKey(Project, related_name='contracts')
+    project = models.ForeignKey(Project, related_name='contracts', on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     num_hours = models.DecimalField(max_digits=12, decimal_places=2,
@@ -3653,7 +3660,7 @@ class ProjectContract(BaseModel):
 
 
 class ContractMilestone(BaseModel):
-    contract = models.ForeignKey(ProjectContract, related_name='milestones')
+    contract = models.ForeignKey(ProjectContract, related_name='milestones', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -3722,10 +3729,11 @@ class AssignmentManager(models.Manager):
 
 
 class ContractAssignment(BaseModel):
-    contract = models.ForeignKey(ProjectContract, related_name='assignments')
+    contract = models.ForeignKey(ProjectContract, related_name='assignments', on_delete=models.CASCADE)
     user = models.ForeignKey(
         User,
         related_name='assignments',
+        on_delete=models.CASCADE,
     )
     start_date = models.DateField()
     end_date = models.DateField()
@@ -3884,7 +3892,7 @@ class AllocationManager(models.Manager):
 
 
 class AssignmentAllocation(BaseModel):
-    assignment = models.ForeignKey(ContractAssignment, related_name='blocks')
+    assignment = models.ForeignKey(ContractAssignment, related_name='blocks', on_delete=models.CASCADE)
     date = models.DateField()
     hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
@@ -3950,7 +3958,7 @@ class UserProfile(BaseModel):
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     project_names_to_ignore = models.TextField(blank=True)
     authenticate_token = models.CharField(max_length=100, blank=True, null=True, help_text="Authentication token remote connections")
-    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='profiles')
+    impd_client = models.ForeignKey(Company, null=True, blank=False, related_name='profiles', on_delete=models.SET_NULL)
 
     required_daily_work_hours = models.IntegerField(default=8, null=False, blank=True)
     is_onboarded = models.BooleanField(default=False)
@@ -4032,8 +4040,8 @@ class UserOtpToken(BaseModel):
 
 class ProjectHours(BaseModel):
     week_start = models.DateField(verbose_name='start of week')
-    project = models.ForeignKey(Project)
-    user = models.ForeignKey(User)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     hours = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     published = models.BooleanField(default=False)
 
@@ -4056,7 +4064,7 @@ class SalaryQuerySet(QuerySet):
         return self.aggregate(Sum('amount'))['amount__sum']
 
 class Salary(BaseModel):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12,decimal_places=2,default=0)
     date = models.DateField(verbose_name='month')
     paye = models.DecimalField(max_digits=12,decimal_places=2,default=0)
@@ -4117,8 +4125,8 @@ class Salary(BaseModel):
 
 class Rate(BaseModel):
     TIME_TRACKING_MODES = [ ('developer', 'Developer'), ('manager', 'Manager'), ('tester', 'Tester') ]
-    project = models.ForeignKey(Project, related_name="rate")
-    user = models.ForeignKey(User, related_name="rates")
+    project = models.ForeignKey(Project, related_name="rate", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name="rates", on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0) #ctc
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     velocity = models.FloatField(default=1)
@@ -4177,7 +4185,7 @@ class Expense(BaseModel):
     date = models.DateField()
     amount = models.DecimalField(max_digits=12,decimal_places=0,default=0)
     description = models.CharField(max_length=255, blank=True, null=True)
-    project = models.ForeignKey(Project, related_name='expense', null=True, blank=True)
+    project = models.ForeignKey(Project, related_name='expense', null=True, blank=True, on_delete=models.SET_NULL)
     paid = models.BooleanField()
     class Meta:
         permissions = (
@@ -4206,7 +4214,7 @@ class TagCategory(BaseModel):
     class Meta:
         unique_together = ('business', 'name')
 
-    business = models.ForeignKey(Business, null=False, related_name='tag_categories')
+    business = models.ForeignKey(Business, null=False, related_name='tag_categories', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, default='general', null=False, blank=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -4228,7 +4236,7 @@ class Tag(BaseModel):
     class Meta:
         unique_together = ('name', 'category')
 
-    category = models.ForeignKey(TagCategory, null=False, related_name='tags')
+    category = models.ForeignKey(TagCategory, null=False, related_name='tags', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=False, blank=True, db_index=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
@@ -4248,7 +4256,7 @@ class Tag(BaseModel):
 
 class IssueStatus(BaseModel):
     name = models.CharField(max_length=255, blank=True, null=True)
-    business = models.ForeignKey(Business, related_name='issue_statuses')
+    business = models.ForeignKey(Business, related_name='issue_statuses', on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -4360,19 +4368,19 @@ class Issue(BaseModel):
     TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
     MANAGEMENT_ISSUE_TYPES = [x[0] for x in ISSUE_TYPES if x[0] not in TESTABLE_ISSUE_TYPES]
 
-    status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True)
+    status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True, on_delete=models.SET_NULL)
     number = models.IntegerField(null=True,blank=True, db_index=True)
-    project = models.ForeignKey(Project, related_name='issues')
+    project = models.ForeignKey(Project, related_name='issues', on_delete=models.CASCADE)
     subject = models.TextField(db_index=True)
     subject_quality_error = models.TextField(null=True)
     description = models.TextField(blank=True)
     enriched_description = models.TextField(blank=True, null=True)
     story_points = models.FloatField(null=True,blank=True)
     order_deprecated = models.FloatField(null=True,blank=True) #deprecated
-    assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True)
+    assigned_to = models.ForeignKey(User, related_name='assigned_issues', blank=True,null=True, on_delete=models.SET_NULL)
     interface_plugin_number = models.CharField(max_length=255, null=True, blank=True) #eg jira
     created = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='created_issues', blank=True,null=True)
+    created_by = models.ForeignKey(User, related_name='created_issues', blank=True,null=True, on_delete=models.SET_NULL)
     modified = models.DateTimeField(auto_now=True)
     due_date = models.DateTimeField(default=None, null=True, blank=True)
     auto_created_during_import = models.BooleanField(default=False)
@@ -4382,7 +4390,7 @@ class Issue(BaseModel):
     needs_issues = models.ManyToManyField("Issue", related_name="issues_needing_us")
 
     can_group_issues = models.BooleanField(default=False)
-    parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children')
+    parent_group = models.ForeignKey("Issue", blank=True, null=True, related_name='group_children', on_delete=models.SET_NULL)
     tags = models.ManyToManyField("Tag", related_name="issues")
 
     share_ref = models.CharField(max_length=40, null=True)
@@ -4674,9 +4682,9 @@ class IssueComment(BaseModel):
                       ('timesheet', 'Timesheet'),
                       ('raw_spec', 'Raw spec' ) )
     
-    issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments')
+    issue = models.ForeignKey(Issue, blank=False, null=False, related_name='comments', on_delete=models.CASCADE)
     comment = models.TextField(blank=True)
-    author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False)
+    author = models.ForeignKey(User, related_name='issue_comments', blank=False, null=False, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     comment_type = models.CharField(max_length=50, choices=COMMENT_TYPES, null=False, default='comment')
@@ -4692,8 +4700,8 @@ class IssueComment(BaseModel):
 
 class ProjectIssueOrder(BaseModel):
     order = models.FloatField()
-    issue = models.ForeignKey(Issue, related_name='project_issue_orders')
-    project = models.ForeignKey(Project)
+    issue = models.ForeignKey(Issue, related_name='project_issue_orders', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('project', 'issue')
@@ -4842,9 +4850,9 @@ class IssuePoints(BaseModel):
     class Meta:
         unique_together = (('user','issue'),)
 
-    user = models.ForeignKey(User,related_name="user_points")
+    user = models.ForeignKey(User,related_name="user_points", on_delete=models.CASCADE)
     points = models.FloatField(null=True,blank=True)
-    issue = models.ForeignKey(Issue, related_name="issue_points")
+    issue = models.ForeignKey(Issue, related_name="issue_points", on_delete=models.CASCADE)
 
     def __unicode__(self):
         return u'%s:%s - %s hours' % (self.issue.subject, self.user.username, self.points)
@@ -4865,7 +4873,7 @@ class IssueHistory(BaseModel):
 
     issue_id = models.IntegerField(blank=False, null=False, db_index=True)
     original_issue = models.ForeignKey(Issue, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
-    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_by = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
@@ -4888,7 +4896,7 @@ class IssueHistory(BaseModel):
 class BusinessHistory(BaseModel):
 
     business_id = models.IntegerField(blank=False, null=False, db_index=True)
-    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_by = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
@@ -4910,8 +4918,8 @@ class BusinessDocument(BaseModel):
                          ('proposal', 'Sprint proposal'), ('contract', 'Contract'),
                          ('other', 'Other') )
 
-    business = models.ForeignKey(Business, null=False, blank=False, related_name='documents', db_index=True)
-    project = models.ForeignKey(Project, null=True, blank=True, related_name='documents', db_index=True)
+    business = models.ForeignKey(Business, null=False, blank=False, related_name='documents', db_index=True, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, null=True, blank=True, related_name='documents', db_index=True, on_delete=models.SET_NULL)
     filename = models.CharField(max_length=255, null=False, blank=False)
     doc = models.FileField(max_length=255, upload_to=upload_to_project_documents, null=False, blank=False)
     doc_type = models.CharField(max_length=100, null=False, blank=False,
@@ -4922,10 +4930,10 @@ class BusinessDocument(BaseModel):
     deleted = models.BooleanField(default=False, blank=True)
     original_content = models.TextField(null=True, blank=True)
 
-    created_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_created_by')
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_created_by', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_modified_by')
+    modified_by = models.ForeignKey(User, null=False, blank=False, related_name='business_document_modified_by', on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         if not self.token:
@@ -4945,8 +4953,8 @@ class CalendarEvent(BaseModel):
 
     NON_WORKING_EVENT_TYPES = ["sickday", "leave", "office_closed"]
 
-    user = models.ForeignKey(User, blank=False, null=False, db_index=True)
-    business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events')
+    user = models.ForeignKey(User, blank=False, null=False, db_index=True, on_delete=models.CASCADE)
+    business = models.ForeignKey(Business, blank=True, null=True, db_index=True, related_name='calendar_events', on_delete=models.SET_NULL)
     start = models.DateTimeField(blank=False,null=False, db_index=True)
     hours = models.DecimalField(max_digits=4, decimal_places=2, default=2.0, db_index=True)
     description = models.TextField(null=True, blank=True)
@@ -5064,7 +5072,7 @@ class BaseChecklist(BaseModel):
     class Meta:
         abstract=True
 
-    business = models.ForeignKey(Business, null=False, blank=True, db_index=True)
+    business = models.ForeignKey(Business, null=False, blank=True, db_index=True, on_delete=models.CASCADE)
 
     # is_projected_cost_in_budget = models.BooleanField(default=False, blank=True, verbose_name="is the projected cost within budget?")
     # all_invoices_sent = models.BooleanField(default=False, blank=True, verbose_name="xxx?")
@@ -5099,8 +5107,8 @@ class BaseChecklistItem(BaseModel):
     passed = models.BooleanField(default=False, blank=True)
     msg = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    issue = models.ForeignKey(Issue, null=True, blank=True)
-    project = models.ForeignKey(Project, null=True, blank=True, db_index=True)
+    issue = models.ForeignKey(Issue, null=True, blank=True, on_delete=models.SET_NULL)
+    project = models.ForeignKey(Project, null=True, blank=True, db_index=True, on_delete=models.SET_NULL)
 
 class TrafficChecklist(BaseChecklist):
 
@@ -5118,10 +5126,10 @@ class TrafficChecklist(BaseChecklist):
     # has_communicated_with_client_this_week = models.BooleanField(default=False, blank=True, verbose_name="has the client had any communication during this week?")
     # all_calendar_entries_assigned_per_developer = models.BooleanField(default=False, blank=True, verbose_name="is the total required time per developer assigned to the calendar for this sprint?")
 
-    created_by = models.ForeignKey(User, null=False, blank=False, related_name='traffic_checklist_created_by')
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='traffic_checklist_created_by', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='traffic_checklist_modified_by')
+    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='traffic_checklist_modified_by', on_delete=models.CASCADE)
 
 
     def is_ok(self):
@@ -5141,7 +5149,7 @@ class TrafficChecklist(BaseChecklist):
         self.save()
 
 class TrafficChecklistItem(BaseChecklistItem):
-    traffic_checklist = models.ForeignKey(TrafficChecklist, null=False, blank=True, db_index=True, related_name="items")
+    traffic_checklist = models.ForeignKey(TrafficChecklist, null=False, blank=True, db_index=True, related_name="items", on_delete=models.CASCADE)
 
 class DevChecklist(BaseChecklist):
 
@@ -5152,10 +5160,10 @@ class DevChecklist(BaseChecklist):
     # have_incoming_issues_beenallocated = models.BooleanField(default=False, blank=True, verbose_name="have all previous issues from the incoming sprint been allocated to an actual sprint?")
     # has_sprints_to_invoice = models.BooleanField(default=False, blank=True, verbose_name="if sprints are closed, they should be set to?")
 
-    created_by = models.ForeignKey(User, null=False, blank=False, related_name='dev_checklist_created_by')
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='dev_checklist_created_by', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='dev_checklist_modified_by')
+    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='dev_checklist_modified_by', on_delete=models.CASCADE)
 
     def is_ok(self):
         return super(DevChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_DEV_SPRINT_CHECKLISTS)
@@ -5174,14 +5182,14 @@ class DevChecklist(BaseChecklist):
         self.save()
 
 class DevChecklistItem(BaseChecklistItem):
-    dev_checklist = models.ForeignKey(DevChecklist, null=False, blank=True, db_index=True, related_name="items")
+    dev_checklist = models.ForeignKey(DevChecklist, null=False, blank=True, db_index=True, related_name="items", on_delete=models.CASCADE)
 
 class FinanceChecklist(BaseChecklist):
 
-    created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by')
+    created_by = models.ForeignKey(User, null=False, blank=False, related_name='finance_checklist_created_by', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='finance_checklist_modified_by')
+    modified_by = models.ForeignKey(User, null=False, blank=True, related_name='finance_checklist_modified_by', on_delete=models.CASCADE)
 
     def is_ok(self):
         return super(FinanceChecklist, self).is_ok() and self.created_at > datetime.datetime.today()-timedelta(days=settings.NUM_DAYS_FOR_FINANCE_SPRINT_CHECKLISTS)
@@ -5200,10 +5208,10 @@ class FinanceChecklist(BaseChecklist):
         self.save()
 
 class FinanceChecklistItem(BaseChecklistItem):
-    finance_checklist = models.ForeignKey(FinanceChecklist, null=False, blank=True, db_index=True, related_name="items")
+    finance_checklist = models.ForeignKey(FinanceChecklist, null=False, blank=True, db_index=True, related_name="items", on_delete=models.CASCADE)
 
 class UserNotification(BaseModel):
-	user = models.ForeignKey(User, related_name='notifications')
+	user = models.ForeignKey(User, related_name='notifications', on_delete=models.CASCADE)
 	notification_type = models.CharField(max_length=50, null=False, blank=False,
 										 choices=( ("daily_calendar", "Daily Calendar"), ("planned_for_today", "Planned for today") ))
 	applies_on = models.DateField(blank=True, null=True)
@@ -5324,10 +5332,10 @@ class ScheduleQuerySet(QuerySet):
 
 
 class Schedule(BaseModel):
-    business = models.ForeignKey('business', null=False, blank=False)
+    business = models.ForeignKey('business', null=False, blank=False, on_delete=models.CASCADE)
     scheduled_date = models.DateField(null=False, blank=False)
     num_hours = models.IntegerField(null=False, blank=False)
-    user = models.ForeignKey(User, related_name='schedules')
+    user = models.ForeignKey(User, related_name='schedules', on_delete=models.CASCADE)
 
     objects = ScheduleQuerySet.as_manager()
 
@@ -5393,7 +5401,7 @@ class ProjectDeadline(BaseModel):
 class ProjectReview(BaseModel):
     project = ProtectedForeignKey(Project, null=False, related_name='reviews')
     review_cycle_days = models.IntegerField(null=False)
-    review_by = models.ForeignKey(User, related_name='project_reviews', null=False)
+    review_by = models.ForeignKey(User, related_name='project_reviews', null=False, on_delete=models.CASCADE)
     must_always_review = models.BooleanField(default=False)
 
     class Meta:
@@ -5417,9 +5425,9 @@ class ProjectReview(BaseModel):
             RefreshNotifier().notify_model_update(self)
 
 class IssueReview(BaseModel):
-    issue = models.ForeignKey(Issue, null=False, related_name='reviews')
+    issue = models.ForeignKey(Issue, null=False, related_name='reviews', on_delete=models.CASCADE)
     last_reviewed_at = models.DateTimeField(null=True, db_index=True)
-    reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False)
+    reviewed_by = models.ForeignKey(User, related_name='issue_reviews', null=False, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ('last_reviewed_at',)

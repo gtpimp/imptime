@@ -14,7 +14,7 @@ CONVERTED_TOKEN="__CONVERTED__"
 
 class Testable(models.Model):
     include_in_regression_test = models.BooleanField(default=True, blank=True)
-    issue = models.ForeignKey(Issue, blank=True, null=True, related_name='testables')
+    issue = models.ForeignKey(Issue, blank=True, null=True, related_name='testables', on_delete=models.SET_NULL)
     project = ProtectedForeignKey(Project, blank=True, null=False, related_name='testables')
     features = models.ManyToManyField("imptime.Feature", related_name="testables")
     name = models.TextField(null=True)
@@ -143,18 +143,18 @@ class TestableLine(models.Model):
 class TestableSession(models.Model):
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='testable_sessions', blank=False, null=False)
+    created_by = models.ForeignKey(User, related_name='testable_sessions', blank=False, null=False, on_delete=models.CASCADE)
     modified_at = models.DateTimeField(null=False, auto_now=True)
-    business = models.ForeignKey(Project, blank=True, null=False, related_name='test_sessions')
+    business = models.ForeignKey(Project, blank=True, null=False, related_name='test_sessions', on_delete=models.CASCADE)
 
     def __unicode__(self):
         return self.name
 
 class TestableResult(models.Model):
     TESTABLE_RESULT_CHOICES = [ ('untested', 'Untested'), ('failed', 'Failed'), ('passed', 'Passed') ]
-    testable = models.ForeignKey(Testable, blank=True, null=True, related_name='testable_results')
+    testable = models.ForeignKey(Testable, blank=True, null=True, related_name='testable_results', on_delete=models.SET_NULL)
     testable_session = models.ForeignKey(TestableSession, blank=True, null=False,
-                                         related_name='testable_results')
-    checked_by = models.ForeignKey(User, related_name='testable_results', blank=False, null=False)
+                                         related_name='testable_results', on_delete=models.CASCADE)
+    checked_by = models.ForeignKey(User, related_name='testable_results', blank=False, null=False, on_delete=models.CASCADE)
     checked_at = models.DateTimeField(null=False)
     status = models.CharField(max_length=10, default='untested', choices=TESTABLE_RESULT_CHOICES)

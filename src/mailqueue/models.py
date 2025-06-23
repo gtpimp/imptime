@@ -133,7 +133,7 @@ class Attachment(models.Model):
                                        storage=get_storage(),
                                        upload_to=upload_to_mailqueue,
                                        blank=True, null=True)
-    email = models.ForeignKey(MailerMessage, blank=True, null=True)
+    email = models.ForeignKey(MailerMessage, blank=True, null=True, on_delete=models.SET_NULL)
     name = models.CharField(blank=True, null=True, max_length=255)
 
     class Meta:

@@ -80,21 +80,21 @@ class RedmineVersion(models.Model):
     class Meta:
         db_table = 'versions'
     name = models.CharField(max_length=255)
-    project = models.ForeignKey(RedmineProject)
+    project = models.ForeignKey(RedmineProject, on_delete=models.CASCADE)
 
 class RedmineIssue(models.Model):
     class Meta:
         db_table = 'issues'
 
-    project = models.ForeignKey(RedmineProject)
+    project = models.ForeignKey(RedmineProject, on_delete=models.CASCADE)
     description = models.TextField()
     subject = models.TextField()
-    tracker = models.ForeignKey(RedmineTracker)
+    tracker = models.ForeignKey(RedmineTracker, on_delete=models.CASCADE)
     story_points = models.FloatField()
     estimated_hours = models.FloatField()
     done_ratio = models.IntegerField()
-    status = models.ForeignKey(RedmineIssueStatus)
-    fixed_version = models.ForeignKey(RedmineVersion,null=True,blank=True)
+    status = models.ForeignKey(RedmineIssueStatus, on_delete=models.CASCADE)
+    fixed_version = models.ForeignKey(RedmineVersion,null=True,blank=True, on_delete=models.SET_NULL)
 
     def get_custom_value(self, value_name):
         try:
@@ -121,13 +121,13 @@ class RedmineCustomField(models.Model):
 class RedmineCustomFieldsTracker(models.Model):
     class Meta:
         db_table = "custom_fields_trackers"
-    custom_field = models.ForeignKey(RedmineCustomField)
-    tracker = models.ForeignKey(RedmineTracker)
+    custom_field = models.ForeignKey(RedmineCustomField, on_delete=models.CASCADE)
+    tracker = models.ForeignKey(RedmineTracker, on_delete=models.CASCADE)
 
 class RedmineCustomValue(models.Model):
     class Meta:
         db_table = "custom_values"
-    custom_field = models.ForeignKey(RedmineCustomField)
+    custom_field = models.ForeignKey(RedmineCustomField, on_delete=models.CASCADE)
     value = models.TextField()
     customized_type = models.CharField(max_length=30)
     customized_id = models.IntegerField()
@@ -136,13 +136,13 @@ class RedmineTimeEntry(models.Model):
     class Meta:
         db_table = 'time_entries'
         
-    user = models.ForeignKey(RedmineUser)
-    project = models.ForeignKey(RedmineProject)
-    issue = models.ForeignKey(RedmineIssue)
+    user = models.ForeignKey(RedmineUser, on_delete=models.CASCADE)
+    project = models.ForeignKey(RedmineProject, on_delete=models.CASCADE)
+    issue = models.ForeignKey(RedmineIssue, on_delete=models.CASCADE)
     hours = models.FloatField()
     comments = models.CharField(max_length=255, blank=True, null=True)
     spent_on = models.DateField()
-    activity = models.ForeignKey(RedmineEnumeration)
+    activity = models.ForeignKey(RedmineEnumeration, on_delete=models.CASCADE)
     tyear = models.IntegerField()
     tmonth = models.IntegerField()
     tweek = models.IntegerField()
@@ -195,7 +195,7 @@ class BambooInvoiceItems(models.Model):
 
     amount = models.FloatField(blank=True,null=True)
     quantity = models.FloatField(blank=True,null=True)
-    invoice = models.ForeignKey(BambooInvoice, related_name='invoice_items')
+    invoice = models.ForeignKey(BambooInvoice, related_name='invoice_items', on_delete=models.CASCADE)
     
     @property
     def total_ex_vat(self):

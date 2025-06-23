@@ -166,7 +166,7 @@ class VisualSpecAnnotation(BaseModel):
                                   'square': { 'x': 50, 'y': 50 },
                                   'arrow': { 'x': 100, 'y': 50 } }
 
-    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='annotations')
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='annotations', on_delete=models.CASCADE)
     shape = models.CharField(max_length=50, choices=SHAPES, default='circle')
     x_pos = models.FloatField()
     y_pos = models.FloatField()
@@ -253,7 +253,7 @@ class VisualSpecProject(BaseModel):
 
 class VisualSpecIssue(BaseModel):
     deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_issues', null=True)
-    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_issues')
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_issues', on_delete=models.CASCADE)
     issue = ProtectedForeignKey(Issue, related_name='visual_spec_issues')
     order = models.IntegerField(default=1)
 
@@ -314,7 +314,7 @@ class VisualSpecIssue(BaseModel):
 
 class VisualSpecFeature(BaseModel):
     deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_features', null=True)
-    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_features')
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_features', on_delete=models.CASCADE)
     feature = ProtectedForeignKey("imptime.Feature", related_name='visual_spec_features')
     order = models.IntegerField(default=1)
 
@@ -429,8 +429,8 @@ class WikiPage(BaseModel):
 
 class ProjectWikiOrder(BaseModel):
     order = models.FloatField()
-    wiki = models.ForeignKey(WikiPage, related_name='project_wiki_orders')
-    project = models.ForeignKey(Project)
+    wiki = models.ForeignKey(WikiPage, related_name='project_wiki_orders', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('project', 'wiki')
@@ -566,7 +566,7 @@ class ProjectWikiOrder(BaseModel):
 class WikiPageHistory(BaseModel):
     wiki_page_id = models.IntegerField(blank=False, null=False, db_index=True)
     original_wiki_page = models.ForeignKey(WikiPage, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
-    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_by = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
@@ -587,7 +587,7 @@ class WikiPageHistory(BaseModel):
         
 class VisualSpecWiki(BaseModel):
     deprecated_visual_spec_document = ProtectedForeignKey(VisualSpecDocument, related_name='visual_spec_wikis', null=True)
-    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_wikis')
+    annotated_visual_spec_document = models.ForeignKey(AnnotatedVisualSpecDocument, related_name='visual_spec_wikis', on_delete=models.CASCADE)
     wiki = ProtectedForeignKey("imptime.WikiPage", related_name='visual_spec_wikis')
     order = models.IntegerField(default=1)
 
@@ -665,7 +665,7 @@ class ReleaseNote(BaseModel):
 
 class ReleaseNoteSeen(BaseModel):
     release_note = ProtectedForeignKey(ReleaseNote, related_name='seen_by', null=False)
-    seen_by = models.ForeignKey(User, related_name='release_notes_seen_by', null=False, blank=False)
+    seen_by = models.ForeignKey(User, related_name='release_notes_seen_by', null=False, blank=False, on_delete=models.CASCADE)
     seen_at = models.DateTimeField(null=False, auto_now=True)
 
 class NudgeQuerySet(QuerySet):
@@ -686,9 +686,9 @@ class NudgeQuerySet(QuerySet):
     
 class Nudge(BaseModel):
 
-    user = models.ForeignKey(User, related_name='nudges', null=False, blank=False)
-    sprint = models.ForeignKey(Sprint, related_name='nudges', null=False)
-    issue = models.ForeignKey(Issue, related_name='nudges', null=True)
+    user = models.ForeignKey(User, related_name='nudges', null=False, blank=False, on_delete=models.CASCADE)
+    sprint = models.ForeignKey(Sprint, related_name='nudges', null=False, on_delete=models.CASCADE)
+    issue = models.ForeignKey(Issue, related_name='nudges', null=True, on_delete=models.SET_NULL)
     reason = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     due_date = models.DateTimeField(null=True)
@@ -739,7 +739,7 @@ class Nudge(BaseModel):
         
 class UserNudgeOrder(BaseModel):
     order = models.FloatField()
-    nudge = models.ForeignKey(Nudge, related_name='nudge_orders', null=False, blank=False, unique=True)
+    nudge = models.ForeignKey(Nudge, related_name='nudge_orders', null=False, blank=False, unique=True, on_delete=models.CASCADE)
 
     INCREMENT=10
     MAX_ORDER=999999
@@ -840,7 +840,7 @@ class UserNudgeOrder(BaseModel):
     
         
 class Mien(BaseModel):
-    user = models.ForeignKey(User, related_name='miens', null=False, blank=False)
+    user = models.ForeignKey(User, related_name='miens', null=False, blank=False, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=True, blank=True)
     order = models.IntegerField(default=0)
     issue_headers = models.TextField(null=True, blank=True) #json blob
@@ -864,7 +864,7 @@ class Mien(BaseModel):
         return self.objects.get_or_create(user=user, title='Default view')
 
 class MienHeader(BaseModel):
-    mien = models.ForeignKey(Mien, related_name='headers', null=False, blank=False)
+    mien = models.ForeignKey(Mien, related_name='headers', null=False, blank=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, null=False, blank=False)
     headers = models.TextField(null=True, blank=True) #json blob
 
@@ -881,9 +881,9 @@ class CompanyProblem(BaseModel):
                               ('cant_fix', "Can't fix") ]
     DELETABLE_STATUSES = ['open', 'closed']
     
-    user = models.ForeignKey(User, related_name='company_problems', null=True, blank=True)
-    project = models.ForeignKey(Project, related_name='company_problems', null=False)
-    sprint = models.ForeignKey(Sprint, related_name='company_problems', null=False)
+    user = models.ForeignKey(User, related_name='company_problems', null=True, blank=True, on_delete=models.SET_NULL)
+    project = models.ForeignKey(Project, related_name='company_problems', null=False, on_delete=models.CASCADE)
+    sprint = models.ForeignKey(Sprint, related_name='company_problems', null=False, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
     problem_type = models.CharField(max_length=100, null=False, choices=PROBLEM_TYPE_OPTIONS)
     money_sensitive = models.BooleanField(default=False) #true if refers to project commercials
@@ -1248,8 +1248,8 @@ class Feature(BaseModel):
         
 class ProjectFeatureOrder(BaseModel):
     order = models.FloatField()
-    feature = models.ForeignKey(Feature, related_name='project_feature_orders')
-    project = models.ForeignKey(Project)
+    feature = models.ForeignKey(Feature, related_name='project_feature_orders', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('project', 'feature')
@@ -1385,7 +1385,7 @@ class ProjectFeatureOrder(BaseModel):
 class FeatureHistory(BaseModel):
     feature_id = models.IntegerField(blank=False, null=False, db_index=True)
     original_feature = models.ForeignKey(Feature, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
-    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_by = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
@@ -1404,7 +1404,7 @@ class FeatureHistory(BaseModel):
         return FeatureHistory.objects.filter(feature_id=feature.id).order_by("-created_at")
     
 class DecisionJournal(BaseModel):
-    project = models.ForeignKey(Project)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     decision_made_at = models.DateTimeField(null=False)
     decision_made_by = ProtectedForeignKey(User, blank=False, null=False)
     decision = models.TextField(null=True, blank=True)
@@ -1428,7 +1428,7 @@ class DecisionJournal(BaseModel):
 class DecisionJournalHistory(BaseModel):
     decision_journal_id = models.IntegerField(blank=False, null=False, db_index=True)
     original_decision_journal = models.ForeignKey(DecisionJournal, null=True, db_index=True, on_delete=SET_NULL, related_name="histories")
-    created_by = models.ForeignKey(User, blank=False, null=False)
+    created_by = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.CharField(max_length=255, blank=False, null=False)
     before = models.TextField(blank=True, null=True)
