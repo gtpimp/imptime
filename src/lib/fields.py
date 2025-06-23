@@ -2,7 +2,7 @@ from django.forms import TypedChoiceField, CharField, IntegerField
 from dateutil.relativedelta import relativedelta
 from imagekit.models import ImageSpecField, ProcessedImageField
 from imagekit.processors import ResizeToFill
-from pilkit.processors import ResizeToRatio, ResizeWithAspect
+from pilkit_processors import ResizeToRatio, ResizeWithAspect
 import re
 import uuid
 import os
