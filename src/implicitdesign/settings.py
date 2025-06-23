@@ -305,7 +305,7 @@ INSTALLED_APPS = (
     'selectable',
     'pipeline',
     'dateutil',
-    'djcelery',
+    #'djcelery',
     'colorful',
     'el_pagination',
     'mailqueue',
@@ -333,11 +333,11 @@ INSTALLED_APPS = (
 
 INVOICE_PAYMENT_DAYS=30
 
-import djcelery
-djcelery.setup_loader()
-CELERYBEAT_CHDIR=PROJECT_HOME
-CELERYBEAT=PROJECT_HOME+"manage.py celerybeat"
-CELERYBEAT_OPTS="--schedule=/var/run/celerybeat-schedule"
+# import djcelery
+# djcelery.setup_loader()
+# CELERYBEAT_CHDIR=PROJECT_HOME
+# CELERYBEAT=PROJECT_HOME+"manage.py celerybeat"
+# CELERYBEAT_OPTS="--schedule=/var/run/celerybeat-schedule"
 
 CALDAV_URL="http://localhost:5232/{USERNAME}/calendar.ics/"
 CALDAV_INCOMING_CALDAV_CHANGES_FOLDER=os.path.join(PROJECT_HOME, "..", "..", 'incoming_caldav_changes')
