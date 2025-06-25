@@ -21,7 +21,7 @@ class EstimateSummaryViewSet(BaseViewSet):
             estimate_summary = calculator.get_data(user=request.user, sprint_id=sprint_id)
             data = {"status": "success", "payload": { 'estimate_summary': estimate_summary }}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 response = requests.post(url=url,
                                          data={'username': username},
                                          files={'orgfile': open(os.path.join(path, filename), 'r')})
-            except Exception, ex:
+            except Exception as ex:
                 logger.exception(ex)
                 try:
                     logger.error("Call to import timesheet failed: %s: %s" % (url, response))
@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
             print response.content
 
-        except Exception, ex:
+        except Exception as ex:
             send_mail(subject="Problems importing timesheet",
                       message=str(ex),
                       from_email="info@implicitdesign.co.za",

@@ -43,7 +43,7 @@ class BillableHoursStatementViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': { 'billable_hours_statement': billable_hours_statement}}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

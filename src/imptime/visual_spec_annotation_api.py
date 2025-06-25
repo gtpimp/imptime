@@ -45,7 +45,7 @@ class VisualSpecAnnotationViewSet(BaseViewSet):
                 
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -66,7 +66,7 @@ class VisualSpecAnnotationViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': {'item':VisualSpecAnnotationSerializer(instance=annotation).data}}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
             
@@ -90,7 +90,7 @@ class VisualSpecAnnotationViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': context}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
             
@@ -102,7 +102,7 @@ class VisualSpecAnnotationViewSet(BaseViewSet):
             visual_spec_annotation = self.allowed_visual_spec_annotations().get(pk=visual_spec_annotation_id)
             visual_spec_annotation.delete()
             data = {'status': 'success'}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         

@@ -40,7 +40,7 @@ class IssueEstimateViewSet(BaseViewSet):
 
             data = {'status': 'success'}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
             

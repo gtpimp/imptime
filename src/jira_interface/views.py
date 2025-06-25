@@ -69,7 +69,7 @@ def sync_business_from_jira(request, business_id, context=None):
     try:
         JiraSync(request, business_id).sync_from_jira()
         return HttpResponse("synched")
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         return HttpResponse("Sync failed: %s" % ex)
 
@@ -88,7 +88,7 @@ def sync_project_to_jira(request, timepiece_project_id, template="jira/sync_to_j
                     jira.sync_project_to_jira(timepiece_project_id, jira_project_key, jira_assigned_to, jira_issue_type_name)
                     messages.info(request, "Synced %s to jira" % timepiece_project)
                     return HttpResponse("Synched")
-                except Exception, ex:
+                except Exception as ex:
                     logger.exception(ex)
                     messages.error(request, "Failed to sync %s to jira : %s" % (timepiece_project, ex))
                     return HttpResponse("Sync failed: %s" % ex)
@@ -102,7 +102,7 @@ def sync_project_to_jira(request, timepiece_project_id, template="jira/sync_to_j
                     'project': timepiece_project }
         return render(request, template, context)
 
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         return HttpResponse("Sync failed: %s" % ex)
 
@@ -114,7 +114,7 @@ def sync_project_from_jira(request, timepiece_project_id, context=None):
         jira_sync = JiraSync(request, timepiece_project.business.id)
         jira_sync.sync_sprint_from_jira(timepiece_sprint=timepiece_project)
         return HttpResponse("synched")
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         messages.error(request, "Sync of %s from jira failed : " % (timepiece_project, ex))
         return HttpResponse("Sync failed: %s" % ex)
@@ -127,7 +127,7 @@ def sync_issue_from_jira(request, issue_id, context=None):
         jira_sync = JiraSync(request, issue.project.business.id)
         jira_sync.sync_issue_from_jira(timepiece_issue=issue)
         return HttpResponse("synched")
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         messages.error(request, "Sync of issue %s from jira failed : %s" % (issue, ex))
         return HttpResponse("Sync failed: %s" % ex)

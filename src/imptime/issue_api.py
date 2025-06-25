@@ -73,7 +73,7 @@ class IssueViewSet(BaseViewSet):
                 context['issues'] = issues_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
@@ -271,7 +271,7 @@ class IssueViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': issue_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -323,7 +323,7 @@ class IssueViewSet(BaseViewSet):
             context['item'] = IssueSerializer(issue, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -369,7 +369,7 @@ class IssueViewSet(BaseViewSet):
             new_issue_ids = [ str(x.id) for x in new_issues ]
             data = {'status': 'success', 'payload': {'new_issue_ids': new_issue_ids}}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -400,7 +400,7 @@ class IssueViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': issue_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -461,7 +461,7 @@ class IssueViewSet(BaseViewSet):
 
             data = {'status': 'success', 'issues': []}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -498,7 +498,7 @@ class IssueViewSet(BaseViewSet):
                 
             data['payload'] = {'issues': []}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -535,7 +535,7 @@ class IssueViewSet(BaseViewSet):
                 
             data['payload'] = {'issues': []}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -553,7 +553,7 @@ class IssueViewSet(BaseViewSet):
             context['item'] = IssueSerializer(issue, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -611,7 +611,7 @@ class IssueShareViewSet(BaseViewSet):
                 data['payload'] = {'issues': [IssueShareSerializer(issue).data]}
             return HttpResponse(JSONRenderer().render(data))
         
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))

@@ -123,7 +123,7 @@ class Extractor(object):
         for issue in issues_processed:
             try:
                 get_interface_plugin(request=None, business=issue.project.business, user=timesheet_user).update_issue_actual_hours(timepiece_issue=issue)
-            except Exception, ex:
+            except Exception as ex:
                 logger.exception(ex)
                 self.status['infos'].append("Couldn't update actual time in the interface because: %s" % ex)
 

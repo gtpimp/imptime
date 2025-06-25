@@ -14,7 +14,7 @@ class Command(BaseCommand):
 
         try:
             status = import_timesheets_from_emacs()
-        except Exception, ex:
+        except Exception as ex:
             send_mail(subject="Problems importing timesheets",
                       message=str(ex),
                       recipient_list=["gtp@implicitdesign.co.za",],

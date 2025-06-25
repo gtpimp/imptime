@@ -45,7 +45,7 @@ class SprintDeadlineViewSet(BaseViewSet):
                 context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
                 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -68,7 +68,7 @@ class SprintDeadlineViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': { 'item': { 'deadline': SprintDeadlineSerializer(deadline).data}}}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -95,7 +95,7 @@ class SprintDeadlineViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': SprintDeadlineSerializer(deadline).data}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -114,7 +114,7 @@ class SprintDeadlineViewSet(BaseViewSet):
             sprint.save()
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

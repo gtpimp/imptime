@@ -50,7 +50,7 @@ class ProjectStatementViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': { 'project_statement': project_statement}}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

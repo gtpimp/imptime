@@ -67,7 +67,7 @@ class SprintUserRateViewSet(BaseViewSet):
                 context['sprint_user_rates'] = surs_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -118,7 +118,7 @@ class SprintUserRateViewSet(BaseViewSet):
                         
             data = {'status': 'success', 'payload': {}}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         

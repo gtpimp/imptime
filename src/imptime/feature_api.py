@@ -170,7 +170,7 @@ class FeatureViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': feature_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -214,7 +214,7 @@ class FeatureViewSet(BaseViewSet):
             context['item'] = FeatureSerializer(feature, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -236,7 +236,7 @@ class FeatureViewSet(BaseViewSet):
             new_feature_ids = [ str(x.id) for x in new_features ]
             data = {'status': 'success', 'payload': {'new_feature_ids': new_feature_ids}}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -252,7 +252,7 @@ class FeatureViewSet(BaseViewSet):
             BulkTextParser(request.user).auto_create_issues_features(project, features)
             data = {'status': 'success'}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -275,7 +275,7 @@ class FeatureViewSet(BaseViewSet):
             feature.link_issue_to_testable(request.user, issue_id, testable_id)
             data = {'status': 'success'}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -298,7 +298,7 @@ class FeatureViewSet(BaseViewSet):
                 feature.link_feature_to_issue_testable(request.user, issue_testable)
             data = {'status': 'success'}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -322,7 +322,7 @@ class FeatureViewSet(BaseViewSet):
             feature.unlink_issue_from_testable(request.user, testable_id, issue_id)
             data = {'status': 'success'}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -351,7 +351,7 @@ class FeatureViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': feature_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

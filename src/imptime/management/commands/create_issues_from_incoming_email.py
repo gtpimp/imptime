@@ -69,7 +69,7 @@ class Command(BaseCommand):
             if self.inbox:
                 self.inbox.close()
                 self.inbox.logout()
-        except Exception, ex:
+        except Exception as ex:
             logger.info("Couldn't disconnect from IMAP : %s", ex)
 
     def _force_reconnect(self):
@@ -84,12 +84,12 @@ class Command(BaseCommand):
                 try:
                     self.process_inbox()
                     self.wait_for_messages()
-                except Exception, ex:
+                except Exception as ex:
                     logger.exception(ex)
                     logger.warning("Reconnecting and re-entering wait loop")
                     time.sleep(5)
                     self._force_reconnect()
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
         finally:
             self._disconnect()
@@ -118,7 +118,7 @@ class Command(BaseCommand):
                     email_message = email.message_from_string(raw_email_text)
                     logger.debug('Message %s\n%s\n' % (message_number, email_message))
                     message = self.unpack_email(email_message)
-                except Exception, ex:
+                except Exception as ex:
                     logger.exception(ex)
                     send_mail(subject="Problems parsing email: %s" % message_number,
                               message=message,
@@ -138,7 +138,7 @@ class Command(BaseCommand):
                         logger.debug("Created issue %s %s" % (new_issue.id, new_issue.subject))
                         issues_created.append(new_issue)
                     self.notify_issues_created(user, project, issues_created)
-                except Exception, ex:
+                except Exception as ex:
                     logger.exception(ex)
                     to_addresses = [settings.EMACS_ADMIN_USER_EMAILS, user_email]
                     send_mail(subject="Couldn't create issues from email",
@@ -146,7 +146,7 @@ class Command(BaseCommand):
                               from_email=settings.FROM_EMAIL,
                               recipient_list=to_addresses,
                               fail_silently=False)
-            except Exception, ex:
+            except Exception as ex:
                 logger.exception(ex)
                 send_mail(subject="Issue creator general error: %s" % message_number,
                           message=str(ex),

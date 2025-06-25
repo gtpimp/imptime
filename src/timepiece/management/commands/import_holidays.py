@@ -31,7 +31,7 @@ class Command(BaseCommand):
 
                 timepiece.Holiday.objects.filter(applies_on__year=year).exclude(pk__in=holiday_ids).delete()
                     
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             raise
         

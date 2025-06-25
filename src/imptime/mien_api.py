@@ -50,7 +50,7 @@ class MienViewSet(BaseViewSet):
                 context['miens'] = miens_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -94,7 +94,7 @@ class MienViewSet(BaseViewSet):
             context['items'] = MienSerializer(self.allowed_miens().filter(pk__in=mien_pks),
                                               many=True).data
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -118,7 +118,7 @@ class MienViewSet(BaseViewSet):
             context['item'] = MienSerializer(mien).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -139,7 +139,7 @@ class MienViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': mien_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

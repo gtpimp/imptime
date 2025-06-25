@@ -4977,13 +4977,13 @@ class CalendarEvent(BaseModel):
         if update_caldav:
             try:
                 CalDavHelper().on_event_saved(imptime_event=self)
-            except Exception, ex:
+            except Exception as ex:
                 logger.exception(ex)
 
     def delete(self, update_caldav=True, *args, **kwargs):
         try:
             CalDavHelper().on_event_deleted(self)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
 
         if update_caldav:

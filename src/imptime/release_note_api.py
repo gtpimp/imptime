@@ -28,7 +28,7 @@ class ReleaseNoteViewSet(BaseViewSet):
                 release_note.save()
                 
             data = {'status': 'success'}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -60,7 +60,7 @@ class ReleaseNoteViewSet(BaseViewSet):
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -90,7 +90,7 @@ class ReleaseNoteViewSet(BaseViewSet):
             data = {'status': 'success'}
             return HttpResponse(JSONRenderer().render(data))
         
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -113,7 +113,7 @@ class ReleaseNoteViewSet(BaseViewSet):
             data = {'status': 'success', 'payload': { 'item': context }}
             return HttpResponse(JSONRenderer().render(data))
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -130,6 +130,6 @@ class ReleaseNoteViewSet(BaseViewSet):
             data = {'status': 'success'}
             return HttpResponse(JSONRenderer().render(data))
         
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)

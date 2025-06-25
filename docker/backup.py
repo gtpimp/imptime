@@ -159,7 +159,7 @@ for database_config_file in settings.DATABASE_CONFIG_FILES:
                          db_user=db_setting['USER'],
                          db_password=db_setting['PASSWORD'],
                          output_folder=output_folder)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             exit(1)
     
@@ -171,7 +171,7 @@ for db_key, db_settings in settings.DATABASES.items():
                      db_user=db_settings['USER'],
                      db_password=db_settings['PASSWORD'],
                      output_folder=output_folder)
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         exit(1)
 
@@ -182,14 +182,14 @@ for s3_settings in settings.S3:
                          aws_profile_name=s3_settings['AWS_PROFILE_NAME'],
                          s3_bucket_name=s3_settings['BUCKET_NAME'],
                          output_folder=output_folder)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             exit(1)
     
 
 try:
     zip_filepath = create_zip(backup_folder=backup_folder, timestamp=timestamp)
-except Exception, ex:
+except Exception as ex:
     logger.exception(ex)
     exit(1)
 
@@ -200,7 +200,7 @@ if settings.FTP['ENABLED'] == True:
                           ftp_host=settings.FTP['HOST'],
                           zip_filepath=zip_filepath,
                           dest_folder=settings.FTP['DEST_FOLDER'])
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         exit(1)
 
@@ -215,7 +215,7 @@ for rsync in settings.RSYNC:
                      dest_ssh_key=rsync.get('DEST_SSH_KEY', None),
                      dest_password=rsync.get('DEST_PASSWORD', None)
             )
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             exit(1)
 
@@ -227,7 +227,7 @@ for scp_upload in settings.SCP_UPLOAD:
                           ssh_key=scp_upload['KEY_FILENAME'],
                           ssh_host=scp_upload['HOST'],
                           ssh_folder=scp_upload['FOLDER'])
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             exit(1)
         
@@ -238,7 +238,7 @@ for s3_upload in settings.S3_UPLOAD:
                          aws_region=s3_upload['AWS_REGION'],
                          aws_profile_name=s3_upload['AWS_PROFILE_NAME'],
                          s3_bucket_name=s3_upload['BUCKET_NAME'])
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             exit(1)
             

@@ -1886,7 +1886,7 @@ class GreenHopper(JIRA):
         try:
             r_json = self._gh_get_json('rapid/charts/sprintreport?rapidViewId=%s&sprintId=%s' % (board_id, sprint_id))
             issues = [Issue(self._options, self._session, raw_res_json) for raw_res_json in r_json['contents']['completedIssues']]
-        except Exception, ex:
+        except Exception as ex:
             if "No issues present" in str(ex):
                 issues = []
             else:
@@ -1900,7 +1900,7 @@ class GreenHopper(JIRA):
         try:
             r_json = self._gh_get_json('rapid/charts/sprintreport?rapidViewId=%s&sprintId=%s' % (board_id, sprint_id))
             issues = [Issue(self._options, self._session, raw_res_json) for raw_res_json in r_json['contents']['incompletedIssues']]
-        except Exception, ex:
+        except Exception as ex:
             if "No issues present" in str(ex):
                 issues = []
             else:

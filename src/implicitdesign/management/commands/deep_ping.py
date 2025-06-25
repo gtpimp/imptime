@@ -35,7 +35,7 @@ class Command(BaseCommand):
             if end - start > max_seconds:
                 return 1, "Db check slow"
             return 0, "Db check ok"
-        except Exception, ex:
+        except Exception as ex:
             logger.debug(ex)
             return 2, "Db check failed"
 

@@ -65,7 +65,7 @@ class ProjectViewSet(BaseViewSet):
                 context['projects'] = projects_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -115,7 +115,7 @@ class ProjectViewSet(BaseViewSet):
                 project.save()
 
             data = {'status': 'success', 'payload': project_pks}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -139,7 +139,7 @@ class ProjectViewSet(BaseViewSet):
             context['item'] = {'name': project.name}
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -177,7 +177,7 @@ class ProjectViewSet(BaseViewSet):
             else:
                 data = {'status': 'failed', 'error_message': 'Permission denied to invite users'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -234,7 +234,7 @@ class ProjectViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': project_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

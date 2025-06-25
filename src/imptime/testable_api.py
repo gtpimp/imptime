@@ -58,7 +58,7 @@ class TestableViewSet(BaseViewSet):
                 context['testables'] = testables_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
@@ -108,7 +108,7 @@ class TestableViewSet(BaseViewSet):
                 
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -161,7 +161,7 @@ class TestableViewSet(BaseViewSet):
             testable.save()
             data = {'status': 'success', 'payload': testable_ids}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -191,7 +191,7 @@ class TestableViewSet(BaseViewSet):
 
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -229,7 +229,7 @@ class TestableViewSet(BaseViewSet):
             
             new_issue_id = new_issue.id
             data = {'status': 'success', 'payload': {'new_issue_id': new_issue_id}}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -288,7 +288,7 @@ class TestableViewSet(BaseViewSet):
             
             data = {'status': 'success', 'payload': testable_id}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

@@ -43,7 +43,7 @@ class IssueCommentViewSet(BaseViewSet):
                                      "added comment", "", comment.comment)
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -71,7 +71,7 @@ class IssueCommentViewSet(BaseViewSet):
             issue.save()
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -90,7 +90,7 @@ class IssueCommentViewSet(BaseViewSet):
 
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

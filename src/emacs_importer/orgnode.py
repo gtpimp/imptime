@@ -151,7 +151,7 @@ def makelist(lines):
                                                            int(cc_re.group(9)),
                                                            int(cc_re.group(10))) }
                        clocks.append(clock)
-                   except Exception, ex:
+                   except Exception as ex:
                        raise Exception("Failed to parse clock: %s : %s" % (line, ex) )
                else:
                    if re.search('CLOCK:\s*\[(\d+)\-(\d+)\-(\d+).....(\d+):(\d+)\]$', line):

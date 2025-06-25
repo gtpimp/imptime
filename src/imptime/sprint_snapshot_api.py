@@ -44,7 +44,7 @@ class SprintSnapshotViewSet(BaseViewSet):
                 context['sprint_snapshots'] = sprint_snapshots_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -74,7 +74,7 @@ class SprintSnapshotViewSet(BaseViewSet):
                                                         many=True,
                                                         logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -92,7 +92,7 @@ class SprintSnapshotViewSet(BaseViewSet):
             context['item'] = SprintSnapshotSerializer(sprint_snapshot, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -113,7 +113,7 @@ class SprintSnapshotViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': sprint_snapshot_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

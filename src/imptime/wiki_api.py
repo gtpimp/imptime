@@ -46,7 +46,7 @@ class WikiViewSet(BaseViewSet):
                 context['wikis'] = wiki_pages_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -110,7 +110,7 @@ class WikiViewSet(BaseViewSet):
                 wiki_page.save()
 
             data = {'status': 'success', 'payload': wiki_page_pks}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -138,7 +138,7 @@ class WikiViewSet(BaseViewSet):
             else:
                 data = {'status': 'failed', 'error_message': 'Permission denied to create wiki page'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -169,7 +169,7 @@ class WikiViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': wiki_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

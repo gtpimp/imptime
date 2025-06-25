@@ -139,13 +139,13 @@ this is the colour of yukc
                             self.process_sqs_message(sqs_message)
                             logger.info("Done, deleting sqs message %s" % sqs_message)
                             sqs_message.delete()
-                except Exception, ex:
+                except Exception as ex:
                     logger.exception(ex)
                     logger.warning("Reconnecting and re-entering wait loop")
                     time.sleep(5)
                     self._disconnect()
                     self._connect()
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
         finally:
             self._disconnect()
@@ -170,7 +170,7 @@ this is the colour of yukc
             logger.info("Processing raw email message: %s %s..." % (email_s3_id,raw_email_message[0:500]))
             email_message = email.message_from_string(raw_email_message)
             message = self.unpack_email(email_message)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             EmailMessage(subject="Problems parsing email: %s" % email_s3_id,
                          body=raw_email_message,
@@ -190,7 +190,7 @@ this is the colour of yukc
                 logger.debug("Created issue %s %s" % (new_issue.id, new_issue.subject))
                 issues_created.append(new_issue)
             self.notify_issues_created(user_email, project, issues_created)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             EmailMessage(subject="Couldn't create issues from email",
                          body="Failed to process your email. Please resend it \n\n%s\n\n%s" % (ex, str(email_message)),

@@ -45,7 +45,7 @@ class TestableLineViewSet(BaseViewSet):
                 context['testable_lines'] = testable_lines_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
@@ -100,7 +100,7 @@ class TestableLineViewSet(BaseViewSet):
             context['item'] = TestableLineSerializer(testable_line).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -160,7 +160,7 @@ class TestableLineViewSet(BaseViewSet):
                 
             data = {'status': 'success', 'payload': testable_line_ids}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -213,7 +213,7 @@ class TestableLineViewSet(BaseViewSet):
 
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

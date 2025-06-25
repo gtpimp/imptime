@@ -77,7 +77,7 @@ class JiraSync(object):
             self.sync_project_issues_to_jira(timepiece_project, jira_project_key, jira_assignee, jira_issue_type_name)
             if self.request:
                 messages.info(self.request, "Sync to jira complete")
-        except Exception, ex:
+        except Exception as ex:
             self._on_error(ex)
 
     def sync_project_issues_to_jira(self, timepiece_project, jira_project_key, jira_assignee, issue_type_name):
@@ -102,7 +102,7 @@ class JiraSync(object):
     def sync_from_jira(self):
         try:
             self._sync_sprint_names_from_jira()
-        except Exception, ex:
+        except Exception as ex:
             self._on_error(ex)
 
     def _sync_sprint_names_from_jira(self):
@@ -118,14 +118,14 @@ class JiraSync(object):
 
             if self.request:
                 messages.info(self.request, "Fetched %d projects from jira" % num_projects_synced)
-        except Exception, ex:
+        except Exception as ex:
             self._on_error(ex)
 
     def sync_issue_from_jira(self, timepiece_issue):
         try:
             if not self._connect():
                 return
-        except Exception, ex:
+        except Exception as ex:
             self._on_error(ex)
 
         if timepiece_issue.interface_plugin_number:
@@ -152,7 +152,7 @@ class JiraSync(object):
 
             if self.request:
                 messages.info(self.request, "Sync of %s from jira complete, %d issues synced, %d issues deleted" % (timepiece_sprint, num_synced, num_deleted))
-        except Exception, ex:
+        except Exception as ex:
             self._on_error(ex)
 
     def _get_or_create_timepiece_sprint_for_jira_sprint(self, jira_sprint):
@@ -309,7 +309,7 @@ class JiraSync(object):
                         pass
             return timepiece_issue
 
-        except Exception, ex:
+        except Exception as ex:
             self._on_error(ex)
             raise
 
@@ -388,7 +388,7 @@ class JiraSync(object):
             jira_estimate_pattern = u'%dm' % (float(issue_points.points)*60)
             try:
                 jira_issue.update(timetracking={'originalEstimate': jira_estimate_pattern})
-            except Exception, ex:
+            except Exception as ex:
                 self._on_error(ex)
                 raise
 
@@ -484,7 +484,7 @@ class JiraSync(object):
         try:
             self.gh.add_issues_to_sprint(timepiece_issue.project.interface_plugin_number, [jira_issue.key],
                                          rankFieldId=self.settings.custom_field_name_for_issue_order)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             logger.info("Couldn't add the issue to the sprint, probably because the sprint is closed: %s" % ex)
 
@@ -543,7 +543,7 @@ class JiraSync(object):
                                move_after_issue_key=timepiece_issue_moved_after_key,
                                move_before_issue_key=timepiece_issue_moved_before_key,
                                rankFieldId=self.settings.custom_field_name_for_issue_order)
-        except Exception, ex:
+        except Exception as ex:
             # most likely reason is
             #  JIRAError: HTTP 400: "This issue cannot be edited because of its workflow status."
             logger.exception(ex)

@@ -46,7 +46,7 @@ class VisualSpecIssueViewSet(BaseViewSet):
                 context['visual_spec_issues'] = visual_spec_issues_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -82,7 +82,7 @@ class VisualSpecIssueViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': {'visual_spec_issue':VisualSpecIssueSerializer(instance=visual_spec_issue).data}}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
             
@@ -110,7 +110,7 @@ class VisualSpecIssueViewSet(BaseViewSet):
             data = {'status': 'success',
                     'payload': context}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
             
@@ -125,7 +125,7 @@ class VisualSpecIssueViewSet(BaseViewSet):
             issue = self.allowed_issues().get(pk=visual_spec_issue.issue_id)
             issue.delete()
             data = {'status': 'success'}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         

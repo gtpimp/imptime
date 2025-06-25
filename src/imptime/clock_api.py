@@ -77,7 +77,7 @@ class ClockViewSet(BaseViewSet):
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -121,7 +121,7 @@ class ClockViewSet(BaseViewSet):
                 context['clock_entry'] = ClockEntrySerializer(entry).data
             data['payload'] = {'item': context}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -210,7 +210,7 @@ class ClockViewSet(BaseViewSet):
             context['clock_entry'] = ClockEntrySerializer(entry).data
             data = {'status': 'success', 'payload': { 'item': context }}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
             
@@ -234,7 +234,7 @@ class ClockViewSet(BaseViewSet):
             
             data = {'status': 'success', 'payload': { 'item': context }}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
             
@@ -261,7 +261,7 @@ class ClockViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': entry_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -340,7 +340,7 @@ class ClockViewSet(BaseViewSet):
             if entry_pks:
                 data['payload'] = entry_pks
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

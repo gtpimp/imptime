@@ -47,7 +47,7 @@ class DecisionJournalViewSet(BaseViewSet):
                 context['items'] = decision_journals_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
@@ -133,7 +133,7 @@ class DecisionJournalViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': decision_journal_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -169,7 +169,7 @@ class DecisionJournalViewSet(BaseViewSet):
             context['item'] = DecisionJournalSerializer(decision_journal, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -198,7 +198,7 @@ class DecisionJournalViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': decision_journal_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

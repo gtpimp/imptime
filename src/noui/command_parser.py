@@ -128,7 +128,7 @@ class CommandParser(object):
         code_locals = self.get_code_context(self.parameters_with_resolved_values)
         try:
             res = self._call_noui_code_snippet(command.command_function, code_locals)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             raise
         return res
@@ -253,7 +253,7 @@ class CommandParser(object):
         code_globals = {}
         try:
             exec(code, code_globals, code_locals)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             logger.error("Code was: %s" % code)
         res = code_locals.get('res', None)

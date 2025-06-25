@@ -19,7 +19,7 @@ class Command(BaseCommand):
                 timepiece.DevChecklist.get_todays_checklist(user, business).recalculate_all()
                 timepiece.TrafficChecklist.get_todays_checklist(user, business).recalculate_all()
                 timepiece.FinanceChecklist.get_todays_checklist(user, business).recalculate_all()
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             raise
         

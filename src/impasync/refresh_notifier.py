@@ -50,6 +50,6 @@ class RefreshNotifier(object):
 
             add_notification(post_data)
             logger.info("Notified about %s" % post_data)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             logger.error("Failed to notify the refresh queue about")

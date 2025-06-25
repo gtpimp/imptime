@@ -107,7 +107,7 @@ def run_command(request, template="noui/command.html", context=None):
                     context['result'] = { 'status': 'executed',
                                           'result': res }
                     context['last_result_message'] = "Executed"
-                except Exception, ex:
+                except Exception as ex:
                     logger.exception(ex)
                     context['result'] = { 'status': 'failed to execute',
                                           'exception': ex }
@@ -124,7 +124,7 @@ def run_command(request, template="noui/command.html", context=None):
         context['form'] = form
         context['cp'] = cp
         
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         context['result'] = { 'status': 'error',
                               'exception': ex }
@@ -156,7 +156,7 @@ def command_export(request, command_ref, context=None):
         response = HttpResponse(data, content_type="text/json")
         response['Content-Disposition'] = 'attachment; filename=%s.json' % command.name
         return response
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         raise
 
@@ -172,7 +172,7 @@ def command_import(request, context=None):
             messages.info(request, "Command imports : %s" % command.name)
             return redirect("noui:command_list")
         
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         raise
 
@@ -188,7 +188,7 @@ def next_action(request, context=None):
             if next_action:
                 context['action'] = next_action.model_to_dict(convert_json_fields_to_json=True)
             context['status'] = 'ok'
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             context['status'] = 'failed'
             context['error_msg'] = str(ex)
@@ -204,7 +204,7 @@ def update_action_status(request, action_ref, context=None):
         action.status = new_status
         action.save()
         context['status'] = 'ok'
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         context['status'] = 'failed'
         context['error_msg'] = str(ex)

@@ -23,7 +23,7 @@ class Command(BaseCommand):
         try:
             syncer.gh.add_issues_to_sprint(sprint, [jira_issue_key])
             print( "Done" )
-        except Exception, ex:
+        except Exception as ex:
             print( str(ex) )
 
         

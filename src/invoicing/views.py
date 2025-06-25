@@ -148,7 +148,7 @@ def edit_invoice(request, invoice_id, template="invoicing/edit_invoice.html", co
                 try:
                     payment.save()
                     break
-                except Exception, ex:
+                except Exception as ex:
                     logger.warning("Getting integrity error during save, most likely a problem with sequences: %s" % ex)
                     fail_count += 1
                     if fail_count>200:

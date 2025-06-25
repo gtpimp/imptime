@@ -52,7 +52,7 @@ class ScheduleViewSet(BaseViewSet):
             }
             return HttpResponse(JSONRenderer().render(data))
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -79,7 +79,7 @@ class ScheduleViewSet(BaseViewSet):
                         'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -103,7 +103,7 @@ class ScheduleViewSet(BaseViewSet):
                         'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -126,7 +126,7 @@ class ScheduleViewSet(BaseViewSet):
                         'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -149,7 +149,7 @@ class ScheduleViewSet(BaseViewSet):
                         'payload': {'items': [s.data]}}
             return HttpResponse(JSONRenderer().render(data))
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         

@@ -27,7 +27,7 @@ def import_timesheets(self):
     def go():
         try:
             management.call_command('import_timesheet', verbosity=0, interactive=False)
-        except Exception, ex:
+        except Exception as ex:
             send_mail(subject="Problems importing timesheets",
                       message=str(ex),
                       from_email=settings.FROM_EMAIL,
@@ -60,7 +60,7 @@ def import_timesheet(request):
                                                                    file_content=form.filecontent)
                     if len(status['errors'])>0:
                         raise Exception("Importer failed")
-            except Exception, ex:
+            except Exception as ex:
                 logger.exception(ex)
                 status['errors'].append(str(ex))            
 
@@ -83,7 +83,7 @@ def import_timesheet(request):
             
             return HttpResponse(json.dumps({'status':status,
                                             'msg':"Single file import of %s complete." % (form.filename)}))
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             send_mail(subject="Problems importing timesheet for %s : %s" %(username, form.filename),
                       message=str(ex),

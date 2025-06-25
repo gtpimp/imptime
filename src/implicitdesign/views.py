@@ -203,7 +203,7 @@ def generate_incremental_timesheet(request, template="generate_incremental_times
             return response
         else:
             return render(request, template, context)
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         context['error'] = str(ex)
         return render(request, template, context)

@@ -49,7 +49,7 @@ class CostSummaryViewSet(BaseViewSet):
             context['items'] = res
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

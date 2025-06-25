@@ -64,7 +64,7 @@ class TimeChartViewSet(BaseViewSet):
                 context['user_timesheets'] = times_by_user
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         return HttpResponse(JSONRenderer().render(data))
@@ -97,7 +97,7 @@ class TimeChartViewSet(BaseViewSet):
             context['project_id'] = project_id
             data = {"status": "success", "payload": context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

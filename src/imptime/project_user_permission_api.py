@@ -53,7 +53,7 @@ class ProjectUserPermissionViewSet(BaseViewSet):
                 context['project_user_permissions'] = pups_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -80,7 +80,7 @@ class ProjectUserPermissionViewSet(BaseViewSet):
                     pup.save()
                 data = {'status': 'success', 'payload': {}}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

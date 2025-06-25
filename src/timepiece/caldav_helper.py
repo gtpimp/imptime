@@ -64,7 +64,7 @@ class CalDavHelper(object):
             for user in imptime_event.event_users:
                 try:
                     calendar = self.calendar(user.username)
-                except Exception, ex:
+                except Exception as ex:
                     if "No calendars" in str(ex):
                         logger.info("User %s doesn't have a calendar, ignoring" % user.username)
                         continue
@@ -77,7 +77,7 @@ class CalDavHelper(object):
                 else:
                     calendar.add_event(self._create_ical_string(imptime_event))
                     
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             raise
 
@@ -87,7 +87,7 @@ class CalDavHelper(object):
             caldav_event = calendar.event_by_uid(uid)
         except error.NotFoundError, ex:
             return None
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             raise
         

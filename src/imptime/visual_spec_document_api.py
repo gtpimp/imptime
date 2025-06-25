@@ -56,7 +56,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                 context['visual_spec_documents'] = visual_spec_documents_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -86,7 +86,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
                 
             data = {'status': 'success'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -130,7 +130,7 @@ class VisualSpecDocumentViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': annotated_visual_spec_document_ids}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

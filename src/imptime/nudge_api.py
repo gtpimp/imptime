@@ -52,7 +52,7 @@ class NudgeViewSet(BaseViewSet):
                     }
             }
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -91,7 +91,7 @@ class NudgeViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': nudge_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -119,7 +119,7 @@ class NudgeViewSet(BaseViewSet):
                      'payload': {'items': nudges} }
             return HttpResponse(JSONRenderer().render(data))
                 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
     
@@ -129,7 +129,7 @@ class NudgeViewSet(BaseViewSet):
             Nudger().refresh_all(user=request.user)
             data = {'status': 'success'}
             return HttpResponse(JSONRenderer().render(data))
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -165,7 +165,7 @@ class NudgeViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': nudge_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

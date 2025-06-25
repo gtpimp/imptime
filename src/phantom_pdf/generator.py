@@ -151,7 +151,7 @@ class RequestToPDF(object):
                 settings.STATIC_URL]
             logger.debug("Rendering pdf using %s" % (phantom_args))
             call(phantom_args)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             raise
 
@@ -185,7 +185,7 @@ class RequestToPDF(object):
 
             # Seems to be a timing issue with big pdfs, so sleep (not sure if this helps)
             sleep(2)
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             raise
         

@@ -53,7 +53,7 @@ class ScheduleItemViewSet(BaseViewSet):
                         'issue_ids': [x.issue_id for x in schedule_items if x.issue_id is not None]
                     }}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -80,7 +80,7 @@ class ScheduleItemViewSet(BaseViewSet):
             data = {'status': 'success', 'payload': context}
             return HttpResponse(JSONRenderer().render(data))
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -109,7 +109,7 @@ class ScheduleItemViewSet(BaseViewSet):
 
             data = {'status': 'success', 'payload': schedule_item_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -132,7 +132,7 @@ class ScheduleItemViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': schedule_item_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

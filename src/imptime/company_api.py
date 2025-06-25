@@ -44,7 +44,7 @@ class CompanyViewSet(BaseViewSet):
                 context['items'] = companies_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -78,7 +78,7 @@ class CompanyViewSet(BaseViewSet):
                 company.save()
             
             data = {'status': 'success', 'payload': company_pks}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -99,7 +99,7 @@ class CompanyViewSet(BaseViewSet):
             context['item'] = CompanySerializer(company, logged_in_user=request.user).data
             data = {'status': 'success', 'payload': context}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -124,7 +124,7 @@ class CompanyViewSet(BaseViewSet):
             else:
                 data = {'status': 'failed', 'error_message': 'Permission denied to invite users'}
                 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -150,7 +150,7 @@ class CompanyViewSet(BaseViewSet):
             if not data:
                 data = {'status': 'success', 'payload': company_pks}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

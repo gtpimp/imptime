@@ -66,7 +66,7 @@ class SprintViewSet(BaseViewSet):
                 context['sprints'] = sprints_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -122,7 +122,7 @@ class SprintViewSet(BaseViewSet):
                 sprint.recalc_secondary_estimates()
 
             data = {'status': 'success', 'payload': sprint_pks}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -168,7 +168,7 @@ class SprintViewSet(BaseViewSet):
             else:
                 data = {'status': 'failed', 'error_message': 'Permission denied to create sprint'}
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -228,7 +228,7 @@ class SprintViewSet(BaseViewSet):
             }
             
             return HttpResponse(JSONRenderer().render(data))
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

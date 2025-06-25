@@ -101,7 +101,7 @@ class Command(BaseCommand):
                             text_content = "Event created by external calendar: %s\n\n%s" % (imptime_event, caldav.as_ical(imptime_event)),
                             html_content = ("Event created by external calendar: %s<br/><br/>%s" % (imptime_event, caldav.as_ical(imptime_event))).replace("\n", "<br/>"),
                             to_addresses=[user.email])
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             logger.error("Caldav error: %s. %s %s %s %s" % (ex, action_type, uid, davical_user_id, davical_path))
             if caldav_event:

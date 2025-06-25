@@ -49,7 +49,7 @@ class CompanyProblemViewSet(BaseViewSet):
                     }
             }
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -82,7 +82,7 @@ class CompanyProblemViewSet(BaseViewSet):
 
             data = {'status': 'success',
                     'payload': { 'items': company_problem_pks }}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -94,6 +94,6 @@ class CompanyProblemViewSet(BaseViewSet):
             CompanyProblemCalculator().refresh_all(projects=self.allowed_projects())
             data = {'status': 'success'}
             return HttpResponse(JSONRenderer().render(data))
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)

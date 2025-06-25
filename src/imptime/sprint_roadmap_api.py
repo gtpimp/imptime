@@ -53,7 +53,7 @@ class SprintRoadmapViewSet(BaseViewSet):
                 context['sprint_roadmaps'] = sprints_data
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 

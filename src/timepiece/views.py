@@ -4598,7 +4598,7 @@ def sprint_report(request, project_id, context=None):
                 url = create_url_from_query_dict(url, qd=DATA)
                 transaction.commit()
                 response = render_url_to_pdf(url, request, basename=filename)
-            except Exception, ex:
+            except Exception as ex:
                 logger.exception(ex)
                 logger.error("Failed to create pdf using url: %s : %s" % (url, ex))
                 raise
@@ -4698,7 +4698,7 @@ def sprint_report(request, project_id, context=None):
         context['url_capture_quote'] = reverse('invoicing:new_quote') + "?" + urllib.urlencode(new_quote_default_args)
         context['report_type'] = DATA['report_type']
 
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         raise
 
@@ -5384,7 +5384,7 @@ def _populate_calendar_events(request, context):
         context['entry_events'] = entry_events
         context['holiday_events'] = holiday_events
         context['filter_form'] = filter_form
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         raise
 
@@ -6059,7 +6059,7 @@ def send_calendar_invite(request, event_id):
         caldav = CalDavHelper()
         caldav.send_invite(event, send_invites_to)
         return HttpResponse( json.dumps( {'status': 'ok' } ) )
-    except Exception, ex:
+    except Exception as ex:
         logger.exception(ex)
         return HttpResponse( json.dumps( {'status': 'failed',
                                           'error_msg': str(ex)} ) )

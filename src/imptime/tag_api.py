@@ -39,7 +39,7 @@ class TagViewSet(BaseViewSet):
             context['pagination'] = pagination
             data = {'status': 'success', 'payload': context}
             
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
         
@@ -69,7 +69,7 @@ class TagViewSet(BaseViewSet):
             data = {'status': 'success'}
             return HttpResponse(JSONRenderer().render(data))
         
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -117,7 +117,7 @@ class TagViewSet(BaseViewSet):
             data = {'status': 'success', 'payload': { 'item': context }}
             return HttpResponse(JSONRenderer().render(data))
 
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
@@ -147,7 +147,7 @@ class TagViewSet(BaseViewSet):
             data = {'status': 'success'}
             return HttpResponse(JSONRenderer().render(data))
         
-        except Exception, ex:
+        except Exception as ex:
             logger.exception(ex)
             return self.error_response(ex)
 
