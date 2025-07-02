@@ -6,7 +6,7 @@ from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType

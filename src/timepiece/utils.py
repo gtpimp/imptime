@@ -14,7 +14,7 @@ from django.db.models import Sum
 #, get_model
 from django.contrib.sites.models import Site
 from django.utils.functional import lazy
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 try:
     from django.utils import timezone

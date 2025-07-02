@@ -5,7 +5,7 @@ import itertools
 import urllib
 from decimal import Decimal
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django.contrib.auth.models import User, Permission
 from django.core.exceptions import ValidationError

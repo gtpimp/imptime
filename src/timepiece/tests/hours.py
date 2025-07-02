@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from timepiece import models as timepiece
 from timepiece import utils

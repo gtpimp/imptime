@@ -18,7 +18,7 @@ from django.forms.models import inlineformset_factory, modelformset_factory
 
 from django.contrib.auth import models as auth_models
 from django.contrib.auth import forms as auth_forms
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 

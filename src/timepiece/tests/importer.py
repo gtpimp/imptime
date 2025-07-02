@@ -2,7 +2,7 @@ from timepiece.tests.base import TimepieceDataTestCase
 from timepiece import models as timepiece
 from timepiece import utils
 from django.contrib.auth.models import User, Permission
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 class ImportProjectTestCase(TimepieceDataTestCase):
     def test_import_invalid(self):

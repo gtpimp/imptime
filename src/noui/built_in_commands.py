@@ -1,5 +1,5 @@
 from noui.models import NouiCommand
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 
 class BuiltInCommands(object):
     """ This class is for simple built-in commands, just to isolate them from the overall command parsing logic """

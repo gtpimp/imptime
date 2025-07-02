@@ -45,7 +45,7 @@ from django.template import RequestContext
 from django.shortcuts import (get_object_or_404, redirect,
                               render)
 from django.core.exceptions import PermissionDenied
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import  Http404, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test

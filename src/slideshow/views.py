@@ -9,7 +9,7 @@ from django.contrib.auth import login as django_login, load_backend
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
 from django.contrib.auth.models import User

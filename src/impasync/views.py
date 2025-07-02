@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import pprint
 from collections import OrderedDict
 import zipfile
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import StringIO
 from rest_framework.renderers import JSONRenderer
 from lib.date_helper import today_in_local_timezone

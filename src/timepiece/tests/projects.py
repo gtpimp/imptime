@@ -1,7 +1,7 @@
 import datetime
 from decimal import Decimal
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 try:
     from django.utils import timezone

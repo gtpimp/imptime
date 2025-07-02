@@ -3,7 +3,7 @@ from timepiece import timings
 import itertools
 from django.db.models import Case, When, SET_NULL
 from lib.quality_helper import Quality
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 import os
 from dateutil.relativedelta import relativedelta
 import api

@@ -3,7 +3,7 @@ import random
 from decimal import Decimal
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db.models import Sum
 from django.contrib.auth.models import User
 

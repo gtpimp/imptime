@@ -1,5 +1,5 @@
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from django.contrib.auth import models as auth_models
 
