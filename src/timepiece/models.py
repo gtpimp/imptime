@@ -1,5 +1,5 @@
 import datetime
-import timings
+from timepiece import timings
 import itertools
 from django.db.models import Case, When, SET_NULL
 from lib.quality_helper import Quality

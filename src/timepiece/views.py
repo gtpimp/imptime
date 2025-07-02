@@ -18,7 +18,7 @@ from django.core.files.base import ContentFile
 import csv
 from exporter import CSVMixin, CSVSprintExport, CSVTimesheetExport
 from interface_plugin import get_interface_plugin
-import timings
+from timepiece import timings
 from xhtml2pdf import pisa
 import operator
 from dateutil.rrule import DAILY, WDAYMASK, rrule, MO,TU,WE,TH,FR
