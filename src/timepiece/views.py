@@ -7,7 +7,7 @@ from lib.file_helper import download_media
 import os
 import time
 from mailqueue.mailqueue_helper import queue_email, queue_admin_email
-from caldav_helper import CalDavHelper
+from timepiece.caldav_helper import CalDavHelper
 from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from django.contrib.humanize.templatetags.humanize import intcomma
 import urllib
