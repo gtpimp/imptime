@@ -4,7 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 from datetime import datetime
 from django.template import RequestContext, Context
-from models import MailerMessage
+from .models import MailerMessage
 from django.conf import settings
 from django.template.loader import render_to_string
 

@@ -2,7 +2,7 @@ from timepiece import models as timepiece
 import re
 import StringIO
 import csv
-from models import redmine_mapping, RedmineIssue
+from .models import redmine_mapping, RedmineIssue
 
 def incremental_timesheets_by_project(project):
 

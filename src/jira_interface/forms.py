@@ -1,5 +1,5 @@
 from django import forms
-from models import Jira, JiraUser
+from .models import Jira, JiraUser
 import timepiece.models
 
 class JiraSettingsForm(forms.ModelForm):

@@ -11,7 +11,7 @@ from django.urls import reverse, resolve
 from django.template import RequestContext
 from django.contrib import messages
 from forms import NouiCommandForm, RunCommandForm, command_parameter_formset, NouiCommandImportForm
-from models import NouiCommand, NouiCommandParameter, PostedAction
+from .models import NouiCommand, NouiCommandParameter, PostedAction
 from django.views.decorators.csrf import csrf_exempt
 from noui.command_parser import CommandParser
 import logging

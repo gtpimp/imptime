@@ -13,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 import calendar
 import subprocess
 import smtplib
-from models import RedmineTimeEntry, redmine_mapping, RedmineIssue
+from .models import RedmineTimeEntry, redmine_mapping, RedmineIssue
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEBase import MIMEBase
 from email.mime.image import MIMEImage

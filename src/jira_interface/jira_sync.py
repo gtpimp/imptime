@@ -6,7 +6,7 @@ from jira_interface.models import JiraSyncStatus
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db.models import Q
-from models import JiraUser, Jira
+from .models import JiraUser, Jira
 from forms import JiraCreateIssueForm
 from dateutil import parser as dateparser
 import logging

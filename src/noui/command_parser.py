@@ -4,7 +4,7 @@ from collections import OrderedDict
 import importlib
 import re
 logger=logging.getLogger(__name__)
-from models import NouiCommand
+from .models import NouiCommand
 from built_in_commands import BuiltInCommands
 from helpers.posted_action_helper import PostedActionHelper
 from helpers.model_wrappers import NouiBusiness, NouiProject

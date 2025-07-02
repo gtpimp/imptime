@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 import json
 from datetime import datetime
 from django.conf import settings
-from models import NouiCommand, NouiCommandParameter
+from .models import NouiCommand, NouiCommandParameter
 import logging
 logger = logging.getLogger(__name__)
 

@@ -7,7 +7,7 @@ from django.template import RequestContext
 from timepiece import models as timepiece
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import  Http404, HttpResponseForbidden
-from models import Jira, JiraUser
+from .models import Jira, JiraUser
 from forms import JiraSettingsForm, JiraUserForm
 from django.shortcuts import get_object_or_404, redirect, render
 from jira_sync import JiraSync
