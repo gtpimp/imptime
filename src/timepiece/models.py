@@ -3124,7 +3124,7 @@ class Entry(BaseModel):
     This class is where all of the time logs are taken care of
     """
 
-    user = models.ForeignKey(User, related_name='timepiece_entries')
+    user = models.ForeignKey(User, related_name='timepiece_entries', on_delete=models.CASCADE)
     activity = models.ForeignKey(
         Activity,
         related_name='entries',

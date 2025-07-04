@@ -7,7 +7,7 @@ class Jira(models.Model):
 
     business = models.ForeignKey(
         timepiece.Business, 
-        related_name='jira', blank=False, null=False)
+        related_name='jira', blank=False, null=False, on_delete=models.CASCADE)
     host = models.CharField(max_length=255, blank=False, null=False) #jira host
     board_id = models.CharField(
         max_length=20, blank=False, null=False, 
@@ -24,14 +24,14 @@ class Jira(models.Model):
         return JiraUser.objects.get_or_create(jira=self, timepiece_user=user)[0]
 
 class JiraUser(models.Model):
-    jira = models.ForeignKey(Jira, blank=False, null=False)
-    timepiece_user = models.ForeignKey(timepiece.User, related_name='jira_user', blank=False, null=False)
+    jira = models.ForeignKey(Jira, blank=False, null=False, on_delete=models.CASCADE)
+    timepiece_user = models.ForeignKey(timepiece.User, related_name='jira_user', blank=False, null=False, on_delete=models.CASCADE)
     jira_username = models.CharField(max_length=255, blank=False, null=False)
     jira_password = models.CharField(max_length=255, blank=False, null=False)
 
 class JiraSyncStatus(models.Model):
     
-    jira = models.ForeignKey(Jira, blank=False, null=False)
+    jira = models.ForeignKey(Jira, blank=False, null=False, on_delete=models.CASCADE)
     updated_at = models.DateTimeField(blank=True, null=True)
 
     @classmethod

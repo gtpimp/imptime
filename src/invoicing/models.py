@@ -86,10 +86,10 @@ class Invoice(models.Model):
     objects = InvoiceQuerySet.as_manager()
 
     from_company = ProtectedForeignKey("timepiece.Company", blank=False, null=False, related_name='invoices')
-    client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False, related_name='invoices')
+    client = models.ForeignKey(ClientInvoiceDetails, blank=False, null=False, related_name='invoices', on_delete=models.CASCADE)
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (doesn't appear on the invoice")
-    business = models.ForeignKey("timepiece.Business", blank=True, null=False, related_name='invoices')
-    project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='invoices')
+    business = models.ForeignKey("timepiece.Business", blank=True, null=False, related_name='invoices', on_delete=models.CASCADE)
+    project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='invoices', on_delete=models.CASCADE)
     invoice_number = models.IntegerField(default=0, null=False, blank=False, unique=True)
     client_order_name = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order name")
     client_order_number = models.CharField(max_length=50, null=True, blank=True, verbose_name="Optional client order number")
@@ -191,7 +191,7 @@ class Invoice(models.Model):
 
 
 class InvoiceItem(models.Model):
-    invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='items')
+    invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='items', on_delete=models.CASCADE)
     num_units = models.FloatField(blank=False, null=False)
     unit_cost = models.FloatField(null=False, blank=False)
     total_cost = models.FloatField(null=False, blank=False)
@@ -204,7 +204,7 @@ class InvoiceItem(models.Model):
 
 
 class InvoicePayment(models.Model):
-    invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='payments')
+    invoice = models.ForeignKey(Invoice, blank=False, null=False, related_name='payments', on_delete=models.CASCADE)
     amount = models.FloatField(null=False, blank=False)
     paid_at = models.DateField(null=False, blank=False)
     description = models.CharField(max_length=255, null=True, blank=True)
@@ -231,7 +231,7 @@ class Quote(models.Model):
     QUOTE_STATUSES = ( ('creating', 'Creating'), ('sent to client', 'Sent to client'), ('accepted', 'Accepted by client'), ('rejected', 'Rejected by client'), ('work done', 'Work done') )
     objects = QuoteQuerySet.as_manager()
     internal_comment = models.TextField(blank=True, null=True, verbose_name="Comment (not sent to the client)")
-    project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='quotes')
+    project = models.ForeignKey("timepiece.Project", blank=True, null=True, related_name='quotes', on_delete=models.SET_NULL)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
     sent_to_client_at = models.DateField(null=True, blank=True)
@@ -239,7 +239,7 @@ class Quote(models.Model):
     status = models.CharField(max_length=20, default='open', blank=False, null=False, choices=QUOTE_STATUSES)
     amount = models.IntegerField(null=True, blank=True) # in rands
     currency_symbol = models.CharField(max_length=3, blank=False, null=False, default="R", choices=CURRENCY_SYMBOLS)
-    quote_document = models.ForeignKey("timepiece.BusinessDocument", blank=True, null=True)
+    quote_document = models.ForeignKey("timepiece.BusinessDocument", blank=True, null=True, on_delete=models.SET_NULL)
     additional_document = models.FileField(max_length=255, upload_to=upload_to_additional_documents, null=True, blank=True)
 
     @property

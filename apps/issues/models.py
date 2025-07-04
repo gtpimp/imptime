@@ -9,7 +9,7 @@ from datetime import date
 
 class Milestone(models.Model):
     name = models.CharField(max_length=200)
-    app = models.ForeignKey(App)
+    app = models.ForeignKey(App, on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=True)
     due_date = models.DateField()
 
@@ -55,12 +55,12 @@ class Issue(models.Model):
     description = models.TextField()
     url = models.URLField(blank=True)
     file = models.FileField(upload_to="issues/issue", null=True, blank=True)
-    creator = models.ForeignKey(User, null=True, blank=True)
-    assigned_to = models.ForeignKey(User, related_name="assignee", null=True, blank=True)
+    creator = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    assigned_to = models.ForeignKey(User, related_name="assignee", null=True, blank=True, on_delete=models.SET_NULL)
     creation_date = models.DateField(auto_now=False, auto_now_add=True)
     last_modified_date = models.DateField(editable=False, blank=True, null=True, auto_now=True)
-    application = models.ForeignKey(App)
-    milestone = models.ForeignKey(Milestone, null=True, blank=True)
+    application = models.ForeignKey(App, on_delete=models.CASCADE)
+    milestone = models.ForeignKey(Milestone, null=True, blank=True, on_delete=models.SET_NULL)
 
     objects = IssueManager()
 
@@ -85,8 +85,8 @@ class Issue(models.Model):
 
 
 class Comment(models.Model):
-    issue = models.ForeignKey(Issue)
-    author = models.ForeignKey(User)
+    issue = models.ForeignKey(Issue, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(null=True, blank=True)
     creation_date = models.DateField(auto_now_add=True)
     creation_date_time = models.DateTimeField(auto_now_add=True)
