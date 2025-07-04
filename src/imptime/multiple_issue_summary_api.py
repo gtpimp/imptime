@@ -17,7 +17,7 @@ from rest_framework.decorators import permission_classes
 from timepiece.models import Issue, IssueHistory, Entry, ProjectRole, Tag, IssuePoints, BusinessPermissions
 from timepiece.models import Business as Project
 from timepiece.models import Project as Sprint
-from multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
+from imptime.multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
 from imptime.multiple_issue_serializer import MultipleIssueFilterSerializer
 
 logger = logging.getLogger(__name__)
