@@ -1,5 +1,5 @@
 
-from timepiece.rates_plugin import RatesPlugin
+from timepiece.checklist_plugins.rates_plugin import RatesPlugin
 from budget_present_plugin import BudgetPresetPlugin
 from over_budget_plugin import OverBudgetPlugin
 from missing_timesheet_entries_plugin import MissingTimesheetEntriesPlugin
