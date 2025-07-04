@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from base_api import BaseViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from time_summary_calculator import TimeSummaryCalculator
+from imptime.time_summary_calculator import TimeSummaryCalculator
 
 logger = logging.getLogger(__name__)
 
