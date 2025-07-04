@@ -1,4 +1,4 @@
-from base_plugin import BasePlugin
+from timepiece.checklist_plugins.base_plugin import BasePlugin
 from django.db.models import Q, Avg, Sum, Max, Min
 
 class IssuesAssignedPlugin(BasePlugin):

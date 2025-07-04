@@ -1,4 +1,4 @@
-from base_plugin import BasePlugin
+from timepiece.checklist_plugins.base_plugin import BasePlugin
 from django.db.models import Q, Avg, Sum, Max, Min
 from django.contrib.humanize.templatetags.humanize import intcomma
 
