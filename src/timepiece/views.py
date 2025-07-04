@@ -17,7 +17,7 @@ from django.contrib.auth import login as django_login, load_backend
 from django.core.files.base import ContentFile
 import csv
 from exporter import CSVMixin, CSVSprintExport, CSVTimesheetExport
-from interface_plugin import get_interface_plugin
+from timepiece.interface_plugin import get_interface_plugin
 from timepiece import timings
 from xhtml2pdf import pisa
 import operator

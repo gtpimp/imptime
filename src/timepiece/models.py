@@ -15,7 +15,7 @@ from timepiece.caldav_helper import CalDavHelper
 from lib.fields import UploadTo, ProtectedForeignKey
 import uuid
 from colorful.fields import RGBColorField
-from interface_plugin import get_interface_plugin
+from timepiece.interface_plugin import get_interface_plugin
 import re
 import logging
 from decimal import Decimal
