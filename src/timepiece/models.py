@@ -3571,10 +3571,13 @@ class Entry(BaseModel):
         """ Make a best attempt to identify what the issue number. """
         return Issue.extract_issue_id(self.comments)
 
+
+VALID_STATUS = ('invoiced', 'not-invoiced')
+
 class EntryGroup(BaseModel):
-    VALID_STATUS = ('invoiced', 'not-invoiced')
     STATUS_CHOICES = [status for status in ENTRY_STATUS \
                       if status[0] in VALID_STATUS]
+    
     user = models.ForeignKey(User, related_name='entry_group', on_delete=models.CASCADE)
     project = models.ForeignKey(Project, related_name='entry_group', on_delete=models.CASCADE)
     status = models.CharField(max_length=24, choices=STATUS_CHOICES,
