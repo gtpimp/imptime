@@ -4322,6 +4322,7 @@ class IssueQuerySet(QuerySet):
         else:
             return self
 
+TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
 
 class Issue(BaseModel):
 
@@ -4369,7 +4370,7 @@ class Issue(BaseModel):
                     ('correspondence', 'Correspondence'),
                     ('minutes', 'Minutes')
     )
-    TESTABLE_ISSUE_TYPES = [ 'issue', 'correspondence', 'minutes' ]
+    TESTABLE_ISSUE_TYPES = TESTABLE_ISSUE_TYPES
     MANAGEMENT_ISSUE_TYPES = [x[0] for x in ISSUE_TYPES if x[0] not in TESTABLE_ISSUE_TYPES]
 
     status2 = models.ForeignKey(IssueStatus, related_name='issues', null=True, on_delete=models.SET_NULL)
