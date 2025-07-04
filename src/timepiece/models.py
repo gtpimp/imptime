@@ -29,7 +29,7 @@ from django.db.models import Q, Avg, Sum, Max, Min, F, FloatField
 from django.utils.datastructures import OrderedDict
 from re import sub as re_sub
 from re import UNICODE as re_UNICODE
-from checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
+from timepiece.checklist_plugins.registry import get_traffic_plugins, get_dev_plugins, get_finance_plugins
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser
 from lib.models import BaseModel
 
