@@ -17,7 +17,7 @@ from django.contrib.auth.models import User
 from imptime.authentication import FormTokenAuthenticated
 from project_statement_serializer import ProjectStatementFilterSerializer
 import csv
-from project_statement_calculator import ProjectStatementCalculator
+from imptime.project_statement_calculator import ProjectStatementCalculator
 
 logger = logging.getLogger(__name__)
 

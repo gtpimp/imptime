@@ -17,7 +17,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from testable.models import Testable, TestableLine
 from imptime.multiple_issue_summary_calculator import MultipleIssueSummaryCalculator
-from project_statement_calculator import ProjectStatementCalculator
+from imptime.project_statement_calculator import ProjectStatementCalculator
 from time_summary_calculator import TimeSummaryCalculator
 from estimate_summary_calculator import EstimateSummaryCalculator
 from django.utils import timezone
