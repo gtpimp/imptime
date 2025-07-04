@@ -3920,6 +3920,7 @@ class PersonSchedule(BaseModel):
         User,
         #unique=True,
         null=True,
+        on_delete=models.SET_NULL,
     )
     hours_per_week = models.DecimalField(max_digits=12, decimal_places=2,
                                          default=0)
@@ -3955,7 +3956,7 @@ class PersonSchedule(BaseModel):
 
 
 class UserProfile(BaseModel):
-    user = models.OneToOneField(User, unique=True, related_name='profile')
+    user = models.OneToOneField(User, unique=True, related_name='profile', on_delete=models.CASCADE)
     mobile_phone_number = models.CharField(max_length=100, blank=True, null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     billable_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -3989,7 +3990,7 @@ class UserProfile(BaseModel):
         return self.businesses.first()
 
 class UserAutoLoginToken(BaseModel):
-    user = models.OneToOneField(User, unique=True, related_name='auto_login')
+    user = models.OneToOneField(User, unique=True, related_name='auto_login', on_delete=models.CASCADE)
     token = models.CharField(max_length=100)
     expire_at = models.DateTimeField()
     used = models.BooleanField(default=False)
@@ -4013,7 +4014,7 @@ class UserAutoLoginToken(BaseModel):
         return a.user
 
 class UserOtpToken(BaseModel):
-    user = models.OneToOneField(User, unique=True, related_name='otp')
+    user = models.OneToOneField(User, unique=True, related_name='otp', on_delete=models.CASCADE)
     token = models.CharField(max_length=100)
     expire_at = models.DateTimeField()
     used = models.BooleanField(default=False)
