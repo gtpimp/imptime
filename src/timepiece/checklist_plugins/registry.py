@@ -1,12 +1,12 @@
 
 from timepiece.checklist_plugins.rates_plugin import RatesPlugin
-from budget_present_plugin import BudgetPresetPlugin
-from over_budget_plugin import OverBudgetPlugin
-from missing_timesheet_entries_plugin import MissingTimesheetEntriesPlugin
-from issues_estimated_plugin import IssuesEstimatesPlugin
-from issues_assigned_plugin import IssuesAssignedPlugin
-from deadlines_plugin import DeadlinesPlugin
-from testable_plugin import TestablePlugin
+from timepiece.checklist_plugins.budget_present_plugin import BudgetPresetPlugin
+from timepiece.checklist_plugins.over_budget_plugin import OverBudgetPlugin
+from timepiece.checklist_plugins.missing_timesheet_entries_plugin import MissingTimesheetEntriesPlugin
+from timepiece.checklist_plugins.issues_estimated_plugin import IssuesEstimatesPlugin
+from timepiece.checklist_plugins.issues_assigned_plugin import IssuesAssignedPlugin
+from timepiece.checklist_plugins.deadlines_plugin import DeadlinesPlugin
+from timepiece.checklist_plugins.testable_plugin import TestablePlugin
 
 finance_plugin_classes = [ RatesPlugin, BudgetPresetPlugin, OverBudgetPlugin ]
 dev_plugin_classes = [ TestablePlugin, IssuesEstimatesPlugin, IssuesAssignedPlugin ]
