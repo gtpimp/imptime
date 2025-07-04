@@ -225,7 +225,7 @@ class Attribute(BaseModel):
         ('project-type', 'Project Type'),
         ('project-status', 'Project Status'),
     )
-    SORT_ORDER_CHOICES = [(x, x) for x in xrange(-20, 21)]
+    SORT_ORDER_CHOICES = [(x, x) for x in range(-20, 21)]
     type = models.CharField(max_length=32, choices=ATTRIBUTE_TYPES)
     label = models.CharField(max_length=255)
     sort_order = models.SmallIntegerField(

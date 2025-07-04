@@ -524,7 +524,7 @@ class AutoActivityTest(TimepieceDataTestCase):
     def testLastWorkedSeveralEntries(self):
         """The worker has several entries on a project. Use the most recent"""
         self.client.login(username='user', password='abc')
-        for day in xrange(0, 10):
+        for day in range(0, 10):
             this_day = utils.add_timezone(datetime.datetime(2011, 1, 1))
             this_day += datetime.timedelta(days=day)
             activity = self.activity if day == 9 else self.devl_activity
@@ -539,7 +539,7 @@ class AutoActivityTest(TimepieceDataTestCase):
         self.client.login(username='user', password='abc')
         project1 = self.project
         project2 = self.project2
-        for day in xrange(0, 10):
+        for day in range(0, 10):
             this_day = utils.add_timezone(datetime.datetime(2011, 1, 1))
             this_day += datetime.timedelta(days=day)
             #Cycle through projects and activities
@@ -764,7 +764,7 @@ class CheckOverlap(TimepieceDataTestCase):
         """
         user_total_overlaps = 0
         for index_a, entry_a in enumerate(entries):
-            for index_b in xrange(index_a, len(entries)):
+            for index_b in range(index_a, len(entries)):
                 entry_b = entries[index_b]
                 if entry_a.check_overlap(entry_b):
                     user_total_overlaps += 1

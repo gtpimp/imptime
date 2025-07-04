@@ -32,7 +32,7 @@ class InvoiceViewPreviousTestCase(TimepieceDataTestCase):
         projects = (self.project, self.project2)
         project = self.project2
         start = utils.add_timezone(datetime.datetime(2011, 1, 1, 0, 0, 0))
-        for index in xrange(0, self.num_entries):
+        for index in range(0, self.num_entries):
             start += datetime.timedelta(hours=(5 * index))
             # Alternate projects
             if project == self.project2:
@@ -360,7 +360,7 @@ class InvoiceCreateTestCase(TimepieceDataTestCase):
         # start = utils.add_timezone(datetime.datetime.now())
         # end = start + datetime.timedelta(hours=4)
         activity = self.create_activity(data={'name': 'activity1'})
-        for num in xrange(0, 4):
+        for num in range(0, 4):
             new_entry = self.create_entry({
                 'user': self.user,
                 'project': self.project_billable,

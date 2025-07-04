@@ -197,11 +197,11 @@ class TimeChartViewSet(BaseViewSet):
                                                    public_holidays.values_list('applies_on', flat=True)))))
             
             allowed_off_days = [d.date() if isinstance(d, datetime) else d for d in allowed_off_days ]
-            daygenerator = ((from_date + timedelta(x)).date() for x in xrange((to_date - from_date).days+1))
+            daygenerator = ((from_date + timedelta(x)).date() for x in range((to_date - from_date).days+1))
 
             if user.username == 'michael':
                 ds = []
-                x = [(from_date + timedelta(x)).date() for x in xrange((to_date - from_date).days+1)]
+                x = [(from_date + timedelta(x)).date() for x in range((to_date - from_date).days+1)]
                 for d in x:
                     if d.weekday() in [5,6] or d in allowed_off_days: 
                         ds.append(d)

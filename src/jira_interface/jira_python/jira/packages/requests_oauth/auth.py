@@ -37,7 +37,7 @@ def to_utf8(x):
         return x
     return [to_utf8(i) for i in l]
 
-generate_verifier = lambda length=8: ''.join([str(random.randint(0, 9)) for i in xrange(length)])
+generate_verifier = lambda length=8: ''.join([str(random.randint(0, 9)) for i in range(length)])
 
 
 class OAuthObject(object):
