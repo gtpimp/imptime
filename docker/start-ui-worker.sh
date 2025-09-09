@@ -3,6 +3,6 @@
 set -e
 
 cd /opt/imptime/api
-python manage.py wait_for_flag db_migrate_complete
+python3 manage.py wait_for_flag db_migrate_complete
 
-python manage.py runworker
+python3 manage.py runworker
