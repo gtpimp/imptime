@@ -1,23 +1,21 @@
-import pprint
 import datetime
+import pprint
 from optparse import OptionParser, make_option
 
 from dateutil.relativedelta import relativedelta
-
-from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth import models as auth_models
-from django.db.models import Q
 from django.conf import settings
+from django.contrib.auth import models as auth_models
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.db.models import Q
 
 try:
     from django.utils import timezone
 except ImportError:
     from timepiece import timezone
 
-from timepiece import utils
-
 from timepiece import models as timepiece
+from timepiece import utils
 
 
 class Command(BaseCommand):
@@ -101,7 +99,7 @@ For options type:
         all_entries = self.find_entries(people, start, *args, **kwargs)
         all_overlaps = self.check_all(all_entries, *args, **kwargs)
         if verbosity >= 1:
-            print 'Total overlapping entries: %d' % all_overlaps
+            print('Total overlapping entries: %d' % all_overlaps)
 
     def check_all(self, all_entries, *args, **kwargs):
         """
@@ -142,8 +140,8 @@ For options type:
                 'last': user.last_name,
                 'total': user_total_overlaps,
             }
-            print 'Total overlapping entries for user ' + \
-                '%(first)s %(last)s: %(total)d' % overlap_data
+            print('Total overlapping entries for user ' + \
+                '%(first)s %(last)s: %(total)d' % overlap_data)
         return user_total_overlaps
 
     def find_start(self, **kwargs):
@@ -216,16 +214,16 @@ For options type:
         verbosity = kwargs.get('verbosity', 1)
         if forever:
             if verbosity >= 1:
-                print 'Checking overlaps from the beginning ' + \
-                    'of time'
+                print('Checking overlaps from the beginning ' + \
+                    'of time')
         else:
             if verbosity >= 1:
-                print 'Checking overlap starting on: ' + \
-                    start.strftime('%m/%d/%Y')
+                print('Checking overlap starting on: ' + \
+                    start.strftime('%m/%d/%Y'))
 
     def show_name(self, person):
-        print 'Checking %s %s...' % \
-        (person.first_name, person.last_name)
+        print('Checking %s %s...' % \
+        (person.first_name, person.last_name))
 
     def show_overlap(self, entry_a, entry_b=None, **kwargs):
         def make_output_data(entry):

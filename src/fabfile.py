@@ -1,9 +1,11 @@
-from fabric.api import local, settings, abort, run, cd, env, prefix
-from fabric.operations import get, put
-import os, errno
-import shutil
-from fabric.contrib.console import confirm, prompt
 import datetime
+import errno
+import os
+import shutil
+
+from fabric.api import abort, cd, env, local, prefix, run, settings
+from fabric.contrib.console import confirm, prompt
+from fabric.operations import get, put
 
 local_code_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 imp_remote_code_dir = "/home/timesheet"
@@ -96,11 +98,11 @@ def deploy_staging(git_origin, branch):
         current_branch = local('git describe --contains --all HEAD',
                                capture=True)
         if current_branch != branch:
-            print 'Branch %s is not currently checked out' % branch
+            print('Branch %s is not currently checked out' % branch)
             return
         local('git push origin %s' % branch)
 
-    print 'Deploying - ', env.base_dir
+    print('Deploying - ', env.base_dir)
     release(env.base_dir, git_origin, branch)
     with cd(env.base_dir):
         print('Reloading apache2 config')
