@@ -1,43 +1,49 @@
 # -*- coding: utf-8 -*-
 
-import urllib
-import os
-import uuid
-import urlparse
-from subprocess import call
-from time import sleep
-from django.conf import settings
-from django.http import HttpResponse
 import json
 import logging
-logger=logging.getLogger(__name__)
+import os
+import urllib
+import uuid
+from subprocess import call
+from time import sleep
+
+import urlparse
+from django.conf import settings
+from django.http import HttpResponse
+
+logger = logging.getLogger(__name__)
 
 # Path to generate_pdf.js file. Its distributed with this django product.
 import phantom_pdf_bin
 
-GENERATE_PDF_JS = os.path.join(os.path.dirname(phantom_pdf_bin.__file__), 'generate_pdf.js')
-DEFAULT_SETTINGS = dict(
-    PHANTOMJS_COOKIE_DIR=os.path.join(settings.PHANTOM_ROOT_DIR, 'cookies'),
-    PHANTOMJS_PDF_DIR=os.path.join(settings.PHANTOM_ROOT_DIR, 'pdfs'),
-    PHANTOMJS_BIN='/usr/bin/phantomjs'
+GENERATE_PDF_JS = os.path.join(
+    os.path.dirname(phantom_pdf_bin.__file__), "generate_pdf.js"
 )
+DEFAULT_SETTINGS = dict(
+    PHANTOMJS_COOKIE_DIR=os.path.join(settings.PHANTOM_ROOT_DIR, "cookies"),
+    PHANTOMJS_PDF_DIR=os.path.join(settings.PHANTOM_ROOT_DIR, "pdfs"),
+    PHANTOMJS_BIN="/usr/bin/phantomjs",
+)
+
 
 class RequestToPDF(object):
     """Class for rendering a requested page to a PDF."""
 
-    def __init__(self,
-                 PHANTOMJS_COOKIE_DIR=None,
-                 PHANTOMJS_PDF_DIR=None,
-                 PHANTOMJS_BIN=None,
-                 PHANTOMJS_GENERATE_PDF=GENERATE_PDF_JS,
-                 keep_pdf_files=True,
-                 ):
+    def __init__(
+        self,
+        PHANTOMJS_COOKIE_DIR=None,
+        PHANTOMJS_PDF_DIR=None,
+        PHANTOMJS_BIN=None,
+        PHANTOMJS_GENERATE_PDF=GENERATE_PDF_JS,
+        keep_pdf_files=True,
+    ):
         """Arguments:
-            PHANTOMJS_COOKIE_DIR = Directory where the temp cookies will be saved.
-            PHANTOMJS_PDF_DIR = Directory where you want to the PDF to be saved temporarily.
-            PHANTOMJS_BIN = Path to PhantomsJS binary.
-            PHANTOMJS_GENERATE_PDF = Path to generate_pdf.js file.
-            keep_pdf_files = Option to not delete the PDF file after rendering it.
+        PHANTOMJS_COOKIE_DIR = Directory where the temp cookies will be saved.
+        PHANTOMJS_PDF_DIR = Directory where you want to the PDF to be saved temporarily.
+        PHANTOMJS_BIN = Path to PhantomsJS binary.
+        PHANTOMJS_GENERATE_PDF = Path to generate_pdf.js file.
+        keep_pdf_files = Option to not delete the PDF file after rendering it.
         """
         self.keep_pdf_files = keep_pdf_files
         self.PHANTOMJS_COOKIE_DIR = PHANTOMJS_COOKIE_DIR
@@ -45,18 +51,20 @@ class RequestToPDF(object):
         self.PHANTOMJS_BIN = PHANTOMJS_BIN
         self.PHANTOMJS_GENERATE_PDF = PHANTOMJS_GENERATE_PDF
         for attr in [
-                'PHANTOMJS_COOKIE_DIR',
-                'PHANTOMJS_PDF_DIR',
-                'PHANTOMJS_BIN',
-                'PHANTOMJS_GENERATE_PDF']:
+            "PHANTOMJS_COOKIE_DIR",
+            "PHANTOMJS_PDF_DIR",
+            "PHANTOMJS_BIN",
+            "PHANTOMJS_GENERATE_PDF",
+        ]:
             if not getattr(self, attr, None):
                 value = getattr(settings, attr, None)
                 if not value:
                     value = DEFAULT_SETTINGS[attr]
                 setattr(self, attr, value)
 
-        assert os.path.isfile(self.PHANTOMJS_BIN), \
+        assert os.path.isfile(self.PHANTOMJS_BIN), (
             "%s doesnt exist, read the docs for more info." % self.PHANTOMJS_BIN
+        )
         for dir_ in [self.PHANTOMJS_COOKIE_DIR, self.PHANTOMJS_PDF_DIR]:
             if not os.path.isdir(dir_):
                 os.makedirs(dir_)
@@ -64,62 +72,53 @@ class RequestToPDF(object):
     def _build_url(self, request):
         """Build the url for the request."""
         scheme, netloc, path, query, fragment = urlparse.urlsplit(
-            request.build_absolute_uri())
+            request.build_absolute_uri()
+        )
         protocol = scheme
         domain = netloc
-        return '{protocol}://{domain}{path}'.format(
-            protocol=protocol,
-            domain=domain,
-            path=path)
+        return "{protocol}://{domain}{path}".format(
+            protocol=protocol, domain=domain, path=path
+        )
 
     def _save_cookie_data(self, request):
         """Save csrftoken and sessionid in a cookie file for authentication."""
-        headers = {
-            'USER_AGENT': request.META['HTTP_USER_AGENT']
-        }
+        headers = {"USER_AGENT": request.META["HTTP_USER_AGENT"]}
 
         cookies = dict(request.COOKIES)
         cookie_fn = os.path.join(
-            self.PHANTOMJS_COOKIE_DIR,  str(uuid.uuid1()) +  '.cookie.txt')
+            self.PHANTOMJS_COOKIE_DIR, str(uuid.uuid1()) + ".cookie.txt"
+        )
 
-        with open(cookie_fn, 'w+') as fh:
-            cookie_data = json.dumps({
-                'headers': headers,
-                'cookies': cookies
-            })
+        with open(cookie_fn, "w+") as fh:
+            cookie_data = json.dumps({"headers": headers, "cookies": cookies})
 
             fh.write(cookie_data)
-        
+
         return cookie_fn
 
     def _set_source_file_name(self, as_image):
         """Return the original source filename of the pdf."""
-        extension = '.png' if as_image else '.pdf'
-        return ''.join((
-            os.path.join(
-                self.PHANTOMJS_PDF_DIR, str(uuid.uuid1())
-            ), extension
-        ))
+        extension = ".png" if as_image else ".pdf"
+        return "".join(
+            (os.path.join(self.PHANTOMJS_PDF_DIR, str(uuid.uuid1())), extension)
+        )
 
     def _return_response(self, file_src, basename, as_image=False):
         """Read the generated pdf and return it in a django HttpResponse."""
         try:
             # Open the file created by PhantomJS
-            return_file = open(file_src, 'r')
-        except IOError, ex:
+            return_file = open(file_src, "r")
+        except IOError as ex:
             logger.exception(ex)
             exc_msg = "The PDF was not created. Enable debug at RequestToPDF instance."
             raise Exception(exc_msg)
 
-        response = HttpResponse(
-            return_file,
-            content_type='application/force-download'
-        )
-        extension = '.png' if as_image else '.pdf'
+        response = HttpResponse(return_file, content_type="application/force-download")
+        extension = ".png" if as_image else ".pdf"
         if not os.path.splitext(basename)[1]:
             basename = basename + extension
         content_disposition = 'attachment; filename="%s"' % (basename)
-        response['Content-Disposition'] = content_disposition
+        response["Content-Disposition"] = content_disposition
 
         if not self.keep_pdf_files:  # remove generated pdf files
             os.remove(file_src)
@@ -135,10 +134,7 @@ class RequestToPDF(object):
 
         logger.debug("url is %s" % url)
 
-        domain = urlparse.urlsplit(
-            request.build_absolute_uri()
-        ).netloc.split(':')[0]
-
+        domain = urlparse.urlsplit(request.build_absolute_uri()).netloc.split(":")[0]
 
         try:
             phantom_args = [
@@ -148,7 +144,8 @@ class RequestToPDF(object):
                 file_src,
                 cookie_file,
                 domain,
-                settings.STATIC_URL]
+                settings.STATIC_URL,
+            ]
             logger.debug("Rendering pdf using %s" % (phantom_args))
             call(phantom_args)
         except Exception as ex:
@@ -156,7 +153,7 @@ class RequestToPDF(object):
             raise
 
         logger.debug("pdf rendered, removing cookie file from %s" % cookie_file)
-        
+
         # Once the pdf is created, remove the cookie file.
         os.remove(cookie_file)
         return self._return_response(file_src, basename)
@@ -165,12 +162,10 @@ class RequestToPDF(object):
         file_src = self._set_source_file_name(as_image)
         cookie_file = self._save_cookie_data(request)
 
-        domain = urlparse.urlsplit(
-            url
-        ).netloc.split(':')[0]
+        domain = urlparse.urlsplit(url).netloc.split(":")[0]
 
         logger.debug("url is %s" % url)
-        
+
         try:
             phantom_args = [
                 self.PHANTOMJS_BIN,
@@ -179,7 +174,8 @@ class RequestToPDF(object):
                 file_src,
                 cookie_file,
                 domain,
-                settings.STATIC_URL]
+                settings.STATIC_URL,
+            ]
             logger.debug("Rendering pdf using %s" % (phantom_args))
             call(phantom_args)
 
@@ -188,7 +184,7 @@ class RequestToPDF(object):
         except Exception as ex:
             logger.exception(ex)
             raise
-        
+
         os.remove(cookie_file)
         response = self._return_response(file_src, basename, as_image)
         if as_response:
@@ -196,26 +192,30 @@ class RequestToPDF(object):
         else:
             return file_src
 
+
 def create_url_from_query_dict(url, qd):
     url_args = []
-    for k,vs in qd.lists():
+    for k, vs in qd.lists():
         for v in vs:
-            url_args.append( (k, v) )
+            url_args.append((k, v))
 
     url_params = urllib.urlencode(url_args)
     url = "%s?%s" % (url, url_params)
     return url
-    
+
+
 def render_url_to_pdf(url, request, basename, png=False):
     request2pdf = RequestToPDF()
     response = request2pdf.url_to_pdf(url, request, basename)
     return response
 
+
 def render_url_to_image(url, request, basename):
-    basename = os.path.splitext(basename)[0] + '.png'
+    basename = os.path.splitext(basename)[0] + ".png"
     request2pdf = RequestToPDF()
     response = request2pdf.url_to_pdf(url, request, basename, as_image=True)
     return response
+
 
 def render_to_pdf(request, basename):
     """Helper function for rendering a request to pdf.

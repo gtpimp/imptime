@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 
-import urllib
-import subprocess
-from copy import copy
+import json
+import logging
 import os
+import subprocess
+import urllib
 import uuid
-import urlparse
+from copy import copy
 from itertools import chain
 from subprocess import call
 from time import sleep
+
+import urlparse
 from django.conf import settings
 from django.http import HttpResponse
-import json
 from django.utils import six
-import logging
+
 logger=logging.getLogger(__name__)
 
 class PuppeteerHelper():
@@ -45,7 +47,7 @@ class PuppeteerHelper():
     def _create_attachment_response(self, pdf_filepath, basename):
         try:
             pdf_file = open(pdf_filepath, 'rb')
-        except IOError, ex:
+        except IOError ex:
             logger.exception(ex)
             raise Exception("The PDF was not created")
 
