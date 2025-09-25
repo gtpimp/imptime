@@ -10,8 +10,8 @@ from copy import copy
 from itertools import chain
 from subprocess import call
 from time import sleep
+from urllib.parse import urlparse
 
-import urlparse
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import six

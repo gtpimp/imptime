@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
+
 """
 oauthlib.oauth1.rfc5849.signature
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -25,17 +26,21 @@ Steps for signing a request:
 import binascii
 import hashlib
 import hmac
+
 try:
-    import urlparse
+    from urllib.parse import urlparse
 except ImportError:
     import urllib.parse as urlparse
+
+from oauthlib.common import (bytes_type, extract_params, safe_string_equals,
+                             unicode_type, urldecode)
+
 from . import utils
-from oauthlib.common import urldecode, extract_params, safe_string_equals
-from oauthlib.common import bytes_type, unicode_type
 
 
-def construct_base_string(http_method, base_string_uri,
-        normalized_encoded_request_parameters):
+def construct_base_string(
+    http_method, base_string_uri, normalized_encoded_request_parameters
+):
     """**String Construction**
     Per `section 3.4.1.1`_ of the spec.
 
@@ -77,7 +82,7 @@ def construct_base_string(http_method, base_string_uri,
     base_string = utils.escape(http_method.upper())
 
     # 2.  An "&" character (ASCII code 38).
-    base_string += '&'
+    base_string += "&"
 
     # 3.  The base string URI from `Section 3.4.1.2`_, after being encoded
     #     (`Section 3.6`_).
@@ -87,7 +92,7 @@ def construct_base_string(http_method, base_string_uri,
     base_string += utils.escape(base_string_uri)
 
     # 4.  An "&" character (ASCII code 38).
-    base_string += '&'
+    base_string += "&"
 
     # 5.  The request parameters as normalized in `Section 3.4.1.3.2`_, after
     #     being encoded (`Section 3.6`).
@@ -122,7 +127,7 @@ def normalize_base_string_uri(uri, host=None):
     The host argument overrides the netloc part of the uri argument.
     """
     if not isinstance(uri, unicode_type):
-        raise ValueError('uri must be a unicode object.')
+        raise ValueError("uri must be a unicode object.")
 
     # FIXME: urlparse does not support unicode
     scheme, netloc, path, params, query, fragment = urlparse.urlparse(uri)
@@ -134,7 +139,7 @@ def normalize_base_string_uri(uri, host=None):
     # .. _`RFC3986`: http://tools.ietf.org/html/rfc3986
 
     if not scheme or not netloc:
-        raise ValueError('uri must include a scheme and netloc')
+        raise ValueError("uri must include a scheme and netloc")
 
     # Per `RFC 2616 section 5.1.2`_:
     #
@@ -143,7 +148,7 @@ def normalize_base_string_uri(uri, host=None):
     #
     # .. _`RFC 2616 section 5.1.2`: http://tools.ietf.org/html/rfc2616#section-5.1.2
     if not path:
-        path = '/'
+        path = "/"
 
     # 1.  The scheme and host MUST be in lowercase.
     scheme = scheme.lower()
@@ -163,15 +168,15 @@ def normalize_base_string_uri(uri, host=None):
     # .. _`RFC2616`: http://tools.ietf.org/html/rfc2616
     # .. _`RFC2818`: http://tools.ietf.org/html/rfc2818
     default_ports = (
-        ('http', '80'),
-        ('https', '443'),
+        ("http", "80"),
+        ("https", "443"),
     )
-    if ':' in netloc:
-        host, port = netloc.split(':', 1)
+    if ":" in netloc:
+        host, port = netloc.split(":", 1)
         if (scheme, port) in default_ports:
             netloc = host
 
-    return urlparse.urlunparse((scheme, netloc, path, params, '', ''))
+    return urlparse.urlunparse((scheme, netloc, path, params, "", ""))
 
 
 # ** Request Parameters **
@@ -186,8 +191,10 @@ def normalize_base_string_uri(uri, host=None):
 #
 #    .. _`section 3.4.1.3`: http://tools.ietf.org/html/rfc5849#section-3.4.1.3
 
-def collect_parameters(uri_query='', body=[], headers=None,
-        exclude_oauth_signature=True, with_realm=False):
+
+def collect_parameters(
+    uri_query="", body=[], headers=None, exclude_oauth_signature=True, with_realm=False
+):
     """**Parameter Sources**
 
     Parameters starting with `oauth_` will be unescaped.
@@ -271,10 +278,15 @@ def collect_parameters(uri_query='', body=[], headers=None,
     # .. _`Section 3.5.1`: http://tools.ietf.org/html/rfc5849#section-3.5.1
     if headers:
         headers_lower = dict((k.lower(), v) for k, v in headers.items())
-        authorization_header = headers_lower.get('authorization')
+        authorization_header = headers_lower.get("authorization")
         if authorization_header is not None:
-            params.extend([i for i in utils.parse_authorization_header(
-                authorization_header) if with_realm or i[0] != 'realm'])
+            params.extend(
+                [
+                    i
+                    for i in utils.parse_authorization_header(authorization_header)
+                    if with_realm or i[0] != "realm"
+                ]
+            )
 
     # *  The HTTP request entity-body, but only if all of the following
     #    conditions are met:
@@ -296,15 +308,16 @@ def collect_parameters(uri_query='', body=[], headers=None,
     # ensure all oauth params are unescaped
     unescaped_params = []
     for k, v in params:
-        if k.startswith('oauth_'):
+        if k.startswith("oauth_"):
             v = utils.unescape(v)
         unescaped_params.append((k, v))
 
     # The "oauth_signature" parameter MUST be excluded from the signature
     # base string if present.
     if exclude_oauth_signature:
-        unescaped_params = list(filter(lambda i: i[0] != 'oauth_signature',
-            unescaped_params))
+        unescaped_params = list(
+            filter(lambda i: i[0] != "oauth_signature", unescaped_params)
+        )
 
     return unescaped_params
 
@@ -399,12 +412,12 @@ def normalize_parameters(params):
     # 3.  The name of each parameter is concatenated to its corresponding
     #     value using an "=" character (ASCII code 61) as a separator, even
     #     if the value is empty.
-    parameter_parts = ['{0}={1}'.format(k, v) for k, v in key_values]
+    parameter_parts = ["{0}={1}".format(k, v) for k, v in key_values]
 
     # 4.  The sorted name/value pairs are concatenated together into a
     #     single string by using an "&" character (ASCII code 38) as
     #     separator.
-    return '&'.join(parameter_parts)
+    return "&".join(parameter_parts)
 
 
 def sign_hmac_sha1(base_string, client_secret, resource_owner_secret):
@@ -433,20 +446,20 @@ def sign_hmac_sha1(base_string, client_secret, resource_owner_secret):
     # 1.  The client shared-secret, after being encoded (`Section 3.6`_).
     #
     # .. _`Section 3.6`: http://tools.ietf.org/html/rfc5849#section-3.6
-    key = utils.escape(client_secret or '')
+    key = utils.escape(client_secret or "")
 
     # 2.  An "&" character (ASCII code 38), which MUST be included
     #     even when either secret is empty.
-    key += '&'
+    key += "&"
 
     # 3.  The token shared-secret, after being encoded (`Section 3.6`_).
     #
     # .. _`Section 3.6`: http://tools.ietf.org/html/rfc5849#section-3.6
-    key += utils.escape(resource_owner_secret or '')
+    key += utils.escape(resource_owner_secret or "")
 
     # FIXME: HMAC does not support unicode!
-    key_utf8 = key.encode('utf-8')
-    text_utf8 = text.encode('utf-8')
+    key_utf8 = key.encode("utf-8")
+    text_utf8 = text.encode("utf-8")
     signature = hmac.new(key_utf8, text_utf8, hashlib.sha1)
 
     # digest  is used to set the value of the "oauth_signature" protocol
@@ -454,7 +467,7 @@ def sign_hmac_sha1(base_string, client_secret, resource_owner_secret):
     #         per `RFC2045, Section 6.8`.
     #
     # .. _`RFC2045, Section 6.8`: http://tools.ietf.org/html/rfc2045#section-6.8
-    return binascii.b2a_base64(signature.digest())[:-1].decode('utf-8')
+    return binascii.b2a_base64(signature.digest())[:-1].decode("utf-8")
 
 
 def sign_rsa_sha1(base_string, rsa_private_key):
@@ -476,15 +489,16 @@ def sign_rsa_sha1(base_string, rsa_private_key):
 
     """
     # TODO: finish RSA documentation
+    from Crypto.Hash import SHA
     from Crypto.PublicKey import RSA
     from Crypto.Signature import PKCS1_v1_5
-    from Crypto.Hash import SHA
+
     key = RSA.importKey(rsa_private_key)
     if isinstance(base_string, unicode_type):
-        base_string = base_string.encode('utf-8')
+        base_string = base_string.encode("utf-8")
     h = SHA.new(base_string)
     p = PKCS1_v1_5.new(key)
-    return binascii.b2a_base64(p.sign(h))[:-1].decode('utf-8')
+    return binascii.b2a_base64(p.sign(h))[:-1].decode("utf-8")
 
 
 def sign_plaintext(client_secret, resource_owner_secret):
@@ -508,22 +522,21 @@ def sign_plaintext(client_secret, resource_owner_secret):
     # 1.  The client shared-secret, after being encoded (`Section 3.6`_).
     #
     # .. _`Section 3.6`: http://tools.ietf.org/html/rfc5849#section-3.6
-    signature = utils.escape(client_secret or '')
+    signature = utils.escape(client_secret or "")
 
     # 2.  An "&" character (ASCII code 38), which MUST be included even
     #     when either secret is empty.
-    signature += '&'
+    signature += "&"
 
     # 3.  The token shared-secret, after being encoded (`Section 3.6`_).
     #
     # .. _`Section 3.6`: http://tools.ietf.org/html/rfc5849#section-3.6
-    signature += utils.escape(resource_owner_secret or '')
+    signature += utils.escape(resource_owner_secret or "")
 
     return signature
 
 
-def verify_hmac_sha1(request, client_secret=None,
-    resource_owner_secret=None):
+def verify_hmac_sha1(request, client_secret=None, resource_owner_secret=None):
     """Verify a HMAC-SHA1 signature.
 
     Per `section 3.4`_ of the spec.
@@ -542,8 +555,7 @@ def verify_hmac_sha1(request, client_secret=None,
     norm_params = normalize_parameters(request.params)
     uri = normalize_base_string_uri(request.uri)
     base_string = construct_base_string(request.http_method, uri, norm_params)
-    signature = sign_hmac_sha1(base_string, client_secret,
-        resource_owner_secret)
+    signature = sign_hmac_sha1(base_string, client_secret, resource_owner_secret)
     return safe_string_equals(signature, request.signature)
 
 
@@ -564,16 +576,17 @@ def verify_rsa_sha1(request, rsa_public_key):
 
     .. _`RFC2616 section 5.2`: http://tools.ietf.org/html/rfc2616#section-5.2
     """
+    from Crypto.Hash import SHA
     from Crypto.PublicKey import RSA
     from Crypto.Signature import PKCS1_v1_5
-    from Crypto.Hash import SHA
+
     key = RSA.importKey(rsa_public_key)
     norm_params = normalize_parameters(request.params)
     uri = normalize_base_string_uri(request.uri)
     message = construct_base_string(request.http_method, uri, norm_params)
-    h = SHA.new(message.encode('utf-8'))
+    h = SHA.new(message.encode("utf-8"))
     p = PKCS1_v1_5.new(key)
-    sig = binascii.a2b_base64(request.signature.encode('utf-8'))
+    sig = binascii.a2b_base64(request.signature.encode("utf-8"))
     return p.verify(h, sig)
 
 

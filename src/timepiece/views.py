@@ -12,11 +12,11 @@ from collections import OrderedDict, defaultdict
 from copy import copy, deepcopy
 from decimal import ROUND_HALF_UP, Decimal
 from itertools import groupby
+from urllib.parse import urlparse
 
 import jsonpickle
 import markdown
 import requests
-import urlparse
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import DAILY, FR, MO, TH, TU, WDAYMASK, WE, rrule
 from django.conf import settings

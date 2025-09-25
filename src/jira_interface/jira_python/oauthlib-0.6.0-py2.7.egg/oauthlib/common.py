@@ -15,6 +15,7 @@ import random
 import re
 import sys
 import time
+
 try:
     from urllib import quote as _quote
     from urllib import unquote as _unquote
@@ -24,36 +25,40 @@ except ImportError:
     from urllib.parse import unquote as _unquote
     from urllib.parse import urlencode as _urlencode
 try:
-    import urlparse
+    from urllib.parse import urlparse
 except ImportError:
     import urllib.parse as urlparse
 
-UNICODE_ASCII_CHARACTER_SET = ('abcdefghijklmnopqrstuvwxyz'
-                               'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-                               '0123456789')
+UNICODE_ASCII_CHARACTER_SET = (
+    "abcdefghijklmnopqrstuvwxyz" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "0123456789"
+)
 
-CLIENT_ID_CHARACTER_SET = (r' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMN'
-                            'OPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}')
+CLIENT_ID_CHARACTER_SET = (
+    r' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMN'
+    "OPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}"
+)
 
 
-always_safe = ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-               'abcdefghijklmnopqrstuvwxyz'
-               '0123456789' '_.-')
+always_safe = (
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ" "abcdefghijklmnopqrstuvwxyz" "0123456789" "_.-"
+)
 
 PY3 = sys.version_info[0] == 3
 
 # Logger used throughout oauthlib
-log = logging.getLogger('oauthlib')
+log = logging.getLogger("oauthlib")
 # Add a NullHandler to prevent warnings for users who don't wish
 # to configure logging.
 try:
     log.addHandler(logging.NullHandler())
 # NullHandler gracefully backported to 2.6
 except AttributeError:
+
     class NullHandler(logging.Handler):
 
         def emit(self, record):
             pass
+
     log.addHandler(NullHandler())
 
 if PY3:
@@ -65,13 +70,13 @@ else:
 
 
 # 'safe' must be bytes (Python 2.6 requires bytes, other versions allow either)
-def quote(s, safe=b'/'):
-    s = s.encode('utf-8') if isinstance(s, unicode_type) else s
+def quote(s, safe=b"/"):
+    s = s.encode("utf-8") if isinstance(s, unicode_type) else s
     s = _quote(s, safe)
     # PY3 always returns unicode.  PY2 may return either, depending on whether
     # it had to modify the string.
     if isinstance(s, bytes_type):
-        s = s.decode('utf-8')
+        s = s.decode("utf-8")
     return s
 
 
@@ -81,7 +86,7 @@ def unquote(s):
     # which differs from quote's behavior.  Just to be safe, make sure it is
     # unicode before we return.
     if isinstance(s, bytes_type):
-        s = s.decode('utf-8')
+        s = s.decode("utf-8")
     return s
 
 
@@ -100,9 +105,12 @@ def encode_params_utf8(params):
     """
     encoded = []
     for k, v in params:
-        encoded.append((
-            k.encode('utf-8') if isinstance(k, unicode_type) else k,
-            v.encode('utf-8') if isinstance(v, unicode_type) else v))
+        encoded.append(
+            (
+                k.encode("utf-8") if isinstance(k, unicode_type) else k,
+                v.encode("utf-8") if isinstance(v, unicode_type) else v,
+            )
+        )
     return encoded
 
 
@@ -112,13 +120,16 @@ def decode_params_utf8(params):
     """
     decoded = []
     for k, v in params:
-        decoded.append((
-            k.decode('utf-8') if isinstance(k, bytes_type) else k,
-            v.decode('utf-8') if isinstance(v, bytes_type) else v))
+        decoded.append(
+            (
+                k.decode("utf-8") if isinstance(k, bytes_type) else k,
+                v.decode("utf-8") if isinstance(v, bytes_type) else v,
+            )
+        )
     return decoded
 
 
-urlencoded = set(always_safe) | set('=&;%+~,*')
+urlencoded = set(always_safe) | set("=&;%+~,*")
 
 
 def urldecode(query):
@@ -132,15 +143,15 @@ def urldecode(query):
     """
     # Check if query contains invalid characters
     if query and not set(query) <= urlencoded:
-        raise ValueError('Not a valid urlencoded string.')
+        raise ValueError("Not a valid urlencoded string.")
 
     # Check for correctly hex encoded values using a regular expression
     # All encoded values begin with % followed by two hex characters
     # correct = %00, %A0, %0A, %FF
     # invalid = %G0, %5H, %PO
-    invalid_hex = '%[^0-9A-Fa-f]|%[0-9A-Fa-f][^0-9A-Fa-f]'
+    invalid_hex = "%[^0-9A-Fa-f]|%[0-9A-Fa-f][^0-9A-Fa-f]"
     if len(re.findall(invalid_hex, query)):
-        raise ValueError('Invalid hex encoding in query string.')
+        raise ValueError("Invalid hex encoding in query string.")
 
     # We encode to utf-8 prior to parsing because parse_qsl behaves
     # differently on unicode input in python 2 and 3.
@@ -156,7 +167,9 @@ def urldecode(query):
     # Python 3.3 however
     # >>> urllib.parse.parse_qsl(u'%E5%95%A6%E5%95%A6')
     # u'\u5566\u5566'
-    query = query.encode('utf-8') if not PY3 and isinstance(query, unicode_type) else query
+    query = (
+        query.encode("utf-8") if not PY3 and isinstance(query, unicode_type) else query
+    )
     # We want to allow queries such as "c2" whereas urlparse.parse_qsl
     # with the strict_parsing flag will not.
     params = urlparse.parse_qsl(query, keep_blank_values=True)
@@ -178,7 +191,7 @@ def extract_params(raw):
             params = urldecode(raw)
         except ValueError:
             params = None
-    elif hasattr(raw, '__iter__'):
+    elif hasattr(raw, "__iter__"):
         try:
             dict(raw)
         except ValueError:
@@ -230,7 +243,7 @@ def generate_token(length=30, chars=UNICODE_ASCII_CHARACTER_SET):
     why SystemRandom is used instead of the default random.choice method.
     """
     rand = random.SystemRandom()
-    return ''.join(rand.choice(chars) for x in range(length))
+    return "".join(rand.choice(chars) for x in range(length))
 
 
 def generate_client_id(length=30, chars=CLIENT_ID_CHARACTER_SET):
@@ -262,7 +275,7 @@ def add_params_to_uri(uri, params, fragment=False):
 
 
 def safe_string_equals(a, b):
-    """ Near-constant time string comparison.
+    """Near-constant time string comparison.
 
     Used in order to avoid timing attacks on sensitive information such
     as secret keys during request verification (`rootLabs`_).
@@ -287,7 +300,7 @@ def to_unicode(data, encoding):
     if isinstance(data, bytes_type):
         return unicode_type(data, encoding=encoding)
 
-    if hasattr(data, '__iter__'):
+    if hasattr(data, "__iter__"):
         try:
             dict(data)
         except TypeError:
@@ -297,9 +310,11 @@ def to_unicode(data, encoding):
             return (to_unicode(i, encoding) for i in data)
         else:
             # We support 2.6 which lacks dict comprehensions
-            if hasattr(data, 'items'):
+            if hasattr(data, "items"):
                 data = data.items()
-            return dict(((to_unicode(k, encoding), to_unicode(v, encoding)) for k, v in data))
+            return dict(
+                ((to_unicode(k, encoding), to_unicode(v, encoding)) for k, v in data)
+            )
 
     return data
 
@@ -348,8 +363,9 @@ class Request(object):
     unmolested.
     """
 
-    def __init__(self, uri, http_method='GET', body=None, headers=None,
-            encoding='utf-8'):
+    def __init__(
+        self, uri, http_method="GET", body=None, headers=None, encoding="utf-8"
+    ):
         # Convert to unicode using encoding if given, else assume unicode
         encode = lambda x: to_unicode(x, encoding) if encoding else x
 
@@ -376,8 +392,9 @@ class Request(object):
     def uri_query_params(self):
         if not self.uri_query:
             return []
-        return urlparse.parse_qsl(self.uri_query, keep_blank_values=True,
-                                  strict_parsing=True)
+        return urlparse.parse_qsl(
+            self.uri_query, keep_blank_values=True, strict_parsing=True
+        )
 
     @property
     def duplicate_params(self):

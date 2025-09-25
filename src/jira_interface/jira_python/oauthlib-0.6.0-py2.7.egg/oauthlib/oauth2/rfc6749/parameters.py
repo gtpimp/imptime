@@ -11,19 +11,23 @@ This module contains methods related to `Section 4`_ of the OAuth 2 RFC.
 """
 
 import json
+
 try:
-    import urlparse
+    from urllib.parse import urlparse
 except ImportError:
     import urllib.parse as urlparse
-from oauthlib.common import add_params_to_uri, add_params_to_qs, unicode_type
-from .errors import raise_from_error, MissingTokenError, MissingTokenTypeError
-from .errors import MismatchingStateError, MissingCodeError
-from .errors import InsecureTransportError
-from .utils import list_to_scope, scope_to_list, is_secure_transport
+
+from oauthlib.common import add_params_to_qs, add_params_to_uri, unicode_type
+
+from .errors import (InsecureTransportError, MismatchingStateError,
+                     MissingCodeError, MissingTokenError,
+                     MissingTokenTypeError, raise_from_error)
+from .utils import is_secure_transport, list_to_scope, scope_to_list
 
 
-def prepare_grant_uri(uri, client_id, response_type, redirect_uri=None,
-            scope=None, state=None, **kwargs):
+def prepare_grant_uri(
+    uri, client_id, response_type, redirect_uri=None, scope=None, state=None, **kwargs
+):
     """Prepare the authorization grant request URI.
 
     The client constructs the request URI by adding the following
@@ -64,15 +68,14 @@ def prepare_grant_uri(uri, client_id, response_type, redirect_uri=None,
     if not is_secure_transport(uri):
         raise InsecureTransportError()
 
-    params = [(('response_type', response_type)),
-              (('client_id', client_id))]
+    params = [(("response_type", response_type)), (("client_id", client_id))]
 
     if redirect_uri:
-        params.append(('redirect_uri', redirect_uri))
+        params.append(("redirect_uri", redirect_uri))
     if scope:
-        params.append(('scope', list_to_scope(scope)))
+        params.append(("scope", list_to_scope(scope)))
     if state:
-        params.append(('state', state))
+        params.append(("state", state))
 
     for k in kwargs:
         if kwargs[k]:
@@ -81,7 +84,7 @@ def prepare_grant_uri(uri, client_id, response_type, redirect_uri=None,
     return add_params_to_uri(uri, params)
 
 
-def prepare_token_request(grant_type, body='', **kwargs):
+def prepare_token_request(grant_type, body="", **kwargs):
     """Prepare the access token request.
 
     The client makes a request to the token endpoint by adding the
@@ -107,10 +110,10 @@ def prepare_token_request(grant_type, body='', **kwargs):
 
     .. _`Section 4.1.1`: http://tools.ietf.org/html/rfc6749#section-4.1.1
     """
-    params = [('grant_type', grant_type)]
+    params = [("grant_type", grant_type)]
 
-    if 'scope' in kwargs:
-        kwargs['scope'] = list_to_scope(kwargs['scope'])
+    if "scope" in kwargs:
+        kwargs["scope"] = list_to_scope(kwargs["scope"])
 
     for k in kwargs:
         if kwargs[k]:
@@ -163,10 +166,10 @@ def parse_authorization_code_response(uri, state=None):
     query = urlparse.urlparse(uri).query
     params = dict(urlparse.parse_qsl(query))
 
-    if not 'code' in params:
+    if not "code" in params:
         raise MissingCodeError("Missing code parameter in response.")
 
-    if state and params.get('state', None) != state:
+    if state and params.get("state", None) != state:
         raise MismatchingStateError()
 
     return params
@@ -219,10 +222,10 @@ def parse_implicit_response(uri, state=None, scope=None):
     fragment = urlparse.urlparse(uri).fragment
     params = dict(urlparse.parse_qsl(fragment, keep_blank_values=True))
 
-    if 'scope' in params:
-        params['scope'] = scope_to_list(params['scope'])
+    if "scope" in params:
+        params["scope"] = scope_to_list(params["scope"])
 
-    if state and params.get('state', None) != state:
+    if state and params.get("state", None) != state:
         raise ValueError("Mismatching or missing state in params.")
 
     validate_token_parameters(params, scope)
@@ -291,8 +294,8 @@ def parse_token_response(body, scope=None):
     """
     params = json.loads(body)
 
-    if 'scope' in params:
-        params['scope'] = scope_to_list(params['scope'])
+    if "scope" in params:
+        params["scope"] = scope_to_list(params["scope"])
 
     validate_token_parameters(params, scope)
     return params
@@ -300,20 +303,20 @@ def parse_token_response(body, scope=None):
 
 def validate_token_parameters(params, scope=None):
     """Ensures token precence, token type, expiration and scope in params."""
-    if 'error' in params:
-        raise_from_error(params.get('error'), params)
+    if "error" in params:
+        raise_from_error(params.get("error"), params)
 
-    if not 'access_token' in params:
+    if not "access_token" in params:
         raise MissingTokenError(description="Missing access token parameter.")
 
-    if not 'token_type' in params:
+    if not "token_type" in params:
         raise MissingTokenTypeError()
 
     # If the issued access token scope is different from the one requested by
     # the client, the authorization server MUST include the "scope" response
     # parameter to inform the client of the actual scope granted.
     # http://tools.ietf.org/html/rfc6749#section-3.3
-    new_scope = params.get('scope', None)
+    new_scope = params.get("scope", None)
     scope = scope_to_list(scope)
     if scope and new_scope and set(scope) != set(new_scope):
         raise Warning("Scope has changed to %s." % new_scope)
