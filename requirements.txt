@@ -146,3 +146,4 @@ imaplib2==2.45.0
 html2text==2017.10.4
 django-imagekit==4.0.1
 certifi==2024.8.30
+chardet==3.0.4
