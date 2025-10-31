@@ -104,6 +104,7 @@ PyBrain==0.3
 pycryptodome==3.9.9
 Pygments==2.0.2
 pyHanko==0.18.1
+pyHanko-certvalidator==0.19.6
 pyparsing==2.0.3
 pyPdf==1.13
 PyPDF2==1.25.1
