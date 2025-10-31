@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y --force-yes \
   libx11-xcb1 \
   libxcursor1 \
   libcups2 \
-  libxss1
+  libxss1 \
+  libffi-dev \
+  cargo
 
 
 # phantomjs

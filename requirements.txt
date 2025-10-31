@@ -154,3 +154,4 @@ idna==3.4
 uritools==4.0.2
 oscrypto==1.3.0
 cryptography==40.0.2
+cffi==1.15.1
