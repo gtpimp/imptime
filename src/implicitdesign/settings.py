@@ -131,6 +131,8 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
     #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
+
+PIPELINE = {}
 # STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 # PIPELINE_CSS = {
 #     'colors': {
