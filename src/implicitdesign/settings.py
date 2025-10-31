@@ -289,7 +289,6 @@ INSTALLED_APPS = (
     "rest_framework.authtoken",
     "bootstrap_toolkit",
     "bootstrap3",
-    "pagination",
     "selectable",
     "pipeline",
     "dateutil",
