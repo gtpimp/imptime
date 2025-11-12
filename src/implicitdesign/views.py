@@ -8,7 +8,7 @@ from django import template
 import os
 import csv
 from django.core.mail import EmailMessage
-import StringIO
+from io import StringIO
 import settings
 from zipfile import ZipFile
 from django.template import RequestContext

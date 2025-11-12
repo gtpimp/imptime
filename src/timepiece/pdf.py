@@ -1,4 +1,4 @@
-import StringIO
+from io import StringIO
 import os
 from django.conf import settings
 from xhtml2pdf import pisa  

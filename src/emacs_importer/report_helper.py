@@ -1,6 +1,6 @@
 from timepiece import models as timepiece
 import re
-import StringIO
+from io import StringIO
 import csv
 from .models import redmine_mapping, RedmineIssue
 

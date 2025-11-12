@@ -5,7 +5,7 @@ import pprint
 from collections import OrderedDict
 import zipfile
 from django.urls import reverse
-import StringIO
+from io import StringIO
 from rest_framework.renderers import JSONRenderer
 from lib.date_helper import today_in_local_timezone
 import json

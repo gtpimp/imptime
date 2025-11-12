@@ -15,7 +15,7 @@ from django.views.generic.base import RedirectView
 
 admin.site.login = login_required(admin.site.login)
 
-import views
+from implicitdesign import views
 from forms import ImpAuthenticationForm
 
 handler400 = "implicitdesign.views.error_handler_400"

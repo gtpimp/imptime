@@ -53,7 +53,7 @@ from xhtml2pdf import pisa
 
 import api
 from timepiece.exporter import CSVMixin, CSVSprintExport, CSVTimesheetExport
-from pdf import render_to_pdf
+from timepiece.pdf import render_to_pdf
 from timepiece import timings
 from timepiece.caldav_helper import CalDavHelper
 from timepiece.interface_plugin import get_interface_plugin

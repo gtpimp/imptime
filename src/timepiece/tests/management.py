@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from StringIO import StringIO
+from io import StringIO
 from dateutil.relativedelta import relativedelta
 
 from django.urls import reverse
