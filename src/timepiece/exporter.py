@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 import unicodecsv as csv
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
-import models as timepiece
+import timepiece.models as timepiece
 
 class ProjectTimesheet(DetailView):
     template_name = 'timepiece/time-sheet/projects/view.html'
