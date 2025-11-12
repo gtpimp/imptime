@@ -159,3 +159,4 @@ tzlocal==2.1
 qrcode==7.3.1
 pypdf==3.9.0
 arabic-reshaper==2.1.4
+python-bidi==0.4.2
