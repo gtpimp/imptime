@@ -52,7 +52,7 @@ from phantom_pdf.generator import create_url_from_query_dict, render_url_to_pdf
 from xhtml2pdf import pisa
 
 import api
-from exporter import CSVMixin, CSVSprintExport, CSVTimesheetExport
+from timepiece.exporter import CSVMixin, CSVSprintExport, CSVTimesheetExport
 from pdf import render_to_pdf
 from timepiece import timings
 from timepiece.caldav_helper import CalDavHelper
