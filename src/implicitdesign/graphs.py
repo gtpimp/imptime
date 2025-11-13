@@ -8,12 +8,12 @@ from timepiece.models import Entry
 from django.contrib.auth.models import User
 import smtplib
 from datetime import datetime, date
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEBase import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
-from email.MIMEText import MIMEText
-from email.Utils import COMMASPACE, formatdate
-from email import Encoders
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+from email import encoders
 
 def daily_graph(username, from_date, to_date, test=False):
 
@@ -98,7 +98,7 @@ def _send_mail(attachments, text, email_to, content_type, title):
         for f in attachments:
             part = MIMEBase(content_type.split("/")[0], content_type.split("/")[1])
             part.set_payload( open(f,"r").read() )
-            Encoders.encode_base64(part)
+            encoders.encode_base64(part)
             part.add_header('Content-Disposition', 'attachment', filename=os.path.basename(f))
             msg.attach(part)
 

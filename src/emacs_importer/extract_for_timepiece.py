@@ -6,7 +6,7 @@ import git
 from implicitdesign import settings
 from timepiece.interface_plugin import get_interface_plugin
 from django.utils import timezone
-from orgnode import makelist_from_file, makelist_from_string
+from emacs_importer.orgnode import makelist_from_file, makelist_from_string
 from django.db import transaction
 from datetime import datetime
 from django.contrib.auth.models import User

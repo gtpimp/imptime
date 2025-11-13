@@ -14,12 +14,12 @@ import calendar
 import subprocess
 import smtplib
 from .models import RedmineTimeEntry, redmine_mapping, RedmineIssue
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEBase import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
-from email.MIMEText import MIMEText
-from email.Utils import COMMASPACE, formatdate
-from email import Encoders
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+from email import encoders
 import zipfile
 import logging
 logger = logging.getLogger(__name__)

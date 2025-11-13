@@ -1,11 +1,11 @@
-from celery.task import task
+from celery import shared_task
 from implicitdesign import settings
 from datetime import datetime
-from extract_for_timepiece import Extractor
+from emacs_importer.extract_for_timepiece import Extractor
 from timepiece.models import UserNotification
 from django.contrib.auth.models import User
 
-@task()
+@shared_task
 def import_timesheets_from_emacs_task():
     return import_timesheets_from_emacs()
 

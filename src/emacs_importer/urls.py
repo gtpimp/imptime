@@ -3,7 +3,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 admin.autodiscover()
 
-import views
+from emacs_importer import views
 
 urlpatterns = [
                        url(r'^import_timesheets$', views.import_timesheets, name='import_timesheets'),

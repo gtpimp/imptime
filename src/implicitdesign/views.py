@@ -9,13 +9,13 @@ import os
 import csv
 from django.core.mail import EmailMessage
 from io import StringIO
-import settings
+from implicitdesign import settings
 from zipfile import ZipFile
 from django.template import RequestContext
 from emacs_importer.process_for_timepiece import Processor
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
-from forms import ImpAuthenticationForm
+from implicitdesign.forms import ImpAuthenticationForm
 from datetime import datetime
 from rest_framework.authtoken.models import Token as RestFrameworkToken
 import logging

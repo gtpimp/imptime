@@ -3,15 +3,15 @@ from django.template import RequestContext
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect
-from extract_for_timepiece import Extractor
+from emacs_importer.extract_for_timepiece import Extractor
 from django.db import transaction
 import os
-from forms import ImportTimesheetForm
+from emacs_importer.forms import ImportTimesheetForm
 from django.core.mail import send_mail
 import pprint
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
-from tasks import import_timesheets_from_emacs_task, import_timesheets_from_emacs
+from emacs_importer.tasks import import_timesheets_from_emacs_task, import_timesheets_from_emacs
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.core import management
