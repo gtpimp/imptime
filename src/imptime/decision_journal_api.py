@@ -3,12 +3,12 @@ from django.utils import timezone
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from django.db.models import Q
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.models import DecisionJournal, DecisionJournalHistory
-from decision_journal_serializer import DecisionJournalSerializer
+from .decision_journal_serializer import DecisionJournalSerializer
 
 logger = logging.getLogger(__name__)
 

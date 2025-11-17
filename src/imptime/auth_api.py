@@ -1,5 +1,5 @@
 import logging
-from user_serializer import UserSerializer
+from .user_serializer import UserSerializer
 from impasync.refresh_notifier import RefreshNotifier
 from mailqueue.mailqueue_helper import queue_email
 from rest_framework.decorators import list_route
@@ -9,7 +9,7 @@ from django.db.models import Q
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

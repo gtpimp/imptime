@@ -1,5 +1,5 @@
 import logging
-from base_serializer import BaseSerializer
+from .base_serializer import BaseSerializer
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 logger = logging.getLogger(__name__)

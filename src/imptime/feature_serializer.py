@@ -1,7 +1,7 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseSerializer
-from testable_serializer import TestableSerializer
+from .base_serializer import BaseSerializer
+from .testable_serializer import TestableSerializer
 from drf_compound_fields.fields import ListField
 from imptime.models import AnnotatedVisualSpecDocument
 logger = logging.getLogger(__name__)

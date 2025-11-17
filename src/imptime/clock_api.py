@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.db.models import Count, Sum, Min
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

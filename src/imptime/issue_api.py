@@ -1,19 +1,19 @@
 import logging
-from issue_serializer import IssueSerializer, IssueShareSerializer
-from issue_serializer import IssueGeneralDetailsSerializer
-from markdown_enrichment import MarkdownEnrichment
-from project_api import ProjectViewSet
+from .issue_serializer import IssueSerializer, IssueShareSerializer
+from .issue_serializer import IssueGeneralDetailsSerializer
+from .markdown_enrichment import MarkdownEnrichment
+from .project_api import ProjectViewSet
 from django.utils import timezone
 from lib import hours_helper
 from imptime.bulk_text_parser import BulkTextParser
-from issue_serializer import IssueWithEstimatesSerializer
+from .issue_serializer import IssueWithEstimatesSerializer
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.db.models import Count, Sum, Q
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

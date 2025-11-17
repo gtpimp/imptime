@@ -16,13 +16,13 @@ from timepiece.models import Business as Project
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from timepiece.models import IssueHistory
 
-from base_api import BaseViewSet
-from feature_serializer import FeatureSerializer
+from .base_api import BaseViewSet
+from .feature_serializer import FeatureSerializer
 from imptime.bulk_text_parser import BulkTextParser
 from imptime.models import (Feature, FeatureHistory, ProjectFeatureOrder,
                             VisualSpecIssue)
-from markdown_enrichment import MarkdownEnrichment
-from project_api import ProjectViewSet
+from .markdown_enrichment import MarkdownEnrichment
+from .project_api import ProjectViewSet
 
 logger = logging.getLogger(__name__)
 

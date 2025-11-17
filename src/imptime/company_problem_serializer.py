@@ -1,6 +1,6 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseModelSerializer
+from .base_serializer import BaseModelSerializer
 from imptime.models import CompanyProblem
 logger = logging.getLogger(__name__)
 

@@ -1,10 +1,10 @@
 import logging
-from sprint_serializer import SprintSerializer # change to new serializer once created
+from .sprint_serializer import SprintSerializer # change to new serializer once created
 from rest_framework.renderers import JSONRenderer
 from lib import file_helper
 from django.utils import timezone
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
 from rest_framework.decorators import list_route
 import json

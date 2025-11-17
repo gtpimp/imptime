@@ -1,8 +1,8 @@
 import logging
-from base_serializer import BaseSerializer
+from .base_serializer import BaseSerializer
 from rest_framework import serializers
-from issue_history_serializer import IssueHistorySerializer
-from clock_entry_serializer import ClockEntrySerializer
+from .issue_history_serializer import IssueHistorySerializer
+from .clock_entry_serializer import ClockEntrySerializer
 logger = logging.getLogger(__name__)
 
 class EventLogFilterSerializer(BaseSerializer):

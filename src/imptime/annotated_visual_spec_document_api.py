@@ -1,12 +1,12 @@
 import logging
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from imptime.base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from visual_spec_document_serializer import VisualSpecDocumentSerializer
-from annotated_visual_spec_document_serializer import AnnotatedVisualSpecDocumentSerializer
+from .visual_spec_document_serializer import VisualSpecDocumentSerializer
+from .annotated_visual_spec_document_serializer import AnnotatedVisualSpecDocumentSerializer
 from imptime.models import FeatureHistory, IssueHistory
 
 logger = logging.getLogger(__name__)

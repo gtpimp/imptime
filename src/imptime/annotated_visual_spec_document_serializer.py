@@ -1,9 +1,9 @@
 import logging
-from base_serializer import BaseSerializer
+from .base_serializer import BaseSerializer
 from rest_framework import serializers
 logger = logging.getLogger(__name__)
-from visual_spec_document_serializer import VisualSpecDocumentSerializer
-from visual_spec_annotation_serializer import VisualSpecAnnotationSerializer
+from .visual_spec_document_serializer import VisualSpecDocumentSerializer
+from .visual_spec_annotation_serializer import VisualSpecAnnotationSerializer
 
 class AnnotatedVisualSpecDocumentSerializer(BaseSerializer):
     id = serializers.CharField(source="pk")

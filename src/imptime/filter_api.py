@@ -1,18 +1,18 @@
 import logging
-from issue_serializer import IssueSerializer
-from issue_serializer import IssueGeneralDetailsSerializer
+from .issue_serializer import IssueSerializer
+from .issue_serializer import IssueGeneralDetailsSerializer
 from django.db.models import Sum, Count, Q, F, Max, Min
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Issue
 from timepiece.models import Project as Sprint
 from timepiece.models import Business as Project
-from filter_serializer import ProjectResultSerializer, SprintResultSerializer, IssueResultSerializer
+from .filter_serializer import ProjectResultSerializer, SprintResultSerializer, IssueResultSerializer
 
 logger = logging.getLogger(__name__)
 

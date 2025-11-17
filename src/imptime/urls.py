@@ -1,52 +1,52 @@
 from django.conf.urls import include, url
-import annotated_visual_spec_document_api
-import auth_api
-import billable_hours_statement_api
-import company_api
-import company_user_permission_api
-import cost_summary_api
-import decision_journal_api
-import estimate_summary_api
-import filter_api
-import issue_api
-import clock_api
-import event_log_api
-import invoice_api
-import issue_comment_api
-import issue_estimate_api
-import issue_history_api
-import issue_review_api
-import mien_api
-import multiple_issue_summary_api
-import nudge_api
-import company_problem_api
-import schedule_api
-import schedule_item_api
-import print_api
-import project_api
-import project_dashboard_api
-import project_statement_api
-import work_summary_api
-import project_user_permission_api
-import release_note_api
-import feature_api
-import sprint_api
-import sprint_deadline_api
-import sprint_review_api
-import sprint_roadmap_api
-import sprint_snapshot_api
-import sprint_user_rate_api
-import testable_api
-import testable_line_api
-import tag_api
-import time_chart_api
-import time_summary_api
-import user_api
-import views
-import visual_spec_document_api
-import visual_spec_issue_api
-import visual_spec_annotation_api
-import wiki_api 
+from imptime import annotated_visual_spec_document_api
+from imptime import auth_api
+from imptime import billable_hours_statement_api
+from imptime import company_api
+from imptime import company_user_permission_api
+from imptime import cost_summary_api
+from imptime import decision_journal_api
+from imptime import estimate_summary_api
+from imptime import filter_api
+from imptime import issue_api
+from imptime import clock_api
+from imptime import event_log_api
+from imptime import invoice_api
+from imptime import issue_comment_api
+from imptime import issue_estimate_api
+from imptime import issue_history_api
+from imptime import issue_review_api
+from imptime import mien_api
+from imptime import multiple_issue_summary_api
+from imptime import nudge_api
+from imptime import company_problem_api
+from imptime import schedule_api
+from imptime import schedule_item_api
+from imptime import print_api
+from imptime import project_api
+from imptime import project_dashboard_api
+from imptime import project_statement_api
+from imptime import work_summary_api
+from imptime import project_user_permission_api
+from imptime import release_note_api
+from imptime import feature_api
+from imptime import sprint_api
+from imptime import sprint_deadline_api
+from imptime import sprint_review_api
+from imptime import sprint_roadmap_api
+from imptime import sprint_snapshot_api
+from imptime import sprint_user_rate_api
+from imptime import testable_api
+from imptime import testable_line_api
+from imptime import tag_api
+from imptime import time_chart_api
+from imptime import time_summary_api
+from imptime import user_api
+from imptime import views
+from imptime import visual_spec_document_api
+from imptime import visual_spec_issue_api
+from imptime import visual_spec_annotation_api
+from imptime import wiki_api 
 from rest_framework.routers import DefaultRouter
 from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
 from visual_spec_document_download import VisualSpecDocumentHiresView, VisualSpecDocumentMediumResPreviewView

@@ -1,7 +1,7 @@
 import logging
-from issue_serializer import IssueSerializer
-from issue_serializer import IssueGeneralDetailsSerializer
-from issue_serializer import IssueWithEstimatesSerializer
+from .issue_serializer import IssueSerializer
+from .issue_serializer import IssueGeneralDetailsSerializer
+from .issue_serializer import IssueWithEstimatesSerializer
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
@@ -9,7 +9,7 @@ from imptime.markdown_enrichment import MarkdownEnrichment
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.db.models import Count, Sum
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

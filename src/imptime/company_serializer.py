@@ -1,8 +1,8 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseSerializer
+from .base_serializer import BaseSerializer
 from timepiece.models import CompanyPermissions
-from company_user_permission_serializer import CompanyUserPermissionSerializer
+from .company_user_permission_serializer import CompanyUserPermissionSerializer
 logger = logging.getLogger(__name__)
 
 
