@@ -1,8 +1,8 @@
 import logging
-from issue_history_serializer import IssueHistorySerializer
+from .issue_history_serializer import IssueHistorySerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
 import json
 from django.utils import timezone

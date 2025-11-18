@@ -1,13 +1,13 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseSerializer, BaseModelSerializer
+from .base_serializer import BaseSerializer, BaseModelSerializer
 from timepiece.models import IssueStatus, Issue, ProjectRole, Rate
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectStatus as SprintStatus
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
 from timepiece.models import BusinessPermissions as ProjectPermissions
 from imptime.models import VisualSpecDocument
-from project_user_permission_serializer import ProjectUserPermissionSerializer
+from .project_user_permission_serializer import ProjectUserPermissionSerializer
 from imptime.project_dashboard_api import get_recent_activity
 logger = logging.getLogger(__name__)
 

@@ -1,17 +1,17 @@
 import logging
-from issue_serializer import IssueSerializer
+from .issue_serializer import IssueSerializer
 from django.conf import settings
 from django.core.files import File as DjangoFile
 import os
 from django_downloadview import HTTPDownloadView
 from django.contrib.auth.decorators import login_required
-from visual_spec_document_serializer import VisualSpecDocumentSerializer
+from .visual_spec_document_serializer import VisualSpecDocumentSerializer
 from rest_framework.decorators import detail_route
 from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Count, Sum, Q, Prefetch
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

@@ -1,8 +1,8 @@
 import logging
-from user_serializer import UserSerializer
+from .user_serializer import UserSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

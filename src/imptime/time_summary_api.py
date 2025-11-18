@@ -1,8 +1,8 @@
 import logging
-from sprint_serializer import SprintSerializer # change to new serializer once created
+from .sprint_serializer import SprintSerializer # change to new serializer once created
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.time_summary_calculator import TimeSummaryCalculator

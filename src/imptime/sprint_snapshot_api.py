@@ -1,5 +1,5 @@
 import logging
-from project_serializer import ProjectSerializer
+from .project_serializer import ProjectSerializer
 from django.db.models import Case, When
 from rest_framework.decorators import detail_route
 from django import template
@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

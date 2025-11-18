@@ -1,8 +1,8 @@
 import logging
-from sprint_roadmap_serializer import SprintRoadmapSerializer
+from .sprint_roadmap_serializer import SprintRoadmapSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
 import json
 from rest_framework.permissions import IsAuthenticated

@@ -9,7 +9,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import ProjectReview as SprintReview
 from timepiece.models import Issue, BusinessPermissions, IssuePoints, Rate, CalendarEvent
 from timepiece.models import ProjectIssueOrder as SprintIssueOrder
-from project_dashboard_api import get_nonexpired_project_ids
+from .project_dashboard_api import get_nonexpired_project_ids
 
 class Nudger(object):
 

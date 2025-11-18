@@ -1,9 +1,9 @@
 import logging
-from wiki_serializer import WikiPageSerializer
+from .wiki_serializer import WikiPageSerializer
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
-from base_api import BaseViewSet
-from markdown_enrichment import MarkdownEnrichment
+from .base_api import BaseViewSet
+from .markdown_enrichment import MarkdownEnrichment
 from django.db.models import Prefetch, Count, Sum
 import json
 from django.utils import timezone

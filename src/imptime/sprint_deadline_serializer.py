@@ -1,6 +1,6 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseSerializer, BaseModelSerializer
+from .base_serializer import BaseSerializer, BaseModelSerializer
 from timepiece.models import ProjectDeadline as SprintDeadline
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
 from timepiece.models import Project as Sprint

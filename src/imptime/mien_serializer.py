@@ -1,6 +1,6 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseSerializer
+from .base_serializer import BaseSerializer
 import json
 logger = logging.getLogger(__name__)
 

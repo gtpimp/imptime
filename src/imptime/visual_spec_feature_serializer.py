@@ -1,5 +1,5 @@
 import logging
-from base_serializer import BaseModelSerializer
+from .base_serializer import BaseModelSerializer
 from rest_framework import serializers
 from imptime.models import VisualSpecFeature
 logger = logging.getLogger(__name__)

@@ -1,6 +1,6 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseSerializer
+from .base_serializer import BaseSerializer
 from django.contrib.auth.models import User
 from timepiece.models import BusinessPermissions
 from imptime.models import Schedule

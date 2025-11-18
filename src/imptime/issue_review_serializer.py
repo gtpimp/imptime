@@ -1,4 +1,4 @@
-from base_serializer import BaseSerializer, BaseModelSerializer
+from .base_serializer import BaseSerializer, BaseModelSerializer
 from rest_framework import serializers
 from timepiece.models import IssueReview
 import logging

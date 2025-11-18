@@ -9,7 +9,7 @@ from timepiece.models import Issue, IssueHistory
 from rest_framework.decorators import permission_classes
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from base_api import PermissionHelper
+from .base_api import PermissionHelper
 from django.contrib.sessions.models import Session
 from lib import file_helper
 from imptime.models import VisualSpecDocument

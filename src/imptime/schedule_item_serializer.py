@@ -1,6 +1,6 @@
 import logging
 from rest_framework import serializers
-from base_serializer import BaseModelSerializer, BaseSerializer
+from .base_serializer import BaseModelSerializer, BaseSerializer
 from imptime.models import ScheduleItem
 logger = logging.getLogger(__name__)
 

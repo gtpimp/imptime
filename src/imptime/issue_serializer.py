@@ -2,12 +2,12 @@ import logging
 from rest_framework import serializers
 from django.utils import timezone
 from drf_compound_fields.fields import ListField
-from base_serializer import BaseSerializer
-from issue_estimate_serializer import IssueEstimateSerializer, IssueHoursSerializer
-from issue_comment_serializer import IssueCommentSerializer, IssueShareCommentSerializer
+from .base_serializer import BaseSerializer
+from .issue_estimate_serializer import IssueEstimateSerializer, IssueHoursSerializer
+from .issue_comment_serializer import IssueCommentSerializer, IssueShareCommentSerializer
 from imptime.models import AnnotatedVisualSpecDocument
 from timepiece.models import BusinessPermissions, Issue
-from testable_serializer import TestableSerializer
+from .testable_serializer import TestableSerializer
 from testable.models import Testable
 from django.conf import settings
 logger = logging.getLogger(__name__)

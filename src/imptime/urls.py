@@ -48,8 +48,8 @@ from imptime import visual_spec_issue_api
 from imptime import visual_spec_annotation_api
 from imptime import wiki_api 
 from rest_framework.routers import DefaultRouter
-from visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
-from visual_spec_document_download import VisualSpecDocumentHiresView, VisualSpecDocumentMediumResPreviewView
+from .visual_spec_document_download import VisualSpecDocumentPreviewView, VisualSpecDocumentDownloadView
+from .visual_spec_document_download import VisualSpecDocumentHiresView, VisualSpecDocumentMediumResPreviewView
 
 router = DefaultRouter()
 router.register(r'auth', auth_api.AuthViewSet,

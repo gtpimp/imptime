@@ -2,8 +2,8 @@ import logging
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from django.conf import settings
-from base_serializer import BaseSerializer
-from clock_entry_serializer import ClockEntrySerializer
+from .base_serializer import BaseSerializer
+from .clock_entry_serializer import ClockEntrySerializer
 from timepiece.models import Entry
 from imptime.models import SprintTemplate
 from timepiece.models import ProjectDeadline as SprintDeadline

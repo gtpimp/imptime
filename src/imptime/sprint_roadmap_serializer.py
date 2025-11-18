@@ -2,10 +2,10 @@ import logging
 from rest_framework import serializers
 import itertools
 from dateutil.relativedelta import relativedelta
-from base_serializer import BaseSerializer
+from .base_serializer import BaseSerializer
 from django.db.models import Count, Min, Max
 from django.utils import timezone
-from clock_entry_serializer import ClockEntrySerializer
+from .clock_entry_serializer import ClockEntrySerializer
 from timepiece.models import Entry, Issue
 from lib import chart_helper
 logger = logging.getLogger(__name__)

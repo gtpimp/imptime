@@ -6,7 +6,7 @@ from itertools import chain
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.http import HttpResponse
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum, Max, Min
 import json
 from rest_framework.permissions import IsAuthenticated

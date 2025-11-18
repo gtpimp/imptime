@@ -5,14 +5,14 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.db.models import Count, Sum
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from timepiece.models import Project as Sprint
 from timepiece.models import ProjectDeadline as SprintDeadline
 from timepiece.models import ProjectDeadlineType as SprintDeadlineType
-from sprint_deadline_serializer import SprintDeadlineModelSerializer, SprintDeadlineSerializer
+from .sprint_deadline_serializer import SprintDeadlineModelSerializer, SprintDeadlineSerializer
 
 logger = logging.getLogger(__name__)
 

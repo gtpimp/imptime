@@ -5,7 +5,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.http import HttpResponse
 from lib import file_helper
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 from django.db.models import Prefetch, Count, Sum
 import json
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +15,7 @@ from timepiece.models import Project as Sprint
 from timepiece.models import BusinessPermissions, Entry, Rate
 from django.contrib.auth.models import User
 from imptime.authentication import FormTokenAuthenticated
-from project_statement_serializer import ProjectStatementFilterSerializer
+from .project_statement_serializer import ProjectStatementFilterSerializer
 import csv
 from imptime.project_statement_calculator import ProjectStatementCalculator
 

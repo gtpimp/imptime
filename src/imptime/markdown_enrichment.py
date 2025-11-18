@@ -2,7 +2,7 @@ import re
 from imptime.base_api import PermissionHelper
 import json
 from timepiece.models import Issue
-from markdown_enrichment_serializer import MarkdownEnrichmentSerializer, MarkdownEnrichmentFailedSerializer
+from .markdown_enrichment_serializer import MarkdownEnrichmentSerializer, MarkdownEnrichmentFailedSerializer
 
 class MarkdownEnrichment(object):
 

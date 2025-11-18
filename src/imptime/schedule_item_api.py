@@ -5,12 +5,12 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.db.models import Prefetch
 from django.db.models import Count, Sum
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from imptime.models import ScheduleItem
-from schedule_item_serializer import ScheduleItemSerializer, ScheduleItemCreateSerializer, ScheduleItemUpdateDatesSerializer
+from .schedule_item_serializer import ScheduleItemSerializer, ScheduleItemCreateSerializer, ScheduleItemUpdateDatesSerializer
 
 logger = logging.getLogger(__name__)
 

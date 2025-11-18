@@ -1,12 +1,12 @@
 import logging
-from nudge_serializer import NudgeSerializer
+from .nudge_serializer import NudgeSerializer
 from rest_framework.decorators import list_route
 import math
 from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from django.db.models import Count
 from django.conf import settings
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes

@@ -1,5 +1,5 @@
 import logging
-from schedule_serializer import ScheduleSerializer
+from .schedule_serializer import ScheduleSerializer
 from django.contrib.auth.models import User
 from rest_framework.decorators import list_route
 from rest_framework.decorators import detail_route
@@ -8,7 +8,7 @@ from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse
 from django.db.models import Count
 from django.conf import settings
-from base_api import BaseViewSet
+from .base_api import BaseViewSet
 import json
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
